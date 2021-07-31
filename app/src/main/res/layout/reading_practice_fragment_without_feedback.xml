@@ -449,7 +449,7 @@
                             android:layout_marginTop="@dimen/_4sdp"
                             android:adjustViewBounds="true"
                             android:scaleType="centerInside"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                             android:textColor="@color/black"
                             app:srcCompat="@drawable/ic_rec_mic_big"
                             tools:text="B+"

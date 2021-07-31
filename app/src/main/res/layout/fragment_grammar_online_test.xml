@@ -24,9 +24,9 @@
             android:background="@drawable/bg_tooltip_large_start">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:visibility="gone"
                 android:layout_width="@dimen/_180sdp"
-                android:layout_height="@dimen/_108sdp">
+                android:layout_height="@dimen/_108sdp"
+                android:visibility="gone">
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/joshTextView"
@@ -95,7 +95,7 @@
                 android:paddingHorizontal="@dimen/_22sdp"
                 android:text="Simple Past Tense"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/description"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -159,7 +159,7 @@
                 android:paddingHorizontal="@dimen/_22sdp"
                 android:text="@string/test_completed"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/your_score_text"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -172,17 +172,14 @@
                 android:id="@+id/your_score_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_18sdp"
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:text="@string/your_score"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textSize="@dimen/_8ssp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/score"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintTop_toBottomOf="@+id/score_title" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -191,16 +188,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_12sdp"
-                tools:text="70% Marks"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/score_start_btn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/your_score_text"
                 app:layout_constraintVertical_chainStyle="packed"
-                app:layout_constraintTop_toBottomOf="@+id/your_score_text" />
+                tools:text="70% Marks" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/score_start_btn"
@@ -220,10 +217,10 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
                 app:cornerRadius="@dimen/_10sdp"
-                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -241,7 +238,7 @@
                 android:paddingHorizontal="@dimen/_22sdp"
                 android:text="Simple Past Tense"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/image"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -271,9 +268,9 @@
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginBottom="@dimen/_16sdp"
                 android:background="@drawable/green_btn_grammar_selector"
+                android:backgroundTint="@color/colorPrimary"
                 android:enabled="true"
                 android:gravity="center"
-                android:backgroundTint="@color/colorPrimary"
                 android:onClick="@{()->handler.onGrammarContinueClick()}"
                 android:paddingVertical="@dimen/_12sdp"
                 android:text="@string/grammar_btn_text_continue"
