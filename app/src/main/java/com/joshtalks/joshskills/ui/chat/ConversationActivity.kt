@@ -231,8 +231,10 @@ class ConversationActivity :
         }
         if (PrefManager.getBoolValue(HAS_OPENED_CONVERSATION_FIRST_TIME, defValue = true)) {
             conversationBinding.lessonTooltipLayout.visibility = VISIBLE
+            conversationBinding.leaderboardTooltipLayout.visibility = VISIBLE
         } else {
             conversationBinding.lessonTooltipLayout.visibility = GONE
+            conversationBinding.leaderboardTooltipLayout.visibility = GONE
         }
     }
 

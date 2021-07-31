@@ -131,7 +131,7 @@
             android:elevation="@dimen/_3sdp"
             android:fillAfter="false"
             android:visibility="gone"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/points"
@@ -560,6 +560,71 @@
             </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+            android:id="@+id/leaderboard_tooltip_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_point_container"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:background="@drawable/bg_tooltip_large_center">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="@dimen/_108sdp">
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/joshTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingTop="@dimen/_18sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp"
+                    android:text="1 of 3"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/joshTextView" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/btnNextStep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:background="@drawable/rounded_primary_bg_2dp"
+                    android:backgroundTint="@color/button_color"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_14sdp"
+                    android:paddingVertical="@dimen/_3sdp"
+                    android:text="आगे बढे"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
 
     </RelativeLayout>
 
