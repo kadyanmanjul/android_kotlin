@@ -35,8 +35,10 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
@@ -114,6 +116,8 @@ class WebRtcService : BaseWebRtcService() {
     private var isSpeakerEnabled = false
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
+    var speakingUsersNewList = arrayListOf<Int>()
+    var speakingUsersOldList = arrayListOf<Int>()
     private var notificationState = NotificationState.NOT_VISIBLE
     private val timer = object : CountDownTimer(3000, 1000) {
         override fun onTick(millisUntilFinished: Long) {}
@@ -130,6 +134,10 @@ class WebRtcService : BaseWebRtcService() {
         var isOnPstnCall = false
         var isConversionRoomActive = false
         var isRoomCreatedByUser = false
+        var agoraUid: Int? = null
+        var moderatorUid: Int? = null
+        var roomId: String? = null
+        val roomReference = FirebaseFirestore.getInstance().collection("conversation-rooms")
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -518,7 +526,26 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onUserOffline(uid: Int, reason: Int) {
                 super.onUserOffline(uid, reason)
-                conversationRoomCallback?.get()?.onUserOffline(uid, reason)
+                val isUserLeave = reason == Constants.USER_OFFLINE_QUIT
+                val usersReference = roomReference.document(roomId.toString()).collection("users")
+                if (isRoomCreatedByUser) {
+                    if (isUserLeave) {
+                        usersReference.document(uid.toString()).delete()
+                    }
+                } else {
+                    if (uid == moderatorUid && isUserLeave) {
+                        usersReference.get().addOnSuccessListener { documents ->
+                            if (documents.size() > 1) {
+                                if (documents.documents[0].id.toInt() == agoraUid) {
+                                    endRoom(roomId, moderatorUid)
+                                } else if (documents.documents[1].id.toInt() == agoraUid) {
+                                    endRoom(roomId, moderatorUid)
+                                }
+                            }
+
+                        }
+                    }
+                }
 
             }
 
@@ -528,10 +555,53 @@ class WebRtcService : BaseWebRtcService() {
             ) {
                 super.onAudioVolumeIndication(speakers, totalVolume)
                 Log.d(TAG, "${speakers?.size} ${speakers?.get(0)?.uid} ${speakers?.get(0)?.volume}")
-                conversationRoomCallback?.get()?.onAudioVolumeIndication(speakers, totalVolume)
+                if (isRoomCreatedByUser) {
+                    speakingUsersOldList.clear()
+                    speakingUsersOldList.addAll(speakingUsersNewList)
+                    speakingUsersNewList.clear()
+                    speakers?.forEach {
+                        if (it.uid != 0 && it.volume > 0) {
+                            speakingUsersNewList.add(it.uid)
+                        }
+                        if (it.uid == 0 && it.volume > 0) {
+                            speakingUsersNewList.add(agoraUid ?: 0)
+                        }
+                    }
+                    updateFirestoreData()
+                }
             }
 
         }
+
+    private fun updateFirestoreData() {
+        val usersReference = roomReference.document(roomId.toString()).collection("users")
+        speakingUsersOldList.forEach {
+            usersReference?.document(it.toString())?.update("is_speaking", false)
+
+        }
+        speakingUsersNewList.forEach {
+            usersReference?.document(it.toString())?.update("is_speaking", true)
+
+        }
+    }
+
+    fun endRoom(roomId: String?, moderatorUid: Int?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val request = JoinConversionRoomRequest(moderatorUid?.toString()!!, roomId?.toInt()!!)
+            AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
+                request
+            )
+        }
+    }
+
+    fun leaveRoom(roomId: String?, moderatorUid: Int?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val request = JoinConversionRoomRequest(moderatorUid?.toString()!!, roomId?.toInt()!!)
+            AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
+                request
+            )
+        }
+    }
 
 
     inner class CustomHandlerThread(name: String) : HandlerThread(name) {
@@ -722,9 +792,9 @@ class WebRtcService : BaseWebRtcService() {
                             AUDIO_PROFILE_SPEECH_STANDARD,
                             AUDIO_SCENARIO_GAME_STREAMING
                         )
-                        if (isRoomCreatedByUser){
+                        if (isRoomCreatedByUser) {
                             setClientRole(CLIENT_ROLE_BROADCASTER)
-                        }else{
+                        } else {
                             setClientRole(CLIENT_ROLE_AUDIENCE)
                         }
                         val option = ChannelMediaOptions()
@@ -932,9 +1002,9 @@ class WebRtcService : BaseWebRtcService() {
                                     } ?: -3
                                     val isRoomCreatedByUser =
                                         intent.getBooleanExtra("isModerator", false)
-                                    if (isRoomCreatedByUser){
+                                    if (isRoomCreatedByUser) {
                                         setClientRole(CLIENT_ROLE_BROADCASTER)
-                                    }else{
+                                    } else {
                                         setClientRole(CLIENT_ROLE_AUDIENCE)
                                     }
 
@@ -960,12 +1030,12 @@ class WebRtcService : BaseWebRtcService() {
         conversationRoomCallback = WeakReference(callback)
     }
 
-    fun joinConversationRoom(uid: Int, channelName: String, token: String){
+    fun joinConversationRoom(uid: Int, channelName: String, token: String) {
         mRtcEngine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
         mRtcEngine?.joinChannel(token, channelName, "test", uid)
-        if (isRoomCreatedByUser){
+        if (isRoomCreatedByUser) {
             setClientRole(CLIENT_ROLE_BROADCASTER)
-        }else{
+        } else {
             setClientRole(CLIENT_ROLE_AUDIENCE)
         }
     }

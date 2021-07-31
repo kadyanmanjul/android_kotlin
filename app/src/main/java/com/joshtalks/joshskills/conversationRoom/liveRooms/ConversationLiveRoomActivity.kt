@@ -139,6 +139,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         intent.putExtra("isModerator", isRoomCreatedByUser)
         startService(intent)
         WebRtcService.isConversionRoomActive = true
+        WebRtcService.moderatorUid = moderatorUid
+        WebRtcService.agoraUid = agoraUid
+        WebRtcService.roomId = roomId?.toString()
         WebRtcService.isRoomCreatedByUser = isRoomCreatedByUser
     }
 
@@ -603,8 +606,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var conversationRoomCallback = object : ConversationRoomCallback {
 
         override fun onUserOffline(uid: Int, reason: Int) {
-            val isUserLeave =
-                reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED
+            val isUserLeave = reason == Constants.USER_OFFLINE_QUIT
             if (isRoomCreatedByUser) {
                 if (isUserLeave) {
                     usersReference?.document(uid.toString())?.delete()
