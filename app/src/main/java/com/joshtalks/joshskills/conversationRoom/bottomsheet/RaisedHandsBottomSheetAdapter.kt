@@ -21,7 +21,7 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
     inner class RaisedHandsViewHolder(val binding: LiRaisedHandsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(model: LiveRoomUser, bindingAdapterPosition: Int) {
+        fun bind(model: LiveRoomUser, position: Int) {
             with(binding) {
                 raisedHandUserName.text = model.name
                 userPhoto.apply {
@@ -32,10 +32,10 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
                     )
                 }
                 addToSpeaker.setOnSingleClickListener {
-                    if (bindingAdapterPosition != RecyclerView.NO_POSITION && action != null && !model.isIs_speaker_invite_sent) {
+                    if (position != RecyclerView.NO_POSITION && action != null && !model.isIs_speaker_invite_sent) {
                         action?.onItemClick(
-                            snapshots.getSnapshot(bindingAdapterPosition),
-                            bindingAdapterPosition
+                            snapshots.getSnapshot(position),
+                            position
                         )
                     }
                 }
@@ -62,7 +62,7 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
         position: Int,
         model: LiveRoomUser
     ) {
-        holder.bind(model, holder.bindingAdapterPosition)
+        holder.bind(model, position)
 
     }
 

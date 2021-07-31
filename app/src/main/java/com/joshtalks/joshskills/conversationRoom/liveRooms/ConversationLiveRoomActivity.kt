@@ -442,29 +442,35 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun setRunnable() {
         runnable = Runnable {
-            binding.notificationBar.loadAnimationSlideUp()
-            binding.notificationBar.endSound()
+            binding.notificationBar.apply {
+                loadAnimationSlideUp()
+                endSound()
+            }
         }
     }
 
 
     private fun setNotificationWithoutAction(heading: String, isGreenColorNotification: Boolean) {
-        binding.notificationBar.visibility = View.VISIBLE
-        binding.notificationBar.hideActionLayout()
-        binding.notificationBar.setHeading(heading)
-        binding.notificationBar.setBackgroundColor(isGreenColorNotification)
-        binding.notificationBar.startSound()
-        binding.notificationBar.loadAnimationSlideDown()
+        binding.notificationBar.apply {
+            visibility = View.VISIBLE
+            hideActionLayout()
+            setHeading(heading)
+            setBackgroundColor(isGreenColorNotification)
+            startSound()
+            loadAnimationSlideDown()
+        }
         hideNotificationAfter4seconds()
     }
 
     private fun showRoomEndNotification() {
-        binding.notificationBar.visibility = View.VISIBLE
-        binding.notificationBar.hideActionLayout()
-        binding.notificationBar.setBackgroundColor(false)
-        binding.notificationBar.setHeading("This room has ended")
-        binding.notificationBar.startSound()
-        binding.notificationBar.loadAnimationSlideDown()
+        binding.notificationBar.apply {
+            visibility = View.VISIBLE
+            hideActionLayout()
+            setBackgroundColor(false)
+            setHeading("This room has ended")
+            startSound()
+            loadAnimationSlideDown()
+        }
         Handler(Looper.getMainLooper()).postDelayed({
             finish()
         }, 4000)
@@ -678,15 +684,21 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun internetNotAvailable() {
-        binding.notificationBar.visibility = View.VISIBLE
-        binding.notificationBar.hideActionLayout()
-        binding.notificationBar.setHeading("The Internet connection appears to be offline")
-        binding.notificationBar.setBackgroundColor(false)
+        binding.notificationBar.apply {
+            visibility = View.VISIBLE
+            hideActionLayout()
+            setHeading("The Internet connection appears to be offline")
+            setBackgroundColor(false)
+            startSound()
+        }
 
     }
 
     private fun internetAvailable() {
-        binding.notificationBar.visibility = View.GONE
+        binding.notificationBar.apply {
+            visibility = View.GONE
+            endSound()
+        }
     }
 
 

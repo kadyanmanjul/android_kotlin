@@ -717,7 +717,7 @@ class WebRtcService : BaseWebRtcService() {
                 when (isConversionRoomActive) {
                     true -> {
                         setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
-                        enableAudioVolumeIndication(1500, 3, true)
+                        enableAudioVolumeIndication(1800, 3, true)
                         setAudioProfile(
                             AUDIO_PROFILE_SPEECH_STANDARD,
                             AUDIO_SCENARIO_GAME_STREAMING
