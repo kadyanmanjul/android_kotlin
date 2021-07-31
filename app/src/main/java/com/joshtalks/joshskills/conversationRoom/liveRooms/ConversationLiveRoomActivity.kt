@@ -92,6 +92,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
+    var isBackPressed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +102,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 this.resources.getColor(R.color.conversation_room_color, theme)
         }
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        isBackPressed = false
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -910,6 +912,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onBackPressed() {
+        isBackPressed = true
         if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
             showEndRoomPopup()
         } else {
@@ -921,7 +924,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onDestroy() {
         speakerAdapter?.stopListening()
         listenerAdapter?.stopListening()
-        mBoundService?.leaveChannel()
+        if (!isBackPressed) {
+            if (isRoomCreatedByUser) {
+                mBoundService?.endRoom(roomId?.toString(), moderatorUid)
+            } else {
+                mBoundService?.leaveRoom(roomId?.toString(), moderatorUid)
+            }
+        }
         binding.notificationBar.destroyMediaPlayer()
         super.onDestroy()
 
