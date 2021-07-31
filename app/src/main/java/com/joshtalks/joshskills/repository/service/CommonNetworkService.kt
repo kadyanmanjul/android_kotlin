@@ -323,4 +323,7 @@ interface CommonNetworkService {
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") intervalType: String
     ): Response<PreviousLeaderboardResponse>
+
+    @POST("$DIR/course/free_trial_register_course/")
+    suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>
 }

@@ -56,7 +56,9 @@ class LauncherActivity : CoreJoshActivity() {
             WorkManagerAdmin.appInitWorker()
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
-            //logNotificationData()
+            if (PrefManager.hasKey(IS_FREE_TRIAL).not()) {
+                 PrefManager.put(IS_FREE_TRIAL,true,false)
+            }
         }
     }
 

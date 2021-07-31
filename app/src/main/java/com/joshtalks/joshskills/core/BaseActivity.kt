@@ -294,7 +294,7 @@ abstract class BaseActivity :
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
                         Intent(this, SignUpActivity::class.java)
                     }
-                    PrefManager.getBoolValue(IS_FREE_TRIAL, false, true) -> {
+                    PrefManager.getBoolValue(IS_FREE_TRIAL, false, false) -> {
                         // TODO -> change defValue from true to false
                         Intent(this, FreeTrialOnBoardActivity::class.java)
                     }
