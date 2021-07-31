@@ -367,9 +367,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             if (isTestCompleted.not()) {
                 arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
             } else if (PrefManager.getIntValue(
-                    ONLINE_TEST_LAST_LESSON_COMPLETED,
-                    defValue = 1
-                ) >= lessonNumber
+                    ONLINE_TEST_LAST_LESSON_COMPLETED) >= lessonNumber
             ) {
                 arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
 

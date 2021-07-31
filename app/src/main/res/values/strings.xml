@@ -899,5 +899,7 @@
     <string name="free_trial_dialog_desc">इस कोर्स की फीस ₹499 है\\nऔर यह एक 90 दिनों का कोर्स है\\n \\nखरीदने से पहले क्या आप इसका एक दिन के लिए मुफ्त में प्रयोग करना चाहते हैं?</string>
     <string name="free_trial_dialog_btn_no">जी नहीं</string>
     <string name="free_trial_dialog_btn_yes">जी हाँ</string>
+    <string name="test_completed">Test Completed</string>
+    <string name="test_score">%2$d % Marks</string>
 
 </resources>

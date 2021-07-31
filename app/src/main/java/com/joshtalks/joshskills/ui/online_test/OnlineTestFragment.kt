@@ -79,6 +79,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var buttonView: Stub<GrammarButtonView>? = null
     private var isFirstTime: Boolean = true
     private var isTestCompleted: Boolean = false
+    private var scoreText: Int? = 0
+    private var pointsList: String? = null
     private var testCallback: OnlineTestInterface? = null
     private var lessonActivityListener: LessonActivityListener? = null
     var reviseVideoObject: VideoModel? = null
@@ -144,6 +146,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     addNewRuleCompleted(onlineTestResponse.ruleAssessmentId)
                 }
                 isTestCompleted = onlineTestResponse.completed
+                scoreText = onlineTestResponse.scoreText
+                pointsList = onlineTestResponse.pointsList?.get(0)
+
             } else {
                 if (onlineTestResponse.ruleAssessmentId != null) {
                     if (previousId != onlineTestResponse.ruleAssessmentId &&
@@ -433,7 +438,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 .beginTransaction()
                 .replace(
                     R.id.parent_Container,
-                    GrammarOnlineTestFragment.getInstance(lessonNumber),
+                    GrammarOnlineTestFragment.getInstance(lessonNumber,scoreText,pointsList),
                     GrammarOnlineTestFragment.TAG
                 )
                 .addToBackStack(TAG)
