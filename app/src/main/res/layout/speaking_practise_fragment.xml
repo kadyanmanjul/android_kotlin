@@ -294,8 +294,8 @@
                             android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                             android:textColor="@color/black"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/joshTextView" />
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/btnNextStep"
