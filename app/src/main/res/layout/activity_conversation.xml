@@ -222,7 +222,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_236sdp"
+                android:layout_marginTop="@dimen/_360sdp"
                 android:background="@drawable/bg_tooltip_small_center">
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
