@@ -156,6 +156,15 @@ class ConversationActivity :
     private var reachEndOfData = false
     private var refreshMessageByUser = false
 
+    private var currentTooltipIndex = 0
+    private val leaderboardTooltipList by lazy {
+        listOf(
+            "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
+            "आपके सहपाठी कौन हैं और उनके कितने पॉइंट्स हैं आप यहाँ से देख सकते हैं"
+        )
+    }
+    private val lessonTooltip by lazy { "हमें यहां हर रोज एक नया पाठ मिलेगा" }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
@@ -232,6 +241,9 @@ class ConversationActivity :
         if (PrefManager.getBoolValue(HAS_OPENED_CONVERSATION_FIRST_TIME, defValue = true)) {
             conversationBinding.lessonTooltipLayout.visibility = VISIBLE
             conversationBinding.leaderboardTooltipLayout.visibility = VISIBLE
+            conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
+            conversationBinding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
         } else {
             conversationBinding.lessonTooltipLayout.visibility = GONE
             conversationBinding.leaderboardTooltipLayout.visibility = GONE
@@ -433,6 +445,16 @@ class ConversationActivity :
             AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
             addAttachmentUIUpdate()
             uploadImageByUser()
+        }
+        conversationBinding.btnNextStep.setOnClickListener {
+            if (currentTooltipIndex < leaderboardTooltipList.size - 1) {
+                currentTooltipIndex++
+                conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
+                conversationBinding.txtTooltipIndex.text =
+                    "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+            } else {
+                conversationBinding.leaderboardTooltipLayout.visibility = GONE
+            }
         }
     }
 
@@ -1450,8 +1472,8 @@ class ConversationActivity :
 
     override fun onPause() {
         super.onPause()
-//        conversationBinding.lessonTooltipLayout.visibility = GONE
-//        PrefManager.put(HAS_OPENED_CONVERSATION_FIRST_TIME, false)
+        conversationBinding.lessonTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_OPENED_CONVERSATION_FIRST_TIME, false)
         audioPlayerManager?.onPause()
         compositeDisposable.clear()
     }

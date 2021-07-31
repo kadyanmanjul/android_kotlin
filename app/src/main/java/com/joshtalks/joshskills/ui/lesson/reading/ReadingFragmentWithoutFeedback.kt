@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
 import com.joshtalks.joshskills.core.HAS_OPENED_READING_FIRST_TIME
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -113,6 +114,15 @@ class ReadingFragmentWithoutFeedback :
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
 
+    private var currentTooltipIndex = 0
+    private val lessonTooltipList by lazy {
+        listOf(
+            "जैसे-जैसे कोर्स आगे बढ़ेगा हम यहां वाक्यांश और मुहावरे भी सीखेंगे",
+            "हम यहां अपने पढ़ने और उच्चारण में सुधार करेंगे ",
+            "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे"
+        )
+    }
+
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -158,10 +168,12 @@ class ReadingFragmentWithoutFeedback :
 
         addObserver()
 
-        if (PrefManager.getBoolValue(HAS_OPENED_READING_FIRST_TIME, defValue = true)) {
+        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
             binding.lessonTooltipLayout.visibility = View.VISIBLE
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
-            binding.lessonTooltipLayout.visibility = GONE
+            binding.lessonTooltipLayout.visibility = View.GONE
         }
 
         return binding.rootView
@@ -190,8 +202,6 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onPause() {
         super.onPause()
-//        binding.lessonTooltipLayout.visibility = GONE
-//        PrefManager.put(HAS_OPENED_READING_FIRST_TIME, false)
         binding.videoPlayer.onPause()
         pauseAllAudioAndUpdateViews()
     }
@@ -209,6 +219,8 @@ class ReadingFragmentWithoutFeedback :
     }
 
     override fun onStop() {
+        binding.lessonTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_OPENED_READING_FIRST_TIME, false)
         appAnalytics?.push()
         super.onStop()
         compositeDisposable.clear()
@@ -521,6 +533,16 @@ class ReadingFragmentWithoutFeedback :
                 }
             }
         )
+        binding.btnNextStep.setOnClickListener {
+            if (currentTooltipIndex < lessonTooltipList.size - 1) {
+                currentTooltipIndex++
+                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                binding.txtTooltipIndex.text =
+                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+            } else {
+                binding.lessonTooltipLayout.visibility = View.GONE
+            }
+        }
     }
 
     private fun showCompletedPractise() {

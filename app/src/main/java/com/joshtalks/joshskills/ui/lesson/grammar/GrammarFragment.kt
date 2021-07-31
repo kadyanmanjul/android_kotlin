@@ -80,6 +80,15 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private var correctAns = 0
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
+    private var currentTooltipIndex = 0
+    private val lessonTooltipList by lazy {
+        listOf(
+            "हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking",
+            "आज, इस भाग में हम अपने वर्तमान व्याकरण स्तर का पता लगाएंगे",
+            "हमारे स्तर के आधार पर अगले पाठ से हम यहाँ व्याकरण की अवधारणाएँ सीखेंगे"
+        )
+    }
+
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -142,6 +151,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
         if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
             binding.lessonTooltipLayout.visibility = View.VISIBLE
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
             binding.lessonTooltipLayout.visibility = View.GONE
         }
@@ -260,6 +271,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         super.onPause()
     }
 
+    override fun onStop() {
+        super.onStop()
+        binding.lessonTooltipLayout.visibility = View.GONE
+        PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
+    }
+
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
@@ -302,6 +319,16 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
         viewModel.grammarVideoInterval.observe(this@GrammarFragment.viewLifecycleOwner) { graph ->
             binding.videoPlayer.setProgress(graph?.endTime ?: 0)
+        }
+        binding.btnNextStep.setOnClickListener {
+            if (currentTooltipIndex < lessonTooltipList.size - 1) {
+                currentTooltipIndex++
+                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                binding.txtTooltipIndex.text =
+                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+            } else {
+                binding.lessonTooltipLayout.visibility = View.GONE
+            }
         }
     }
 

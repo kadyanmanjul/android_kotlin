@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
 import com.joshtalks.joshskills.core.HAS_OPENED_SPEAKING_FIRST_TIME
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -59,6 +60,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
 
+    private var currentTooltipIndex = 0
+    private val lessonTooltipList by lazy {
+        listOf(
+            "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
+        )
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is LessonActivityListener) {
@@ -79,8 +87,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         addObservers()
 
-        if (PrefManager.getBoolValue(HAS_OPENED_SPEAKING_FIRST_TIME, defValue = true)) {
-            binding.lessonTooltipLayout.visibility = VISIBLE
+        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
+            binding.lessonTooltipLayout.visibility = View.VISIBLE
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
             binding.lessonTooltipLayout.visibility = GONE
         }
@@ -97,14 +107,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         subscribeRXBus()
     }
 
-    override fun onPause() {
-        super.onPause()
-//        binding.lessonTooltipLayout.visibility = View.GONE
-//        PrefManager.put(HAS_OPENED_SPEAKING_FIRST_TIME, false)
-    }
-
     override fun onStop() {
         super.onStop()
+        binding.lessonTooltipLayout.visibility = View.GONE
+        PrefManager.put(HAS_OPENED_SPEAKING_FIRST_TIME, false)
         compositeDisposable.clear()
     }
 
@@ -206,6 +212,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.favoriteCaller.collect {
                 haveAnyFavCaller = it
                 binding.btnFavorite.visibility = if (haveAnyFavCaller) VISIBLE else GONE
+            }
+        }
+        binding.btnNextStep.setOnClickListener {
+            if (currentTooltipIndex < lessonTooltipList.size - 1) {
+                currentTooltipIndex++
+                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                binding.txtTooltipIndex.text =
+                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+            } else {
+                binding.lessonTooltipLayout.visibility = GONE
             }
         }
     }

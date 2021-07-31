@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
 import com.joshtalks.joshskills.core.HAS_OPENED_VOCAB_FIRST_TIME
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -70,6 +71,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
 
+    private var currentTooltipIndex = 0
+    private val lessonTooltipList by lazy {
+        listOf(
+            "हम यहां हर रोज 3 शब्द सीखेंगे",
+            "जैसे-जैसे कोर्स आगे बढ़ेगा हम यहां वाक्यांश और मुहावरे भी सीखेंगे"
+        )
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is LessonActivityListener)
@@ -105,8 +114,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (PrefManager.getBoolValue(HAS_OPENED_VOCAB_FIRST_TIME, defValue = true)) {
+        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
             binding.lessonTooltipLayout.visibility = View.VISIBLE
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
             binding.lessonTooltipLayout.visibility = View.GONE
         }
@@ -134,6 +145,16 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
             }
         }*/
+        binding.btnNextStep.setOnClickListener {
+            if (currentTooltipIndex < lessonTooltipList.size - 1) {
+                currentTooltipIndex++
+                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                binding.txtTooltipIndex.text =
+                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+            } else {
+                binding.lessonTooltipLayout.visibility = View.GONE
+            }
+        }
     }
 
     private fun initAdapter(assessmentList: ArrayList<AssessmentWithRelations>) {
@@ -413,9 +434,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 adapter.itemList.forEachIndexed { index, lessonQuestion ->
                     if (lessonQuestion.type != LessonQuestionType.QUIZ)
                         (
-                            binding.practiceRv.findViewHolderForAdapterPosition(index)
-                                as VocabularyPracticeAdapter.VocabularyViewHolder
-                            ).pauseAudio()
+                                binding.practiceRv.findViewHolderForAdapterPosition(index)
+                                        as VocabularyPracticeAdapter.VocabularyViewHolder
+                                ).pauseAudio()
                 }
             }
         } catch (ex: Throwable) {
@@ -425,8 +446,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onPause() {
         super.onPause()
-//        binding.lessonTooltipLayout.visibility = View.GONE
-//        PrefManager.put(HAS_OPENED_VOCAB_FIRST_TIME, false)
         if (::adapter.isInitialized) {
             adapter.audioManager?.onPause()
         }
@@ -441,6 +460,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onStop() {
         super.onStop()
+        binding.lessonTooltipLayout.visibility = View.GONE
+        PrefManager.put(HAS_OPENED_VOCAB_FIRST_TIME, false)
         compositeDisposable.clear()
         try {
             adapter.audioManager?.onPause()
