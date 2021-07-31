@@ -932,9 +932,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         listenerAdapter?.stopListening()
         if (!isBackPressed) {
             if (isRoomCreatedByUser) {
-                mBoundService?.endRoom(roomId?.toString(), moderatorUid)
+                mBoundService?.endRoom(roomId?.toString())
             } else {
-                mBoundService?.leaveRoom(roomId?.toString(), moderatorUid)
+                mBoundService?.leaveRoom(roomId?.toString())
             }
         }
         binding.notificationBar.destroyMediaPlayer()

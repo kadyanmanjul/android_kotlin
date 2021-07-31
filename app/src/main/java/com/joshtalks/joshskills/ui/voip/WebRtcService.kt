@@ -541,12 +541,12 @@ class WebRtcService : BaseWebRtcService() {
                 } else {
                     if (uid == moderatorUid && (reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED)) {
                         usersReference.get().addOnSuccessListener { documents ->
-                            Log.d("ABC", "OnUserOffline for moderator call $moderatorUid $reason" )
+                            Log.d("ABC", "OnUserOffline for moderator call $moderatorUid $reason")
                             if (documents.size() > 1) {
                                 if (documents.documents[0].id.toInt() == agoraUid) {
-                                    endRoom(roomId, moderatorUid)
+                                    endRoom(roomId)
                                 } else if (documents.documents[1].id.toInt() == agoraUid) {
-                                    endRoom(roomId, moderatorUid)
+                                    endRoom(roomId)
                                 }
                             }
 
@@ -598,22 +598,21 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    fun endRoom(roomId: String?, moderatorUid: Int?) {
+    fun endRoom(roomId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
-            val request = JoinConversionRoomRequest(moderatorUid?.toString()!!, roomId?.toInt()!!)
-           val response = AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
-                request
-            )
-            Log.d("ABC", "end room api call")
-            if (response.isSuccessful){
+            val request = JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt()!!)
+            val response =
+                AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
+            Log.d("ABC", "end room api call ${response.code()}")
+            if (response.isSuccessful) {
                 Log.d("ABC", "end room api call success")
             }
         }
     }
 
-    fun leaveRoom(roomId: String?, moderatorUid: Int?) {
+    fun leaveRoom(roomId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
-            val request = JoinConversionRoomRequest(moderatorUid?.toString()!!, roomId?.toInt()!!)
+            val request = JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt()!!)
             AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                 request
             )
@@ -1509,9 +1508,9 @@ class WebRtcService : BaseWebRtcService() {
 
     override fun onDestroy() {
         if (isRoomCreatedByUser) {
-            endRoom(roomId, moderatorUid)
+            endRoom(roomId)
         } else {
-            leaveRoom(roomId, moderatorUid)
+            leaveRoom(roomId)
         }
         Log.d("ABC", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         RtcEngine.destroy()
