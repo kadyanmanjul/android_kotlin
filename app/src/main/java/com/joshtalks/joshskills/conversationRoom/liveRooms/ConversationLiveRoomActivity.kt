@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -139,12 +140,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         intent.putExtra("channel_name", channelName)
         intent.putExtra("uid", agoraUid)
         intent.putExtra("isModerator", isRoomCreatedByUser)
-        startService(intent)
+        AppObjectController.joshApplication.startService(intent)
         WebRtcService.isConversionRoomActive = true
         WebRtcService.moderatorUid = moderatorUid
         WebRtcService.agoraUid = agoraUid
         WebRtcService.roomId = roomId?.toString()
-        WebRtcService.isRoomCreatedByUser = isRoomCreatedByUser
+        WebRtcService.isRoomCreatedByUser = if (moderatorUid != null) {
+            moderatorUid == agoraUid
+        } else isRoomCreatedByUser
     }
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
@@ -213,6 +216,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         )
         roomReference?.get()?.addOnSuccessListener {
             moderatorUid = it.get("started_by")?.toString()?.toInt()
+            WebRtcService.moderatorUid = moderatorUid
+            WebRtcService.isRoomCreatedByUser = moderatorUid == agoraUid
+            Log.d("ABC", "moderatorUid set")
             topicName = it.get("topic")?.toString()
             binding.topic.text = topicName
             usersReference?.document(moderatorUid.toString())?.get()

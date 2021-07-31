@@ -137,7 +137,7 @@ class WebRtcService : BaseWebRtcService() {
         var agoraUid: Int? = null
         var moderatorUid: Int? = null
         var roomId: String? = null
-        val roomReference = FirebaseFirestore.getInstance().collection("conversation-rooms")
+        val roomReference = FirebaseFirestore.getInstance().collection("conversation_rooms")
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -514,6 +514,9 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
                 super.onJoinChannelSuccess(channel, uid, elapsed)
+                Log.d("ABC", "joinChannelSuccess $uid")
+                Log.d("ABC", "moderatorUid in onJoinChannelSuccess: $moderatorUid")
+
             }
 
             override fun onLeaveChannel(stats: RtcStats) {
@@ -522,6 +525,8 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
                 super.onRejoinChannelSuccess(channel, uid, elapsed)
+                Log.d("ABC", "RejoinChannelSuccess $uid")
+
             }
 
             override fun onUserOffline(uid: Int, reason: Int) {
@@ -531,10 +536,12 @@ class WebRtcService : BaseWebRtcService() {
                 if (isRoomCreatedByUser) {
                     if (isUserLeave) {
                         usersReference.document(uid.toString()).delete()
+                        Log.d("ABC", "OnUserOffline remove user by moderator $moderatorUid")
                     }
                 } else {
-                    if (uid == moderatorUid && isUserLeave) {
+                    if (uid == moderatorUid && (reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED)) {
                         usersReference.get().addOnSuccessListener { documents ->
+                            Log.d("ABC", "OnUserOffline for moderator call $moderatorUid $reason" )
                             if (documents.size() > 1) {
                                 if (documents.documents[0].id.toInt() == agoraUid) {
                                     endRoom(roomId, moderatorUid)
@@ -554,7 +561,10 @@ class WebRtcService : BaseWebRtcService() {
                 totalVolume: Int
             ) {
                 super.onAudioVolumeIndication(speakers, totalVolume)
-                Log.d(TAG, "${speakers?.size} ${speakers?.get(0)?.uid} ${speakers?.get(0)?.volume}")
+                Log.d(
+                    "ABC",
+                    "${speakers?.size} ${speakers?.get(0)?.uid} ${speakers?.get(0)?.volume} , moderatorUid: $moderatorUid"
+                )
                 if (isRoomCreatedByUser) {
                     speakingUsersOldList.clear()
                     speakingUsersOldList.addAll(speakingUsersNewList)
@@ -567,6 +577,11 @@ class WebRtcService : BaseWebRtcService() {
                             speakingUsersNewList.add(agoraUid ?: 0)
                         }
                     }
+                    Log.d(
+                        "ABC",
+                        "new list : ${speakingUsersNewList.size} old list : ${speakingUsersOldList.size}"
+                    )
+                    Log.d(TAG, "moderatorUid in onAudioIndication: $moderatorUid")
                     updateFirestoreData()
                 }
             }
@@ -575,22 +590,24 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun updateFirestoreData() {
         val usersReference = roomReference.document(roomId.toString()).collection("users")
-        speakingUsersOldList.forEach {
-            usersReference?.document(it.toString())?.update("is_speaking", false)
-
+        speakingUsersOldList.forEach { user ->
+            usersReference?.document(user.toString())?.update("is_speaking", false)
         }
-        speakingUsersNewList.forEach {
-            usersReference?.document(it.toString())?.update("is_speaking", true)
-
+        speakingUsersNewList.forEach { user ->
+            usersReference?.document(user.toString())?.update("is_speaking", true)
         }
     }
 
     fun endRoom(roomId: String?, moderatorUid: Int?) {
         CoroutineScope(Dispatchers.IO).launch {
             val request = JoinConversionRoomRequest(moderatorUid?.toString()!!, roomId?.toInt()!!)
-            AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
+           val response = AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
                 request
             )
+            Log.d("ABC", "end room api call")
+            if (response.isSuccessful){
+                Log.d("ABC", "end room api call success")
+            }
         }
     }
 
@@ -600,6 +617,7 @@ class WebRtcService : BaseWebRtcService() {
             AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                 request
             )
+            Log.d("ABC", "leave room api call")
         }
     }
 
@@ -715,6 +733,8 @@ class WebRtcService : BaseWebRtcService() {
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
         }
         addFirestoreObserver()
+        Log.d("ABC", "WebRtcService onCreate called")
+
     }
 
     private fun addFirestoreObserver() {
@@ -753,6 +773,12 @@ class WebRtcService : BaseWebRtcService() {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
+            Log.d(
+                "ABC",
+                "initEngine called room id : $roomId isRoomCreatedByUser $isRoomCreatedByUser agoraUid:" +
+                        " $agoraUid moderatorUid: $moderatorUid"
+            )
+
             when (isConversionRoomActive) {
                 false -> {
                     if (eventListener != null) {
@@ -794,8 +820,11 @@ class WebRtcService : BaseWebRtcService() {
                         )
                         if (isRoomCreatedByUser) {
                             setClientRole(CLIENT_ROLE_BROADCASTER)
+                            Log.d("ABC", "Broadcaster role set")
+
                         } else {
                             setClientRole(CLIENT_ROLE_AUDIENCE)
+                            Log.d("ABC", "Audience role set")
                         }
                         val option = ChannelMediaOptions()
                         option.autoSubscribeAudio = true
@@ -840,6 +869,11 @@ class WebRtcService : BaseWebRtcService() {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
         /*if(serviceNotificationState == ServiceNotificationState.NONE)
             showDefaultNotification()*/
+        Log.d(
+            "ABC",
+            "onStartCommandCalled roomId: $roomId agoraId: $agoraUid action: ${intent?.action}"
+        )
+
         if (notificationState == NotificationState.NOT_VISIBLE) {
             showDefaultNotification()
             timer.cancel()
@@ -989,7 +1023,7 @@ class WebRtcService : BaseWebRtcService() {
                         try {
                             when {
                                 this == ConversationRoomJoin().action -> {
-                                    removeNotifications()
+                                    showConversationRoomNotification()
                                     val agoraUid = intent.getIntExtra(RTC_UID_KEY, 0)
                                     val token = intent.getStringExtra(RTC_TOKEN_KEY)
                                     val channelName = intent.getStringExtra(RTC_CHANNEL_KEY)
@@ -1004,8 +1038,11 @@ class WebRtcService : BaseWebRtcService() {
                                         intent.getBooleanExtra("isModerator", false)
                                     if (isRoomCreatedByUser) {
                                         setClientRole(CLIENT_ROLE_BROADCASTER)
+                                        Log.d("ABC", "Broadcaster role set status code $statusCode")
+
                                     } else {
                                         setClientRole(CLIENT_ROLE_AUDIENCE)
+                                        Log.d("ABC", "Audience role set status code $statusCode")
                                     }
 
                                 }
@@ -1028,29 +1065,6 @@ class WebRtcService : BaseWebRtcService() {
 
     fun addListener(callback: ConversationRoomCallback) {
         conversationRoomCallback = WeakReference(callback)
-    }
-
-    fun joinConversationRoom(uid: Int, channelName: String, token: String) {
-        mRtcEngine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
-        mRtcEngine?.joinChannel(token, channelName, "test", uid)
-        if (isRoomCreatedByUser) {
-            setClientRole(CLIENT_ROLE_BROADCASTER)
-        } else {
-            setClientRole(CLIENT_ROLE_AUDIENCE)
-        }
-    }
-
-    fun initConversationRoom(channelName: String?, agoraUid: Int?, token: String?) {
-        initEngine {
-            val statusCode = agoraUid?.let {
-                mRtcEngine?.joinChannel(
-                    token,
-                    channelName, "test",
-                    it
-                )
-            } ?: -3
-        }
-
     }
 
     private fun callStopWithoutIssue() {
@@ -1267,6 +1281,12 @@ class WebRtcService : BaseWebRtcService() {
         showNotification(
             actionNotification(DEFAULT_NOTIFICATION_TITLE),
             ACTION_NOTIFICATION_ID
+        )
+    }
+
+    private fun showConversationRoomNotification() {
+        showNotification(
+            conversationRoomNotification(), ACTION_NOTIFICATION_ID
         )
     }
 
@@ -1488,6 +1508,12 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onDestroy() {
+        if (isRoomCreatedByUser) {
+            endRoom(roomId, moderatorUid)
+        } else {
+            leaveRoom(roomId, moderatorUid)
+        }
+        Log.d("ABC", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         RtcEngine.destroy()
         stopRing()
         userDetailMap = null
@@ -1860,6 +1886,37 @@ class WebRtcService : BaseWebRtcService() {
 
         if (title != DEFAULT_NOTIFICATION_TITLE)
             lNotificationBuilder.setProgress(0, 0, true)
+
+        lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
+        return lNotificationBuilder.build()
+    }
+
+    private fun conversationRoomNotification(): Notification {
+        Timber.tag(TAG).e("actionNotification  ")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannelName: CharSequence = "Voip Call Status"
+            val mChannel = NotificationChannel(
+                CALL_NOTIFICATION_CHANNEL,
+                notificationChannelName,
+                NotificationManager.IMPORTANCE_MIN,
+            ).apply {
+                description = "Notifications for voice calling"
+            }
+            mNotificationManager?.createNotificationChannel(mChannel)
+        }
+        val lNotificationBuilder =
+            NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+                .setChannelId(CALL_NOTIFICATION_CHANNEL)
+                .setContentTitle("Conversation Room")
+                .setSmallIcon(R.drawable.ic_status_bar_notification)
+                .setColor(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.colorPrimary
+                    )
+                )
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
 
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()
