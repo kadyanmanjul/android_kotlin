@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -201,6 +202,7 @@ class ConversationRoomListingActivity : BaseActivity(),
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
                     internetAvailableFlag = connectivity.available()
+                    Log.d("ABC", "internetAvailableFlag: $internetAvailableFlag ${connectivity.available()}")
                     if (internetAvailableFlag) {
                         internetAvailable()
                     } else {
@@ -213,17 +215,16 @@ class ConversationRoomListingActivity : BaseActivity(),
     private fun internetNotAvailable() {
         binding.notificationBar.apply {
             visibility = View.VISIBLE
+            startSound()
             hideActionLayout()
             setHeading("The Internet connection appears to be offline")
             setBackgroundColor(false)
-            startSound()
             loadAnimationSlideDown()
         }
     }
 
     private fun internetAvailable() {
         binding.notificationBar.apply {
-            endSound()
             loadAnimationSlideUp()
         }
     }
@@ -255,6 +256,7 @@ class ConversationRoomListingActivity : BaseActivity(),
                 setHeading(error)
                 setBackgroundColor(false)
                 loadAnimationSlideDown()
+                startSound()
                 hideNotificationAfter4seconds()
             }
         } else {

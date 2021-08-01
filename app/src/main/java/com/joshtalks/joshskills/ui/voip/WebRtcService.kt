@@ -604,7 +604,8 @@ class WebRtcService : BaseWebRtcService() {
 
     fun endRoom(roomId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
-            val request = JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt()!!)
+            val request =
+                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0)
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             Log.d("ABC", "end room api call ${response.code()}")
@@ -616,7 +617,8 @@ class WebRtcService : BaseWebRtcService() {
 
     fun leaveRoom(roomId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
-            val request = JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt()!!)
+            val request =
+                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0)
             val response =
                 AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                     request
@@ -1024,6 +1026,7 @@ class WebRtcService : BaseWebRtcService() {
                 }
             }
         } else {
+            removeNotifications()
             executor.execute {
                 intent?.action?.run {
                     initEngine {

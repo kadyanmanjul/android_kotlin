@@ -719,6 +719,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             visibility = View.VISIBLE
             hideActionLayout()
             setHeading("The Internet connection appears to be offline")
+            startSound()
             setBackgroundColor(false)
         }
 
