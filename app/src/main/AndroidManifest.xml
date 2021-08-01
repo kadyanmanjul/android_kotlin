@@ -81,7 +81,9 @@
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
             android:name=".conversationRoom.liveRooms.ConversationLiveRoomActivity"
-            android:launchMode="standard"
+            android:launchMode="singleTask"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.introduction.IntroductionActivity"

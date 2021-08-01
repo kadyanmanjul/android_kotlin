@@ -133,6 +133,18 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         takePermissions()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val newChannelName = intent?.getStringExtra("CHANNEL_NAME")
+        if (newChannelName != null && newChannelName != channelName) {
+            Log.d("ABC", "onNewIntent: called channel name not same old : $channelName  new : $newChannelName")
+            finish()
+            startActivity(intent)
+            overridePendingTransition(0, 0)
+            return
+        }
+    }
+
     private fun callWebRtcService() {
         val intent = Intent(AppObjectController.joshApplication, WebRtcService::class.java)
         intent.action = ConversationRoomJoin().action

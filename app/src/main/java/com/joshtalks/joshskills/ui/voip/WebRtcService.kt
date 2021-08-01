@@ -1914,11 +1914,16 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         val intent = Intent(this, ConversationLiveRoomActivity::class.java)
-        intent.putExtra("CHANNEL_NAME", conversationRoomChannelName)
-        intent.putExtra("UID", agoraUid)
-        intent.putExtra("TOKEN", conversationRoomToken)
-        intent.putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
-        intent.putExtra("ROOM_ID", roomId)
+
+        intent.apply {
+            putExtra("CHANNEL_NAME", conversationRoomChannelName)
+            putExtra("UID", agoraUid)
+            putExtra("TOKEN", conversationRoomToken)
+            putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
+            putExtra("ROOM_ID", roomId)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
 
         val pendingIntent: PendingIntent =
@@ -1930,6 +1935,10 @@ class WebRtcService : BaseWebRtcService() {
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
+        Log.d(
+            "ABC",
+            "conversationRoomNotification: pending intent channel $conversationRoomChannelName"
+        )
 
         val lNotificationBuilder =
             NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
