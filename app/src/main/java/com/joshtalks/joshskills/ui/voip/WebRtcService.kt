@@ -38,6 +38,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
@@ -128,6 +129,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     companion object {
+        var conversationRoomTopicName: String? = ""
         private val TAG = WebRtcService::class.java.simpleName
         var pstnCallState = CallState.CALL_STATE_IDLE
 
@@ -137,6 +139,8 @@ class WebRtcService : BaseWebRtcService() {
         var agoraUid: Int? = null
         var moderatorUid: Int? = null
         var roomId: String? = null
+        var conversationRoomChannelName: String? = null
+        var conversationRoomToken: String? = null
         val roomReference = FirebaseFirestore.getInstance().collection("conversation_rooms")
 
         @JvmStatic
@@ -591,10 +595,10 @@ class WebRtcService : BaseWebRtcService() {
     private fun updateFirestoreData() {
         val usersReference = roomReference.document(roomId.toString()).collection("users")
         speakingUsersOldList.forEach { user ->
-            usersReference?.document(user.toString())?.update("is_speaking", false)
+            usersReference.document(user.toString()).update("is_speaking", false)
         }
         speakingUsersNewList.forEach { user ->
-            usersReference?.document(user.toString())?.update("is_speaking", true)
+            usersReference.document(user.toString()).update("is_speaking", true)
         }
     }
 
@@ -605,7 +609,7 @@ class WebRtcService : BaseWebRtcService() {
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             Log.d("ABC", "end room api call ${response.code()}")
             if (response.isSuccessful) {
-                Log.d("ABC", "end room api call success")
+                removeNotifications()
             }
         }
     }
@@ -613,10 +617,14 @@ class WebRtcService : BaseWebRtcService() {
     fun leaveRoom(roomId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             val request = JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt()!!)
-            AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
-                request
-            )
+            val response =
+                AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
+                    request
+                )
             Log.d("ABC", "leave room api call")
+            if (response.isSuccessful) {
+                removeNotifications()
+            }
         }
     }
 
@@ -1024,12 +1032,13 @@ class WebRtcService : BaseWebRtcService() {
                                 this == ConversationRoomJoin().action -> {
                                     showConversationRoomNotification()
                                     val agoraUid = intent.getIntExtra(RTC_UID_KEY, 0)
-                                    val token = intent.getStringExtra(RTC_TOKEN_KEY)
-                                    val channelName = intent.getStringExtra(RTC_CHANNEL_KEY)
+                                    conversationRoomToken = intent.getStringExtra(RTC_TOKEN_KEY)
+                                    conversationRoomChannelName =
+                                        intent.getStringExtra(RTC_CHANNEL_KEY)
                                     val statusCode = agoraUid.let {
                                         mRtcEngine?.joinChannel(
-                                            token,
-                                            channelName, "test",
+                                            conversationRoomToken,
+                                            conversationRoomChannelName, "test",
                                             it
                                         )
                                     } ?: -3
@@ -1903,11 +1912,31 @@ class WebRtcService : BaseWebRtcService() {
             }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
+
+        val intent = Intent(this, ConversationLiveRoomActivity::class.java)
+        intent.putExtra("CHANNEL_NAME", conversationRoomChannelName)
+        intent.putExtra("UID", agoraUid)
+        intent.putExtra("TOKEN", conversationRoomToken)
+        intent.putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
+        intent.putExtra("ROOM_ID", roomId)
+        val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+
+        val pendingIntent: PendingIntent =
+            intent.let { notificationIntent ->
+                PendingIntent.getActivity(
+                    this,
+                    uniqueInt,
+                    notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            }
+
         val lNotificationBuilder =
             NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
                 .setChannelId(CALL_NOTIFICATION_CHANNEL)
                 .setContentTitle("Conversation Room")
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
+                .setContentIntent(pendingIntent)
                 .setColor(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
@@ -1916,6 +1945,9 @@ class WebRtcService : BaseWebRtcService() {
                 )
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
+        if (!conversationRoomTopicName.isNullOrEmpty()) {
+            lNotificationBuilder.setContentText(conversationRoomTopicName)
+        }
 
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()

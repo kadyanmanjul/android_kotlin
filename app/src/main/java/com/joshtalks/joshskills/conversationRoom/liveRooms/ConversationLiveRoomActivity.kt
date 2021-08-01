@@ -220,6 +220,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             WebRtcService.isRoomCreatedByUser = moderatorUid == agoraUid
             Log.d("ABC", "moderatorUid set")
             topicName = it.get("topic")?.toString()
+            WebRtcService.conversationRoomTopicName = topicName
             binding.topic.text = topicName
             usersReference?.document(moderatorUid.toString())?.get()
                 ?.addOnSuccessListener { moderator ->
