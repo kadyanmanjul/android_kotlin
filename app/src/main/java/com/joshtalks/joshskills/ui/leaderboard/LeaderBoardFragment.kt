@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirectio
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -93,6 +94,10 @@ class LeaderBoardFragment : Fragment() {
 
     private fun setListener() {
         binding.userLayout.setOnClickListener {
+            if (User.getInstance().isVerified.not()){
+                //openRegistrationScreen
+                //return@setOnClickListener
+            }
             scrollToUserPosition()
             binding.userLayout.visibility = View.GONE
         }
@@ -300,6 +305,9 @@ class LeaderBoardFragment : Fragment() {
                 .append(" ")
         }
         binding.name.text = resp
+        if (User.getInstance().isVerified.not()){
+            //binding.name.text = getString(R.string.enter_your_name)
+        }
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(
             response.photoUrl,

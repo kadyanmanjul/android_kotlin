@@ -901,5 +901,7 @@
     <string name="free_trial_dialog_btn_yes">जी हाँ</string>
     <string name="test_completed">Test Completed</string>
     <string name="test_score">%1$d%% Marks</string>
+    <string name="enter_your_name">Enter your name</string>
+
 
 </resources>

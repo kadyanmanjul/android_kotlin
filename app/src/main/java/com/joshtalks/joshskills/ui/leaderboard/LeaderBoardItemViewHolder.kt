@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.mindorks.placeholderview.annotations.Click
@@ -77,7 +78,11 @@ class LeaderBoardItemViewHolder(
             }
             name.text = resp
             points.text = response.points.toString()
-            user_pic.setUserImageOrInitials(response.photoUrl, response.name ?: getRandomName(), isRound = true)
+            user_pic.setUserImageOrInitials(
+                response.photoUrl,
+                response.name ?: getRandomName(),
+                isRound = true
+            )
             user_pic.visibility = android.view.View.VISIBLE
             if (response.isOnline != null && response.isOnline!!) {
                 onlineStatusLayout.visibility = android.view.View.VISIBLE
@@ -89,6 +94,9 @@ class LeaderBoardItemViewHolder(
 
     @Click(R.id.user_pic)
     fun onClick() {
+        if (currentUser && User.getInstance().isVerified.not()) {
+            //return
+        }
         if (isHeader.not())
             response.id?.let {
                 RxBus2.publish(OpenUserProfile(it, response.isOnline ?: false))
@@ -97,6 +105,9 @@ class LeaderBoardItemViewHolder(
 
     @Click(R.id.container)
     fun onContainerClick() {
+        if (currentUser && User.getInstance().isVerified.not()) {
+            //return
+        }
         if (isHeader.not())
             response.id?.let {
                 RxBus2.publish(OpenUserProfile(it, response.isOnline ?: false))

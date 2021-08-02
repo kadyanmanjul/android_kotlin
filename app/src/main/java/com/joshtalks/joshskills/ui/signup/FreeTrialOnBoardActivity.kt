@@ -44,7 +44,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                    moveToInboxScreen()
                 }
                 else -> {
-                   showToast(getString(R.string.something_went_wrong))
+                   //showToast(getString(R.string.something_went_wrong))
                 }
             }}
     }
