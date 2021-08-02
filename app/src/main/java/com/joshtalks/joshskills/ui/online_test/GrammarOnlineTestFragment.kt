@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -20,7 +21,12 @@ import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
+import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineTestInterface {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
@@ -97,9 +103,11 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                         binding.score.text = getString(R.string.test_score, scoreText)
 
                     } else {
-                        binding.score.text = getString(R.string.test_score, PrefManager.getIntValue(
-                            FREE_TRIAL_TEST_SCORE,false
-                        ,0))
+                        binding.score.text = getString(
+                            R.string.test_score, PrefManager.getIntValue(
+                                FREE_TRIAL_TEST_SCORE, false, 0
+                            )
+                        )
                     }
                     if (pointsList.isNullOrBlank().not()) {
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
@@ -131,23 +139,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         }
 
         binding.btnNextStep.setOnClickListener {
-            if (currentTooltipIndex < lessonTooltipList.size - 1) {
-                currentTooltipIndex++
-                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                binding.txtTooltipIndex.text =
-                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-            } else {
-                binding.lessonTooltipLayout.visibility = View.GONE
-            }
+            showNextTooltip()
         }
-
-        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-            binding.lessonTooltipLayout.visibility = View.VISIBLE
-            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-        } else {
-            binding.lessonTooltipLayout.visibility = View.GONE
-        }
+        showTooltip()
     }
 
     override fun onPause() {
@@ -160,6 +154,39 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         super.onStop()
         binding.lessonTooltipLayout.visibility = View.GONE
         PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
+    }
+
+    private fun showTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                withContext(Dispatchers.Main) {
+                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                    binding.txtTooltipIndex.text =
+                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                    binding.lessonTooltipLayout.visibility = View.VISIBLE
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    binding.lessonTooltipLayout.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < lessonTooltipList.size - 1) {
+            currentTooltipIndex++
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+        } else {
+            binding.lessonTooltipLayout.visibility = View.GONE
+        }
+    }
+
+    fun hideTooltip() {
+        binding.lessonTooltipLayout.visibility = View.GONE
     }
 
     private fun completeGrammarCardLogic() {
@@ -199,12 +226,14 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         ) {
             binding.testScoreContainer.visibility = View.VISIBLE
             if (scoreText != -1) {
-                binding.score.text = getString(R.string.test_score, scoreText )
+                binding.score.text = getString(R.string.test_score, scoreText)
 
             } else {
-                binding.score.text = getString(R.string.test_score, PrefManager.getIntValue(
-                    FREE_TRIAL_TEST_SCORE,false
-                    ,0))
+                binding.score.text = getString(
+                    R.string.test_score, PrefManager.getIntValue(
+                        FREE_TRIAL_TEST_SCORE, false, 0
+                    )
+                )
 
             }
             if (pointsList.isNullOrBlank().not()) {
@@ -229,7 +258,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         @JvmStatic
         fun getInstance(
             lessonNumber: Int,
-            scoreText: Int?=null,
+            scoreText: Int? = null,
             pointsList: String? = null
         ): GrammarOnlineTestFragment {
             val args = Bundle()

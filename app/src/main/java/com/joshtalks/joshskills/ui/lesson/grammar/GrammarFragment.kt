@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -60,7 +61,9 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
@@ -148,14 +151,40 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
+        showTooltip()
+    }
 
-        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-            binding.lessonTooltipLayout.visibility = View.VISIBLE
+    private fun showTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                withContext(Dispatchers.Main) {
+                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                    binding.txtTooltipIndex.text =
+                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                    binding.lessonTooltipLayout.visibility = View.VISIBLE
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    binding.lessonTooltipLayout.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < lessonTooltipList.size - 1) {
+            currentTooltipIndex++
             binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+            binding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
             binding.lessonTooltipLayout.visibility = View.GONE
         }
+    }
+
+    fun hideTooltip() {
+        binding.lessonTooltipLayout.visibility = View.GONE
     }
 
     private fun subscribeRxBus() {
@@ -266,8 +295,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     override fun onPause() {
         binding.videoPlayer.onPause()
-//        binding.lessonTooltipLayout.visibility = View.GONE
-//        PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
         super.onPause()
     }
 
@@ -321,14 +348,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             binding.videoPlayer.setProgress(graph?.endTime ?: 0)
         }
         binding.btnNextStep.setOnClickListener {
-            if (currentTooltipIndex < lessonTooltipList.size - 1) {
-                currentTooltipIndex++
-                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                binding.txtTooltipIndex.text =
-                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-            } else {
-                binding.lessonTooltipLayout.visibility = View.GONE
-            }
+            showNextTooltip()
         }
     }
 

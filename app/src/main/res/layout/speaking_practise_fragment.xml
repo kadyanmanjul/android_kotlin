@@ -259,21 +259,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:background="@drawable/bg_tooltip_large_end"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="@dimen/_180sdp"
-                        android:layout_height="@dimen/_108sdp">
+                        android:layout_height="@dimen/_108sdp"
+                        android:layout_marginHorizontal="@dimen/_2sdp"
+                        android:background="@drawable/bg_tooltip_large_end">
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/joshTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/_8sdp"
                             android:paddingHorizontal="@dimen/_8sdp"
                             android:paddingTop="@dimen/_18sdp"
                             android:paddingBottom="@dimen/_8sdp"
@@ -282,6 +284,7 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                             android:textColor="@color/black"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -318,6 +321,17 @@
                             app:layout_constraintEnd_toEndOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:background="@drawable/ic_outline_cancel_24"
+                        android:onClick="@{()->handler.hideTooltip()}"
+                        android:padding="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </FrameLayout>
 

@@ -91,6 +91,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -105,6 +106,8 @@ const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
+const val DEFAULT_TOOLTIP_DELAY_IN_MS = 750L
+const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 500L
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -163,7 +166,6 @@ class ConversationActivity :
             "आपके सहपाठी कौन हैं और उनके कितने पॉइंट्स हैं आप यहाँ से देख सकते हैं"
         )
     }
-    private val lessonTooltip by lazy { "हमें यहां हर रोज एक नया पाठ मिलेगा" }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -238,16 +240,47 @@ class ConversationActivity :
         if (inboxEntity.isCourseLocked) {
             initEndTrialBottomSheet()
         }
-        if (PrefManager.getBoolValue(HAS_OPENED_CONVERSATION_FIRST_TIME, defValue = true)) {
-            conversationBinding.lessonTooltipLayout.visibility = VISIBLE
-            conversationBinding.leaderboardTooltipLayout.visibility = VISIBLE
-            conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
-            conversationBinding.txtTooltipIndex.text =
-                "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
-        } else {
-            conversationBinding.lessonTooltipLayout.visibility = GONE
-            conversationBinding.leaderboardTooltipLayout.visibility = GONE
+        showLessonTooltip()
+    }
+
+    private fun showLessonTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_LESSON_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    conversationBinding.lessonTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                withContext(Dispatchers.Main) {
+                    conversationBinding.lessonTooltipLayout.visibility = VISIBLE
+                }
+                PrefManager.put(HAS_SEEN_LESSON_TOOLTIP, true)
+            }
         }
+    }
+
+    private fun showLeaderBoardTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    conversationBinding.leaderboardTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(LEADERBOARD_TOOLTIP_DELAY_IN_MS)
+                withContext(Dispatchers.Main) {
+                    conversationBinding.joshTextView.text =
+                        leaderboardTooltipList[currentTooltipIndex]
+                    conversationBinding.txtTooltipIndex.text =
+                        "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+                    conversationBinding.leaderboardTooltipLayout.visibility = VISIBLE
+                }
+                PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
+            }
+        }
+    }
+
+    fun hideLeaderboardTooltip() {
+        conversationBinding.leaderboardTooltipLayout.visibility = GONE
     }
 
     private fun initEndTrialBottomSheet() {
@@ -447,14 +480,18 @@ class ConversationActivity :
             uploadImageByUser()
         }
         conversationBinding.btnNextStep.setOnClickListener {
-            if (currentTooltipIndex < leaderboardTooltipList.size - 1) {
-                currentTooltipIndex++
-                conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
-                conversationBinding.txtTooltipIndex.text =
-                    "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
-            } else {
-                conversationBinding.leaderboardTooltipLayout.visibility = GONE
-            }
+            showNextTooltip()
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < leaderboardTooltipList.size - 1) {
+            currentTooltipIndex++
+            conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
+            conversationBinding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+        } else {
+            conversationBinding.leaderboardTooltipLayout.visibility = GONE
         }
     }
 
@@ -864,6 +901,7 @@ class ConversationActivity :
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 conversationBinding.userPointContainer.slideInAnimation()
+                showLeaderBoardTooltip()
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
@@ -1473,7 +1511,7 @@ class ConversationActivity :
     override fun onPause() {
         super.onPause()
         conversationBinding.lessonTooltipLayout.visibility = GONE
-        PrefManager.put(HAS_OPENED_CONVERSATION_FIRST_TIME, false)
+        conversationBinding.leaderboardTooltipLayout.visibility = GONE
         audioPlayerManager?.onPause()
         compositeDisposable.clear()
     }

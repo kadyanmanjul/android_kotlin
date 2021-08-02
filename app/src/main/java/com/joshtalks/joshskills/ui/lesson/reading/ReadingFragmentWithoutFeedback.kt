@@ -67,6 +67,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -87,6 +88,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
@@ -165,17 +167,8 @@ class ReadingFragmentWithoutFeedback :
         binding.lifecycleOwner = this
         binding.handler = this
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
-
         addObserver()
-
-        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-            binding.lessonTooltipLayout.visibility = View.VISIBLE
-            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-        } else {
-            binding.lessonTooltipLayout.visibility = View.GONE
-        }
-
+        showTooltip()
         return binding.rootView
     }
 
@@ -241,6 +234,39 @@ class ReadingFragmentWithoutFeedback :
             audioManager?.release()
         } catch (ex: Exception) {
         }
+    }
+
+    private fun showTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                withContext(Dispatchers.Main) {
+                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                    binding.txtTooltipIndex.text =
+                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                    binding.lessonTooltipLayout.visibility = VISIBLE
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    binding.lessonTooltipLayout.visibility = GONE
+                }
+            }
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < lessonTooltipList.size - 1) {
+            currentTooltipIndex++
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+        } else {
+            binding.lessonTooltipLayout.visibility = View.GONE
+        }
+    }
+
+    fun hideTooltip() {
+        binding.lessonTooltipLayout.visibility = View.GONE
     }
 
     fun hidePracticeInputLayout() {
@@ -534,14 +560,7 @@ class ReadingFragmentWithoutFeedback :
             }
         )
         binding.btnNextStep.setOnClickListener {
-            if (currentTooltipIndex < lessonTooltipList.size - 1) {
-                currentTooltipIndex++
-                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                binding.txtTooltipIndex.text =
-                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-            } else {
-                binding.lessonTooltipLayout.visibility = View.GONE
-            }
+            showNextTooltip()
         }
     }
 

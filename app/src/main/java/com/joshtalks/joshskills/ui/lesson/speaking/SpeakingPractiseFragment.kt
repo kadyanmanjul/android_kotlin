@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -39,7 +40,11 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
 
@@ -84,17 +89,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.lifecycleOwner = this
         binding.handler = this
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
-
         addObservers()
-
-        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-            binding.lessonTooltipLayout.visibility = View.VISIBLE
-            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-            binding.txtTooltipIndex.text = "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-        } else {
-            binding.lessonTooltipLayout.visibility = GONE
-        }
-
+        showTooltip()
         return binding.rootView
     }
 
@@ -215,15 +211,41 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         }
         binding.btnNextStep.setOnClickListener {
-            if (currentTooltipIndex < lessonTooltipList.size - 1) {
-                currentTooltipIndex++
-                binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                binding.txtTooltipIndex.text =
-                    "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+            showNextTooltip()
+        }
+    }
+
+    private fun showTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                withContext(Dispatchers.Main) {
+                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                    binding.txtTooltipIndex.text =
+                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                    binding.lessonTooltipLayout.visibility = VISIBLE
+                }
             } else {
-                binding.lessonTooltipLayout.visibility = GONE
+                withContext(Dispatchers.Main) {
+                    binding.lessonTooltipLayout.visibility = GONE
+                }
             }
         }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < lessonTooltipList.size - 1) {
+            currentTooltipIndex++
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+        } else {
+            binding.lessonTooltipLayout.visibility = View.GONE
+        }
+    }
+
+    fun hideTooltip() {
+        binding.lessonTooltipLayout.visibility = View.GONE
     }
 
     private fun startPractise(favoriteUserCall: Boolean = false) {
