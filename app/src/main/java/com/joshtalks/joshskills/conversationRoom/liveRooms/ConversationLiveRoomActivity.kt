@@ -58,7 +58,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     NotificationView.NotificationViewAction {
     private var mServiceBound: Boolean = false
     lateinit var binding: ActivityConversationLiveRoomBinding
-    lateinit var viewModel: ConversationLiveRoomViewModel
     val database = FirebaseFirestore.getInstance()
     var roomReference: DocumentReference? = null
     var usersReference: CollectionReference? = null
@@ -104,7 +103,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
@@ -115,13 +113,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         updateUI()
         setNotificationStates()
         leaveRoomIfModeratorEndRoom()
-
-        viewModel.navigation.observe(this, {
-            when (it) {
-                is ConversationLiveRoomNavigation.ApiCallError -> showApiCallErrorToast("Something went wrong. Please try Again!!!")
-                is ConversationLiveRoomNavigation.ExitRoom -> finish()
-            }
-        })
 
         clickListener()
         switchRoles()
@@ -258,7 +249,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
                 showEndRoomPopup()
             } else {
-                viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
+                mBoundService?.leaveRoom(roomId?.toString())
             }
         }
 
@@ -624,11 +615,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         )
     }
 
-
-    private fun showApiCallErrorToast(errorMessage: String) {
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
     private fun observeNetwork() {
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(applicationContext)
@@ -653,15 +639,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             hideActionLayout()
             setBackgroundColor(false)
         }
-
     }
 
     private fun internetAvailable() {
         binding.notificationBar.apply {
-            visibility = View.GONE
+            loadAnimationSlideUp()
+            endSound()
         }
     }
-
 
     private fun setLeaveEndButton(isRoomCreatedByUser: Boolean) {
         when (isRoomCreatedByUser) {
@@ -788,11 +773,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                 setNotificationWithoutAction("Something Went Wrong", false)
                             }
                     }
-
                     override fun onDismiss() {
                         isBottomSheetVisible = false
                     }
-
                 })
         bottomSheet.show(supportFragmentManager, "Bottom sheet")
         bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -887,10 +870,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.destroyMediaPlayer()
         super.onDestroy()
 
-    }
-
-    companion object {
-        private const val TAG = "ConversationLiveRoomAct"
     }
 
     override fun onAcceptNotification() {

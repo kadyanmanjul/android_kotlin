@@ -215,11 +215,10 @@ class ConversationRoomListingActivity : BaseActivity(),
     private fun internetNotAvailable() {
         binding.notificationBar.apply {
             visibility = View.VISIBLE
-            startSound()
             hideActionLayout()
             setHeading("The Internet connection appears to be offline")
             setBackgroundColor(false)
-            loadAnimationSlideDown()
+            startSound()
         }
     }
 

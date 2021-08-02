@@ -613,6 +613,7 @@ class WebRtcService : BaseWebRtcService() {
                 removeNotifications()
                 conversationRoomChannelName = null
                 mRtcEngine?.leaveChannel()
+                joshAudioManager?.endCommunication()
             }
         }
     }
@@ -630,6 +631,7 @@ class WebRtcService : BaseWebRtcService() {
                 removeNotifications()
                 conversationRoomChannelName = null
                 mRtcEngine?.leaveChannel()
+                joshAudioManager?.endCommunication()
             }
         }
     }
