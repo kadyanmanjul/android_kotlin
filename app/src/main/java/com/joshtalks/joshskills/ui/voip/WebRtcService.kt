@@ -612,6 +612,7 @@ class WebRtcService : BaseWebRtcService() {
             if (response.isSuccessful) {
                 removeNotifications()
                 conversationRoomChannelName = null
+                mRtcEngine?.leaveChannel()
             }
         }
     }
@@ -628,6 +629,7 @@ class WebRtcService : BaseWebRtcService() {
             if (response.isSuccessful) {
                 removeNotifications()
                 conversationRoomChannelName = null
+                mRtcEngine?.leaveChannel()
             }
         }
     }
@@ -694,21 +696,33 @@ class WebRtcService : BaseWebRtcService() {
             Timber.tag(TAG).e("RTC=    %s", state)
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
-                    isOnPstnCall = false
-                    pstnCallState = CallState.CALL_STATE_IDLE
-                    mRtcEngine?.muteAllRemoteAudioStreams(false)
-                    mRtcEngine?.muteLocalAudioStream(false)
-                    mRtcEngine?.enableLocalAudio(true)
+                    if (isConversionRoomActive) {
+                        val usersReference =
+                            roomReference.document(roomId.toString()).collection("users")
+                        usersReference.document(agoraUid.toString()).get().addOnSuccessListener {
+                            val isMicOn = it["is_mic_on"]
+                            val isSpeaker = it["is_speaker"]
+                            if (isSpeaker == true && isMicOn == true) {
+                                unMuteCall()
+                            }
+                        }
+                    } else {
+                        isOnPstnCall = false
+                        pstnCallState = CallState.CALL_STATE_IDLE
+                        mRtcEngine?.muteAllRemoteAudioStreams(false)
+                        mRtcEngine?.muteLocalAudioStream(false)
+                        mRtcEngine?.enableLocalAudio(true)
 
-                    mRtcEngine?.adjustRecordingSignalVolume(400)
-                    val audio = getSystemService(AUDIO_SERVICE) as AudioManager
-                    val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
-                    val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-                    mRtcEngine?.adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
+                        mRtcEngine?.adjustRecordingSignalVolume(400)
+                        val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+                        val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                        val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                        mRtcEngine?.adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
 
-                    val message = Message()
-                    message.what = CallState.UNHOLD.state
-                    mHandler?.sendMessageDelayed(message, 500)
+                        val message = Message()
+                        message.what = CallState.UNHOLD.state
+                        mHandler?.sendMessageDelayed(message, 500)
+                    }
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
                     if (isConversionRoomActive) {
@@ -724,6 +738,19 @@ class WebRtcService : BaseWebRtcService() {
                         mHandler?.sendMessage(message)
                     }
 
+                }
+                TelephonyManager.CALL_STATE_RINGING -> {
+                    if (isConversionRoomActive) {
+                        val usersReference =
+                            roomReference.document(roomId.toString()).collection("users")
+                        usersReference.document(agoraUid.toString()).get().addOnSuccessListener {
+                            val isMicOn = it["is_mic_on"]
+                            val isSpeaker = it["is_speaker"]
+                            if (isSpeaker == true && isMicOn == true) {
+                                muteCall()
+                            }
+                        }
+                    }
                 }
                 else -> {
                     isOnPstnCall = true

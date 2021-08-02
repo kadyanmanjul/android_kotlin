@@ -648,9 +648,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun internetNotAvailable() {
         binding.notificationBar.apply {
             visibility = View.VISIBLE
-            hideActionLayout()
             setHeading("The Internet connection appears to be offline")
             startSound()
+            hideActionLayout()
             setBackgroundColor(false)
         }
 
@@ -829,7 +829,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
-            viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
+            mBoundService?.endRoom(roomId?.toString())
             alertDialog.dismiss()
             finish()
         }
@@ -867,7 +867,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
             showEndRoomPopup()
         } else {
-            viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
+            mBoundService?.leaveRoom(roomId?.toString())
             super.onBackPressed()
         }
     }
