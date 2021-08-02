@@ -42,15 +42,12 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.voip.ConversationRoomCallback
 import com.joshtalks.joshskills.ui.voip.ConversationRoomJoin
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import io.agora.rtc.Constants
-import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -136,8 +133,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         val newChannelName = intent?.getStringExtra("CHANNEL_NAME")
+        Log.d("ABC", "onNewIntent old: $channelName new: $newChannelName")
         if (newChannelName != null && newChannelName != channelName) {
-            Log.d("ABC", "onNewIntent: called channel name not same old : $channelName  new : $newChannelName")
+            Log.d(
+                "ABC",
+                "onNewIntent: called channel name not same old : $channelName  new : $newChannelName"
+            )
             finish()
             startActivity(intent)
             overridePendingTransition(0, 0)
@@ -167,7 +168,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
-            mBoundService?.addListener(conversationRoomCallback)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -624,75 +624,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         )
     }
 
-    private var conversationRoomCallback = object : ConversationRoomCallback {
-
-        override fun onUserOffline(uid: Int, reason: Int) {
-            val isUserLeave = reason == Constants.USER_OFFLINE_QUIT
-            if (isRoomCreatedByUser) {
-                if (isUserLeave) {
-                    usersReference?.document(uid.toString())?.delete()
-                }
-            } else {
-                if (uid == moderatorUid && isUserLeave) {
-                    usersReference?.get()?.addOnSuccessListener { documents ->
-                        if (documents.size() > 1) {
-                            if (documents.documents[0].id.toInt() == agoraUid) {
-                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
-                            } else if (documents.documents[1].id.toInt() == agoraUid) {
-                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-        override fun onAudioVolumeIndication(
-            speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
-            totalVolume: Int
-        ) {
-            if (isRoomCreatedByUser) {
-                speakingUsersOldList.clear()
-                speakingUsersOldList.addAll(speakingUsersNewList)
-                speakingUsersNewList.clear()
-                speakers?.forEach {
-                    if (it.uid != 0 && it.volume > 0) {
-                        speakingUsersNewList.add(it.uid)
-                    }
-                    if (it.uid == 0 && it.volume > 0) {
-                        speakingUsersNewList.add(agoraUid ?: 0)
-                    }
-                }
-                updateFirestoreData()
-            }
-        }
-
-        override fun onSwitchToSpeaker() {
-            mBoundService?.setClientRole(CLIENT_ROLE_BROADCASTER)
-        }
-
-        override fun onSwitchToAudience() {
-            mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
-        }
-
-    }
-
-    private fun updateFirestoreData() {
-        speakingUsersOldList.forEach {
-            usersReference?.document(it.toString())?.update("is_speaking", false)
-                ?.addOnFailureListener {
-                    setNotificationWithoutAction("Something Went Wrong", false)
-                }
-        }
-        speakingUsersNewList.forEach {
-            usersReference?.document(it.toString())?.update("is_speaking", true)
-                ?.addOnFailureListener {
-                    setNotificationWithoutAction("Something Went Wrong", false)
-                }
-        }
-
-    }
 
     private fun showApiCallErrorToast(errorMessage: String) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
@@ -947,8 +878,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (!isBackPressed) {
             if (isRoomCreatedByUser) {
                 mBoundService?.endRoom(roomId?.toString())
+                Log.d("ABC", " ACTIVITY OnDestroy endRoom")
             } else {
                 mBoundService?.leaveRoom(roomId?.toString())
+                Log.d("ABC", " ACTIVITY OnDestroy leaveRoom")
             }
         }
         binding.notificationBar.destroyMediaPlayer()

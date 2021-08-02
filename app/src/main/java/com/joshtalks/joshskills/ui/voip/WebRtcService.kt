@@ -543,7 +543,7 @@ class WebRtcService : BaseWebRtcService() {
                         Log.d("ABC", "OnUserOffline remove user by moderator $moderatorUid")
                     }
                 } else {
-                    if (uid == moderatorUid && (reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED)) {
+                    if (uid == moderatorUid && isUserLeave) {
                         usersReference.get().addOnSuccessListener { documents ->
                             Log.d("ABC", "OnUserOffline for moderator call $moderatorUid $reason")
                             if (documents.size() > 1) {
@@ -611,6 +611,7 @@ class WebRtcService : BaseWebRtcService() {
             Log.d("ABC", "end room api call ${response.code()}")
             if (response.isSuccessful) {
                 removeNotifications()
+                conversationRoomChannelName = null
             }
         }
     }
@@ -626,6 +627,7 @@ class WebRtcService : BaseWebRtcService() {
             Log.d("ABC", "leave room api call")
             if (response.isSuccessful) {
                 removeNotifications()
+                conversationRoomChannelName = null
             }
         }
     }
@@ -1924,8 +1926,7 @@ class WebRtcService : BaseWebRtcService() {
             putExtra("TOKEN", conversationRoomToken)
             putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
             putExtra("ROOM_ID", roomId)
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            Log.d("ABC", "channelName: $conversationRoomChannelName")
         }
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
 

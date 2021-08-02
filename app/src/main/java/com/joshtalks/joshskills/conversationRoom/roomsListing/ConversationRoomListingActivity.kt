@@ -226,6 +226,7 @@ class ConversationRoomListingActivity : BaseActivity(),
     private fun internetAvailable() {
         binding.notificationBar.apply {
             loadAnimationSlideUp()
+            endSound()
         }
     }
 
