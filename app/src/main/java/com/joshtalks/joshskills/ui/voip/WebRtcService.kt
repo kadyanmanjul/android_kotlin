@@ -711,10 +711,19 @@ class WebRtcService : BaseWebRtcService() {
                     mHandler?.sendMessageDelayed(message, 500)
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
-                    isOnPstnCall = true
-                    val message = Message()
-                    message.what = CallState.ONHOLD.state
-                    mHandler?.sendMessage(message)
+                    if (isConversionRoomActive) {
+                        if (isRoomCreatedByUser) {
+                            endRoom(roomId)
+                        } else {
+                            leaveRoom(roomId)
+                        }
+                    } else {
+                        isOnPstnCall = true
+                        val message = Message()
+                        message.what = CallState.ONHOLD.state
+                        mHandler?.sendMessage(message)
+                    }
+
                 }
                 else -> {
                     isOnPstnCall = true
