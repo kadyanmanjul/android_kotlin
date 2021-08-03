@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
@@ -124,9 +123,8 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     )
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false).not()){
-                            it.isVerified = true
-                        }
+
+                        it.isVerified = User.getInstance().isVerified
                         User.getInstance().updateFromResponse(it)
                     }
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)

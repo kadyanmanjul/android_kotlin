@@ -146,7 +146,6 @@ class LeaderBoardFragment : Fragment() {
         })
 
         binding.editName.apply {
-            visibility = View.VISIBLE
             setCursorVisible(true)
             isPressed=true
             isFocusableInTouchMode = true
