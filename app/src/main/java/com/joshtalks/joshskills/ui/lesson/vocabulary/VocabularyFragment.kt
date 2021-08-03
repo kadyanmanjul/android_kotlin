@@ -76,7 +76,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     private var currentTooltipIndex = 0
     private val lessonTooltipList by lazy {
         listOf(
-            "हम यहां हर रोज 3 शब्द सीखेंगे",
+            "हम यहां हर रोज़ 3 शब्द सीखेंगे",
             "जैसे-जैसे कोर्स आगे बढ़ेगा हम यहां वाक्यांश और मुहावरे भी सीखेंगे"
         )
     }
@@ -116,7 +116,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showTooltip()
+        //showTooltip()
     }
 
     private fun showTooltip() {

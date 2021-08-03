@@ -118,10 +118,8 @@ class ReadingFragmentWithoutFeedback :
     private var currentTooltipIndex = 0
     private val lessonTooltipList by lazy {
         listOf(
-            "जैसे-जैसे कोर्स आगे बढ़ेगा हम यहां वाक्यांश और मुहावरे भी सीखेंगे",
-            "हम यहां अपने पढ़ने और उच्चारण में सुधार करेंगे ",
-            "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे"
-        )
+            "हम यहां अपने पढ़ने और उच्चारण में सुधार करेंगे",
+            "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे")
     }
 
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(

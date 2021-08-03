@@ -67,6 +67,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var currentTooltipIndex = 0
     private val lessonTooltipList by lazy {
         listOf(
+            "कोर्स का सबसे मज़ेदार हिस्सा।",
             "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
         )
     }

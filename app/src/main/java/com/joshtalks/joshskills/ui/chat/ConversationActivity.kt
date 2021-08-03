@@ -904,7 +904,7 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-        userData.isPointsActive?.let { isLeaderBoardActive ->
+        userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
@@ -1507,7 +1507,7 @@ class ConversationActivity :
 
     override fun onStart() {
         super.onStart()
-        showLessonTooltip()
+        //showLessonTooltip()
     }
 
     override fun onResume() {
