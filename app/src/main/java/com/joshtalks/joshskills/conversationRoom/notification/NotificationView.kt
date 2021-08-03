@@ -79,9 +79,7 @@ class NotificationView @JvmOverloads constructor(
     }
 
     fun startSound() {
-        if (mediaPlayer == null){
-            mediaPlayer = MediaPlayer.create(context, R.raw.ib_core_sound_new_message)
-        }
+        mediaPlayer = MediaPlayer.create(context, R.raw.ib_core_sound_new_message)
         mediaPlayer?.start()
     }
 

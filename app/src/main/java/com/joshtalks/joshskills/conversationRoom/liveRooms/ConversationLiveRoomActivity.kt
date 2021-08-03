@@ -635,6 +635,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.apply {
             visibility = View.VISIBLE
             setHeading("The Internet connection appears to be offline")
+            loadAnimationSlideDown()
             startSound()
             hideActionLayout()
             setBackgroundColor(false)
@@ -643,7 +644,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun internetAvailable() {
         binding.notificationBar.apply {
-            loadAnimationSlideUp()
+            visibility = View.GONE
             endSound()
         }
     }
