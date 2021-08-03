@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
-import android.util.Log
 import com.joshtalks.joshskills.core.*
 import java.io.*
 import java.text.SimpleDateFormat
@@ -38,7 +37,6 @@ object AppDirectory {
         if (f.exists().not()) {
             f.mkdirs()
         }
-        Log.d("Manjul", "getRootDirectoryPath path of the file : ${f.absolutePath}")
         return f
     }
 
@@ -61,7 +59,6 @@ object AppDirectory {
             return file
         }
         file.createNewFile()
-        Log.d("Manjul", "getAudioReceivedFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -92,7 +89,6 @@ object AppDirectory {
         }
         val file = File(rootPath + File.separator + fileName)
         file.createNewFile()
-        Log.d("Manjul", "getAudioSentFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -116,7 +112,6 @@ object AppDirectory {
             return file
         }
         file.createNewFile()
-        Log.d("Manjul", "getImageReceivedFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -140,7 +135,6 @@ object AppDirectory {
             return file
         }
         file.createNewFile()
-        Log.d("Manjul", "getSentFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -170,7 +164,6 @@ object AppDirectory {
         }
         val file = File(rootPath + File.separator + fileName)
         file.createNewFile()
-        Log.d("Manjul", "getImageSentFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -188,7 +181,6 @@ object AppDirectory {
         }
         val file = File(rootPath + File.separator + Utils.getFileNameFromURL(url))
         file.createNewFile()
-        Log.d("Manjul", "docsReceivedFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -205,7 +197,6 @@ object AppDirectory {
         if (f.exists().not()) {
             f.mkdirs()
         }
-        Log.d("Manjul", "getVideoDownloadDirectory path of the file : ${f.absolutePath}")
         return f
     }
 
@@ -284,7 +275,6 @@ object AppDirectory {
         }
         val file = File(rootPath + File.separator + getImageFileName())
         file.createNewFile()
-        Log.d("Manjul", "imageSentFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -301,7 +291,6 @@ object AppDirectory {
         }
         val file = File(rootPath + File.separator + getImageFileName())
         file.createNewFile()
-        Log.d("Manjul", "imageReceivedFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -315,7 +304,6 @@ object AppDirectory {
         }
         val file = File(rootPath + File.separator + getVideoFileName())
         file.createNewFile()
-        Log.d("Manjul", "videoReceivedFile path of the file : ${file.absolutePath}")
         return file
     }
 
@@ -328,21 +316,18 @@ object AppDirectory {
         }
         val file = File(rootPath + File.separator + getVideoFileName())
         file.createNewFile()
-        Log.d("Manjul", "videoSentFile path of the file : ${file.absolutePath}")
         return file
     }
 
     fun tempRecordingFile(): File {
         val outputDir =
             AppObjectController.joshApplication.cacheDir // context being the Activity pointer
-        Log.d("Manjul", "tempRecordingFile path of the file :  ${outputDir}")
         return File.createTempFile("record", AUDIO_EXTENSION, outputDir)
     }
 
     fun tempRecordingFileM4A(): File {
         val outputDir =
             AppObjectController.joshApplication.cacheDir // context being the Activity pointer
-        Log.d("Manjul", "tempRecordingFileM4A path of the file : ${outputDir}")
         return File.createTempFile("record", ".m4a", outputDir)
     }
 
@@ -374,13 +359,11 @@ object AppDirectory {
                 return@execute
             }
             File(filePath).deleteRecursively()
-            Log.d("Manjul", "deleteFileFile execute path of the file : ${filePath}")
         }
         return true
     }
 
     fun deleteFileFile(file: File): Boolean {
-        Log.d("Manjul", "deleteFileFile path of the file : ${file.absolutePath}")
         return file.delete()
     }
 
@@ -436,8 +419,6 @@ object AppDirectory {
         if (f.exists().not()) {
             f.mkdirs()
         }
-
-        Log.d("Manjul", "getTempPath path of the file : ${f.absolutePath}")
         return rootPath
 
     }

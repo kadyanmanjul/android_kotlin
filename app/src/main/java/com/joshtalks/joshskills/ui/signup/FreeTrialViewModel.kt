@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -23,8 +22,6 @@ class FreeTrialViewModel(application: Application) : AndroidViewModel(applicatio
                 val resp =
                     AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(mapOf("mentor_id" to mentorId))
 
-                Log.d("Manjul ", "startFreeTrial() called $resp")
-                Log.d("Manjul ", "startFreeTrial() called ${resp.isSuccessful}")
 
                 if (resp.isSuccessful){
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)

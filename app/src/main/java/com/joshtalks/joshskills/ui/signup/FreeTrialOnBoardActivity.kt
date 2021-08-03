@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -11,7 +10,6 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -38,7 +36,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         viewModel.apiStatus.observe(this) {
-            Log.d("Manjul", "addObserver() called $it")
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                    moveToInboxScreen()
