@@ -240,7 +240,6 @@ class ConversationActivity :
         if (inboxEntity.isCourseLocked) {
             initEndTrialBottomSheet()
         }
-        showLessonTooltip()
     }
 
     private fun showLessonTooltip() {
@@ -1504,6 +1503,11 @@ class ConversationActivity :
                 }
             }
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showLessonTooltip()
     }
 
     override fun onResume() {
