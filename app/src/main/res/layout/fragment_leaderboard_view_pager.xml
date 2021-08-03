@@ -129,6 +129,8 @@
                 android:visibility="invisible"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/white"
+                android:cursorVisible="true"
+                android:textCursorDrawable="@drawable/cursor_drawable_white"
                 app:layout_constraintBottom_toBottomOf="@+id/points"
                 app:layout_constraintEnd_toStartOf="@id/points"
                 app:layout_constraintHorizontal_bias="0"

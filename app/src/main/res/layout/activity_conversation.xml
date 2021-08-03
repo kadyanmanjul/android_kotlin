@@ -237,11 +237,9 @@
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/black"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:visibility="visible" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
             </FrameLayout>
 

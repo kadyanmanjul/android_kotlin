@@ -331,13 +331,19 @@ class LeaderBoardFragment : Fragment() {
             ).not()
         ) {
             binding.name.visibility = View.INVISIBLE
-            binding.editName.visibility = View.VISIBLE
-            binding.editName.setOnEditorActionListener { v, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_DONE && v.text.isNullOrBlank().not()) {
-                    viewModel.updateUserName(v.text.toString())
+            binding.editName.apply {
+                visibility = View.VISIBLE
+                requestFocus()
+                setCursorVisible(true)
+                isPressed=true
+                setOnEditorActionListener { v, actionId, event ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE && v.text.isNullOrBlank().not()) {
+                        viewModel.updateUserName(v.text.toString())
+                    }
+                    true
                 }
-                true
             }
+
         } else {
             binding.name.visibility = View.VISIBLE
             binding.editName.visibility = View.INVISIBLE
