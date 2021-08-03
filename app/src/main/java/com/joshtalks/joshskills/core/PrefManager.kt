@@ -221,6 +221,7 @@ object PrefManager {
     }
 
     fun clearDatabase(){
+        LastSyncPrefManager.clear()
         AppDatabase.clearDatabase()
     }
 
