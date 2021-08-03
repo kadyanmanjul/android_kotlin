@@ -288,7 +288,8 @@ abstract class BaseActivity :
         val intent: Intent = when {
             User.getInstance().isVerified.not() -> {
                 when {
-                    PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
+                    (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
+                            PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
                         getInboxActivityIntent()
                     }
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
