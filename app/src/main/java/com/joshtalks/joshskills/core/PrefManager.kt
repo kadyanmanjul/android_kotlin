@@ -220,6 +220,10 @@ object PrefManager {
         WorkManagerAdmin.appStartWorker()
     }
 
+    fun clearDatabase(){
+        AppDatabase.clearDatabase()
+    }
+
 
     fun removeKey(key: String, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().remove(key).apply()

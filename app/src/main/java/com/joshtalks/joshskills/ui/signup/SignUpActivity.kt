@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -74,6 +75,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -141,6 +144,9 @@ class SignUpActivity : BaseActivity() {
                 }
                 SignUpStepStatus.ProfileInCompleted -> {
                     binding.ivBack.visibility = View.GONE
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        PrefManager.clearDatabase()
+                    }
                     openProfileDetailFragment(true)
                 }
                 SignUpStepStatus.ProfileCompleted -> {
