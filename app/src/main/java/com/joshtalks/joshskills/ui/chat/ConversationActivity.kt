@@ -1525,7 +1525,6 @@ class ConversationActivity :
 
     override fun onStop() {
         super.onStop()
-        conversationBinding.lessonTooltipLayout.visibility = GONE
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
