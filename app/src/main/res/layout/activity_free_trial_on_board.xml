@@ -110,7 +110,7 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:onClick="@{()->handler.startTrial()}"
+            android:onClick="@{()->handler.showStartTrialPopup()}"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_14sdp"
             android:text="Start 1 Day Free Trial"
