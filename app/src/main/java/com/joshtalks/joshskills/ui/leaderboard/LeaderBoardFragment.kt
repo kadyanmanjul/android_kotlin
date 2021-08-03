@@ -69,7 +69,6 @@ class LeaderBoardFragment : Fragment() {
                 false
             )
         binding.lifecycleOwner = this
-
         return binding.root
     }
 
@@ -145,6 +144,20 @@ class LeaderBoardFragment : Fragment() {
                 }
             }
         })
+
+        binding.editName.apply {
+            visibility = View.VISIBLE
+            setCursorVisible(true)
+            isPressed=true
+            isFocusableInTouchMode = true
+            setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE && v.text.isNullOrBlank().not()) {
+                    viewModel.updateUserName(v.text.toString())
+                }
+                true
+            }
+            requestFocus()
+        }
     }
 
     private fun addObserver() {
@@ -333,20 +346,8 @@ class LeaderBoardFragment : Fragment() {
             binding.name.visibility = View.INVISIBLE
             binding.editName.apply {
                 visibility = View.VISIBLE
-                requestFocus()
-                setCursorVisible(true)
-                isPressed=true
-                setOnEditorActionListener { v, actionId, event ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE && v.text.isNullOrBlank().not()) {
-                        viewModel.updateUserName(v.text.toString())
-                    }
-                    true
-                }
             }
 
-        } else {
-            binding.name.visibility = View.VISIBLE
-            binding.editName.visibility = View.INVISIBLE
         }
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(
@@ -382,15 +383,6 @@ class LeaderBoardFragment : Fragment() {
                     }
                 )
         )
-
-        if (User.getInstance().isVerified.not() && PrefManager.getBoolValue(
-                HAS_ENTERED_NAME_IN_FREE_TRIAL, false, false
-            ) && PrefManager.getBoolValue(
-                IS_ENTERED_NAME_IN_FREE_TRIAL, false, false
-            )
-        ) {
-            updateNameLayout(User.getInstance().firstName.toString())
-        }
     }
 
     private fun openUserProfileActivity(
