@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirectio
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
@@ -94,9 +96,12 @@ class LeaderBoardFragment : Fragment() {
 
     private fun setListener() {
         binding.userLayout.setOnClickListener {
-            if (User.getInstance().isVerified.not()){
-                //openRegistrationScreen
-                //return@setOnClickListener
+            if (User.getInstance().isVerified.not() &&
+                (PrefManager.hasKey(HAS_ENTERED_NAME_IN_FREE_TRIAL).not() ||
+                        PrefManager.getBoolValue(HAS_ENTERED_NAME_IN_FREE_TRIAL, false, false)
+                            .not())
+            ) {
+                return@setOnClickListener
             }
             scrollToUserPosition()
             binding.userLayout.visibility = View.GONE
@@ -201,10 +206,26 @@ class LeaderBoardFragment : Fragment() {
                 }
             }
         )
+
+        viewModel.apiCallStatus.observe(viewLifecycleOwner) {
+            if (it == ApiCallStatus.SUCCESS) {
+                updateNameLayout(binding.editName.text.toString())
+                viewModel.getRefreshedLeaderboardData(Mentor.getInstance().getId(), courseId, type)
+            }
+        }
+    }
+
+    private fun updateNameLayout(name: String) {
+        binding.name.text = name
+        binding.name.visibility = View.VISIBLE
+        binding.editName.visibility = View.INVISIBLE
+        binding.editName.clearFocus()
+        hideKeyboard(requireActivity(), binding.editName)
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {
         var additionalIndexCount = 0
+        binding.recyclerView.removeAllViews()
         if (leaderboardResponse1.info.isNullOrBlank().not()) {
             // TODO handel this count as well in other places where using position of recycler view eg. in tooltip
             additionalIndexCount = additionalIndexCount.plus(1)
@@ -305,8 +326,21 @@ class LeaderBoardFragment : Fragment() {
                 .append(" ")
         }
         binding.name.text = resp
-        if (User.getInstance().isVerified.not()){
-            //binding.name.text = getString(R.string.enter_your_name)
+        if (User.getInstance().isVerified.not() && PrefManager.getBoolValue(
+                HAS_ENTERED_NAME_IN_FREE_TRIAL, false, false
+            ).not()
+        ) {
+            binding.name.visibility = View.INVISIBLE
+            binding.editName.visibility = View.VISIBLE
+            binding.editName.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE && v.text.isNullOrBlank().not()) {
+                    viewModel.updateUserName(v.text.toString())
+                }
+                true
+            }
+        } else {
+            binding.name.visibility = View.VISIBLE
+            binding.editName.visibility = View.INVISIBLE
         }
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(
@@ -342,6 +376,15 @@ class LeaderBoardFragment : Fragment() {
                     }
                 )
         )
+
+        if (User.getInstance().isVerified.not() && PrefManager.getBoolValue(
+                HAS_ENTERED_NAME_IN_FREE_TRIAL, false, false
+            ) && PrefManager.getBoolValue(
+                IS_ENTERED_NAME_IN_FREE_TRIAL, false, false
+            )
+        ) {
+            updateNameLayout(User.getInstance().firstName.toString())
+        }
     }
 
     private fun openUserProfileActivity(

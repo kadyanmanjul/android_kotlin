@@ -7,7 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_ENTERED_NAME_IN_FREE_TRIAL
+import com.joshtalks.joshskills.core.IS_ENTERED_NAME_IN_FREE_TRIAL
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.*
@@ -23,6 +27,8 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfMonth: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfBatch: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfLifeTime: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val userEnteredName: MutableLiveData<String> = MutableLiveData()
 
     fun getFullLeaderBoardData(mentorId: String, course_id: String?) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -205,5 +211,34 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
             }
             return@async false
         }.await()
+    }
+
+    fun updateUserName(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestMap = mutableMapOf<String, String?>()
+                requestMap["first_name"] = name
+                val response =
+                    AppObjectController.signUpNetworkService.updateUserProfile(
+                        Mentor.getInstance().getUserId(), requestMap
+                    )
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        PrefManager.put(HAS_ENTERED_NAME_IN_FREE_TRIAL, true, false)
+                        PrefManager.put(IS_ENTERED_NAME_IN_FREE_TRIAL, true, false)
+                        User.getInstance().updateFromResponse(it)
+                    }
+                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                    userEnteredName.postValue(name)
+                    return@launch
+                } else {
+                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiCallStatus.postValue(ApiCallStatus.FAILED)
+            }
+        }
     }
 }
