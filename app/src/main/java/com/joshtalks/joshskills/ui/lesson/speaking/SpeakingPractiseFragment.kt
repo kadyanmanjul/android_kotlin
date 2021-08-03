@@ -18,8 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
-import com.joshtalks.joshskills.core.HAS_OPENED_SPEAKING_FIRST_TIME
+import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
@@ -105,8 +104,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     override fun onStop() {
         super.onStop()
-        binding.lessonTooltipLayout.visibility = View.GONE
-        PrefManager.put(HAS_OPENED_SPEAKING_FIRST_TIME, false)
         compositeDisposable.clear()
     }
 
@@ -217,17 +214,19 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                withContext(Dispatchers.Main) {
-                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                    binding.txtTooltipIndex.text =
-                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-                    binding.lessonTooltipLayout.visibility = VISIBLE
-                }
-            } else {
+            if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_TOOLTIP, defValue = false)) {
                 withContext(Dispatchers.Main) {
                     binding.lessonTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                        binding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.lessonTooltipLayout.visibility = VISIBLE
+                    }
                 }
             }
         }
@@ -240,12 +239,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             binding.txtTooltipIndex.text =
                 "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
-            binding.lessonTooltipLayout.visibility = View.GONE
+            binding.lessonTooltipLayout.visibility = GONE
+            PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
         }
     }
 
     fun hideTooltip() {
-        binding.lessonTooltipLayout.visibility = View.GONE
+        binding.lessonTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
     private fun startPractise(favoriteUserCall: Boolean = false) {

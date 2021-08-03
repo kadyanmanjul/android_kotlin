@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
-import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
+import com.joshtalks.joshskills.core.HAS_SEEN_GRAMMAR_TOOLTIP
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
@@ -144,31 +144,21 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         showTooltip()
     }
 
-    override fun onPause() {
-        super.onPause()
-//        binding.lessonTooltipLayout.visibility = View.GONE
-//        PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        binding.lessonTooltipLayout.visibility = View.GONE
-        PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
-    }
-
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                withContext(Dispatchers.Main) {
-                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                    binding.txtTooltipIndex.text =
-                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-                    binding.lessonTooltipLayout.visibility = View.VISIBLE
-                }
-            } else {
+            if (PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_TOOLTIP, defValue = false)) {
                 withContext(Dispatchers.Main) {
                     binding.lessonTooltipLayout.visibility = View.GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (lessonNumber == 1) {
+                    withContext(Dispatchers.Main) {
+                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                        binding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.lessonTooltipLayout.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -182,11 +172,13 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
             binding.lessonTooltipLayout.visibility = View.GONE
+            PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
         }
     }
 
     fun hideTooltip() {
         binding.lessonTooltipLayout.visibility = View.GONE
+        PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
     }
 
     private fun completeGrammarCardLogic() {

@@ -82,10 +82,10 @@ const val HAS_ENTERED_NAME_IN_FREE_TRIAL = "has_entered_name_in_free_trial"
 const val IS_ENTERED_NAME_IN_FREE_TRIAL = "is_entered_name_in_free_trial"
 const val HAS_SEEN_LESSON_TOOLTIP = "joshskills_has_seen_lesson_tooltip"
 const val HAS_SEEN_LEADERBOARD_TOOLTIP = "joshskills_has_seen_leaderboard_tooltip"
-const val HAS_OPENED_GRAMMAR_FIRST_TIME = "joshskills_has_opened_grammar_first_time"
-const val HAS_OPENED_VOCAB_FIRST_TIME = "joshskills_has_opened_vocab_first_time"
-const val HAS_OPENED_READING_FIRST_TIME = "joshskills_has_opened_reading_first_time"
-const val HAS_OPENED_SPEAKING_FIRST_TIME = "joshskills_has_opened_speaking_first_time"
+const val HAS_SEEN_GRAMMAR_TOOLTIP = "joshskills_has_seen_grammar_tooltip"
+const val HAS_SEEN_VOCAB_TOOLTIP = "joshskills_has_seen_vocab_tooltip"
+const val HAS_SEEN_READING_TOOLTIP = "joshskills_has_seen_reading_tooltip"
+const val HAS_SEEN_SPEAKING_TOOLTIP = "joshskills_has_seen_speaking_tooltip"
 
 object PrefManager {
 

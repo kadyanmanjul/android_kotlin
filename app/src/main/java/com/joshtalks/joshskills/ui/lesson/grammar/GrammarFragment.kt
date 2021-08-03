@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.BuildConfig
@@ -156,17 +155,19 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                withContext(Dispatchers.Main) {
-                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                    binding.txtTooltipIndex.text =
-                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-                    binding.lessonTooltipLayout.visibility = View.VISIBLE
-                }
-            } else {
+            if (PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_TOOLTIP, defValue = false)) {
                 withContext(Dispatchers.Main) {
                     binding.lessonTooltipLayout.visibility = View.GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                        binding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.lessonTooltipLayout.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -180,11 +181,13 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
             binding.lessonTooltipLayout.visibility = View.GONE
+            PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
         }
     }
 
     fun hideTooltip() {
         binding.lessonTooltipLayout.visibility = View.GONE
+        PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
     }
 
     private fun subscribeRxBus() {
@@ -298,12 +301,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         super.onPause()
     }
 
-    override fun onStop() {
-        super.onStop()
-        binding.lessonTooltipLayout.visibility = View.GONE
-        PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
-    }
-
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
@@ -311,8 +308,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     private fun setObservers() {
         viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner,
-            Observer { lessonQuestions ->
+            viewLifecycleOwner, { lessonQuestions ->
                 binding.practiceTitleTv.text =
                     getString(
                         R.string.today_lesson,

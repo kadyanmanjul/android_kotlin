@@ -38,8 +38,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
-import com.joshtalks.joshskills.core.HAS_OPENED_READING_FIRST_TIME
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -212,8 +211,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     override fun onStop() {
-        binding.lessonTooltipLayout.visibility = GONE
-        PrefManager.put(HAS_OPENED_READING_FIRST_TIME, false)
         appAnalytics?.push()
         super.onStop()
         compositeDisposable.clear()
@@ -238,17 +235,19 @@ class ReadingFragmentWithoutFeedback :
 
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                withContext(Dispatchers.Main) {
-                    binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                    binding.txtTooltipIndex.text =
-                        "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-                    binding.lessonTooltipLayout.visibility = VISIBLE
-                }
-            } else {
+            if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP, defValue = false)) {
                 withContext(Dispatchers.Main) {
                     binding.lessonTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                        binding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.lessonTooltipLayout.visibility = VISIBLE
+                    }
                 }
             }
         }
@@ -261,12 +260,14 @@ class ReadingFragmentWithoutFeedback :
             binding.txtTooltipIndex.text =
                 "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
         } else {
-            binding.lessonTooltipLayout.visibility = View.GONE
+            binding.lessonTooltipLayout.visibility = GONE
+            PrefManager.put(HAS_SEEN_READING_TOOLTIP, true)
         }
     }
 
     fun hideTooltip() {
-        binding.lessonTooltipLayout.visibility = View.GONE
+        binding.lessonTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_SEEN_READING_TOOLTIP, true)
     }
 
     fun hidePracticeInputLayout() {
