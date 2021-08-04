@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_22sdp"
-                android:text="Simple Past Tense"
+                android:text="Grammar Test"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/grammar_black_text_color"
@@ -126,6 +126,7 @@
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:text="@string/grammar_unlock_text"
                 android:textAlignment="center"
+                android:visibility="invisible"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/start_btn"
@@ -161,7 +162,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/score_title"
