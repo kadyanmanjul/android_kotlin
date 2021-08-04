@@ -169,35 +169,6 @@ class VocabularyPracticeAdapter(
         }
     }
 
-/*    fun onPauseAudio(viewHolder : RecyclerView.ViewHolder?) {
-        if(viewHolder is VocabularyViewHolder) {
-            with(viewHolder) {
-                currentQuestion?.isPlaying = false
-                binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                audioManager?.onPause()
-            }
-        }
-    }
-
-    fun onReleaseAudio(viewHolder : RecyclerView.ViewHolder?) {
-        if(viewHolder is VocabularyViewHolder) {
-            with(viewHolder) {
-                currentQuestion?.isPlaying = false
-                binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                audioManager?.release()
-            }
-        }
-    }
-
-    fun stopPreviousAudio(viewHolder : RecyclerView.ViewHolder?) {
-        if(viewHolder is VocabularyViewHolder) {
-                with(viewHolder) {
-                    currentQuestion?.isPlaying = false
-                    binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                }
-        }
-    }*/
-
     private fun initExpandCardPosition() {
         if (expandCardPosition == -1) {
             for (index in itemList.indices) {
