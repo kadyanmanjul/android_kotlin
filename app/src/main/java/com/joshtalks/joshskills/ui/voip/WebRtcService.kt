@@ -1186,9 +1186,7 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
             showToast("Switching to Bluetooth...")
         else if (BLUETOOTH_RETRY_COUNT < 3)
             showToast("Retrying($BLUETOOTH_RETRY_COUNT) switching to Bluetooth")
-        else if (BLUETOOTH_RETRY_COUNT == 3)
-            showToast("Please wait... Fixing Bluetooth audio")
-        else if (BLUETOOTH_RETRY_COUNT > 3)
+        else if (BLUETOOTH_RETRY_COUNT >= 3)
             showToast("Please restart your bluetooth headset")
 
         AppObjectController.uiHandler.postDelayed({
@@ -1206,9 +1204,6 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
             }
             2 -> {
                 turnOnDefault(state)
-            }
-            3 -> {
-                bluetoothAdapter?.disable()
             }
         }
     }
