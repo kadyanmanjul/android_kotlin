@@ -38,6 +38,8 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
@@ -146,6 +148,8 @@ class SignUpActivity : BaseActivity() {
                     binding.ivBack.visibility = View.GONE
                     lifecycleScope.launch(Dispatchers.IO) {
                         PrefManager.clearDatabase()
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
                     }
                     openProfileDetailFragment(true)
                 }
