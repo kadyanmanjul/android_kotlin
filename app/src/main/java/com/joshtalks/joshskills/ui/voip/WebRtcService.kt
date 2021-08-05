@@ -9,7 +9,6 @@ import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -86,7 +85,7 @@ const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
 
-class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
+class WebRtcService : BaseWebRtcService() {
 
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
@@ -576,8 +575,8 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
         pstnCallState = CallState.CALL_STATE_IDLE
         handlerThread.start()
         mHandler = Handler(handlerThread.looper)
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        bluetoothAdapter?.getProfileProxy(this, this, BluetoothProfile.HEADSET)
+        //bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        //bluetoothAdapter?.getProfileProxy(this, this, BluetoothProfile.HEADSET)
         CoroutineScope(Dispatchers.IO).launch {
             TelephonyUtil.getManager(this@WebRtcService)
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
@@ -1205,6 +1204,9 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
             2 -> {
                 turnOnDefault(state)
             }
+            else -> {
+                turnOnBluetooth(state, true)
+            }
         }
     }
 
@@ -1230,7 +1232,7 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
         }, AUDIO_SWITCH_OFFSET)
     }
 
-    override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
+    /*override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
         Timber.tag("BLUETOOTH").d("bluetoothConnected")
     }
 
@@ -1241,7 +1243,7 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
             }, 1000)
             return
         }
-    }
+    }*/
 
     fun switchSpeck() {
         executor.submit {
