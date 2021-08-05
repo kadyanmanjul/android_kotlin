@@ -149,7 +149,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         binding.videoPlayer.setVideoPlayerEventListener(this)
 
         if (intent.hasExtra(VIDEO_OBJECT)) {
-            chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
+            chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel?
             chatObject?.run {
                 question?.let { question ->
                     courseId = question.course_id

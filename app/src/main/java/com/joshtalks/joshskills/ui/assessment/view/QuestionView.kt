@@ -128,8 +128,10 @@ class QuestionView : FrameLayout {
                 AssessmentMediaType.AUDIO -> {
                     audioPlayerStub?.run {
                         if (this.resolved().not()) {
-                            this.get()
-                                ?.setupAudio(it.question.remoteId.toString(), it.question.mediaUrl)
+                            it.question.mediaUrl?.let { mediaUrl ->
+                                this.get()
+                                    ?.setupAudio(it.question.remoteId.toString(), mediaUrl)
+                            }
                             cardView.cardElevation = 0F
                             cardView.radius = 0F
                         }

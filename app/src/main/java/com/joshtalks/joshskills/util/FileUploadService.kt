@@ -102,7 +102,7 @@ class FileUploadService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             fileQueue.clear()
             if (mFileUploadTask != null) {
-                mFileUploadHandler.removeCallbacks(mFileUploadTask)
+                mFileUploadHandler.removeCallbacks(mFileUploadTask!!)
                 isFileUploadRunning = false
                 mFileUploadTask = null
                 AppObjectController.uiHandler.post {
@@ -139,7 +139,7 @@ class FileUploadService : Service() {
             }
             if (!isFileUploadRunning) {
                 isFileUploadRunning = true
-                mFileUploadHandler.post(mFileUploadTask)
+                mFileUploadHandler.post(mFileUploadTask!!)
             }
         }
     }

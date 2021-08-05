@@ -112,7 +112,11 @@ class CourseProgressActivityNew :
                         ) {
 
                             val viewHolder =
-                                binding.progressRv.findViewHolderForAdapterPosition((index * 2).plus(1))
+                                binding.progressRv.findViewHolderForAdapterPosition(
+                                    (index * 2).plus(
+                                        1
+                                    )
+                                )
                             if (viewHolder is ProgressActivityAdapter.ProgressViewHolder) {
                                 viewHolder.adapter.updateDataList(response.responseData?.get(index)?.data)
                                 viewHolder.updateItem(courseOverviewResponse, (index * 2).plus(1))
@@ -226,7 +230,8 @@ class CourseProgressActivityNew :
                         LessonActivity.getActivityIntent(
                             this@CourseProgressActivityNew,
                             item.lessonId,
-                            conversationId = intent.getStringExtra(CONVERSATION_ID)
+                            conversationId = intent.getStringExtra(CONVERSATION_ID),
+                            isNewGrammar = item.isNewGrammar ?: false
                         )
                     )
                 } else {

@@ -27,9 +27,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.Browser
 import android.provider.Settings
+import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateUtils
@@ -73,7 +73,6 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.muddzdev.styleabletoast.StyleableToast
-import com.sinch.verification.PhoneNumberUtils
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
 import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
@@ -107,14 +106,13 @@ val YYYY_MM_DD = SimpleDateFormat("yyyy-MM-dd")
 val DD_MM_YYYY = SimpleDateFormat("dd/MM/yyyy")
 val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
 val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
+const val IS_FOREGROUND = "is_foreground"
 
 object Utils {
 
     fun formatToShort(number: Int?): String {
-
         try {
             var value = number!! * 1.0
-
             val power: Int
             val suffix = " kmbt"
             var formattedNumber: String
@@ -201,7 +199,7 @@ object Utils {
             val mmr = MediaMetadataRetriever()
             mmr.setDataSource(context, uri)
             val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            return durationStr.toLong()
+            return durationStr?.toLong()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -225,7 +223,8 @@ object Utils {
     }
 
     fun getPathFromUri(path: String): String {
-        return Environment.getExternalStorageDirectory().toString().plus("/")
+        return AppObjectController.joshApplication.getExternalFilesDir(null)?.path.toString()
+            .plus("/")
             .plus(path.split(Regex("/"), 3)[2])
     }
 
@@ -305,6 +304,9 @@ object Utils {
                 ) + 0.5f
                 ).roundToInt()
     }
+
+    // Usage : Utils.sdpToPx(R.dimen._24sdp)
+    fun sdpToPx(dimen: Int) = AppObjectController.joshApplication.resources.getDimension(dimen)
 
     fun call(context: Context, phoneNumber: String) {
         val intent = Intent(Intent.ACTION_DIAL).apply {
@@ -785,7 +787,7 @@ object Utils {
             val bitmap: Bitmap
             val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
             connection.connect()
-            val input: InputStream = connection.getInputStream()
+            val input: InputStream = connection.inputStream
             bitmap = BitmapFactory.decodeStream(input)
             BitmapDrawable(Resources.getSystem(), bitmap)
         } catch (ex: Exception) {
@@ -897,7 +899,7 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
         phoneNumberUtil.getRegionCodeForCountryCode(phoneNumber.countryCode)
     } else {
         try {
-            PhoneNumberUtils.getDefaultCountryIso(AppObjectController.joshApplication)
+            getDefaultCountryIso(AppObjectController.joshApplication)
         } catch (ex: Exception) {
             countryRegion
         }
@@ -1130,6 +1132,7 @@ fun Intent.startServiceForWebrtc() {
     if (JoshApplication.isAppVisible) {
         AppObjectController.joshApplication.startService(this)
     } else {
+        this.putExtra(IS_FOREGROUND, true)
         ContextCompat.startForegroundService(
             AppObjectController.joshApplication,
             this
@@ -1246,14 +1249,26 @@ fun playSnackbarSound(context: Context) {
     try {
         val mediaplayer: MediaPlayer = MediaPlayer.create(
             context,
-            // R.raw.ting
-            // R.raw.accept_confirm
-            // R.raw.tinder_one
-            // R.raw.tinder_two
-            // R.raw.tinder_new
-            // R.raw.moneybag
-            // R.raw.si_montok_sound_effect,
-            R.raw.right_answer
+            R.raw.right_a
+        )
+
+        mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+            override fun onCompletion(mediaPlayer: MediaPlayer) {
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+        })
+        mediaplayer.start()
+    } catch (ex: Exception) {
+        Timber.d(ex)
+    }
+}
+
+fun playWrongAnswerSound(context: Context) {
+    try {
+        val mediaplayer: MediaPlayer = MediaPlayer.create(
+            context,
+            R.raw.wrong_answer
         )
 
         mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
@@ -1318,7 +1333,7 @@ fun getScreenSize(context: Context): IntArray {
     widthHeight[HEIGHT_INDEX] = 0
     val windowManager: WindowManager =
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    val display: Display = windowManager.getDefaultDisplay()
+    val display: Display = windowManager.defaultDisplay
     val size = Point()
     display.getSize(size)
     widthHeight[WIDTH_INDEX] = size.x
@@ -1331,12 +1346,18 @@ fun getScreenSize(context: Context): IntArray {
     }
     // Last defense. Use deprecated API that was introduced in lower than API 13
     if (!isScreenSizeRetrieved(widthHeight)) {
-        widthHeight[0] = display.getWidth() // deprecated
-        widthHeight[1] = display.getHeight() // deprecated
+        widthHeight[0] = display.width // deprecated
+        widthHeight[1] = display.height // deprecated
     }
     return widthHeight
 }
 
 private fun isScreenSizeRetrieved(widthHeight: IntArray): Boolean {
     return widthHeight[WIDTH_INDEX] != 0 && widthHeight[HEIGHT_INDEX] != 0
+}
+
+fun getDefaultCountryIso(context: Context): String {
+    val telephoneManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+    val simState: Int? = telephoneManager?.simState
+    return if (simState == 5) telephoneManager.simCountryIso.toUpperCase(Locale.ROOT) else Locale.getDefault().country
 }

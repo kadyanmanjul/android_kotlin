@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.RuleIdsList
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
@@ -28,13 +29,13 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.File
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -60,11 +61,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val favoriteCaller = MutableSharedFlow<Boolean>(replay = 0)
+    val ruleListIds: MutableLiveData<RuleIdsList> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val lesson = getLessonFromDB(lessonId)
-
             if (lesson != null) {
                 lessonLiveData.postValue(lesson)
             } else {
@@ -82,6 +83,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun getQuestions(lessonId: Int, isDemo: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val questionsFromDB = getQuestionsFromDB(lessonId)
+            //TODO remove below line and uncomment above code after getting correct data from API
+            //val questionsFromDB = emptyList<LessonQuestion>()
             if (questionsFromDB.isNotEmpty()) {
                 lessonQuestionsLiveData.postValue(questionsFromDB)
             }
@@ -605,7 +608,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private suspend fun updateLessonStatus() {
+    suspend fun updateLessonStatus() {
         viewModelScope.launch(Dispatchers.IO) {
             lessonLiveData.postValue(
                 lessonLiveData.value?.apply {
@@ -670,6 +673,19 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 }
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun getListOfRuleIds() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.chatNetworkService.getListOfRuleIds()
+                if (response.isSuccessful && response.body() != null && response.body()!!.totalRulesIds.isNullOrEmpty().not()) {
+                    ruleListIds.postValue(response.body())
+                }
+            } catch (ex: Throwable) {
                 Timber.e(ex)
             }
         }

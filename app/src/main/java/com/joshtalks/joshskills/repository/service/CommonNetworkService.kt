@@ -217,7 +217,7 @@ interface CommonNetworkService {
     @POST("$DIR/certificateexam/user_details")
     suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>
 
-    @GET("$DIR/group/user_profile/{mentor_id}/")
+    @GET("$DIR/group/user_profile_v2/{mentor_id}/")
     suspend fun getUserProfileData(
         @Path("mentor_id") id: String,
         @Query("interval_type") intervalType: String? = null,
@@ -323,4 +323,7 @@ interface CommonNetworkService {
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") intervalType: String
     ): Response<PreviousLeaderboardResponse>
+
+    @POST("$DIR/course/free_trial_register_course/")
+    suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>
 }

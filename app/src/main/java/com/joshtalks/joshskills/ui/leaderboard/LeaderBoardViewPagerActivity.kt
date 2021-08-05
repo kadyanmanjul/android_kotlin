@@ -7,15 +7,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
-import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
@@ -120,14 +119,22 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
 
                 setTabText(it)
 
-                binding.viewPager.registerOnPageChangeCallback(object :
-                    ViewPager2.OnPageChangeCallback() {
+                binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int
+                    ) {
+                    }
+
                     override fun onPageSelected(position: Int) {
-                        super.onPageSelected(position)
                         tabPosition = position
                         mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
                         viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
                     }
+
+                    override fun onPageScrollStateChanged(state: Int) {}
+
                 })
             }
         )
@@ -188,53 +195,60 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
 
     private fun setTabText(map: HashMap<String, LeaderboardResponse>) {
         var list = EMPTY
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when (position) {
+        val tabCount = binding.tabLayout.tabCount
+        for (index in 0 until tabCount) {
+            val tab = binding.tabLayout.getTabAt(index)
+            when (index) {
                 0 -> {
                     list = "TODAY"
+                    setText(tab, map[list])
                 }
                 1 -> {
                     list = "WEEK"
+                    setText(tab, map[list])
                 }
                 2 -> {
                     list = "MONTH"
+                    setText(tab, map[list])
                 }
                 4 -> {
                     list = "BATCH"
+                    if (map[list]?.intervalTabText.isNullOrBlank())
+                        tab?.text = getString(R.string.my_batch)
+                    else
+                        tab?.text = getString(R.string.my_batch).plus('\n')
+                            .plus(map[list]?.intervalTabText)
                 }
                 3 -> {
                     list = "LIFETIME"
+                    setText(tab, map[list])
                 }
             }
-            if (map.get(list)?.intervalTabText.isNullOrBlank()) {
-                if (position == 4) {
-                    tab.text = getString(R.string.my_batch)
-                } else {
-                    tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
-                }
-            } else {
-                if (position == 4) {
-                    tab.text = getString(R.string.my_batch).plus('\n')
-                        .plus(map.get(list)?.intervalTabText)
-                } else {
-                    tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
-                            .plus('\n')
-                            .plus(map.get(list)?.intervalTabText)
-                }
+        }
+    }
 
-            }
-        }.attach()
+    private fun setText(tab: TabLayout.Tab?, response: LeaderboardResponse?) {
+        if (response?.intervalTabText.isNullOrBlank()) {
+            tab?.text =
+                response?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+        } else {
+            tab?.text =
+                response?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                    .plus('\n')
+                    .plus(response?.intervalTabText)
+
+
+        }
+
     }
 
     private fun initViewPager() {
-        binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
-            LeaderBoardViewPagerAdapter(getCourseId(), this)
+            LeaderBoardViewPagerAdapter(
+                getCourseId(), supportFragmentManager,
+                FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+            )
         binding.viewPager.offscreenPageLimit = 4
-        binding.viewPager.recyclerView.enforceSingleScrollDirection()
     }
 
     override fun onResume() {

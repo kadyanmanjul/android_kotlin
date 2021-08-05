@@ -55,7 +55,6 @@ import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
-import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressTooltip
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
@@ -63,6 +62,7 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.video_player.*
 import com.joshtalks.joshskills.ui.view_holders.*
@@ -91,6 +91,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -105,6 +106,8 @@ const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
+const val DEFAULT_TOOLTIP_DELAY_IN_MS = 2000L
+const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -114,8 +117,7 @@ class ConversationActivity :
     Player.EventListener,
     ExoAudioPlayer.ProgressUpdateListener,
     AudioPlayerEventListener,
-    OnDismissWithSuccess,
-    CourseProgressTooltip.OnDismissClick {
+    OnDismissWithSuccess {
 
     companion object {
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
@@ -156,6 +158,14 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
+
+    private var currentTooltipIndex = 0
+    private val leaderboardTooltipList by lazy {
+        listOf(
+            "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
+            "आपके सहपाठी कौन हैं और उनके कितने पॉइंट्स हैं आप यहाँ से देख सकते हैं"
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -227,6 +237,62 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
+        if (inboxEntity.isCourseLocked) {
+            initEndTrialBottomSheet()
+        }
+    }
+
+    private fun showLessonTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_LESSON_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    conversationBinding.lessonTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (conversationAdapter.getLastLesson()?.lessonNo == 1 &&
+                    conversationAdapter.getLastLesson()?.status == LESSON_STATUS.NO
+                ) {
+                    withContext(Dispatchers.Main) {
+                        conversationBinding.lessonTooltipLayout.visibility = VISIBLE
+                    }
+                } else {
+                    PrefManager.put(HAS_SEEN_LESSON_TOOLTIP, true)
+                }
+            }
+        }
+    }
+
+    private fun showLeaderBoardTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    conversationBinding.leaderboardTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(LEADERBOARD_TOOLTIP_DELAY_IN_MS)
+                if (conversationAdapter.getLastLesson()?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        conversationBinding.joshTextView.text =
+                            leaderboardTooltipList[currentTooltipIndex]
+                        conversationBinding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+                        conversationBinding.leaderboardTooltipLayout.visibility = VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+    fun hideLeaderboardTooltip() {
+        conversationBinding.leaderboardTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
+    }
+
+    private fun initEndTrialBottomSheet() {
+        TrialEndBottomSheetFragment.showDialog(
+            supportFragmentManager
+        )
     }
 
     private fun initToolbar() {
@@ -235,20 +301,12 @@ class ConversationActivity :
                 PrefManager.put(IS_DEMO_P2P, false)
             }
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
-            conversationBinding.dummyTextMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
             conversationBinding.imageViewLogo.setOnClickListener {
                 openCourseProgressListingScreen()
             }
-            conversationBinding.dummyImageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
-            conversationBinding.dummyImageViewLogo.setOnClickListener {
-                openCourseProgressListingScreen()
-            }
             conversationBinding.textMessageTitle.setOnClickListener {
-                openCourseProgressListingScreen()
-            }
-            conversationBinding.dummyTextMessageTitle.setOnClickListener {
                 openCourseProgressListingScreen()
             }
 
@@ -361,6 +419,7 @@ class ConversationActivity :
                 conversationBinding.imgGroupChat,
                 conversationBinding.txtUnreadCount
             )
+            hideLeaderboardTooltip()
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
@@ -427,6 +486,21 @@ class ConversationActivity :
             addAttachmentUIUpdate()
             uploadImageByUser()
         }
+        conversationBinding.btnNextStep.setOnClickListener {
+            showNextTooltip()
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < leaderboardTooltipList.size - 1) {
+            currentTooltipIndex++
+            conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
+            conversationBinding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+        } else {
+            conversationBinding.leaderboardTooltipLayout.visibility = GONE
+            PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
+        }
     }
 
     private fun initFuture() {
@@ -457,14 +531,6 @@ class ConversationActivity :
                     }
                 }
             }
-        }
-    }
-
-    private fun initCourseProgressTooltip() {
-        val flag = PrefManager.getBoolValue(LESSON_TWO_OPENED)
-        courseProgressUIVisible = PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
-        if (inboxEntity.isCapsuleCourse && flag && courseProgressUIVisible.not()) {
-            showCourseProgressTooltip()
         }
     }
 
@@ -679,11 +745,9 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if (conversationBinding.courseProgressTooltip.visibility != VISIBLE) {
-                    initScoreCardView(userProfileData)
-                    if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
-                        profileFeatureActiveView(true)
-                }
+                initScoreCardView(userProfileData)
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                    profileFeatureActiveView(true)
             }
         }
 
@@ -840,11 +904,12 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-        userData.isPointsActive?.let { isLeaderBoardActive ->
+        userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 conversationBinding.userPointContainer.slideInAnimation()
+                showLeaderBoardTooltip()
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
@@ -857,38 +922,6 @@ class ConversationActivity :
         }
         if (unseenAwards.isNotEmpty()) {
             showAward(unseenAwards)
-        }
-    }
-
-    private fun showCourseProgressTooltip() {
-        if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
-        ) {
-            conversationBinding.userPointContainer.slideOutAnimation(
-                conversationBinding.imgGroupChat,
-                conversationBinding.txtUnreadCount
-            )
-            conversationBinding.courseProgressTooltip.setDismissListener(this)
-            conversationBinding.courseProgressTooltipContainer.visibility = VISIBLE
-            conversationBinding.courseProgressTooltip.visibility = VISIBLE
-            conversationBinding.shader.visibility = VISIBLE
-        }
-    }
-
-    private fun hideCourseProgressTooltip() {
-        if (conversationBinding.courseProgressTooltip.visibility == VISIBLE) {
-            conversationBinding.courseProgressTooltip.moveViewToScreenCenter(
-                conversationBinding.imgGroupChat,
-                conversationBinding.txtUnreadCount
-            )
-        }
-        conversationBinding.courseProgressTooltipContainer.visibility = GONE
-        conversationBinding.courseProgressTooltip.visibility = GONE
-        conversationBinding.shader.visibility = GONE
-
-        userProfileData?.let {
-            //initScoreCardView(it)
-            //profileFeatureActiveView()
         }
     }
 
@@ -1305,7 +1338,8 @@ class ConversationActivity :
                             LessonActivity.getActivityIntent(
                                 this,
                                 it.lessonId,
-                                conversationId = inboxEntity.conversation_id
+                                conversationId = inboxEntity.conversation_id,
+                                isNewGrammar = it.isNewGrammar
                             ),
                             LESSON_REQUEST_CODE
                         )
@@ -1412,9 +1446,6 @@ class ConversationActivity :
                         data?.getStringExtra(CHAT_ROOM_ID)?.let {
                             conversationViewModel.refreshMessageObject(it)
                         }
-                        if (requestCode == LESSON_REQUEST_CODE && courseProgressUIVisible.not()) {
-                            initCourseProgressTooltip() // Progress Tooltip
-                        }
                     }
                     COURSE_PROGRESS_NEW_REQUEST_CODE -> {
                         data?.getIntExtra(COURSE_ID, -1)?.let {
@@ -1474,6 +1505,11 @@ class ConversationActivity :
         )
     }
 
+    override fun onStart() {
+        super.onStart()
+        //showLessonTooltip()
+    }
+
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
@@ -1528,7 +1564,6 @@ class ConversationActivity :
                 ),
                 COURSE_PROGRESS_NEW_REQUEST_CODE
             )
-            hideCourseProgressTooltip()
             PrefManager.put(COURSE_PROGRESS_OPENED, true)
             courseProgressUIVisible = true
         } else {
@@ -1617,10 +1652,6 @@ class ConversationActivity :
                 ex.printStackTrace()
             }
         }
-    }
-
-    override fun onCourseProgressTooltipDismiss() {
-        hideCourseProgressTooltip()
     }
 
     override fun onProgressUpdate(progress: Long) {

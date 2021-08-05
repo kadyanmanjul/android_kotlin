@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.userprofile
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -124,7 +123,8 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     )
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        it.isVerified = true
+
+                        it.isVerified = User.getInstance().isVerified
                         User.getInstance().updateFromResponse(it)
                     }
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)

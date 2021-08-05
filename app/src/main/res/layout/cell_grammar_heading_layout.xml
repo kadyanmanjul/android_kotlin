@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_8sdp"
+    android:layout_marginBottom="@dimen/_2sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/_12sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/question_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="-0.04"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/grammar_black_text_color"
+            android:textSize="@dimen/_14ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="सही अनुवाद चुनें" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/question_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textColor="@color/grammar_black_text_color"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/question_heading"
+            tools:text="काश मुझे सच पता होता।  "
+            tools:visibility="visible" />
+
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/heading_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="question_description,question_heading" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/regular_audio_iv"
+            android:layout_width="@dimen/_86sdp"
+            android:layout_height="@dimen/_86sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_11sdp"
+            android:background="@drawable/blue_btn_grammar_selector"
+            android:padding="@dimen/_22sdp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/slow_audio_iv"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/heading_barrier"
+            app:srcCompat="@drawable/ic_baseline_speaker_on"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/slow_audio_iv"
+            android:layout_width="@dimen/_58sdp"
+            android:layout_height="@dimen/_58sdp"
+            android:layout_marginStart="@dimen/_11sdp"
+            android:background="@drawable/blue_btn_grammar_selector"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_18sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/regular_audio_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/regular_audio_iv"
+            app:srcCompat="@drawable/ic_speaker_slow"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="question_description,heading_barrier,regular_audio_iv,slow_audio_iv"
+            tools:visibility="gone" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/single_audio"
+            android:layout_width="@dimen/_44sdp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="@drawable/blue_btn_grammar_selector"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_12sdp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/question_heading"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_speaker"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/question_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textColor="@color/grammar_black_text_color"
+            android:visibility="gone"
+            android:minLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/single_audio"
+            app:layout_constraintTop_toBottomOf="@id/question_heading"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="काश मुझे सच पता होता।  "
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="single_audio,question_text"
+            tools:visibility="visible" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
+

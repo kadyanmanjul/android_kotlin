@@ -99,17 +99,6 @@ const val QUESTION_ID = "question_id"
 
 class FirebaseNotificationService : FirebaseMessagingService() {
 
-    private var notificationChannelId = "101111"
-    private var notificationChannelName = NotificationChannelNames.DEFAULT.type
-    private var groupChatChannelId = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
-    private var groupChatChannelName = NotificationChannelNames.GROUP_CHATS.type
-    private var msgCount = 0
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    private var importance = NotificationManager.IMPORTANCE_DEFAULT
-    private val executor: ExecutorService =
-        JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification")
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
@@ -505,58 +494,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 //            }
             else -> {
                 return null
-            }
-        }
-    }
-
-    private fun callForceConnect(actionData: String?) {
-        actionData?.let {
-            try {
-                val obj = JSONObject(it)
-                val data = HashMap<String, String>()
-                data[RTC_TOKEN_KEY] = obj.getString("token")
-                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
-                data[RTC_UID_KEY] = obj.getString("uid")
-                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-                WebRtcService.forceConnect(data)
-            } catch (t: Throwable) {
-                t.printStackTrace()
-            }
-        }
-    }
-
-    private fun callForceDisconnect() {
-        WebRtcService.forceDisconnect()
-    }
-
-    private fun callDisconnectNotificationAction() {
-        WebRtcService.disconnectCallFromCallie()
-    }
-
-    private fun incomingCallNotificationAction(actionData: String?) {
-        actionData?.let {
-            try {
-                val obj = JSONObject(it)
-                val data = HashMap<String, String?>()
-                data[RTC_TOKEN_KEY] = obj.getString("token")
-                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
-                data[RTC_UID_KEY] = obj.getString("uid")
-                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-
-                if (obj.has("f")) {
-                    val id = obj.getInt("caller_uid")
-                    val caller =
-                        AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
-                    Thread.sleep(25)
-                    if (caller != null) {
-                        data[RTC_NAME] = caller.name
-                        data[RTC_CALLER_PHOTO] = caller.image
-                        data[RTC_IS_FAVORITE] = "true"
-                    }
-                }
-                WebRtcService.startOnNotificationIncomingCall(data)
-            } catch (t: Throwable) {
-                t.printStackTrace()
             }
         }
     }
@@ -995,6 +932,220 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     companion object {
-//        val unreadMessageList: LinkedList<BaseMessage> = LinkedList()
+        private val executor: ExecutorService by lazy {
+            JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification")
+        }
+
+        private var notificationChannelId = "101111"
+        private var notificationChannelName = NotificationChannelNames.DEFAULT.type
+
+        @RequiresApi(Build.VERSION_CODES.N)
+        private var importance = NotificationManager.IMPORTANCE_DEFAULT
+
+        public fun sendFirestoreNotification(
+            notificationObject: NotificationObject,
+            context: Context
+        ) {
+            executor.execute {
+
+                val intent = getIntentForNotificationAction(
+                    notificationObject,
+                    notificationObject.action,
+                    notificationObject.actionData
+                )
+
+                intent?.run {
+                    putExtra(HAS_NOTIFICATION, true)
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
+
+                    val activityList = arrayOf(this)
+                    val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+                    val defaultSound =
+                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                    val pendingIntent = PendingIntent.getActivities(
+                        context.applicationContext,
+                        uniqueInt, activityList,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+
+                    val style = NotificationCompat.BigTextStyle()
+                    style.setBigContentTitle(notificationObject.contentTitle)
+                    style.bigText(notificationObject.contentText)
+                    style.setSummaryText("")
+
+                    val notificationBuilder =
+                        NotificationCompat.Builder(
+                            context,
+                            notificationChannelId
+                        )
+                            .setTicker(notificationObject.ticker)
+                            .setSmallIcon(R.drawable.ic_status_bar_notification)
+                            .setContentTitle(notificationObject.contentTitle)
+                            .setAutoCancel(true)
+                            .setSound(defaultSound)
+                            .setContentText(notificationObject.contentText)
+                            .setContentIntent(pendingIntent)
+                            .setStyle(style)
+                            .setWhen(System.currentTimeMillis())
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.colorAccent
+                                )
+                            )
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
+                    }
+
+                    val dismissIntent =
+                        Intent(
+                            context.applicationContext,
+                            DismissNotifEventReceiver::class.java
+                        ).apply {
+                            putExtra(NOTIFICATION_ID, notificationObject.id)
+                            putExtra(HAS_NOTIFICATION, true)
+                        }
+                    val dismissPendingIntent: PendingIntent =
+                        PendingIntent.getBroadcast(
+                            context.applicationContext,
+                            uniqueInt,
+                            dismissIntent,
+                            0
+                        )
+
+                    notificationBuilder.setDeleteIntent(dismissPendingIntent)
+
+                    val notificationManager =
+                        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val notificationChannel = NotificationChannel(
+                            notificationChannelId,
+                            notificationChannelName,
+                            importance
+                        )
+                        notificationChannel.enableLights(true)
+                        notificationChannel.enableVibration(true)
+                        notificationBuilder.setChannelId(notificationChannelId)
+                        notificationManager.createNotificationChannel(notificationChannel)
+                    }
+                    notificationManager.notify(uniqueInt, notificationBuilder.build())
+                }
+                if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
+                    EngagementNetworkHelper.receivedNotification(notificationObject)
+                }
+            }
+        }
+
+        private fun getIntentForNotificationAction(
+            notificationObject: NotificationObject,
+            action: NotificationAction?,
+            actionData: String?
+        ): Intent? {
+            return when (action) {
+                NotificationAction.INCOMING_CALL_NOTIFICATION -> {
+                    if (User.getInstance().isVerified) {
+                        incomingCallNotificationAction(notificationObject.actionData)
+                    }
+                    null
+                }
+                NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
+                    callDisconnectNotificationAction()
+                    null
+                }
+                NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
+                    if (User.getInstance().isVerified) {
+                        callForceConnect(notificationObject.actionData)
+                    }
+                    null
+                }
+                NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
+                    callForceDisconnect()
+                    null
+                }
+                NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
+                    WebRtcService.noUserFoundCallDisconnect()
+                    null
+                }
+                NotificationAction.CALL_ON_HOLD_NOTIFICATION -> {
+                    WebRtcService.holdCall()
+                    null
+                }
+                NotificationAction.CALL_RESUME_NOTIFICATION -> {
+                    WebRtcService.resumeCall()
+                    null
+                }
+                NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
+                    if (notificationObject.actionData != null) {
+                        try {
+                            val obj = JSONObject(notificationObject.actionData!!)
+                            WebRtcService.userJoined(obj.getInt(OPPOSITE_USER_UID))
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+                    null
+                }
+                else -> {
+                    null
+                }
+            }
+        }
+
+        private fun callForceDisconnect() {
+            WebRtcService.forceDisconnect()
+        }
+
+        private fun callForceConnect(actionData: String?) {
+            actionData?.let {
+                try {
+                    val obj = JSONObject(it)
+                    val data = HashMap<String, String>()
+                    data[RTC_TOKEN_KEY] = obj.getString("token")
+                    data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+                    data[RTC_UID_KEY] = obj.getString("uid")
+                    data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+                    WebRtcService.forceConnect(data)
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
+            }
+        }
+
+        private fun callDisconnectNotificationAction() {
+            WebRtcService.disconnectCallFromCallie()
+        }
+
+        private fun incomingCallNotificationAction(actionData: String?) {
+            actionData?.let {
+                try {
+                    val obj = JSONObject(it)
+                    val data = HashMap<String, String?>()
+                    data[RTC_TOKEN_KEY] = obj.getString("token")
+                    data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+                    data[RTC_UID_KEY] = obj.getString("uid")
+                    data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+
+                    if (obj.has("f")) {
+                        val id = obj.getInt("caller_uid")
+                        val caller =
+                            AppObjectController.appDatabase.favoriteCallerDao()
+                                .getFavoriteCaller(id)
+                        Thread.sleep(25)
+                        if (caller != null) {
+                            data[RTC_NAME] = caller.name
+                            data[RTC_CALLER_PHOTO] = caller.image
+                            data[RTC_IS_FAVORITE] = "true"
+                        }
+                    }
+                    WebRtcService.startOnNotificationIncomingCall(data)
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
+            }
+        }
+
     }
 }

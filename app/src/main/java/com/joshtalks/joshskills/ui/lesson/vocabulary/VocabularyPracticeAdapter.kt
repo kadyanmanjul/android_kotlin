@@ -47,13 +47,15 @@ const val PAUSE_AUDIO = "PAUSE_AUDIO"
 
 class VocabularyPracticeAdapter(
     val context: Context,
+    // Audio + Quiz
     val itemList: List<LessonQuestion>,
+    // Child Question Quiz Type
     val assessmentQuizList: ArrayList<AssessmentWithRelations>,
     val clickListener: PracticeClickListeners,
     private var lifecycleProvider: LifecycleOwner,
     private val conversationId: String?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
+    private val TAG = "VocabularyPracticeAdapt"
     var audioManager = ExoAudioPlayer.getInstance()
     var currentQuestion: LessonQuestion? = null
     var currentPlayingPosition: Int = 0
@@ -93,11 +95,39 @@ class VocabularyPracticeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d(TAG, "onBindViewHolder: $position")
+        mapDataToViewHolder(holder, position)
+    }
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        Log.d(TAG, "onBindViewHolder: payloads $position")
+        if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
+            (holder as VocabularyViewHolder).binding.root.tag = itemList[position].id
+            holder.lessonQuestion = itemList[position]
+            holder.positionInList = position
+            holder.pauseAudio()
+        } else
+            mapDataToViewHolder(holder, position)
+    }
+
+    override fun onFailedToRecycleView(holder: RecyclerView.ViewHolder): Boolean {
+        return super.onFailedToRecycleView(holder)
+        Log.d(TAG, "onFailedToRecycleView: ")
+    }
+
+    private fun mapDataToViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
             VOCAB_TYPE -> {
                 (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
                 holder.positionInList = position
                 holder.bind(position)
+                Log.d(TAG, "onBindViewHolder: ${holder.lessonQuestion?.filePath}")
+                if (!holder.lessonQuestion?.filePath.isNullOrBlank())
+                    holder.audioAttachmentInit(holder.lessonQuestion!!)
             }
             else -> {
                 (holder as QuizViewHolder).lessonQuestion = itemList[position]
@@ -107,36 +137,6 @@ class VocabularyPracticeAdapter(
                         holder.assessmentWithRelations = assessmentWithRelations
                         holder.bind(position)
                     }
-            }
-        }
-    }
-
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
-            (holder as VocabularyViewHolder).binding.root.tag = itemList[position].id
-            holder.lessonQuestion = itemList[position]
-            holder.positionInList = position
-            holder.pauseAudio()
-        } else {
-            when (holder.itemViewType) {
-                VOCAB_TYPE -> {
-                    (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
-                    holder.positionInList = position
-                    holder.bind(position)
-                }
-                else -> {
-                    (holder as QuizViewHolder).lessonQuestion = itemList[position]
-                    holder.positionInList = position
-                    assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
-                        .getOrNull(0)?.let { assessmentWithRelations ->
-                            holder.assessmentWithRelations = assessmentWithRelations
-                            holder.bind(position)
-                        }
-                }
             }
         }
     }
@@ -161,9 +161,11 @@ class VocabularyPracticeAdapter(
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        Log.d(TAG, "onViewDetachedFromWindow: ")
         super.onViewDetachedFromWindow(holder)
         if (holder is VocabularyViewHolder) {
-            holder.complete()
+            if (holder.lessonQuestion?.isPlaying == true)
+                holder.complete()
         }
     }
 
@@ -546,6 +548,7 @@ class VocabularyPracticeAdapter(
         RecyclerView.ViewHolder(binding.root),
         AudioPlayerEventListener,
         ExoAudioPlayer.ProgressUpdateListener {
+        private val TAG = "VocabularyPracticeAdapt"
         private var startTime: Long = 0L
         var filePath: String? = null
         private var mUserIsSeeking = false
@@ -557,6 +560,7 @@ class VocabularyPracticeAdapter(
             initViewHolder()
         }
 
+        // Setting Listener
         private fun initViewHolder() {
             binding.handler = this
             binding.titleView.setOnClickListener {
@@ -675,7 +679,7 @@ class VocabularyPracticeAdapter(
                 lessonQuestion?.let {
                     val videoId = it.videoList?.getOrNull(0)?.id
                     val videoUrl = it.videoList?.getOrNull(0)?.video_url
-                    val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                    val currentVideoProgressPosition = binding.videoPlayer.progress
                     VideoPlayerActivity.startVideoActivity(
                         context,
                         "",
@@ -720,8 +724,10 @@ class VocabularyPracticeAdapter(
             }
         }
 
+        // Called to bind data
         fun bind(position: Int) {
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+
             if (expandCardPosition == positionInList && lessonQuestion?.status == QUESTION_STATUS.NA) {
                 expandCardPosition = -1
                 expandCard()
@@ -735,8 +741,11 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        // ===============================
+        // Overidden Methods for AudioPlayerEventListener===============================
         override fun onPlayerPause() {
+            //binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            //currentQuestion?.isPlaying = false
+            //pauseAudio()
         }
 
         override fun onPlayerResume() {
@@ -761,8 +770,10 @@ class VocabularyPracticeAdapter(
         }
 
         override fun complete() {
+            Log.d(TAG, "complete: ")
             clickListener.playAudio(-1)
-            pauseAudio()
+            //pauseAudio()
+            stopAudio()
             audioManager?.setProgressUpdateListener(null)
             audioManager?.seekTo(0)
             binding.progressBarImageView.progress = 0
@@ -770,9 +781,12 @@ class VocabularyPracticeAdapter(
             binding.submitPractiseSeekbar.progress = 0
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             currentQuestion?.isPlaying = false
+            Log.d(TAG, "complete: ${binding.submitBtnPlayInfo.state}")
+            Log.d(TAG, "complete: ${currentQuestion?.isPlaying}")
             pronounceAnimation?.stop()
         }
 
+        // ExoPlayer Overidden Methods
         override fun onProgressUpdate(progress: Long) {
             lessonQuestion?.let {
                 currentQuestion?.playProgress = progress.toInt()
@@ -781,7 +795,7 @@ class VocabularyPracticeAdapter(
                     if (it.materialType == LessonMaterialType.AU) {
                         binding.practiseSeekbar.progress = progress.toInt()
                     }
-                    Timber.d("onProgressUpdate() called with: progress = $progress")
+                    // Timber.d("onProgressUpdate() called with: progress = $progress")
                     binding.submitPractiseSeekbar.progress = progress.toInt()
 
 //                notifyItemChanged(layoutPosition)
@@ -795,6 +809,8 @@ class VocabularyPracticeAdapter(
             }
         }
 
+
+        // Audio Control Methods
         private fun checkIsPlayer(): Boolean {
             return audioManager != null
         }
@@ -811,17 +827,16 @@ class VocabularyPracticeAdapter(
         ) {
 
             currentPlayingPosition = position
-
             currentQuestion = lessonQuestion
             audioManager?.playerListener = this
             audioManager?.play(audioObject.audio_url)
             audioManager?.setProgressUpdateListener(progressListener)
-
             lessonQuestion.isPlaying = lessonQuestion.isPlaying.not()
             clickListener.playAudio(bindingAdapterPosition)
         }
 
         fun playPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
+            Log.d(TAG, "playPracticeAudio: ")
             if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
                 StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
                     .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
@@ -859,6 +874,7 @@ class VocabularyPracticeAdapter(
         }
 
         fun playSubmitPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
+            Log.d(TAG, "playSubmitPracticeAudio: ")
             try {
                 val audioType = AudioType()
                 if (filePath == null) {
@@ -914,6 +930,7 @@ class VocabularyPracticeAdapter(
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
+                showToast("Error Playing Audio...")
             }
         }
 
@@ -949,6 +966,7 @@ class VocabularyPracticeAdapter(
         }
 
         fun pauseAudio() {
+            Log.d(TAG, "pauseAudio: ")
             audioManager?.onPause()
             lessonQuestion?.let {
                 if (it.isPlaying) {
@@ -959,7 +977,16 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        // ============================================================================
+        fun stopAudio() {
+            Log.d(TAG, "stopAudio: ")
+            audioManager?.onPause()
+            lessonQuestion?.let {
+                currentQuestion?.isPlaying = false
+                binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            }
+        }
+
+        // UI Control Methods ============================================================================
         private fun setPracticeInfoView(lessonQuestion: LessonQuestion) {
             val wordNumber = itemList.filter { it.assessmentId == null }.indexOf(lessonQuestion) + 1
 
@@ -1080,6 +1107,7 @@ class VocabularyPracticeAdapter(
         }
 
         private fun setViewUserSubmitAnswer(lessonQuestion: LessonQuestion) {
+            Log.d(TAG, "setViewUserSubmitAnswer: ")
             lessonQuestion.expectedEngageType?.let {
                 hidePracticeInputLayout()
                 showPracticeSubmitLayout()
@@ -1187,7 +1215,8 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        private fun audioAttachmentInit(lessonQuestion: LessonQuestion) {
+        fun audioAttachmentInit(lessonQuestion: LessonQuestion) {
+            Log.d(TAG, "audioAttachmentInit: ${lessonQuestion.hashCode()}")
             CoroutineScope(Dispatchers.Main).launch {
                 showPracticeSubmitLayout()
                 binding.submitAudioViewContainer.visibility = VISIBLE
@@ -1222,6 +1251,7 @@ class VocabularyPracticeAdapter(
         }
 
         private fun removeAudioPractice(lessonQuestion: LessonQuestion) {
+            Log.d(TAG, "removeAudioPractice: ")
             if (isAudioPlaying()) {
                 audioManager?.resumeOrPause()
             }

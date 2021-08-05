@@ -74,6 +74,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
     private var isFromFreeTrial: Boolean = false
+    private var isFromNewFreeTrial: Boolean = false
     private var buySubscription: Boolean = false
     private var flowFrom: String? = null
     private var downloadID: Long = -1
@@ -232,6 +233,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, { data ->
+            isFromNewFreeTrial = data.isFreeTrial
             binding.txtActualPrice.text = data.paymentData.actualAmount
             binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
             if (data.paymentData.discountText.isNullOrEmpty().not()) {
@@ -629,7 +631,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             logStartCourseAnalyticEvent(tempTestId)
             PaymentSummaryActivity.startPaymentSummaryActivity(
                 this,
-                PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
+                testId = PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString(),
+                isFromNewFreeTrial = isFromNewFreeTrial
             )
         } else if (isFromFreeTrial) {
             val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
@@ -639,7 +642,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 logStartCourseAnalyticEvent(tempTestId)
                 PaymentSummaryActivity.startPaymentSummaryActivity(
                     this,
-                    tempTestId.toString()
+                    tempTestId.toString(),
+                    isFromNewFreeTrial = isFromNewFreeTrial
                 )
             } else viewModel.addMoreCourseToFreeTrial(testId)
         } else {
@@ -660,11 +664,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 logStartCourseAnalyticEvent(tempTestId)
                 PaymentSummaryActivity.startPaymentSummaryActivity(
                     this,
-                    tempTestId.toString()
+                    tempTestId.toString(),
+                    isFromNewFreeTrial = isFromNewFreeTrial
                 )
             } else {
                 logStartCourseAnalyticEvent(testId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
+                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial)
             }
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }
@@ -808,6 +813,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     }
                 }
             }
+        }
+
+        if (viewModel.courseDetailsLiveData.value?.isFreeTrial?:false || isFromNewFreeTrial ) {
+            binding.btnStartCourse.text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_COURSE_DETAIL_BTN_TXT)
         }
     }
 

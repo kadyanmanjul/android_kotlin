@@ -18,6 +18,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
+import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.TIMEOUT_TIME
 import com.joshtalks.joshskills.core.Utils
@@ -25,6 +29,7 @@ import com.joshtalks.joshskills.core.VerificationService
 import com.joshtalks.joshskills.core.VerificationStatus
 import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.getCountryIsoCode
+import com.joshtalks.joshskills.core.getDefaultCountryIso
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.core.showToast
@@ -32,7 +37,6 @@ import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
-import com.sinch.verification.PhoneNumberUtils
 import java.util.concurrent.TimeUnit
 
 class SignUpOptionsFragment : BaseSignUpFragment() {
@@ -68,7 +72,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
+        val defaultRegion: String = getDefaultCountryIso(requireContext())
         setupVerificationSystem(defaultRegion)
         if (Utils.isTrueCallerAppExist()) {
             binding.btnTruecallerLogin.visibility = View.VISIBLE
@@ -86,6 +90,19 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         }
         prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         bindProgressButton(binding.btnLogin)
+        addObserver()
+        if (PrefManager.getBoolValue(IS_PAYMENT_DONE) &&
+            (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
+        ) {
+                val mobileNumber = PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(
+                    SINGLE_SPACE)
+            if (mobileNumber.isNullOrEmpty().not()) {
+                binding.mobileEt.setText(mobileNumber[1])
+            }
+        }
+    }
+
+    private fun addObserver() {
         viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {
             it.run {
                 when {
@@ -208,7 +225,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     private fun setupVerificationSystem(countryRegion: String? = null) {
         var defaultRegion: String = countryRegion ?: EMPTY
         if (defaultRegion.isEmpty()) {
-            defaultRegion = PhoneNumberUtils.getDefaultCountryIso(requireContext())
+            defaultRegion = getDefaultCountryIso(requireContext())
         }
         verificationVia = if (defaultRegion == "IN") {
             VerificationVia.SMS
@@ -226,7 +243,8 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         verificationService = if (defaultRegion == "IN") {
             VerificationService.SMS_COUNTRY
         } else {
-            VerificationService.SINCH
+            // VerificationService.SINCH
+            VerificationService.SMS_COUNTRY
         }
         callVerificationService()
         disableMobileEditText()

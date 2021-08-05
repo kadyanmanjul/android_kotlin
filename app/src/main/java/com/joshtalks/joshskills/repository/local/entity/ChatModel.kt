@@ -129,6 +129,7 @@ data class ChatModel(
     @Ignore
     var filePath: String? = null
 
+    @Ignore
     constructor(type: BASE_MESSAGE_TYPE, text: String = EMPTY) : this(
         type = type,
         text = text,
@@ -309,7 +310,7 @@ data class Question(
 //    @SerializedName("practice_engagements")
     var practiseEngagementV2: List<PracticeEngagementV2>? = emptyList(),
 
-) : Parcelable
+    ) : Parcelable
 
 data class User(
     @SerializedName("first_name") var first_name: String = "",

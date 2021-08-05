@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.BuildConfig
@@ -40,6 +39,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -57,11 +57,13 @@ import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.io.File
 import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
 
@@ -79,6 +81,15 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private var currentQuizQuestion: Int = 0
     private var correctAns = 0
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
+
+    private var currentTooltipIndex = 0
+    private val lessonTooltipList by lazy {
+        listOf(
+            "हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking",
+            "आज, इस भाग में हम अपने वर्तमान व्याकरण स्तर का पता लगाएंगे",
+            "हमारे स्तर के आधार पर अगले पाठ से हम यहाँ व्याकरण की अवधारणाएँ सीखेंगे"
+        )
+    }
 
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -107,9 +118,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_grammar_layout, container, false)
-        binding.handler = this
         binding.grammarScrollView.layoutTransition?.setAnimateParentHierarchy(false)
-
+        binding.handler = this
         binding.grammarScrollView.viewTreeObserver.addOnScrollChangedListener(this)
         binding.expandIv.setOnClickListener {
             if (binding.grammarDescTv.maxLines == COLLAPSED_DESCRIPTION_MAX_LINES) {
@@ -132,7 +142,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
         subscribeRxBus()
         setObservers()
-
         return binding.root
     }
 
@@ -141,6 +150,44 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
+        showTooltip()
+    }
+
+    private fun showTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    binding.lessonTooltipLayout.visibility = View.GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                        binding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.lessonTooltipLayout.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < lessonTooltipList.size - 1) {
+            currentTooltipIndex++
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+        } else {
+            binding.lessonTooltipLayout.visibility = View.GONE
+            PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
+        }
+    }
+
+    fun hideTooltip() {
+        binding.lessonTooltipLayout.visibility = View.GONE
+        PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
     }
 
     private fun subscribeRxBus() {
@@ -261,8 +308,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     private fun setObservers() {
         viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner,
-            Observer { lessonQuestions ->
+            viewLifecycleOwner, { lessonQuestions ->
                 binding.practiceTitleTv.text =
                     getString(
                         R.string.today_lesson,
@@ -296,6 +342,9 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
         viewModel.grammarVideoInterval.observe(this@GrammarFragment.viewLifecycleOwner) { graph ->
             binding.videoPlayer.setProgress(graph?.endTime ?: 0)
+        }
+        binding.btnNextStep.setOnClickListener {
+            showNextTooltip()
         }
     }
 
@@ -665,9 +714,9 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
 
             val selectedChoice = question.choiceList[
-                binding.quizRadioGroup.indexOfChild(
-                    binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                )
+                    binding.quizRadioGroup.indexOfChild(
+                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                    )
             ]
             selectedChoice.isSelectedByUser = true
             selectedChoice.userSelectedOrder = selectedChoice.sortOrder
@@ -776,8 +825,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                         download()
                     } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
                             File(
-                                    AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
-                                )
+                                AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
+                            )
                         ) > 0
                     ) {
                         pdfQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED

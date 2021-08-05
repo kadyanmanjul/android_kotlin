@@ -13,22 +13,36 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
+import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
+import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
+import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
+import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,11 +57,27 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
     lateinit var titleView: TextView
     private var isDemo = false
+    private var isNewGrammar = false
     private var testId = -1
     private var whatsappUrl = EMPTY
-
+    private val compositeDisposable = CompositeDisposable()
+    private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
+    val arrayFragment = arrayListOf<Fragment>()
+    var lessonIsNewGrammar = false
+    var lessonNumber = -1
+    private var ruleIdLeftList = ArrayList<Int>()
+    private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
+    private var totalRuleList: ArrayList<Int>? = arrayListOf()
+    private val adapter: LessonPagerAdapter by lazy {
+        LessonPagerAdapter(
+            supportFragmentManager,
+            FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+            arrayFragment
+        )
+    }
+
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK && result.data!!.hasExtra(IS_BATCH_CHANGED)) {
@@ -75,10 +105,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
+        isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
+            IS_NEW_GRAMMAR,
+            false
+        ) else false
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
-                .not()
-            ) intent.getStringExtra(WHATSAPP_URL) else EMPTY
+                    .not()
+            ) intent.getStringExtra(WHATSAPP_URL) ?: EMPTY else EMPTY
         testId = intent.getIntExtra(TEST_ID, -1)
 
         titleView = findViewById(R.id.text_message_title)
@@ -96,6 +130,42 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRxBus()
+    }
+
+    private fun subscribeRxBus() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { event ->
+                    if (customView == null) {
+                        customView = CustomWord(this, event.customWord.choice)
+                    } else {
+                        binding.rootView.removeView(customView)
+                        customView?.updateChoice(event.customWord.choice)
+                        //customView?.choice = event.customWord.choice
+                    }
+                    customView?.apply {
+                        binding.rootView.addView(this)
+                        this.text = event.customWord.choice.text
+                        this.x = event.fromLocation[0].toFloat()
+                        this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
+                        val toLocation = IntArray(2)
+                        event.customWord.getLocationOnScreen(toLocation)
+                        toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
+                        this.transaltionAnimationNew(
+                            toLocation,
+                            event.customWord,
+                            event.optionLayout
+                        )
+                    }
+                }
+        )
     }
 
     override fun getConversationId(): String? {
@@ -116,9 +186,45 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 viewModel.lessonLiveData.value?.let {
                     titleView.text =
                         getString(R.string.lesson_no, it.lessonNo)
+                    lessonNumber = it.lessonNo
+                    lessonIsNewGrammar = it.isNewGrammar
                 }
-                setUpTabLayout()
-                setTabCompletionStatus()
+                if (lessonIsNewGrammar) {
+
+                    totalRuleList = AppObjectController.gsonMapper.fromJson(
+                        PrefManager.getStringValue(ONLINE_TEST_LIST_OF_TOTAL_RULES),
+                        object : TypeToken<ArrayList<Int>?>() {}.type
+                    )
+                    if (totalRuleList.isNullOrEmpty()) {
+                        viewModel.getListOfRuleIds()
+                    } else {
+                        ruleCompletedList = AppObjectController.gsonMapper.fromJson(
+                            PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
+                            object : TypeToken<ArrayList<Int>?>() {}.type
+                        )
+                        setUpNewGrammarLayouts(ruleCompletedList, totalRuleList)
+                    }
+                } else {
+                    setUpTabLayout(lessonNumber, lessonIsNewGrammar)
+                    setTabCompletionStatus()
+                }
+            }
+        )
+
+        viewModel.ruleListIds.observe(
+            this,
+            { ruleIds ->
+                if (ruleIds.totalRulesIds.isNullOrEmpty().not()) {
+                    PrefManager.put(
+                        ONLINE_TEST_LIST_OF_TOTAL_RULES,
+                        ruleIds.totalRulesIds.toString()
+                    )
+                    PrefManager.put(
+                        ONLINE_TEST_LIST_OF_COMPLETED_RULES,
+                        ruleIds.rulesCompletedIds.toString()
+                    )
+                    setUpNewGrammarLayouts(ruleIds.rulesCompletedIds, ruleIds.totalRulesIds)
+                }
             }
         )
 
@@ -131,20 +237,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                         playSnackbarSound(this)
                     }
                 }
-            /*if (it.awardMentorList.isNullOrEmpty().not()) {
-                //TODO add when awards functionality is over
-                //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
-            }
-            if (it.outranked!!) {
-                it.outrankedData?.let {
-                    showLeaderboardAchievement(
-                        it,
-                        lessonInterval,
-                        chatId,
-                        lessonModel?.lessonNo ?: 0
-                    )
+                /*if (it.awardMentorList.isNullOrEmpty().not()) {
+                    //TODO add when awards functionality is over
+                    //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
                 }
-            }*/
+                if (it.outranked!!) {
+                    it.outrankedData?.let {
+                        showLeaderboardAchievement(
+                            it,
+                            lessonInterval,
+                            chatId,
+                            lessonModel?.lessonNo ?: 0
+                        )
+                    }
+                }*/
             }
         )
 
@@ -158,14 +264,30 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         )
     }
 
+    private fun setUpNewGrammarLayouts(
+        rulesCompletedIds: ArrayList<Int>?,
+        totalRulesIds: ArrayList<Int>?
+    ) {
+        var isTestCompleted = false
+        if (rulesCompletedIds.isNullOrEmpty().not()) {
+            totalRulesIds?.removeAll(rulesCompletedIds!!)
+            ruleIdLeftList = totalRulesIds ?: ArrayList<Int>()
+            if (ruleIdLeftList.isEmpty()) {
+                isTestCompleted = true
+            }
+        }
+        setUpTabLayout(lessonNumber, lessonIsNewGrammar, isTestCompleted)
+        setTabCompletionStatus()
+    }
+
     override fun onNextTabCall(currentTabNumber: Int) {
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
-                        lesson.vocabStatus == LESSON_STATUS.CO &&
-                        lesson.readingStatus == LESSON_STATUS.CO &&
-                        lesson.speakingStatus == LESSON_STATUS.CO
+                            lesson.vocabStatus == LESSON_STATUS.CO &&
+                            lesson.readingStatus == LESSON_STATUS.CO &&
+                            lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (lessonCompleted) {
                         lesson.status = LESSON_STATUS.CO
@@ -204,6 +326,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
+    override fun onLessonUpdate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                viewModel.updateLessonStatus()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.lessonLiveData.value?.let { lesson ->
@@ -222,112 +354,36 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
-    /*private fun setUpTabLayout() {
-        val adapter = LessonPagerAdapter(
-            supportFragmentManager,
-            this.lifecycle
-        )
+    private fun setUpTabLayout(
+        lessonNo: Int,
+        lessonIsNewGrammar: Boolean,
+        isTestCompleted: Boolean = false
+    ) {
 
-        binding.lessonViewpager.adapter = adapter
-        //binding.lessonViewpager.add
-        binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
-        binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
+        if (lessonIsNewGrammar) {
+            if (isTestCompleted.not()) {
+                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+            } else if (PrefManager.getIntValue(
+                    ONLINE_TEST_LAST_LESSON_COMPLETED
+                ) >= lessonNumber
+            ) {
+                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
 
-        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-        for (i in 0 until tabs.childCount) {
-            val tab = tabs.getChildAt(i)
-            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-            layoutParams.weight = 0f
-            //     layoutParams.marginEnd = Utils.dpToPx(2)
-            //  layoutParams.marginStart = Utils.dpToPx(2)
+            } else arrayFragment.add(0, GrammarFragment.getInstance())
+        } else {
+            arrayFragment.add(0, GrammarFragment.getInstance())
         }
-        binding.lessonTabLayout.requestLayout()
 
-        TabLayoutMediator(
-            binding.lessonTabLayout,
-            binding.lessonViewpager
-        ) { tab, position ->
-            tab.setCustomView(R.layout.capsule_tab_layout_view)
-            when (position) {
-                0 -> {
-                    setSelectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
-                }
-                1 -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
-                }
-                2 -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.READING_TITLE)
-                }
-                3 -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
-                }
-            }
-        }.attach()
-
-        binding.lessonTabLayout.addOnTabSelectedListener(object :
-                TabLayout.OnTabSelectedListener {
-
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    setSelectedColor(tab)
-                }
-
-                override fun onTabReselected(tab: TabLayout.Tab?) {
-                    setSelectedColor(tab)
-                }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-                    setUnselectedColor(tab)
-                }
-            })
-
-        Handler().postDelayed(
-            {
-                openIncompleteTab(3)
-            },
-            50
-        )
-    }*/
-
-    private fun setUpTabLayout() {
-        val adapter = LessonPagerTestAdapter(
-            supportFragmentManager,
-            FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-        )
-
-        /*LessonPagerAdapter(
-        supportFragmentManager,
-        this.lifecycle
-    )*/
-
+        arrayFragment.add(1, VocabularyFragment.getInstance())
+        arrayFragment.add(2, ReadingFragmentWithoutFeedback.getInstance())
+        arrayFragment.add(3, SpeakingPractiseFragment.newInstance())
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.offscreenPageLimit = 3
-        //binding.lessonViewpager.add
-        //binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
-        //binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
 
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-        /*for (i in 0 until tabs.childCount) {
-            val tab = tabs.getChildAt(i)
-            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-            layoutParams.weight = 0f
-            //     layoutParams.marginEnd = Utils.dpToPx(2)
-            //  layoutParams.marginStart = Utils.dpToPx(2)
-        }*/
+
         binding.lessonTabLayout.requestLayout()
-        // binding.lessonTabLayout.s
-        //for(tab in )
+
         val tabCount = binding.lessonTabLayout.tabCount
         for (index in 0 until tabCount) {
             val tab = binding.lessonTabLayout.getTabAt(index)
@@ -359,38 +415,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 }
             }
         }
-        /*TabLayoutMediator(
-            binding.lessonTabLayout,
-            binding.lessonViewpager
-        ) { tab, position ->
-            tab.setCustomView(R.layout.capsule_tab_layout_view)
-            when (position) {
-                0 -> {
-                    setSelectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
-                }
-                1 -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
-                }
-                2 -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.READING_TITLE)
-                }
-                3 -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
-                }
-            }
-        }.attach()*/
+
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
@@ -414,6 +439,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             },
             50
         )
+    }
+
+    private fun isOnlineTestCompleted(): Boolean {
+        if (ruleCompletedList.isNullOrEmpty()) {
+            return false
+        } else return ruleIdLeftList.isNullOrEmpty()
     }
 
     private fun openIncompleteTab(currentTabNumber: Int) {
@@ -588,8 +619,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     companion object {
-        private const val LESSON_ID = "lesson_id"
+        const val LESSON_ID = "lesson_id"
         private const val IS_DEMO = "is_demo"
+        private const val IS_NEW_GRAMMAR = "is_new_grammar"
         private const val WHATSAPP_URL = "whatsapp_url"
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
@@ -601,9 +633,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             whatsappUrl: String? = null,
             testId: Int? = null,
             conversationId: String? = null,
+            isNewGrammar: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
+            putExtra(IS_NEW_GRAMMAR, isNewGrammar)
             putExtra(CONVERSATION_ID, conversationId)
             if (isDemo) {
                 putExtra(WHATSAPP_URL, whatsappUrl)

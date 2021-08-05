@@ -5,6 +5,7 @@ import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import java.lang.Math.abs
+import timber.log.Timber
 
 fun RecyclerView.enforceSingleScrollDirection() {
     val enforcer = SingleScrollDirectionEnforcer()
@@ -53,20 +54,24 @@ private class SingleScrollDirectionEnforcer : RecyclerView.OnScrollListener(),
     override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
 
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-        val oldState = scrollState
-        scrollState = newState
-        if (oldState == RecyclerView.SCROLL_STATE_IDLE && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-            recyclerView.layoutManager?.let { layoutManager ->
-                val canScrollHorizontally = layoutManager.canScrollHorizontally()
-                val canScrollVertically = layoutManager.canScrollVertically()
-                if (canScrollHorizontally != canScrollVertically) {
-                    if ((canScrollHorizontally && abs(dy) > abs(dx))
-                        || (canScrollVertically && abs(dx) > abs(dy))
-                    ) {
-                        recyclerView.stopScroll()
+        try {
+            val oldState = scrollState
+            scrollState = newState
+            if (oldState == RecyclerView.SCROLL_STATE_IDLE && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                recyclerView.layoutManager?.let { layoutManager ->
+                    val canScrollHorizontally = layoutManager.canScrollHorizontally()
+                    val canScrollVertically = layoutManager.canScrollVertically()
+                    if (canScrollHorizontally != canScrollVertically) {
+                        if ((canScrollHorizontally && abs(dy) > abs(dx))
+                            || (canScrollVertically && abs(dx) > abs(dy))
+                        ) {
+                            recyclerView.stopScroll()
+                        }
                     }
                 }
             }
+        } catch (ex: Exception) {
+            Timber.w(ex);
         }
     }
 }

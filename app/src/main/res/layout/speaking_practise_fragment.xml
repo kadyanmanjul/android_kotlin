@@ -160,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:backgroundTint="@color/disable_color"
+                    android:backgroundTint="@color/colorAccent"
                     android:gravity="center"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
@@ -169,13 +169,15 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_12ssp"
+                    android:visibility="gone"
                     app:cornerRadius="@dimen/_36sdp"
                     app:layout_constraintBottom_toTopOf="@+id/btn_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.7"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/white"
+                    tools:visibility="visible" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_start"
@@ -251,6 +253,87 @@
                     android:visibility="gone"
                     app:constraint_referenced_ids="text_view_2,tv_today_topic,tv_practise_time,progress_bar,info_container,text_view_1"
                     tools:visibility="visible" />
+
+                <FrameLayout
+                    android:id="@+id/lesson_tooltip_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="@dimen/_180sdp"
+                        android:layout_height="@dimen/_108sdp"
+                        android:layout_marginHorizontal="@dimen/_2sdp"
+                        android:background="@drawable/bg_tooltip_large_end">
+
+                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                            android:id="@+id/joshTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_8sdp"
+                            android:paddingTop="@dimen/_18sdp"
+                            android:paddingBottom="@dimen/_8sdp"
+                            android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtTooltipIndex"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_8sdp"
+                            android:paddingVertical="@dimen/_8sdp"
+                            android:text="1 of 3"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textColor="@color/black"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/btnNextStep"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/_8sdp"
+                            android:background="@drawable/rounded_primary_bg_2dp"
+                            android:backgroundTint="@color/button_color"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:paddingHorizontal="@dimen/_14sdp"
+                            android:paddingVertical="@dimen/_3sdp"
+                            android:text="आगे बढ़े"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:background="@drawable/ic_outline_cancel_24"
+                        android:onClick="@{()->handler.hideTooltip()}"
+                        android:padding="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </FrameLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

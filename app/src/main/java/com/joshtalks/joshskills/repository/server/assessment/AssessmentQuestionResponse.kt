@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.server.assessment
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -14,14 +15,23 @@ data class AssessmentQuestionResponse(
     @SerializedName("text")
     val text: String,
 
+    @SerializedName("sub_text")
+    val subText: String = EMPTY,
+
     @SerializedName("sort_order")
     val sortOrder: Int,
 
     @SerializedName("media_url")
-    val mediaUrl: String,
+    val mediaUrl: String = EMPTY,
 
     @SerializedName("media_type")
-    val mediaType: AssessmentMediaType,
+    val mediaType: AssessmentMediaType = AssessmentMediaType.NONE,
+
+    @SerializedName("media_url_2")
+    val mediaUrl2: String = EMPTY,
+
+    @SerializedName("media_type_2")
+    val mediaType2: AssessmentMediaType = AssessmentMediaType.NONE,
 
     @SerializedName("video_thumbnail_url")
     val videoThumbnailUrl: String?,
@@ -35,11 +45,20 @@ data class AssessmentQuestionResponse(
     @SerializedName("revise_concept")
     val reviseConcept: ReviseConceptResponse?,
 
+    @SerializedName("feedback")
+    val feedback: AssessmentQuestionFeedbackResponse? = null,
+
     @SerializedName("is_attempted")
     val isAttempted: Boolean = false,
 
+    @SerializedName("is_new_header")
+    val isNewHeader: Boolean = false,
+
     @SerializedName("status")
-    val status: QuestionStatus = QuestionStatus.NONE
+    val status: QuestionStatus = QuestionStatus.NONE,
+
+    @SerializedName("list_of_answers")
+    val listOfAnswers: List<String>? = arrayListOf()
 
 ) : Parcelable
 
@@ -62,6 +81,15 @@ enum class ChoiceType(val type: String) {
 
     @SerializedName("FILL_IN_THE_BLANKS_TEXT")
     FILL_IN_THE_BLANKS_TEXT("FILL_IN_THE_BLANKS_TEXT"),
+
+    @SerializedName("ARRANGE_THE_SENTENCE")
+    ARRANGE_THE_SENTENCE("ARRANGE_THE_SENTENCE"),
+
+    @SerializedName("ARRANGE_THE_SENTENCE_NEW")
+    ARRANGE_THE_SENTENCE_NEW("ARRANGE_THE_SENTENCE_NEW"),
+
+    @SerializedName("INPUT_TEXT")
+    INPUT_TEXT("INPUT_TEXT"),
 
 }
 

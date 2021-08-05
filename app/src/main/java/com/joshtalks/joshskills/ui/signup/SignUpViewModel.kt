@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
+import com.userexperior.UserExperior
 import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -223,6 +224,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 .setUserId(loginResponse.userId)
                 .update()
             Mentor.getInstance().updateUser(user)
+            UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
             WorkManagerAdmin.userActiveStatusWorker(true)

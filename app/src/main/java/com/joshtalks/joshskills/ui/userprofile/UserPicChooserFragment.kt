@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.userprofile
 
 import android.os.Bundle
+import android.os.Environment
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.UserPicChooserDialogBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
+import java.io.File
 
 class UserPicChooserFragment : BottomSheetDialogFragment() {
 
@@ -97,6 +99,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         ImagePicker.with(this)
             .crop()                    //Crop image(Optional), Check Customization for more option
             .galleryOnly()
+            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
         dismiss()
     }
@@ -106,6 +109,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         ImagePicker.with(this)
             .crop()                    //Crop image(Optional), Check Customization for more option
             .cameraOnly()
+            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
         dismiss()
     }

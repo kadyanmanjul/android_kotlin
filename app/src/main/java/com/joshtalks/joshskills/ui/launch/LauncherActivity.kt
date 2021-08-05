@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
@@ -56,7 +57,9 @@ class LauncherActivity : CoreJoshActivity() {
             WorkManagerAdmin.appInitWorker()
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
-            //logNotificationData()
+            if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {
+                 PrefManager.put(IS_FREE_TRIAL,true,false)
+            }
         }
     }
 

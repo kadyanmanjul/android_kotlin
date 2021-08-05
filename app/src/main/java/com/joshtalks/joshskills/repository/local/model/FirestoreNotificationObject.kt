@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.local.model
 
+import com.google.firebase.Timestamp
 import com.google.gson.annotations.SerializedName
 
 data class FirestoreNotificationObject(
@@ -66,6 +67,24 @@ data class FirestoreNotificationObject(
 
     @SerializedName("additionalData")
     var extraData: String? = null,
+
+    @SerializedName("callTopic")
+    var topicName: String? = null,
+
+    @SerializedName("topicId")
+    var topicId: Int = -1,
+
+    @SerializedName("profilePic")
+    var profilePicUrl: String? = null,
+
+    @SerializedName("userName")
+    var userName: String? = null,
+
+    @SerializedName("created")
+    var created: Timestamp? = null,
+
+    @SerializedName("modified")
+    var modified: Timestamp? = null,
 ) {
     fun toNotificationObject(id: String?) = NotificationObject().also {
         it.id = id

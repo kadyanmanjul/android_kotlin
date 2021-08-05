@@ -99,8 +99,8 @@ class ActivityLibMain : ActivityBase() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
                 true
@@ -135,8 +135,10 @@ class ActivityLibMain : ActivityBase() {
             }
             if (intent.hasExtra("uris")) {
                 val paths = intent.getParcelableArrayListExtra<Uri>("uris")
-                for (i in paths.indices) {
-                    uriList.add(paths[i])
+                if (paths != null) {
+                    for (i in paths.indices) {
+                        uriList.add(paths[i])
+                    }
                 }
             }
             if (uriList.isNotEmpty()) {
@@ -313,7 +315,10 @@ class ActivityLibMain : ActivityBase() {
 
     fun processVideo(uri: Uri, filePath: String) {
         val f =
-            File(Environment.getExternalStorageDirectory().toString() + File.separator + "JoshSkill" + File.separator + "Media" + "/cached")
+            File(
+                Environment.getExternalStorageDirectory()
+                    .toString() + File.separator + "JoshSkill" + File.separator + "Media" + "/cached"
+            )
         if (!f.exists()) {
             f.mkdirs()
         }
@@ -338,7 +343,7 @@ class ActivityLibMain : ActivityBase() {
         } else if (data != null && resultCode == Activity.RESULT_OK) {
             val uriList: ArrayList<Uri> = arrayListOf()
             if (requestCode == IMAGE_SELECT) {
-                uriList.add(Uri.parse(data.getStringArrayListExtra(IMAGE_RESULTS)[0]))
+                uriList.add(Uri.parse(data.getStringArrayListExtra(IMAGE_RESULTS)?.get(0)))
             } else if (requestCode == VIDEO_SELECT) {
                 uriList.add(Uri.parse(data.getStringExtra("video_uri")))
             }

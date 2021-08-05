@@ -38,7 +38,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -47,7 +49,6 @@ import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.AudioType
@@ -64,6 +65,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -84,6 +86,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
@@ -111,6 +114,13 @@ class ReadingFragmentWithoutFeedback :
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
 
+    private var currentTooltipIndex = 0
+    private val lessonTooltipList by lazy {
+        listOf(
+            "हम यहां अपने पढ़ने और उच्चारण में सुधार करेंगे",
+            "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे")
+    }
+
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -119,7 +129,7 @@ class ReadingFragmentWithoutFeedback :
                 CURRENT_VIDEO_PROGRESS_POSITION,
                 0
             )?.let { progress ->
-                binding.videoPlayer.setProgress(progress)
+                binding.videoPlayer.progress = progress
                 binding.videoPlayer.onResume()
             }
         }
@@ -149,13 +159,12 @@ class ReadingFragmentWithoutFeedback :
                 container,
                 false
             )
+        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
-        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
-
         addObserver()
-
+        showTooltip()
         return binding.rootView
     }
 
@@ -221,6 +230,43 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
+    private fun showTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_READING_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    binding.lessonTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                        binding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.lessonTooltipLayout.visibility = VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < lessonTooltipList.size - 1) {
+            currentTooltipIndex++
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+        } else {
+            binding.lessonTooltipLayout.visibility = GONE
+            PrefManager.put(HAS_SEEN_READING_TOOLTIP, true)
+        }
+    }
+
+    fun hideTooltip() {
+        binding.lessonTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_SEEN_READING_TOOLTIP, true)
+    }
+
     fun hidePracticeInputLayout() {
         binding.practiseInputHeader.visibility = GONE
         binding.practiseInputLabel.visibility = GONE
@@ -261,6 +307,7 @@ class ReadingFragmentWithoutFeedback :
         val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
         viewHolders.forEach {
             it.pauseAudio()
+            it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
         }
     }
 
@@ -338,7 +385,7 @@ class ReadingFragmentWithoutFeedback :
                             binding.videoPlayer.setPlayListener {
                                 val videoId = this.videoList?.getOrNull(0)?.id
                                 val videoUrl = this.videoList?.getOrNull(0)?.video_url
-                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                                val currentVideoProgressPosition = binding.videoPlayer.progress
                                 openVideoPlayerActivity.launch(
                                     VideoPlayerActivity.getActivityIntent(
                                         requireContext(),
@@ -511,6 +558,9 @@ class ReadingFragmentWithoutFeedback :
                 }
             }
         )
+        binding.btnNextStep.setOnClickListener {
+            showNextTooltip()
+        }
     }
 
     private fun showCompletedPractise() {
@@ -630,7 +680,7 @@ class ReadingFragmentWithoutFeedback :
             )
         )
         binding.audioList.addItemDecoration(divider)
-        binding.audioList.enforceSingleScrollDirection()
+        //binding.audioList.enforceSingleScrollDirection()
     }
 
     private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {

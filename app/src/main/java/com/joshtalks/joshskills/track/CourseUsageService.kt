@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import java.util.Stack
 import timber.log.Timber
 
@@ -24,7 +25,7 @@ class CourseUsageService : JobIntentService() {
         intent.action?.let {
             when (it) {
                 AppUsageStartConversationId().action -> {
-                    val conversationId = intent.getStringExtra(CONVERSATION_ID)
+                    val conversationId = intent.getStringExtra(CONVERSATION_ID)?: EMPTY
                     val screenName = intent.getStringExtra(SCREEN_NAME)
                     val obj = CourseUsageModel(
                         conversationId = conversationId,

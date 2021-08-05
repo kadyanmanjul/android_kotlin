@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
-import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.*
@@ -77,7 +76,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
             PrefManager.put(API_TOKEN, User.getInstance().token)
         }
         if (PrefManager.getStringValue(COUNTRY_ISO).isEmpty()) {
-            PrefManager.put(COUNTRY_ISO, PhoneNumberUtils.getDefaultCountryIso(context))
+            PrefManager.put(COUNTRY_ISO, getDefaultCountryIso(context))
         }
         if (PrefManager.getIntValue(SUBSCRIPTION_TEST_ID) == 0) {
             PrefManager.put(SUBSCRIPTION_TEST_ID, 122)
@@ -467,7 +466,16 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
             val status = device?.apiStatus ?: ApiRespStatus.EMPTY
             val deviceId = device?.id ?: 0
             if (ApiRespStatus.PATCH == status) {
-                return Result.success()
+                //return Result.success()
+                if (deviceId > 0) {
+                    val details = AppObjectController.signUpNetworkService.patchDeviceDetails(
+                        deviceId,
+                        UpdateDeviceRequest()
+                    )
+                    // TODO no need to send UpdateDeviceRequest object in patch request
+                    details.apiStatus = ApiRespStatus.PATCH
+                    details.update()
+                }
             } else if (ApiRespStatus.POST == status) {
                 if (deviceId > 0) {
                     val details = AppObjectController.signUpNetworkService.patchDeviceDetails(

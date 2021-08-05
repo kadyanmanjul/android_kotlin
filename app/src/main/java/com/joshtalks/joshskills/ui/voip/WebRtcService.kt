@@ -41,10 +41,14 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_FOREGROUND
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
+import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.getRandomName
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.startServiceForWebrtc
@@ -52,6 +56,7 @@ import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
+import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
@@ -60,7 +65,11 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_N
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
+import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
+import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
+import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
+import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
@@ -84,9 +93,10 @@ const val RTC_NAME = "caller_name"
 const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
+const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 
 class WebRtcService : BaseWebRtcService() {
-
+    private val TAG = "WebRtcService"
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
@@ -108,6 +118,7 @@ class WebRtcService : BaseWebRtcService() {
     private val AUDIO_SWITCH_OFFSET = 1000L
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
+    private var notificationState = NotificationState.NOT_VISIBLE
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -575,12 +586,20 @@ class WebRtcService : BaseWebRtcService() {
         pstnCallState = CallState.CALL_STATE_IDLE
         handlerThread.start()
         mHandler = Handler(handlerThread.looper)
-        //bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        //bluetoothAdapter?.getProfileProxy(this, this, BluetoothProfile.HEADSET)
         CoroutineScope(Dispatchers.IO).launch {
             TelephonyUtil.getManager(this@WebRtcService)
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
         }
+        addFirestoreObserver()
+    }
+
+    private fun addFirestoreObserver() {
+        FirestoreDB.setNotificationListener(listener = object : AgoraNotificationListener {
+            override fun onReceived(firestoreNotification: FirestoreNotificationObject) {
+                val nc = firestoreNotification.toNotificationObject(null)
+                FirebaseNotificationService.sendFirestoreNotification(nc, this@WebRtcService)
+            }
+        })
     }
 
     private fun initIncomingCallChannel() {
@@ -633,9 +652,10 @@ class WebRtcService : BaseWebRtcService() {
                 enableAudio()
                 enableAudioVolumeIndication(1000, 3, true)
                 setAudioProfile(
-                    Constants.AUDIO_PROFILE_SPEECH_STANDARD,
-                    Constants.AUDIO_SCENARIO_EDUCATION
+                    AUDIO_PROFILE_SPEECH_STANDARD,
+                    AUDIO_SCENARIO_EDUCATION
                 )
+                setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
                 adjustRecordingSignalVolume(400)
                 val audio = getSystemService(AUDIO_SERVICE) as AudioManager
                 val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
@@ -659,10 +679,12 @@ class WebRtcService : BaseWebRtcService() {
 
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.tag(TAG).e(
-            "onStartCommand=  %s  IsSpeakerOn = $isSpeakerEnabled  IsBluetoothOn = $isBluetoothEnabled",
-            intent?.action
-        )
+        Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
+        val isForeground = intent?.extras?.getBoolean(IS_FOREGROUND, false)
+        Timber.tag(TAG).e("onStartCommand: is Foreground --> $isForeground")
+        if (isForeground == true && notificationState == NotificationState.NOT_VISIBLE) {
+            showDefaultNotification()
+        }
         executor.execute {
             intent?.action?.run {
                 initEngine {
@@ -671,7 +693,6 @@ class WebRtcService : BaseWebRtcService() {
                         when {
                             this == InitLibrary().action -> {
                                 Timber.tag(TAG).e("LibraryInit")
-                                //isBluetoothEnabled = false
                             }
                             this == IncomingCall().action -> {
                                 if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
@@ -1017,6 +1038,10 @@ class WebRtcService : BaseWebRtcService() {
         isCallOnGoing.postValue(false)
     }
 
+    private fun showDefaultNotification() {
+        showNotification(actionNotification(DEFAULT_NOTIFICATION_TITLE), ACTION_NOTIFICATION_ID)
+    }
+
     fun answerCall(data: HashMap<String, String?>) {
         executor.execute {
             try {
@@ -1143,6 +1168,7 @@ class WebRtcService : BaseWebRtcService() {
     fun getCallType() = callType
 
     override fun onBind(intent: Intent): IBinder {
+        Timber.tag(TAG).e("onBind")
         return mBinder
     }
 
@@ -1283,6 +1309,7 @@ class WebRtcService : BaseWebRtcService() {
         try {
             mNotificationManager?.cancelAll()
             stopForeground(true)
+            notificationState = NotificationState.NOT_VISIBLE
             addMissCallNotification()
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -1296,7 +1323,6 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        //unregisterBluetoothReceiver()
         joshAudioManager?.quitEverything()
         isEngineInitialized = false
         isTimeOutToPickCall = false
@@ -1305,6 +1331,10 @@ class WebRtcService : BaseWebRtcService() {
         callStartTime = 0L
         retryInitLibrary = 0
         userDetailMap = null
+        stopForeground(true)
+        notificationState = NotificationState.NOT_VISIBLE
+        Timber.tag(TAG).e("onTaskRemoved")
+        stopSelf()
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
@@ -1312,13 +1342,11 @@ class WebRtcService : BaseWebRtcService() {
     override fun onDestroy() {
         RtcEngine.destroy()
         stopRing()
-        //unregisterBluetoothReceiver()
-        //mediaRouting.removeCallback(mediaRouteCallback)
         userDetailMap = null
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
         AppObjectController.mRtcEngine = null
-        handlerThread.quitSafely()
+        handlerThread?.quitSafely()
         isTimeOutToPickCall = false
         isCallerJoined = false
         callStartTime = 0L
@@ -1331,6 +1359,9 @@ class WebRtcService : BaseWebRtcService() {
         Timber.tag(TAG).e("onDestroy")
         // removeSensor()
         executor.shutdown()
+        stopForeground(true)
+        notificationState = NotificationState.NOT_VISIBLE
+        stopSelf()
         super.onDestroy()
     }
 
@@ -1368,6 +1399,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun showNotification(notification: Notification, notificationId: Int) {
+        Timber.tag(TAG).e("showNotification")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
                 notificationId,
@@ -1377,6 +1409,7 @@ class WebRtcService : BaseWebRtcService() {
         } else {
             startForeground(notificationId, notification)
         }
+        notificationState = NotificationState.VISIBLE
     }
 
     private fun canHeadsUpNotification(): Boolean {
@@ -1665,7 +1698,10 @@ class WebRtcService : BaseWebRtcService() {
             )
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setProgress(0, 0, true)
+
+        if (title != DEFAULT_NOTIFICATION_TITLE)
+            lNotificationBuilder.setProgress(0, 0, true)
+
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()
     }
@@ -1798,3 +1834,11 @@ interface WebRtcCallback {
     fun onSpeakerOff() {}
     fun onBluetoothStateChanged(isOn: Boolean) {}
 }
+
+enum class NotificationState {
+    VISIBLE, NOT_VISIBLE
+}
+
+/*enum class ServiceNotificationState {
+    NONE, ACTION, INCOMING, CONNECTED
+}*/
