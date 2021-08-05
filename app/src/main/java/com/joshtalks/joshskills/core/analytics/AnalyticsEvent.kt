@@ -429,6 +429,7 @@ enum class AnalyticsEvent(val NAME: String) {
     COURSE_SUGGEST_SCROLL("course_suggest_scroll V3"),
     OK_GOT_IT_CLICKED("okgot_inbox_screen_clicked V3"),
     BLANK_INBOX_SCREEN_CLICKED("blank_inbox_screen_clicked V3"),
+    FREE_TRIAL_ONBOARDING("free_trial_onboarding"),
 
     //REMINDER
     REMINDER_BELL_CLICKED("reminder_bell_clicked"),
@@ -501,6 +502,7 @@ enum class AnalyticsEvent(val NAME: String) {
     USER_OUTGOING_HANGUP_EVENT_P2P("hangup_outgoing_p2p"),
     USER_INCOMING_HANGUP_EVENT_P2P("hangup_incoming_p2p"),
     USER_REJECT_INCOMING_P2P("reject_incoming_p2p"),
+
     // Registration_screen_events
     REGISTRATION_STARTED("registration_started"),
     IS_REGISTRATION_FIRST_TIME("is_registration_first_time"),

@@ -91,6 +91,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -105,6 +106,8 @@ const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
+const val DEFAULT_TOOLTIP_DELAY_IN_MS = 2000L
+const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -155,6 +158,14 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
+
+    private var currentTooltipIndex = 0
+    private val leaderboardTooltipList by lazy {
+        listOf(
+            "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
+            "आपके सहपाठी कौन हैं और उनके कितने पॉइंट्स हैं आप यहाँ से देख सकते हैं"
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -229,6 +240,53 @@ class ConversationActivity :
         if (inboxEntity.isCourseLocked) {
             initEndTrialBottomSheet()
         }
+    }
+
+    private fun showLessonTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_LESSON_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    conversationBinding.lessonTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (conversationAdapter.getLastLesson()?.lessonNo == 1 &&
+                    conversationAdapter.getLastLesson()?.status == LESSON_STATUS.NO
+                ) {
+                    withContext(Dispatchers.Main) {
+                        conversationBinding.lessonTooltipLayout.visibility = VISIBLE
+                    }
+                } else {
+                    PrefManager.put(HAS_SEEN_LESSON_TOOLTIP, true)
+                }
+            }
+        }
+    }
+
+    private fun showLeaderBoardTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    conversationBinding.leaderboardTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(LEADERBOARD_TOOLTIP_DELAY_IN_MS)
+                if (conversationAdapter.getLastLesson()?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        conversationBinding.joshTextView.text =
+                            leaderboardTooltipList[currentTooltipIndex]
+                        conversationBinding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+                        conversationBinding.leaderboardTooltipLayout.visibility = VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+    fun hideLeaderboardTooltip() {
+        conversationBinding.leaderboardTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
     }
 
     private fun initEndTrialBottomSheet() {
@@ -361,6 +419,7 @@ class ConversationActivity :
                 conversationBinding.imgGroupChat,
                 conversationBinding.txtUnreadCount
             )
+            hideLeaderboardTooltip()
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
@@ -426,6 +485,21 @@ class ConversationActivity :
             AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
             addAttachmentUIUpdate()
             uploadImageByUser()
+        }
+        conversationBinding.btnNextStep.setOnClickListener {
+            showNextTooltip()
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < leaderboardTooltipList.size - 1) {
+            currentTooltipIndex++
+            conversationBinding.joshTextView.text = leaderboardTooltipList[currentTooltipIndex]
+            conversationBinding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${leaderboardTooltipList.size}"
+        } else {
+            conversationBinding.leaderboardTooltipLayout.visibility = GONE
+            PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
         }
     }
 
@@ -671,9 +745,9 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                    initScoreCardView(userProfileData)
-                    if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
-                        profileFeatureActiveView(true)
+                initScoreCardView(userProfileData)
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                    profileFeatureActiveView(true)
             }
         }
 
@@ -830,11 +904,12 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-        userData.isPointsActive?.let { isLeaderBoardActive ->
+        userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 conversationBinding.userPointContainer.slideInAnimation()
+                showLeaderBoardTooltip()
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
@@ -1428,6 +1503,11 @@ class ConversationActivity :
                 }
             }
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        //showLessonTooltip()
     }
 
     override fun onResume() {

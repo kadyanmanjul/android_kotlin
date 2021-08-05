@@ -24,6 +24,7 @@
     <color name="emoji_bg_color">#e6e6e6</color>
     <color name="pdf_bg_color">#F7F7F7</color>
     <color name="grey_7A">#7A7A7A</color>
+    <color name="grey_A7">#A7A7A7</color>
 
     <color name="seek_bar_background">#CCababab</color>
     <color name="seek_bar_secondary_progress">#3399CC</color>
@@ -168,5 +169,6 @@
     <color name="grammar_button_color_concrete">#95a5a6</color>
     <color name="grammar_button_color_asbestos">#7f8c8d</color>
     <color name="grammar_button_color_transparent">@android:color/transparent</color>
+    <color name="transparent_shadow_grey">#B3A7A7A7</color>
 
 </resources>

@@ -138,12 +138,18 @@ class PractiseSubmitActivity :
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(PRACTISE_OBJECT).not()) {
             this.finish()
+        } else {
+            val data = intent.getParcelableExtra(PRACTISE_OBJECT) as ChatModel?
+            if (data != null) {
+                chatModel = data
+            } else {
+                finish()
+            }
         }
         totalTimeSpend = System.currentTimeMillis()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_pratice_submit)
         binding.lifecycleOwner = this
         binding.handler = this
-        chatModel = intent.getParcelableExtra(PRACTISE_OBJECT) as ChatModel
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
             .addBasicParam()
@@ -534,9 +540,10 @@ class PractiseSubmitActivity :
                             filePath = practiseEngagement?.localPath
                             binding.submitPractiseSeekbar.max =
                                 Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath!!)
-                                ?.toInt() ?: 0
+                                    ?.toInt() ?: 0
                         } else {
-                            binding.submitPractiseSeekbar.max = practiseEngagement?.duration ?: 10_000
+                            binding.submitPractiseSeekbar.max =
+                                practiseEngagement?.duration ?: 10_000
                             if (binding.submitPractiseSeekbar.max == 0) {
                                 binding.submitPractiseSeekbar.max = 1_00_000
                             }
@@ -759,10 +766,10 @@ class PractiseSubmitActivity :
         MediaPicker.with(this, MediaPicker.MediaTypes.VIDEO)
             .setConfig(pickerConfig)
             .setFileMissingListener(object :
-                    MediaPicker.MediaPickerImpl.OnMediaListener {
-                    override fun onMissingFileWarning() {
-                    }
-                })
+                MediaPicker.MediaPickerImpl.OnMediaListener {
+                override fun onMissingFileWarning() {
+                }
+            })
             .onResult()
             .subscribeOn(Schedulers.io())
             .subscribe(
@@ -788,10 +795,10 @@ class PractiseSubmitActivity :
         MediaPicker.with(this, MediaPicker.MediaTypes.AUDIO)
             .setConfig(pickerConfig)
             .setFileMissingListener(object :
-                    MediaPicker.MediaPickerImpl.OnMediaListener {
-                    override fun onMissingFileWarning() {
-                    }
-                })
+                MediaPicker.MediaPickerImpl.OnMediaListener {
+                override fun onMissingFileWarning() {
+                }
+            })
             .onResult()
             .subscribe(
                 {

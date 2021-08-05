@@ -164,8 +164,8 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
     private fun initDownload() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val fileDir =
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+
+                val fileDir = requireContext().getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS)?.absolutePath
                 val destination = File(
                     fileDir + File.separator + Utils.getFileNameFromURL(certificateUrl)
                 )

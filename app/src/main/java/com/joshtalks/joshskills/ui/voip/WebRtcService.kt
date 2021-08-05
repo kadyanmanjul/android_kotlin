@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -44,6 +45,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_FOREGROUND
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -52,6 +54,7 @@ import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.printAll
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
@@ -76,6 +79,7 @@ import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
 import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
+import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
@@ -115,18 +119,16 @@ class WebRtcService : BaseWebRtcService() {
     var isCallerJoined: Boolean = false
     private var isMicEnabled = true
     private var isSpeakerEnabled = false
+    private var isSpeakerTurningOn = false
+    var isBluetoothEnabled = false
+        private set
+    private var bluetoothAdapter: BluetoothAdapter? = null
+    private val AUDIO_SWITCH_OFFSET = 1000L
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
     private var notificationState = NotificationState.NOT_VISIBLE
-    private val timer = object : CountDownTimer(3000, 1000) {
-        override fun onTick(millisUntilFinished: Long) {}
-        override fun onFinish() {
-            if (notificationState == NotificationState.NOT_VISIBLE)
-                showDefaultNotification()
-        }
-    }
 
     companion object {
         var conversationRoomTopicName: String? = ""
@@ -142,6 +144,9 @@ class WebRtcService : BaseWebRtcService() {
         var conversationRoomChannelName: String? = null
         var conversationRoomToken: String? = null
         val roomReference = FirebaseFirestore.getInstance().collection("conversation_rooms")
+
+        var BLUETOOTH_RETRY_COUNT = 0
+        var currentButtonState = VoipButtonState.NONE
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -322,35 +327,21 @@ class WebRtcService : BaseWebRtcService() {
 
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
-            Timber.tag(TAG).e("onAudioRouteChanged=  $routing")
-            executor.submit {
-                if (routing == AUDIO_ROUTE_HEADSET) {
-                    bluetoothDisconnected()
-                    callCallback?.get()?.onSpeakerOff()
-                    isSpeakerEnabled = false
-                    mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnabled)
-                } else if (routing == AUDIO_ROUTE_HEADSETBLUETOOTH) {
-                    callCallback?.get()?.onSpeakerOff()
-                    isSpeakerEnabled = false
-                    bluetoothConnected()
-                } else {
-                    bluetoothDisconnected()
+            val am = getSystemService(AUDIO_SERVICE) as AudioManager
+                when (routing) {
+                    AUDIO_ROUTE_HEADSETBLUETOOTH -> {
+                        VoipAudioState.switchToBluetooth()
+                    }
+                    Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
+                        VoipAudioState.switchToSpeaker()
+                    }
+                    Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
+                        VoipAudioState.switchToSpeaker()
+                    }
+                    else -> {
+                        VoipAudioState.switchToDefault(am.isWiredHeadsetOn)
+                    }
                 }
-            }
-        }
-
-        private fun bluetoothDisconnected() {
-            val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            audioManager.stopBluetoothSco()
-            audioManager.isBluetoothScoOn = false
-        }
-
-        private fun bluetoothConnected() {
-            val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            audioManager.startBluetoothSco()
-            audioManager.isBluetoothScoOn = true
         }
 
         override fun onError(errorCode: Int) {
@@ -770,7 +761,6 @@ class WebRtcService : BaseWebRtcService() {
 
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
-        timer.start()
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         initIncomingCallChannel()
@@ -782,8 +772,6 @@ class WebRtcService : BaseWebRtcService() {
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
         }
         addFirestoreObserver()
-        Log.d("ABC", "WebRtcService onCreate called")
-
     }
 
     private fun addFirestoreObserver() {
@@ -858,6 +846,7 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
+                setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
 
                 when (isConversionRoomActive) {
                     true -> {
@@ -916,16 +905,10 @@ class WebRtcService : BaseWebRtcService() {
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
-        /*if(serviceNotificationState == ServiceNotificationState.NONE)
-            showDefaultNotification()*/
-        Log.d(
-            "ABC",
-            "onStartCommandCalled roomId: $roomId agoraId: $agoraUid action: ${intent?.action}"
-        )
-
-        if (notificationState == NotificationState.NOT_VISIBLE) {
+        val isForeground = intent?.extras?.getBoolean(IS_FOREGROUND, false)
+        Timber.tag(TAG).e("onStartCommand: is Foreground --> $isForeground")
+        if (isForeground == true && notificationState == NotificationState.NOT_VISIBLE) {
             showDefaultNotification()
-            timer.cancel()
         }
         if (!isConversionRoomActive) {
             executor.execute {
@@ -1143,15 +1126,14 @@ class WebRtcService : BaseWebRtcService() {
             500
         )
         addNotification(CallConnect().action, callData)
-        // addSensor()
         joshAudioManager?.startCommunication()
         joshAudioManager?.stopConnectTone()
         audioFocus()
     }
 
     private fun audioFocus() {
-        val audioManager: AudioManager =
-            getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        Log.d("AUDIO", "audioFocus: ")
+        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val af = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
                 setAudioAttributes(
@@ -1329,10 +1311,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun showDefaultNotification() {
-        showNotification(
-            actionNotification(DEFAULT_NOTIFICATION_TITLE),
-            ACTION_NOTIFICATION_ID
-        )
+        showNotification(actionNotification(DEFAULT_NOTIFICATION_TITLE), ACTION_NOTIFICATION_ID)
     }
 
     private fun showConversationRoomNotification() {
@@ -1475,23 +1454,108 @@ class WebRtcService : BaseWebRtcService() {
     fun getCallType() = callType
 
     override fun onBind(intent: Intent): IBinder {
-        timer.cancel()
-        Log.d(TAG, "onBind: ")
-        /*if(serviceNotificationState == ServiceNotificationState.NONE)
-            showDefaultNotification()*/
+        Timber.tag(TAG).e("onBind")
         return mBinder
     }
 
-    fun switchAudioSpeaker() {
-        executor.submit {
-            val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-            isSpeakerEnabled = !isSpeakerEnabled
-            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
-//            mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
-            audioManager.isSpeakerphoneOn = isSpeakerEnabled
+    @Synchronized
+    fun turnOnDefault(state: VoipButtonState) {
+        Log.d(TAG, "turnOnDefault: ")
+        if (state != VoipButtonState.BLUETOOTH)
+            BLUETOOTH_RETRY_COUNT = 0
+        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        currentButtonState = state
+        am.mode = AudioManager.MODE_IN_COMMUNICATION
+        am.stopBluetoothSco()
+        am.isBluetoothScoOn = false
+        if (state == VoipButtonState.DEFAULT)
+            showToast("Switching to ${if (am.isWiredHeadsetOn) "Earphone" else "Headset"}...")
+        AppObjectController.uiHandler.postDelayed({
+            mRtcEngine?.setEnableSpeakerphone(false)
+            am.isSpeakerphoneOn = false
+            if (state == VoipButtonState.BLUETOOTH)
+                turnOnBluetooth(state, isRetrying = true)
+            else
+                VoipAudioState.switchToDefault(am.isWiredHeadsetOn)
+        }, AUDIO_SWITCH_OFFSET)
+    }
+
+    @Synchronized
+    fun turnOnBluetooth(state: VoipButtonState, isRetrying: Boolean = false) {
+        Log.d(TAG, "turnOnBluetooth: ")
+        if (!isRetrying && currentButtonState == state) {
+            BLUETOOTH_RETRY_COUNT += 1
+            retryTurningOnBluetooth(state)
+            return
+        }
+        currentButtonState = state
+        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        am.mode = AudioManager.MODE_IN_COMMUNICATION
+        mRtcEngine?.setEnableSpeakerphone(false)
+        am.isSpeakerphoneOn = false
+        if (BLUETOOTH_RETRY_COUNT == 0)
+            showToast("Switching to Bluetooth...")
+        else if (BLUETOOTH_RETRY_COUNT < 3)
+            showToast("Retrying($BLUETOOTH_RETRY_COUNT) switching to Bluetooth")
+        else if (BLUETOOTH_RETRY_COUNT >= 3)
+            showToast("Please restart your bluetooth headset")
+
+        AppObjectController.uiHandler.postDelayed({
+            am.startBluetoothSco()
+            am.isBluetoothScoOn = true
+            VoipAudioState.switchToBluetooth()
+        }, AUDIO_SWITCH_OFFSET)
+    }
+
+    @Synchronized
+    private fun retryTurningOnBluetooth(state: VoipButtonState) {
+        when (BLUETOOTH_RETRY_COUNT) {
+            1 -> {
+                turnOnSpeaker(state)
+            }
+            2 -> {
+                turnOnDefault(state)
+            }
+            else -> {
+                turnOnBluetooth(state, true)
+            }
         }
     }
+
+    @Synchronized
+    fun turnOnSpeaker(state: VoipButtonState) {
+        Log.d(TAG, "turnOnSpeaker: ")
+        if (state != VoipButtonState.BLUETOOTH)
+            BLUETOOTH_RETRY_COUNT = 0
+        currentButtonState = state
+        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        am.mode = AudioManager.MODE_IN_COMMUNICATION
+        am.stopBluetoothSco()
+        am.isBluetoothScoOn = false
+        if (state == VoipButtonState.SPEAKER)
+            showToast("Switching to Speaker...")
+        AppObjectController.uiHandler.postDelayed({
+            mRtcEngine?.setEnableSpeakerphone(true)
+            am.isSpeakerphoneOn = true
+            if (state == VoipButtonState.BLUETOOTH)
+                turnOnBluetooth(state, isRetrying = true)
+            else
+                VoipAudioState.switchToSpeaker()
+        }, AUDIO_SWITCH_OFFSET)
+    }
+
+    /*override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
+        Timber.tag("BLUETOOTH").d("bluetoothConnected")
+    }
+
+    override fun onServiceDisconnected(profile: Int) {
+        if (currentButtonState == VoipButtonState.BLUETOOTH && BLUETOOTH_RETRY_COUNT == 3) {
+            AppObjectController.uiHandler.postDelayed({
+                bluetoothAdapter?.enable()
+            }, 1000)
+            return
+        }
+    }*/
 
     fun switchSpeck() {
         executor.submit {
@@ -1513,7 +1577,6 @@ class WebRtcService : BaseWebRtcService() {
     private fun resetConfig() {
         stopRing()
         joshAudioManager?.stopConnectTone()
-        // removeSensor()
         isCallerJoined = false
         eventListener = null
         isSpeakerEnabled = false
@@ -1554,6 +1617,10 @@ class WebRtcService : BaseWebRtcService() {
         callStartTime = 0L
         retryInitLibrary = 0
         userDetailMap = null
+        stopForeground(true)
+        notificationState = NotificationState.NOT_VISIBLE
+        Timber.tag(TAG).e("onTaskRemoved")
+        stopSelf()
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
@@ -1585,6 +1652,9 @@ class WebRtcService : BaseWebRtcService() {
         // removeSensor()
         executor.shutdown()
         jobs.forEach { it.cancel() }
+        stopForeground(true)
+        notificationState = NotificationState.NOT_VISIBLE
+        stopSelf()
         super.onDestroy()
     }
 
@@ -1610,10 +1680,7 @@ class WebRtcService : BaseWebRtcService() {
                     )
                 }
                 CallForceConnect().action -> {
-                    showNotification(
-                        actionNotification("Connecting Call"),
-                        ACTION_NOTIFICATION_ID
-                    )
+                    showNotification(actionNotification("Connecting Call"), ACTION_NOTIFICATION_ID)
                 }
                 CallDisconnect().action -> {
                     showNotification(
@@ -1626,6 +1693,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun showNotification(notification: Notification, notificationId: Int) {
+        Timber.tag(TAG).e("showNotification")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
                 notificationId,
@@ -1739,12 +1807,7 @@ class WebRtcService : BaseWebRtcService() {
                 }
 
         val answerPendingIntent: PendingIntent =
-            PendingIntent.getService(
-                this,
-                0,
-                answerActionIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
+            PendingIntent.getService(this, 0, answerActionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         builder.addAction(
             NotificationCompat.Action(
@@ -1852,10 +1915,9 @@ class WebRtcService : BaseWebRtcService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip call connect"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
-            val mChannel =
-                NotificationChannel(CALL_NOTIFICATION_CHANNEL, name, importance).apply {
-                    description = "Notifications for voice calling"
-                }
+            val mChannel = NotificationChannel(CALL_NOTIFICATION_CHANNEL, name, importance).apply {
+                description = "Notifications for voice calling"
+            }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
@@ -1880,31 +1942,29 @@ class WebRtcService : BaseWebRtcService() {
                 declineActionIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        val lNotificationBuilder =
-            NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
-                .setChannelId(CALL_NOTIFICATION_CHANNEL)
-                .setContentIntent(pendingIntent)
-                .setContentTitle(getNameAfterConnectedCall(data))
-                .setContentText("Ongoing voice call")
-                .setSmallIcon(R.drawable.ic_status_bar_notification)
-                .setColor(
-                    ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.colorPrimary
-                    )
+        val lNotificationBuilder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+            .setChannelId(CALL_NOTIFICATION_CHANNEL)
+            .setContentIntent(pendingIntent)
+            .setContentTitle(getNameAfterConnectedCall(data))
+            .setContentText("Ongoing voice call")
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimary
                 )
-                .setOngoing(true)
-                .setContentInfo("Outgoing call")
-                .addAction(
-                    NotificationCompat.Action(
-                        R.drawable.ic_call_end,
-                        getActionText(R.string.hang_up, R.color.error_color),
-                        declineActionPendingIntent
-                    )
-                ).setStyle(
-                    androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(0)
+            )
+            .setOngoing(true)
+            .setContentInfo("Outgoing call")
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.ic_call_end,
+                    getActionText(R.string.hang_up, R.color.error_color),
+                    declineActionPendingIntent
                 )
+            ).setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(0)
+            )
         return lNotificationBuilder.build()
     }
 
@@ -2025,10 +2085,7 @@ class WebRtcService : BaseWebRtcService() {
         return "Speaking Practice"
     }
 
-    private fun getActionText(
-        @StringRes stringRes: Int,
-        @ColorRes colorRes: Int
-    ): Spannable {
+    private fun getActionText(@StringRes stringRes: Int, @ColorRes colorRes: Int): Spannable {
         val spannable: Spannable = SpannableString(getText(stringRes))
         spannable.setSpan(
             ForegroundColorSpan(ContextCompat.getColor(this, colorRes)),
@@ -2073,22 +2130,14 @@ class WebRtcService : BaseWebRtcService() {
 
 sealed class WebRtcCalling
 data class InitLibrary(val action: String = "calling.action.initLibrary") : WebRtcCalling()
-data class IncomingCall(val action: String = "calling.action.incoming_call") :
-    WebRtcCalling()
-
+data class IncomingCall(val action: String = "calling.action.incoming_call") : WebRtcCalling()
 data class CallConnect(val action: String = "calling.action.connect") : WebRtcCalling()
-data class CallDisconnect(val action: String = "calling.action.disconnect") :
-    WebRtcCalling()
-
+data class CallDisconnect(val action: String = "calling.action.disconnect") : WebRtcCalling()
 data class CallReject(val action: String = "calling.action.callReject") : WebRtcCalling()
 
-data class OutgoingCall(val action: String = "calling.action.outgoing_call") :
-    WebRtcCalling()
-
+data class OutgoingCall(val action: String = "calling.action.outgoing_call") : WebRtcCalling()
 data class CallStop(val action: String = "calling.action.stopcall") : WebRtcCalling()
-data class CallForceConnect(val action: String = "calling.action.force_connect") :
-    WebRtcCalling()
-
+data class CallForceConnect(val action: String = "calling.action.force_connect") : WebRtcCalling()
 data class CallForceDisconnect(val action: String = "calling.action.force_disconnect") :
     WebRtcCalling()
 
@@ -2116,6 +2165,10 @@ enum class CallAction(val action: String) {
     AUTO_DISCONNECT("AUTO_DISCONNECT")
 }
 
+enum class VoipButtonState {
+    SPEAKER, BLUETOOTH, DEFAULT, NONE
+}
+
 class NotificationId {
     companion object {
         const val ACTION_NOTIFICATION_ID = 200000
@@ -2139,6 +2192,7 @@ interface WebRtcCallback {
     fun onHoldCall() {}
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
+    fun onBluetoothStateChanged(isOn: Boolean) {}
 }
 
 interface ConversationRoomCallback {

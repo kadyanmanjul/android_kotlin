@@ -9,17 +9,17 @@ if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
 //-PdevBuild command
-//-PdevBuild --warning-mode=all --full-stacktrace
+//-PdevBuild --warning-mode=all --full-stacktrace --scan
 def majorVersion = 5
 def minorVersion = 0
 def patchVersion = 1
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName "${majorVersion}.${minorVersion}.${patchVersion}"
         vectorDrawables.useSupportLibrary true
@@ -62,7 +62,7 @@ android {
     buildFeatures {
         dataBinding = true
     }
-    ndkVersion '21.3.6528147'
+    // ndkVersion '21.3.6528147'
     configurations.all {
         resolutionStrategy.force "org.antlr:antlr4-runtime:4.7.1"
         resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
@@ -120,9 +120,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-    aaptOptions {
-        cruncherEnabled = false
     }
 
     dexOptions {
@@ -217,6 +214,12 @@ android {
     kapt {
         generateStubs = true
     }
+
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
 }
 
 dependencies {
@@ -229,39 +232,40 @@ dependencies {
     implementation project(path: ':joshcamerax')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3-native-mt'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3-native-mt'
-    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
+
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.core:core-ktx:1.6.0'
     implementation "androidx.collection:collection-ktx:1.1.0"
-    implementation "androidx.fragment:fragment-ktx:1.3.1"
-    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation "androidx.fragment:fragment-ktx:1.3.6"
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.browser:browser:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.3.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
-    implementation 'androidx.lifecycle:lifecycle-service:2.3.0'
-    implementation 'androidx.lifecycle:lifecycle-process:2.3.0'
+    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-service:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-process:2.3.1'
 
     implementation 'androidx.work:work-runtime-ktx:2.5.0'
     implementation 'androidx.work:work-rxjava2:2.5.0'
     implementation 'androidx.work:work-runtime:2.5.0'
     implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
 
-    def room_version = "2.2.6"
+    def room_version = "2.3.0"
 
     implementation "androidx.room:room-runtime:$room_version"
+    kapt "org.xerial:sqlite-jdbc:3.34.0"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
 
-    implementation 'com.google.android.material:material:1.4.0-alpha01'
+    implementation 'com.google.android.material:material:1.4.0'
     kapt 'com.android.databinding:compiler:3.1.4'
 
     implementation('com.github.bumptech.glide:glide:4.12.0') {
@@ -279,24 +283,25 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-workmanager:2.11.7'
 
 
-    implementation 'com.google.firebase:firebase-crashlytics:17.4.0'
-    implementation 'com.google.firebase:firebase-appindexing:19.2.0'
-    implementation 'com.google.firebase:firebase-analytics:18.0.2'
-    implementation 'com.google.firebase:firebase-core:18.0.2'
-    implementation 'com.google.firebase:firebase-messaging:21.0.1'
-    implementation 'com.google.firebase:firebase-perf:19.1.1'
-    implementation 'com.google.firebase:firebase-config:20.0.4'
-    implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.1'
-    implementation 'com.google.firebase:firebase-auth:20.0.3'
-    implementation 'com.google.firebase:firebase-inappmessaging-ktx:19.1.5'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.1.5'
-    implementation 'com.google.firebase:firebase-installations:16.3.5'
-    implementation 'com.google.firebase:firebase-firestore-ktx:23.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.0'
+    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
+    implementation 'com.google.firebase:firebase-analytics:19.0.0'
+    implementation 'com.google.firebase:firebase-core:19.0.0'
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+    implementation 'com.google.firebase:firebase-perf:20.0.2'
+    implementation 'com.google.firebase:firebase-config:21.0.0'
+    implementation 'com.google.firebase:firebase-dynamic-links-ktx:20.1.1'
+    implementation 'com.google.firebase:firebase-auth:21.0.1'
+    implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-installations:17.0.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:23.0.3'
+    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
 
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
-    implementation 'com.google.android.gms:play-services-ads:19.8.0'
-    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+    implementation 'com.google.android.gms:play-services-ads:20.2.0'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.google.android.gms:play-services-base:17.6.0'
     implementation 'com.google.android.libraries.places:places:2.4.0'
     implementation 'com.google.android.play:core:1.10.0'
@@ -334,7 +339,7 @@ dependencies {
 
     implementation 'id.zelory:compressor:2.1.0'
 
-    implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
+    implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.6'
     implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
     implementation "androidx.tonyodev.fetch2rx:xfetch2rx:3.1.6"
 
@@ -357,7 +362,7 @@ dependencies {
     implementation 'com.muddzdev:styleabletoast:2.2.3'
     implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
 
-    implementation 'io.branch.sdk.android:library:5.0.3'
+    implementation 'io.branch.sdk.android:library:5.0.7'
     implementation 'com.clevertap.android:clevertap-android-sdk:4.0.4'
     implementation 'com.flurry.android:analytics:12.3.0@aar'
 
@@ -391,11 +396,14 @@ dependencies {
     })*/
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation 'com.uxcam:uxcam:3.3.3@aar'
-    implementation 'io.agora.rtc:voice-sdk:3.3.2'
+    //implementation 'io.agora.rtc:voice-sdk:3.3.2'
+    //implementation 'io.agora.rtc:voice-sdk:3.4.5'
+    //implementation 'com.github.agorabuilder:native-voice-sdk:3.4.5'
+    implementation files("libs/agora-rtc-sdk.jar")
 
-    testImplementation 'junit:junit:4.13.1'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation 'com.airbnb.android:lottie:3.7.0'
     implementation 'info.kimjihyok:voice-ripple-record-button:0.1.3'
@@ -403,7 +411,7 @@ dependencies {
 
     debugImplementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
-    implementation 'com.github.dhaval2404:imagepicker:1.8'
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
     //ScrollingPagerIndicator
     implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1"
     implementation "com.github.skydoves:balloon:1.3.3"
@@ -411,7 +419,7 @@ dependencies {
     //Flow Layout
     implementation 'com.nex3z:flow-layout:1.2.2'
     //Bugsee
-    implementation 'com.bugsee:bugsee-android:+'
+    implementation 'com.bugsee:bugsee-android:1.19.18'
     //smartLook
     implementation 'com.smartlook.recording:app:1.8.1-native'
     implementation 'com.userexperior:userexperior-android:6.0.6'

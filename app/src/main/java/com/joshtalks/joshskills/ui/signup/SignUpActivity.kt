@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -23,7 +24,6 @@ import com.facebook.GraphRequest
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -37,6 +37,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
@@ -74,6 +77,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -141,6 +146,11 @@ class SignUpActivity : BaseActivity() {
                 }
                 SignUpStepStatus.ProfileInCompleted -> {
                     binding.ivBack.visibility = View.GONE
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        PrefManager.clearDatabase()
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
+                    }
                     openProfileDetailFragment(true)
                 }
                 SignUpStepStatus.ProfileCompleted -> {
@@ -355,13 +365,11 @@ class SignUpActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val url = ImagePicker.getFilePath(data)
-        if (url.isNullOrBlank().not() && resultCode == Activity.RESULT_OK) {
-            ImagePicker.getFilePath(data)?.let {
-                val imageUpdatedPath = AppDirectory.getImageSentFilePath()
-                AppDirectory.copy(it, imageUpdatedPath)
-                viewModelForDpUpload.uploadMedia(imageUpdatedPath)
-            }
+        val url = data?.data?.path ?: EMPTY
+        if (url.isNotBlank() && resultCode == Activity.RESULT_OK) {
+            val imageUpdatedPath = AppDirectory.getImageSentFilePath()
+            AppDirectory.copy(url, imageUpdatedPath)
+            viewModelForDpUpload.uploadMedia(imageUpdatedPath)
         } else if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {

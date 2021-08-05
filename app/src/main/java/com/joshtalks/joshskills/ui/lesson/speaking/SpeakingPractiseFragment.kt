@@ -2,14 +2,14 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
@@ -28,6 +29,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -37,7 +39,11 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
 
@@ -47,7 +53,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var courseId: String = EMPTY
     private var topicId: String? = EMPTY
     private var questionId: String? = null
-    private var favoriteCallerExist = false
+    private var haveAnyFavCaller = false
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -56,6 +62,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+    }
+
+    private var currentTooltipIndex = 0
+    private val lessonTooltipList by lazy {
+        listOf(
+            "कोर्स का सबसे मज़ेदार हिस्सा।",
+            "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
+        )
     }
 
     override fun onAttach(context: Context) {
@@ -75,9 +89,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.lifecycleOwner = this
         binding.handler = this
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
-
         addObservers()
-
+        showTooltip()
         return binding.rootView
     }
 
@@ -142,7 +155,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.speakingTopicLiveData.observe(
             viewLifecycleOwner,
             { response ->
-                binding.progressView.visibility = View.GONE
+                binding.progressView.visibility = GONE
                 if (response == null) {
                     showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
                 } else {
@@ -163,16 +176,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                    binding.groupTwo.visibility = View.VISIBLE
+                    binding.groupTwo.visibility = VISIBLE
 
                     val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-                    if (points.isNullOrEmpty().not()) {
+                    if (points.isNotEmpty()) {
                         // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
                         PrefManager.put(SPEAKING_POINTS, EMPTY)
                     }
 
                     if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
-                        binding.btnContinue.visibility = View.VISIBLE
+                        binding.btnContinue.visibility = VISIBLE
                         lessonActivityListener?.onQuestionStatusUpdate(
                             QUESTION_STATUS.AT,
                             questionId
@@ -183,7 +196,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
-            if (favoriteCallerExist) {
+            if (haveAnyFavCaller) {
                 startPractise(favoriteUserCall = true)
             } else {
                 showToast(getString(R.string.empty_favorite_list_message))
@@ -191,16 +204,50 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
         lifecycleScope.launchWhenStarted {
             viewModel.favoriteCaller.collect {
-                favoriteCallerExist = it
-                binding.btnFavorite.backgroundTintList =
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
-                        )
-                    )
+                haveAnyFavCaller = it
+                binding.btnFavorite.visibility = if (haveAnyFavCaller) VISIBLE else GONE
             }
         }
+        binding.btnNextStep.setOnClickListener {
+            showNextTooltip()
+        }
+    }
+
+    private fun showTooltip() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_TOOLTIP, defValue = false)) {
+                withContext(Dispatchers.Main) {
+                    binding.lessonTooltipLayout.visibility = GONE
+                }
+            } else {
+                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
+                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
+                    withContext(Dispatchers.Main) {
+                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+                        binding.txtTooltipIndex.text =
+                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.lessonTooltipLayout.visibility = VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showNextTooltip() {
+        if (currentTooltipIndex < lessonTooltipList.size - 1) {
+            currentTooltipIndex++
+            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
+            binding.txtTooltipIndex.text =
+                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+        } else {
+            binding.lessonTooltipLayout.visibility = GONE
+            PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
+        }
+    }
+
+    fun hideTooltip() {
+        binding.lessonTooltipLayout.visibility = GONE
+        PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
     private fun startPractise(favoriteUserCall: Boolean = false) {

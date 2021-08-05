@@ -105,7 +105,7 @@ class StartCourseActivity : CoreJoshActivity() {
         if (intent.hasExtra(courseName)) {
             val courseName = intent.getStringExtra(courseName)
             if (courseName.isNullOrEmpty().not()) {
-                return courseName
+                return courseName?: EMPTY
             }
         }
         return EMPTY

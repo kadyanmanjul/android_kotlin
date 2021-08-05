@@ -23,7 +23,9 @@ import com.mindorks.placeholderview.PlaceHolderView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class SeeAllAwardActivity : BaseActivity() {
     private lateinit var binding: FragmentSeeAllAwardBinding
@@ -33,7 +35,7 @@ class SeeAllAwardActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        awardCategory = intent.getParcelableArrayListExtra(AWARD_CATEGORY)
+        awardCategory = intent.getParcelableArrayListExtra<AwardCategory>(AWARD_CATEGORY) as List<AwardCategory>
         binding = DataBindingUtil.setContentView(this, R.layout.fragment_see_all_award)
         binding.lifecycleOwner = this
         binding.fragment = this

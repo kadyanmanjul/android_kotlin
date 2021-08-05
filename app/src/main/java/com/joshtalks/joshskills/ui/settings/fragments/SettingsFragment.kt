@@ -109,6 +109,11 @@ class SettingsFragment : Fragment() {
         binding.p2pSetting.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
         }
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false) && User.getInstance().isVerified.not()){
+            binding.personalInfoTv.isEnabled = false
+            binding.personalInfoTv.isClickable = false
+            binding.personalInfoTv.alpha = ALPHA_MIN
+        }
     }
 
     override fun onResume() {

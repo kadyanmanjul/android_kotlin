@@ -26,29 +26,32 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.joshtalks.joshskills.ui.leaderboard.CustomTabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:tabStripEnabled="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar_container"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/button_color"
-                app:tabTextColor="#666666"
-                app:tabIndicatorFullWidth="false"
-                app:tabIndicatorHeight="@dimen/_2sdp"
-                app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/button_color"
-                app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"/>
-
-            <androidx.viewpager2.widget.ViewPager2
+            <androidx.viewpager.widget.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tab_layout" />
+                app:layout_constraintTop_toBottomOf="@id/toolbar_container">
+
+                <com.joshtalks.joshskills.ui.leaderboard.CustomTabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="2dp"
+                    android:tabStripEnabled="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/toolbar_container"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/button_color"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="@dimen/_2sdp"
+                    app:tabMode="scrollable"
+                    app:tabSelectedTextColor="@color/button_color"
+                    app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"
+                    app:tabTextColor="#666666" />
+
+            </androidx.viewpager.widget.ViewPager>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

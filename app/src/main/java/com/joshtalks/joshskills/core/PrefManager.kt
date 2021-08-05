@@ -79,6 +79,16 @@ const val ONLINE_TEST_LAST_LESSON_ATTEMPTED = "online_test_last_lesson_attempted
 const val ONLINE_TEST_LIST_OF_COMPLETED_RULES = "online_test_list_of_completed_rules"
 const val ONLINE_TEST_LIST_OF_TOTAL_RULES = "online_test_list_of_total_rules"
 const val INBOX_SCREEN_VISIT_COUNT = "inbox_screen_visit_count"
+const val IS_FREE_TRIAL = "joshskills_is_free_trial"
+const val FREE_TRIAL_TEST_SCORE = "free_trial_test_score"
+const val HAS_ENTERED_NAME_IN_FREE_TRIAL = "has_entered_name_in_free_trial"
+const val IS_ENTERED_NAME_IN_FREE_TRIAL = "is_entered_name_in_free_trial"
+const val HAS_SEEN_LESSON_TOOLTIP = "joshskills_has_seen_lesson_tooltip"
+const val HAS_SEEN_LEADERBOARD_TOOLTIP = "joshskills_has_seen_leaderboard_tooltip"
+const val HAS_SEEN_GRAMMAR_TOOLTIP = "joshskills_has_seen_grammar_tooltip"
+const val HAS_SEEN_VOCAB_TOOLTIP = "joshskills_has_seen_vocab_tooltip"
+const val HAS_SEEN_READING_TOOLTIP = "joshskills_has_seen_reading_tooltip"
+const val HAS_SEEN_SPEAKING_TOOLTIP = "joshskills_has_seen_speaking_tooltip"
 
 object PrefManager {
 
@@ -126,7 +136,7 @@ object PrefManager {
         defValue: Boolean = false
     ): Boolean {
         return if (isConsistent) prefManagerConsistent.getBoolean(key, defValue)
-        else prefManagerCommon.getBoolean(key, false)
+        else prefManagerCommon.getBoolean(key, defValue)
     }
 
     fun getStringValue(
@@ -144,7 +154,7 @@ object PrefManager {
 
     }
 
-    fun getIntValue(key: String, isConsistent: Boolean = false,defValue: Int): Int {
+    fun getIntValue(key: String, isConsistent: Boolean = false, defValue: Int): Int {
         return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
         else prefManagerCommon.getInt(key, defValue)
 
@@ -211,6 +221,11 @@ object PrefManager {
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
+    }
+
+    fun clearDatabase(){
+        LastSyncPrefManager.clear()
+        AppDatabase.clearDatabase()
     }
 
 

@@ -8,9 +8,9 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.viewpager.widget.ViewPager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import java.util.ArrayList
-import java.util.Locale
 
 
 class LeaderBoardSearchActivity : BaseActivity() {
@@ -118,62 +117,34 @@ class LeaderBoardSearchActivity : BaseActivity() {
     }
 
     private fun initViewPager() {
-        binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
-            LeaderboardSearchPagerAdapter(this)
+            LeaderboardSearchPagerAdapter(
+                supportFragmentManager,
+                FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+                map,
+                getString(R.string.my_batch)
+            )
         binding.viewPager.offscreenPageLimit = 4
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
             override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
                 if (position != 3) {
                     isFirstTime = false
                 }
             }
+
+            override fun onPageScrollStateChanged(state: Int) {}
+
         })
 
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
         hideViewpager()
-
-        var list = EMPTY
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when (position) {
-                0 -> {
-                    list = "TODAY"
-                }
-                1 -> {
-                    list = "WEEK"
-                }
-                2 -> {
-                    list = "MONTH"
-                }
-                4 -> {
-                    list = "MYBATCH"
-                }
-                3 -> {
-                    list = "LIFETIME"
-                }
-            }
-            if (map.get(list)?.intervalTabText.isNullOrBlank()) {
-                if (position == 4){
-                    tab.text = getString(R.string.my_batch)
-                } else {
-                    tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
-                }
-            } else {
-                if (position==4){
-                    tab.text = getString(R.string.my_batch).plus('\n')
-                        .plus(map.get(list)?.intervalTabText)
-                } else{
-                    tab.text =
-                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
-                            .plus('\n')
-                            .plus(map.get(list)?.intervalTabText)}
-
-            }
-        }.attach()
-
-
     }
 
     fun hideViewpager() {

@@ -32,7 +32,7 @@
             android:layout_marginTop="@dimen/_12ssp"
             android:letterSpacing="0"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

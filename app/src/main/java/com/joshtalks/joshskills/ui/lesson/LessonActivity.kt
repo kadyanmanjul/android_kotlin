@@ -8,23 +8,20 @@ import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
-import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -76,7 +73,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
-            this.lifecycle,
+            FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
             arrayFragment
         )
     }
@@ -115,7 +112,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
                     .not()
-            ) intent.getStringExtra(WHATSAPP_URL) else EMPTY
+            ) intent.getStringExtra(WHATSAPP_URL) ?: EMPTY else EMPTY
         testId = intent.getIntExtra(TEST_ID, -1)
 
         titleView = findViewById(R.id.text_message_title)
@@ -367,8 +364,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             if (isTestCompleted.not()) {
                 arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
             } else if (PrefManager.getIntValue(
-                    ONLINE_TEST_LAST_LESSON_COMPLETED,
-                    defValue = 1
+                    ONLINE_TEST_LAST_LESSON_COMPLETED
                 ) >= lessonNumber
             ) {
                 arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
@@ -382,52 +378,44 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         arrayFragment.add(2, ReadingFragmentWithoutFeedback.getInstance())
         arrayFragment.add(3, SpeakingPractiseFragment.newInstance())
         binding.lessonViewpager.adapter = adapter
-        binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
-        binding.lessonViewpager.offscreenPageLimit = 4
-        binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
+        binding.lessonViewpager.offscreenPageLimit = 3
 
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-        for (i in 0 until tabs.childCount) {
-            val tab = tabs.getChildAt(i)
-            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-            layoutParams.weight = 0f
-            //     layoutParams.marginEnd = Utils.dpToPx(2)
-            //  layoutParams.marginStart = Utils.dpToPx(2)
-        }
+
         binding.lessonTabLayout.requestLayout()
 
-        TabLayoutMediator(
-            binding.lessonTabLayout,
-            binding.lessonViewpager
-        ) { tab, position ->
-            tab.setCustomView(R.layout.capsule_tab_layout_view)
-            when (position) {
+        val tabCount = binding.lessonTabLayout.tabCount
+        for (index in 0 until tabCount) {
+            val tab = binding.lessonTabLayout.getTabAt(index)
+            tab?.setCustomView(R.layout.capsule_tab_layout_view)
+            when (index) {
                 0 -> {
                     setSelectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                 }
                 1 -> {
                     setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
                 }
                 2 -> {
                     setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.READING_TITLE)
                 }
                 3 -> {
                     setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                 }
             }
-        }.attach()
+        }
+
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
@@ -456,9 +444,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private fun isOnlineTestCompleted(): Boolean {
         if (ruleCompletedList.isNullOrEmpty()) {
             return false
-        } else if (ruleIdLeftList.isNullOrEmpty()) {
-            return true
-        } else return false
+        } else return ruleIdLeftList.isNullOrEmpty()
     }
 
     private fun openIncompleteTab(currentTabNumber: Int) {

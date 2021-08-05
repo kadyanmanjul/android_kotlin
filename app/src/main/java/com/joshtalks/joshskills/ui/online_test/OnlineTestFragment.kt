@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
@@ -79,6 +80,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var buttonView: Stub<GrammarButtonView>? = null
     private var isFirstTime: Boolean = true
     private var isTestCompleted: Boolean = false
+    private var scoreText: Int? = 0
+    private var pointsList: String? = null
     private var testCallback: OnlineTestInterface? = null
     private var lessonActivityListener: LessonActivityListener? = null
     var reviseVideoObject: VideoModel? = null
@@ -144,6 +147,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     addNewRuleCompleted(onlineTestResponse.ruleAssessmentId)
                 }
                 isTestCompleted = onlineTestResponse.completed
+                scoreText = onlineTestResponse.scoreText
+                onlineTestResponse.scoreText?.let {
+                    PrefManager.put(
+                        FREE_TRIAL_TEST_SCORE, it,false)
+                }
+                pointsList = onlineTestResponse.pointsList?.get(0)
+
             } else {
                 if (onlineTestResponse.ruleAssessmentId != null) {
                     if (previousId != onlineTestResponse.ruleAssessmentId &&
@@ -433,7 +443,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 .beginTransaction()
                 .replace(
                     R.id.parent_Container,
-                    GrammarOnlineTestFragment.getInstance(lessonNumber),
+                    GrammarOnlineTestFragment.getInstance(lessonNumber,scoreText,pointsList),
                     GrammarOnlineTestFragment.TAG
                 )
                 .addToBackStack(TAG)

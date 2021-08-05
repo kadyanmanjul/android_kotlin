@@ -123,7 +123,8 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     )
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        it.isVerified = true
+
+                        it.isVerified = User.getInstance().isVerified
                         User.getInstance().updateFromResponse(it)
                     }
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)

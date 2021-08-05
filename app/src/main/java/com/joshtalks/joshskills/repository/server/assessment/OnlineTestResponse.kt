@@ -31,6 +31,12 @@ data class OnlineTestResponse(
     @SerializedName("rule_type")
     var questiontype : OnlineTestType,
 
+    @SerializedName("score_text")
+    var scoreText : Int?,
+
+    @SerializedName("points_list")
+    val pointsList: List<String>?
+
 ) : Parcelable
 
 enum class OnlineTestType(val status: String) {
