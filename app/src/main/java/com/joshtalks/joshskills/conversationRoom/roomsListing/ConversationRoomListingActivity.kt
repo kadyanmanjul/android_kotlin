@@ -268,11 +268,11 @@ class ConversationRoomListingActivity : BaseActivity(),
     private fun hideNotificationAfter4seconds() {
         if (runnable == null) {
             setRunnable()
-            handler?.postDelayed(runnable, 4000)
+            handler?.postDelayed(runnable!!, 4000)
         } else {
-            handler?.removeCallbacks(runnable)
+            handler?.removeCallbacks(runnable!!)
             setRunnable()
-            handler?.postDelayed(runnable, 4000)
+            handler?.postDelayed(runnable!!, 4000)
         }
     }
 
