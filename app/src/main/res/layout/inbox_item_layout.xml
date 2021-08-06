@@ -115,7 +115,6 @@
                 tools:text="Click to start the course"
                 tools:visibility="visible" />
 
-
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_last_message_time"
                 android:layout_width="wrap_content"
@@ -139,11 +138,11 @@
                 android:maxLines="1"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_2sdp"
-                android:paddingVertical="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_12sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:textColor="@color/white"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_last_message"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_last_message"

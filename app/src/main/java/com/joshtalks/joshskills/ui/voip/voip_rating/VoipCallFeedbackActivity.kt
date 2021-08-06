@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.core.showToast
@@ -88,6 +90,8 @@ class VoipCallFeedbackActivity : BaseActivity() {
                         Snackbar.LENGTH_LONG,
                         it.pointsList!!.get(0)
                     )
+                    PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,it.pointsList!!.last(),false)
+
                 }
             }
         )

@@ -18,11 +18,16 @@ import com.joshtalks.joshskills.core.HAS_SEEN_GRAMMAR_TOOLTIP
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -190,6 +195,16 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     }
 
     fun startOnlineExamTest() {
+
+        if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
+            askStoragePermission()
+            return
+        }
+        moveToOnlineTestFragment()
+
+    }
+
+    fun moveToOnlineTestFragment() {
         activity?.supportFragmentManager?.let { fragmentManager ->
             binding.parentContainer.visibility = View.VISIBLE
             binding.startTestContainer.visibility = View.GONE
@@ -205,6 +220,40 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 .addToBackStack(TAG)
                 .commitAllowingStateLoss()
         }
+    }
+
+    private fun askStoragePermission() {
+        PermissionUtils.storageReadAndWritePermission(
+            requireContext(),
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            moveToOnlineTestFragment()
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                            //errorDismiss()
+                            return
+                        }
+                        return
+                    }
+                    report?.isAnyPermissionPermanentlyDenied?.let {
+                        PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                        //errorDismiss()
+                        return
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     private fun showGrammarCompleteLayout() {

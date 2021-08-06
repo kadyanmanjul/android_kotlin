@@ -105,7 +105,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             R.layout.lesson_activity
         )
         binding.viewbinding = this
-
+        PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY,false)
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
@@ -238,6 +238,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     if (it.pointsList.isNullOrEmpty().not()) {
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
                         playSnackbarSound(this)
+                        it.pointsList?.let { it1 ->
+                            PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                                it1.last(),false)
+                        }
                     }
                 }
                 /*if (it.awardMentorList.isNullOrEmpty().not()) {
@@ -262,6 +266,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                    PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,it.pointsList!!.last(),false)
                 }
             }
         )
@@ -301,6 +306,29 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     } else {
                         AppObjectController.uiHandler.post {
                             openIncompleteTab(currentTabNumber)
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun showLessonCompleteCard() {
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.lessonLiveData.value?.let { lesson ->
+                    val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                            lesson.vocabStatus == LESSON_STATUS.CO &&
+                            lesson.readingStatus == LESSON_STATUS.CO &&
+                            lesson.speakingStatus == LESSON_STATUS.CO
+
+                    if (lessonCompleted) {
+                        lesson.status = LESSON_STATUS.CO
+                        viewModel.updateLesson(lesson)
+                        AppObjectController.uiHandler.post {
+                            openLessonCompleteScreen(lesson)
                         }
                     }
                 }
@@ -527,6 +555,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 lesson.speakingStatus == LESSON_STATUS.CO
             )
         }
+        showLessonCompleteCard()
     }
 
     private fun setTabCompletionStatus(tab: View?, isSectionCompleted: Boolean) {
