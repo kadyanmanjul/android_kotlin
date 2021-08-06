@@ -129,6 +129,26 @@
                 app:layout_constraintTop_toTopOf="@+id/tv_name"
                 tools:text="08/12/90" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/unseen_msg_count"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_alignTop="@id/tv_last_message"
+                android:background="@drawable/circle2"
+                android:backgroundTint="@color/colorPrimary"
+                android:maxLines="1"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_2sdp"
+                android:paddingVertical="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_last_message"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_last_message"
+                tools:text="3" />
+
             <LinearLayout
                 android:id="@+id/horizontal_line"
                 android:layout_width="0dp"

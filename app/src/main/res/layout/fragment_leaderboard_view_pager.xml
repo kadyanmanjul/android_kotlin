@@ -142,7 +142,7 @@
                 app:layout_goneMarginStart="@dimen/_84sdp"
                 tools:text="@string/improve_answer"
                 android:imeOptions="actionDone"
-                android:inputType="text"
+                android:inputType="textCapSentences"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
