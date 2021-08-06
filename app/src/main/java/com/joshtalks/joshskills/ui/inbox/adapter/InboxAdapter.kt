@@ -20,6 +20,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.YYYY_MM_DD
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -97,6 +99,12 @@ class InboxAdapter(
                 courseProgressBar.progress = 0
                 horizontalLine.visibility = android.view.View.VISIBLE
                 imageUrl(binding.profileImage, inboxEntity.course_icon)
+                if (PrefManager.getBoolValue(IS_FREE_TRIAL) && inboxEntity.created == null && inboxEntity.isCapsuleCourse) {
+                    unseenMsgCount.visibility = ViewGroup.VISIBLE
+                    unseenMsgCount.text = "3"
+                } else {
+                    unseenMsgCount.visibility = ViewGroup.GONE
+                }
                 //   profileImage.setInboxImageView(inboxEntity.course_icon)
                 /* if (inboxEntity.chat_id.isNullOrEmpty()) {
                      tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(
