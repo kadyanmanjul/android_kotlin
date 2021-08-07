@@ -117,34 +117,6 @@
                 app:layout_goneMarginStart="@dimen/_84sdp"
                 tools:text="@string/improve_answer" />
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/edit_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:visibility="invisible"
-                android:background="@null"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/white"
-                android:cursorVisible="true"
-                android:focusable="true"
-                android:textCursorDrawable="@null"
-                app:layout_constraintBottom_toBottomOf="@+id/points"
-                app:layout_constraintEnd_toStartOf="@id/points"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toEndOf="@id/user_pic_frame"
-                app:layout_constraintTop_toTopOf="@+id/points"
-                android:hint="@string/enter_your_name"
-                app:layout_goneMarginStart="@dimen/_84sdp"
-                tools:text="@string/improve_answer"
-                android:imeOptions="actionDone"
-                android:inputType="textCapSentences"
-                />
-
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/points"
                 android:layout_width="wrap_content"
