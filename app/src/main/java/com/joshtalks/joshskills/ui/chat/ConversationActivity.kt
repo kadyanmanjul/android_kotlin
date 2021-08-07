@@ -1125,13 +1125,16 @@ class ConversationActivity :
                 .subscribe {
                     if (conversationBinding.refreshLayout.isRefreshing) {
                         val message: String = if (it.flag) {
-                            getString(R.string.new_message_arrive)
+                            //getString(R.string.new_message_arrive)
+                            EMPTY
                         } else {
                             getString(R.string.no_new_message_arrive)
                         }
-                        StyleableToast.Builder(this).gravity(Gravity.BOTTOM)
-                            .text(message).cornerRadius(16).length(Toast.LENGTH_LONG)
-                            .solidBackground().show()
+                        if (message.isBlank().not()) {
+                            StyleableToast.Builder(this).gravity(Gravity.BOTTOM)
+                                .text(message).cornerRadius(16).length(Toast.LENGTH_LONG)
+                                .solidBackground().show()
+                        }
                     }
                     if (it.flag.not()) {
                         hideProgressBar()
