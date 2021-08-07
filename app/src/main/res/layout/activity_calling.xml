@@ -51,7 +51,6 @@
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
 
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/caller_name"
             android:layout_width="wrap_content"
@@ -99,6 +98,39 @@
             app:layout_constraintStart_toStartOf="@+id/c_image"
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
+
+        <RelativeLayout
+            android:id="@+id/incoming_timer_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.37">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/incoming_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:progress="75"
+                app:indicatorColor="#0D5CB8"
+                app:indicatorSize="@dimen/_108sdp"
+                app:trackColor="#ffffff"
+                app:trackThickness="10dp" />
+
+            <TextView
+                android:id="@+id/incoming_timer_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="20"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                android:textColor="#ffffff"
+                android:textSize="42dp" />
+        </RelativeLayout>
 
 
         <de.hdodenhof.circleimageview.CircleImageView

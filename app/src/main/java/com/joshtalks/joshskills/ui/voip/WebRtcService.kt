@@ -18,7 +18,6 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -70,7 +69,6 @@ import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
 import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
-import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
 import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
@@ -79,16 +77,18 @@ import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
 import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
-import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
+import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -102,6 +102,7 @@ const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
 const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
+const val IS_CHANNEL_ACTIVE_KEY = "success"
 
 class WebRtcService : BaseWebRtcService() {
     private val TAG = "WebRtcService"
@@ -144,6 +145,7 @@ class WebRtcService : BaseWebRtcService() {
         var conversationRoomChannelName: String? = null
         var conversationRoomToken: String? = null
         val roomReference = FirebaseFirestore.getInstance().collection("conversation_rooms")
+        val incomingWaitJobsList = LinkedList<Job>()
 
         var BLUETOOTH_RETRY_COUNT = 0
         var currentButtonState = VoipButtonState.NONE
@@ -369,12 +371,17 @@ class WebRtcService : BaseWebRtcService() {
                 channelName = getChannelName(it)
                 try {
                     val id = getUID(it)
+                    Log.d(TAG, "onJoinChannelSuccess: ")
                     if ((callType == CallType.INCOMING || callType == CallType.FAVORITE_INCOMING) && id == uid) {
-                        startCallTimer()
-                        callStatusNetworkApi(it, CallAction.ACCEPT)
-                        addNotification(CallConnect().action, callData)
-                        //addSensor()
-                        joshAudioManager?.startCommunication()
+                        if (!WebRtcActivity.isIncomingCallHasNewChannel) {
+                            startCallTimer()
+                            if (!isFavorite())
+                                callCallback?.get()?.onIncomingCallConnected()
+                            callStatusNetworkApi(it, CallAction.ACCEPT)
+                            addNotification(CallConnect().action, callData)
+                            //addSensor()
+                            joshAudioManager?.startCommunication()
+                        }
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
@@ -841,8 +848,8 @@ class WebRtcService : BaseWebRtcService() {
             }
             mRtcEngine?.apply {
                 if (BuildConfig.DEBUG) {
-                    setParameters("{\"rtc.log_filter\": 65535}")
-                    setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
+                    //setParameters("{\"rtc.log_filter\": 65535}")
+                    //setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
@@ -1115,6 +1122,8 @@ class WebRtcService : BaseWebRtcService() {
         compositeDisposable.clear()
         isCallOnGoing.postValue(true)
         isCallerJoined = true
+        if (!isFavorite())
+            callCallback?.get()?.onIncomingCallUserConnected()
         if (callStartTime == 0L) {
             startCallTimer()
         }
@@ -1321,19 +1330,32 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun answerCall(data: HashMap<String, String?>) {
+        Log.d(TAG, "answerCall: ")
         executor.execute {
             try {
                 stopRing()
-                joinCall(data)
-                executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                if (isFavorite()) {
+                    joinCall(data)
+                    executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                } else {
+                    showNotification(actionNotification("Connecting Call"), ACTION_NOTIFICATION_ID)
+                    callData?.let {
+                        callStatusNetworkApi(
+                            it,
+                            CallAction.ACCEPT,
+                            isForCheckingChannel = true,
+                            dataForIncomingCall = data
+                        )
+                    }
+                }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
     }
 
-    private fun joinCall(data: HashMap<String, String?>) {
-        if (isTimeOutToPickCall) {
+    private fun joinCall(data: HashMap<String, String?>, isNewChannelGiven: Boolean = false) {
+        if (!isNewChannelGiven && isTimeOutToPickCall) {
             isTimeOutToPickCall = false
             RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
             return
@@ -1396,6 +1418,8 @@ class WebRtcService : BaseWebRtcService() {
         }
         return false
     }
+
+    /*fun isFavorite() = false*/
 
     fun setAsFavourite() {
         callData?.put(RTC_IS_FAVORITE, "true")
@@ -1638,7 +1662,7 @@ class WebRtcService : BaseWebRtcService() {
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
         AppObjectController.mRtcEngine = null
-        handlerThread?.quitSafely()
+        handlerThread.quitSafely()
         isTimeOutToPickCall = false
         isCallerJoined = false
         callStartTime = 0L
@@ -2099,7 +2123,9 @@ class WebRtcService : BaseWebRtcService() {
     private fun callStatusNetworkApi(
         data: HashMap<String, String?>,
         callAction: CallAction,
-        hasDisconnected: Boolean = false
+        hasDisconnected: Boolean = false,
+        isForCheckingChannel: Boolean = false,
+        dataForIncomingCall: HashMap<String, String?> = HashMap()
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -2113,13 +2139,42 @@ class WebRtcService : BaseWebRtcService() {
                         PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false).toString()
                 }
                 val resp = AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
-                if (resp.code() == 500) {
-                    callCallback?.get()?.onNoUserFound()
-                    return@launch
-                }
-                if (CallAction.ACCEPT == callAction) {
-                    callCallback?.get()?.onServerConnect()
-                    return@launch
+                if (isForCheckingChannel) {
+                    val job = launch(Dispatchers.Main) {
+                        if (resp.code() == 200) {
+                            Log.d(TAG, "callStatusNetworkApi: ${resp.body()}")
+                            val response = resp.body()
+                            if (isActive) {
+                                if (response?.containsKey(IS_CHANNEL_ACTIVE_KEY) == true) {
+                                    joinCall(dataForIncomingCall)
+                                    executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                                } else {
+                                    if (response?.containsKey(RTC_CHANNEL_KEY) == true) {
+                                        val newChannel = response[RTC_CHANNEL_KEY]
+                                        val token = response[RTC_TOKEN_KEY]
+                                        val uid = response[RTC_UID_KEY]
+                                        dataForIncomingCall[RTC_CHANNEL_KEY] = newChannel
+                                        dataForIncomingCall[RTC_TOKEN_KEY] = token
+                                        dataForIncomingCall[RTC_UID_KEY] = uid
+                                        callCallback?.get()?.onNewIncomingCallChannel()
+                                        joinCall(dataForIncomingCall, isNewChannelGiven = true)
+                                        executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    incomingWaitJobsList.push(job)
+                    Log.d(TAG, "callStatusNetworkApi: Below Coroutine")
+                } else {
+                    if (resp.code() == 500) {
+                        callCallback?.get()?.onNoUserFound()
+                        return@launch
+                    }
+                    if (CallAction.ACCEPT == callAction) {
+                        callCallback?.get()?.onServerConnect()
+                        return@launch
+                    }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -2193,6 +2248,9 @@ interface WebRtcCallback {
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
     fun onBluetoothStateChanged(isOn: Boolean) {}
+    fun onIncomingCallConnected() {}
+    fun onIncomingCallUserConnected() {}
+    fun onNewIncomingCallChannel() {}
 }
 
 interface ConversationRoomCallback {
