@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.signup.SignUpProfileForFreeTrialFragment" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fillViewport="true"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:paddingStart="@dimen/_8sdp"
+        android:paddingEnd="@dimen/_8sdp"
+        android:scrollbarThumbHorizontal="@null"
+        android:scrollbarThumbVertical="@null">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:gravity="start"
+                    android:text="@string/your_name"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/dark_grey" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/name_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/mobile_no_bg"
+                    android:gravity="start"
+                    android:hint="@string/hint_name_field"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords"
+                    android:lines="1"
+                    android:maxLength="24"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:paddingStart="@dimen/_14sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_14sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/light_grey"
+                    android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="start"
+                    android:text="@string/phone_number"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/dark_grey"
+                    android:visibility="visible"
+                    tools:visibility="visible" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+
+                    android:id="@+id/et_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/mobile_no_bg"
+                    android:paddingStart="@dimen/_14sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_14sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:visibility="visible"
+                    tools:visibility="visible">
+
+                    <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
+                        android:id="@+id/country_code_picker"
+                        style="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="@dimen/_2sdp"
+                        app:ccpDialog_allowSearch="true"
+                        app:ccpDialog_backgroundColor="@color/wh_f4"
+                        app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
+                        app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        app:ccpDialog_fastScroller_handleColor="@color/colorAccent"
+                        app:ccpDialog_initialScrollToSelection="true"
+                        app:ccpDialog_keyboardAutoPopup="false"
+                        app:ccpDialog_searchEditTextTint="@color/emoji_bg_color"
+                        app:ccpDialog_showCloseIcon="true"
+                        app:ccpDialog_showFastScroller="true"
+                        app:ccpDialog_showPhoneCode="true"
+                        app:ccpDialog_showTitle="false"
+                        app:ccpDialog_textColor="@color/black"
+                        app:ccp_areaCodeDetectedCountry="true"
+                        app:ccp_arrowColor="@color/button_activated"
+                        app:ccp_arrowSize="@dimen/_4sdp"
+                        app:ccp_autoDetectCountry="true"
+                        app:ccp_autoDetectLanguage="true"
+                        app:ccp_autoFormatNumber="false"
+                        app:ccp_clickable="true"
+                        app:ccp_contentColor="@color/black"
+                        app:ccp_countryAutoDetectionPref="SIM_LOCALE"
+                        app:ccp_countryPreference="IN"
+                        app:ccp_defaultLanguage="ENGLISH"
+                        app:ccp_defaultNameCode="IN"
+                        app:ccp_defaultPhoneCode="91"
+                        app:ccp_hintExampleNumber="false"
+                        app:ccp_rememberLastSelection="true"
+                        app:ccp_showArrow="false"
+                        app:ccp_showFullName="false"
+                        app:ccp_showNameCode="false"
+                        app:ccp_showPhoneCode="true"
+                        app:ccp_textGravity="CENTER"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/phone_number_et"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@null"
+                        android:digits="1234567890"
+                        android:enabled="true"
+                        android:focusable="true"
+                        android:gravity="start|center"
+                        android:imeOptions="actionDone"
+                        android:importantForAutofill="no"
+                        android:inputType="phone"
+                        android:lines="1"
+                        android:maxLength="13"
+                        android:paddingStart="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_4sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        app:backgroundTint="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/country_code_picker"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_dob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="start"
+                    android:text="@string/date_of_birth"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/dark_grey" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/dob_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/mobile_no_bg"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:gravity="start"
+                    android:hint="@string/hint_date_field"
+                    android:imeOptions="actionNone"
+                    android:importantForAutofill="no"
+                    android:inputType="none"
+                    android:onClick="@{()->handler.selectDateOfBirth()}"
+                    android:paddingStart="@dimen/_14sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_14sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/light_grey" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="start"
+                    android:text="@string/gender"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/dark_grey" />
+
+                <LinearLayout
+                    android:id="@+id/gender_toggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_male_gender"
+                        android:layout_width="@dimen/_85sdp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/mobile_no_bg"
+                        android:duplicateParentState="true"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/_20sdp"
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_20sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:text="@string/male"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                        android:textColor="@color/dark_grey"
+                        app:rippleColor="@color/white" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_female_gender"
+                        android:layout_width="@dimen/_85sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:background="@drawable/mobile_no_bg"
+                        android:duplicateParentState="true"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/_20sdp"
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_20sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:text="@string/female"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                        android:textColor="@color/dark_grey"
+                        app:rippleColor="@color/white" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_other_gender"
+                        android:layout_width="@dimen/_85sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:background="@drawable/mobile_no_bg"
+                        android:duplicateParentState="true"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/_20sdp"
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_20sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:text="@string/other"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                        android:textColor="@color/dark_grey"
+                        app:rippleColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_24sdp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_login"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:backgroundTint="@color/button_color"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:maxLines="1"
+                    android:onClick="@{()->handler.submitProfile()}"
+                    android:paddingTop="@dimen/_12sdp"
+                    android:paddingBottom="@dimen/_12sdp"
+                    android:text="@string/next"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/white"
+                    app:cornerRadius="@dimen/_32sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.8"
+                    app:rippleColor="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>
