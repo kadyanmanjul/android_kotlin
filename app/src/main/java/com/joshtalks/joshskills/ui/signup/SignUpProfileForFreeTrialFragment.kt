@@ -217,6 +217,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
         requestMap["date_of_birth"] = userDateOfBirth ?: EMPTY
         requestMap["gender"] = gender?.gValue ?: EMPTY
+        requestMap["is_free_trial"] = "Y"
         val mobNo = binding.phoneNumberEt.text!!.toString()
         if (mobNo.isNullOrBlank().not()) {
             requestMap["mobile"] = mobNo
