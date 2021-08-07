@@ -132,7 +132,7 @@
                 android:id="@+id/unseen_msg_count"
                 android:layout_width="@dimen/_16sdp"
                 android:layout_height="@dimen/_16sdp"
-                android:layout_alignTop="@id/tv_last_message"
+                android:layout_alignBottom="@id/tv_last_message"
                 android:background="@drawable/circle2"
                 android:backgroundTint="@color/colorPrimary"
                 android:maxLines="1"
@@ -145,7 +145,6 @@
                 tools:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_last_message"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_last_message"
                 tools:text="3" />
 
             <LinearLayout
