@@ -534,28 +534,32 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     private fun setTabCompletionStatus() {
-        viewModel.lessonLiveData.value?.let { lesson ->
-            if (lesson.lessonNo >= 2) {
-                PrefManager.put(LESSON_TWO_OPENED, true)
+        try {
+            viewModel.lessonLiveData.value?.let { lesson ->
+                if (lesson.lessonNo >= 2) {
+                    PrefManager.put(LESSON_TWO_OPENED, true)
+                }
+                setTabCompletionStatus(
+                    tabs.getChildAt(0),
+                    lesson.grammarStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(1),
+                    lesson.vocabStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(2),
+                    lesson.readingStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(3),
+                    lesson.speakingStatus == LESSON_STATUS.CO
+                )
             }
-            setTabCompletionStatus(
-                tabs.getChildAt(0),
-                lesson.grammarStatus == LESSON_STATUS.CO
-            )
-            setTabCompletionStatus(
-                tabs.getChildAt(1),
-                lesson.vocabStatus == LESSON_STATUS.CO
-            )
-            setTabCompletionStatus(
-                tabs.getChildAt(2),
-                lesson.readingStatus == LESSON_STATUS.CO
-            )
-            setTabCompletionStatus(
-                tabs.getChildAt(3),
-                lesson.speakingStatus == LESSON_STATUS.CO
-            )
+            showLessonCompleteCard()
+        } catch (ex:java.lang.Exception){
+            ex.printStackTrace()
         }
-        showLessonCompleteCard()
     }
 
     private fun setTabCompletionStatus(tab: View?, isSectionCompleted: Boolean) {
