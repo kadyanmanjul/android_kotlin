@@ -405,9 +405,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if (User.getInstance().isVerified) {
+                //if (User.getInstance().isVerified) {
                     incomingCallNotificationAction(notificationObject.actionData)
-                }
+                //}
                 return null
             }
             NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -415,9 +415,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                if (User.getInstance().isVerified) {
+                //if (User.getInstance().isVerified) {
                     callForceConnect(notificationObject.actionData)
-                }
+                //}
                 return null
             }
             NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
@@ -1046,9 +1046,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ): Intent? {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                    if (User.getInstance().isVerified) {
+                    //if (User.getInstance().isVerified) {
                         incomingCallNotificationAction(notificationObject.actionData)
-                    }
+                    //}
                     null
                 }
                 NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -1056,9 +1056,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     null
                 }
                 NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                    if (User.getInstance().isVerified) {
+                    //if (User.getInstance().isVerified) {
                         callForceConnect(notificationObject.actionData)
-                    }
+                    //}
                     null
                 }
                 NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
