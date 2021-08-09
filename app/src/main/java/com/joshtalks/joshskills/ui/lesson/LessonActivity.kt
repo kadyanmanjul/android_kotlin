@@ -61,6 +61,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     lateinit var titleView: TextView
     private var isDemo = false
     private var isNewGrammar = false
+    private var isLesssonCompleted = false
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
@@ -105,17 +106,24 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             R.layout.lesson_activity
         )
         binding.viewbinding = this
-        PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY,false)
+        PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY, false)
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
             false
         ) else false
+
+        if (intent.hasExtra(IS_LESSON_COMPLETED)) {
+            isLesssonCompleted = intent.getBooleanExtra(IS_LESSON_COMPLETED, false)
+        } else {
+            isLesssonCompleted = false
+        }
+
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
                     .not()
-            ) intent.getStringExtra(WHATSAPP_URL)?: EMPTY else EMPTY
+            ) intent.getStringExtra(WHATSAPP_URL) ?: EMPTY else EMPTY
         testId = intent.getIntExtra(TEST_ID, -1)
 
         titleView = findViewById(R.id.text_message_title)
@@ -239,8 +247,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
                         playSnackbarSound(this)
                         it.pointsList?.let { it1 ->
-                            PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
-                                it1.last(),false)
+                            PrefManager.put(
+                                LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                                it1.last(), false
+                            )
                         }
                     }
                 }
@@ -266,7 +276,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
-                    PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,it.pointsList!!.last(),false)
+                    PrefManager.put(
+                        LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                        it.pointsList!!.last(),
+                        false
+                    )
                 }
             }
         )
@@ -395,7 +409,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             if (isTestCompleted.not()) {
                 arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
             } else if (PrefManager.getIntValue(
-                    ONLINE_TEST_LAST_LESSON_COMPLETED) >= lessonNumber
+                    ONLINE_TEST_LAST_LESSON_COMPLETED
+                ) >= lessonNumber
             ) {
                 arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
 
@@ -556,8 +571,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     lesson.speakingStatus == LESSON_STATUS.CO
                 )
             }
-            showLessonCompleteCard()
-        } catch (ex:java.lang.Exception){
+            if (isLesssonCompleted.not()) {
+                showLessonCompleteCard()
+            }
+        } catch (ex: java.lang.Exception) {
             ex.printStackTrace()
         }
     }
@@ -667,6 +684,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         const val LESSON_ID = "lesson_id"
         private const val IS_DEMO = "is_demo"
         private const val IS_NEW_GRAMMAR = "is_new_grammar"
+        private const val IS_LESSON_COMPLETED = "is_lesson_completed"
         private const val WHATSAPP_URL = "whatsapp_url"
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
@@ -678,11 +696,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             whatsappUrl: String? = null,
             testId: Int? = null,
             conversationId: String? = null,
-            isNewGrammar: Boolean = false
+            isNewGrammar: Boolean = false,
+            isLessonCompleted: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
             putExtra(IS_NEW_GRAMMAR, isNewGrammar)
+            putExtra(IS_LESSON_COMPLETED, isLessonCompleted)
             putExtra(CONVERSATION_ID, conversationId)
             if (isDemo) {
                 putExtra(WHATSAPP_URL, whatsappUrl)
