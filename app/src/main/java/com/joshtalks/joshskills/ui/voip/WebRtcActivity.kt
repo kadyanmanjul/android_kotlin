@@ -68,6 +68,7 @@ import timber.log.Timber
 
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
+const val HIDE_INCOMING_UI = "hide_incoming_call_timer"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
 const val IS_DEMO_P2P = "is_demo_p2p"
@@ -498,7 +499,8 @@ class WebRtcActivity : AppCompatActivity() {
             WebRtcService.incomingWaitJobsList.pop().cancel()
         Log.d(TAG, "onStop: is Finishing --> $isFinishing")
         Log.d(TAG, "onStop: isCallOnGoing --> ${isCallOnGoing.value}")
-        if (callType == CallType.INCOMING && isCallOnGoing.value == false && isIncomingCallHasNewChannel)
+        val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
+        if (callType == CallType.INCOMING && isCallOnGoing.value == false && isIncomingCallHasNewChannel && !hideIncomingCallUi)
             mBoundService?.timeoutCaller()
         unbindService(myConnection)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
@@ -826,7 +828,8 @@ class WebRtcActivity : AppCompatActivity() {
         mBoundService?.answerCall(data)
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
-        if (!isCallFavoritePP())
+        val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
+        if (!isCallFavoritePP() && !hideIncomingCallUi)
             startIncomingTimer()
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
             .addBasicParam()
