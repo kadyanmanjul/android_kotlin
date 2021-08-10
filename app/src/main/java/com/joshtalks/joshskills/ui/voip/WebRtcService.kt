@@ -130,6 +130,7 @@ class WebRtcService : BaseWebRtcService() {
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
     private var notificationState = NotificationState.NOT_VISIBLE
+    private val timber = Timber.tag(TAG)
 
     companion object {
         var conversationRoomTopicName: String? = ""
@@ -148,6 +149,7 @@ class WebRtcService : BaseWebRtcService() {
         val incomingWaitJobsList = LinkedList<Job>()
 
         var BLUETOOTH_RETRY_COUNT = 0
+        var HANDSET_RETRY_COUNT = 0
         var currentButtonState = VoipButtonState.NONE
 
         @JvmStatic
@@ -371,7 +373,7 @@ class WebRtcService : BaseWebRtcService() {
                 channelName = getChannelName(it)
                 try {
                     val id = getUID(it)
-                    Log.d(TAG, "onJoinChannelSuccess: ")
+                    timber.d("onJoinChannelSuccess")
                     if ((callType == CallType.INCOMING || callType == CallType.FAVORITE_INCOMING) && id == uid) {
                         if (!WebRtcActivity.isIncomingCallHasNewChannel) {
                             startCallTimer()
@@ -1489,6 +1491,10 @@ class WebRtcService : BaseWebRtcService() {
         Log.d(TAG, "turnOnDefault: ")
         if (state != VoipButtonState.BLUETOOTH)
             BLUETOOTH_RETRY_COUNT = 0
+        if (state != VoipButtonState.DEFAULT)
+            HANDSET_RETRY_COUNT = 0
+        else if (state == VoipButtonState.DEFAULT && currentButtonState == state)
+            HANDSET_RETRY_COUNT += 1
         val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         currentButtonState = state
         am.mode = AudioManager.MODE_IN_COMMUNICATION
@@ -1497,8 +1503,22 @@ class WebRtcService : BaseWebRtcService() {
         if (state == VoipButtonState.DEFAULT)
             showToast("Switching to ${if (am.isWiredHeadsetOn) "Earphone" else "Headset"}...")
         AppObjectController.uiHandler.postDelayed({
-            mRtcEngine?.setEnableSpeakerphone(false)
-            am.isSpeakerphoneOn = false
+            if (am.isWiredHeadsetOn) {
+                mRtcEngine?.setEnableSpeakerphone(false)
+                am.isSpeakerphoneOn = false
+            } else {
+                val mode = getHandsetMode()
+                if (mode != null) {
+                    am.stopBluetoothSco()
+                    am.isBluetoothScoOn = false
+                    am.mode = mode
+                    mRtcEngine?.setEnableSpeakerphone(false)
+                    am.isSpeakerphoneOn = false
+                } else {
+                    showToast("Please Disconnect the Bluetooth")
+                    return@postDelayed
+                }
+            }
             if (state == VoipButtonState.BLUETOOTH)
                 turnOnBluetooth(state, isRetrying = true)
             else
@@ -1506,9 +1526,31 @@ class WebRtcService : BaseWebRtcService() {
         }, AUDIO_SWITCH_OFFSET)
     }
 
+    private fun getHandsetMode(): Int? =
+        when (HANDSET_RETRY_COUNT) {
+            0 -> AudioManager.MODE_IN_COMMUNICATION
+            1 -> AudioManager.MODE_NORMAL
+            2 -> AudioManager.MODE_IN_CALL
+            else -> null
+        }
+
+
+    fun getModeName(mode: Int) =
+        when (mode) {
+            -2 -> "MODE_INVALID"
+            -1 -> "MODE_CURRENT"
+            0 -> "MODE_NORMAL"
+            1 -> "MODE_RINGTONE"
+            2 -> "MODE_IN_CALL"
+            3 -> "MODE_IN_COMMUNICATION"
+            4 -> "NUM_MODES"
+            else -> "Unsupported Modes"
+        }
+
     @Synchronized
     fun turnOnBluetooth(state: VoipButtonState, isRetrying: Boolean = false) {
         Log.d(TAG, "turnOnBluetooth: ")
+        HANDSET_RETRY_COUNT = 0
         if (!isRetrying && currentButtonState == state) {
             BLUETOOTH_RETRY_COUNT += 1
             retryTurningOnBluetooth(state)
@@ -1553,6 +1595,7 @@ class WebRtcService : BaseWebRtcService() {
         Log.d(TAG, "turnOnSpeaker: ")
         if (state != VoipButtonState.BLUETOOTH)
             BLUETOOTH_RETRY_COUNT = 0
+        HANDSET_RETRY_COUNT = 0
         currentButtonState = state
         val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         am.mode = AudioManager.MODE_IN_COMMUNICATION

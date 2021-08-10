@@ -304,6 +304,7 @@ class WebRtcActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         //viewModel.isWiredHeadphoneConnected.set(isWiredHeadSetOn)
         WebRtcService.BLUETOOTH_RETRY_COUNT = 0
+        WebRtcService.HANDSET_RETRY_COUNT = 0
         WebRtcService.currentButtonState = VoipButtonState.NONE
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
