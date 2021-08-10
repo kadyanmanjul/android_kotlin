@@ -330,20 +330,20 @@ class WebRtcService : BaseWebRtcService() {
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
             val am = getSystemService(AUDIO_SERVICE) as AudioManager
-                when (routing) {
-                    AUDIO_ROUTE_HEADSETBLUETOOTH -> {
-                        VoipAudioState.switchToBluetooth()
-                    }
-                    Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
-                        VoipAudioState.switchToSpeaker()
-                    }
-                    Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
-                        VoipAudioState.switchToSpeaker()
-                    }
-                    else -> {
-                        VoipAudioState.switchToDefault(am.isWiredHeadsetOn)
-                    }
+            when (routing) {
+                AUDIO_ROUTE_HEADSETBLUETOOTH -> {
+                    VoipAudioState.switchToBluetooth()
                 }
+                Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
+                    VoipAudioState.switchToSpeaker()
+                }
+                Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
+                    VoipAudioState.switchToSpeaker()
+                }
+                else -> {
+                    VoipAudioState.switchToDefault(am.isWiredHeadsetOn)
+                }
+            }
         }
 
         override fun onError(errorCode: Int) {
@@ -617,19 +617,21 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun leaveRoom(roomId: String?) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val request =
-                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0)
-            val response =
-                AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
-                    request
-                )
-            Log.d("ABC", "leave room api call")
-            if (response.isSuccessful) {
-                removeNotifications()
-                conversationRoomChannelName = null
-                mRtcEngine?.leaveChannel()
-                joshAudioManager?.endCommunication()
+        if (roomId.isNullOrBlank().not()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val request =
+                    JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0)
+                val response =
+                    AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
+                        request
+                    )
+                Log.d("ABC", "leave room api call")
+                if (response.isSuccessful) {
+                    removeNotifications()
+                    conversationRoomChannelName = null
+                    mRtcEngine?.leaveChannel()
+                    joshAudioManager?.endCommunication()
+                }
             }
         }
     }
