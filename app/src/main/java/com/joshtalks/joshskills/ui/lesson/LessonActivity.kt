@@ -451,7 +451,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             when (position) {
                 GRAMMAR_POSITION -> {
                     setSelectedColor(tab)
-                    viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
@@ -482,12 +481,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 setSelectedColor(tab)
-                viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 setSelectedColor(tab)
-                viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -619,6 +616,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 SPEAKING_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
                 }
             }
         }
