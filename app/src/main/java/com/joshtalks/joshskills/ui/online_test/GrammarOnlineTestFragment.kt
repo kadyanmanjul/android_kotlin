@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -191,7 +192,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             QUESTION_STATUS.AT,
             questionId
         )*/
-        lessonActivityListener?.onSectionStatusUpdate(0, true)
+        lessonActivityListener?.onSectionStatusUpdate(GRAMMAR_POSITION, true)
     }
 
     fun startOnlineExamTest() {
@@ -287,7 +288,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     }
 
     fun onGrammarContinueClick() {
-        lessonActivityListener?.onNextTabCall(0)
+        lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 
     companion object {

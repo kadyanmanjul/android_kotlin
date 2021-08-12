@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -209,7 +210,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     override fun onContinue() {
-        lessonActivityListener?.onNextTabCall(2)
+        lessonActivityListener?.onNextTabCall(READING_POSITION)
     }
 
     override fun onPracticeSubmitted() {
@@ -217,7 +218,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             QUESTION_STATUS.AT,
             rpQuestion?.id
         )
-        lessonActivityListener?.onSectionStatusUpdate(2, true)
+        lessonActivityListener?.onSectionStatusUpdate(READING_POSITION, true)
     }
 
     override fun onResume() {

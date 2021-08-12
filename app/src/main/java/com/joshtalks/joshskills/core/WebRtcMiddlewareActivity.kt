@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
@@ -106,8 +107,12 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     }
 
     override fun onStop() {
+        try {
+            unbindService(myConnection)
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        }
         super.onStop()
-        unbindService(myConnection)
     }
 
     override fun getConversationId(): String? {

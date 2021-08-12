@@ -16,6 +16,10 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
+import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
+import com.joshtalks.joshskills.ui.lesson.READING_POSITION
+import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
 
 class LessonInProgressView : FrameLayout {
     private lateinit var rootView: FrameLayout
@@ -76,10 +80,35 @@ class LessonInProgressView : FrameLayout {
         lessonNameTv = findViewById(R.id.lesson_name_tv)
         startLessonTv = findViewById(R.id.start_lesson_tv)
         continueLessonTv = findViewById(R.id.continue_lesson_tv)
-        grammarStatus = findViewById(R.id.view1)
-        vocabStatus = findViewById(R.id.view2)
-        readingStatus = findViewById(R.id.view3)
-        speakingStatus = findViewById(R.id.view4)
+
+        grammarStatus = when (GRAMMAR_POSITION) {
+            0 -> findViewById(R.id.view1)
+            1 -> findViewById(R.id.view2)
+            2 -> findViewById(R.id.view3)
+            3 -> findViewById(R.id.view4)
+            else -> findViewById(R.id.view1)
+        }
+        vocabStatus = when (VOCAB_POSITION) {
+            0 -> findViewById(R.id.view1)
+            1 -> findViewById(R.id.view2)
+            2 -> findViewById(R.id.view3)
+            3 -> findViewById(R.id.view4)
+            else -> findViewById(R.id.view2)
+        }
+        readingStatus = when (READING_POSITION) {
+            0 -> findViewById(R.id.view1)
+            1 -> findViewById(R.id.view2)
+            2 -> findViewById(R.id.view3)
+            3 -> findViewById(R.id.view4)
+            else -> findViewById(R.id.view3)
+        }
+        speakingStatus = when (SPEAKING_POSITION) {
+            0 -> findViewById(R.id.view1)
+            1 -> findViewById(R.id.view2)
+            2 -> findViewById(R.id.view3)
+            3 -> findViewById(R.id.view4)
+            else -> findViewById(R.id.view4)
+        }
     }
 
     fun setup(lesson: LessonModel) {

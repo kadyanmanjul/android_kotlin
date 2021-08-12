@@ -287,7 +287,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             when (tabPosition) {
-                0 -> {
+                GRAMMAR_POSITION -> {
                     appDatabase.lessonDao().updateGrammarSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -295,7 +295,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                1 -> {
+                VOCAB_POSITION -> {
                     appDatabase.lessonDao().updateVocabularySectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -303,7 +303,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                2 -> {
+                READING_POSITION -> {
                     appDatabase.lessonDao().updateReadingSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -311,7 +311,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                3 -> {
+                SPEAKING_POSITION -> {
                     appDatabase.lessonDao().updateSpeakingSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {

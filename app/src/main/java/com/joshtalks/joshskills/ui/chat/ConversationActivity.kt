@@ -1532,12 +1532,12 @@ class ConversationActivity :
     }
 
     override fun onStop() {
-        super.onStop()
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+        super.onStop()
     }
 
     override fun onDestroy() {

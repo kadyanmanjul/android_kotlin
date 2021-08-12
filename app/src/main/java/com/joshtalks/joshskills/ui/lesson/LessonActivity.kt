@@ -46,9 +46,15 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
+const val GRAMMAR_POSITION = 0
+const val SPEAKING_POSITION = 1
+const val VOCAB_POSITION = 2
+const val READING_POSITION = 3
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
@@ -386,10 +392,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             viewModel.lessonLiveData.value?.let { lesson ->
                 val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
                 when (tabPosition) {
-                    0 -> lesson.grammarStatus = status
-                    1 -> lesson.vocabStatus = status
-                    2 -> lesson.readingStatus = status
-                    3 -> lesson.speakingStatus = status
+                    GRAMMAR_POSITION -> lesson.grammarStatus = status
+                    VOCAB_POSITION -> lesson.vocabStatus = status
+                    READING_POSITION -> lesson.readingStatus = status
+                    SPEAKING_POSITION -> lesson.speakingStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
@@ -407,21 +413,21 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         if (lessonIsNewGrammar) {
             if (isTestCompleted.not()) {
-                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+                arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
             } else if (PrefManager.getIntValue(
                     ONLINE_TEST_LAST_LESSON_COMPLETED
                 ) >= lessonNumber
             ) {
-                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+                arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
 
-            } else arrayFragment.add(0, GrammarFragment.getInstance())
+            } else arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
         } else {
-            arrayFragment.add(0, GrammarFragment.getInstance())
+            arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
         }
 
-        arrayFragment.add(1, VocabularyFragment.getInstance())
-        arrayFragment.add(2, ReadingFragmentWithoutFeedback.getInstance())
-        arrayFragment.add(3, SpeakingPractiseFragment.newInstance())
+        arrayFragment.add(SPEAKING_POSITION, SpeakingPractiseFragment.newInstance())
+        arrayFragment.add(VOCAB_POSITION, VocabularyFragment.getInstance())
+        arrayFragment.add(READING_POSITION, ReadingFragmentWithoutFeedback.getInstance())
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.lessonViewpager.offscreenPageLimit = 4
@@ -443,25 +449,25 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         ) { tab, position ->
             tab.setCustomView(R.layout.capsule_tab_layout_view)
             when (position) {
-                0 -> {
+                GRAMMAR_POSITION -> {
                     setSelectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                 }
-                1 -> {
+                VOCAB_POSITION -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
                 }
-                2 -> {
+                READING_POSITION -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.READING_TITLE)
                 }
-                3 -> {
+                SPEAKING_POSITION -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
@@ -488,7 +494,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         Handler().postDelayed(
             {
-                openIncompleteTab(3)
+                openIncompleteTab(arrayFragment.size - 1)
             },
             50
         )
@@ -505,41 +511,41 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private fun openIncompleteTab(currentTabNumber: Int) {
         var nextTabIndex = currentTabNumber + 1
         while (nextTabIndex != currentTabNumber) {
-            if (nextTabIndex == 4) {
+            if (nextTabIndex == arrayFragment.size) {
                 nextTabIndex = 0
             } else {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     when (nextTabIndex) {
-                        0 ->
+                        GRAMMAR_POSITION ->
                             if (lesson.grammarStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 0
+                                binding.lessonViewpager.currentItem = GRAMMAR_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        1 ->
+                        VOCAB_POSITION ->
                             if (lesson.vocabStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 1
+                                binding.lessonViewpager.currentItem = VOCAB_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        2 ->
+                        READING_POSITION ->
                             if (lesson.readingStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 2
+                                binding.lessonViewpager.currentItem = READING_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        3 ->
+                        SPEAKING_POSITION ->
                             if (lesson.speakingStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 3
+                                binding.lessonViewpager.currentItem = SPEAKING_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
                         else -> {
-                            binding.lessonViewpager.currentItem = 3
+                            binding.lessonViewpager.currentItem = arrayFragment.size - 1
                             return
                         }
                     }
@@ -555,19 +561,19 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     PrefManager.put(LESSON_TWO_OPENED, true)
                 }
                 setTabCompletionStatus(
-                    tabs.getChildAt(0),
+                    tabs.getChildAt(GRAMMAR_POSITION),
                     lesson.grammarStatus == LESSON_STATUS.CO
                 )
                 setTabCompletionStatus(
-                    tabs.getChildAt(1),
+                    tabs.getChildAt(VOCAB_POSITION),
                     lesson.vocabStatus == LESSON_STATUS.CO
                 )
                 setTabCompletionStatus(
-                    tabs.getChildAt(2),
+                    tabs.getChildAt(READING_POSITION),
                     lesson.readingStatus == LESSON_STATUS.CO
                 )
                 setTabCompletionStatus(
-                    tabs.getChildAt(3),
+                    tabs.getChildAt(SPEAKING_POSITION),
                     lesson.speakingStatus == LESSON_STATUS.CO
                 )
             }
@@ -596,18 +602,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 ?.setTextColor(ContextCompat.getColor(this, R.color.white))
 
             when (tab.position) {
-                0 -> {
+                GRAMMAR_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
                 }
-                1 -> {
+                VOCAB_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
                 }
-                2 -> {
+                READING_POSITION -> {
                     tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
                 }
-                3 -> {
+                SPEAKING_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
                 }

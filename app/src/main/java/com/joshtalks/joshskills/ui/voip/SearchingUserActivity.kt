@@ -9,7 +9,6 @@ import android.content.pm.ActivityInfo
 import android.location.Location
 import android.os.*
 import android.view.KeyEvent
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -130,16 +129,16 @@ class SearchingUserActivity : BaseActivity() {
             super.onChannelJoin()
             Timber.tag("SearchingUserActivity").e("onChannelJoin")
             addReceiverTimeout()
-            uiHandler?.postDelayed(
-                {
-                    try {
-                        binding.btnAction.visibility = View.VISIBLE
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                },
-                500
-            )
+//            uiHandler?.postDelayed(
+//                {
+//                    try {
+//                        binding.btnAction.visibility = View.VISIBLE
+//                    } catch (ex: Exception) {
+//                        ex.printStackTrace()
+//                    }
+//                },
+//                500
+//            )
         }
     }
 

@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -149,7 +150,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         binding.btnContinue.setOnClickListener {
-            lessonActivityListener?.onNextTabCall(3)
+            lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }
 
         viewModel.speakingTopicLiveData.observe(
@@ -190,7 +191,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             QUESTION_STATUS.AT,
                             questionId
                         )
-                        lessonActivityListener?.onSectionStatusUpdate(3, true)
+                        lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
                     }
                 }
             }

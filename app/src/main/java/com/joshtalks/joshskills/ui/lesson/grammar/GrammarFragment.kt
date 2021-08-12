@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
+import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -764,12 +765,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
         } else {
             showQuizCompleteLayout()
-            lessonActivityListener?.onSectionStatusUpdate(0, true)
+            lessonActivityListener?.onSectionStatusUpdate(GRAMMAR_POSITION, true)
         }
     }
 
     fun onGrammarContinueClick() {
-        lessonActivityListener?.onNextTabCall(0)
+        lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 
     fun onRedoQuizClick() {

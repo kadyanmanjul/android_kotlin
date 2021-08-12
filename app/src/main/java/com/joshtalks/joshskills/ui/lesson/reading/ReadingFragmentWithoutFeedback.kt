@@ -71,6 +71,7 @@ import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -600,7 +601,7 @@ class ReadingFragmentWithoutFeedback :
                 QUESTION_STATUS.AT,
                 currentLessonQuestion?.id
             )
-            lessonActivityListener?.onSectionStatusUpdate(2, true)
+            lessonActivityListener?.onSectionStatusUpdate(READING_POSITION, true)
         }
     }
 
@@ -1038,7 +1039,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun onReadingContinueClick() {
-        lessonActivityListener?.onNextTabCall(2)
+        lessonActivityListener?.onNextTabCall(READING_POSITION)
     }
 
 /*

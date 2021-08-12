@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -294,7 +295,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     binding.vocabularyCompleteLayout.visibility = View.VISIBLE
                 }
             }
-            lessonActivityListener?.onSectionStatusUpdate(1, true)
+            lessonActivityListener?.onSectionStatusUpdate(VOCAB_POSITION, true)
         }
     }
 
@@ -309,7 +310,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     fun onContinueClick() {
-        lessonActivityListener?.onNextTabCall(1)
+        lessonActivityListener?.onNextTabCall(VOCAB_POSITION)
     }
 
     fun onCloseDialog() {
