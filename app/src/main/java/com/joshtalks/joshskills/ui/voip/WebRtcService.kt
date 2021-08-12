@@ -368,7 +368,9 @@ class WebRtcService : BaseWebRtcService() {
             removeIncomingNotification()
             compositeDisposable.clear()
             userAgoraId = uid
-            isCallOnGoing.postValue(true)
+            Timber.tag(TAG).d("isCallOnGoing --> TURE .... ${isCallOnGoing.value}")
+            if (!(callType == CallType.INCOMING && WebRtcActivity.isIncomingCallHasNewChannel))
+                isCallOnGoing.postValue(true)
             callData?.let {
                 channelName = getChannelName(it)
                 try {
@@ -377,9 +379,10 @@ class WebRtcService : BaseWebRtcService() {
                     if ((callType == CallType.INCOMING || callType == CallType.FAVORITE_INCOMING) && id == uid) {
                         if (!WebRtcActivity.isIncomingCallHasNewChannel) {
                             startCallTimer()
-                            if (!isFavorite())
+                            if (isFavorite())
+                                callStatusNetworkApi(it, CallAction.ACCEPT)
+                            else
                                 callCallback?.get()?.onIncomingCallConnected()
-                            callStatusNetworkApi(it, CallAction.ACCEPT)
                             addNotification(CallConnect().action, callData)
                             //addSensor()
                             joshAudioManager?.startCommunication()
@@ -1028,7 +1031,10 @@ class WebRtcService : BaseWebRtcService() {
                                             if (callCallback != null && callCallback?.get() != null) {
                                                 callCallback?.get()?.switchChannel(data)
                                             } else {
-                                                startAutoPickCallActivity(false)
+                                                startAutoPickCallActivity(
+                                                    false,
+                                                    isFromForceConnect = true
+                                                )
                                             }
                                         },
                                         750
@@ -1124,6 +1130,7 @@ class WebRtcService : BaseWebRtcService() {
         removeIncomingNotification()
         oppositeCallerId = uid
         compositeDisposable.clear()
+        Timber.tag(TAG).d("isCallOnGoing --> TURE .... ${isCallOnGoing.value}")
         isCallOnGoing.postValue(true)
         isCallerJoined = true
         if (!isFavorite())
@@ -1183,7 +1190,7 @@ class WebRtcService : BaseWebRtcService() {
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
     }
 
-    private fun startAutoPickCallActivity(autoPick: Boolean) {
+    private fun startAutoPickCallActivity(autoPick: Boolean, isFromForceConnect: Boolean = false) {
         val callActivityIntent =
             Intent(
                 this,
@@ -1194,6 +1201,8 @@ class WebRtcService : BaseWebRtcService() {
                         put(RTC_IS_FAVORITE, "true")
                     }
                 }
+                if (isFromForceConnect)
+                    putExtra(HIDE_INCOMING_UI, true)
                 putExtra(CALL_TYPE, CallType.INCOMING)
                 putExtra(AUTO_PICKUP_CALL, autoPick)
                 putExtra(CALL_USER_OBJ, callData)
@@ -1252,7 +1261,7 @@ class WebRtcService : BaseWebRtcService() {
     private fun addTimeObservable() {
         compositeDisposable.add(
             Completable.complete()
-                .delay(10, TimeUnit.SECONDS)
+                .delay(30, TimeUnit.SECONDS)
                 .doOnComplete {
                     if (isCallConnected().not()) {
                         isTimeOutToPickCall = true
@@ -1311,6 +1320,7 @@ class WebRtcService : BaseWebRtcService() {
         }
         joshAudioManager?.endCommunication()
         mRtcEngine?.leaveChannel()
+        Timber.tag(TAG).d("isCallOnGoing --->  ${isCallOnGoing.value}")
         if (isCallOnGoing.value == true) {
             isCallOnGoing.postValue(false)
             disconnectService()
@@ -1393,6 +1403,7 @@ class WebRtcService : BaseWebRtcService() {
                 joinCall(data)
             }
         }
+        Timber.tag(TAG).d("isCallOnGoing --> TURE .... ${isCallOnGoing.value}")
         isCallOnGoing.postValue(true)
     }
 
@@ -2191,18 +2202,19 @@ class WebRtcService : BaseWebRtcService() {
                             val response = resp.body()
                             if (isActive) {
                                 if (response?.containsKey(IS_CHANNEL_ACTIVE_KEY) == true) {
-                                    joinCall(dataForIncomingCall)
+                                    joinCall(data)
                                     executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
                                 } else {
                                     if (response?.containsKey(RTC_CHANNEL_KEY) == true) {
                                         val newChannel = response[RTC_CHANNEL_KEY]
                                         val token = response[RTC_TOKEN_KEY]
                                         val uid = response[RTC_UID_KEY]
-                                        dataForIncomingCall[RTC_CHANNEL_KEY] = newChannel
-                                        dataForIncomingCall[RTC_TOKEN_KEY] = token
-                                        dataForIncomingCall[RTC_UID_KEY] = uid
+                                        data[RTC_CHANNEL_KEY] = newChannel
+                                        data[RTC_TOKEN_KEY] = token
+                                        data[RTC_UID_KEY] = uid
+                                        //callData?.containsKey()
                                         callCallback?.get()?.onNewIncomingCallChannel()
-                                        joinCall(dataForIncomingCall, isNewChannelGiven = true)
+                                        joinCall(data, isNewChannelGiven = true)
                                         executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
                                     }
                                 }

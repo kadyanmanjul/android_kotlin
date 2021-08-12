@@ -187,7 +187,7 @@ class WebRtcActivity : AppCompatActivity() {
 
         override fun onNewIncomingCallChannel() {
             super.onNewIncomingCallChannel()
-            isIncomingCallHasNewChannel = false
+            isIncomingCallHasNewChannel = true
         }
 
         override fun onIncomingCallConnected() {
@@ -502,7 +502,7 @@ class WebRtcActivity : AppCompatActivity() {
         Log.d(TAG, "onStop: isCallOnGoing --> ${isCallOnGoing.value}")
         val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
         if (callType == CallType.INCOMING && isCallOnGoing.value == false && isIncomingCallHasNewChannel && !hideIncomingCallUi)
-            mBoundService?.timeoutCaller()
+            WebRtcService.disconnectCall()
         unbindService(myConnection)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
     }
@@ -984,6 +984,8 @@ class WebRtcActivity : AppCompatActivity() {
         binding.cImage.visibility = View.INVISIBLE
         binding.topicName.visibility = View.INVISIBLE
         binding.topicHeader.visibility = View.INVISIBLE
+        binding.callerName.visibility = View.INVISIBLE
+        binding.callStatus.visibility = View.INVISIBLE
         setIncomingText()
         var counter = 20
         progressAnimator.addListener(object : Animator.AnimatorListener {
@@ -996,9 +998,10 @@ class WebRtcActivity : AppCompatActivity() {
                     textAnimator.start()
                     progressAnimator.start()
                 } else {
-                    if (counter <= 0)
-                        WebRtcService.disconnectCall()
-                    mBoundService?.timeoutCaller()
+                    if (counter <= 0) {
+                        isIncomingCallHasNewChannel = false
+                        WebRtcService.noUserFoundCallDisconnect()
+                    }
                 }
             }
 
@@ -1015,10 +1018,12 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun setIncomingText() {
-        binding.callStatus.text = "Practice with Partner"
-        binding.callerName.text = "Call is being connected..."
-        binding.callerName.textSize = 15f
-        binding.callerName.setTypeface(binding.callStatus.typeface, Typeface.NORMAL)
+        binding.tvIncomingCallHeading.visibility = View.VISIBLE
+        binding.tvIncomingCallSubHeading.visibility = View.VISIBLE
+        binding.tvIncomingCallHeading.text = "Practice with Partner"
+        binding.tvIncomingCallSubHeading.text = "Call is being connected..."
+        binding.tvIncomingCallSubHeading.textSize = 15f
+        binding.tvIncomingCallSubHeading.setTypeface(binding.callStatus.typeface, Typeface.NORMAL)
     }
 
     @Synchronized
@@ -1028,12 +1033,14 @@ class WebRtcActivity : AppCompatActivity() {
         runOnUiThread {
             progressAnimator.cancel()
             binding.incomingTimerContainer.visibility = View.INVISIBLE
+            binding.tvIncomingCallHeading.visibility = View.INVISIBLE
+            binding.tvIncomingCallSubHeading.visibility = View.INVISIBLE
             binding.groupForOutgoing.visibility = View.VISIBLE
             binding.cImage.visibility = View.VISIBLE
             binding.topicName.visibility = View.VISIBLE
             binding.topicHeader.visibility = View.VISIBLE
-            binding.callerName.textSize = 20f
-            binding.callStatus.setTypeface(binding.callStatus.typeface, Typeface.BOLD)
+            binding.callerName.visibility = View.VISIBLE
+            binding.callStatus.visibility = View.VISIBLE
         }
     }
 

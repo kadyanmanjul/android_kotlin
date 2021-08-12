@@ -67,6 +67,39 @@
             tools:ignore="MissingPrefix"
             tools:text="Mohit " />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_incoming_call_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/pp_calling"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/caller_name"
+            app:layout_constraintEnd_toEndOf="@+id/caller_name"
+            app:layout_constraintStart_toStartOf="@+id/caller_name"
+            tools:ignore="MissingPrefix"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_incoming_call_sub_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_20ssp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/call_time"
+            app:layout_constraintEnd_toEndOf="@+id/call_time"
+            app:layout_constraintStart_toStartOf="@+id/call_time"
+            tools:ignore="MissingPrefix"
+            tools:text="Mohit " />
+
         <Chronometer
             android:id="@+id/call_time"
             android:layout_width="wrap_content"

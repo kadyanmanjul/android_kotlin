@@ -8,6 +8,7 @@ import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.location.Location
 import android.os.*
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.Window
