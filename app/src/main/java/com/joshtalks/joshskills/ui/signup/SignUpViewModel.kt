@@ -290,7 +290,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         return EMPTY
     }
 
-    fun completingProfile(map: MutableMap<String, String?>,isUserVerified:Boolean = true) {
+    fun completingProfile(map: MutableMap<String, String?>, isUserVerified: Boolean = true) {
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -398,10 +398,15 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 apiStatus.postValue(ApiCallStatus.START)
                 val resp =
-                    AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(mapOf("mentor_id" to mentorId))
+                    AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
+                        mapOf(
+                            "mentor_id" to mentorId,
+                            "event_name" to IMPRESSION_START_FREE_TRIAL
+                        )
+                    )
 
 
-                if (resp.isSuccessful){
+                if (resp.isSuccessful) {
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     return@launch

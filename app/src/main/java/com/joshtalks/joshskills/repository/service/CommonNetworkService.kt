@@ -326,4 +326,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/course/free_trial_register_course/")
     suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>
+
+    @POST("$DIR/impressions/track_impressions/")
+    suspend fun saveImpression(@Body params: Map<String, String>): Response<Void>
 }

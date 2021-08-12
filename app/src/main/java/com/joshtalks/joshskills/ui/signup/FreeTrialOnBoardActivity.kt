@@ -11,11 +11,15 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
@@ -26,6 +30,9 @@ import kotlinx.coroutines.launch
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
+    private val viewModel: FreeTrialOnBoardViewModel by lazy {
+        ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +43,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
     }
 
     fun signUp() {
@@ -69,12 +81,14 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             if (Mentor.getInstance().getId().isNotEmpty()) {
+                viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
                 openProfileDetailFragment()
                 alertDialog.dismiss()
             }
         }
 
         dialogView.findViewById<MaterialTextView>(R.id.cancel).setOnClickListener {
+            viewModel.saveImpression(IMPRESSION_START_TRIAL_NO)
             alertDialog.dismiss()
         }
     }

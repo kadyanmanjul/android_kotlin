@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -682,7 +683,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.chatNetworkService.getListOfRuleIds()
-                if (response.isSuccessful && response.body() != null && response.body()!!.totalRulesIds.isNullOrEmpty().not()) {
+                if (response.isSuccessful && response.body() != null && response.body()!!.totalRulesIds.isNullOrEmpty()
+                        .not()
+                ) {
                     ruleListIds.postValue(response.body())
                 }
             } catch (ex: Throwable) {
@@ -690,4 +693,19 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
+    fun saveImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
 }

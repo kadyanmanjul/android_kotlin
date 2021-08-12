@@ -335,6 +335,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onBackPressed() {
         stopSearching()
+        viewModel.saveImpression(IMPRESSION_SEARCHING_SCREEN_BACK_PRESS)
     }
 
     override fun onStart() {
