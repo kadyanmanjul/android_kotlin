@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_14sdp"
             android:layout_marginEnd="@dimen/_2sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Regular"
             android:textColor="@color/grammar_black_text_color"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:constraint_referenced_ids="question_description,heading_barrier,regular_audio_iv,slow_audio_iv"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -114,7 +114,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Regular"
             android:textColor="@color/grammar_black_text_color"
             android:visibility="gone"
             android:minLines="1"

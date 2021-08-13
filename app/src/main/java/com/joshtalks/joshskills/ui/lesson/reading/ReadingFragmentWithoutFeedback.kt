@@ -38,7 +38,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_HAND_TOOLTIP
 import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
+import com.joshtalks.joshskills.core.HAS_SEEN_VOCAB_HAND_TOOLTIP
 import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -121,7 +123,8 @@ class ReadingFragmentWithoutFeedback :
     private val lessonTooltipList by lazy {
         listOf(
             "हम यहां अपने पढ़ने और उच्चारण में सुधार करेंगे",
-            "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे")
+            "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे"
+        )
     }
 
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -372,8 +375,8 @@ class ReadingFragmentWithoutFeedback :
                     this.imageList?.getOrNull(0)?.imageUrl?.let { path ->
                         binding.imageView.setImageAndFitCenter(path, context)
                         binding.imageView.setOnClickListener {
-                            ImageShowFragment.newInstance(path, "", "")
-                                .show(childFragmentManager, "ImageShow")
+                            //ImageShowFragment.newInstance(path, "", "")
+                            //    .show(childFragmentManager, "ImageShow")
                         }
                     }
                 }
@@ -472,6 +475,14 @@ class ReadingFragmentWithoutFeedback :
         currentLessonQuestion?.run {
             showPracticeInputLayout()
             binding.recordingViewFrame.visibility = VISIBLE
+            if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+                    HAS_SEEN_READING_HAND_TOOLTIP
+                ).not()
+            ) {
+                binding.readingHoldHint.visibility = VISIBLE
+            } else {
+                binding.readingHoldHint.visibility = GONE
+            }
             binding.audioPractiseHint.visibility = VISIBLE
             binding.practiseInputHeader.text =
                 AppObjectController.getFirebaseRemoteConfig()
@@ -557,7 +568,11 @@ class ReadingFragmentWithoutFeedback :
                 updatePracticeFeedback(it)
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
-                    PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,it.pointsList!!.last(),false)
+                    PrefManager.put(
+                        LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                        it.pointsList!!.last(),
+                        false
+                    )
                 }
             }
         )
@@ -808,6 +823,8 @@ class ReadingFragmentWithoutFeedback :
                     pauseAllAudioAndUpdateViews()
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterTv.visibility = VISIBLE
+                    PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
+                    binding.readingHoldHint.visibility = GONE
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.recordingView.startAnimation(scaleAnimation)
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
@@ -1020,6 +1037,7 @@ class ReadingFragmentWithoutFeedback :
                         binding.feedbackGrade.visibility = GONE
                         binding.feedbackDescription.visibility = GONE
                         binding.recordingViewFrame.visibility = GONE
+                        binding.readingHoldHint.visibility = GONE
                         binding.audioPractiseHint.visibility = GONE
                         binding.counterTv.visibility = GONE
                         binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)

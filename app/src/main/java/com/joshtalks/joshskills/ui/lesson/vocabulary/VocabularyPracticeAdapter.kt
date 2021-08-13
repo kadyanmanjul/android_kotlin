@@ -1069,6 +1069,13 @@ class VocabularyPracticeAdapter(
                 showPracticeInputLayout()
                 this.expectedEngageType?.let {
                     binding.uploadPractiseView.visibility = VISIBLE
+                    binding.uploadPractiseViewContainer.visibility = VISIBLE
+                    if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not()||PrefManager.getBoolValue(
+                            HAS_SEEN_VOCAB_HAND_TOOLTIP).not()) {
+                        binding.vocabHoldHint.visibility = VISIBLE
+                    } else {
+                        binding.vocabHoldHint.visibility = GONE
+                    }
                     binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
@@ -1139,12 +1146,13 @@ class VocabularyPracticeAdapter(
                             binding.videoPlayer.onPause()
                             binding.practiseInfoLayout.requestDisallowInterceptTouchEvent(true)
                             binding.counterContainer.visibility = VISIBLE
+                            binding.vocabHoldHint.visibility = GONE
                             val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
                             binding.uploadPractiseView.startAnimation(scaleAnimation)
                             binding.counterTv.base = SystemClock.elapsedRealtime()
-
                             binding.counterTv.start()
                             this.startTime = System.currentTimeMillis()
+                            PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
                             clickListener.startRecording(it, layoutPosition, startTime)
                             binding.audioPractiseHint.visibility = GONE
 

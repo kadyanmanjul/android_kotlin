@@ -323,6 +323,30 @@
 
                         </FrameLayout>
 
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/reading_hold_hint"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:paddingHorizontal="@dimen/_8sdp"
+                            android:paddingVertical="@dimen/_14sdp"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="@id/recording_view_frame"
+                            app:layout_constraintEnd_toEndOf="@id/recording_view_frame"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toEndOf="@id/recording_view_frame"
+                            app:layout_constraintTop_toBottomOf="@id/recording_view_frame"
+                            app:lottie_autoPlay="true"
+                            app:lottie_fileName="lottie/data.json"
+                            app:lottie_imageAssetsFolder="lottie"
+                            app:lottie_loop="true"
+                            app:lottie_repeatMode="restart"
+                            app:lottie_scale="1"
+                            app:lottie_speed="1"
+                            tools:visibility="visible" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
 

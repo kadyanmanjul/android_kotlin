@@ -99,30 +99,45 @@
 
         </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.textview.MaterialTextView
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/btnStartTrial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/_14sdp"
-            android:background="@drawable/round_rectangle_for_course_expo"
-            android:backgroundTint="@color/button_color"
+            android:layout_marginHorizontal="@dimen/_14sdp"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:onClick="@{()->handler.showStartTrialPopup()}"
             android:paddingHorizontal="@dimen/_8sdp"
-            android:paddingVertical="@dimen/_14sdp"
-            android:text="Start 1 Day Free Trial"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            android:textColor="@color/white"
-            app:cornerRadius="@dimen/_32sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardViewHighlights"
-            app:layout_constraintVertical_bias="0.65" />
+            app:layout_constraintVertical_bias="0.65"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/button3.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/btnStartTrialText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:elevation="@dimen/_2sdp"
+            android:text="Start 1 Day Free Trial"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_32sdp"
+            app:layout_constraintBottom_toBottomOf="@id/btnStartTrial"
+            app:layout_constraintEnd_toEndOf="@id/btnStartTrial"
+            app:layout_constraintStart_toStartOf="@id/btnStartTrial"
+            app:layout_constraintTop_toTopOf="@id/btnStartTrial" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtLogin"
@@ -142,7 +157,10 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="@dimen/_5sdp" />
+            tools:visibility="gone"
+            android:elevation="@dimen/_5sdp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
