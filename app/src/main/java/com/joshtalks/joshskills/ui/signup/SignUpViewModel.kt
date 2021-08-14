@@ -401,7 +401,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
                         mapOf(
                             "mentor_id" to mentorId,
-                            "event_name" to IMPRESSION_START_FREE_TRIAL
+                            "event_name" to IMPRESSION_REGISTER_FREE_TRIAL
                         )
                     )
 

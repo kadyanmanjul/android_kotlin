@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
+import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -65,6 +66,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun showStartTrialPopup() {
+        viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)
