@@ -317,7 +317,6 @@
                         android:paddingVertical="@dimen/_14sdp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="@id/upload_practise_view"
-                        app:layout_constraintEnd_toEndOf="@id/upload_practise_view"
                         app:layout_constraintHorizontal_bias="0"
                         app:layout_constraintStart_toEndOf="@id/upload_practise_view"
                         app:layout_constraintTop_toBottomOf="@id/upload_practise_view"
