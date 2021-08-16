@@ -237,8 +237,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
         if (totalQuestion != null) {
             binding.questionProgressBar.visibility = View.VISIBLE
-            binding.questionProgressBar.max = totalQuestion!!
-            binding.questionProgressBar.progress = totalAnsweredQuestions ?: 0
+            binding.questionProgressBar.max = totalQuestion!!*100
+            binding.questionProgressBar.progress = (totalAnsweredQuestions?.plus(1)?.times(100)) ?: 0
         } else {
             binding.questionProgressBar.visibility = View.VISIBLE
         }
