@@ -295,6 +295,7 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun callback(token: String, channelName: String, uid: Int) {
         ifDidNotFindActiveUser()
+        Log.d(TAG, "callback: ")
         WebRtcService.startOutgoingCall(getMapForOutgoing(token, channelName, uid))
     }
 
@@ -310,7 +311,8 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     fun stopSearching() {
-        mBoundService?.endCall(apiCall = true)
+        Log.d(TAG, "stopSearching: ")
+        mBoundService?.endCall(apiCall = true, hasDisconnected = true)
         mBoundService?.setOngoingCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()

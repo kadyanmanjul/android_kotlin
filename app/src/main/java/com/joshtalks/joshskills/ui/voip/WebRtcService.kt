@@ -1028,9 +1028,13 @@ class WebRtcService : BaseWebRtcService() {
                                                 channelName = data[RTC_CHANNEL_KEY]
                                             }
                                             removeIncomingNotification()
-                                            if (callCallback != null && callCallback?.get() != null) {
+                                            if (WebRtcActivity.isIncomingCallHasNewChannel) {
+                                                joinCall(data, isNewChannelGiven = true)
+                                            } else if (callCallback != null && callCallback?.get() != null && !WebRtcActivity.isIncomingCallHasNewChannel) {
+                                                Log.d(TAG, "onStartCommand: CallForceConnect -->")
                                                 callCallback?.get()?.switchChannel(data)
                                             } else {
+                                                Log.d(TAG, "onStartCommand: ")
                                                 startAutoPickCallActivity(
                                                     false,
                                                     isFromForceConnect = true
@@ -1191,6 +1195,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun startAutoPickCallActivity(autoPick: Boolean, isFromForceConnect: Boolean = false) {
+        Log.d(TAG, "startAutoPickCallActivity: ")
         val callActivityIntent =
             Intent(
                 this,
@@ -1261,7 +1266,7 @@ class WebRtcService : BaseWebRtcService() {
     private fun addTimeObservable() {
         compositeDisposable.add(
             Completable.complete()
-                .delay(30, TimeUnit.SECONDS)
+                .delay(20, TimeUnit.SECONDS)
                 .doOnComplete {
                     if (isCallConnected().not()) {
                         isTimeOutToPickCall = true
@@ -1311,11 +1316,15 @@ class WebRtcService : BaseWebRtcService() {
         disconnectService()
     }
 
-    fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT) {
+    fun endCall(
+        apiCall: Boolean = false,
+        action: CallAction = CallAction.DISCONNECT,
+        hasDisconnected: Boolean = false
+    ) {
         Timber.tag(TAG).e("call_status%s", mRtcEngine?.connectionState)
         if (apiCall) {
             callData?.let {
-                callStatusNetworkApi(it, action)
+                callStatusNetworkApi(it, action, hasDisconnected = hasDisconnected)
             }
         }
         joshAudioManager?.endCommunication()

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.app.Application
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -107,5 +108,10 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                 ex.printStackTrace()
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "onCleared: ")
     }
 }

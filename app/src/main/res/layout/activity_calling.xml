@@ -159,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:text="20"
+                android:text="25"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:textColor="#ffffff"
                 android:textSize="42dp" />

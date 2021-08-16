@@ -202,6 +202,7 @@ class WebRtcActivity : AppCompatActivity() {
             super.onIncomingCallUserConnected()
             if (isIncomingCallHasNewChannel) {
                 Log.d(TAG, "onIncomingCallUserConnected: stopAnimation")
+                setUserInfo(mBoundService?.getOppositeCallerId()?.toString(), isFromApi = true)
                 stopAnimation()
             }
         }
@@ -259,6 +260,26 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.btnMute.isEnabled = false
             }
         }
+
+        /*override fun switchChannel(data: HashMap<String, String?>) {
+            super.switchChannel(data)
+
+            val callActivityIntent =
+                Intent(this@WebRtcActivity, WebRtcActivity::class.java).apply {
+                    putExtra(CALL_TYPE, CallType.INCOMING)
+                    putExtra(AUTO_PICKUP_CALL, true)
+                    putExtra(HIDE_INCOMING_UI, true)
+                    putExtra(CALL_USER_OBJ, data)
+                    if (isCallFavoritePP()) {
+                        putExtra(RTC_IS_FAVORITE, "true")
+                    }
+                }
+            Log.d(TAG, "switchChannel: ")
+            finish()
+            startActivity(callActivityIntent)
+            overridePendingTransition(0, 0)
+
+        }*/
 
         override fun onUnHoldCall() {
             super.onUnHoldCall()
@@ -399,6 +420,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     override fun onNewIntent(nIntent: Intent) {
         super.onNewIntent(nIntent)
+        Log.d(TAG, "onNewIntent: ")
         try {
             val nMap = nIntent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val nChannel = nMap?.get(RTC_CHANNEL_KEY)
@@ -489,6 +511,15 @@ class WebRtcActivity : AppCompatActivity() {
         super.onPause()
         compositeDisposable.clear()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+        while (WebRtcService.incomingWaitJobsList.isNotEmpty())
+            WebRtcService.incomingWaitJobsList.pop().cancel()
+        if (binding.incomingTimerContainer.visibility == View.VISIBLE) {
+            isAnimationCancled = true
+            runOnUiThread {
+                progressAnimator.cancel()
+            }
+            WebRtcService.disconnectCall()
+        }
     }
 
     override fun onStop() {
@@ -496,13 +527,16 @@ class WebRtcActivity : AppCompatActivity() {
         binding.callTime.stop()
         removeAudioStateListener()
         Log.d(TAG, "onStop: ")
-        while (WebRtcService.incomingWaitJobsList.isNotEmpty())
-            WebRtcService.incomingWaitJobsList.pop().cancel()
         Log.d(TAG, "onStop: is Finishing --> $isFinishing")
         Log.d(TAG, "onStop: isCallOnGoing --> ${isCallOnGoing.value}")
         val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
-        if (callType == CallType.INCOMING && isCallOnGoing.value == false && isIncomingCallHasNewChannel && !hideIncomingCallUi)
+        /*if (callType == CallType.INCOMING && !isAnimationCancled && isCallOnGoing.value == false) {
+            isAnimationCancled = true
+            runOnUiThread {
+                progressAnimator.cancel()
+            }
             WebRtcService.disconnectCall()
+        }*/
         unbindService(myConnection)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
     }
@@ -516,6 +550,7 @@ class WebRtcActivity : AppCompatActivity() {
         userDetailLiveData.observe(
             this,
             {
+                Log.d(TAG, "addObserver: $it")
                 binding.topicHeader.visibility = View.VISIBLE
                 binding.topicName.text = it["topic_name"]
                 binding.callerName.text = it["name"]
@@ -525,7 +560,7 @@ class WebRtcActivity : AppCompatActivity() {
         )
 
         WebRtcService.isCallOnGoing.observe(this, { isCallOngoing ->
-            if (isCallOngoing) {
+            if (isCallOngoing && !isIncomingCallHasNewChannel) {
                 var partnerUid: String? = intent.getIntExtra(RTC_PARTNER_ID, -1).toString()
                 if (partnerUid == "-1") {
                     val map =
@@ -560,14 +595,17 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
             } else if (CallType.INCOMING == this) {
+                Log.d(TAG, "initCall: OUT")
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 if (autoPickUp) {
+                    Log.d(TAG, "initCall: autoPickUp --> $autoPickUp")
                     acceptCall()
                     if (isCallFavoritePP()) {
                         callDisViewEnable()
                         startCallTimer()
                     }
                 } else {
+                    Log.d(TAG, "initCall: ELSE")
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
             } else {
@@ -640,10 +678,10 @@ class WebRtcActivity : AppCompatActivity() {
         ) * 1000
     }
 
-    private fun setUserInfo(uuid: String?) {
+    private fun setUserInfo(uuid: String?, isFromApi: Boolean = false) {
         if (uuid.isNullOrEmpty())
             return
-        if (userDetailLiveData.value != null) {
+        if (!isFromApi && userDetailLiveData.value != null) {
             return
         }
 
@@ -652,8 +690,10 @@ class WebRtcActivity : AppCompatActivity() {
             try {
                 val userInfo = mBoundService?.getOppositeUserInfo()
                 val userDetails =
-                    if (userInfo != null && userInfo["uid"] == uuid) userInfo
-                    else AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
+                    if (!isFromApi && userInfo != null && userInfo["uid"] == uuid)
+                        userInfo
+                    else
+                        AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
                 userDetailLiveData.postValue(userDetails)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
@@ -826,11 +866,12 @@ class WebRtcActivity : AppCompatActivity() {
             this.finishAndRemoveTask()
             return
         }
-        mBoundService?.answerCall(data)
+        if (!isAnimationCancled)
+            mBoundService?.answerCall(data)
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
         val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
-        if (!isCallFavoritePP() && !hideIncomingCallUi)
+        if (!isCallFavoritePP() && !hideIncomingCallUi && !isAnimationCancled)
             startIncomingTimer()
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
             .addBasicParam()
@@ -987,7 +1028,7 @@ class WebRtcActivity : AppCompatActivity() {
         binding.callerName.visibility = View.INVISIBLE
         binding.callStatus.visibility = View.INVISIBLE
         setIncomingText()
-        var counter = 20
+        var counter = 25
         progressAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) {}
 
@@ -1001,6 +1042,7 @@ class WebRtcActivity : AppCompatActivity() {
                     if (counter <= 0) {
                         isIncomingCallHasNewChannel = false
                         WebRtcService.noUserFoundCallDisconnect()
+                        finish()
                     }
                 }
             }
