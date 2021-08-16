@@ -9,8 +9,6 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
-import com.airbnb.lottie.LottieAnimationView
-import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.extension.setImageInLessonView
@@ -30,7 +28,6 @@ class LessonInProgressView : FrameLayout {
     private lateinit var imageView: AppCompatImageView
     private lateinit var lessonNameTv: AppCompatTextView
     private lateinit var startLessonTv: AppCompatTextView
-    private lateinit var startLessonTvShimmer: LottieAnimationView
     private lateinit var continueLessonTv: AppCompatTextView
     private lateinit var grammarStatus: ImageView
     private lateinit var vocabStatus: ImageView
@@ -81,8 +78,7 @@ class LessonInProgressView : FrameLayout {
         }
         imageView = findViewById(R.id.lesson_iv)
         lessonNameTv = findViewById(R.id.lesson_name_tv)
-        startLessonTv = findViewById<MaterialTextView>(R.id.start_lesson_tv)
-        startLessonTvShimmer = findViewById<LottieAnimationView>(R.id.start_lesson_tv_shimmer)
+        startLessonTv = findViewById(R.id.start_lesson_tv)
         continueLessonTv = findViewById(R.id.continue_lesson_tv)
 
         grammarStatus = when (GRAMMAR_POSITION) {
@@ -129,7 +125,6 @@ class LessonInProgressView : FrameLayout {
     private fun setupUI(lesson: LessonModel) {
         if (lesson.status == LESSON_STATUS.AT) {
             startLessonTv.visibility = GONE
-            startLessonTvShimmer.visibility = GONE
             continueLessonTv.visibility = View.VISIBLE
             grammarStatus.visibility = View.VISIBLE
             vocabStatus.visibility = View.VISIBLE
@@ -162,7 +157,6 @@ class LessonInProgressView : FrameLayout {
             readingStatus.visibility = GONE
             speakingStatus.visibility = GONE
             startLessonTv.visibility = View.VISIBLE
-            startLessonTvShimmer.visibility = View.VISIBLE
             continueLessonTv.visibility = GONE
         }
     }
