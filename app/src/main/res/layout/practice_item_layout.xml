@@ -308,13 +308,11 @@
 
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/vocab_hold_hint"
-                        android:layout_width="@dimen/_70sdp"
-                        android:layout_height="@dimen/_70sdp"
+                        android:layout_width="@dimen/_36sdp"
+                        android:layout_height="@dimen/_36sdp"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
-                        android:paddingHorizontal="@dimen/_8sdp"
-                        android:paddingVertical="@dimen/_14sdp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="@id/upload_practise_view"
                         app:layout_constraintHorizontal_bias="0"

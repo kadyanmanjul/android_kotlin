@@ -70,7 +70,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
@@ -824,7 +823,6 @@ class ReadingFragmentWithoutFeedback :
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterTv.visibility = VISIBLE
                     PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
-                    binding.readingHoldHint.visibility = GONE
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.recordingView.startAnimation(scaleAnimation)
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
@@ -860,6 +858,7 @@ class ReadingFragmentWithoutFeedback :
                             isAudioRecordDone = true
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
+                            binding.readingHoldHint.visibility = GONE
                             audioAttachmentInit()
                             AppObjectController.uiHandler.postDelayed(
                                 {

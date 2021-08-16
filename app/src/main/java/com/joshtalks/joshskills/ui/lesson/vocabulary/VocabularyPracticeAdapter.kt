@@ -1146,7 +1146,6 @@ class VocabularyPracticeAdapter(
                             binding.videoPlayer.onPause()
                             binding.practiseInfoLayout.requestDisallowInterceptTouchEvent(true)
                             binding.counterContainer.visibility = VISIBLE
-                            binding.vocabHoldHint.visibility = GONE
                             val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
                             binding.uploadPractiseView.startAnimation(scaleAnimation)
                             binding.counterTv.base = SystemClock.elapsedRealtime()
@@ -1183,6 +1182,7 @@ class VocabularyPracticeAdapter(
                                     startTime
                                 )
                             if (timeDifference > 1) {
+                                binding.vocabHoldHint.visibility = GONE
                                 audioAttachmentInit(it)
                             } else {
                             }
