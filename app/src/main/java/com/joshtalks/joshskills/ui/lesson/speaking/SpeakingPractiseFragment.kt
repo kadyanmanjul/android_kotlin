@@ -55,6 +55,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var topicId: String? = EMPTY
     private var questionId: String? = null
     private var haveAnyFavCaller = false
+    private var isAimationShown = false
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -178,6 +179,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         ex.printStackTrace()
                     }
                     binding.groupTwo.visibility = VISIBLE
+                    if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
+                        binding.progressBar.visibility = GONE
+                        binding.tvPractiseTime.visibility = GONE
+                        binding.progressBarAnim.visibility = VISIBLE
+                        if (!isAimationShown) {
+                            binding.progressBarAnim.playAnimation()
+                            isAimationShown = true
+                        }
+                    }
 
                     val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
                     if (points.isNotEmpty()) {

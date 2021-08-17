@@ -86,6 +86,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_today_topic" />
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/progress_bar_anim"
+                    android:layout_width="@dimen/_96sdp"
+                    android:layout_height="@dimen/_96sdp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/info_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_today_topic"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="lottie/speaking_anim.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="false" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_practise_time"
                     android:layout_width="wrap_content"

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -237,8 +238,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
         if (totalQuestion != null) {
             binding.questionProgressBar.visibility = View.VISIBLE
-            binding.questionProgressBar.max = totalQuestion!!*100
-            binding.questionProgressBar.progress = (totalAnsweredQuestions?.plus(1)?.times(100)) ?: 0
+            binding.questionProgressBar.max = (totalQuestion!! + 1) * 100
+            animateProgress()
         } else {
             binding.questionProgressBar.visibility = View.VISIBLE
         }
@@ -362,6 +363,18 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     moveToNextGrammarQuestion()
                 }
             })
+        }
+    }
+
+    private fun animateProgress() {
+        val currentProgress = binding.questionProgressBar.progress
+        val finalProgress = (totalAnsweredQuestions?.plus(1)?.times(100)) ?: 0
+        ValueAnimator.ofInt(currentProgress, finalProgress).apply {
+            duration = 500
+            addUpdateListener {
+                binding.questionProgressBar.progress = it.animatedValue as Int
+            }
+            start()
         }
     }
 
@@ -530,7 +543,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         setPlayListener(object : JoshGrammarVideoPlayer.PlayerFullScreenListener {
 
                             override fun onFullScreen() {
-                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                                val currentVideoProgressPosition = binding.videoPlayer.progress
                                 startActivity(
                                     VideoPlayerActivity.getActivityIntent(
                                         requireContext(),
