@@ -560,12 +560,14 @@ class VocabularyPracticeAdapter(
         private fun initViewHolder() {
             binding.handler = this
             binding.titleView.setOnClickListener {
+                setAnimationStatus()
                 if (binding.practiceContentLl.visibility == GONE) {
                     expandCard()
                 } else {
                     collapseCard()
                 }
             }
+            setAnimationStatus()
             binding.btnPlayInfo.setOnClickListener {
                 lessonQuestion?.let {
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
@@ -675,7 +677,7 @@ class VocabularyPracticeAdapter(
                 lessonQuestion?.let {
                     val videoId = it.videoList?.getOrNull(0)?.id
                     val videoUrl = it.videoList?.getOrNull(0)?.video_url
-                    val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                    val currentVideoProgressPosition = binding.videoPlayer.progress
                     VideoPlayerActivity.startVideoActivity(
                         context,
                         "",
@@ -715,8 +717,28 @@ class VocabularyPracticeAdapter(
 
             binding.imgPronounce.setOnClickListener {
                 lessonQuestion?.let {
+                    if (PrefManager.hasKey(HAS_SEEN_VOCAB_SPEAKING_ANIMATION)
+                            .not() || PrefManager.getBoolValue(
+                            HAS_SEEN_VOCAB_SPEAKING_ANIMATION
+                        ).not()
+                    ) {
+                        PrefManager.put(HAS_SEEN_VOCAB_SPEAKING_ANIMATION, true)
+                        binding.vocabSpeakingHint.visibility = GONE
+                    }
                     playPronunciationAudio(it, layoutPosition)
                 }
+            }
+        }
+
+        private fun setAnimationStatus() {
+            if (PrefManager.hasKey(HAS_SEEN_VOCAB_SPEAKING_ANIMATION)
+                    .not() || PrefManager.getBoolValue(
+                    HAS_SEEN_VOCAB_SPEAKING_ANIMATION
+                ).not()
+            ) {
+                binding.vocabSpeakingHint.visibility = VISIBLE
+            } else {
+                binding.vocabSpeakingHint.visibility = GONE
             }
         }
 

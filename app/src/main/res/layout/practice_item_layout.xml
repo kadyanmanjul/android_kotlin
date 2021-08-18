@@ -188,14 +188,39 @@
                     android:text="@string/how_to_pronounce"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imgPronounce"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
-                    android:background="@drawable/pronounce_animation"
-                    android:padding="@dimen/_7sdp"
-                    android:scaleType="fitCenter"
-                    android:tint="@color/white" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgPronounce"
+                        android:layout_width="@dimen/_28sdp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/pronounce_animation"
+                        android:elevation="@dimen/_2sdp"
+                        android:padding="@dimen/_7sdp"
+                        android:scaleType="fitCenter"
+                        android:tint="@color/white" />
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/vocab_speaking_hint"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_height="@dimen/_48sdp"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="lottie/speaking_ripple.json"
+                        app:lottie_imageAssetsFolder="lottie"
+                        app:lottie_loop="true"
+                        app:lottie_repeatMode="restart"
+                        app:lottie_scale="1"
+                        app:lottie_speed="3"
+                        tools:visibility="visible" />
+
+                </RelativeLayout>
 
             </LinearLayout>
 

@@ -1,10 +1,13 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -94,6 +97,7 @@ import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
+private const val TAG = "ReadingFragmentWithoutF"
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
     Player.EventListener,
@@ -113,9 +117,32 @@ class ReadingFragmentWithoutFeedback :
     private var audioManager: ExoAudioPlayer? = null
     private var currentLessonQuestion: LessonQuestion? = null
     var lessonActivityListener: LessonActivityListener? = null
+    private var canShowAnimation = true
+    private var isAnimationStarted = false
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+    }
+
+    private val progressAnimator by lazy {
+        ValueAnimator.ofInt(0, 60).apply {
+            duration = 1850
+            addUpdateListener {
+                binding.progressAnimation.progress = it.animatedValue as Int
+            }
+            addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {}
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    binding.progressAnimation.progress = 0
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {}
+
+                override fun onAnimationRepeat(animation: Animator?) {}
+
+            })
+        }
     }
 
     private var currentTooltipIndex = 0
@@ -175,6 +202,7 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onResume() {
         super.onResume()
+        startFirstTimeAnimation()
         subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -198,6 +226,61 @@ class ReadingFragmentWithoutFeedback :
         super.onPause()
         binding.videoPlayer.onPause()
         pauseAllAudioAndUpdateViews()
+    }
+
+    private fun startFirstTimeAnimation() {
+        if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+                HAS_SEEN_READING_HAND_TOOLTIP
+            ).not()
+        ) {
+            binding.blackFrameContainer.visibility = VISIBLE
+            binding.practiseInfoContainer.setBackgroundColor(Color.parseColor("#88000000"))
+            binding.readingHoldHint.visibility = VISIBLE
+            binding.progressAnimation.visibility = VISIBLE
+            var isChildAnimationStared = false
+            binding.readingHoldHint.addAnimatorUpdateListener {
+                val startAnimation = 0.033 * 4
+                val currentValue = it.animatedFraction
+                if (startAnimation <= currentValue && !isChildAnimationStared) {
+                    isChildAnimationStared = true
+                    startProgressAnimation()
+                }
+            }
+            binding.readingHoldHint.addAnimatorListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {}
+
+                override fun onAnimationEnd(animation: Animator?) {}
+
+                override fun onAnimationCancel(animation: Animator?) {
+                    progressAnimator.cancel()
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) {
+                    isChildAnimationStared = false
+                }
+
+            })
+            binding.readingHoldHint.cancelAnimation()
+            binding.readingHoldHint.playAnimation()
+        }
+    }
+
+    private fun startProgressAnimation() {
+        progressAnimator.start()
+    }
+
+    private fun stopProgressAnimation() {
+        if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+                HAS_SEEN_READING_HAND_TOOLTIP
+            ).not()
+        ) {
+            PrefManager.put(HAS_SEEN_READING_HAND_TOOLTIP, value = true)
+            binding.blackFrameContainer.visibility = GONE
+            binding.practiseInfoContainer.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            binding.readingHoldHint.visibility = GONE
+            binding.readingHoldHint.cancelAnimation()
+            binding.progressAnimation.visibility = GONE
+        }
     }
 
     private fun pauseAllAudioAndUpdateViews() {
@@ -474,14 +557,7 @@ class ReadingFragmentWithoutFeedback :
         currentLessonQuestion?.run {
             showPracticeInputLayout()
             binding.recordingViewFrame.visibility = VISIBLE
-            if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
-                    HAS_SEEN_READING_HAND_TOOLTIP
-                ).not()
-            ) {
-                binding.readingHoldHint.visibility = VISIBLE
-            } else {
-                binding.readingHoldHint.visibility = GONE
-            }
+            binding.recordTransparentContainer.visibility = VISIBLE
             binding.audioPractiseHint.visibility = VISIBLE
             binding.practiseInputHeader.text =
                 AppObjectController.getFirebaseRemoteConfig()
@@ -782,6 +858,7 @@ class ReadingFragmentWithoutFeedback :
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             binding.recordingView.setOnClickListener(null)
+                            binding.recordTransparentContainer.setOnClickListener(null)
                             audioRecordTouchListener()
                             return
                         }
@@ -807,7 +884,7 @@ class ReadingFragmentWithoutFeedback :
 
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
-        binding.recordingView.setOnTouchListener { _, event ->
+        binding.recordTransparentContainer.setOnTouchListener { _, event ->
             if (isCallOngoing()) {
                 return@setOnTouchListener false
             }
@@ -837,6 +914,7 @@ class ReadingFragmentWithoutFeedback :
 //                    params.topMargin = binding.rootView.scrollY
                     viewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
+                    stopProgressAnimation()
                 }
                 MotionEvent.ACTION_MOVE -> {
                 }
@@ -858,7 +936,7 @@ class ReadingFragmentWithoutFeedback :
                             isAudioRecordDone = true
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
-                            binding.readingHoldHint.visibility = GONE
+                            //binding.readingHoldHint.visibility = GONE
                             audioAttachmentInit()
                             AppObjectController.uiHandler.postDelayed(
                                 {
@@ -1036,7 +1114,8 @@ class ReadingFragmentWithoutFeedback :
                         binding.feedbackGrade.visibility = GONE
                         binding.feedbackDescription.visibility = GONE
                         binding.recordingViewFrame.visibility = GONE
-                        binding.readingHoldHint.visibility = GONE
+                        binding.recordTransparentContainer.visibility = GONE
+                        //binding.readingHoldHint.visibility = GONE
                         binding.audioPractiseHint.visibility = GONE
                         binding.counterTv.visibility = GONE
                         binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)

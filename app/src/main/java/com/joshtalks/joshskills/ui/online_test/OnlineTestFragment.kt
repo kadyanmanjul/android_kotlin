@@ -370,7 +370,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         val currentProgress = binding.questionProgressBar.progress
         val finalProgress = (totalAnsweredQuestions?.plus(1)?.times(100)) ?: 0
         ValueAnimator.ofInt(currentProgress, finalProgress).apply {
-            duration = 500
+            duration = 200
             addUpdateListener {
                 binding.questionProgressBar.progress = it.animatedValue as Int
             }
