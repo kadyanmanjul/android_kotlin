@@ -113,31 +113,53 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
-                            android:id="@+id/btn_play_info"
+                        <RelativeLayout
+                            android:id="@+id/btn_play_info_container"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_centerInParent="true"
-                            android:layout_gravity="center"
-                            android:background="@drawable/play_pause_button_background"
-                            android:backgroundTint="@color/button_color"
-                            android:contentDescription="@string/play_button_description"
-                            android:elevation="4dp"
-                            android:onClick="@{()->handler.playPracticeAudio()}"
-                            android:padding="@dimen/_4sdp"
-                            android:theme="?actionBarTheme"
-                            android:tint="?colorControlNormal" />
+                            android:layout_gravity="center">
 
+                            <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+                                android:id="@+id/btn_play_info"
+                                android:layout_width="@dimen/_24sdp"
+                                android:layout_height="@dimen/_24sdp"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/play_pause_button_background"
+                                android:backgroundTint="@color/button_color"
+                                android:contentDescription="@string/play_button_description"
+                                android:elevation="4dp"
+                                android:onClick="@{()->handler.playPracticeAudio()}"
+                                android:theme="?actionBarTheme"
+                                android:tint="?colorControlNormal" />
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/play_info_hint"
+                                android:layout_width="@dimen/_48sdp"
+                                android:layout_height="@dimen/_48sdp"
+                                android:layout_centerInParent="true"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:visibility="gone"
+                                app:lottie_autoPlay="true"
+                                app:lottie_fileName="lottie/speaking_ripple.json"
+                                app:lottie_imageAssetsFolder="lottie"
+                                app:lottie_loop="true"
+                                app:lottie_repeatMode="restart"
+                                app:lottie_scale="1"
+                                app:lottie_speed="3"
+                                tools:visibility="visible" />
+                        </RelativeLayout>
 
                         <SeekBar
                             android:id="@+id/practise_seekbar"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignBaseline="@id/btn_play_info"
+                            android:layout_alignBaseline="@id/btn_play_info_container"
                             android:layout_centerInParent="true"
                             android:layout_marginHorizontal="@dimen/_8sdp"
-                            android:layout_toEndOf="@id/btn_play_info"
+                            android:layout_toEndOf="@id/btn_play_info_container"
                             android:paddingStart="@dimen/_6sdp"
                             android:paddingEnd="@dimen/_6sdp"
                             android:progressDrawable="@drawable/seek_bar_draw"

@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.HAS_SEEN_READING_HAND_TOOLTIP
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_PLAY_ANIMATION
 import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
 import com.joshtalks.joshskills.core.HAS_SEEN_VOCAB_HAND_TOOLTIP
 import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
@@ -198,6 +199,16 @@ class ReadingFragmentWithoutFeedback :
         addObserver()
         // showTooltip()
         return binding.rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
+                HAS_SEEN_READING_PLAY_ANIMATION
+            ).not()
+        ) {
+            binding.playInfoHint.visibility = VISIBLE
+        }
     }
 
     override fun onResume() {
@@ -956,6 +967,13 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun playPracticeAudio() {
+        if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
+                HAS_SEEN_READING_PLAY_ANIMATION
+            ).not()
+        ) {
+            PrefManager.put(HAS_SEEN_READING_PLAY_ANIMATION, true)
+            binding.playInfoHint.visibility = GONE
+        }
         if (isAudioRecording.not()) {
             if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
                 StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
