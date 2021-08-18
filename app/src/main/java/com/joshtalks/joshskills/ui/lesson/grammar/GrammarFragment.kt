@@ -151,7 +151,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
-        showTooltip()
+        // showTooltip()
     }
 
     private fun showTooltip() {

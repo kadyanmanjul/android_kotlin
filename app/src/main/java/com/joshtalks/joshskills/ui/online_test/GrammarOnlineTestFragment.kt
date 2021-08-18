@@ -80,7 +80,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showTooltip()
+        // showTooltip()
         when {
             (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED)
                 .plus(1) == lessonNumber) -> {

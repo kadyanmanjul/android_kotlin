@@ -165,5 +165,6 @@
     <color name="grammar_button_color_asbestos">#7f8c8d</color>
     <color name="grammar_button_color_transparent">@android:color/transparent</color>
     <color name="transparent_shadow_grey">#B3A7A7A7</color>
+    <color name="name_field_color">#F9F9F9</color>
 
 </resources>

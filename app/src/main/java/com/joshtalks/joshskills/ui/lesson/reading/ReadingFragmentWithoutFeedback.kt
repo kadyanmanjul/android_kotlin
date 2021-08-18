@@ -169,7 +169,7 @@ class ReadingFragmentWithoutFeedback :
         binding.handler = this
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
-        showTooltip()
+        // showTooltip()
         return binding.rootView
     }
 

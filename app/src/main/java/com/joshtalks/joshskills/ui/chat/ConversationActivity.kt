@@ -419,7 +419,7 @@ class ConversationActivity :
                 conversationBinding.imgGroupChat,
                 conversationBinding.txtUnreadCount
             )
-            hideLeaderboardTooltip()
+            // hideLeaderboardTooltip()
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
@@ -909,7 +909,7 @@ class ConversationActivity :
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 conversationBinding.userPointContainer.slideInAnimation()
-                showLeaderBoardTooltip()
+                // showLeaderBoardTooltip()
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)

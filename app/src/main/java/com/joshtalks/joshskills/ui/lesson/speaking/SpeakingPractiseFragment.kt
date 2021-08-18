@@ -55,7 +55,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var topicId: String? = EMPTY
     private var questionId: String? = null
     private var haveAnyFavCaller = false
-    private var isAimationShown = false
+    private var isAnimationShown = false
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -92,7 +92,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.handler = this
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         addObservers()
-        showTooltip()
+        // showTooltip()
         return binding.rootView
     }
 
@@ -175,6 +175,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         } else {
                             getString(R.string.pp_message, response.duration.toString())
                         }
+                        /*binding.progressBar.visibility = GONE
+                        binding.tvPractiseTime.visibility = GONE
+                        binding.progressBarAnim.visibility = VISIBLE
+                        binding.progressBarAnim.playAnimation()*/
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
@@ -183,9 +187,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.progressBar.visibility = GONE
                         binding.tvPractiseTime.visibility = GONE
                         binding.progressBarAnim.visibility = VISIBLE
-                        if (!isAimationShown) {
+                        if (!isAnimationShown) {
                             binding.progressBarAnim.playAnimation()
-                            isAimationShown = true
+                            isAnimationShown = true
                         }
                     }
 
@@ -197,11 +201,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                     if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
                         binding.btnContinue.visibility = VISIBLE
+                        binding.btnStart.pauseAnimation()
+                        binding.btnContinue.playAnimation()
                         lessonActivityListener?.onQuestionStatusUpdate(
                             QUESTION_STATUS.AT,
                             questionId
                         )
                         lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
+                    } else {
+                        binding.btnStart.playAnimation()
                     }
                 }
             }

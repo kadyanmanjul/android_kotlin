@@ -338,7 +338,7 @@
     <string name="start_practise">"प्रैक्टिस शुरू करें "</string>
     <string name="practise_intro_sub">इस प्रैक्टिस को पूरा कैसे करें?</string>
     <string name="select_partner">पहले अपना साथी चुनें</string>
-    <string name="hint_name_field">उदाहरण मोहित अरोड़ा</string>
+    <string name="hint_name_field">आपका नाम</string>
     <string name="hint_email_field">उदाहरण abc@xyz.com</string>
     <string name="hint_date_field">उदाहरण 01 जनवरी 1990</string>
     <string name="interest_count">(%1$d/%2$d)</string>

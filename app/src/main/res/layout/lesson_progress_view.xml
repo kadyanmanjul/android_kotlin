@@ -31,6 +31,7 @@
             tools:text="Lesson 1: title name" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            tools:background="@drawable/video_placeholder"
             android:id="@+id/lesson_iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,7 +41,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv"
-            tools:background="@drawable/video_placeholder"
             tools:srcCompat="@drawable/have_a_referral" />
 
 
@@ -71,42 +71,41 @@
             app:layout_constraintWidth_percent="0.59"
             tools:visibility="gone" />
 
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmerLayout"
-            android:layout_width="wrap_content"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/start_lesson_tv_shimmer"
+            android:layout_width="0dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/_24sdp"
+            app:layout_constraintVertical_bias="0.65"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lesson_iv"
-            app:shimmer_auto_start="true"
-            app:shimmer_base_alpha="0.8"
-            app:shimmer_base_color="@color/button_color"
-            app:shimmer_duration="800"
-            app:shimmer_highlight_alpha="1"
-            app:shimmer_highlight_color="@color/white"
-            app:shimmer_repeat_count="2"
-            app:shimmer_tilt="20">
+            app:layout_constraintWidth_percent="0.9"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/button11.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/start_lesson_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:background="@drawable/rounded_state_button_bg"
-                android:backgroundTint="@color/colorPrimary"
-                android:gravity="center"
-                android:paddingHorizontal="@dimen/_24sdp"
-                android:paddingVertical="@dimen/_4sdp"
-                android:text="@string/start_lesson"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/lesson_iv" />
-
-        </com.facebook.shimmer.ShimmerFrameLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/start_lesson_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_2sdp"
+            android:gravity="center"
+            android:text="@string/start_lesson"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_32sdp"
+            app:layout_constraintBottom_toBottomOf="@id/start_lesson_tv_shimmer"
+            app:layout_constraintEnd_toEndOf="@id/start_lesson_tv_shimmer"
+            app:layout_constraintStart_toStartOf="@id/start_lesson_tv_shimmer"
+            app:layout_constraintTop_toTopOf="@id/start_lesson_tv_shimmer" />
 
 
         <androidx.appcompat.widget.AppCompatImageView
