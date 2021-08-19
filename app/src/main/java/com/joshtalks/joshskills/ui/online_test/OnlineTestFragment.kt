@@ -495,10 +495,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     ) {
         assessmentQuestions.question.status =
             if (status) QuestionStatus.CORRECT else QuestionStatus.WRONG
-        if (status) {
-            playSnackbarSound(requireActivity())
-        } else {
-            playWrongAnswerSound(requireActivity())
+        val isLastQuestion = (totalQuestion == (totalAnsweredQuestions ?: 0) + 1)
+        if (!isLastQuestion) {
+            if (status) {
+                playSnackbarSound(requireActivity())
+            } else {
+                playWrongAnswerSound(requireActivity())
+            }
         }
         viewModel.postAnswerAndGetNewQuestion(
             assessmentQuestions,
