@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -105,6 +106,7 @@ class ReadingFragmentWithoutFeedback :
     AudioPlayerEventListener,
     ProgressUpdateListener {
 
+    private val CLICK_OFFSET_PERIOD = 300L
     private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: ReadingPracticeFragmentWithoutFeedbackBinding
@@ -120,6 +122,18 @@ class ReadingFragmentWithoutFeedback :
     var lessonActivityListener: LessonActivityListener? = null
     private var canShowAnimation = true
     private var isAnimationStarted = false
+    private val pauseAnimationCallback by lazy {
+        Runnable {
+            if (audioManager?.isPlaying() == false)
+                showRecordHintAnimation()
+        }
+    }
+
+    private val longPressAnimationCallback by lazy {
+        Runnable {
+            hideRecordHindAnimation()
+        }
+    }
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
@@ -213,7 +227,7 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onResume() {
         super.onResume()
-        startFirstTimeAnimation()
+        showRecordHintAnimation()
         subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -239,10 +253,13 @@ class ReadingFragmentWithoutFeedback :
         pauseAllAudioAndUpdateViews()
     }
 
-    private fun startFirstTimeAnimation() {
-        if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+    private fun showRecordHintAnimation() {
+        if (PrefManager.getBoolValue(
+                HAS_SEEN_READING_PLAY_ANIMATION
+            ) && (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP)
+                .not() || PrefManager.getBoolValue(
                 HAS_SEEN_READING_HAND_TOOLTIP
-            ).not()
+            ).not())
         ) {
             binding.blackFrameContainer.visibility = VISIBLE
             binding.practiseInfoContainer.setBackgroundColor(Color.parseColor("#88000000"))
@@ -280,7 +297,7 @@ class ReadingFragmentWithoutFeedback :
         progressAnimator.start()
     }
 
-    private fun stopProgressAnimation() {
+    private fun hideRecordHindAnimation() {
         if (PrefManager.hasKey(HAS_SEEN_READING_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
                 HAS_SEEN_READING_HAND_TOOLTIP
             ).not()
@@ -925,7 +942,7 @@ class ReadingFragmentWithoutFeedback :
 //                    params.topMargin = binding.rootView.scrollY
                     viewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
-                    stopProgressAnimation()
+                    AppObjectController.uiHandler.postDelayed(longPressAnimationCallback, 600)
                 }
                 MotionEvent.ACTION_MOVE -> {
                 }
@@ -959,6 +976,12 @@ class ReadingFragmentWithoutFeedback :
                                 200
                             )
                         }
+                    }
+                    val duration = event.eventTime - event.downTime
+
+                    if (duration < CLICK_OFFSET_PERIOD) {
+                        AppObjectController.uiHandler.removeCallbacks(longPressAnimationCallback)
+                        showRecordHintAnimation()
                     }
                 }
             }
@@ -1166,6 +1189,9 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onPlayerPause() {
         binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        Log.d(TAG, "onPlayerPause: ")
+        AppObjectController.uiHandler.removeCallbacks(pauseAnimationCallback)
+        AppObjectController.uiHandler.postDelayed(pauseAnimationCallback, 1000)
     }
 
     override fun onPlayerResume() {
@@ -1196,6 +1222,7 @@ class ReadingFragmentWithoutFeedback :
         audioManager?.seekTo(0)
         audioManager?.onPause()
         audioManager?.setProgressUpdateListener(null)
+        showRecordHintAnimation()
     }
 
     override fun onProgressUpdate(progress: Long) {
