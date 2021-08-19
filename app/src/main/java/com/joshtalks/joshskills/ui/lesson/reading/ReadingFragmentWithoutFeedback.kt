@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.HAS_SEEN_READING_HAND_TOOLTIP
 import com.joshtalks.joshskills.core.HAS_SEEN_READING_PLAY_ANIMATION
 import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
-import com.joshtalks.joshskills.core.HAS_SEEN_VOCAB_HAND_TOOLTIP
 import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -146,10 +145,23 @@ class ReadingFragmentWithoutFeedback :
                 binding.progressAnimation.progress = it.animatedValue as Int
             }
             addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {}
+                override fun onAnimationStart(animation: Animator?) {
+                    binding.recordingView.scaleX = 0.95f
+                    binding.recordingView.scaleY = 0.95f
+                    binding.recordingView.backgroundTintList = ContextCompat.getColorStateList(
+                        AppObjectController.joshApplication,
+                        R.color.highlight_btn_color
+                    )
+                }
 
                 override fun onAnimationEnd(animation: Animator?) {
                     binding.progressAnimation.progress = 0
+                    binding.recordingView.scaleX = 1f
+                    binding.recordingView.scaleY = 1f
+                    binding.recordingView.backgroundTintList = ContextCompat.getColorStateList(
+                        AppObjectController.joshApplication,
+                        R.color.button_color
+                    )
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {}
@@ -308,6 +320,12 @@ class ReadingFragmentWithoutFeedback :
             binding.readingHoldHint.visibility = GONE
             binding.readingHoldHint.cancelAnimation()
             binding.progressAnimation.visibility = GONE
+            binding.recordingView.scaleX = 1f
+            binding.recordingView.scaleY = 1f
+            binding.recordingView.backgroundTintList = ContextCompat.getColorStateList(
+                AppObjectController.joshApplication,
+                R.color.button_color
+            )
         }
     }
 
@@ -927,7 +945,7 @@ class ReadingFragmentWithoutFeedback :
                     pauseAllAudioAndUpdateViews()
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterTv.visibility = VISIBLE
-                    PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
+                    //PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.recordingView.startAnimation(scaleAnimation)
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)

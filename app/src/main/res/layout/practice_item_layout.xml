@@ -310,47 +310,102 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:layout_marginBottom="@dimen/_12sdp"
                     android:adjustViewBounds="true"
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/upload_practise_view"
+                    <RelativeLayout
+                        android:id="@+id/mic_container"
+                        android:layout_width="@dimen/_62sdp"
+                        android:layout_height="@dimen/_62sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/upload_practise_view"
+                            android:layout_width="@dimen/_52sdp"
+                            android:layout_height="@dimen/_52sdp"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            android:background="@drawable/recv_bg_mic"
+                            android:backgroundTint="@color/button_color"
+                            android:scaleType="centerInside"
+                            android:tint="@color/white"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_rec_mic_big"
+                            tools:visibility="visible" />
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/progress_animation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginBottom="0dp"
+                            android:max="60"
+                            android:padding="0dp"
+                            android:progress="0"
+                            android:rotation="-115"
+                            android:visibility="gone"
+                            app:indicatorColor="@color/status_bar_color"
+                            app:indicatorSize="@dimen/_60sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:trackColor="#ffffff"
+                            app:trackThickness="3dp"
+                            tools:progress="10"
+                            tools:visibility="visible" />
+                    </RelativeLayout>
+
+                    <FrameLayout
+                        android:id="@+id/record_transparent_container"
                         android:layout_width="@dimen/_52sdp"
                         android:layout_height="@dimen/_52sdp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/recv_bg_mic"
-                        android:backgroundTint="@color/button_color"
-                        android:scaleType="centerInside"
-                        android:tint="@color/white"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:elevation="@dimen/_10sdp"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_rec_mic_big"
                         tools:visibility="visible" />
 
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/vocab_hold_hint"
-                        android:layout_width="@dimen/_36sdp"
-                        android:layout_height="@dimen/_36sdp"
+                        android:layout_width="@dimen/_60sdp"
+                        android:layout_height="@dimen/_60sdp"
                         android:clickable="true"
+                        android:elevation="@dimen/_2sdp"
                         android:focusable="true"
                         android:gravity="center"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="@id/upload_practise_view"
-                        app:layout_constraintHorizontal_bias="0"
-                        app:layout_constraintStart_toEndOf="@id/upload_practise_view"
-                        app:layout_constraintTop_toBottomOf="@id/upload_practise_view"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.46"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.8"
                         app:lottie_autoPlay="true"
-                        app:lottie_fileName="lottie/data.json"
+                        app:lottie_fileName="lottie/press_and_hold_black.json"
                         app:lottie_imageAssetsFolder="lottie"
                         app:lottie_loop="true"
                         app:lottie_repeatMode="restart"
                         app:lottie_scale="1"
                         app:lottie_speed="1"
                         tools:visibility="visible" />
+
+                    <FrameLayout
+                        android:id="@+id/empty_container"
+                        android:layout_width="@dimen/_1sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        app:layout_constraintStart_toEndOf="@id/mic_container"
+                        app:layout_constraintTop_toBottomOf="@id/mic_container" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -360,7 +415,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:padding="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
                     android:text="@string/hold_to_record_msz"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/black"

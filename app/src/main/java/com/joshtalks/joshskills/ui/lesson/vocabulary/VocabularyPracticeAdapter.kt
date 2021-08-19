@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.vocabulary
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -43,6 +45,7 @@ import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
+private const val TAG = "VocabularyPracticeAdapt"
 const val PAUSE_AUDIO = "PAUSE_AUDIO"
 
 class VocabularyPracticeAdapter(
@@ -549,6 +552,41 @@ class VocabularyPracticeAdapter(
         private var startTime: Long = 0L
         var filePath: String? = null
         private var mUserIsSeeking = false
+        private val progressAnimator by lazy {
+            ValueAnimator.ofInt(0, 60).apply {
+                duration = 1850
+                addUpdateListener {
+                    binding.progressAnimation.progress = it.animatedValue as Int
+                }
+                addListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator?) {
+                        binding.uploadPractiseView.scaleX = 0.95f
+                        binding.uploadPractiseView.scaleY = 0.95f
+                        binding.uploadPractiseView.backgroundTintList =
+                            ContextCompat.getColorStateList(
+                                AppObjectController.joshApplication,
+                                R.color.highlight_btn_color
+                            )
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        binding.progressAnimation.progress = 0
+                        binding.uploadPractiseView.scaleX = 1f
+                        binding.uploadPractiseView.scaleY = 1f
+                        binding.uploadPractiseView.backgroundTintList =
+                            ContextCompat.getColorStateList(
+                                AppObjectController.joshApplication,
+                                R.color.button_color
+                            )
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {}
+
+                    override fun onAnimationRepeat(animation: Animator?) {}
+
+                })
+            }
+        }
         var lessonQuestion: LessonQuestion? = null
         var positionInList = -1
         var pronounceAnimation: AnimationDrawable? = null
@@ -568,6 +606,7 @@ class VocabularyPracticeAdapter(
                 }
             }
             setAnimationStatus()
+            showRecordHintAnimation()
             binding.btnPlayInfo.setOnClickListener {
                 lessonQuestion?.let {
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
@@ -727,6 +766,65 @@ class VocabularyPracticeAdapter(
                     }
                     playPronunciationAudio(it, layoutPosition)
                 }
+            }
+        }
+
+        private fun showRecordHintAnimation() {
+            Log.d(TAG, "showRecordHintAnimation: ")
+            if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+                    HAS_SEEN_VOCAB_HAND_TOOLTIP
+                ).not()
+            ) {
+                binding.progressAnimation.visibility = VISIBLE
+                binding.vocabHoldHint.visibility = VISIBLE
+                var isChildAnimationStared = false
+                binding.vocabHoldHint.addAnimatorUpdateListener {
+                    val startAnimation = 0.033 * 4
+                    val currentValue = it.animatedFraction
+                    if (startAnimation <= currentValue && !isChildAnimationStared) {
+                        isChildAnimationStared = true
+                        startProgressAnimation()
+                    }
+                }
+                binding.vocabHoldHint.addAnimatorListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator?) {}
+
+                    override fun onAnimationEnd(animation: Animator?) {}
+
+                    override fun onAnimationCancel(animation: Animator?) {
+                        progressAnimator.cancel()
+                    }
+
+                    override fun onAnimationRepeat(animation: Animator?) {
+                        isChildAnimationStared = false
+                    }
+
+                })
+                //binding.vocabHoldHint.cancelAnimation()
+                //binding.vocabHoldHint.playAnimation()
+            }
+        }
+
+        private fun startProgressAnimation() {
+            progressAnimator.start()
+        }
+
+        private fun hideRecordHindAnimation() {
+            Log.d(TAG, "hideRecordHindAnimation: ")
+            if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+                    HAS_SEEN_VOCAB_HAND_TOOLTIP
+                ).not()
+            ) {
+                PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP, value = true)
+                binding.vocabHoldHint.visibility = GONE
+                binding.vocabHoldHint.cancelAnimation()
+                binding.progressAnimation.visibility = GONE
+                binding.uploadPractiseView.scaleX = 1f
+                binding.uploadPractiseView.scaleY = 1f
+                binding.uploadPractiseView.backgroundTintList = ContextCompat.getColorStateList(
+                    AppObjectController.joshApplication,
+                    R.color.button_color
+                )
             }
         }
 
@@ -1091,13 +1189,9 @@ class VocabularyPracticeAdapter(
                 showPracticeInputLayout()
                 this.expectedEngageType?.let {
                     binding.uploadPractiseView.visibility = VISIBLE
+                    binding.recordTransparentContainer.visibility = VISIBLE
                     binding.uploadPractiseViewContainer.visibility = VISIBLE
-                    if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not()||PrefManager.getBoolValue(
-                            HAS_SEEN_VOCAB_HAND_TOOLTIP).not()) {
-                        binding.vocabHoldHint.visibility = VISIBLE
-                    } else {
-                        binding.vocabHoldHint.visibility = GONE
-                    }
+                    showRecordHintAnimation()
                     binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
@@ -1154,7 +1248,8 @@ class VocabularyPracticeAdapter(
 
         @SuppressLint("ClickableViewAccessibility")
         private fun setAudioRecordTouchListener() {
-            binding.uploadPractiseView.setOnTouchListener { _, event ->
+
+            binding.recordTransparentContainer.setOnTouchListener { _, event ->
                 if (isCallOngoing()) {
                     return@setOnTouchListener false
                 }
@@ -1173,10 +1268,10 @@ class VocabularyPracticeAdapter(
                             binding.counterTv.base = SystemClock.elapsedRealtime()
                             binding.counterTv.start()
                             this.startTime = System.currentTimeMillis()
-                            PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
+                            //PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
                             clickListener.startRecording(it, layoutPosition, startTime)
                             binding.audioPractiseHint.visibility = GONE
-
+                            hideRecordHindAnimation()
                             appAnalytics?.addParam(
                                 AnalyticsEvent.AUDIO_RECORD.NAME,
                                 "Audio Recording"
