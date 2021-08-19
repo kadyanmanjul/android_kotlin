@@ -84,7 +84,8 @@
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
-            android:theme="@style/AppNoBarTheme" />
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.introduction.IntroductionActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"

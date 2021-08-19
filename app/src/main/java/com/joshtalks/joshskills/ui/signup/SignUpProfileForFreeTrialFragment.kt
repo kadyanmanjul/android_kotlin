@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -71,6 +72,15 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     }
 
     private fun addObservers() {
+        binding.nameEditText.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_SEND -> {
+                    submitProfile()
+                    true
+                }
+                else -> false
+            }
+        }
         viewModel.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it) {
                 SignUpStepStatus.ProfileCompleted -> {
