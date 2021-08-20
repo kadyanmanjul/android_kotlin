@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
-private const val TAG = "VocabularyPracticeAdapt"
+private const val TAG = "VocabularyPracticeAdapter"
 const val PAUSE_AUDIO = "PAUSE_AUDIO"
 
 class VocabularyPracticeAdapter(
