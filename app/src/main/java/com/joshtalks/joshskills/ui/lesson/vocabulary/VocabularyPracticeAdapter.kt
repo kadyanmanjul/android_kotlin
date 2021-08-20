@@ -681,7 +681,8 @@ class VocabularyPracticeAdapter(
                 Timber.d("Submit Button click started")
                 lessonQuestion?.let {
                     expandCardPosition = positionInList + 1
-                    if (it.filePath == null) {
+                    val duration = Utils.getDurationOfMedia(context, it.filePath)?.toInt() ?: 0
+                    if (it.filePath == null || duration < 1000) {
                         showToast(AppObjectController.joshApplication.getString(R.string.submit_practise_msz))
                         return@setOnClickListener
                     }
