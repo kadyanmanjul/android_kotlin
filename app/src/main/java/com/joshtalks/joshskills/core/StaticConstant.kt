@@ -186,6 +186,7 @@ class FirebaseRemoteConfigKey {
 
         // Reading Practise Record title
         const val READING_PRACTICE_TITLE = "READING_PRACTICE_TITLE"
+        const val VOCAB_PRACTICE_TITLE = "VOCAB_PRACTICE_TITLE"
 
         // Active api fire
         const val INTERVAL_TO_FIRE_ACTIVE_API = "INTERVAL_TO_FIRE_ACTIVE_API"

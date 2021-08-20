@@ -136,7 +136,7 @@
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Recording</string>
     <string name="your_feedback">Your Feedback</string>
-    <string name="your_submitted_answer">Your Submitted Answer</string>
+    <string name="your_submitted_answer">Your Submitted Recording</string>
 
     <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
     <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>

@@ -1193,7 +1193,7 @@ class VocabularyPracticeAdapter(
                     binding.uploadPractiseViewContainer.visibility = VISIBLE
                     showRecordHintAnimation()
                     binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
+                        .getString(FirebaseRemoteConfigKey.VOCAB_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                     binding.audioPractiseHint.visibility = VISIBLE
                     binding.submitAudioViewContainer.visibility = GONE

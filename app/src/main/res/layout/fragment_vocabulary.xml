@@ -25,7 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:itemCount="2"
-            tools:listitem="@layout/vocab_quiz_practice_item_layout" />
+            tools:listitem="@layout/practice_item_layout" />
 
         <RelativeLayout
             android:id="@+id/progress_layout"

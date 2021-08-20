@@ -525,7 +525,11 @@
     </entry>
     <entry>
         <key>READING_PRACTICE_TITLE</key>
-        <value>Please, Record your answer</value>
+        <value>Read the following sentences</value>
+    </entry>
+    <entry>
+        <key>VOCAB_PRACTICE_TITLE</key>
+        <value>Read the above sentences</value>
     </entry>
     <entry>
         <key>INTERVAL_TO_FIRE_ACTIVE_API</key>
