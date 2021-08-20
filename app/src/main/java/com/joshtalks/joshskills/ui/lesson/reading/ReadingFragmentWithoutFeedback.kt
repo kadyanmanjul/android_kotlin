@@ -119,8 +119,6 @@ class ReadingFragmentWithoutFeedback :
     private var audioManager: ExoAudioPlayer? = null
     private var currentLessonQuestion: LessonQuestion? = null
     var lessonActivityListener: LessonActivityListener? = null
-    private var canShowAnimation = true
-    private var isAnimationStarted = false
     private val pauseAnimationCallback by lazy {
         Runnable {
             if (audioManager?.isPlaying() == false)
@@ -940,15 +938,17 @@ class ReadingFragmentWithoutFeedback :
             }
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    binding.rootView.requestDisallowInterceptTouchEvent(true)
+                    //AppObjectController.uiHandler.postAtFrontOfQueue {
+                    binding.counterTv.visibility = VISIBLE
+                    //}
                     isAudioRecording = true
+                    //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
+                    binding.recordingView.startAnimation(scaleAnimation)
+                    //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.videoPlayer.onPause()
                     pauseAllAudioAndUpdateViews()
-                    binding.rootView.requestDisallowInterceptTouchEvent(true)
-                    binding.counterTv.visibility = VISIBLE
                     //PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
-                    binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
-                    binding.recordingView.startAnimation(scaleAnimation)
-                    binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
                     // appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
@@ -970,7 +970,9 @@ class ReadingFragmentWithoutFeedback :
                     binding.counterTv.stop()
                     viewModel.stopRecording()
                     binding.recordingView.clearAnimation()
+                    //AppObjectController.uiHandler.postAtFrontOfQueue {
                     binding.counterTv.visibility = GONE
+                    //}
                     binding.audioPractiseHint.visibility = VISIBLE
                     requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     val timeDifference =

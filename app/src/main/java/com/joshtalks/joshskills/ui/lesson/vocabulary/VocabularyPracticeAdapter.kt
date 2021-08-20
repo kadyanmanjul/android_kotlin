@@ -1251,6 +1251,7 @@ class VocabularyPracticeAdapter(
         private fun setAudioRecordTouchListener() {
 
             binding.recordTransparentContainer.setOnTouchListener { _, event ->
+                Log.d(TAG, "setAudioRecordTouchListener: START")
                 if (isCallOngoing()) {
                     return@setOnTouchListener false
                 }
@@ -1261,8 +1262,10 @@ class VocabularyPracticeAdapter(
                 lessonQuestion?.let {
                     when (event.action) {
                         MotionEvent.ACTION_DOWN -> {
+                            Log.d(TAG, "setAudioRecordTouchListener: START")
                             binding.videoPlayer.onPause()
                             binding.practiseInfoLayout.requestDisallowInterceptTouchEvent(true)
+                            Log.d(TAG, "setAudioRecordTouchListener: START 2::")
                             binding.counterContainer.visibility = VISIBLE
                             val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
                             binding.uploadPractiseView.startAnimation(scaleAnimation)

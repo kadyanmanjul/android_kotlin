@@ -813,5 +813,44 @@
 
     </ScrollView>
 
+    <!--<androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/tv_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:padding="@dimen/_4sdp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#88000000"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:text="Press to record, release to save"
+                android:textColor="#ffffff"
+                tools:visibility="visible" />
+
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/iv_triangle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_record"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/traingal_down"
+            app:layout_constraintEnd_toEndOf="@+id/tv_record"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="@+id/tv_record"
+            app:layout_constraintTop_toBottomOf="@+id/tv_record" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
 </layout>
 
