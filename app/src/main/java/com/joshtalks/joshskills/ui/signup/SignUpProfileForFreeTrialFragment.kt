@@ -204,7 +204,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 //    }
 
     fun submitProfile() {
-
+        activity?.let { hideKeyboard(it, binding.nameEditText) }
         if (binding.nameEditText.text.isNullOrEmpty()) {
             showToast(getString(R.string.name_error_toast))
             return
