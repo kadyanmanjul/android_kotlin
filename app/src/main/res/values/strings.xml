@@ -132,9 +132,9 @@
     <!-- Help Screen  -->
     <string name="today_practise">Today\'s Practice</string>
 
-    <string name="hold_to_record_msz">Press and hold to record your answer</string>
+    <string name="hold_to_record_msz">Press and hold to record</string>
     <string name="upload_file_msz">Upload a file</string>
-    <string name="your_answer">Your Answer</string>
+    <string name="your_answer">Your Recording</string>
     <string name="your_feedback">Your Feedback</string>
     <string name="your_submitted_answer">Your Submitted Answer</string>
 
@@ -834,7 +834,7 @@
     <string name="reading_practice">Reading Practice</string>
     <string name="reading_sub_title">Neeche diye gai lino ko padhe</string>
     <string name="record_your_answer">Record your answer</string>
-    <string name="attempt_reading_practice">Here is today’s Reading Practice, read it out loudly and send us back the voice recording</string>
+    <string name="attempt_reading_practice">Here is today\'s reading practice, please record &amp; submit</string>
     <string name="recording_start">Tap to record your answer</string>
     <string name="recording_stop">Tap to stop recording&#8230;</string>
 
@@ -878,7 +878,7 @@
     <string name="skip">Skip</string>
     <string name="add_photo">Add Photo</string>
     <string name="ucrop_label_edit_photo">Add photo</string>
-    <string name="please_record_answer">Please, Record your answer</string>
+    <string name="please_record_answer">Read the following sentences</string>
 
     <string name="certificate_d_header">Please fill the below details to download your certificate</string>
     <string name="mname_error_toast">Mother name cannot be empty!</string>

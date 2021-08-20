@@ -415,12 +415,12 @@ class ReadingFragmentWithoutFeedback :
 
     fun showPracticeSubmitLayout() {
         binding.yourSubAnswerTv.visibility = VISIBLE
-        binding.subPractiseSubmitLayout.visibility = VISIBLE
+        binding.practiseSubmitLayout.visibility = VISIBLE
     }
 
     fun hidePracticeSubmitLayout() {
         //binding.yourSubAnswerTv.visibility = GONE
-        binding.subPractiseSubmitLayout.visibility = GONE
+        binding.practiseSubmitLayout.visibility = GONE
     }
 
     fun showImproveButton() {
