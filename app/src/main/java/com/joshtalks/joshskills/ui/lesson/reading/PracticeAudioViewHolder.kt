@@ -89,7 +89,7 @@ class PracticeAudioViewHolder(
             }
             ivCancel.visibility = android.view.View.GONE
         } else {
-            date.text = DD_MM_YYYY.format(Date()).toLowerCase(Locale.getDefault())
+            date.text = DD_MM_YYYY.format(Date()).lowercase(Locale.getDefault())
             ivCancel.visibility = android.view.View.VISIBLE
         }
         initializePractiseSeekBar()
@@ -174,7 +174,7 @@ class PracticeAudioViewHolder(
                 audioType.id = Random.nextInt().toString()
 
                 val state =
-                    if (playPauseBtn.state == MaterialPlayPauseDrawable.State.Pause && audioManager!!.isPlaying()) {
+                    if (playPauseBtn.state == MaterialPlayPauseDrawable.State.Pause && audioManager?.isPlaying() == true) {
                         audioManager?.setProgressUpdateListener(this)
                         MaterialPlayPauseDrawable.State.Play
                     } else {
@@ -242,12 +242,12 @@ class PracticeAudioViewHolder(
     }
 
     override fun onPlayerPause() {
-        if (audioManager?.isPlaying()!!)
+        if (audioManager?.isPlaying() == true)
             playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
     }
 
     override fun onPlayerResume() {
-        if (audioManager?.isPlaying()!!)
+        if (audioManager?.isPlaying() == true)
             playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
     }
 
