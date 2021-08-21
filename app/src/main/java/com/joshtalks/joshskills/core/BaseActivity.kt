@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
+import com.joshtalks.joshskills.repository.server.signup.EngagementVersion
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.track.TrackActivity
@@ -284,7 +285,7 @@ abstract class BaseActivity :
         }
     }
 
-    fun getIntentForState(): Intent {
+    fun getIntentForState(engagementVersion: EngagementVersion?=null): Intent {
         val intent: Intent = when {
             User.getInstance().isVerified.not() -> {
                 when {
@@ -295,8 +296,10 @@ abstract class BaseActivity :
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
                         Intent(this, SignUpActivity::class.java)
                     }
-                    PrefManager.getBoolValue(IS_FREE_TRIAL, false, false) -> {
-                        // TODO -> change defValue from true to false
+                    User.getInstance().version == EngagementVersion.V2 -> {
+                        Intent(this, FreeTrialOnBoardActivity::class.java)
+                    }
+                    engagementVersion == EngagementVersion.V2 -> {
                         Intent(this, FreeTrialOnBoardActivity::class.java)
                     }
                     else -> {

@@ -48,10 +48,10 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
                 var id = getGoogleAdId(context)
                 // TODO abhi ke lea crash ka jugaad
-                if (id.isNullOrEmpty()){
-                    id= getGoogleAdId(context)
+                if (id.isNullOrEmpty()) {
+                    id = getGoogleAdId(context)
                 }
-                if (id.isNullOrEmpty()){
+                if (id.isNullOrEmpty()) {
                     return Result.failure()
                 }
                 PrefManager.put(USER_UNIQUE_ID, id)
@@ -465,14 +465,22 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
             val device = DeviceDetailsResponse.getInstance()
             val status = device?.apiStatus ?: ApiRespStatus.EMPTY
             val deviceId = device?.id ?: 0
-            if (ApiRespStatus.PATCH == status) {
+            val appVersion = BuildConfig.VERSION_CODE
+            if (device?.appVersionCode ?: 0 < appVersion || ( deviceId <= 0 && status == ApiRespStatus.EMPTY)) {
+                val details =
+                    AppObjectController.signUpNetworkService.postDeviceDetails(
+                        UpdateDeviceRequest()
+                    )
+                details.apiStatus = ApiRespStatus.POST
+                details.update()
+            }
+            /*else if (ApiRespStatus.PATCH == status) {
                 //return Result.success()
                 if (deviceId > 0) {
                     val details = AppObjectController.signUpNetworkService.patchDeviceDetails(
                         deviceId,
                         UpdateDeviceRequest()
                     )
-                    // TODO no need to send UpdateDeviceRequest object in patch request
                     details.apiStatus = ApiRespStatus.PATCH
                     details.update()
                 }
@@ -482,7 +490,6 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         deviceId,
                         UpdateDeviceRequest()
                     )
-                    // TODO no need to send UpdateDeviceRequest object in patch request 
                     details.apiStatus = ApiRespStatus.PATCH
                     details.update()
                 }
@@ -493,7 +500,7 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                     )
                 details.apiStatus = ApiRespStatus.POST
                 details.update()
-            }
+            }*/
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -833,7 +840,7 @@ fun getGoogleAdId(context: Context): String? {
         MobileAds.initialize(context)
         val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
         return adInfo.id
-    } catch (e:Exception){
+    } catch (e: Exception) {
 
     }
     return null

@@ -230,6 +230,30 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fetchMentor()
             WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
+            fetchNewVersion()
+        }
+    }
+
+    private fun fetchNewVersion() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestParams: HashMap<String, String> = HashMap()
+                requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+                requestParams["mentor_id"] = Mentor.getInstance().getId()
+
+                val response = AppObjectController.commonNetworkService.getVersion(requestParams)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        val user = User.getInstance()
+                        user.version = it
+                        User.update(user)
+                    }
+                    return@launch
+                }
+                return@launch
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
         }
     }
 
@@ -239,6 +263,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["non_verified_mentor_id"] = oldMentorId
                 requestParams["verified_mentor_id"] = mentorId
+                requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID, false)
 
                 AppObjectController.commonNetworkService.deleteMentor(requestParams)
                 return@launch

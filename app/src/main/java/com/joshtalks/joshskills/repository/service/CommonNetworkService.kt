@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryRes
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
+import com.joshtalks.joshskills.repository.server.signup.EngagementVersion
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
@@ -73,7 +74,7 @@ interface CommonNetworkService {
     @POST("$DIR/support/complaint/")
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
 
-    @POST("$DIR/mentor/gaid/")
+    @POST("$DIR/mentor/gaid_v2/")
     fun registerGAIdAsync(@Body requestRegisterGAId: RequestRegisterGAId): Deferred<RequestRegisterGAId>
 
     @GET("$DIR/mentor/restore_id/{id}/")
@@ -249,6 +250,11 @@ interface CommonNetworkService {
     @POST("$DIR/mentor/delete_mentor/")
     suspend fun deleteMentor(@Body params: Map<String, String>): Response<Void>
 
+    @GET("$DIR/version/get_engagement_version/")
+    suspend fun getVersion(
+        @QueryMap params: Map<String, String>
+    ): Response<EngagementVersion>
+
     @GET("$DIR/group/{group_id}/pinnedmessages/")
     suspend fun getPinnedMessages(
         @Path("group_id") groupId: String
@@ -300,7 +306,7 @@ interface CommonNetworkService {
         @Body params: HashMap<String, List<CourseUsageSync>>
     ): Response<Void>
 
-    @POST("$DIR/mentor/gaid/")
+    @POST("$DIR/mentor/gaid_v2/")
     suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): GaIDMentorModel
 
     @POST("$DIR/group/updatelastmessage/")

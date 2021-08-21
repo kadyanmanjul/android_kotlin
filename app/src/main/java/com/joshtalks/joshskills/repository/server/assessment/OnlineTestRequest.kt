@@ -25,8 +25,10 @@ data class OnlineTestRequest(
     var ruleAssessmentQuestionId: String?=null,
 
     @SerializedName("answer_order")
-    var answerOrder: List<Int>
+    var answerOrder: List<Int>,
 
+    @SerializedName("gaid")
+    var gaid: String
 
 ) : Parcelable {
 
@@ -35,13 +37,15 @@ data class OnlineTestRequest(
         answer: String,
         answerOrder: List<Int>,
         ruleAssessmentQuestionId: String?,
-        lessonId: Int
+        lessonId: Int,
+        gaid: String
     ) : this(
         questionId = question.question.remoteId,
         status = question.question.status,
         answer = answer,
         answerOrder = answerOrder,
         ruleAssessmentQuestionId = ruleAssessmentQuestionId,
-        lessonId = lessonId
+        lessonId = lessonId,
+        gaid = gaid
     )
 }

@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -34,7 +36,8 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
-                val params = mapOf("lesson_id" to lessonId)
+                val params = mapOf("lesson_id" to lessonId,
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false))
                 val response = AppObjectController.chatNetworkService.getOnlineTestQuestion(params)
 
                 if (response.isSuccessful) {
@@ -77,7 +80,8 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     answer = answerText.toString(),
                     answerOrder = answerOrderList,
                     ruleAssessmentQuestionId = ruleAssessmentQuestionId,
-                    lessonId = lessonId
+                    lessonId = lessonId,
+                    gaid = PrefManager.getStringValue(USER_UNIQUE_ID, false)
                 )
                 val response =
                     AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(

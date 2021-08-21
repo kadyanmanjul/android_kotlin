@@ -75,6 +75,10 @@ class Mentor {
                 user.userId = loginResponse.userId
                 user.isVerified = false
                 user.token = loginResponse.token
+
+                loginResponse.engagement_version?.let { version ->
+                    user.version = version
+                }
                 User.update(user)
                 PrefManager.put(API_TOKEN, loginResponse.token)
                 getInstance()

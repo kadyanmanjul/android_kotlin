@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.local.model
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.server.signup.EngagementVersion
 
 open class User {
     @SerializedName("mobile")
@@ -49,6 +50,9 @@ open class User {
 
     @SerializedName("is_verified")
     var isVerified: Boolean = false
+
+    @SerializedName("version")
+    var version: EngagementVersion? = null
 
     override fun toString(): String {
         return AppObjectController.gsonMapper.toJson(this)

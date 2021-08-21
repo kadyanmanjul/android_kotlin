@@ -105,10 +105,10 @@ interface SignUpNetworkService {
     @POST("$DIR/user/{id}/upload_profile_pic/")
     suspend fun uploadProfilePicture(@Path("id") id: String, @Part file: MultipartBody.Part): Any
 
-    @POST("$DIR/mentor/devices_v2/")
+    @POST("$DIR/mentor/devices_v3/")
     suspend fun postDeviceDetails(@Body obj: UpdateDeviceRequest): DeviceDetailsResponse
 
-    @PATCH("$DIR/mentor/devices_v2/{id}/")
+    @PATCH("$DIR/mentor/devices_v3/{id}/")
     suspend fun patchDeviceDetails(
         @Path("id") id: Int,
         @Body obj: UpdateDeviceRequest
@@ -130,7 +130,7 @@ interface SignUpNetworkService {
     @POST("$DIR/payment/create_order_v2")
     fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
 
-    @GET("$DIR/course/test/")
+    @GET("$DIR/course/test_v2/")
     suspend fun exploreCourses(@QueryMap params: Map<String, String>? = mapOf("is_default" to "true")): List<CourseExploreModel>
 
     @GET("$DIR/payment/coupon/")

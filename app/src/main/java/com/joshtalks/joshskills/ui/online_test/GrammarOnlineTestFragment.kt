@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
 import com.joshtalks.joshskills.core.HAS_SEEN_GRAMMAR_TOOLTIP
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -26,6 +25,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
+import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.signup.EngagementVersion
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
@@ -150,12 +151,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 ONLINE_TEST_LAST_LESSON_COMPLETED
             ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
-                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                        IS_FREE_TRIAL,
-                        false,
-                        false
-                    )
-                ) {
+                if (User.getInstance().version == EngagementVersion.V2) {
                     binding.testScoreContainer.visibility = View.VISIBLE
                     if (scoreText != -1) {
                         binding.score.text = getString(R.string.test_score, scoreText)
@@ -314,12 +310,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private fun showGrammarCompleteLayout() {
         binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
-        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                IS_FREE_TRIAL,
-                false,
-                false
-            )
-        ) {
+        if (User.getInstance().version == EngagementVersion.V2) {
             binding.testScoreContainer.visibility = View.VISIBLE
             if (scoreText != -1) {
                 binding.score.text = getString(R.string.test_score, scoreText)

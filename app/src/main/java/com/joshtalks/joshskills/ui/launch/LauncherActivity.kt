@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.signup.EngagementVersion
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
@@ -57,9 +57,6 @@ class LauncherActivity : CoreJoshActivity() {
             WorkManagerAdmin.appInitWorker()
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
-            if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {
-                 PrefManager.put(IS_FREE_TRIAL,true,false)
-            }
         }
     }
 
@@ -164,11 +161,11 @@ class LauncherActivity : CoreJoshActivity() {
         this.finishAndRemoveTask()
     }
 
-    private fun startNextActivity() {
+    private fun startNextActivity(engagementVersion: EngagementVersion?=null) {
         lifecycleScope.launch(Dispatchers.IO) {
             WorkManagerAdmin.appStartWorker()
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-            val intent = getIntentForState()
+            val intent = getIntentForState(engagementVersion)
             startActivity(intent)
             this@LauncherActivity.finishAndRemoveTask()
         }
@@ -259,8 +256,8 @@ class LauncherActivity : CoreJoshActivity() {
         this@LauncherActivity.finish()
     }
 
-    private fun navigateToNextScreen() {
-        startNextActivity()
+    private fun navigateToNextScreen(engagementVersion: EngagementVersion?=null) {
+        startNextActivity(engagementVersion)
     }
 
     private fun initGaid(testId: String? = null, exploreType: String? = null) {
@@ -319,10 +316,13 @@ class LauncherActivity : CoreJoshActivity() {
     private fun getMentorForUser(instanceId: String, testId: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
             val response =
-                AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
+                AppObjectController.signUpNetworkService.createGuestUser(mapOf(
+                    "instance_id" to instanceId,
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false)
+                ))
             Mentor.updateFromLoginResponse(response)
             if (testId.isNullOrEmpty()) {
-                navigateToNextScreen()
+                navigateToNextScreen(response.engagement_version)
             } else {
                 navigateToCourseDetailsScreen(testId)
             }

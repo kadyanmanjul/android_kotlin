@@ -76,7 +76,6 @@ const val ONLINE_TEST_LAST_LESSON_ATTEMPTED = "online_test_last_lesson_attempted
 const val ONLINE_TEST_LIST_OF_COMPLETED_RULES = "online_test_list_of_completed_rules"
 const val ONLINE_TEST_LIST_OF_TOTAL_RULES = "online_test_list_of_total_rules"
 const val INBOX_SCREEN_VISIT_COUNT = "inbox_screen_visit_count"
-const val IS_FREE_TRIAL = "joshskills_is_free_trial"
 const val FREE_TRIAL_TEST_SCORE = "free_trial_test_score"
 const val HAS_ENTERED_NAME_IN_FREE_TRIAL = "has_entered_name_in_free_trial"
 const val IS_ENTERED_NAME_IN_FREE_TRIAL = "is_entered_name_in_free_trial"

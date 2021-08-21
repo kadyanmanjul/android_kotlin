@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LanguageItem
+import com.joshtalks.joshskills.repository.server.signup.EngagementVersion
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -109,7 +110,7 @@ class SettingsFragment : Fragment() {
         binding.p2pSetting.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
         }
-        if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false) && User.getInstance().isVerified.not()){
+        if (User.getInstance().version == EngagementVersion.V2 && User.getInstance().isVerified.not()){
             binding.personalInfoTv.isEnabled = false
             binding.personalInfoTv.isClickable = false
             binding.personalInfoTv.alpha = ALPHA_MIN

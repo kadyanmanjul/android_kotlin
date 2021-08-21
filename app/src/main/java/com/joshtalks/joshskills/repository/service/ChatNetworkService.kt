@@ -180,7 +180,7 @@ interface ChatNetworkService {
     suspend fun getDemoOnBoardingData(): Response<DemoOnboardingData>
 
     @GET("$DIR/assessment/test_v4/")
-    suspend fun getOnlineTestQuestion(@QueryMap params: Map<String, Int>): Response<OnlineTestResponse>
+    suspend fun getOnlineTestQuestion(@QueryMap params: Map<String, Any>): Response<OnlineTestResponse>
 
     @POST("$DIR/assessment/test_v4/")
     suspend fun postAndGetNextOnlineTestQuestion(@Body onlineTestRequest: OnlineTestRequest): Response<OnlineTestResponse>

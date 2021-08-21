@@ -278,7 +278,12 @@ class NewLauncherActivity : CoreJoshActivity() {
     private fun getMentorForUser(instanceId: String, testId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             val response =
-                AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
+                AppObjectController.signUpNetworkService.createGuestUser(
+                    mapOf(
+                        "instance_id" to instanceId,
+                        "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false)
+                    )
+                )
             Mentor.updateFromLoginResponse(response)
             if (testId.isNullOrEmpty()) {
                 navigateToNextScreen()
