@@ -234,7 +234,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val resp =
                     AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                         .await()
-                PrefManager.put(SERVER_GID_ID, resp.id)
+                //PrefManager.put(SERVER_GID_ID, resp.id)
                 PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, false)
             } catch (ex: Throwable) {
                 // LogException.catchException(ex)

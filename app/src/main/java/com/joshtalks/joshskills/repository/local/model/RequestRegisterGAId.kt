@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.repository.local.model
 
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 
@@ -24,9 +23,6 @@ data class RequestRegisterGAId(
 
     @SerializedName("utm_source")
     var utmSource: String? = EMPTY,
-
-    @Expose(serialize = false, deserialize = true)
-    var id: Int = 0,
 
     @SerializedName("explore_type")
     var exploreCardType: ExploreCardType? = ExploreCardType.NORMAL

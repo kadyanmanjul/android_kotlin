@@ -74,6 +74,7 @@ interface CommonNetworkService {
     @POST("$DIR/support/complaint/")
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
 
+    // Not used
     @POST("$DIR/mentor/gaid_v2/")
     fun registerGAIdAsync(@Body requestRegisterGAId: RequestRegisterGAId): Deferred<RequestRegisterGAId>
 

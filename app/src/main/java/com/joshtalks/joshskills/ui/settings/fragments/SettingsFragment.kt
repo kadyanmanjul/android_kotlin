@@ -110,7 +110,7 @@ class SettingsFragment : Fragment() {
         binding.p2pSetting.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
         }
-        if (User.getInstance().version == EngagementVersion.V2 && User.getInstance().isVerified.not()){
+        if ((User.getInstance().version == EngagementVersion.V3 || User.getInstance().version == EngagementVersion.V4) && User.getInstance().isVerified.not()){
             binding.personalInfoTv.isEnabled = false
             binding.personalInfoTv.isClickable = false
             binding.personalInfoTv.alpha = ALPHA_MIN

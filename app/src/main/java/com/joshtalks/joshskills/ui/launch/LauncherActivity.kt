@@ -329,7 +329,7 @@ class LauncherActivity : CoreJoshActivity() {
         }
     }
 
-    private fun startOnboardingNewActivity() {
+    private fun startOnBoardingNewActivity() {
         OnBoardingActivityNew.startOnBoardingActivity(
             this@LauncherActivity,
             COURSE_EXPLORER_NEW,

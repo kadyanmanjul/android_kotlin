@@ -151,7 +151,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 ONLINE_TEST_LAST_LESSON_COMPLETED
             ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
-                if (User.getInstance().version == EngagementVersion.V2) {
+                if (User.getInstance().version == EngagementVersion.V3 || User.getInstance().version == EngagementVersion.V4) {
                     binding.testScoreContainer.visibility = View.VISIBLE
                     if (scoreText != -1) {
                         binding.score.text = getString(R.string.test_score, scoreText)
@@ -310,7 +310,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private fun showGrammarCompleteLayout() {
         binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
-        if (User.getInstance().version == EngagementVersion.V2) {
+        if (User.getInstance().version == EngagementVersion.V3 || User.getInstance().version == EngagementVersion.V4) {
             binding.testScoreContainer.visibility = View.VISIBLE
             if (scoreText != -1) {
                 binding.score.text = getString(R.string.test_score, scoreText)

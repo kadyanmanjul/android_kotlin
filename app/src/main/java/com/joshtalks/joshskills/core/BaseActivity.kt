@@ -296,10 +296,10 @@ abstract class BaseActivity :
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
                         Intent(this, SignUpActivity::class.java)
                     }
-                    User.getInstance().version == EngagementVersion.V2 -> {
+                    (User.getInstance().version == EngagementVersion.V3 || User.getInstance().version == EngagementVersion.V4)-> {
                         Intent(this, FreeTrialOnBoardActivity::class.java)
                     }
-                    engagementVersion == EngagementVersion.V2 -> {
+                    (engagementVersion == EngagementVersion.V3 || engagementVersion == EngagementVersion.V4) -> {
                         Intent(this, FreeTrialOnBoardActivity::class.java)
                     }
                     else -> {
