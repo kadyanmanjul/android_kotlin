@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -15,13 +16,33 @@
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/_16sdp">
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/card_confetti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/_9sdp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/confetti.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="false"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1"
+            tools:visibility="visible" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_16sdp"
             android:background="@drawable/rect_grey_bg"
             android:elevation="@dimen/_8sdp"
-            android:layout_margin="@dimen/_16sdp"
             android:outlineAmbientShadowColor="@color/green_right_answer"
             app:cardElevation="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -42,9 +63,9 @@
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
                     android:text="@string/lesson_completed"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -54,8 +75,8 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/lesson_iv"
                     android:layout_width="0dp"
-                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_40sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -78,8 +99,8 @@
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/description_tv"
                     android:layout_width="0dp"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:text="@string/lesson_completed"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     app:layout_constraintEnd_toEndOf="parent"

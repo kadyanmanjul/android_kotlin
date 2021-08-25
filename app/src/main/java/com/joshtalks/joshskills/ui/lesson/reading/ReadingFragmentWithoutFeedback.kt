@@ -98,7 +98,8 @@ import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
-private const val TAG = "ReadingFragmentWithoutF"
+private const val TAG = "ReadingFragmentWithoutFeedback"
+
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
     Player.EventListener,

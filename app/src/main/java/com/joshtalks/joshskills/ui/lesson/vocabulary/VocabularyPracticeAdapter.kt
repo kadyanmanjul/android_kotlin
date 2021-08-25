@@ -165,8 +165,8 @@ class VocabularyPracticeAdapter(
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        if (holder is VocabularyViewHolder) {
-            holder.complete()
+        if (holder is VocabularyViewHolder && holder.lessonQuestion?.isPlaying == true) {
+            //holder.complete()
         }
     }
 
@@ -631,7 +631,7 @@ class VocabularyPracticeAdapter(
                     playSubmitPracticeAudio(it, layoutPosition)
 //                filePath = chatModel.downloadedLocalPath
                     val state =
-                        if (it.isPlaying) {
+                        if (it.isPlaying || isAudioPlaying()) {
                             currentQuestion?.isPlaying = true
                             MaterialPlayPauseDrawable.State.Pause
                         } else {
@@ -1070,12 +1070,14 @@ class VocabularyPracticeAdapter(
         }
 
         fun pauseAudio() {
-            audioManager?.onPause()
+            audioManager?.let {
+                it.onPause()
+                binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            }
             lessonQuestion?.let {
                 if (it.isPlaying) {
-                    playSubmitPracticeAudio(it, layoutPosition)
+                    //playSubmitPracticeAudio(it, layoutPosition)
                     currentQuestion?.isPlaying = false
-                    binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
             }
         }

@@ -605,13 +605,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 GRAMMAR_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
+                    viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
                 }
                 VOCAB_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_VOCABULARY_SCREEN)
                 }
                 READING_POSITION -> {
                     tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_READING_SCREEN)
                 }
                 SPEAKING_POSITION -> {
                     tab.view.background =

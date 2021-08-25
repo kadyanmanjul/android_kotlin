@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -20,6 +22,7 @@ import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
@@ -48,6 +51,46 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
 //            "आज, इस भाग में हम अपने वर्तमान व्याकरण स्तर का पता लगाएंगे",
 //            "हमारे स्तर के आधार पर अगले पाठ से हम यहाँ व्याकरण की अवधारणाएँ सीखेंगे"
         )
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    val onTouchListener3 = View.OnTouchListener { v, event ->
+        val currentPaddingTop = v.paddingTop
+        val currentPaddingBottom = v.paddingBottom
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                val drawable = R.drawable.blue_new_btn_pressed_state
+                v.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    drawable
+                )
+
+                v.setPaddingRelative(
+                    v.paddingLeft,
+                    currentPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                    v.paddingRight,
+                    currentPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                )
+                v.invalidate()
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+
+                val drawable = R.drawable.blue_new_btn_unpressed_state
+                v.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    drawable
+                )
+                v.setPaddingRelative(
+                    v.paddingLeft,
+                    currentPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                    v.paddingRight,
+                    currentPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                )
+                v.invalidate()
+            }
+        }
+        false
     }
 
     override fun onAttach(context: Context) {
@@ -80,6 +123,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.continueBtn.setOnTouchListener(onTouchListener3)
+        binding.startBtn.setOnTouchListener(onTouchListener3)
+        binding.scoreStartBtn.setOnTouchListener(onTouchListener3)
         // showTooltip()
         when {
             (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED)
