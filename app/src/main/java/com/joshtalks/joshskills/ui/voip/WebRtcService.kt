@@ -65,6 +65,7 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICA
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
@@ -88,6 +89,8 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -133,6 +136,7 @@ class WebRtcService : BaseWebRtcService() {
     private val timber = Timber.tag(TAG)
 
     companion object {
+        var incomingTimer: CoroutineScope? = null
         var conversationRoomTopicName: String? = ""
         private val TAG = WebRtcService::class.java.simpleName
         var pstnCallState = CallState.CALL_STATE_IDLE
@@ -206,6 +210,12 @@ class WebRtcService : BaseWebRtcService() {
                 action = InitLibrary().action
             }
             AppObjectController.joshApplication.startService(serviceIntent)
+        }
+
+        fun cancelCallieDisconnectTimer() = try {
+            incomingTimer?.cancel()
+        } catch (e: Exception) {
+
         }
 
         fun startOutgoingCall(map: HashMap<String, String?>) {
@@ -366,6 +376,7 @@ class WebRtcService : BaseWebRtcService() {
             super.onJoinChannelSuccess(channel, uid, elapsed)
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
             removeIncomingNotification()
+            cancelCallieDisconnectTimer()
             compositeDisposable.clear()
             userAgoraId = uid
             Timber.tag(TAG).d("isCallOnGoing --> TURE .... ${isCallOnGoing.value}")
@@ -465,6 +476,7 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         private fun gainNetwork() {
+            cancelCallieDisconnectTimer()
             compositeDisposable.clear()
             callCallback?.get()?.onNetworkReconnect()
             joshAudioManager?.stopConnectTone()
@@ -489,6 +501,7 @@ class WebRtcService : BaseWebRtcService() {
                         }
                 )
             } else {
+                cancelCallieDisconnectTimer()
                 compositeDisposable.clear()
                 gainNetwork()
             }
@@ -688,6 +701,7 @@ class WebRtcService : BaseWebRtcService() {
                         mRtcEngine?.muteLocalAudioStream(false)
                         mRtcEngine?.enableLocalAudio(true)
                         joshAudioManager?.stopConnectTone()
+                        cancelCallieDisconnectTimer()
                         compositeDisposable.clear()
                         callCallback?.get()?.onUnHoldCall()
                     }
@@ -1010,6 +1024,7 @@ class WebRtcService : BaseWebRtcService() {
                                 this == CallForceConnect().action -> {
                                     stopRing()
                                     callStartTime = 0L
+                                    cancelCallieDisconnectTimer()
                                     compositeDisposable.clear()
                                     switchChannel = true
                                     setOppositeUserInfo(null)
@@ -1050,16 +1065,18 @@ class WebRtcService : BaseWebRtcService() {
                                     mHandler?.sendMessage(message)
                                 }
                                 this == ResumeCall().action -> {
+                                    cancelCallieDisconnectTimer()
                                     compositeDisposable.clear()
                                     val message = Message()
                                     message.what = CallState.CALL_RESUME_BY_OPPOSITE.state
                                     mHandler?.sendMessage(message)
                                 }
                                 this == UserJoined().action -> {
+                                    Log.d(TAG, "onStartCommand: UserJoined")
                                     val uid =
                                         intent.getIntExtra(OPPOSITE_USER_UID, -1)
                                     if (uid != -1) {
-                                        userJoined(uid)
+                                        userJoined(uid, true)
                                     }
                                 }
                             }
@@ -1127,12 +1144,15 @@ class WebRtcService : BaseWebRtcService() {
         val message = Message()
         message.what = CallState.EXIT.state
         mHandler?.sendMessageDelayed(message, 1000)
+        while (WebRtcService.incomingWaitJobsList.isNotEmpty())
+            WebRtcService.incomingWaitJobsList.pop().cancel()
         disconnectService()
     }
 
-    fun userJoined(uid: Int) {
+    fun userJoined(uid: Int, isFromOnResume: Boolean = false) {
         removeIncomingNotification()
         oppositeCallerId = uid
+        cancelCallieDisconnectTimer()
         compositeDisposable.clear()
         Timber.tag(TAG).d("isCallOnGoing --> TURE .... ${isCallOnGoing.value}")
         isCallOnGoing.postValue(true)
@@ -1261,20 +1281,27 @@ class WebRtcService : BaseWebRtcService() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(callActivityIntent)
+        VoipAnalytics.push(VoipAnalytics.Event.INCOMING_SCREEN_VISUAL)
     }
 
     private fun addTimeObservable() {
-        compositeDisposable.add(
-            Completable.complete()
-                .delay(20, TimeUnit.SECONDS)
-                .doOnComplete {
-                    if (isCallConnected().not()) {
-                        isTimeOutToPickCall = true
-                        disconnectCallFromCallie()
-                    }
+        Log.d(TAG, "addTimeObservable: ")
+        cancelCallieDisconnectTimer()
+        WebRtcActivity.isTimerCanceled = false
+        incomingTimer = CoroutineScope(Dispatchers.IO)
+        try {
+            incomingTimer?.launch {
+                delay(20000)
+                WebRtcActivity.isTimerCanceled = true
+                if (isCallConnected().not() && isActive) {
+                    isTimeOutToPickCall = true
+                    VoipAnalytics.push(VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL)
+                    disconnectCallFromCallie()
                 }
-                .subscribe()
-        )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun addTimerReconnect(callDisconnectTime: Long) {
@@ -1293,6 +1320,10 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun isCallConnected(): Boolean {
+        Log.d(
+            TAG,
+            "isCallConnected: isCallOnGoing --> ${isCallOnGoing.value} , isCallerJoined --> ${isCallerJoined} , state --> mRtcEngine?.connectionState"
+        )
         return ((mRtcEngine?.connectionState == Constants.CONNECTION_STATE_CONNECTING ||
                 mRtcEngine?.connectionState == Constants.CONNECTION_STATE_CONNECTED ||
                 mRtcEngine?.connectionState == Constants.CONNECTION_STATE_RECONNECTING) &&
@@ -1352,12 +1383,12 @@ class WebRtcService : BaseWebRtcService() {
         )
     }
 
-    fun answerCall(data: HashMap<String, String?>) {
+    fun answerCall(data: HashMap<String, String?>, callAcceptApi: Boolean = false) {
         Log.d(TAG, "answerCall: ")
         executor.execute {
             try {
                 stopRing()
-                if (isFavorite()) {
+                if (isFavorite() || !callAcceptApi) {
                     joinCall(data)
                     executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
                 } else {
@@ -1672,6 +1703,7 @@ class WebRtcService : BaseWebRtcService() {
         isMicEnabled = true
         oppositeCallerId = null
         pstnCallState = CallState.CALL_STATE_IDLE
+        cancelCallieDisconnectTimer()
         compositeDisposable.clear()
     }
 

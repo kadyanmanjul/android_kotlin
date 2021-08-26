@@ -106,11 +106,13 @@ class SearchingUserActivity : BaseActivity() {
         }
 
         override fun switchChannel(data: HashMap<String, String?>) {
+            Log.d(TAG, "switchChannel: ${data}")
             compositeDisposable.clear()
             val callActivityIntent =
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
                     putExtra(CALL_TYPE, CallType.INCOMING)
                     putExtra(AUTO_PICKUP_CALL, true)
+                    putExtra(CALL_ACCEPT, false)
                     putExtra(HIDE_INCOMING_UI, true)
                     putExtra(CALL_USER_OBJ, data)
                     if (isFavorite) {

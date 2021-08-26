@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 35,
-    "identityHash": "adf2d1b63c8cd7208a2e54b4f9dc42fd",
+    "identityHash": "71f7f5949ab6e5022513f5571bb958cd",
     "entities": [
       {
         "tableName": "course",
@@ -944,32 +944,8 @@
       },
       {
         "tableName": "video_watch_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mentorId` TEXT, `gID` TEXT, `is_sync` INTEGER NOT NULL, `graph` TEXT NOT NULL, `videoId` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL, `course_id` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`graph` TEXT NOT NULL, `videoId` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL, `course_id` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mentorId` TEXT, `gID` TEXT, `is_sync` INTEGER NOT NULL)",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "mentorId",
-            "columnName": "mentorId",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "gID",
-            "columnName": "gID",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "isSync",
-            "columnName": "is_sync",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "graph",
             "columnName": "graph",
@@ -991,6 +967,30 @@
           {
             "fieldPath": "courseID",
             "columnName": "course_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mentorId",
+            "columnName": "mentorId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gID",
+            "columnName": "gID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isSync",
+            "columnName": "is_sync",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -1682,8 +1682,14 @@
       },
       {
         "tableName": "app_usage",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `usage_time` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`usage_time` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "usageTime",
+            "columnName": "usage_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "id",
             "columnName": "id",
@@ -1693,12 +1699,6 @@
           {
             "fieldPath": "usageDate",
             "columnName": "created",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "usageTime",
-            "columnName": "usage_time",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -1714,8 +1714,14 @@
       },
       {
         "tableName": "app_activity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `activity` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`activity` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "activityName",
+            "columnName": "activity",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "id",
             "columnName": "id",
@@ -1726,12 +1732,6 @@
             "fieldPath": "usageDate",
             "columnName": "created",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "activityName",
-            "columnName": "activity",
-            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -1850,14 +1850,8 @@
       },
       {
         "tableName": "pending_task_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `request_object` TEXT NOT NULL, `type` TEXT NOT NULL, `retry_count` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`request_object` TEXT NOT NULL, `type` TEXT NOT NULL, `retry_count` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "requestObject",
             "columnName": "request_object",
@@ -1873,6 +1867,12 @@
           {
             "fieldPath": "numberOfRetries",
             "columnName": "retry_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -2583,12 +2583,38 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "voip_analytics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "event",
+            "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'adf2d1b63c8cd7208a2e54b4f9dc42fd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71f7f5949ab6e5022513f5571bb958cd')"
     ]
   }
 }

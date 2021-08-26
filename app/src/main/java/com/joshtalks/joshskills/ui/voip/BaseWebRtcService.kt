@@ -134,8 +134,4 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
         }
     }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

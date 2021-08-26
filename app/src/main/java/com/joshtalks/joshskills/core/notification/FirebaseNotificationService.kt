@@ -25,6 +25,7 @@ import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -583,7 +584,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             AppObjectController.appDatabase.run {
                 val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
-                conversationId?.let {
+                conversationId.let {
                     PrefManager.removeKey(it)
                     LastSyncPrefManager.removeKey(it)
                 }
@@ -1152,6 +1153,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     null
                 }
                 NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
+                    Log.d(
+                        "FSDB",
+                        "getIntentForNotificationAction: ${notificationObject.actionData}"
+                    )
                     if (notificationObject.actionData != null) {
                         try {
                             val obj = JSONObject(notificationObject.actionData!!)

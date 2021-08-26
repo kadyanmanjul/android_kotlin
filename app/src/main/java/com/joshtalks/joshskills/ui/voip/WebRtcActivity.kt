@@ -46,7 +46,9 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.cancelCallieDisconnectTimer
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallOnGoing
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -68,6 +70,7 @@ import timber.log.Timber
 
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
+const val CALL_ACCEPT = "web_rtc_call_accept"
 const val HIDE_INCOMING_UI = "hide_incoming_call_timer"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
@@ -119,6 +122,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     companion object {
         var isIncomingCallHasNewChannel = false
+        var isTimerCanceled = false
 
         fun startOutgoingCallActivity(
             activity: Activity,
@@ -127,6 +131,7 @@ class WebRtcActivity : AppCompatActivity() {
             conversationId: String? = null,
             isDemoClass: Boolean = false
         ) {
+            Log.d(TAG, "startOutgoingCallActivity: ${mapForOutgoing}")
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_OBJ, mapForOutgoing)
                 putExtra(CALL_TYPE, callType)
@@ -227,6 +232,7 @@ class WebRtcActivity : AppCompatActivity() {
                     binding.connectionLost.text = getString(R.string.reconnecting)
                     binding.connectionLost.visibility = View.VISIBLE
                     binding.callTime.visibility = View.INVISIBLE
+                    VoipAnalytics.push(VoipAnalytics.Event.RECONNECTING)
                 },
                 250
             )
@@ -378,12 +384,14 @@ class WebRtcActivity : AppCompatActivity() {
     private fun callMissedCallUser() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         if (callType == null) {
+            Log.d(TAG, "callMissedCallUser: --- 2")
             this@WebRtcActivity.finishAndRemoveTask()
         }
         callType?.run {
             if (CallType.FAVORITE_MISSED_CALL == this) {
                 val pId = intent.getIntExtra(RTC_PARTNER_ID, -1)
                 if (pId == -1) {
+                    Log.d(TAG, "callMissedCallUser: finishAndRemoveTask -- 1")
                     this@WebRtcActivity.finishAndRemoveTask()
                 }
                 updateStatusLabel()
@@ -597,9 +605,10 @@ class WebRtcActivity : AppCompatActivity() {
             } else if (CallType.INCOMING == this) {
                 Log.d(TAG, "initCall: OUT")
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
+                val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
                     Log.d(TAG, "initCall: autoPickUp --> $autoPickUp")
-                    acceptCall()
+                    acceptCall(callAcceptApi)
                     if (isCallFavoritePP()) {
                         callDisViewEnable()
                         startCallTimer()
@@ -608,7 +617,6 @@ class WebRtcActivity : AppCompatActivity() {
                     Log.d(TAG, "initCall: ELSE")
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
-            } else {
             }
             phoneConnectedStatus()
         }
@@ -768,21 +776,27 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun onDeclineCall() {
+        VoipAnalytics.push(VoipAnalytics.Event.CALL_DECLINED)
         WebRtcService.rejectCall()
     }
 
-    fun acceptCall() {
-        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-            acceptCallForDemo()
-        } else {
-            acceptCallForNormal()
+    fun acceptCall(callAcceptApi: Boolean = true, isUserPickUp: Boolean = false) {
+        if (!isTimerCanceled) {
+            if (isUserPickUp)
+                VoipAnalytics.push(VoipAnalytics.Event.CALL_ACCEPT)
+            cancelCallieDisconnectTimer()
+            if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+                acceptCallForDemo(callAcceptApi)
+            } else {
+                acceptCallForNormal(callAcceptApi)
+            }
         }
     }
 
-    private fun acceptCallForDemo() {
+    private fun acceptCallForDemo(callAcceptApi: Boolean = true) {
         if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
             Log.d(TAG, "acceptCallForDemo: ")
-            answerCall()
+            answerCall(callAcceptApi)
             return
         }
 
@@ -793,7 +807,7 @@ class WebRtcActivity : AppCompatActivity() {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             Log.d(TAG, "onPermissionsChecked: acceptCallForDemo")
-                            answerCall()
+                            answerCall(callAcceptApi)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -814,10 +828,10 @@ class WebRtcActivity : AppCompatActivity() {
         )
     }
 
-    private fun acceptCallForNormal() {
+    private fun acceptCallForNormal(callAcceptApi: Boolean = true) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             Log.d(TAG, "acceptCallForNormal: ")
-            answerCall()
+            answerCall(callAcceptApi)
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -827,7 +841,7 @@ class WebRtcActivity : AppCompatActivity() {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             Log.d(TAG, "onPermissionsChecked: acceptCallForNormal")
-                            answerCall()
+                            answerCall(callAcceptApi)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -860,16 +874,19 @@ class WebRtcActivity : AppCompatActivity() {
         )
     }
 
-    private fun answerCall() {
+    private fun answerCall(callAcceptApi: Boolean = true) {
         val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        Log.d(TAG, "answerCall: $data")
         if (data == null) {
+            Log.d(TAG, "answerCall: finishAndRemoveTask -- 3")
             this.finishAndRemoveTask()
             return
         }
         if (!isAnimationCancled)
-            mBoundService?.answerCall(data)
+            mBoundService?.answerCall(data, callAcceptApi)
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
+        //TODO: OutGoing Screen Visual for OutGoing and Incoming
         val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
         if (!isCallFavoritePP() && !hideIncomingCallUi && !isAnimationCancled)
             startIncomingTimer()
@@ -939,6 +956,7 @@ class WebRtcActivity : AppCompatActivity() {
             mBoundService?.setOppositeUserInfo(null)
             return
         }
+        Log.d(TAG, "showCallRatingScreen: finishAndRemoveTask --- 4")
         this@WebRtcActivity.finishAndRemoveTask()
     }
 

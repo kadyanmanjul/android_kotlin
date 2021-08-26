@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
 import com.smartlook.sdk.smartlook.Smartlook
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
@@ -146,6 +147,10 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var p2pNetworkService: P2PNetworkService
+            private set
+
+        @JvmStatic
+        lateinit var voipAnalyticsService: VoipAnalyticsService
             private set
 
 
@@ -313,10 +318,13 @@ class AppObjectController {
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
+
                 signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
                 chatNetworkService = retrofit.create(ChatNetworkService::class.java)
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-                conversationRoomsNetworkService = retrofit.create(ConversationRoomsNetworkService::class.java)
+                conversationRoomsNetworkService =
+                    retrofit.create(ConversationRoomsNetworkService::class.java)
+                voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
