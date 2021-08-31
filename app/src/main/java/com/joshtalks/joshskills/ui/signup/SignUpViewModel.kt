@@ -208,7 +208,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             FCMResponse.removeOldFCM()
             DeviceDetailsResponse.removeOldDevice()
             deleteMentor(loginResponse.mentorId, Mentor.getInstance().getId())
@@ -245,7 +245,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     response.body()?.let {
                         val user = User.getInstance()
-                        user.version = it
+                        user.version = it.engagementVersion
                         User.update(user)
                     }
                     return@launch

@@ -44,7 +44,7 @@ import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryRes
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.repository.server.signup.EngagementVersion
+import com.joshtalks.joshskills.repository.server.signup.EngagementVersionResponse
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
@@ -254,7 +254,7 @@ interface CommonNetworkService {
     @GET("$DIR/version/get_engagement_version/")
     suspend fun getVersion(
         @QueryMap params: Map<String, String>
-    ): Response<EngagementVersion>
+    ): Response<EngagementVersionResponse>
 
     @GET("$DIR/group/{group_id}/pinnedmessages/")
     suspend fun getPinnedMessages(
