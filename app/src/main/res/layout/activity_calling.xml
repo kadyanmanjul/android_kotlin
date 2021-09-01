@@ -254,7 +254,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/green"
-            android:onClick="@{()->handler.acceptCall()}"
+            android:onClick="@{()->handler.acceptCall(true)}"
             android:padding="@dimen/_14sdp"
             android:rotation="225"
             app:layout_constraintBottom_toBottomOf="parent"

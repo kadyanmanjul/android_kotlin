@@ -33,6 +33,7 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -47,6 +48,7 @@ import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.printAll
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
@@ -58,25 +60,37 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICA
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
+import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
+import com.joshtalks.joshskills.util.DateUtils
 import io.agora.rtc.Constants
 import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
+import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
+import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
+import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
+import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
+import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -85,6 +99,7 @@ const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
 const val RTC_UID_KEY = "uid"
 const val RTC_CALLER_UID_KEY = "caller_uid"
+const val RTC_CALL_ID = "rtc_call_id"
 const val RTC_NAME = "caller_name"
 const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
@@ -383,6 +398,7 @@ class WebRtcService : BaseWebRtcService() {
             }
 
             callData = null
+            CurrentCallDetails.reset()
         }
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
@@ -597,6 +613,7 @@ class WebRtcService : BaseWebRtcService() {
         FirestoreDB.setNotificationListener(listener = object : AgoraNotificationListener {
             override fun onReceived(firestoreNotification: FirestoreNotificationObject) {
                 val nc = firestoreNotification.toNotificationObject(null)
+                nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }
                 FirebaseNotificationService.sendFirestoreNotification(nc, this@WebRtcService)
             }
         })
@@ -696,6 +713,7 @@ class WebRtcService : BaseWebRtcService() {
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
                                 data.let {
                                     callData = it
+                                    CurrentCallDetails.fromMap(it)
                                 }
                                 setOppositeUserInfo(null)
                                 callType = CallType.INCOMING
@@ -711,6 +729,7 @@ class WebRtcService : BaseWebRtcService() {
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
                                 data.let {
                                     callData = it
+                                    CurrentCallDetails.fromMap(it)
                                 }
                                 callType = CallType.OUTGOING
                                 joinCall(data)
@@ -773,11 +792,13 @@ class WebRtcService : BaseWebRtcService() {
                                 resetConfig()
                                 addNotification(CallForceConnect().action, null)
                                 callData = null
+                                CurrentCallDetails.reset()
                                 AppObjectController.uiHandler.postDelayed(
                                     {
                                         val data =
                                             intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
                                         callData = data
+                                        CurrentCallDetails.fromMap(data)
                                         if (data.containsKey(RTC_CHANNEL_KEY)) {
                                             channelName = data[RTC_CHANNEL_KEY]
                                         }
@@ -848,7 +869,6 @@ class WebRtcService : BaseWebRtcService() {
             500
         )
         addNotification(CallConnect().action, callData)
-        // addSensor()
         joshAudioManager?.startCommunication()
         joshAudioManager?.stopConnectTone()
         audioFocus()
@@ -882,6 +902,7 @@ class WebRtcService : BaseWebRtcService() {
     private fun callConnectService(data: HashMap<String, String?>?) {
         data?.let {
             callData = it
+            CurrentCallDetails.fromMap(it)
         }
         removeIncomingNotification()
         startAutoPickCallActivity(true)
@@ -956,6 +977,12 @@ class WebRtcService : BaseWebRtcService() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(callActivityIntent)
+        VoipAnalytics.push(
+            VoipAnalytics.Event.INCOMING_SCREEN_VISUAL,
+            agoraMentorUid = CurrentCallDetails.callieUid,
+            agoraCallId = CurrentCallDetails.callId,
+            timeStamp = DateUtils.getCurrentTimeStamp()
+        )
     }
 
     private fun addTimeObservable() {
@@ -965,6 +992,14 @@ class WebRtcService : BaseWebRtcService() {
                 .doOnComplete {
                     if (isCallConnected().not()) {
                         isTimeOutToPickCall = true
+                        callData?.let {
+                            VoipAnalytics.push(
+                                VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL,
+                                agoraMentorUid = CurrentCallDetails.callieUid,
+                                agoraCallId = CurrentCallDetails.callId,
+                                timeStamp = DateUtils.getCurrentTimeStamp()
+                            )
+                        }
                         disconnectCallFromCallie()
                     }
                 }
@@ -1052,6 +1087,7 @@ class WebRtcService : BaseWebRtcService() {
         }
         if (callData == null) {
             callData = data
+            CurrentCallDetails.fromMap(data)
         }
         data.printAll()
         val statusCode = mRtcEngine?.joinChannel(
@@ -1137,11 +1173,11 @@ class WebRtcService : BaseWebRtcService() {
 
     fun getOppositeUserInfo() = userDetailMap
 
-    private fun muteCall() {
+    fun muteCall() {
         mRtcEngine?.muteLocalAudioStream(true)
     }
 
-    private fun unMuteCall() {
+    fun unMuteCall() {
         mRtcEngine?.muteLocalAudioStream(false)
     }
 
@@ -1192,7 +1228,6 @@ class WebRtcService : BaseWebRtcService() {
     private fun resetConfig() {
         stopRing()
         joshAudioManager?.stopConnectTone()
-        // removeSensor()
         isCallerJoined = false
         eventListener = null
         isSpeakerEnabled = false

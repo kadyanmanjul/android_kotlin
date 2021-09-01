@@ -36,7 +36,10 @@ import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallOnGoing
+import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
+import com.joshtalks.joshskills.util.DateUtils
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -152,6 +155,12 @@ class WebRtcActivity : AppCompatActivity() {
                     binding.connectionLost.text = getString(R.string.reconnecting)
                     binding.connectionLost.visibility = View.VISIBLE
                     binding.callTime.visibility = View.INVISIBLE
+                    VoipAnalytics.push(
+                        VoipAnalytics.Event.RECONNECTING,
+                        agoraMentorUid = CurrentCallDetails.callieUid,
+                        agoraCallId = CurrentCallDetails.callId,
+                        timeStamp = DateUtils.getCurrentTimeStamp()
+                    )
                 },
                 250
             )
@@ -179,6 +188,12 @@ class WebRtcActivity : AppCompatActivity() {
             super.onHoldCall()
             Timber.tag(TAG).e("onHoldCall")
             runOnUiThread {
+                VoipAnalytics.push(
+                    VoipAnalytics.Event.ON_HOLD,
+                    agoraMentorUid = CurrentCallDetails.callieUid,
+                    agoraCallId = CurrentCallDetails.callId,
+                    timeStamp = DateUtils.getCurrentTimeStamp()
+                )
                 binding.connectionLost.text = getString(R.string.hold_call)
                 binding.connectionLost.visibility = View.VISIBLE
                 binding.callTime.visibility = View.INVISIBLE
@@ -192,6 +207,12 @@ class WebRtcActivity : AppCompatActivity() {
             runOnUiThread {
                 //      binding.connectionLost.text = EMPTY
                 if (binding.connectionLost.text != getString(R.string.ringing)) {
+                    VoipAnalytics.push(
+                        VoipAnalytics.Event.RESUME,
+                        agoraMentorUid = CurrentCallDetails.callieUid,
+                        agoraCallId = CurrentCallDetails.callId,
+                        timeStamp = DateUtils.getCurrentTimeStamp()
+                    )
                     binding.connectionLost.visibility = View.INVISIBLE
                     binding.callTime.visibility = View.VISIBLE
                     binding.btnMute.isEnabled = true
@@ -414,6 +435,12 @@ class WebRtcActivity : AppCompatActivity() {
                 startCallTimer()
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
+                VoipAnalytics.push(
+                    VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
+                    agoraMentorUid = CurrentCallDetails.callieUid,
+                    agoraCallId = CurrentCallDetails.callId,
+                    timeStamp = DateUtils.getCurrentTimeStamp()
+                )
             } else if (CallType.INCOMING == this) {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 if (autoPickUp) {
@@ -423,7 +450,6 @@ class WebRtcActivity : AppCompatActivity() {
                 } else {
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
-            } else {
             }
             phoneConnectedStatus()
         }
@@ -585,10 +611,22 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun onDeclineCall() {
+        VoipAnalytics.push(
+            VoipAnalytics.Event.CALL_DECLINED, agoraMentorUid = CurrentCallDetails.callieUid,
+            agoraCallId = CurrentCallDetails.callId,
+            timeStamp = DateUtils.getCurrentTimeStamp()
+        )
         WebRtcService.rejectCall()
     }
 
-    fun acceptCall() {
+    fun acceptCall(isUserPickUp: Boolean = false) {
+        if (isUserPickUp)
+            VoipAnalytics.push(
+                VoipAnalytics.Event.CALL_ACCEPT,
+                agoraMentorUid = CurrentCallDetails.callieUid,
+                agoraCallId = CurrentCallDetails.callId,
+                timeStamp = DateUtils.getCurrentTimeStamp()
+            )
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             acceptCallForDemo()
         } else {
