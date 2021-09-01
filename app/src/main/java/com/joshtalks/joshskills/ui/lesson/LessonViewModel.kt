@@ -63,6 +63,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val favoriteCaller = MutableSharedFlow<Boolean>(replay = 0)
     val ruleListIds: MutableLiveData<RuleIdsList> = MutableLiveData()
+    val lessonSpotlightStateLiveData: MutableLiveData<LessonSpotlightState?> = MutableLiveData(null)
+    val grammarSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
+    val speakingSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {

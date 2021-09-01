@@ -290,24 +290,30 @@ class ConversationActivity :
         PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
     }
 
-    private fun showLeaderBoardAnimation() {
+    private fun showLeaderBoardSpotlight() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.leaderboard_overlay_status_bar)
         conversationBinding.overlayLayout.visibility = VISIBLE
         conversationBinding.arrowAnimation.visibility = VISIBLE
         conversationBinding.overlayLeaderboardContainer.visibility = VISIBLE
         conversationBinding.overlayLeaderboardTooltip.visibility = VISIBLE
+        conversationBinding.overlayLeaderboardTooltip.startAnimation(
+            AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+        )
         conversationBinding.labelTapToDismiss.visibility = GONE
         lifecycleScope.launch(Dispatchers.Main) {
             delay(6500)
             conversationBinding.overlayLayout.setOnClickListener {
                 PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
-                hideLeaderBoardAnimation()
+                hideLeaderBoardSpotlight()
             }
             conversationBinding.labelTapToDismiss.visibility = VISIBLE
+            conversationBinding.labelTapToDismiss.startAnimation(
+                AnimationUtils.loadAnimation(this@ConversationActivity, R.anim.slide_up_dialog)
+            )
         }
     }
 
-    private fun hideLeaderBoardAnimation() {
+    private fun hideLeaderBoardSpotlight() {
         conversationBinding.overlayLayout.setOnClickListener(null)
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
         conversationBinding.overlayLayout.visibility = GONE
@@ -456,7 +462,7 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardContainer.setOnClickListener {
             PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
             openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
-            hideLeaderBoardAnimation()
+            hideLeaderBoardSpotlight()
         }
         conversationBinding.points.setOnClickListener {
             openUserProfileActivity(
@@ -941,14 +947,15 @@ class ConversationActivity :
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-                conversationBinding.userPointContainer.slideInAnimation()
+                // conversationBinding.userPointContainer.slideInAnimation()
+                conversationBinding.userPointContainer.visibility = VISIBLE
                 // showLeaderBoardTooltip()
                 val hasSeenLeaderBoardAnim =
                     PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION, false, false)
                 if (hasSeenLeaderBoardAnim) {
-                    hideLeaderBoardAnimation()
+                    hideLeaderBoardSpotlight()
                 } else {
-                    showLeaderBoardAnimation()
+                    showLeaderBoardSpotlight()
                 }
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
@@ -1589,7 +1596,7 @@ class ConversationActivity :
     override fun onBackPressed() {
         audioPlayerManager?.onPause()
         if (conversationBinding.overlayLayout.visibility == VISIBLE) {
-            hideLeaderBoardAnimation()
+            hideLeaderBoardSpotlight()
         } else {
             val resultIntent = Intent()
             setResult(Activity.RESULT_OK, resultIntent)

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -16,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -49,12 +51,14 @@ import io.reactivex.schedulers.Schedulers
 import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
 const val VOCAB_POSITION = 2
 const val READING_POSITION = 3
+const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
@@ -225,6 +229,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     setUpTabLayout(lessonNumber, lessonIsNewGrammar)
                     setTabCompletionStatus()
                 }
+//                if (PrefManager.getBoolValue(HAS_SEEN_LESSON_SPOTLIGHT)) {
+//                    hideSpotlight()
+//                } else {
+//                    showLessonSpotlight()
+//                }
             }
         )
 
@@ -290,7 +299,252 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 }
             }
         )
+
+        viewModel.lessonSpotlightStateLiveData.observe(this, {
+            // Show lesson Spotlight
+            when (it) {
+                LessonSpotlightState.LESSON_SPOTLIGHT -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_lesson_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1)
+                    }
+                }
+                LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.VISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_grammar_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT)
+                    }
+                }
+                LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.VISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_speaking_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART1)
+                    }
+                }
+                LessonSpotlightState.VOCAB_SPOTLIGHT_PART1 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.VISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_vocab_spotlight_1)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART2)
+                    }
+                }
+                LessonSpotlightState.VOCAB_SPOTLIGHT_PART2 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.VISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_vocab_spotlight_2)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART3)
+                    }
+                }
+                LessonSpotlightState.VOCAB_SPOTLIGHT_PART3 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.VISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_vocab_spotlight_3)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.READING_SPOTLIGHT)
+                    }
+                }
+                LessonSpotlightState.READING_SPOTLIGHT -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_reading_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART2)
+                    }
+                }
+                LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART2 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.VISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_grammar_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.VISIBLE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.VISIBLE
+                }
+                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_speaking_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.VISIBLE
+                    binding.spotlightCallBtnText.visibility = View.VISIBLE
+                    binding.arrowAnimation.visibility = View.VISIBLE
+                }
+                else -> {
+                    // Hide lesson Spotlight
+                    binding.overlayLayout.visibility = View.GONE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.GONE
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                }
+            }
+        })
     }
+
+    private fun hideSpotlight() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+    }
+
+    private fun showLessonSpotlight() {
+        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.LESSON_SPOTLIGHT)
+        PrefManager.put(HAS_SEEN_LESSON_SPOTLIGHT, true)
+    }
+
+    fun startOnlineExamTest() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+        viewModel.grammarSpotlightClickLiveData.postValue(Unit)
+    }
+
+    fun callPracticePartner() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+        viewModel.speakingSpotlightClickLiveData.postValue(Unit)
+    }
+
+//    fun onSpotlightClick() {
+//        when (viewModel.lessonSpotlightStateLiveData.value) {
+//            LessonSpotlightState.LESSON_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT)
+//            }
+//            LessonSpotlightState.GRAMMAR_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT)
+//            }
+//            LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART1)
+//            }
+//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART1 -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART2)
+//            }
+//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART2 -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART3)
+//            }
+//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART3 -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.READING_SPOTLIGHT)
+//            }
+//            LessonSpotlightState.READING_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(null)
+//            }
+//        }
+//    }
 
     private fun setUpNewGrammarLayouts(
         rulesCompletedIds: ArrayList<Int>?,
@@ -620,9 +874,19 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
+                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+                        hideSpotlight()
+                    } else {
+                        showSpeakingSpotlight()
+                    }
                 }
             }
         }
+    }
+
+    private fun showSpeakingSpotlight() {
+        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
@@ -671,15 +935,19 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     override fun onBackPressed() {
-        val resultIntent = Intent()
-        viewModel.lessonLiveData.value?.let {
-            resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
-            resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
-            resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
-            resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+        if (binding.overlayLayout.visibility == View.VISIBLE) {
+            hideSpotlight()
+        } else {
+            val resultIntent = Intent()
+            viewModel.lessonLiveData.value?.let {
+                resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
+                resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
+                resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+            }
+            setResult(RESULT_OK, resultIntent)
+            this@LessonActivity.finish()
         }
-        setResult(RESULT_OK, resultIntent)
-        this@LessonActivity.finish()
     }
 
     override fun onVisibleScreen() {

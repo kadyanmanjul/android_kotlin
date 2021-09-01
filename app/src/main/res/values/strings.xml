@@ -896,7 +896,7 @@
     <string name="grammar_continue_test_text">क्लास जारी रखने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_input_question_hint">अंग्रेजी में जवाब लिखे </string>
     <string name="free_trial_dialog_title">जरुरी जानकारी</string>
-    <string name="free_trial_dialog_desc">इस कोर्स की फीस ₹499 है\\nऔर यह एक 90 दिनों का कोर्स है\\n \\nखरीदने से पहले क्या आप इसका एक दिन के लिए मुफ्त में प्रयोग करना चाहते हैं?</string>
+    <string name="free_trial_dialog_desc">यह एक 90 दिनों का कोर्स है\\nऔर try करने के बाद अगर आप चाहें तो इसे ₹499 में खरीद सकते हैं\\n  \\nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
     <string name="free_trial_dialog_btn_no">जी नहीं</string>
     <string name="free_trial_dialog_btn_yes">जी हाँ</string>
     <string name="test_completed">Test Completed</string>
@@ -905,5 +905,14 @@
     <string name="test_completed_description">ग्रामर का लेवल चेक करने के लिए आपके सभी जवाबों को रिकॉर्ड कर लिया गया हैं \n \n आपकी ग्रामर के Current Status के आधार पर आपके आगे का कोर्स सेट किया जा रहा हैं</string>
     <string name="enter_name_label">आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</string>
 
+    <!--    Lesson Spotlight-->
+    <string name="label_lesson_spotlight">हर Lesson में चार भाग होते है</string>
+    <string name="label_grammar_spotlight">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
+    <string name="label_speaking_spotlight">एस भाग में आपको एक प्रैक्टिस पार्टनर के साथ 2 मिनट के लिए अंग्रेजी में बात करनी है</string>
+    <string name="label_speaking_spotlight_2"> To complete this section you have to speak to a practice partner for 2 minutes</string>
+    <string name="label_vocab_spotlight_1">हर रोज़ यहाँ पर हम नए शब्द सिखेंगे</string>
+    <string name="label_vocab_spotlight_2">Appreciate का सही उच्चारण क्या है यहां से देखे</string>
+    <string name="label_vocab_spotlight_3">अब ये तीन वाक्यों को साथ में पढ़ कर बोले</string>
+    <string name="label_reading_spotlight">इस भाग में हम अपनी रीडिंग की प्रैक्टिस करेंगे</string>
 
 </resources>

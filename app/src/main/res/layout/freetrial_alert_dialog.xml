@@ -61,6 +61,7 @@
         android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/_16ssp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/yes"
         app:layout_constraintStart_toStartOf="parent"

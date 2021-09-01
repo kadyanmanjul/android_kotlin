@@ -150,6 +150,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             startPractise(favoriteUserCall = false)
         }
 
+        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner, {
+            startPractise(favoriteUserCall = false)
+        })
+
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }

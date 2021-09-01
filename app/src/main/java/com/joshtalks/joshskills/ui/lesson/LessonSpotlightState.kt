@@ -1,0 +1,13 @@
+package com.joshtalks.joshskills.ui.lesson
+
+enum class LessonSpotlightState(value: Int) {
+    LESSON_SPOTLIGHT(0),
+    GRAMMAR_SPOTLIGHT_PART1(1),
+    SPEAKING_SPOTLIGHT(2),
+    VOCAB_SPOTLIGHT_PART1(3),
+    VOCAB_SPOTLIGHT_PART2(4),
+    VOCAB_SPOTLIGHT_PART3(5),
+    READING_SPOTLIGHT(6),
+    GRAMMAR_SPOTLIGHT_PART2(7),
+    SPEAKING_SPOTLIGHT_PART2(8),
+}

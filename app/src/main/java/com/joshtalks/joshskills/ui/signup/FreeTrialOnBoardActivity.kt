@@ -67,6 +67,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     fun showStartTrialPopup() {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
+        layout.btnStartTrial.pauseAnimation()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)

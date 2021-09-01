@@ -16,10 +16,10 @@
         android:layout_height="match_parent">
 
         <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/toolbar_container"
             layout="@layout/base_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +73,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:paddingVertical="@dimen/_4sdp">
+                android:paddingVertical="@dimen/_4sdp"
+                tools:visibility="gone">
 
 
                 <com.google.android.material.textview.MaterialTextView
@@ -142,10 +143,209 @@
             app:matProg_progressIndeterminate="true" />
 
         <FrameLayout
+            android:id="@+id/overlay_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/transparent_blue_alpha_75"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-        </FrameLayout>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/arrow_animation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:elevation="@dimen/_7sdp"
+            android:rotation="90"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/spotlight_call_btn_text"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/leaderboard_arrow.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/spotlight_start_grammar_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:background="@drawable/blue_new_btn_grammar_selector"
+            android:elevation="@dimen/_6sdp"
+            android:enabled="true"
+            android:gravity="center"
+            android:onClick="@{()->viewbinding.startOnlineExamTest()}"
+            android:paddingVertical="@dimen/_12sdp"
+            android:text="@string/grammar_btn_text_start"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:cornerRadius="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="gone" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/spotlight_call_btn"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_56sdp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_18sdp"
+            android:backgroundTint="@color/colorAccent"
+            android:elevation="@dimen/_6sdp"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:onClick="@{()->viewbinding.callPracticePartner()}"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="lottie/button11.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1"
+            app:rippleColor="@color/white"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/spotlight_call_btn_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_2sdp"
+            android:gravity="center"
+            android:text="@string/call_practice_partner"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/spotlight_call_btn"
+            app:layout_constraintEnd_toEndOf="@id/spotlight_call_btn"
+            app:layout_constraintStart_toStartOf="@id/spotlight_call_btn"
+            app:layout_constraintTop_toTopOf="@id/spotlight_call_btn"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_grammar"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/capsule_selection_tab"
+            android:gravity="center"
+            android:text="@string/grammar"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/black"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_speaking"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/speaking_tab_bg"
+            android:gravity="center"
+            android:text="@string/speaking"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/spotlight_tab_grammar"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/black"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_vocab"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/vocabulary_tab_bg"
+            android:gravity="center"
+            android:text="@string/vocabulary"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/spotlight_tab_speaking"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/black"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/spotlight_tab_reading"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/reading_tab_bg"
+            android:gravity="center"
+            android:text="@string/reading"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/spotlight_tab_vocab"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:tabMinWidth="@dimen/_32sdp"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/black"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lesson_spotlight_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="@dimen/_24sdp"
+            android:layout_marginVertical="@dimen/_60sdp"
+            android:background="@drawable/rounded_rectangle_with_border"
+            android:backgroundTint="@color/leaderboard_tooltip_bg_color"
+            android:elevation="@dimen/_8sdp"
+            android:gravity="center"
+            android:padding="@dimen/_18sdp"
+            android:text="@string/label_lesson_spotlight"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textColor="@color/leaderboard_tooltip_text_color"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.76"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

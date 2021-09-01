@@ -42,9 +42,10 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewHighlights"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_24sdp"
+            android:layout_marginHorizontal="@dimen/_24sdp"
             app:cardElevation="@dimen/_4sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -90,7 +91,20 @@
                     android:paddingVertical="@dimen/_2sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_12sdp"
-                    android:text="Course Fees ₹499"
+                    android:text="Remove hesitation"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:drawableTint="@color/right_answer_color" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_check_box"
+                    android:drawablePadding="@dimen/_24sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:paddingStart="@dimen/_24sdp"
+                    android:paddingEnd="@dimen/_12sdp"
+                    android:text="Practice speaking with partners"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:drawableTint="@color/right_answer_color" />
