@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
+import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -86,8 +87,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private val lessonTooltipList by lazy {
         listOf(
             "हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking",
-            "आज, इस भाग में हम अपने वर्तमान व्याकरण स्तर का पता लगाएंगे",
-            "हमारे स्तर के आधार पर अगले पाठ से हम यहाँ व्याकरण की अवधारणाएँ सीखेंगे"
+//            "आज, इस भाग में हम अपने वर्तमान व्याकरण स्तर का पता लगाएंगे",
+//            "हमारे स्तर के आधार पर अगले पाठ से हम यहाँ व्याकरण की अवधारणाएँ सीखेंगे"
         )
     }
 
@@ -150,7 +151,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
-        showTooltip()
+        // showTooltip()
     }
 
     private fun showTooltip() {
@@ -764,12 +765,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
         } else {
             showQuizCompleteLayout()
-            lessonActivityListener?.onSectionStatusUpdate(0, true)
+            lessonActivityListener?.onSectionStatusUpdate(GRAMMAR_POSITION, true)
         }
     }
 
     fun onGrammarContinueClick() {
-        lessonActivityListener?.onNextTabCall(0)
+        lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 
     fun onRedoQuizClick() {

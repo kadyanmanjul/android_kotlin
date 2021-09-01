@@ -271,6 +271,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         }
         requestMap["date_of_birth"] = userDateOfBirth ?: EMPTY
         requestMap["gender"] = gender?.gValue ?: EMPTY
+        requestMap["is_free_trial"] = "N"
         viewModel.completingProfile(requestMap)
     }
 

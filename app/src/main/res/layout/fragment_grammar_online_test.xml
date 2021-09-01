@@ -73,7 +73,7 @@
                     android:paddingHorizontal="@dimen/_14sdp"
                     android:paddingVertical="@dimen/_3sdp"
                     android:text="आगे बढ़े"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import java.util.ConcurrentModificationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
@@ -52,7 +51,7 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                         IS_PROFILE_FEATURE_ACTIVE,
                         response.body()?.isPointsActive ?: false
                     )
-                    delay(850)
+                    //delay(850)
                     userData.emit(ur)
                 }
             } catch (ex: Throwable) {

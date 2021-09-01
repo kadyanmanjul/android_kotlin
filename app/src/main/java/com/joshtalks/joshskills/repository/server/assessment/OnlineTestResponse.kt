@@ -35,7 +35,14 @@ data class OnlineTestResponse(
     var scoreText : Int?,
 
     @SerializedName("points_list")
-    val pointsList: List<String>?
+    val pointsList: List<String>?,
+
+    @SerializedName("total_questions")
+    val totalQuestions: Int?=null,
+
+    @SerializedName("total_answered")
+    val totalAnswered: Int?=null
+
 
 ) : Parcelable
 

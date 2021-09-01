@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.app.Application
 import android.location.Location
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,8 +15,10 @@ import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.ProtocolException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import timber.log.Timber
 
 private const val TAG = "VoipCallingViewModel"
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
@@ -117,8 +118,18 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        Log.d(TAG, "onCleared: ")
+    fun saveImpression(eventName: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
     }
+
 }

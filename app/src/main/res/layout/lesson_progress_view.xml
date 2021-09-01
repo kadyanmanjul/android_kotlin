@@ -71,23 +71,41 @@
             app:layout_constraintWidth_percent="0.59"
             tools:visibility="gone" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/start_lesson_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/_8sdp"
-            android:background="@drawable/rounded_state_button_bg"
-            android:backgroundTint="@color/colorPrimary"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/start_lesson_tv_shimmer"
+            android:layout_width="0dp"
             android:gravity="center"
+            android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/_24sdp"
-            android:paddingVertical="@dimen/_4sdp"
-            android:text="@string/start_lesson"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-            android:textColor="@color/white"
+            app:layout_constraintVertical_bias="0.65"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lesson_iv" />
+            app:layout_constraintTop_toBottomOf="@+id/lesson_iv"
+            app:layout_constraintWidth_percent="0.9"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/button11.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/start_lesson_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_2sdp"
+            android:gravity="center"
+            android:text="@string/start_lesson"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_32sdp"
+            app:layout_constraintBottom_toBottomOf="@id/start_lesson_tv_shimmer"
+            app:layout_constraintEnd_toEndOf="@id/start_lesson_tv_shimmer"
+            app:layout_constraintStart_toStartOf="@id/start_lesson_tv_shimmer"
+            app:layout_constraintTop_toTopOf="@id/start_lesson_tv_shimmer" />
 
 
         <androidx.appcompat.widget.AppCompatImageView

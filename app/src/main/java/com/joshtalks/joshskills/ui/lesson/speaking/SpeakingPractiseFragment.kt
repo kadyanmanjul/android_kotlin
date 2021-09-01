@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -54,6 +55,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var topicId: String? = EMPTY
     private var questionId: String? = null
     private var haveAnyFavCaller = false
+    private var isAnimationShown = false
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -90,7 +92,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.handler = this
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         addObservers()
-        showTooltip()
+        // showTooltip()
         return binding.rootView
     }
 
@@ -148,8 +150,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             startPractise(favoriteUserCall = false)
         }
 
+        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner, {
+            startPractise(favoriteUserCall = false)
+        })
+
         binding.btnContinue.setOnClickListener {
-            lessonActivityListener?.onNextTabCall(3)
+            lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }
 
         viewModel.speakingTopicLiveData.observe(
@@ -173,10 +179,23 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         } else {
                             getString(R.string.pp_message, response.duration.toString())
                         }
+                        /*binding.progressBar.visibility = GONE
+                        binding.tvPractiseTime.visibility = GONE
+                        binding.progressBarAnim.visibility = VISIBLE
+                        binding.progressBarAnim.playAnimation()*/
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
                     binding.groupTwo.visibility = VISIBLE
+                    if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
+                        binding.progressBar.visibility = GONE
+                        binding.tvPractiseTime.visibility = GONE
+                        binding.progressBarAnim.visibility = VISIBLE
+                        if (!isAnimationShown) {
+                            binding.progressBarAnim.playAnimation()
+                            isAnimationShown = true
+                        }
+                    }
 
                     val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
                     if (points.isNotEmpty()) {
@@ -186,11 +205,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                     if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
                         binding.btnContinue.visibility = VISIBLE
+                        binding.btnStart.pauseAnimation()
+                        binding.btnContinue.playAnimation()
                         lessonActivityListener?.onQuestionStatusUpdate(
                             QUESTION_STATUS.AT,
                             questionId
                         )
-                        lessonActivityListener?.onSectionStatusUpdate(3, true)
+                        lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
+                    } else {
+                        binding.btnStart.playAnimation()
                     }
                 }
             }

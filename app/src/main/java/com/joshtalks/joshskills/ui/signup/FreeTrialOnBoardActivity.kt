@@ -9,27 +9,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
+import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
-    private val viewModel: FreeTrialViewModel by lazy {
-        ViewModelProvider(this).get(FreeTrialViewModel::class.java)
+    private val viewModel: FreeTrialOnBoardViewModel by lazy {
+        ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -39,33 +44,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
-        addObserver()
     }
 
-    private fun addObserver() {
-        viewModel.apiStatus.observe(this) {
-            when (it) {
-                ApiCallStatus.SUCCESS -> {
-                   moveToInboxScreen()
-                }
-                else -> {
-                   //showToast(getString(R.string.something_went_wrong))
-                }
-            }}
-    }
-
-    private fun moveToInboxScreen() {
-        AppAnalytics.create(AnalyticsEvent.FREE_TRIAL_ONBOARDING.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
-            .push()
-        val intent = Intent(this@FreeTrialOnBoardActivity, InboxActivity::class.java).apply {
-            putExtra(FLOW_FROM, "free trial onboarding journey")
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivity(intent)
+    override fun onStart() {
+        super.onStart()
+        viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
     }
 
     fun signUp() {
@@ -83,6 +66,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun showStartTrialPopup() {
+        viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
+        layout.btnStartTrial.pauseAnimation()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)
@@ -95,23 +80,40 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+        dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+            getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
-            if (Mentor.getInstance().getId().isNotEmpty()){
-                viewModel.startFreeTrial(Mentor.getInstance().getId())
+            if (Mentor.getInstance().getId().isNotEmpty()) {
+                viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
+                openProfileDetailFragment()
+                alertDialog.dismiss()
             }
-            alertDialog.dismiss()
         }
 
         dialogView.findViewById<MaterialTextView>(R.id.cancel).setOnClickListener {
+            viewModel.saveImpression(IMPRESSION_START_TRIAL_NO)
             alertDialog.dismiss()
         }
+    }
 
+    private fun openProfileDetailFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                SignUpProfileForFreeTrialFragment.newInstance(),
+                SignUpProfileForFreeTrialFragment::class.java.name
+            )
+        }
     }
 
     override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            this@FreeTrialOnBoardActivity.finish()
+            return
+        }
         super.onBackPressed()
-        this@FreeTrialOnBoardActivity.finish()
     }
 
 }

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -94,13 +95,6 @@ class LeaderBoardFragment : Fragment() {
 
     private fun setListener() {
         binding.userLayout.setOnClickListener {
-            if (User.getInstance().isVerified.not() &&
-                (PrefManager.hasKey(HAS_ENTERED_NAME_IN_FREE_TRIAL).not() ||
-                        PrefManager.getBoolValue(HAS_ENTERED_NAME_IN_FREE_TRIAL, false, false)
-                            .not())
-            ) {
-                return@setOnClickListener
-            }
             scrollToUserPosition()
             binding.userLayout.visibility = View.GONE
         }
@@ -337,16 +331,6 @@ class LeaderBoardFragment : Fragment() {
                 .append(" ")
         }
         binding.name.text = resp
-        if (User.getInstance().isVerified.not() && PrefManager.getBoolValue(
-                HAS_ENTERED_NAME_IN_FREE_TRIAL, false, false
-            ).not()
-        ) {
-            binding.name.visibility = View.INVISIBLE
-            binding.editName.apply {
-                visibility = View.VISIBLE
-            }
-
-        }
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(
             response.photoUrl,

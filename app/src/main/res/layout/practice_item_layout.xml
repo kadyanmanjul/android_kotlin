@@ -188,14 +188,39 @@
                     android:text="@string/how_to_pronounce"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imgPronounce"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
-                    android:background="@drawable/pronounce_animation"
-                    android:padding="@dimen/_7sdp"
-                    android:scaleType="fitCenter"
-                    android:tint="@color/white" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgPronounce"
+                        android:layout_width="@dimen/_28sdp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/pronounce_animation"
+                        android:elevation="@dimen/_2sdp"
+                        android:padding="@dimen/_7sdp"
+                        android:scaleType="fitCenter"
+                        android:tint="@color/white" />
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/vocab_speaking_hint"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_height="@dimen/_48sdp"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="lottie/speaking_ripple.json"
+                        app:lottie_imageAssetsFolder="lottie"
+                        app:lottie_loop="true"
+                        app:lottie_repeatMode="restart"
+                        app:lottie_scale="1"
+                        app:lottie_speed="3"
+                        tools:visibility="visible" />
+
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -279,22 +304,110 @@
 
                 </FrameLayout>
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/upload_practise_view"
-                    android:layout_width="@dimen/_52sdp"
-                    android:layout_height="@dimen/_52sdp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/upload_practise_view_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:layout_marginBottom="@dimen/_12sdp"
                     android:adjustViewBounds="true"
-                    android:background="@drawable/recv_bg_mic"
-                    android:backgroundTint="@color/button_color"
-                    android:elevation="@dimen/_2sdp"
-                    android:scaleType="centerInside"
-                    android:tint="@color/white"
                     android:visibility="gone"
-                    app:srcCompat="@drawable/ic_rec_mic_big"
-                    tools:visibility="visible" />
+                    tools:visibility="visible">
+
+                    <RelativeLayout
+                        android:id="@+id/mic_container"
+                        android:layout_width="@dimen/_62sdp"
+                        android:layout_height="@dimen/_62sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/upload_practise_view"
+                            android:layout_width="@dimen/_52sdp"
+                            android:layout_height="@dimen/_52sdp"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            android:background="@drawable/recv_bg_mic"
+                            android:backgroundTint="@color/button_color"
+                            android:scaleType="centerInside"
+                            android:tint="@color/white"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_rec_mic_big"
+                            tools:visibility="visible" />
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/progress_animation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginBottom="0dp"
+                            android:max="60"
+                            android:padding="0dp"
+                            android:progress="0"
+                            android:rotation="-115"
+                            android:visibility="gone"
+                            app:indicatorColor="@color/status_bar_color"
+                            app:indicatorSize="@dimen/_60sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:trackColor="#ffffff"
+                            app:trackThickness="3dp"
+                            tools:progress="10"
+                            tools:visibility="visible" />
+                    </RelativeLayout>
+
+                    <FrameLayout
+                        android:id="@+id/record_transparent_container"
+                        android:layout_width="@dimen/_52sdp"
+                        android:layout_height="@dimen/_52sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:elevation="@dimen/_10sdp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="visible" />
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/vocab_hold_hint"
+                        android:layout_width="@dimen/_60sdp"
+                        android:layout_height="@dimen/_60sdp"
+                        android:clickable="true"
+                        android:elevation="@dimen/_2sdp"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.46"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.8"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="lottie/press_and_hold_black.json"
+                        app:lottie_imageAssetsFolder="lottie"
+                        app:lottie_loop="true"
+                        app:lottie_repeatMode="restart"
+                        app:lottie_scale="1"
+                        app:lottie_speed="1"
+                        tools:visibility="visible" />
+
+                    <FrameLayout
+                        android:id="@+id/empty_container"
+                        android:layout_width="@dimen/_1sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        app:layout_constraintStart_toEndOf="@id/mic_container"
+                        app:layout_constraintTop_toBottomOf="@id/mic_container" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/audio_practise_hint"
@@ -302,7 +415,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:padding="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
                     android:text="@string/hold_to_record_msz"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/black"
@@ -416,12 +529,13 @@
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/round_rectangle"
                 android:backgroundTint="@color/seek_bar_background"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingStart="@dimen/_24sdp"
                 android:paddingTop="@dimen/_12sdp"
                 android:paddingEnd="@dimen/_24sdp"
                 android:paddingBottom="@dimen/_12sdp"
-                android:text="@string/submit_answer"
+                android:text="@string/submit"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/white"

@@ -10,6 +10,7 @@
         android:id="@+id/snack_constraint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_58sdp"
         android:background="@drawable/rect_with_green_bound"
         android:backgroundTint="@color/green_snackbar">
 
@@ -17,9 +18,10 @@
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_2sdp"
+            android:layout_marginVertical="@dimen/_8sdp"
             android:gravity="center_vertical|start"
             android:text="@string/congratulations"
-            android:layout_margin="@dimen/_8sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"

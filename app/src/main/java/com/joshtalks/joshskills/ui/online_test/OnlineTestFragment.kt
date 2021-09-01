@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
@@ -71,6 +73,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
     private var assessmentQuestions: AssessmentQuestionWithRelations? = null
     private var ruleAssessmentQuestionId: String? = null
+    private var totalQuestion: Int? = null
+    private var totalAnsweredQuestions: Int? = null
     private var lessonNumber: Int = -1
     private var lessonId: Int = -1
     private var headingView: Stub<GrammarHeadingView>? = null
@@ -132,7 +136,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         headingView = Stub(binding.choiceContainer.findViewById(R.id.heading_view))
         mcqChoiceView = Stub(binding.choiceContainer.findViewById(R.id.mcq_choice_view))
         atsChoiceView = Stub(binding.choiceContainer.findViewById(R.id.ats_choice_view))
-        subjectiveChoiceView = Stub(binding.choiceContainer.findViewById(R.id.subjective_choice_view))
+        subjectiveChoiceView =
+            Stub(binding.choiceContainer.findViewById(R.id.subjective_choice_view))
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
     }
 
@@ -141,6 +146,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
             this.ruleAssessmentQuestionId = onlineTestResponse.ruleAssessmentQuestionId
             this.reviseVideoObject = onlineTestResponse.videoObject
+            this.totalQuestion = onlineTestResponse.totalQuestions
+            this.totalAnsweredQuestions = onlineTestResponse.totalAnswered
             if (onlineTestResponse.completed) {
                 PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, lessonNumber)
                 if (onlineTestResponse.ruleAssessmentId != null) {
@@ -150,9 +157,18 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 scoreText = onlineTestResponse.scoreText
                 onlineTestResponse.scoreText?.let {
                     PrefManager.put(
-                        FREE_TRIAL_TEST_SCORE, it,false)
+                        FREE_TRIAL_TEST_SCORE, it, false
+                    )
                 }
-                pointsList = onlineTestResponse.pointsList?.get(0)
+                onlineTestResponse.pointsList?.let { pointsListRes ->
+                    pointsList = pointsListRes.get(0)
+                    PrefManager.put(
+                        LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                        pointsListRes.last(),
+                        false
+                    )
+                }
+
 
             } else {
                 if (onlineTestResponse.ruleAssessmentId != null) {
@@ -167,7 +183,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
                     this.assessmentQuestions?.choiceList?.let { list ->
                         viewModel.insertChoicesToDB(
-                            list,this.assessmentQuestions
+                            list, this.assessmentQuestions
                         )
                     }
                     if (isFirstTime) {
@@ -219,6 +235,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         if (isTestCompleted) {
             showGrammarCompleteFragment()
             return
+        }
+        if (totalQuestion != null) {
+            binding.questionProgressBar.visibility = View.VISIBLE
+            binding.questionProgressBar.max = (totalQuestion!! + 1) * 100
+            animateProgress()
+        } else {
+            binding.questionProgressBar.visibility = View.VISIBLE
         }
         downloadAudios(assessmentQuestions.choiceList)
         headingView?.resolved().let {
@@ -343,6 +366,18 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
     }
 
+    private fun animateProgress() {
+        val currentProgress = binding.questionProgressBar.progress
+        val finalProgress = (totalAnsweredQuestions?.plus(1)?.times(100)) ?: 0
+        ValueAnimator.ofInt(currentProgress, finalProgress).apply {
+            duration = 200
+            addUpdateListener {
+                binding.questionProgressBar.progress = it.animatedValue as Int
+            }
+            start()
+        }
+    }
+
     private fun downloadAudios(choiceList: List<Choice>) {
         if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
             askStoragePermission(choiceList)
@@ -380,9 +415,12 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         CoroutineScope(Dispatchers.IO).launch {
                             it.tag?.toInt()?.let { id ->
                                 AppObjectController.appDatabase.assessmentDao()
-                                    .updateChoiceDownloadStatusForAudio(id,DOWNLOAD_STATUS.DOWNLOADED)
+                                    .updateChoiceDownloadStatusForAudio(
+                                        id,
+                                        DOWNLOAD_STATUS.DOWNLOADED
+                                    )
                                 AppObjectController.appDatabase.assessmentDao()
-                                    .updateChoiceLocalPathForAudio(id,it.file)
+                                    .updateChoiceLocalPathForAudio(id, it.file)
                             }
                         }
                         DownloadUtils.objectFetchListener.remove(it.tag)
@@ -443,7 +481,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 .beginTransaction()
                 .replace(
                     R.id.parent_Container,
-                    GrammarOnlineTestFragment.getInstance(lessonNumber,scoreText,pointsList),
+                    GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList),
                     GrammarOnlineTestFragment.TAG
                 )
                 .addToBackStack(TAG)
@@ -457,10 +495,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     ) {
         assessmentQuestions.question.status =
             if (status) QuestionStatus.CORRECT else QuestionStatus.WRONG
-        if (status) {
-            playSnackbarSound(requireActivity())
-        } else {
-            playWrongAnswerSound(requireActivity())
+        val isLastQuestion = (totalQuestion == (totalAnsweredQuestions ?: 0) + 1)
+        if (!isLastQuestion) {
+            if (status) {
+                playSnackbarSound(requireActivity())
+            } else {
+                playWrongAnswerSound(requireActivity())
+            }
         }
         viewModel.postAnswerAndGetNewQuestion(
             assessmentQuestions,
@@ -505,7 +546,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         setPlayListener(object : JoshGrammarVideoPlayer.PlayerFullScreenListener {
 
                             override fun onFullScreen() {
-                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                                val currentVideoProgressPosition = binding.videoPlayer.progress
                                 startActivity(
                                     VideoPlayerActivity.getActivityIntent(
                                         requireContext(),

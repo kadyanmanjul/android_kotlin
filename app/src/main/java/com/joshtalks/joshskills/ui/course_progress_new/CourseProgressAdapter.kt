@@ -13,6 +13,10 @@ import com.joshtalks.joshskills.databinding.CourseProgressItemBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
+import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
+import com.joshtalks.joshskills.ui.lesson.READING_POSITION
+import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
 
 class CourseProgressAdapter(
     val context: Context,
@@ -116,22 +120,126 @@ class CourseProgressAdapter(
                 binding.progressIv.visibility = View.GONE
                 binding.radialProgressView.visibility = View.VISIBLE
                 val item = itemList[position]
-                binding.radialProgressView.setOuterProgress(
-                    item.grammarPercentage.toDouble().toInt()
-                )
-                binding.radialProgressView.setCenterProgress(
-                    item.vocabPercentage.toDouble().toInt()
-                )
-                binding.radialProgressView.setInnerProgress(
-                    item.readingPercentage.toDouble().toInt()
-                )
+                when (GRAMMAR_POSITION) {
+                    0 -> {
+                        binding.radialProgressView.setOuterProgress(
+                            item.grammarPercentage.toDouble().toInt()
+                        )
+                    }
+                    1 -> {
+                        binding.radialProgressView.setCenterProgress(
+                            item.grammarPercentage.toDouble().toInt()
+                        )
+                    }
+                    2 -> {
+                        binding.radialProgressView.setInnerProgress(
+                            item.grammarPercentage.toDouble().toInt()
+                        )
+                    }
+                    3 -> {
+                        binding.radialProgressView.hasThreeProgressView(false)
+                        binding.radialProgressView.setInnerMostProgress(
+                            item.grammarPercentage.toDouble().toInt()
+                        )
+                    }
+                    else -> {
+                        binding.radialProgressView.setOuterProgress(
+                            item.grammarPercentage.toDouble().toInt()
+                        )
+                    }
+                }
+
+                when (VOCAB_POSITION) {
+                    0 -> {
+                        binding.radialProgressView.setOuterProgress(
+                            item.vocabPercentage.toDouble().toInt()
+                        )
+                    }
+                    1 -> {
+                        binding.radialProgressView.setCenterProgress(
+                            item.vocabPercentage.toDouble().toInt()
+                        )
+                    }
+                    2 -> {
+                        binding.radialProgressView.setInnerProgress(
+                            item.vocabPercentage.toDouble().toInt()
+                        )
+                    }
+                    3 -> {
+                        binding.radialProgressView.hasThreeProgressView(false)
+                        binding.radialProgressView.setInnerMostProgress(
+                            item.vocabPercentage.toDouble().toInt()
+                        )
+                    }
+                    else -> {
+                        binding.radialProgressView.setCenterProgress(
+                            item.vocabPercentage.toDouble().toInt()
+                        )
+                    }
+                }
+
+                when (READING_POSITION) {
+                    0 -> {
+                        binding.radialProgressView.setOuterProgress(
+                            item.readingPercentage.toDouble().toInt()
+                        )
+                    }
+                    1 -> {
+                        binding.radialProgressView.setCenterProgress(
+                            item.readingPercentage.toDouble().toInt()
+                        )
+                    }
+                    2 -> {
+                        binding.radialProgressView.setInnerProgress(
+                            item.readingPercentage.toDouble().toInt()
+                        )
+                    }
+                    3 -> {
+                        binding.radialProgressView.hasThreeProgressView(false)
+                        binding.radialProgressView.setInnerMostProgress(
+                            item.readingPercentage.toDouble().toInt()
+                        )
+                    }
+                    else -> {
+                        binding.radialProgressView.setInnerProgress(
+                            item.readingPercentage.toDouble().toInt()
+                        )
+                    }
+                }
+
                 if (item.speakingPercentage == null) {
                     binding.radialProgressView.hasThreeProgressView(true)
                 } else {
-                    binding.radialProgressView.hasThreeProgressView(false)
-                    binding.radialProgressView.setInnerMostProgress(
-                        item.speakingPercentage!!.toDouble().toInt()
-                    )
+                    when (SPEAKING_POSITION) {
+                        0 -> {
+                            binding.radialProgressView.setOuterProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        1 -> {
+                            binding.radialProgressView.setCenterProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        2 -> {
+                            binding.radialProgressView.setInnerProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        3 -> {
+                            binding.radialProgressView.hasThreeProgressView(false)
+                            binding.radialProgressView.setInnerMostProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                        else -> {
+                            binding.radialProgressView.hasThreeProgressView(false)
+                            binding.radialProgressView.setInnerMostProgress(
+                                item.speakingPercentage!!.toDouble().toInt()
+                            )
+                        }
+                    }
+
                 }
                 if (item.status == LESSON_STATUS.NO.name)
                     binding.progressIv.alpha = 0.5f

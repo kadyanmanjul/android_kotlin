@@ -25,7 +25,6 @@ import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -419,7 +418,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if (User.getInstance().isVerified && !PrefManager.getBoolValue(
+                if ( !PrefManager.getBoolValue(
                         IS_CONVERSATION_ROOM_ACTIVE
                     )
                 ) {
@@ -437,9 +436,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                if (User.getInstance().isVerified) {
+                //if (User.getInstance().isVerified) {
                     callForceConnect(notificationObject.actionData)
-                }
+                //}
                 return null
             }
             NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
@@ -456,6 +455,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.CALL_RESUME_NOTIFICATION -> {
                 WebRtcService.resumeCall()
+                return null
+            }
+            NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
+                if (notificationObject.actionData != null) {
+                    try {
+                        val obj = JSONObject(notificationObject.actionData!!)
+                        WebRtcService.userJoined(obj.getInt(OPPOSITE_USER_UID))
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
                 return null
             }
             NotificationAction.AUDIO_FEEDBACK_REPORT -> {
@@ -593,7 +603,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             AppObjectController.appDatabase.run {
                 val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
-                conversationId.let {
+                conversationId?.let {
                     PrefManager.removeKey(it)
                     LastSyncPrefManager.removeKey(it)
                 }
@@ -1026,7 +1036,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         @RequiresApi(Build.VERSION_CODES.N)
         private var importance = NotificationManager.IMPORTANCE_DEFAULT
 
-        fun sendFirestoreNotification(
+        public fun sendFirestoreNotification(
             notificationObject: NotificationObject,
             context: Context
         ) {
@@ -1130,8 +1140,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ): Intent? {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                    if (User.getInstance().isVerified) {
+                    if ( !PrefManager.getBoolValue(
+                            IS_CONVERSATION_ROOM_ACTIVE
+                        )
+                    ) {
                         incomingCallNotificationAction(notificationObject.actionData)
+                    } else if (PrefManager.getBoolValue(
+                            IS_CONVERSATION_ROOM_ACTIVE
+                        )
+                    ) {
+                        callForceDisconnect()
                     }
                     null
                 }
@@ -1140,9 +1158,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     null
                 }
                 NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                    if (User.getInstance().isVerified) {
+                    //if (User.getInstance().isVerified) {
                         callForceConnect(notificationObject.actionData)
-                    }
+                    //}
                     null
                 }
                 NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
@@ -1162,10 +1180,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     null
                 }
                 NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
-                    Log.d(
-                        "FSDB",
-                        "getIntentForNotificationAction: ${notificationObject.actionData}"
-                    )
                     if (notificationObject.actionData != null) {
                         try {
                             val obj = JSONObject(notificationObject.actionData!!)
@@ -1241,5 +1255,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
         }
+
     }
 }

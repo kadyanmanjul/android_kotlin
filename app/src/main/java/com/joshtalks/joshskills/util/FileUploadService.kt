@@ -19,6 +19,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -195,6 +197,11 @@ class FileUploadService : Service() {
                                 pendingTaskModel.requestObject.questionId
                             )
                         )
+                        responseObj.pointsList?.let {
+                            PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                                it.last(),false)
+                        }
+
                     }
                     val statusCode: Int =
                         uploadOnS3Server(responseObj, requestEngage.localPath!!)
@@ -232,6 +239,7 @@ class FileUploadService : Service() {
                                     pendingTaskModel.requestObject.questionId
                                 )
                             )
+                            PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,resp.body()!!.pointsList!!.last(),false)
                         }
                     } else {
                         val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
@@ -251,6 +259,7 @@ class FileUploadService : Service() {
                                         pendingTaskModel.requestObject.questionId
                                     )
                                 )
+                                PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,resp.body()!!.pointsList!!.last(),false)
                             }
                         }
                     }

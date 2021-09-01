@@ -1,13 +1,16 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
@@ -18,11 +21,19 @@ import com.joshtalks.joshskills.core.HAS_SEEN_GRAMMAR_TOOLTIP
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,6 +42,9 @@ import kotlinx.coroutines.withContext
 class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineTestInterface {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
     private var lessonActivityListener: LessonActivityListener? = null
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+    }
     private var lessonNumber: Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
@@ -39,9 +53,49 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private val lessonTooltipList by lazy {
         listOf(
             "हर पाठ में 4 भाग होते हैं \nGrammar, Vocabulary, Reading\nऔर Speaking",
-            "आज, इस भाग में हम अपने वर्तमान व्याकरण स्तर का पता लगाएंगे",
-            "हमारे स्तर के आधार पर अगले पाठ से हम यहाँ व्याकरण की अवधारणाएँ सीखेंगे"
+//            "आज, इस भाग में हम अपने वर्तमान व्याकरण स्तर का पता लगाएंगे",
+//            "हमारे स्तर के आधार पर अगले पाठ से हम यहाँ व्याकरण की अवधारणाएँ सीखेंगे"
         )
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    val onTouchListener3 = View.OnTouchListener { v, event ->
+        val currentPaddingTop = v.paddingTop
+        val currentPaddingBottom = v.paddingBottom
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                val drawable = R.drawable.blue_new_btn_pressed_state
+                v.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    drawable
+                )
+
+                v.setPaddingRelative(
+                    v.paddingLeft,
+                    currentPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                    v.paddingRight,
+                    currentPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                )
+                v.invalidate()
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+
+                val drawable = R.drawable.blue_new_btn_unpressed_state
+                v.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    drawable
+                )
+                v.setPaddingRelative(
+                    v.paddingLeft,
+                    currentPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                    v.paddingRight,
+                    currentPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                )
+                v.invalidate()
+            }
+        }
+        false
     }
 
     override fun onAttach(context: Context) {
@@ -74,6 +128,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.continueBtn.setOnTouchListener(onTouchListener3)
+        binding.startBtn.setOnTouchListener(onTouchListener3)
+        binding.scoreStartBtn.setOnTouchListener(onTouchListener3)
+        // showTooltip()
         when {
             (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED)
                 .plus(1) == lessonNumber) -> {
@@ -141,7 +199,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
-        showTooltip()
+        viewModel.grammarSpotlightClickLiveData.observe(viewLifecycleOwner, {
+            startOnlineExamTest()
+        })
     }
 
     private fun showTooltip() {
@@ -186,10 +246,20 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             QUESTION_STATUS.AT,
             questionId
         )*/
-        lessonActivityListener?.onSectionStatusUpdate(0, true)
+        lessonActivityListener?.onSectionStatusUpdate(GRAMMAR_POSITION, true)
     }
 
     fun startOnlineExamTest() {
+
+        if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
+            askStoragePermission()
+            return
+        }
+        moveToOnlineTestFragment()
+
+    }
+
+    fun moveToOnlineTestFragment() {
         activity?.supportFragmentManager?.let { fragmentManager ->
             binding.parentContainer.visibility = View.VISIBLE
             binding.startTestContainer.visibility = View.GONE
@@ -205,6 +275,40 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 .addToBackStack(TAG)
                 .commitAllowingStateLoss()
         }
+    }
+
+    private fun askStoragePermission() {
+        PermissionUtils.storageReadAndWritePermission(
+            requireContext(),
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            moveToOnlineTestFragment()
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                            //errorDismiss()
+                            return
+                        }
+                        return
+                    }
+                    report?.isAnyPermissionPermanentlyDenied?.let {
+                        PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                        //errorDismiss()
+                        return
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     private fun showGrammarCompleteLayout() {
@@ -238,7 +342,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     }
 
     fun onGrammarContinueClick() {
-        lessonActivityListener?.onNextTabCall(0)
+        lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 
     companion object {

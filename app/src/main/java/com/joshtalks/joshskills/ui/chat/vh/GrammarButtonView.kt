@@ -205,6 +205,7 @@ class GrammarButtonView : FrameLayout {
             } else {
                 correctAnswerTitle.visibility = View.VISIBLE
                 correctAnswerTitle.text = this.correctAnswerHeading
+                //correctAnswerTitle.text = getFormattedText(this.correctAnswerHeading)
             }
 
             if (this.correctAnswerText.isNullOrBlank()) {
@@ -219,6 +220,7 @@ class GrammarButtonView : FrameLayout {
             } else {
                 wrongAnswerTitle.visibility = View.VISIBLE
                 wrongAnswerTitle.text = this.wrongAnswerHeading
+                //wrongAnswerTitle.text = getFormattedText(this.wrongAnswerHeading)
             }
 
             if (this.wrongAnswerText.isNullOrBlank()) {
@@ -260,7 +262,9 @@ class GrammarButtonView : FrameLayout {
 
     }
 
-    public fun enableBtn() {
+    //private fun getFormattedText(string : String) = string.replace("\\n", "\n").trim()
+
+    fun enableBtn() {
 
         grammarBtn.isEnabled = true
         grammarBtn.isClickable = true
@@ -270,7 +274,7 @@ class GrammarButtonView : FrameLayout {
 
     }
 
-    public fun disableBtn() {
+    fun disableBtn() {
 
         grammarBtn.isEnabled = false
         grammarBtn.isClickable = false

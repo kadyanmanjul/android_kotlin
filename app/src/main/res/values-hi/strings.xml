@@ -83,11 +83,11 @@
     <string name="submit_answer">उत्तर सबमिट करें</string>
     <string name="improve_answer">उत्तर में सुधार करें</string>
     <string name="today_practise">आज की प्रैक्टिस</string>
-    <string name="hold_to_record_msz">उत्तर रिकॉर्ड करने के लिए दबाकर रखें</string>
+    <string name="hold_to_record_msz">रिकॉर्ड करने के लिए दबाकर रखें</string>
     <string name="upload_file_msz">एक फाइल अपलोड करें</string>
-    <string name="your_answer">आपका जवाब</string>
+    <string name="your_answer">आपकी रिकॉर्डिंग</string>
     <string name="record_your_answer">अपना उत्तर रिकॉर्ड करें</string>
-    <string name="attempt_reading_practice">यह आज की रीडिंग प्रैक्टिस है, इसे ज़ोर से पढ़ें और वॉयस रिकॉर्डिंग भेजें</string>
+    <string name="attempt_reading_practice">यह आज की रीडिंग प्रैक्टिस है, इसे रिकॉर्ड करें और सबमिट करें</string>
     <string name="your_feedback">आपकी प्रतिक्रिया</string>
     <string name="your_submitted_answer">आपका सबमिट किया गया जवाब</string>
     <string name="type_your_answer_hint">अपना जवाब यहाँ टाइप करें</string>
@@ -338,7 +338,7 @@
     <string name="start_practise">"प्रैक्टिस शुरू करें "</string>
     <string name="practise_intro_sub">इस प्रैक्टिस को पूरा कैसे करें?</string>
     <string name="select_partner">पहले अपना साथी चुनें</string>
-    <string name="hint_name_field">उदाहरण मोहित अरोड़ा</string>
+    <string name="hint_name_field">आपका नाम</string>
     <string name="hint_email_field">उदाहरण abc@xyz.com</string>
     <string name="hint_date_field">उदाहरण 01 जनवरी 1990</string>
     <string name="interest_count">(%1$d/%2$d)</string>

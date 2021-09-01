@@ -39,7 +39,7 @@ class LessonCompleteView : FrameLayout {
         rootView = findViewById(R.id.root_view_completed)
         rootView.setOnClickListener {
             lessonModel?.let {
-                RxBus2.publish(LessonItemClickEventBus(it.id,it.isNewGrammar))
+                RxBus2.publish(LessonItemClickEventBus(it.id,it.isNewGrammar,true))
             }
         }
     }

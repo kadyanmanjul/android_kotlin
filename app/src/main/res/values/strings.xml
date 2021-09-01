@@ -132,11 +132,11 @@
     <!-- Help Screen  -->
     <string name="today_practise">Today\'s Practice</string>
 
-    <string name="hold_to_record_msz">Press and hold to record your answer</string>
+    <string name="hold_to_record_msz">Press and hold to record</string>
     <string name="upload_file_msz">Upload a file</string>
-    <string name="your_answer">Your Answer</string>
+    <string name="your_answer">Your Recording</string>
     <string name="your_feedback">Your Feedback</string>
-    <string name="your_submitted_answer">Your Submitted Answer</string>
+    <string name="your_submitted_answer">Your Submitted Recording</string>
 
     <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
     <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
@@ -387,7 +387,7 @@
     <string name="alarms_deleted">Alarms Deleted</string>
     <string name="start_learning_now">Start Learning Now</string>
     <string name="resend">Resend</string>
-    <string name="hint_name_field">e.g. Mohit Arora</string>
+    <string name="hint_name_field">Your Name</string>
     <string name="hint_email_field">e.g. abc@xyz.com</string>
     <string name="hint_date_field">e.g. 01 Jan 1990</string>
     <string name="total_interests_selected">Total interests selected</string>
@@ -834,7 +834,7 @@
     <string name="reading_practice">Reading Practice</string>
     <string name="reading_sub_title">Neeche diye gai lino ko padhe</string>
     <string name="record_your_answer">Record your answer</string>
-    <string name="attempt_reading_practice">Here is today’s Reading Practice, read it out loudly and send us back the voice recording</string>
+    <string name="attempt_reading_practice">Here is today\'s reading practice, please record &amp; submit</string>
     <string name="recording_start">Tap to record your answer</string>
     <string name="recording_stop">Tap to stop recording&#8230;</string>
 
@@ -878,7 +878,7 @@
     <string name="skip">Skip</string>
     <string name="add_photo">Add Photo</string>
     <string name="ucrop_label_edit_photo">Add photo</string>
-    <string name="please_record_answer">Please, Record your answer</string>
+    <string name="please_record_answer">Read the following sentences</string>
 
     <string name="certificate_d_header">Please fill the below details to download your certificate</string>
     <string name="mname_error_toast">Mother name cannot be empty!</string>
@@ -917,13 +917,23 @@
     <string name="grammar_continue_test_text">क्लास जारी रखने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_input_question_hint">अंग्रेजी में जवाब लिखे </string>
     <string name="free_trial_dialog_title">जरुरी जानकारी</string>
-    <string name="free_trial_dialog_desc">इस कोर्स की फीस ₹499 है\\nऔर यह एक 90 दिनों का कोर्स है\\n \\nखरीदने से पहले क्या आप इसका एक दिन के लिए मुफ्त में प्रयोग करना चाहते हैं?</string>
+    <string name="free_trial_dialog_desc">यह एक 90 दिनों का कोर्स है\\nऔर try करने के बाद अगर आप चाहें तो इसे ₹499 में खरीद सकते हैं\\n  \\nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
     <string name="free_trial_dialog_btn_no">जी नहीं</string>
     <string name="free_trial_dialog_btn_yes">जी हाँ</string>
     <string name="test_completed">Test Completed</string>
     <string name="test_score">%1$d%% Marks</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="test_completed_description">ग्रामर का लेवल चेक करने के लिए आपके सभी जवाबों को रिकॉर्ड कर लिया गया हैं \n \n आपकी ग्रामर के Current Status के आधार पर आपके आगे का कोर्स सेट किया जा रहा हैं</string>
+    <string name="enter_name_label">आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</string>
 
+    <!--    Lesson Spotlight-->
+    <string name="label_lesson_spotlight">हर Lesson में चार भाग होते है</string>
+    <string name="label_grammar_spotlight">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
+    <string name="label_speaking_spotlight">एस भाग में आपको एक प्रैक्टिस पार्टनर के साथ 2 मिनट के लिए अंग्रेजी में बात करनी है</string>
+    <string name="label_speaking_spotlight_2"> To complete this section you have to speak to a practice partner for 2 minutes</string>
+    <string name="label_vocab_spotlight_1">हर रोज़ यहाँ पर हम नए शब्द सिखेंगे</string>
+    <string name="label_vocab_spotlight_2">Appreciate का सही उच्चारण क्या है यहां से देखे</string>
+    <string name="label_vocab_spotlight_3">अब ये तीन वाक्यों को साथ में पढ़ कर बोले</string>
+    <string name="label_reading_spotlight">इस भाग में हम अपनी रीडिंग की प्रैक्टिस करेंगे</string>
 
 </resources>

@@ -13,6 +13,7 @@ import android.view.*
 import android.view.View.*
 import android.view.animation.*
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -106,7 +107,7 @@ const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
-const val DEFAULT_TOOLTIP_DELAY_IN_MS = 2000L
+const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
@@ -289,6 +290,39 @@ class ConversationActivity :
         PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
     }
 
+    private fun showLeaderBoardSpotlight() {
+        window.statusBarColor = ContextCompat.getColor(this, R.color.leaderboard_overlay_status_bar)
+        conversationBinding.overlayLayout.visibility = VISIBLE
+        conversationBinding.arrowAnimation.visibility = VISIBLE
+        conversationBinding.overlayLeaderboardContainer.visibility = VISIBLE
+        conversationBinding.overlayLeaderboardTooltip.visibility = VISIBLE
+        conversationBinding.overlayLeaderboardTooltip.startAnimation(
+            AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+        )
+        conversationBinding.labelTapToDismiss.visibility = GONE
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(6500)
+            conversationBinding.overlayLayout.setOnClickListener {
+                PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
+                hideLeaderBoardSpotlight()
+            }
+            conversationBinding.labelTapToDismiss.visibility = VISIBLE
+            conversationBinding.labelTapToDismiss.startAnimation(
+                AnimationUtils.loadAnimation(this@ConversationActivity, R.anim.slide_up_dialog)
+            )
+        }
+    }
+
+    private fun hideLeaderBoardSpotlight() {
+        conversationBinding.overlayLayout.setOnClickListener(null)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
+        conversationBinding.overlayLayout.visibility = GONE
+        conversationBinding.arrowAnimation.visibility = GONE
+        conversationBinding.overlayLeaderboardContainer.visibility = GONE
+        conversationBinding.labelTapToDismiss.visibility = GONE
+        conversationBinding.overlayLeaderboardTooltip.visibility = GONE
+    }
+
     private fun initEndTrialBottomSheet() {
         TrialEndBottomSheetFragment.showDialog(
             supportFragmentManager
@@ -419,11 +453,16 @@ class ConversationActivity :
                 conversationBinding.imgGroupChat,
                 conversationBinding.txtUnreadCount
             )
-            hideLeaderboardTooltip()
+            // hideLeaderboardTooltip()
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
             openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
+        }
+        conversationBinding.overlayLeaderboardContainer.setOnClickListener {
+            PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
+            openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
+            hideLeaderBoardSpotlight()
         }
         conversationBinding.points.setOnClickListener {
             openUserProfileActivity(
@@ -516,23 +555,23 @@ class ConversationActivity :
         initSnackBar()
     }
 
-    private fun groupChatHintLogic() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val isGroupChatHintAlreadySeen = PrefManager.getBoolValue(IS_GROUP_CHAT_HINT_SEEN, true)
-            if (inboxEntity.isGroupActive && isGroupChatHintAlreadySeen.not()) {
-                val lesson = conversationAdapter.getLastLesson()
-                lesson?.let {
-                    if (it.lessonNo > 3 || (it.lessonNo == 3 && it.status != LESSON_STATUS.NO)) {
-                        conversationBinding.balloonText.text =
-                            AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.GROUP_CHAT_TAGLINE)
-                        conversationBinding.overlayLayout.visibility = VISIBLE
-                        PrefManager.put(IS_GROUP_CHAT_HINT_SEEN, true, true)
-                    }
-                }
-            }
-        }
-    }
+//    private fun groupChatHintLogic() {
+//        CoroutineScope(Dispatchers.Main).launch {
+//            val isGroupChatHintAlreadySeen = PrefManager.getBoolValue(IS_GROUP_CHAT_HINT_SEEN, true)
+//            if (inboxEntity.isGroupActive && isGroupChatHintAlreadySeen.not()) {
+//                val lesson = conversationAdapter.getLastLesson()
+//                lesson?.let {
+//                    if (it.lessonNo > 3 || (it.lessonNo == 3 && it.status != LESSON_STATUS.NO)) {
+//                        conversationBinding.balloonText.text =
+//                            AppObjectController.getFirebaseRemoteConfig()
+//                                .getString(FirebaseRemoteConfigKey.GROUP_CHAT_TAGLINE)
+//                        conversationBinding.overlayLayout.visibility = VISIBLE
+//                        PrefManager.put(IS_GROUP_CHAT_HINT_SEEN, true, true)
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private fun onlyChatView() {
         inboxEntity.chat_type?.let {
@@ -908,8 +947,16 @@ class ConversationActivity :
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-                conversationBinding.userPointContainer.slideInAnimation()
-                showLeaderBoardTooltip()
+                // conversationBinding.userPointContainer.slideInAnimation()
+                conversationBinding.userPointContainer.visibility = VISIBLE
+                // showLeaderBoardTooltip()
+                val hasSeenLeaderBoardAnim =
+                    PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION, false, false)
+                if (hasSeenLeaderBoardAnim) {
+                    hideLeaderBoardSpotlight()
+                } else {
+                    showLeaderBoardSpotlight()
+                }
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
@@ -1125,13 +1172,16 @@ class ConversationActivity :
                 .subscribe {
                     if (conversationBinding.refreshLayout.isRefreshing) {
                         val message: String = if (it.flag) {
-                            getString(R.string.new_message_arrive)
+                            //getString(R.string.new_message_arrive)
+                            EMPTY
                         } else {
                             getString(R.string.no_new_message_arrive)
                         }
-                        StyleableToast.Builder(this).gravity(Gravity.BOTTOM)
-                            .text(message).cornerRadius(16).length(Toast.LENGTH_LONG)
-                            .solidBackground().show()
+                        if (message.isBlank().not()) {
+                            StyleableToast.Builder(this).gravity(Gravity.BOTTOM)
+                                .text(message).cornerRadius(16).length(Toast.LENGTH_LONG)
+                                .solidBackground().show()
+                        }
                     }
                     if (it.flag.not()) {
                         hideProgressBar()
@@ -1339,7 +1389,8 @@ class ConversationActivity :
                                 this,
                                 it.lessonId,
                                 conversationId = inboxEntity.conversation_id,
-                                isNewGrammar = it.isNewGrammar
+                                isNewGrammar = it.isNewGrammar,
+                                isLessonCompleted = it.isLessonCompleted
                             ),
                             LESSON_REQUEST_CODE
                         )
@@ -1528,12 +1579,12 @@ class ConversationActivity :
     }
 
     override fun onStop() {
-        super.onStop()
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+        super.onStop()
     }
 
     override fun onDestroy() {
@@ -1545,7 +1596,7 @@ class ConversationActivity :
     override fun onBackPressed() {
         audioPlayerManager?.onPause()
         if (conversationBinding.overlayLayout.visibility == VISIBLE) {
-            conversationBinding.overlayLayout.visibility = GONE
+            hideLeaderBoardSpotlight()
         } else {
             val resultIntent = Intent()
             setResult(Activity.RESULT_OK, resultIntent)

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.widget.Chronometer
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +15,7 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
@@ -24,7 +24,6 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var myConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            Log.d("ConversationRtc", "onServiceConnected: ")
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
@@ -112,11 +111,16 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     }
 
     override fun onStop() {
-        super.onStop()
-        if (!isScreenOpenByConversationRoom) {
-            unbindService(myConnection)
+        try {
+            if (!isScreenOpenByConversationRoom) {
+                unbindService(myConnection)
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
+        super.onStop()
     }
+
     companion object{
         var isScreenOpenByConversationRoom = false
 

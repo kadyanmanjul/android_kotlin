@@ -42,6 +42,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var currentTime: Long = 0
     var fromVerificationScreen = MutableLiveData(false)
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
+    val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
     val otpField = ObservableField<String>()
     var context: JoshApplication = getApplication()
@@ -289,14 +290,14 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         return EMPTY
     }
 
-    fun completingProfile(map: MutableMap<String, String?>) {
+    fun completingProfile(map: MutableMap<String, String?>, isUserVerified: Boolean = true) {
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        it.isVerified = true
+                        it.isVerified = isUserVerified
                         User.getInstance().updateFromResponse(it)
                         _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
                     }
@@ -390,6 +391,33 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     fun changeSignupStatusToProfilePicSkipped() {
         _signUpStatus.postValue(SignUpStepStatus.ProfilePicSkipped)
+    }
+
+    fun startFreeTrial(mentorId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiStatus.postValue(ApiCallStatus.START)
+                val resp =
+                    AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
+                        mapOf(
+                            "mentor_id" to mentorId,
+                            "event_name" to IMPRESSION_REGISTER_FREE_TRIAL
+                        )
+                    )
+
+
+                if (resp.isSuccessful) {
+                    PrefManager.put(IS_GUEST_ENROLLED, value = true)
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
+                    return@launch
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
+            }
+            apiStatus.postValue(ApiCallStatus.FAILED)
+        }
     }
 
 }

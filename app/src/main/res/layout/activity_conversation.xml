@@ -473,93 +473,107 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
             android:id="@+id/overlay_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent_black_alfa_70"
+            android:alpha="1"
+            android:background="@color/transparent_blue_alpha_75"
+            android:clickable="true"
             android:elevation="@dimen/_4sdp"
-            android:paddingVertical="@dimen/_8sdp"
+            android:focusable="true"
             android:visibility="gone"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgGroupChatOverlay"
-                android:layout_width="@dimen/_28sdp"
-                android:layout_height="@dimen/_28sdp"
-                android:layout_gravity="top|end"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginVertical="?attr/actionBarSize"
-                android:adjustViewBounds="true"
-                android:background="@drawable/white_button_round_enabled"
-                android:backgroundTint="@color/colorPrimary"
-                android:clickable="true"
-                android:focusable="true"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_tap_to_dismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginVertical="@dimen/_60sdp"
+                android:elevation="@dimen/_8sdp"
+                android:text="Tap anywhere to continue"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/arrow_animation"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignTop="@+id/overlay_leaderboard_container"
+            android:layout_alignBottom="@+id/overlay_leaderboard_container"
+            android:elevation="@dimen/_6sdp"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/leaderboard_arrow.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/overlay_leaderboard_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar_container"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/rounded_rectangle_with_border"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/_5sdp"
+            android:fillAfter="false"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/leaderboard_txt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_32sdp"
+                android:layout_marginVertical="@dimen/_2sdp"
+                android:elevation="@dimen/_8sdp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:padding="@dimen/_6sdp"
-                android:visibility="visible"
-                app:elevation="@dimen/_4sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_chat"
-                tools:visibility="gone" />
-
-            <RelativeLayout
-                android:layout_width="@dimen/_220sdp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:paddingHorizontal="@dimen/_4sdp"
+                android:text="@string/leaderboard"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imgGroupChatOverlay">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/balloon_arrow"
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="@dimen/_12sdp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="@dimen/_10sdp"
-                    android:scaleType="fitXY"
-                    android:tint="@color/white"
-                    app:srcCompat="@drawable/arrow" />
-
-                <RelativeLayout
-                    android:id="@+id/balloon_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:paddingTop="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_8sdp">
-
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_grey_bg_2dp"
-                        android:backgroundTint="@color/white"
-                        android:paddingVertical="@dimen/_6sdp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/balloon_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center"
-                            android:paddingHorizontal="@dimen/_2sdp"
-                            android:text="@string/group_chat_tagline"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/black" />
-                    </FrameLayout>
-
-                </RelativeLayout>
-
-            </RelativeLayout>
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.5" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/overlay_leaderboard_tooltip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/overlay_leaderboard_container"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginVertical="@dimen/_60sdp"
+            android:background="@drawable/rounded_rectangle_with_border"
+            android:backgroundTint="@color/leaderboard_tooltip_bg_color"
+            android:elevation="@dimen/_8sdp"
+            android:gravity="center"
+            android:padding="@dimen/_18sdp"
+            android:text="आपके सहपाठी कौन है आप यहाँ से देख सकते है "
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textColor="@color/leaderboard_tooltip_text_color"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
 
         <FrameLayout
             android:id="@+id/leaderboard_tooltip_layout"
@@ -621,7 +635,7 @@
                     android:paddingHorizontal="@dimen/_14sdp"
                     android:paddingVertical="@dimen/_3sdp"
                     android:text="आगे बढ़े"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

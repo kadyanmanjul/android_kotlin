@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.vocabulary
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -43,6 +45,7 @@ import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
+private const val TAG = "VocabularyPracticeAdapter"
 const val PAUSE_AUDIO = "PAUSE_AUDIO"
 
 class VocabularyPracticeAdapter(
@@ -95,7 +98,6 @@ class VocabularyPracticeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d(TAG, "onBindViewHolder: $position")
         mapDataToViewHolder(holder, position)
     }
 
@@ -104,7 +106,6 @@ class VocabularyPracticeAdapter(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        Log.d(TAG, "onBindViewHolder: payloads $position")
         if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
             (holder as VocabularyViewHolder).binding.root.tag = itemList[position].id
             holder.lessonQuestion = itemList[position]
@@ -116,7 +117,6 @@ class VocabularyPracticeAdapter(
 
     override fun onFailedToRecycleView(holder: RecyclerView.ViewHolder): Boolean {
         return super.onFailedToRecycleView(holder)
-        Log.d(TAG, "onFailedToRecycleView: ")
     }
 
     private fun mapDataToViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -161,11 +161,9 @@ class VocabularyPracticeAdapter(
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        Log.d(TAG, "onViewDetachedFromWindow: ")
         super.onViewDetachedFromWindow(holder)
-        if (holder is VocabularyViewHolder) {
-            if (holder.lessonQuestion?.isPlaying == true)
-                holder.complete()
+        if (holder is VocabularyViewHolder && holder.lessonQuestion?.isPlaying == true) {
+            //holder.complete()
         }
     }
 
@@ -552,6 +550,41 @@ class VocabularyPracticeAdapter(
         private var startTime: Long = 0L
         var filePath: String? = null
         private var mUserIsSeeking = false
+        private val progressAnimator by lazy {
+            ValueAnimator.ofInt(0, 60).apply {
+                duration = 1850
+                addUpdateListener {
+                    binding.progressAnimation.progress = it.animatedValue as Int
+                }
+                addListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator?) {
+                        binding.uploadPractiseView.scaleX = 0.95f
+                        binding.uploadPractiseView.scaleY = 0.95f
+                        binding.uploadPractiseView.backgroundTintList =
+                            ContextCompat.getColorStateList(
+                                AppObjectController.joshApplication,
+                                R.color.highlight_btn_color
+                            )
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        binding.progressAnimation.progress = 0
+                        binding.uploadPractiseView.scaleX = 1f
+                        binding.uploadPractiseView.scaleY = 1f
+                        binding.uploadPractiseView.backgroundTintList =
+                            ContextCompat.getColorStateList(
+                                AppObjectController.joshApplication,
+                                R.color.button_color
+                            )
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {}
+
+                    override fun onAnimationRepeat(animation: Animator?) {}
+
+                })
+            }
+        }
         var lessonQuestion: LessonQuestion? = null
         var positionInList = -1
         var pronounceAnimation: AnimationDrawable? = null
@@ -564,12 +597,15 @@ class VocabularyPracticeAdapter(
         private fun initViewHolder() {
             binding.handler = this
             binding.titleView.setOnClickListener {
+                setAnimationStatus()
                 if (binding.practiceContentLl.visibility == GONE) {
                     expandCard()
                 } else {
                     collapseCard()
                 }
             }
+            setAnimationStatus()
+            showRecordHintAnimation()
             binding.btnPlayInfo.setOnClickListener {
                 lessonQuestion?.let {
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
@@ -594,7 +630,7 @@ class VocabularyPracticeAdapter(
                     playSubmitPracticeAudio(it, layoutPosition)
 //                filePath = chatModel.downloadedLocalPath
                     val state =
-                        if (it.isPlaying) {
+                        if (it.isPlaying || isAudioPlaying()) {
                             currentQuestion?.isPlaying = true
                             MaterialPlayPauseDrawable.State.Pause
                         } else {
@@ -644,7 +680,8 @@ class VocabularyPracticeAdapter(
                 Timber.d("Submit Button click started")
                 lessonQuestion?.let {
                     expandCardPosition = positionInList + 1
-                    if (it.filePath == null) {
+                    val duration = Utils.getDurationOfMedia(context, it.filePath)?.toInt() ?: 0
+                    if (it.filePath == null || duration < 1000) {
                         showToast(AppObjectController.joshApplication.getString(R.string.submit_practise_msz))
                         return@setOnClickListener
                     }
@@ -719,12 +756,91 @@ class VocabularyPracticeAdapter(
 
             binding.imgPronounce.setOnClickListener {
                 lessonQuestion?.let {
+                    if (PrefManager.hasKey(HAS_SEEN_VOCAB_SPEAKING_ANIMATION)
+                            .not() || PrefManager.getBoolValue(
+                            HAS_SEEN_VOCAB_SPEAKING_ANIMATION
+                        ).not()
+                    ) {
+                        PrefManager.put(HAS_SEEN_VOCAB_SPEAKING_ANIMATION, true)
+                        binding.vocabSpeakingHint.visibility = GONE
+                    }
                     playPronunciationAudio(it, layoutPosition)
                 }
             }
         }
 
         // Called to bind data
+        private fun showRecordHintAnimation() {
+            Log.d(TAG, "showRecordHintAnimation: ")
+            if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+                    HAS_SEEN_VOCAB_HAND_TOOLTIP
+                ).not()
+            ) {
+                binding.progressAnimation.visibility = VISIBLE
+                binding.vocabHoldHint.visibility = VISIBLE
+                var isChildAnimationStared = false
+                binding.vocabHoldHint.addAnimatorUpdateListener {
+                    val startAnimation = 0.033 * 4
+                    val currentValue = it.animatedFraction
+                    if (startAnimation <= currentValue && !isChildAnimationStared) {
+                        isChildAnimationStared = true
+                        startProgressAnimation()
+                    }
+                }
+                binding.vocabHoldHint.addAnimatorListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator?) {}
+
+                    override fun onAnimationEnd(animation: Animator?) {}
+
+                    override fun onAnimationCancel(animation: Animator?) {
+                        progressAnimator.cancel()
+                    }
+
+                    override fun onAnimationRepeat(animation: Animator?) {
+                        isChildAnimationStared = false
+                    }
+
+                })
+                //binding.vocabHoldHint.cancelAnimation()
+                //binding.vocabHoldHint.playAnimation()
+            }
+        }
+
+        private fun startProgressAnimation() {
+            progressAnimator.start()
+        }
+
+        private fun hideRecordHindAnimation() {
+            Log.d(TAG, "hideRecordHindAnimation: ")
+            if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
+                    HAS_SEEN_VOCAB_HAND_TOOLTIP
+                ).not()
+            ) {
+                PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP, value = true)
+                binding.vocabHoldHint.visibility = GONE
+                binding.vocabHoldHint.cancelAnimation()
+                binding.progressAnimation.visibility = GONE
+                binding.uploadPractiseView.scaleX = 1f
+                binding.uploadPractiseView.scaleY = 1f
+                binding.uploadPractiseView.backgroundTintList = ContextCompat.getColorStateList(
+                    AppObjectController.joshApplication,
+                    R.color.button_color
+                )
+            }
+        }
+
+        private fun setAnimationStatus() {
+            if (PrefManager.hasKey(HAS_SEEN_VOCAB_SPEAKING_ANIMATION)
+                    .not() || PrefManager.getBoolValue(
+                    HAS_SEEN_VOCAB_SPEAKING_ANIMATION
+                ).not()
+            ) {
+                binding.vocabSpeakingHint.visibility = VISIBLE
+            } else {
+                binding.vocabSpeakingHint.visibility = GONE
+            }
+        }
+
         fun bind(position: Int) {
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
 
@@ -770,7 +886,6 @@ class VocabularyPracticeAdapter(
         }
 
         override fun complete() {
-            Log.d(TAG, "complete: ")
             clickListener.playAudio(-1)
             //pauseAudio()
             stopAudio()
@@ -781,8 +896,6 @@ class VocabularyPracticeAdapter(
             binding.submitPractiseSeekbar.progress = 0
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             currentQuestion?.isPlaying = false
-            Log.d(TAG, "complete: ${binding.submitBtnPlayInfo.state}")
-            Log.d(TAG, "complete: ${currentQuestion?.isPlaying}")
             pronounceAnimation?.stop()
         }
 
@@ -795,7 +908,7 @@ class VocabularyPracticeAdapter(
                     if (it.materialType == LessonMaterialType.AU) {
                         binding.practiseSeekbar.progress = progress.toInt()
                     }
-                    // Timber.d("onProgressUpdate() called with: progress = $progress")
+                    Timber.d("onProgressUpdate() called with: progress = $progress")
                     binding.submitPractiseSeekbar.progress = progress.toInt()
 
 //                notifyItemChanged(layoutPosition)
@@ -836,7 +949,6 @@ class VocabularyPracticeAdapter(
         }
 
         fun playPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
-            Log.d(TAG, "playPracticeAudio: ")
             if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
                 StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
                     .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
@@ -874,7 +986,6 @@ class VocabularyPracticeAdapter(
         }
 
         fun playSubmitPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
-            Log.d(TAG, "playSubmitPracticeAudio: ")
             try {
                 val audioType = AudioType()
                 if (filePath == null) {
@@ -966,13 +1077,15 @@ class VocabularyPracticeAdapter(
         }
 
         fun pauseAudio() {
-            Log.d(TAG, "pauseAudio: ")
             audioManager?.onPause()
+            audioManager?.let {
+                it.onPause()
+                binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            }
             lessonQuestion?.let {
                 if (it.isPlaying) {
-                    playSubmitPracticeAudio(it, layoutPosition)
+                    //playSubmitPracticeAudio(it, layoutPosition)
                     currentQuestion?.isPlaying = false
-                    binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
             }
         }
@@ -1096,8 +1209,11 @@ class VocabularyPracticeAdapter(
                 showPracticeInputLayout()
                 this.expectedEngageType?.let {
                     binding.uploadPractiseView.visibility = VISIBLE
+                    binding.recordTransparentContainer.visibility = VISIBLE
+                    binding.uploadPractiseViewContainer.visibility = VISIBLE
+                    showRecordHintAnimation()
                     binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
+                        .getString(FirebaseRemoteConfigKey.VOCAB_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                     binding.audioPractiseHint.visibility = VISIBLE
                     binding.submitAudioViewContainer.visibility = GONE
@@ -1107,7 +1223,6 @@ class VocabularyPracticeAdapter(
         }
 
         private fun setViewUserSubmitAnswer(lessonQuestion: LessonQuestion) {
-            Log.d(TAG, "setViewUserSubmitAnswer: ")
             lessonQuestion.expectedEngageType?.let {
                 hidePracticeInputLayout()
                 showPracticeSubmitLayout()
@@ -1153,7 +1268,8 @@ class VocabularyPracticeAdapter(
 
         @SuppressLint("ClickableViewAccessibility")
         private fun setAudioRecordTouchListener() {
-            binding.uploadPractiseView.setOnTouchListener { _, event ->
+
+            binding.recordTransparentContainer.setOnTouchListener { _, event ->
                 if (isCallOngoing()) {
                     return@setOnTouchListener false
                 }
@@ -1170,12 +1286,12 @@ class VocabularyPracticeAdapter(
                             val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
                             binding.uploadPractiseView.startAnimation(scaleAnimation)
                             binding.counterTv.base = SystemClock.elapsedRealtime()
-
                             binding.counterTv.start()
                             this.startTime = System.currentTimeMillis()
+                            //PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
                             clickListener.startRecording(it, layoutPosition, startTime)
                             binding.audioPractiseHint.visibility = GONE
-
+                            hideRecordHindAnimation()
                             appAnalytics?.addParam(
                                 AnalyticsEvent.AUDIO_RECORD.NAME,
                                 "Audio Recording"
@@ -1203,6 +1319,7 @@ class VocabularyPracticeAdapter(
                                     startTime
                                 )
                             if (timeDifference > 1) {
+                                binding.vocabHoldHint.visibility = GONE
                                 audioAttachmentInit(it)
                             } else {
                             }
@@ -1216,7 +1333,6 @@ class VocabularyPracticeAdapter(
         }
 
         fun audioAttachmentInit(lessonQuestion: LessonQuestion) {
-            Log.d(TAG, "audioAttachmentInit: ${lessonQuestion.hashCode()}")
             CoroutineScope(Dispatchers.Main).launch {
                 showPracticeSubmitLayout()
                 binding.submitAudioViewContainer.visibility = VISIBLE
@@ -1251,7 +1367,6 @@ class VocabularyPracticeAdapter(
         }
 
         private fun removeAudioPractice(lessonQuestion: LessonQuestion) {
-            Log.d(TAG, "removeAudioPractice: ")
             if (isAudioPlaying()) {
                 audioManager?.resumeOrPause()
             }

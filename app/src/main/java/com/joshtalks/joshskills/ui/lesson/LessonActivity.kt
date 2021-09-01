@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,12 +18,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
+import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
+import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -43,9 +49,17 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+const val GRAMMAR_POSITION = 0
+const val SPEAKING_POSITION = 1
+const val VOCAB_POSITION = 2
+const val READING_POSITION = 3
+const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
@@ -58,6 +72,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     lateinit var titleView: TextView
     private var isDemo = false
     private var isNewGrammar = false
+    private var isLesssonCompleted = false
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
@@ -102,13 +117,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             R.layout.lesson_activity
         )
         binding.viewbinding = this
-
+        PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY, false)
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
             false
         ) else false
+
+        if (intent.hasExtra(IS_LESSON_COMPLETED)) {
+            isLesssonCompleted = intent.getBooleanExtra(IS_LESSON_COMPLETED, false)
+        } else {
+            isLesssonCompleted = false
+        }
+
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
                     .not()
@@ -208,6 +230,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     setUpTabLayout(lessonNumber, lessonIsNewGrammar)
                     setTabCompletionStatus()
                 }
+//                if (PrefManager.getBoolValue(HAS_SEEN_LESSON_SPOTLIGHT)) {
+//                    hideSpotlight()
+//                } else {
+//                    showLessonSpotlight()
+//                }
             }
         )
 
@@ -235,6 +262,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     if (it.pointsList.isNullOrEmpty().not()) {
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
                         playSnackbarSound(this)
+                        it.pointsList?.let { it1 ->
+                            PrefManager.put(
+                                LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                                it1.last(), false
+                            )
+                        }
                     }
                 }
                 /*if (it.awardMentorList.isNullOrEmpty().not()) {
@@ -259,10 +292,260 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                    PrefManager.put(
+                        LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                        it.pointsList!!.last(),
+                        false
+                    )
                 }
             }
         )
+
+        viewModel.lessonSpotlightStateLiveData.observe(this, {
+            // Show lesson Spotlight
+            when (it) {
+                LessonSpotlightState.LESSON_SPOTLIGHT -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_lesson_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1)
+                    }
+                }
+                LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART1 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.VISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_grammar_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT)
+                    }
+                }
+                LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.VISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_speaking_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART1)
+                    }
+                }
+                LessonSpotlightState.VOCAB_SPOTLIGHT_PART1 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.VISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_vocab_spotlight_1)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART2)
+                    }
+                }
+                LessonSpotlightState.VOCAB_SPOTLIGHT_PART2 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.VISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_vocab_spotlight_2)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART3)
+                    }
+                }
+                LessonSpotlightState.VOCAB_SPOTLIGHT_PART3 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.VISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_vocab_spotlight_3)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.READING_SPOTLIGHT)
+                    }
+                }
+                LessonSpotlightState.READING_SPOTLIGHT -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_reading_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                    lifecycleScope.launch {
+                        delay(DEFAULT_SPOTLIGHT_DELAY_IN_MS)
+                        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART2)
+                    }
+                }
+                LessonSpotlightState.GRAMMAR_SPOTLIGHT_PART2 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.VISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_grammar_spotlight)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.VISIBLE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.VISIBLE
+                }
+                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.text =
+                        resources.getText(R.string.label_speaking_spotlight_2)
+                    binding.lessonSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.VISIBLE
+                    binding.spotlightCallBtnText.visibility = View.VISIBLE
+                    binding.arrowAnimation.visibility = View.VISIBLE
+                }
+                else -> {
+                    // Hide lesson Spotlight
+                    binding.overlayLayout.visibility = View.GONE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.GONE
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                }
+            }
+        })
     }
+
+    private fun hideSpotlight() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+    }
+
+    private fun showLessonSpotlight() {
+        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.LESSON_SPOTLIGHT)
+        PrefManager.put(HAS_SEEN_LESSON_SPOTLIGHT, true)
+    }
+
+    fun startOnlineExamTest() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+        viewModel.grammarSpotlightClickLiveData.postValue(Unit)
+    }
+
+    fun callPracticePartner() {
+        viewModel.lessonSpotlightStateLiveData.postValue(null)
+        viewModel.speakingSpotlightClickLiveData.postValue(Unit)
+    }
+
+//    fun onSpotlightClick() {
+//        when (viewModel.lessonSpotlightStateLiveData.value) {
+//            LessonSpotlightState.LESSON_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT)
+//            }
+//            LessonSpotlightState.GRAMMAR_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT)
+//            }
+//            LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART1)
+//            }
+//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART1 -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART2)
+//            }
+//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART2 -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART3)
+//            }
+//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART3 -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.READING_SPOTLIGHT)
+//            }
+//            LessonSpotlightState.READING_SPOTLIGHT -> {
+//                viewModel.lessonSpotlightStateLiveData.postValue(null)
+//            }
+//        }
+//    }
 
     private fun setUpNewGrammarLayouts(
         rulesCompletedIds: ArrayList<Int>?,
@@ -307,6 +590,29 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
+    fun showLessonCompleteCard() {
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.lessonLiveData.value?.let { lesson ->
+                    val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                            lesson.vocabStatus == LESSON_STATUS.CO &&
+                            lesson.readingStatus == LESSON_STATUS.CO &&
+                            lesson.speakingStatus == LESSON_STATUS.CO
+
+                    if (lessonCompleted) {
+                        lesson.status = LESSON_STATUS.CO
+                        viewModel.updateLesson(lesson)
+                        AppObjectController.uiHandler.post {
+                            openLessonCompleteScreen(lesson)
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun onQuestionStatusUpdate(
         status: QUESTION_STATUS,
         questionId: String?,
@@ -341,10 +647,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             viewModel.lessonLiveData.value?.let { lesson ->
                 val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
                 when (tabPosition) {
-                    0 -> lesson.grammarStatus = status
-                    1 -> lesson.vocabStatus = status
-                    2 -> lesson.readingStatus = status
-                    3 -> lesson.speakingStatus = status
+                    GRAMMAR_POSITION -> lesson.grammarStatus = status
+                    VOCAB_POSITION -> lesson.vocabStatus = status
+                    READING_POSITION -> lesson.readingStatus = status
+                    SPEAKING_POSITION -> lesson.speakingStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
@@ -362,23 +668,23 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         if (lessonIsNewGrammar) {
             if (isTestCompleted.not()) {
-                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+                arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
             } else if (PrefManager.getIntValue(
                     ONLINE_TEST_LAST_LESSON_COMPLETED
                 ) >= lessonNumber
             ) {
-                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+                arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
 
-            } else arrayFragment.add(0, GrammarFragment.getInstance())
+            } else arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
         } else {
-            arrayFragment.add(0, GrammarFragment.getInstance())
+            arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
         }
 
-        arrayFragment.add(1, VocabularyFragment.getInstance())
-        arrayFragment.add(2, ReadingFragmentWithoutFeedback.getInstance())
-        arrayFragment.add(3, SpeakingPractiseFragment.newInstance())
+        arrayFragment.add(SPEAKING_POSITION, SpeakingPractiseFragment.newInstance())
+        arrayFragment.add(VOCAB_POSITION, VocabularyFragment.getInstance())
+        arrayFragment.add(READING_POSITION, ReadingFragmentWithoutFeedback.getInstance())
         binding.lessonViewpager.adapter = adapter
-        binding.lessonViewpager.offscreenPageLimit = 3
+        binding.lessonViewpager.offscreenPageLimit = 4
 
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
 
@@ -389,25 +695,25 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             val tab = binding.lessonTabLayout.getTabAt(index)
             tab?.setCustomView(R.layout.capsule_tab_layout_view)
             when (index) {
-                0 -> {
+                GRAMMAR_POSITION -> {
                     setSelectedColor(tab)
                     tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                 }
-                1 -> {
+                VOCAB_POSITION -> {
                     setUnselectedColor(tab)
                     tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
                 }
-                2 -> {
+                READING_POSITION -> {
                     setUnselectedColor(tab)
                     tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.READING_TITLE)
                 }
-                3 -> {
+                SPEAKING_POSITION -> {
                     setUnselectedColor(tab)
                     tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
@@ -435,7 +741,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         Handler().postDelayed(
             {
-                openIncompleteTab(3)
+                openIncompleteTab(arrayFragment.size - 1)
             },
             50
         )
@@ -450,41 +756,41 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private fun openIncompleteTab(currentTabNumber: Int) {
         var nextTabIndex = currentTabNumber + 1
         while (nextTabIndex != currentTabNumber) {
-            if (nextTabIndex == 4) {
+            if (nextTabIndex == arrayFragment.size) {
                 nextTabIndex = 0
             } else {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     when (nextTabIndex) {
-                        0 ->
+                        GRAMMAR_POSITION ->
                             if (lesson.grammarStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 0
+                                binding.lessonViewpager.currentItem = GRAMMAR_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        1 ->
+                        VOCAB_POSITION ->
                             if (lesson.vocabStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 1
+                                binding.lessonViewpager.currentItem = VOCAB_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        2 ->
+                        READING_POSITION ->
                             if (lesson.readingStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 2
+                                binding.lessonViewpager.currentItem = READING_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        3 ->
+                        SPEAKING_POSITION ->
                             if (lesson.speakingStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = 3
+                                binding.lessonViewpager.currentItem = SPEAKING_POSITION
                                 return
                             } else {
                                 nextTabIndex++
                             }
                         else -> {
-                            binding.lessonViewpager.currentItem = 3
+                            binding.lessonViewpager.currentItem = arrayFragment.size - 1
                             return
                         }
                     }
@@ -494,26 +800,33 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     private fun setTabCompletionStatus() {
-        viewModel.lessonLiveData.value?.let { lesson ->
-            if (lesson.lessonNo >= 2) {
-                PrefManager.put(LESSON_TWO_OPENED, true)
+        try {
+            viewModel.lessonLiveData.value?.let { lesson ->
+                if (lesson.lessonNo >= 2) {
+                    PrefManager.put(LESSON_TWO_OPENED, true)
+                }
+                setTabCompletionStatus(
+                    tabs.getChildAt(GRAMMAR_POSITION),
+                    lesson.grammarStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(VOCAB_POSITION),
+                    lesson.vocabStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(READING_POSITION),
+                    lesson.readingStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(SPEAKING_POSITION),
+                    lesson.speakingStatus == LESSON_STATUS.CO
+                )
             }
-            setTabCompletionStatus(
-                tabs.getChildAt(0),
-                lesson.grammarStatus == LESSON_STATUS.CO
-            )
-            setTabCompletionStatus(
-                tabs.getChildAt(1),
-                lesson.vocabStatus == LESSON_STATUS.CO
-            )
-            setTabCompletionStatus(
-                tabs.getChildAt(2),
-                lesson.readingStatus == LESSON_STATUS.CO
-            )
-            setTabCompletionStatus(
-                tabs.getChildAt(3),
-                lesson.speakingStatus == LESSON_STATUS.CO
-            )
+            if (isLesssonCompleted.not()) {
+                showLessonCompleteCard()
+            }
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
         }
     }
 
@@ -534,23 +847,37 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 ?.setTextColor(ContextCompat.getColor(this, R.color.white))
 
             when (tab.position) {
-                0 -> {
+                GRAMMAR_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
+                    viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
                 }
-                1 -> {
+                VOCAB_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_VOCABULARY_SCREEN)
                 }
-                2 -> {
+                READING_POSITION -> {
                     tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_READING_SCREEN)
                 }
-                3 -> {
+                SPEAKING_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
+                    if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
+                        hideSpotlight()
+                    } else {
+                        showSpeakingSpotlight()
+                    }
                 }
             }
         }
+    }
+
+    private fun showSpeakingSpotlight() {
+        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
@@ -599,15 +926,19 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     override fun onBackPressed() {
-        val resultIntent = Intent()
-        viewModel.lessonLiveData.value?.let {
-            resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
-            resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
-            resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
-            resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+        if (binding.overlayLayout.visibility == View.VISIBLE) {
+            hideSpotlight()
+        } else {
+            val resultIntent = Intent()
+            viewModel.lessonLiveData.value?.let {
+                resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
+                resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
+                resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+            }
+            setResult(RESULT_OK, resultIntent)
+            this@LessonActivity.finish()
         }
-        setResult(RESULT_OK, resultIntent)
-        this@LessonActivity.finish()
     }
 
     override fun onVisibleScreen() {
@@ -622,6 +953,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         const val LESSON_ID = "lesson_id"
         private const val IS_DEMO = "is_demo"
         private const val IS_NEW_GRAMMAR = "is_new_grammar"
+        private const val IS_LESSON_COMPLETED = "is_lesson_completed"
         private const val WHATSAPP_URL = "whatsapp_url"
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
@@ -633,11 +965,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             whatsappUrl: String? = null,
             testId: Int? = null,
             conversationId: String? = null,
-            isNewGrammar: Boolean = false
+            isNewGrammar: Boolean = false,
+            isLessonCompleted: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
             putExtra(IS_NEW_GRAMMAR, isNewGrammar)
+            putExtra(IS_LESSON_COMPLETED, isLessonCompleted)
             putExtra(CONVERSATION_ID, conversationId)
             if (isDemo) {
                 putExtra(WHATSAPP_URL, whatsappUrl)

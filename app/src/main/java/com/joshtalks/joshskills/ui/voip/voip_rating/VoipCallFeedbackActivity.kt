@@ -17,9 +17,10 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.setRoundImage
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
@@ -88,6 +89,8 @@ class VoipCallFeedbackActivity : BaseActivity() {
                         Snackbar.LENGTH_LONG,
                         it.pointsList!!.get(0)
                     )
+                    PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,it.pointsList!!.last(),false)
+
                 }
             }
         )
@@ -165,13 +168,13 @@ class VoipCallFeedbackActivity : BaseActivity() {
                 }
                 when (response) {
                     "YES" -> {
-                        showToast("$callerName is now added to your Favorite Practice Partners.")
+                        //showToast("$callerName is now added to your Favorite Practice Partners.")
                     }
                     "NO" -> {
-                        showToast("$callerName is now added to your Blocklist.")
+                        //showToast("$callerName is now added to your Blocklist.")
                     }
                     "MAYBE" -> {
-                        showToast("Thank you for submitting the feedback.")
+                        //showToast("Thank you for submitting the feedback.")
                     }
                 }
                 finishAndRemoveTask()
