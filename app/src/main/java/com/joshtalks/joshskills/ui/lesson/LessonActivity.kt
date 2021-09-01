@@ -475,7 +475,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
                     binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_speaking_spotlight)
+                        resources.getText(R.string.label_speaking_spotlight_2)
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
