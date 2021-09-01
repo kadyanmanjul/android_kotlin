@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 35,
-    "identityHash": "71f7f5949ab6e5022513f5571bb958cd",
+    "identityHash": "86491d50222afeca348b603320897651",
     "entities": [
       {
         "tableName": "course",
@@ -2586,11 +2586,29 @@
       },
       {
         "tableName": "voip_analytics",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `agoraCallId` TEXT NOT NULL, `agoraMentorUid` TEXT NOT NULL, `timeStamp` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "event",
             "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "agoraCallId",
+            "columnName": "agoraCallId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "agoraMentorUid",
+            "columnName": "agoraMentorUid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeStamp",
+            "columnName": "timeStamp",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -2614,7 +2632,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71f7f5949ab6e5022513f5571bb958cd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '86491d50222afeca348b603320897651')"
     ]
   }
 }

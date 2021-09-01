@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
+import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.ProtocolException
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,12 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                 if (response.isSuccessful && response.code() in 200..203) {
                     response.body()?.let {
                         location?.let { location ->
+                            CurrentCallDetails.set(
+                                it["channel_name"] ?: "",
+                                callId = it["agora_call_id"] ?: "",
+                                callieUid = it["uid"] ?: "",
+                                callerUid = ""
+                            )
                             uploadUserCurrentLocation(it["channel_name"]!!, location)
                         }
                         aFunction.invoke(

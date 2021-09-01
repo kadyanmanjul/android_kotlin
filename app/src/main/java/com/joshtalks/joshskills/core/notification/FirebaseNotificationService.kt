@@ -78,12 +78,14 @@ import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivit
 import com.joshtalks.joshskills.ui.voip.OPPOSITE_USER_UID
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
+import com.joshtalks.joshskills.ui.voip.RTC_CALL_ID
 import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
 import com.joshtalks.joshskills.ui.voip.RTC_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -118,6 +120,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Timber.tag(FirebaseNotificationService::class.java.name).e("fcm")
+        Timber.tag(FirebaseNotificationService::class.java.name).e("fcm ---> ${remoteMessage.data}")
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage)) {
                 Freshchat.handleFcmMessage(this, remoteMessage)
@@ -142,6 +145,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     )
                     FirestoreDB.getNotification {
                         val nc = it.toNotificationObject(shortNc.id)
+                        if (remoteMessage.data["nType"] == "CR") {
+                            nc.actionData?.let {
+                                pushIncomingCallAnalytics(it)
+                            }
+                        }
                         sendNotification(nc)
                     }
                 } else {
@@ -554,6 +562,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                 data[RTC_UID_KEY] = obj.getString("uid")
                 data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+                data[RTC_CALL_ID] = obj.getString("agoraCallId")
 
                 if (obj.has("f")) {
                     val id = obj.getInt("caller_uid")
@@ -1212,6 +1221,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                     data[RTC_UID_KEY] = obj.getString("uid")
                     data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
 
                     if (obj.has("f")) {
                         val id = obj.getInt("caller_uid")
@@ -1231,6 +1241,5 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
         }
-
     }
 }
