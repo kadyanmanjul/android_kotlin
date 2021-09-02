@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,12 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -137,19 +134,6 @@ class LeaderBoardFragment : Fragment() {
                 }
             }
         })
-
-        binding.editName.apply {
-            isCursorVisible = true
-            isPressed = true
-            isFocusableInTouchMode = true
-            setOnEditorActionListener { v, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_DONE && v.text.isNullOrBlank().not()) {
-                    viewModel.updateUserName(v.text.toString())
-                }
-                true
-            }
-            requestFocus()
-        }
     }
 
     private fun addObserver() {
@@ -214,18 +198,9 @@ class LeaderBoardFragment : Fragment() {
 
         viewModel.apiCallStatus.observe(viewLifecycleOwner) {
             if (it == ApiCallStatus.SUCCESS) {
-                updateNameLayout(binding.editName.text.toString())
                 viewModel.getRefreshedLeaderboardData(Mentor.getInstance().getId(), courseId, type)
             }
         }
-    }
-
-    private fun updateNameLayout(name: String) {
-        binding.name.text = name
-        binding.name.visibility = View.VISIBLE
-        binding.editName.visibility = View.INVISIBLE
-        binding.editName.clearFocus()
-        hideKeyboard(requireActivity(), binding.editName)
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {
