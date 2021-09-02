@@ -78,7 +78,7 @@
                     android:paddingVertical="@dimen/_2sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_12sdp"
-                    android:text="Beginner To Advanced"
+                    android:text="English Speaking ka माहौल"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:drawableTint="@color/right_answer_color" />

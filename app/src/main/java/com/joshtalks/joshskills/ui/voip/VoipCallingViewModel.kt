@@ -14,8 +14,9 @@ import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.ProtocolException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import timber.log.Timber
@@ -32,7 +33,12 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val request = AgoraTokenRequest(Mentor.getInstance().getId(), courseId, is_demo, topicId.toString())
+                val request = AgoraTokenRequest(
+                    Mentor.getInstance().getId(),
+                    courseId,
+                    is_demo,
+                    topicId.toString()
+                )
                 val response =
                     AppObjectController.p2pNetworkService.getAgoraClientToken(request)
                 if (response.isSuccessful && response.code() in 200..203) {
@@ -118,7 +124,7 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun saveImpression(eventName: String) {
-        GlobalScope.launch(Dispatchers.IO) {
+        CoroutineScope(Job() + Dispatchers.IO).launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),

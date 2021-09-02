@@ -151,6 +151,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
+        viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
 
     override fun onResume() {

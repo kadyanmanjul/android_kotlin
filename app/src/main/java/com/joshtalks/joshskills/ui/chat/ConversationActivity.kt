@@ -291,16 +291,23 @@ class ConversationActivity :
     }
 
     private fun showLeaderBoardSpotlight() {
-        window.statusBarColor = ContextCompat.getColor(this, R.color.leaderboard_overlay_status_bar)
-        conversationBinding.overlayLayout.visibility = VISIBLE
-        conversationBinding.arrowAnimation.visibility = VISIBLE
-        conversationBinding.overlayLeaderboardContainer.visibility = VISIBLE
-        conversationBinding.overlayLeaderboardTooltip.visibility = VISIBLE
-        conversationBinding.overlayLeaderboardTooltip.startAnimation(
-            AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
-        )
-        conversationBinding.labelTapToDismiss.visibility = GONE
         lifecycleScope.launch(Dispatchers.Main) {
+            delay(1000)
+            window.statusBarColor = ContextCompat.getColor(
+                this@ConversationActivity,
+                R.color.leaderboard_overlay_status_bar
+            )
+            conversationBinding.overlayLayout.visibility = VISIBLE
+            conversationBinding.arrowAnimation.visibility = VISIBLE
+            conversationBinding.overlayLeaderboardContainer.visibility = VISIBLE
+            conversationBinding.overlayLeaderboardTooltip.visibility = VISIBLE
+            conversationBinding.overlayLeaderboardTooltip.startAnimation(
+                AnimationUtils.loadAnimation(
+                    this@ConversationActivity,
+                    R.anim.slide_in_left
+                )
+            )
+            conversationBinding.labelTapToDismiss.visibility = GONE
             delay(6500)
             conversationBinding.overlayLayout.setOnClickListener {
                 PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
