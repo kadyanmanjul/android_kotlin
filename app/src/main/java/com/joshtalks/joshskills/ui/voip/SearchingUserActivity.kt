@@ -21,6 +21,8 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -120,7 +122,7 @@ class SearchingUserActivity : BaseActivity() {
         }
 
         override fun onNoUserFound() {
-            stopCalling()
+            stopCalling(DISCONNECT.NO_USER_FOUND_FAILURE)
             showToast(getString(R.string.did_not_answer_message))
             timer?.cancel()
         }
@@ -295,8 +297,8 @@ class SearchingUserActivity : BaseActivity() {
         WebRtcService.startOutgoingCall(getMapForOutgoing(token, channelName, uid))
     }
 
-    private fun stopCalling() {
-        mBoundService?.endCall(apiCall = false)
+    private fun stopCalling(reason : DISCONNECT) {
+        mBoundService?.endCall(apiCall = false, reason = reason)
         mBoundService?.setOngoingCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
@@ -306,8 +308,8 @@ class SearchingUserActivity : BaseActivity() {
         finishAndRemoveTask()
     }
 
-    fun stopSearching() {
-        mBoundService?.endCall(apiCall = true)
+    fun stopSearching(reason: DISCONNECT) {
+        mBoundService?.endCall(apiCall = true, reason = reason)
         mBoundService?.setOngoingCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
@@ -319,7 +321,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME) {
-            stopCalling()
+            stopCalling(DISCONNECT.BACK_BUTTON_FAILURE)
         }
         return super.onKeyDown(keyCode, event)
     }
@@ -335,7 +337,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onBackPressed() {
         viewModel.saveImpression(IMPRESSION_SEARCHING_SCREEN_BACK_PRESS)
-        stopSearching()
+        stopSearching(DISCONNECT.BACK_BUTTON_FAILURE)
     }
 
     override fun onStart() {

@@ -27,6 +27,7 @@ import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -56,12 +57,15 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
+import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.util.DateUtils
@@ -92,6 +96,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 
@@ -106,7 +112,7 @@ const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
 
 class WebRtcService : BaseWebRtcService() {
-
+    private val log = Timber.tag("WebRtcService")
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
@@ -207,22 +213,33 @@ class WebRtcService : BaseWebRtcService() {
             serviceIntent.startServiceForWebrtc()
         }
 
-        fun disconnectCall() {
+        fun disconnectCall(reason: VoipEvent) {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
                 WebRtcService::class.java
             ).apply {
                 action = CallDisconnect().action
+                val reasonEnum = if(reason is VoipAnalytics.Event) reason else reason as DISCONNECT
+                putExtra(DISCONNECT_REASON, reasonEnum)
             }
             serviceIntent.startServiceForWebrtc()
         }
 
-        fun disconnectCallFromCallie() {
+        fun disconnectCallFromCallie(isFromNotification : Boolean = true) {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
                 WebRtcService::class.java
             ).apply {
                 action = CallStop().action
+            }
+            if(isFromNotification) {
+                val state = CurrentCallDetails.state()
+                VoipAnalytics.push(
+                    DISCONNECT.CALL_DISCONNECT_NOTIFICATION_FAILURE,
+                    agoraCallId = state.callId,
+                    agoraMentorUid = state.callieUid,
+                    timeStamp = DateUtils.getCurrentTimeStamp()
+                )
             }
             serviceIntent.startServiceForWebrtc()
         }
@@ -303,6 +320,76 @@ class WebRtcService : BaseWebRtcService() {
 
     @Volatile
     private var eventListener: IRtcEngineEventHandler? = object : IRtcEngineEventHandler() {
+        private val micMutex = Mutex()
+        private val speakerMutex = Mutex()
+
+        override fun onAudioVolumeIndication(
+            speakers: Array<out AudioVolumeInfo>?,
+            totalVolume: Int
+        ) {
+            super.onAudioVolumeIndication(speakers, totalVolume)
+            log.d("${speakers}")
+                val isSpeaking = (speakers?.find { it.uid == 0 }) != null
+                val isListening = (speakers?.find { it.uid > 0 }) != null
+                if (isSpeaking)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        saveMicState()
+                    }
+                if(isListening)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        saveSpeakerState()
+                    }
+        }
+
+        suspend fun saveMicState() {
+            log.d("saveMicState: ")
+            micMutex.withLock {
+                log.d("saveMicState --> lock")
+                val currentCallDetails = CurrentCallDetails.state()
+                log.d("$currentCallDetails")
+                val timestamp = DateUtils.getCurrentTimeStamp()
+                if(!currentCallDetails.isSpeakingPushed && currentCallDetails.isCallConnectedScreenVisible) {
+                    val agoraMentorUid = currentCallDetails.callieUid
+                    val agoraCallId = currentCallDetails.callId
+
+                    VoipAnalytics.push(
+                        VoipAnalytics.Event.SPEAKING,
+                        agoraMentorUid = agoraMentorUid,
+                        agoraCallId = agoraCallId,
+                        timeStamp = timestamp
+                    )
+
+                    if (agoraCallId.isNotEmpty() || agoraMentorUid.isNotEmpty())
+                        CurrentCallDetails.speakingPushed()
+                }
+                log.d("saveMicState --> unlock")
+            }
+        }
+
+        suspend fun saveSpeakerState() {
+            log.d("saveSpeakerState")
+            speakerMutex.withLock {
+                log.d("saveSpeakerState -- lock")
+                val currentCallDetails = CurrentCallDetails.state()
+                log.d("$currentCallDetails")
+                val timestamp = DateUtils.getCurrentTimeStamp()
+                if(!currentCallDetails.isListeningPushed && currentCallDetails.isCallConnectedScreenVisible) {
+                    val agoraMentorUid = currentCallDetails.callieUid
+                    val agoraCallId = currentCallDetails.callId
+
+                    VoipAnalytics.push(
+                        VoipAnalytics.Event.LISTENING,
+                        agoraMentorUid = agoraMentorUid,
+                        agoraCallId = agoraCallId,
+                        timeStamp = timestamp
+                    )
+
+                    if (agoraCallId.isNotEmpty() || agoraMentorUid.isNotEmpty())
+                        CurrentCallDetails.listeningPushed()
+                }
+                log.d("saveSpeakerState -- unlock")
+            }
+        }
 
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
@@ -363,6 +450,14 @@ class WebRtcService : BaseWebRtcService() {
                 try {
                     val id = getUID(it)
                     if ((callType == CallType.INCOMING || callType == CallType.FAVORITE_INCOMING) && id == uid) {
+                        val state = CurrentCallDetails.state()
+                        VoipAnalytics.push(
+                            VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
+                            agoraMentorUid = state.callieUid,
+                            agoraCallId = state.callId,
+                            timeStamp = DateUtils.getCurrentTimeStamp()
+                        )
+                        CurrentCallDetails.callConnectedScreenVisible()
                         startCallTimer()
                         callStatusNetworkApi(it, CallAction.ACCEPT)
                         addNotification(CallConnect().action, callData)
@@ -415,9 +510,9 @@ class WebRtcService : BaseWebRtcService() {
                 Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
                     if (isCallerJoined) {
-                        endCall(apiCall = true, action = CallAction.DISCONNECT)
+                        endCall(apiCall = true, action = CallAction.DISCONNECT, reason = DISCONNECT.AGORA_USER_OFFLINE_FAILURE)
                     } else {
-                        endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
+                        endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT, reason = DISCONNECT.AGORA_USER_OFFLINE_FAILURE)
                     }
                     isCallOnGoing.postValue(false)
                 } else if (id != uid && reason == Constants.USER_OFFLINE_DROPPED) {
@@ -613,7 +708,8 @@ class WebRtcService : BaseWebRtcService() {
         FirestoreDB.setNotificationListener(listener = object : AgoraNotificationListener {
             override fun onReceived(firestoreNotification: FirestoreNotificationObject) {
                 val nc = firestoreNotification.toNotificationObject(null)
-                nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }
+                if(nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
+                    nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }
                 FirebaseNotificationService.sendFirestoreNotification(nc, this@WebRtcService)
             }
         })
@@ -658,15 +754,15 @@ class WebRtcService : BaseWebRtcService() {
             }
             mRtcEngine?.apply {
                 if (BuildConfig.DEBUG) {
-                    setParameters("{\"rtc.log_filter\": 65535}")
-                    setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
+                    //setParameters("{\"rtc.log_filter\": 65535}")
+                    //setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
 
                 disableVideo()
                 enableAudio()
-                enableAudioVolumeIndication(1000, 3, true)
+                enableAudioVolumeIndication(500, 3, true)
                 setAudioProfile(
                     AUDIO_PROFILE_SPEECH_STANDARD,
                     AUDIO_SCENARIO_EDUCATION
@@ -735,6 +831,13 @@ class WebRtcService : BaseWebRtcService() {
                                 joinCall(data)
                             }
                             this == CallConnect().action -> {
+                                val state = CurrentCallDetails.state()
+                                VoipAnalytics.push(
+                                    VoipAnalytics.Event.CALL_ACCEPT,
+                                    agoraMentorUid = state.callieUid,
+                                    agoraCallId = state.callId,
+                                    timeStamp = DateUtils.getCurrentTimeStamp()
+                                )
                                 removeIncomingNotification()
                                 val callData: HashMap<String, String?>? =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
@@ -746,10 +849,20 @@ class WebRtcService : BaseWebRtcService() {
                                     callStatusNetworkApi(it, CallAction.DECLINE)
                                     rejectCall()
                                 }
+                                val state = CurrentCallDetails.state()
+                                VoipAnalytics.push(
+                                    VoipAnalytics.Event.CALL_DECLINED,
+                                    agoraMentorUid = state.callieUid,
+                                    agoraCallId = state.callId,
+                                    timeStamp = DateUtils.getCurrentTimeStamp()
+                                )
                                 disconnectService()
                             }
                             this == CallDisconnect().action -> {
                                 addNotification(CallDisconnect().action, null)
+                                val reasonEnum  =
+                                    intent.getSerializableExtra(DISCONNECT_REASON)
+                                val reason = if(reasonEnum is VoipAnalytics.Event) reasonEnum else reasonEnum as DISCONNECT
                                 callData?.let {
                                     callStatusNetworkApi(
                                         it,
@@ -757,13 +870,22 @@ class WebRtcService : BaseWebRtcService() {
                                         hasDisconnected = true
                                     )
                                 }
-                                endCall()
+                                endCall(reason = reason)
                             }
                             this == NoUserFound().action -> {
                                 callData?.let {
                                     callStatusNetworkApi(it, CallAction.NOUSERFOUND)
                                 }
                                 mRtcEngine?.leaveChannel()
+                                if(callCallback?.get() == null) {
+                                    val state = CurrentCallDetails.state()
+                                    VoipAnalytics.push(
+                                        DISCONNECT.NO_USER_FOUND_FAILURE,
+                                        agoraCallId = state.callId,
+                                        agoraMentorUid = state.callieUid,
+                                        timeStamp = DateUtils.getCurrentTimeStamp()
+                                        )
+                                }
                                 callCallback?.get()?.onNoUserFound()
                                 disconnectService()
                             }
@@ -777,7 +899,7 @@ class WebRtcService : BaseWebRtcService() {
                                 if (JoshApplication.isAppVisible.not()) {
                                     addNotification(CallDisconnect().action, null)
                                 }
-                                endCall(apiCall = false)
+                                endCall(apiCall = false, reason = DISCONNECT.FORCE_DISCONNECT_NOTIFICATION_FAILURE)
                                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                             }
                             this == CallForceConnect().action -> {
@@ -957,6 +1079,13 @@ class WebRtcService : BaseWebRtcService() {
             }
         }
         addNotification(IncomingCall().action, callData)
+        val state = CurrentCallDetails.state()
+        VoipAnalytics.push(
+            VoipAnalytics.Event.INCOMING_SCREEN_VISUAL,
+            agoraMentorUid = state.callieUid,
+            agoraCallId = state.callId,
+            timeStamp = DateUtils.getCurrentTimeStamp()
+        )
         addTimeObservable()
     }
 
@@ -977,12 +1106,6 @@ class WebRtcService : BaseWebRtcService() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(callActivityIntent)
-        VoipAnalytics.push(
-            VoipAnalytics.Event.INCOMING_SCREEN_VISUAL,
-            agoraMentorUid = CurrentCallDetails.callieUid,
-            agoraCallId = CurrentCallDetails.callId,
-            timeStamp = DateUtils.getCurrentTimeStamp()
-        )
     }
 
     private fun addTimeObservable() {
@@ -993,14 +1116,15 @@ class WebRtcService : BaseWebRtcService() {
                     if (isCallConnected().not()) {
                         isTimeOutToPickCall = true
                         callData?.let {
+                            val state = CurrentCallDetails.state()
                             VoipAnalytics.push(
                                 VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL,
-                                agoraMentorUid = CurrentCallDetails.callieUid,
-                                agoraCallId = CurrentCallDetails.callId,
+                                agoraMentorUid = state.callieUid,
+                                agoraCallId = state.callId,
                                 timeStamp = DateUtils.getCurrentTimeStamp()
                             )
                         }
-                        disconnectCallFromCallie()
+                        disconnectCallFromCallie(isFromNotification = false)
                     }
                 }
                 .subscribe()
@@ -1017,7 +1141,7 @@ class WebRtcService : BaseWebRtcService() {
                 .subscribeOn(Schedulers.io())
                 .subscribe {
                     Timber.tag("WebRtcService").e("Complete")
-                    endCall(apiCall = true)
+                    endCall(apiCall = true, reason = DISCONNECT.RECONNECTING_FAILURE)
                 }
         )
     }
@@ -1043,10 +1167,11 @@ class WebRtcService : BaseWebRtcService() {
             RxBus2.publish(WebrtcEventBus(CallState.REJECT))
             ex.printStackTrace()
         }
+
         disconnectService()
     }
 
-    fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT) {
+    fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT, reason : VoipEvent) {
         Timber.tag(TAG).e("call_status%s", mRtcEngine?.connectionState)
         if (apiCall) {
             callData?.let {
@@ -1054,6 +1179,13 @@ class WebRtcService : BaseWebRtcService() {
             }
         }
         joshAudioManager?.endCommunication()
+        val state = CurrentCallDetails.state()
+        VoipAnalytics.push(
+            reason,
+            agoraCallId = state.callId,
+            agoraMentorUid = state.callieUid,
+            timeStamp = DateUtils.getCurrentTimeStamp()
+        )
         mRtcEngine?.leaveChannel()
         if (isCallOnGoing.value == true) {
             isCallOnGoing.postValue(false)
@@ -1102,7 +1234,7 @@ class WebRtcService : BaseWebRtcService() {
 
         if (statusCode < 0) {
             if (retryInitLibrary == 3) {
-                disconnectCall()
+                disconnectCall(DISCONNECT.AGORA_LIBRARY_FAILURE)
                 return
             }
             retryInitLibrary++
@@ -1688,6 +1820,13 @@ class WebRtcService : BaseWebRtcService() {
                     return@launch
                 }
             } catch (ex: Exception) {
+                val state = CurrentCallDetails.state()
+                VoipAnalytics.push(
+                    DISCONNECT.AGORA_CALL_RESPONSE_FAILURE,
+                    agoraCallId = state.callId,
+                    agoraMentorUid = state.callieUid,
+                    timeStamp = DateUtils.getCurrentTimeStamp()
+                )
                 ex.printStackTrace()
             }
         }

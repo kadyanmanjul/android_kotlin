@@ -32,6 +32,8 @@ import com.joshtalks.joshskills.ui.voip.VoipCallingViewModel
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -269,9 +271,9 @@ class DemoSearchingUserActivity : AppCompatActivity() {
         WebRtcService.startOutgoingCall(getMapForOutgoing(token, channelName, uid))
     }
 
-    fun stopCalling() {
+    fun stopCalling(reason : DISCONNECT) {
         val userId = mBoundService?.getUserAgoraId()
-        mBoundService?.endCall(apiCall = userId != null)
+        mBoundService?.endCall(apiCall = userId != null, reason = reason)
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -282,7 +284,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME) {
-            stopCalling()
+            stopCalling(DISCONNECT.BACK_BUTTON_FAILURE)
         }
         return super.onKeyDown(keyCode, event)
     }
@@ -297,7 +299,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        stopCalling()
+        stopCalling(DISCONNECT.BACK_BUTTON_FAILURE)
     }
 
     override fun onStart() {
