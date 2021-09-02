@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.ApiRespStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
@@ -55,12 +56,12 @@ import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -109,6 +110,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
+        try {
+            if(PrefManager.hasKey(FCM_TOKEN)) {
+                val fcmResponse = FCMResponse.getInstance()
+                fcmResponse?.apiStatus = ApiRespStatus.POST
+                fcmResponse?.update()
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
+        }
         PrefManager.put(FCM_TOKEN, token)
         CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
