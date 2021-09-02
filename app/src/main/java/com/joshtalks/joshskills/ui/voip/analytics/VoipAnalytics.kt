@@ -49,7 +49,7 @@ object VoipAnalytics {
         SPEAKING("mic_started_at"),
         LISTENING("speaker_started_at"),
         USER_DID_NOT_PICKUP_CALL("ignored_at"),
-        RECONNECTING("RECONNECTING"),
+        RECONNECTING("RECONNECT"),
         CALL_RESTORED("CALL_RESTORED"),
         RESUME("RESUME"),
         ON_HOLD("ONHOLD");
