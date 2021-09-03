@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -140,6 +141,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
             }
         )
+        viewModel.lessonSpotlightStateLiveData.observe(requireActivity(), {
+            when (it) {
+                LessonSpotlightState.LESSON_SPOTLIGHT -> {
+                    binding.nestedScrollView.scrollTo(0, binding.btnStartTrialText.bottom)
+                }
+                }
+        })
         viewModel.courseId.observe(
             viewLifecycleOwner,
             {
