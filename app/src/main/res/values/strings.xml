@@ -892,8 +892,9 @@
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
     <string name="hallway">Hallway</string>
-    <string name="e_g_motivation_career_advice">e.g. Motivation, Career Advice</string>
+    <string name="e_g_motivation_career_advice">आप किसी भी टॉपिक पर कन्वर्सेशन शुरू कर सकते है जैसे की,\n UPSC Aspirants Discussion  </string>
     <string name="add_a_topic">Add a topic</string>
+    <string name="select_conversation_partners">Select Conversation Partners</string>
     <string name="let_s_go">Let’s Go</string>
     <string name="set_topic">Set Topic</string>
     <string name="start_a_room">Start a room</string>
@@ -935,5 +936,8 @@
     <string name="label_vocab_spotlight_2">Appreciate का सही उच्चारण क्या है यहां से देखे</string>
     <string name="label_vocab_spotlight_3">अब ये तीन वाक्यों को साथ में पढ़ कर बोले</string>
     <string name="label_reading_spotlight">इस भाग में हम अपनी रीडिंग की प्रैक्टिस करेंगे</string>
+    <!-- Convo room strings -->
+    <string name="no_room_text">👋 Hi there! \n \n Start a new room to get a conversation going!</string>
+    <string name="no_room_text_tooltip">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है</string>
 
 </resources>

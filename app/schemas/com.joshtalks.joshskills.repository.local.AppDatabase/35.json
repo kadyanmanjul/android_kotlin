@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 35,
-    "identityHash": "86491d50222afeca348b603320897651",
+    "identityHash": "6a2c41f8a3624cd9c6eceeb2dd60950c",
     "entities": [
       {
         "tableName": "course",
@@ -1746,7 +1746,7 @@
       },
       {
         "tableName": "LessonModel",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER NOT NULL, `chat_id` TEXT NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `status` TEXT, `grammarStatus` TEXT, `vocabularyStatus` TEXT, `readingStatus` TEXT, `speakingStatus` TEXT, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `show_new_grammar_screen` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER NOT NULL, `chat_id` TEXT NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `status` TEXT, `grammarStatus` TEXT, `vocabularyStatus` TEXT, `readingStatus` TEXT, `speakingStatus` TEXT, `roomStatus` TEXT, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `show_new_grammar_screen` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -1817,6 +1817,12 @@
           {
             "fieldPath": "speakingStatus",
             "columnName": "speakingStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "roomStatus",
+            "columnName": "roomStatus",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -2632,7 +2638,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '86491d50222afeca348b603320897651')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6a2c41f8a3624cd9c6eceeb2dd60950c')"
     ]
   }
 }

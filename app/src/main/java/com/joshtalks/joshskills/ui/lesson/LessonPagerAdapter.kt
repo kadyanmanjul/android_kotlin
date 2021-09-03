@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 class LessonPagerAdapter(fm: FragmentManager, behavior: Int, val fragmentList: List<Fragment>) :
     FragmentPagerAdapter(fm, behavior) {
 
-    override fun getCount() = 4
+    override fun getCount() = 5
 
     override fun getItem(position: Int): Fragment = fragmentList.get(position)
 }

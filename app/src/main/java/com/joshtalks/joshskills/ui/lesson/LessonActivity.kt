@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,13 +20,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
-import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -40,6 +36,7 @@ import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
+import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
@@ -59,6 +56,7 @@ const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
 const val VOCAB_POSITION = 2
 const val READING_POSITION = 3
+const val ROOM_POSITION = 4
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
@@ -597,6 +595,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
+                            lesson.roomStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (lessonCompleted) {
@@ -651,6 +650,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
                     SPEAKING_POSITION -> lesson.speakingStatus = status
+                    ROOM_POSITION -> lesson.roomStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
@@ -683,6 +683,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         arrayFragment.add(SPEAKING_POSITION, SpeakingPractiseFragment.newInstance())
         arrayFragment.add(VOCAB_POSITION, VocabularyFragment.getInstance())
         arrayFragment.add(READING_POSITION, ReadingFragmentWithoutFeedback.getInstance())
+        arrayFragment.add(ROOM_POSITION, ConversationRoomListingFragment.getInstance())
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.offscreenPageLimit = 4
 
@@ -718,6 +719,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                }
+                ROOM_POSITION -> {
+                    setUnselectedColor(tab)
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.ROOM_TITLE)
                 }
             }
         }
@@ -789,6 +796,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                             } else {
                                 nextTabIndex++
                             }
+                        ROOM_POSITION ->
+                            if (lesson.roomStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = ROOM_POSITION
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
                         else -> {
                             binding.lessonViewpager.currentItem = arrayFragment.size - 1
                             return
@@ -820,6 +834,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 setTabCompletionStatus(
                     tabs.getChildAt(SPEAKING_POSITION),
                     lesson.speakingStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(ROOM_POSITION),
+                    lesson.roomStatus == LESSON_STATUS.CO
                 )
             }
             if (isLesssonCompleted.not()) {
@@ -860,6 +878,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 READING_POSITION -> {
                     tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_READING_SCREEN)
+                }
+                ROOM_POSITION -> {
+                    tab.view.background = ContextCompat.getDrawable(this, R.drawable.convo_room_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_ROOM_SCREEN)
                 }
                 SPEAKING_POSITION -> {
                     tab.view.background =

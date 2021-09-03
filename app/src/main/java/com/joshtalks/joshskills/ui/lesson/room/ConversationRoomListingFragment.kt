@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.conversationRoom.roomsListing
+package com.joshtalks.joshskills.ui.lesson.room
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -9,19 +9,29 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.google.android.material.textview.MaterialTextView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingAdapter
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
@@ -39,7 +49,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 
-class ConversationRoomListingActivity : BaseActivity(),
+
+
+
+class ConversationRoomListingFragment : CoreJoshFragment(),
     ConversationRoomListAction {
 
     private val db = FirebaseFirestore.getInstance()
@@ -57,40 +70,52 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     companion object {
         var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
+
+        @JvmStatic
+        fun getInstance() = ConversationRoomListingFragment()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+   /* override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         getIntentExtras(intent)
         openConversationRoomByNotificationIntent()
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+
+        binding =
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.activity_conversations_rooms_listing,
+                container,
+                false
+            )
+        binding.lifecycleOwner = this
         binding = ActivityConversationsRoomsListingBinding.inflate(layoutInflater)
-        val view = binding.root
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            this.window.statusBarColor =
-                this.resources.getColor(R.color.conversation_room_color, theme)
+            requireActivity().window.statusBarColor =
+                this.resources.getColor(R.color.conversation_room_color, requireActivity().theme)
         }
         handler = Handler(Looper.getMainLooper())
-        setContentView(view)
-        viewModel = ConversationRoomListingViewModel()
-        getIntentExtras(intent)
-        setUpRecyclerView()
-        setFlagInWebRtcServie()
-        viewModel.makeEnterExitConversationRoom(true)
+        initViews()
+        addObservers()
+        openConversationRoomByNotificationIntent()
+        // showTooltip()
+        return binding.root
+    }
 
-        with(binding) {
-            createRoom.apply {
-                clipToOutline = true
-                setOnSingleClickListener {
-                    showPopup()
-                }
-            }
-        }
-        viewModel.navigation.observe(this, {
+    private fun addObservers() {
+
+        viewModel.navigation.observe(viewLifecycleOwner, {
             when (it) {
                 is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
                 is ConversationRoomListingNavigation.OpenConversationLiveRoom -> openConversationLiveRoom(
@@ -104,7 +129,24 @@ class ConversationRoomListingActivity : BaseActivity(),
                 ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
             }
         })
-        openConversationRoomByNotificationIntent()
+    }
+
+    private fun initViews() {
+
+        viewModel = ConversationRoomListingViewModel()
+        getIntentExtras(requireActivity().intent)
+        setUpRecyclerView()
+        setFlagInWebRtcServie()
+        viewModel.makeEnterExitConversationRoom(true)
+
+        with(binding) {
+            createRoom.apply {
+                clipToOutline = true
+                setOnSingleClickListener {
+                    showPopup()
+                }
+            }
+        }
 
     }
 
@@ -119,7 +161,7 @@ class ConversationRoomListingActivity : BaseActivity(),
             noRoomsText.apply {
                 visibility = View.VISIBLE
                 text =
-                    String.format("\uD83D\uDC4B Hi there! \n\n Start a new room to get a\n conversation going!")
+                    String.format(getString(R.string.no_room_text))
             }
             recyclerView.apply {
                 visibility = View.GONE
@@ -135,7 +177,7 @@ class ConversationRoomListingActivity : BaseActivity(),
             recyclerView.apply {
                 visibility = View.VISIBLE
                 setHasFixedSize(true)
-                layoutManager = LinearLayoutManager(this@ConversationRoomListingActivity)
+                layoutManager = LinearLayoutManager(requireContext())
                 adapter = conversationRoomsListingAdapter
             }
         }
@@ -159,17 +201,17 @@ class ConversationRoomListingActivity : BaseActivity(),
     }
 
     private fun setFlagInWebRtcServie() {
-        val intent = Intent(this, WebRtcService::class.java)
+        val intent = Intent(requireActivity(), WebRtcService::class.java)
         isConversionRoomActive = true
-        startService(intent)
+        requireActivity().startService(intent)
     }
 
     fun goToProfile() {
         UserProfileActivity.startUserProfileActivity(
-            this, Mentor.getInstance().getId(),
+            requireActivity(), Mentor.getInstance().getId(),
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             null, USER_PROFILE_FLOW_FROM.AWARD.value,
-            conversationId = intent.getStringExtra(CONVERSATION_ID)
+            conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
         )
     }
 
@@ -180,7 +222,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     private fun observeNetwork() {
         compositeDisposable.add(
-            ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+            ReactiveNetwork.observeNetworkConnectivity(AppObjectController.joshApplication)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
@@ -223,7 +265,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
-        val intent = Intent(this, ConversationLiveRoomActivity::class.java)
+        val intent = Intent(requireActivity(), ConversationLiveRoomActivity::class.java)
         intent.putExtra("CHANNEL_NAME", channelName)
         intent.putExtra("UID", uid)
         intent.putExtra("TOKEN", token)
@@ -244,7 +286,7 @@ class ConversationRoomListingActivity : BaseActivity(),
                 hideNotificationAfter4seconds()
             }
         } else {
-            Toast.makeText(this, "Something Went Wrong !!!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), "Something Went Wrong !!!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -269,24 +311,80 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     private fun showPopup() {
         var topic = ""
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.alert_label_editor, null)
         dialogBuilder.setView(dialogView)
 
         val alertDialog: AlertDialog = dialogBuilder.create()
-        val width = AppObjectController.screenWidth * .8
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
         alertDialog.show()
-        alertDialog.window?.setLayout(width.toInt(), height)
-        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.window?.let { window->
+            val width = AppObjectController.screenWidth * .91
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+            val wlp: WindowManager.LayoutParams = window.getAttributes()
+            wlp.gravity = Gravity.BOTTOM
+            //wlp.flags = wlp.flags and WindowManager.LayoutParams.FLAG_DIM_BEHIND.inv()
+            window.setAttributes(wlp)
+            window.setLayout(width.toInt(), height)
+            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
 
-        dialogView.findViewById<MaterialTextView>(R.id.create_room).setOnClickListener {
-            topic = dialogView.findViewById<EditText>(R.id.label_field).text.toString()
+        dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
+            showRoomPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
+            alertDialog.dismiss()
+        }
+    }
+
+    private fun showRoomPopup(topic:String) {
+        var topic = topic
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.alert_room_picker, null)
+        dialogBuilder.setView(dialogView)
+        var isP2Pselected=true
+
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.show()
+        alertDialog.window?.let { window->
+            val width = AppObjectController.screenWidth * .91
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+            val wlp: WindowManager.LayoutParams = window.getAttributes()
+            wlp.gravity = Gravity.BOTTOM
+            window.setAttributes(wlp)
+            window.setLayout(width.toInt(), height)
+            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
             viewModel.createRoom(topic)
             alertDialog.dismiss()
         }
-
+        dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setOnClickListener {
+            dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setCardBackgroundColor(
+                ContextCompat.getColor(
+                requireContext(),
+                R.color.artboard_color
+            ))
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).setCardBackgroundColor(
+                ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            ))
+            isP2Pselected = true
+        }
+        dialogView.findViewById<MaterialCardView>(R.id.favt_container).setOnClickListener {
+            dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                ))
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.artboard_color
+                ))
+            isP2Pselected = false
+        }
     }
 
     override fun onStart() {
@@ -315,11 +413,11 @@ class ConversationRoomListingActivity : BaseActivity(),
         isRoomCreatedByUser = false
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         super.onBackPressed()
         isBackPressed = true
         viewModel.makeEnterExitConversationRoom(false)
-    }
+    }*/
 
     private fun setUpRecyclerView() {
         val options: FirestoreRecyclerOptions<ConversationRoomsListingItem> =
@@ -339,5 +437,4 @@ class ConversationRoomListingActivity : BaseActivity(),
     override fun onRoomClick(item: ConversationRoomsListingItem) {
         viewModel.joinRoom(item)
     }
-
 }

@@ -196,6 +196,7 @@ class FirebaseRemoteConfigKey {
         const val VOCABULARY_TITLE = "VOCABULARY_TITLE"
         const val READING_TITLE = "READING_TITLE"
         const val SPEAKING_TITLE = "SPEAKING_TITLE"
+        const val ROOM_TITLE = "ROOM_TITLE"
         const val TODAYS_QUIZ_TITLE = "TODAYS_QUIZ_TITLE"
         const val VOCABULARY_COMPLETED = "VOCABULARY_COMPLETED"
 
