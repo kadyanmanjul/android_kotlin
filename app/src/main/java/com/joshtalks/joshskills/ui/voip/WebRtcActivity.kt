@@ -654,6 +654,15 @@ class WebRtcActivity : AppCompatActivity() {
                 agoraCallId = state.callId,
                 timeStamp = DateUtils.getCurrentTimeStamp()
             )
+        } else {
+            val state = CurrentCallDetails.state()
+            VoipAnalytics.push(
+                VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
+                agoraMentorUid = state.callieUid,
+                agoraCallId = state.callId,
+                timeStamp = DateUtils.getCurrentTimeStamp()
+            )
+            CurrentCallDetails.callConnectedScreenVisible()
         }
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             acceptCallForDemo()

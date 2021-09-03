@@ -37,7 +37,10 @@ object VoipAnalytics {
         Event.DISCONNECT.USER_DISCONNECTED_FAILURE.value,
         Event.DISCONNECT.RECONNECTING_FAILURE.value,
         Event.DISCONNECT.NO_USER_FOUND_FAILURE.value,
-        Event.DISCONNECT.BACK_BUTTON_FAILURE.value
+        Event.DISCONNECT.BACK_BUTTON_FAILURE.value,
+        Event.DISCONNECT.AGORA_LIBRARY_FAILURE.value,
+        Event.DISCONNECT.LOCATION_PERMISSION_FAILURE.value,
+        Event.DISCONNECT.AGORA_USER_OFFLINE_FAILURE.value,
     )
 
     enum class Event(override val value: String) : VoipEvent {

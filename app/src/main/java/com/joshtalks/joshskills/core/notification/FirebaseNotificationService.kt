@@ -517,6 +517,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                 data[RTC_UID_KEY] = obj.getString("uid")
                 data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+                try {
+                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
                 WebRtcService.forceConnect(data)
             } catch (t: Throwable) {
                 t.printStackTrace()
@@ -561,7 +566,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                 data[RTC_UID_KEY] = obj.getString("uid")
                 data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-                data[RTC_CALL_ID] = obj.getString("agoraCallId")
+                try {
+                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
 
                 if (obj.has("f")) {
                     val id = obj.getInt("caller_uid")
@@ -1190,6 +1199,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                     data[RTC_UID_KEY] = obj.getString("uid")
                     data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+                    try {
+                        data[RTC_CALL_ID] = obj.getString("agoraCallId")
+                    } catch (e : Exception) {
+                        e.printStackTrace()
+                    }
                     WebRtcService.forceConnect(data)
                 } catch (t: Throwable) {
                     t.printStackTrace()
@@ -1210,7 +1224,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                     data[RTC_UID_KEY] = obj.getString("uid")
                     data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
+                    try {
+                        data[RTC_CALL_ID] = obj.getString("agoraCallId")
+                    } catch (e : Exception) {
+                        e.printStackTrace()
+                    }
 
                     if (obj.has("f")) {
                         val id = obj.getInt("caller_uid")
