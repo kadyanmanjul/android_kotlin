@@ -199,7 +199,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/_56sdp"
             android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/_18sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
             android:backgroundTint="@color/colorAccent"
             android:elevation="@dimen/_6sdp"
             android:gravity="center"

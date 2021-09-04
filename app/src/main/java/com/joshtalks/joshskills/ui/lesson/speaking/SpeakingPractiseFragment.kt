@@ -143,10 +143,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         )
         viewModel.lessonSpotlightStateLiveData.observe(requireActivity(), {
             when (it) {
-                LessonSpotlightState.LESSON_SPOTLIGHT -> {
-                    binding.nestedScrollView.scrollTo(0, binding.btnStartTrialText.bottom)
+                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
+                    binding.nestedScrollView.scrollTo(0, binding.nestedScrollView.bottom)
                 }
-                }
+            }
         })
         viewModel.courseId.observe(
             viewLifecycleOwner,
