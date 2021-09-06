@@ -51,6 +51,8 @@ object VoipAnalytics {
         CALL_ACCEPT("picked_at"),
         SPEAKING("mic_started_at"),
         LISTENING("speaker_started_at"),
+        RECEIVE_TIMER_START("receive_timer_start"),
+        RECEIVE_TIMER_STOP("receive_timer_end"),
         USER_DID_NOT_PICKUP_CALL("ignored_at"),
         RECONNECTING("RECONNECT"),
         CALL_RESTORED("CALL_RESTORED"),
@@ -157,8 +159,3 @@ object VoipAnalytics {
 interface VoipEvent {
     val value : String
 }
-
-/*
-fun main() {
-    print("${DateUtils.getCurrentTimeStamp()}")
-}*/

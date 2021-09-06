@@ -114,6 +114,7 @@ class SearchingUserActivity : BaseActivity() {
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
                     putExtra(CALL_TYPE, CallType.INCOMING)
                     putExtra(AUTO_PICKUP_CALL, true)
+                    putExtra(CALL_ACCEPT, false)
                     putExtra(HIDE_INCOMING_UI, true)
                     putExtra(CALL_USER_OBJ, data)
                     if (isFavorite) {

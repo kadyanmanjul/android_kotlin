@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.cancelCallieDisconnectTimer
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallOnGoing
 import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
@@ -68,8 +69,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
+import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
+import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
+import com.joshtalks.joshskills.util.DateUtils
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
+const val CALL_ACCEPT = "web_rtc_call_accept"
 const val HIDE_INCOMING_UI = "hide_incoming_call_timer"
 const val CALL_USER_OBJ = "call_user_obj"
 const val DISCONNECT_REASON = "call_disconnect_reason"
@@ -115,6 +122,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     companion object {
         var isIncomingCallHasNewChannel = false
+        var isTimerCanceled = false
 
         fun startOutgoingCallActivity(
             activity: Activity,
@@ -189,7 +197,7 @@ class WebRtcActivity : AppCompatActivity() {
             super.onIncomingCallConnected()
             if (!isIncomingCallHasNewChannel) {
                 Log.d(TAG, "onIncomingCallConnected: stopAnimation")
-                stopAnimation()
+                stopAnimation(true)
             }
         }
 
@@ -198,7 +206,7 @@ class WebRtcActivity : AppCompatActivity() {
             if (isIncomingCallHasNewChannel) {
                 Log.d(TAG, "onIncomingCallUserConnected: stopAnimation")
                 setUserInfo(mBoundService?.getOppositeCallerId()?.toString(), isFromApi = true)
-                stopAnimation()
+                stopAnimation(true)
             }
         }
 
@@ -548,8 +556,9 @@ class WebRtcActivity : AppCompatActivity() {
                 CurrentCallDetails.callConnectedScreenVisible()
             } else if (CallType.INCOMING == this) {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
+                val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
-                    acceptCall()
+                    acceptCall(callAcceptApi)
                     if (isCallFavoritePP()) {
                         callDisViewEnable()
                         startCallTimer()
@@ -730,35 +739,38 @@ class WebRtcActivity : AppCompatActivity() {
         WebRtcService.rejectCall()
     }
 
-    fun acceptCall(isUserPickUp: Boolean = false) {
-        if (isUserPickUp) {
-            val state = CurrentCallDetails.state()
-            VoipAnalytics.push(
-                VoipAnalytics.Event.CALL_ACCEPT,
-                agoraMentorUid = state.callieUid,
-                agoraCallId = state.callId,
-                timeStamp = DateUtils.getCurrentTimeStamp()
-            )
-        } else {
-            val state = CurrentCallDetails.state()
-            VoipAnalytics.push(
-                VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
-                agoraMentorUid = state.callieUid,
-                agoraCallId = state.callId,
-                timeStamp = DateUtils.getCurrentTimeStamp()
-            )
-            CurrentCallDetails.callConnectedScreenVisible()
-        }
-        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-            acceptCallForDemo()
-        } else {
-            acceptCallForNormal()
+    fun acceptCall(callAcceptApi: Boolean = true, isUserPickUp: Boolean = false) {
+        if (!isTimerCanceled) {
+            if (isUserPickUp) {
+                val state = CurrentCallDetails.state()
+                VoipAnalytics.push(
+                    VoipAnalytics.Event.CALL_ACCEPT,
+                    agoraMentorUid = state.callieUid,
+                    agoraCallId = state.callId,
+                    timeStamp = DateUtils.getCurrentTimeStamp()
+                )
+            } else {
+                val state = CurrentCallDetails.state()
+                VoipAnalytics.push(
+                    VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
+                    agoraMentorUid = state.callieUid,
+                    agoraCallId = state.callId,
+                    timeStamp = DateUtils.getCurrentTimeStamp()
+                )
+                CurrentCallDetails.callConnectedScreenVisible()
+            }
+            cancelCallieDisconnectTimer()
+            if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+                acceptCallForDemo(callAcceptApi)
+            } else {
+                acceptCallForNormal(callAcceptApi)
+            }
         }
     }
 
-    private fun acceptCallForDemo() {
+    private fun acceptCallForDemo(callAcceptApi: Boolean = true) {
         if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
-            answerCall()
+            answerCall(callAcceptApi)
             return
         }
 
@@ -768,7 +780,7 @@ class WebRtcActivity : AppCompatActivity() {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            answerCall()
+                            answerCall(callAcceptApi)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -789,9 +801,9 @@ class WebRtcActivity : AppCompatActivity() {
         )
     }
 
-    private fun acceptCallForNormal() {
+    private fun acceptCallForNormal(callAcceptApi: Boolean = true) {
         if (PermissionUtils.isCallingPermissionEnabled(AppObjectController.joshApplication)) {
-            answerCall()
+            answerCall(callAcceptApi)
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -800,7 +812,7 @@ class WebRtcActivity : AppCompatActivity() {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            answerCall()
+                            answerCall(callAcceptApi)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -833,14 +845,14 @@ class WebRtcActivity : AppCompatActivity() {
         )
     }
 
-    private fun answerCall() {
+    private fun answerCall(callAcceptApi: Boolean = true) {
         val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
         if (data == null) {
             this.finishAndRemoveTask()
             return
         }
         if (!isAnimationCancled)
-            mBoundService?.answerCall(data)
+            mBoundService?.answerCall(data, callAcceptApi)
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
         val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
@@ -968,6 +980,13 @@ class WebRtcActivity : AppCompatActivity() {
                     textAnimator.start()
                     progressAnimator.start()
                 } else {
+                    val state = CurrentCallDetails.state()
+                    VoipAnalytics.push(
+                        VoipAnalytics.Event.RECEIVE_TIMER_STOP,
+                        agoraMentorUid = state.callieUid,
+                        agoraCallId = state.callId,
+                        timeStamp = DateUtils.getCurrentTimeStamp()
+                    )
                     if (counter <= 0) {
                         isIncomingCallHasNewChannel = false
                         WebRtcService.noUserFoundCallDisconnect()
@@ -984,7 +1003,13 @@ class WebRtcActivity : AppCompatActivity() {
             override fun onAnimationRepeat(animation: Animator?) {}
 
         })
-
+        val state = CurrentCallDetails.state()
+        VoipAnalytics.push(
+            VoipAnalytics.Event.RECEIVE_TIMER_START,
+            agoraMentorUid = state.callieUid,
+            agoraCallId = state.callId,
+            timeStamp = DateUtils.getCurrentTimeStamp()
+        )
         progressAnimator.start()
     }
 
@@ -998,7 +1023,7 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     @Synchronized
-    private fun stopAnimation() {
+    private fun stopAnimation(isCallConnected: Boolean = false) {
         Log.d(TAG, "stopAnimation: ")
         isAnimationCancled = true
         runOnUiThread {
@@ -1012,6 +1037,15 @@ class WebRtcActivity : AppCompatActivity() {
             binding.topicHeader.visibility = View.VISIBLE
             binding.callerName.visibility = View.VISIBLE
             binding.callStatus.visibility = View.VISIBLE
+            if (isCallConnected) {
+                VoipAnalytics.push(
+                    VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
+                    agoraMentorUid = CurrentCallDetails.callieUid,
+                    agoraCallId = CurrentCallDetails.callId,
+                    timeStamp = DateUtils.getCurrentTimeStamp()
+                )
+                CurrentCallDetails.callConnectedScreenVisible()
+            }
         }
     }
 }

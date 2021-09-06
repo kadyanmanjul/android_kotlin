@@ -28,12 +28,14 @@ import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -48,6 +50,7 @@ import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.printAll
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
@@ -72,18 +75,28 @@ import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
+import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
+import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
+import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
+import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
+import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable.isActive
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -121,8 +134,10 @@ class WebRtcService : BaseWebRtcService() {
     private var isSpeakerEnabled = false
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
+    private val timber = Timber.tag(TAG)
 
     companion object {
+        var incomingTimer: CoroutineScope? = null
         private val TAG = WebRtcService::class.java.simpleName
         var pstnCallState = CallState.CALL_STATE_IDLE
 
@@ -180,6 +195,11 @@ class WebRtcService : BaseWebRtcService() {
                 action = InitLibrary().action
             }
             AppObjectController.joshApplication.startService(serviceIntent)
+        }
+
+        fun cancelCallieDisconnectTimer() = try {
+            incomingTimer?.cancel()
+        } catch (e: Exception) {
         }
 
         fun startOutgoingCall(map: HashMap<String, String?>) {
@@ -435,6 +455,7 @@ class WebRtcService : BaseWebRtcService() {
             super.onJoinChannelSuccess(channel, uid, elapsed)
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
             removeIncomingNotification()
+            cancelCallieDisconnectTimer()
             compositeDisposable.clear()
             userAgoraId = uid
             if (!(callType == CallType.INCOMING && WebRtcActivity.isIncomingCallHasNewChannel))
@@ -541,6 +562,7 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         private fun gainNetwork() {
+            cancelCallieDisconnectTimer()
             compositeDisposable.clear()
             callCallback?.get()?.onNetworkReconnect()
             joshAudioManager?.stopConnectTone()
@@ -565,6 +587,7 @@ class WebRtcService : BaseWebRtcService() {
                         }
                 )
             } else {
+                cancelCallieDisconnectTimer()
                 compositeDisposable.clear()
                 gainNetwork()
             }
@@ -637,6 +660,7 @@ class WebRtcService : BaseWebRtcService() {
                         mRtcEngine?.muteLocalAudioStream(false)
                         mRtcEngine?.enableLocalAudio(true)
                         joshAudioManager?.stopConnectTone()
+                        cancelCallieDisconnectTimer()
                         compositeDisposable.clear()
                         callCallback?.get()?.onUnHoldCall()
                     }
@@ -904,6 +928,7 @@ class WebRtcService : BaseWebRtcService() {
                             this == CallForceConnect().action -> {
                                 stopRing()
                                 callStartTime = 0L
+                                cancelCallieDisconnectTimer()
                                 compositeDisposable.clear()
                                 switchChannel = true
                                 setOppositeUserInfo(null)
@@ -946,6 +971,7 @@ class WebRtcService : BaseWebRtcService() {
                                 mHandler?.sendMessage(message)
                             }
                             this == ResumeCall().action -> {
+                                cancelCallieDisconnectTimer()
                                 compositeDisposable.clear()
                                 val message = Message()
                                 message.what = CallState.CALL_RESUME_BY_OPPOSITE.state
@@ -955,7 +981,7 @@ class WebRtcService : BaseWebRtcService() {
                                 val uid =
                                     intent.getIntExtra(OPPOSITE_USER_UID, -1)
                                 if (uid != -1) {
-                                    userJoined(uid)
+                                    userJoined(uid, true)
                                 }
                             }
                         }
@@ -977,12 +1003,15 @@ class WebRtcService : BaseWebRtcService() {
         val message = Message()
         message.what = CallState.EXIT.state
         mHandler?.sendMessageDelayed(message, 1000)
+        while (WebRtcService.incomingWaitJobsList.isNotEmpty())
+            WebRtcService.incomingWaitJobsList.pop().cancel()
         disconnectService()
     }
 
-    fun userJoined(uid: Int) {
+    fun userJoined(uid: Int, isFromOnResume: Boolean = false) {
         removeIncomingNotification()
         oppositeCallerId = uid
+        cancelCallieDisconnectTimer()
         compositeDisposable.clear()
         isCallOnGoing.postValue(true)
         isCallerJoined = true
@@ -1128,26 +1157,31 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun addTimeObservable() {
-        compositeDisposable.add(
-            Completable.complete()
-                .delay(20, TimeUnit.SECONDS)
-                .doOnComplete {
-                    if (isCallConnected().not()) {
-                        isTimeOutToPickCall = true
-                        callData?.let {
-                            val state = CurrentCallDetails.state()
-                            VoipAnalytics.push(
-                                VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL,
-                                agoraMentorUid = state.callieUid,
-                                agoraCallId = state.callId,
-                                timeStamp = DateUtils.getCurrentTimeStamp()
-                            )
-                        }
-                        disconnectCallFromCallie(isFromNotification = false)
+        Log.d(TAG, "addTimeObservable: ")
+        cancelCallieDisconnectTimer()
+        WebRtcActivity.isTimerCanceled = false
+        incomingTimer = CoroutineScope(Dispatchers.IO)
+        try {
+            incomingTimer?.launch {
+                delay(20000)
+                WebRtcActivity.isTimerCanceled = true
+                if (isCallConnected().not() && isActive) {
+                    isTimeOutToPickCall = true
+                    callData?.let {
+                        val state = CurrentCallDetails.state()
+                        VoipAnalytics.push(
+                            VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL,
+                            agoraMentorUid = state.callieUid,
+                            agoraCallId = state.callId,
+                            timeStamp = DateUtils.getCurrentTimeStamp()
+                        )
                     }
+                    disconnectCallFromCallie(isFromNotification = false)
                 }
-                .subscribe()
-        )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun addTimerReconnect(callDisconnectTime: Long) {
@@ -1218,11 +1252,11 @@ class WebRtcService : BaseWebRtcService() {
         isCallOnGoing.postValue(false)
     }
 
-    fun answerCall(data: HashMap<String, String?>) {
+    fun answerCall(data: HashMap<String, String?>,  callAcceptApi: Boolean = false) {
         executor.execute {
             try {
                 stopRing()
-                if (isFavorite()) {
+                if (isFavorite() || !callAcceptApi) {
                     joinCall(data)
                     executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
                 } else {
@@ -1408,6 +1442,7 @@ class WebRtcService : BaseWebRtcService() {
         isMicEnabled = true
         oppositeCallerId = null
         pstnCallState = CallState.CALL_STATE_IDLE
+        cancelCallieDisconnectTimer()
         compositeDisposable.clear()
     }
 
@@ -1875,6 +1910,12 @@ class WebRtcService : BaseWebRtcService() {
                                         data[RTC_CHANNEL_KEY] = newChannel
                                         data[RTC_TOKEN_KEY] = token
                                         data[RTC_UID_KEY] = uid
+                                        CurrentCallDetails.set(
+                                            channelName = newChannel ?: "",
+                                            callId = response["agora_call_id"] ?: "",
+                                            callieUid = uid ?: "",
+                                            callerUid = ""
+                                        )
                                         callCallback?.get()?.onNewIncomingCallChannel()
                                         joinCall(data, isNewChannelGiven = true)
                                         executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
