@@ -118,6 +118,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
+        try {
+            if(PrefManager.hasKey(FCM_TOKEN)) {
+                val fcmResponse = FCMResponse.getInstance()
+                fcmResponse?.apiStatus = ApiRespStatus.POST
+                fcmResponse?.update()
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
+        }
         PrefManager.put(FCM_TOKEN, token)
         CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
