@@ -17,6 +17,7 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -99,6 +100,8 @@ const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_IS_NEW_USER_CALL = "is_new_user_call"
 const val RTC_PARTNER_ID = "partner_id"
+const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
+const val IS_CHANNEL_ACTIVE_KEY = "success"
 
 class WebRtcService : BaseWebRtcService() {
     private val log = Timber.tag("WebRtcService")
@@ -124,6 +127,7 @@ class WebRtcService : BaseWebRtcService() {
         var pstnCallState = CallState.CALL_STATE_IDLE
 
         var isOnPstnCall = false
+        val incomingWaitJobsList = LinkedList<Job>()
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -433,25 +437,31 @@ class WebRtcService : BaseWebRtcService() {
             removeIncomingNotification()
             compositeDisposable.clear()
             userAgoraId = uid
-            isCallOnGoing.postValue(true)
+            if (!(callType == CallType.INCOMING && WebRtcActivity.isIncomingCallHasNewChannel))
+                isCallOnGoing.postValue(true)
             callData?.let {
                 channelName = getChannelName(it)
                 try {
                     val id = getUID(it)
                     if ((callType == CallType.INCOMING || callType == CallType.FAVORITE_INCOMING) && id == uid) {
-                        val state = CurrentCallDetails.state()
-                        VoipAnalytics.push(
-                            VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
-                            agoraMentorUid = state.callieUid,
-                            agoraCallId = state.callId,
-                            timeStamp = DateUtils.getCurrentTimeStamp()
-                        )
-                        CurrentCallDetails.callConnectedScreenVisible()
-                        startCallTimer()
-                        callStatusNetworkApi(it, CallAction.ACCEPT)
-                        addNotification(CallConnect().action, callData)
-                        //addSensor()
-                        joshAudioManager?.startCommunication()
+                        if (!WebRtcActivity.isIncomingCallHasNewChannel) {
+                            /*val state = CurrentCallDetails.state()
+                            VoipAnalytics.push(
+                                VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
+                                agoraMentorUid = state.callieUid,
+                                agoraCallId = state.callId,
+                                timeStamp = DateUtils.getCurrentTimeStamp()
+                            )
+                            CurrentCallDetails.callConnectedScreenVisible()*/
+                            startCallTimer()
+                            if (isFavorite())
+                                callStatusNetworkApi(it, CallAction.ACCEPT)
+                            else
+                                callCallback?.get()?.onIncomingCallConnected()
+                            addNotification(CallConnect().action, callData)
+                            //addSensor()
+                            joshAudioManager?.startCommunication()
+                        }
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
@@ -914,10 +924,17 @@ class WebRtcService : BaseWebRtcService() {
                                             channelName = data[RTC_CHANNEL_KEY]
                                         }
                                         removeIncomingNotification()
-                                        if (callCallback != null && callCallback?.get() != null) {
+                                        if (WebRtcActivity.isIncomingCallHasNewChannel) {
+                                            joinCall(data, isNewChannelGiven = true)
+                                        } else if (callCallback != null && callCallback?.get() != null && !WebRtcActivity.isIncomingCallHasNewChannel) {
+                                            Log.d(TAG, "onStartCommand: CallForceConnect -->")
                                             callCallback?.get()?.switchChannel(data)
                                         } else {
-                                            startAutoPickCallActivity(false)
+                                            Log.d(TAG, "onStartCommand: ")
+                                            startAutoPickCallActivity(
+                                                false,
+                                                isFromForceConnect = true
+                                            )
                                         }
                                     },
                                     750
@@ -969,6 +986,8 @@ class WebRtcService : BaseWebRtcService() {
         compositeDisposable.clear()
         isCallOnGoing.postValue(true)
         isCallerJoined = true
+        if (!isFavorite())
+            callCallback?.get()?.onIncomingCallUserConnected()
         if (callStartTime == 0L) {
             startCallTimer()
         }
@@ -1024,7 +1043,7 @@ class WebRtcService : BaseWebRtcService() {
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
     }
 
-    private fun startAutoPickCallActivity(autoPick: Boolean) {
+    private fun startAutoPickCallActivity(autoPick: Boolean, isFromForceConnect: Boolean = false) {
         val callActivityIntent =
             Intent(
                 this,
@@ -1038,6 +1057,8 @@ class WebRtcService : BaseWebRtcService() {
                         put(RTC_IS_NEW_USER_CALL, "true")
                     }
                 }
+                if (isFromForceConnect)
+                    putExtra(HIDE_INCOMING_UI, true)
                 putExtra(CALL_TYPE, CallType.INCOMING)
                 putExtra(AUTO_PICKUP_CALL, autoPick)
                 putExtra(CALL_USER_OBJ, callData)
@@ -1109,7 +1130,7 @@ class WebRtcService : BaseWebRtcService() {
     private fun addTimeObservable() {
         compositeDisposable.add(
             Completable.complete()
-                .delay(10, TimeUnit.SECONDS)
+                .delay(20, TimeUnit.SECONDS)
                 .doOnComplete {
                     if (isCallConnected().not()) {
                         isTimeOutToPickCall = true
@@ -1169,11 +1190,11 @@ class WebRtcService : BaseWebRtcService() {
         disconnectService()
     }
 
-    fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT, reason : VoipEvent) {
+    fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT, reason : VoipEvent, hasDisconnected: Boolean = false) {
         Timber.tag(TAG).e("call_status%s", mRtcEngine?.connectionState)
         if (apiCall) {
             callData?.let {
-                callStatusNetworkApi(it, action)
+                callStatusNetworkApi(it, action, hasDisconnected = hasDisconnected)
             }
         }
         joshAudioManager?.endCommunication()
@@ -1201,16 +1222,28 @@ class WebRtcService : BaseWebRtcService() {
         executor.execute {
             try {
                 stopRing()
-                joinCall(data)
-                executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                if (isFavorite()) {
+                    joinCall(data)
+                    executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                } else {
+                    showNotification(actionNotification("Connecting Call"), ACTION_NOTIFICATION_ID)
+                    callData?.let {
+                        callStatusNetworkApi(
+                            it,
+                            CallAction.ACCEPT,
+                            isForCheckingChannel = true,
+                            dataForIncomingCall = data
+                        )
+                    }
+                }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
     }
 
-    private fun joinCall(data: HashMap<String, String?>) {
-        if (isTimeOutToPickCall) {
+    private fun joinCall(data: HashMap<String, String?>, isNewChannelGiven: Boolean = false) {
+        if (!isNewChannelGiven && isTimeOutToPickCall) {
             isTimeOutToPickCall = false
             RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
             return
@@ -1809,7 +1842,9 @@ class WebRtcService : BaseWebRtcService() {
     private fun callStatusNetworkApi(
         data: HashMap<String, String?>,
         callAction: CallAction,
-        hasDisconnected: Boolean = false
+        hasDisconnected: Boolean = false,
+        isForCheckingChannel: Boolean = false,
+        dataForIncomingCall: HashMap<String, String?> = HashMap()
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -1823,13 +1858,42 @@ class WebRtcService : BaseWebRtcService() {
                         PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false).toString()
                 }
                 val resp = AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
-                if (resp.code() == 500) {
-                    callCallback?.get()?.onNoUserFound()
-                    return@launch
-                }
-                if (CallAction.ACCEPT == callAction) {
-                    callCallback?.get()?.onServerConnect()
-                    return@launch
+                if (isForCheckingChannel) {
+                    val job = launch(Dispatchers.Main) {
+                        if (resp.code() == 200) {
+                            Log.d(TAG, "callStatusNetworkApi: ${resp.body()}")
+                            val response = resp.body()
+                            if (isActive) {
+                                if (response?.containsKey(IS_CHANNEL_ACTIVE_KEY) == true) {
+                                    joinCall(data)
+                                    executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                                } else {
+                                    if (response?.containsKey(RTC_CHANNEL_KEY) == true) {
+                                        val newChannel = response[RTC_CHANNEL_KEY]
+                                        val token = response[RTC_TOKEN_KEY]
+                                        val uid = response[RTC_UID_KEY]
+                                        data[RTC_CHANNEL_KEY] = newChannel
+                                        data[RTC_TOKEN_KEY] = token
+                                        data[RTC_UID_KEY] = uid
+                                        callCallback?.get()?.onNewIncomingCallChannel()
+                                        joinCall(data, isNewChannelGiven = true)
+                                        executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    incomingWaitJobsList.push(job)
+                    Log.d(TAG, "callStatusNetworkApi: Below Coroutine")
+                } else {
+                    if (resp.code() == 500) {
+                        callCallback?.get()?.onNoUserFound()
+                        return@launch
+                    }
+                    if (CallAction.ACCEPT == callAction) {
+                        callCallback?.get()?.onServerConnect()
+                        return@launch
+                    }
                 }
             } catch (ex: Exception) {
                 val state = CurrentCallDetails.state()
@@ -1904,4 +1968,7 @@ interface WebRtcCallback {
     fun onHoldCall() {}
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
+    fun onIncomingCallConnected() {}
+    fun onIncomingCallUserConnected() {}
+    fun onNewIncomingCallChannel() {}
 }

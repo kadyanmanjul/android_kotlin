@@ -114,6 +114,7 @@ class SearchingUserActivity : BaseActivity() {
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
                     putExtra(CALL_TYPE, CallType.INCOMING)
                     putExtra(AUTO_PICKUP_CALL, true)
+                    putExtra(HIDE_INCOMING_UI, true)
                     putExtra(CALL_USER_OBJ, data)
                     if (isFavorite) {
                         putExtra(RTC_IS_FAVORITE, "true")
@@ -318,7 +319,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     fun stopSearching(reason: DISCONNECT) {
-        mBoundService?.endCall(apiCall = true, reason = reason)
+        mBoundService?.endCall(apiCall = true, reason = reason, hasDisconnected = true)
         mBoundService?.setOngoingCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()

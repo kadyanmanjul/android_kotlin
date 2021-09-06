@@ -1,21 +1,28 @@
 package com.joshtalks.joshskills.ui.voip
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothHeadset
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import android.graphics.Typeface
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.BounceInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
@@ -23,6 +30,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -51,12 +59,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
+const val HIDE_INCOMING_UI = "hide_incoming_call_timer"
 const val CALL_USER_OBJ = "call_user_obj"
 const val DISCONNECT_REASON = "call_disconnect_reason"
 const val CALL_TYPE = "call_type"
@@ -69,13 +83,39 @@ class WebRtcActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    private lateinit var scope: CoroutineScope
     private val compositeDisposable = CompositeDisposable()
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
     private val viewModel: WebrtcViewModel by lazy {
         ViewModelProvider(this).get(WebrtcViewModel::class.java)
     }
+    private var isAnimationCancled = false
+    private var callType: CallType? = null
+
+    val progressAnimator by lazy<ValueAnimator> {
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 1000
+            addUpdateListener {
+                binding.incomingProgress.progress = ((animatedValue as Float) * 100).toInt()
+            }
+        }
+    }
+
+    val textAnimator by lazy<ValueAnimator> {
+        ValueAnimator.ofFloat(0.8f, 1.2f, 1f).apply {
+            duration = 300
+            interpolator = BounceInterpolator()
+            addUpdateListener {
+                binding.incomingTimerTv.scaleX = it.animatedValue as Float
+                binding.incomingTimerTv.scaleY = it.animatedValue as Float
+            }
+        }
+    }
+
 
     companion object {
+        var isIncomingCallHasNewChannel = false
+
         fun startOutgoingCallActivity(
             activity: Activity,
             mapForOutgoing: HashMap<String, String?>,
@@ -94,6 +134,7 @@ class WebRtcActivity : AppCompatActivity() {
                 activity.startActivityForResult(this, 9999)
             }
         }
+
 
         fun getFavMissedCallbackIntent(partnerUid: Int, activity: Activity): Intent {
             val data = HashMap<String, String?>().apply {
@@ -137,6 +178,28 @@ class WebRtcActivity : AppCompatActivity() {
                 500
             )
             PrefManager.put(P2P_LAST_CALL, true)
+        }
+
+        override fun onNewIncomingCallChannel() {
+            super.onNewIncomingCallChannel()
+            isIncomingCallHasNewChannel = true
+        }
+
+        override fun onIncomingCallConnected() {
+            super.onIncomingCallConnected()
+            if (!isIncomingCallHasNewChannel) {
+                Log.d(TAG, "onIncomingCallConnected: stopAnimation")
+                stopAnimation()
+            }
+        }
+
+        override fun onIncomingCallUserConnected() {
+            super.onIncomingCallUserConnected()
+            if (isIncomingCallHasNewChannel) {
+                Log.d(TAG, "onIncomingCallUserConnected: stopAnimation")
+                setUserInfo(mBoundService?.getOppositeCallerId()?.toString(), isFromApi = true)
+                stopAnimation()
+            }
         }
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
@@ -247,6 +310,7 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        isIncomingCallHasNewChannel = false
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -289,7 +353,7 @@ class WebRtcActivity : AppCompatActivity() {
         }
     }
 
-    private fun setFavoriteUIScreen() {
+    private fun setCallScreenBackground() {
         if (isCallFavoritePP()) {
             binding.container.setBackgroundResource(R.drawable.voip_bg)
             return
@@ -403,10 +467,20 @@ class WebRtcActivity : AppCompatActivity() {
         super.onPause()
         compositeDisposable.clear()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+        while (WebRtcService.incomingWaitJobsList.isNotEmpty())
+            WebRtcService.incomingWaitJobsList.pop().cancel()
+        if (binding.incomingTimerContainer.visibility == View.VISIBLE) {
+            isAnimationCancled = true
+            runOnUiThread {
+                progressAnimator.cancel()
+            }
+            WebRtcService.disconnectCall(DISCONNECT.BACK_BUTTON_FAILURE)
+        }
     }
 
     override fun onStop() {
         super.onStop()
+        Log.d(TAG, "onStop: ")
         binding.callTime.stop()
         unbindService(myConnection)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
@@ -430,7 +504,7 @@ class WebRtcActivity : AppCompatActivity() {
         )
 
         WebRtcService.isCallOnGoing.observe(this, { isCallOngoing ->
-            if (isCallOngoing) {
+            if (isCallOngoing && !isIncomingCallHasNewChannel) {
                 var partnerUid: String? = intent.getIntExtra(RTC_PARTNER_ID, -1).toString()
                 if (partnerUid == "-1") {
                     val map =
@@ -448,9 +522,9 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun initCall() {
-        setFavoriteUIScreen()
+        setCallScreenBackground()
         updateButtonStatus()
-        val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+        callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
 
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             updateCallInfo()
@@ -476,8 +550,10 @@ class WebRtcActivity : AppCompatActivity() {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 if (autoPickUp) {
                     acceptCall()
-                    callDisViewEnable()
-                    startCallTimer()
+                    if (isCallFavoritePP()) {
+                        callDisViewEnable()
+                        startCallTimer()
+                    }
                 } else {
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
@@ -561,23 +637,22 @@ class WebRtcActivity : AppCompatActivity() {
         ) * 1000
     }
 
-    private fun setUserInfo(uuid: String?) {
+    private fun setUserInfo(uuid: String?, isFromApi: Boolean = false) {
         if (uuid.isNullOrEmpty())
             return
-        if (userDetailLiveData.value != null) {
+        if (!isFromApi && userDetailLiveData.value != null) {
             return
         }
-//        if (mBoundService?.getOppositeUserInfo() != null) {
-//            userDetailLiveData.postValue(mBoundService?.getOppositeUserInfo())
-//            return
-//        }
+
         lifecycleScope.launch(Dispatchers.IO) {
             delay(750)
             try {
                 val userInfo = mBoundService?.getOppositeUserInfo()
                 val userDetails =
-                    if (userInfo != null && userInfo["uid"] == uuid) userInfo
-                    else AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
+                    if (!isFromApi && userInfo != null && userInfo["uid"] == uuid)
+                        userInfo
+                    else
+                        AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
                 userDetailLiveData.postValue(userDetails)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
@@ -764,9 +839,13 @@ class WebRtcActivity : AppCompatActivity() {
             this.finishAndRemoveTask()
             return
         }
-        mBoundService?.answerCall(data)
+        if (!isAnimationCancled)
+            mBoundService?.answerCall(data)
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
+        val hideIncomingCallUi = intent.getBooleanExtra(HIDE_INCOMING_UI, false)
+        if (!isCallFavoritePP() && !hideIncomingCallUi && !isAnimationCancled)
+            startIncomingTimer()
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -865,6 +944,74 @@ class WebRtcActivity : AppCompatActivity() {
             // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
             playSnackbarSound(this)
+        }
+    }
+
+    private fun startIncomingTimer() {
+        stopAnimation()
+        isAnimationCancled = false
+        binding.incomingTimerContainer.visibility = View.VISIBLE
+        binding.cImage.visibility = View.INVISIBLE
+        binding.topicName.visibility = View.INVISIBLE
+        binding.topicHeader.visibility = View.INVISIBLE
+        binding.callerName.visibility = View.INVISIBLE
+        binding.callStatus.visibility = View.INVISIBLE
+        setIncomingText()
+        var counter = 25
+        progressAnimator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) {}
+
+            override fun onAnimationEnd(animation: Animator?) {
+                if (counter != 0 && !isAnimationCancled) {
+                    counter -= 1
+                    binding.incomingTimerTv.text = "$counter"
+                    textAnimator.start()
+                    progressAnimator.start()
+                } else {
+                    if (counter <= 0) {
+                        isIncomingCallHasNewChannel = false
+                        WebRtcService.noUserFoundCallDisconnect()
+                        finish()
+                    }
+                }
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+                if (textAnimator.isStarted && textAnimator.isRunning)
+                    textAnimator.cancel()
+            }
+
+            override fun onAnimationRepeat(animation: Animator?) {}
+
+        })
+
+        progressAnimator.start()
+    }
+
+    private fun setIncomingText() {
+        binding.tvIncomingCallHeading.visibility = View.VISIBLE
+        binding.tvIncomingCallSubHeading.visibility = View.VISIBLE
+        binding.tvIncomingCallHeading.text = "Practice with Partner"
+        binding.tvIncomingCallSubHeading.text = "Call is being connected..."
+        binding.tvIncomingCallSubHeading.textSize = 15f
+        binding.tvIncomingCallSubHeading.setTypeface(binding.callStatus.typeface, Typeface.NORMAL)
+    }
+
+    @Synchronized
+    private fun stopAnimation() {
+        Log.d(TAG, "stopAnimation: ")
+        isAnimationCancled = true
+        runOnUiThread {
+            progressAnimator.cancel()
+            binding.incomingTimerContainer.visibility = View.INVISIBLE
+            binding.tvIncomingCallHeading.visibility = View.INVISIBLE
+            binding.tvIncomingCallSubHeading.visibility = View.INVISIBLE
+            binding.groupForOutgoing.visibility = View.VISIBLE
+            binding.cImage.visibility = View.VISIBLE
+            binding.topicName.visibility = View.VISIBLE
+            binding.topicHeader.visibility = View.VISIBLE
+            binding.callerName.visibility = View.VISIBLE
+            binding.callStatus.visibility = View.VISIBLE
         }
     }
 }
