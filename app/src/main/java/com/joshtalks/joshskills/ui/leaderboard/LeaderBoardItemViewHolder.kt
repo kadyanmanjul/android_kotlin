@@ -78,6 +78,7 @@ class LeaderBoardItemViewHolder(
             }
             name.text = resp
             points.text = response.points.toString()
+            user_pic.setImageDrawable(null)
             user_pic.setUserImageOrInitials(
                 response.photoUrl,
                 response.name ?: getRandomName(),

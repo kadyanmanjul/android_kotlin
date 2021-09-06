@@ -78,7 +78,7 @@
                     android:paddingVertical="@dimen/_2sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_12sdp"
-                    android:text="English Speaking ka माहौल"
+                    android:text="Beginner to Advanced"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:drawableTint="@color/right_answer_color" />
@@ -91,20 +91,7 @@
                     android:paddingVertical="@dimen/_2sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_12sdp"
-                    android:text="Remove hesitation"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/black"
-                    app:drawableTint="@color/right_answer_color" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_check_box"
-                    android:drawablePadding="@dimen/_24sdp"
-                    android:paddingVertical="@dimen/_2sdp"
-                    android:paddingStart="@dimen/_24sdp"
-                    android:paddingEnd="@dimen/_12sdp"
-                    android:text="Practice speaking with partners"
+                    android:text="English Speaking का माहौल"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:drawableTint="@color/right_answer_color" />
@@ -144,7 +131,7 @@
             android:layout_gravity="center"
             android:elevation="@dimen/_2sdp"
             android:gravity="center"
-            android:text="Start 1 Day Free Trial"
+            android:text="Start Now"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/white"
             app:cornerRadius="@dimen/_32sdp"
