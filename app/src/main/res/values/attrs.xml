@@ -9,6 +9,9 @@
 
     </declare-styleable>
 
+    <declare-styleable name="JoshTooltip">
+        <attr name="tooltipText" format="string" />
+    </declare-styleable>
 
     <declare-styleable name="AttachmentView">
         <attr name="image_src" format="reference" />
