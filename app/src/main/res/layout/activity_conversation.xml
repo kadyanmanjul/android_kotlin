@@ -555,23 +555,20 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
             android:id="@+id/overlay_leaderboard_tooltip"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/overlay_leaderboard_container"
             android:layout_centerHorizontal="true"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginVertical="@dimen/_60sdp"
-            android:background="@drawable/spotlight_gradient"
             android:elevation="@dimen/_8sdp"
             android:gravity="center"
             android:padding="@dimen/_18sdp"
-            android:text="आपके सहपाठी कौन है आप यहाँ से देख सकते है "
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-            android:textColor="@color/leaderboard_tooltip_text_color"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="visible"
+            app:tooltipText="आपके सहपाठी कौन है आप यहाँ से देख सकते है" />
 
 
         <FrameLayout
