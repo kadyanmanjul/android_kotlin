@@ -435,6 +435,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     override fun onNewIntent(nIntent: Intent) {
         super.onNewIntent(nIntent)
+        Log.d(TAG, "onNewIntent: ")
         try {
             val nMap = nIntent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val nChannel = nMap?.get(RTC_CHANNEL_KEY)
@@ -547,6 +548,7 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
                 val state = CurrentCallDetails.state()
+                Log.d(TAG, "initCall: ---> CALL_CONNECT_SCREEN_VISUAL")
                 VoipAnalytics.push(
                     VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
                     agoraMentorUid = state.callieUid,
@@ -740,6 +742,7 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun acceptCall(callAcceptApi: Boolean = true, isUserPickUp: Boolean = false) {
+        Log.d(TAG, "acceptCall: ")
         if (!isTimerCanceled) {
             if (isUserPickUp) {
                 val state = CurrentCallDetails.state()
@@ -749,7 +752,8 @@ class WebRtcActivity : AppCompatActivity() {
                     agoraCallId = state.callId,
                     timeStamp = DateUtils.getCurrentTimeStamp()
                 )
-            } else {
+            } /*else {
+                Log.d(TAG, "acceptCall: ---> CALL_CONNECT_SCREEN_VISUAL")
                 val state = CurrentCallDetails.state()
                 VoipAnalytics.push(
                     VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
@@ -758,7 +762,7 @@ class WebRtcActivity : AppCompatActivity() {
                     timeStamp = DateUtils.getCurrentTimeStamp()
                 )
                 CurrentCallDetails.callConnectedScreenVisible()
-            }
+            }*/
             cancelCallieDisconnectTimer()
             if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
                 acceptCallForDemo(callAcceptApi)
@@ -980,13 +984,15 @@ class WebRtcActivity : AppCompatActivity() {
                     textAnimator.start()
                     progressAnimator.start()
                 } else {
-                    val state = CurrentCallDetails.state()
-                    VoipAnalytics.push(
-                        VoipAnalytics.Event.RECEIVE_TIMER_STOP,
-                        agoraMentorUid = state.callieUid,
-                        agoraCallId = state.callId,
-                        timeStamp = DateUtils.getCurrentTimeStamp()
-                    )
+                    if(!isIncomingCallHasNewChannel) {
+                        val state = CurrentCallDetails.state()
+                        VoipAnalytics.push(
+                            VoipAnalytics.Event.RECEIVE_TIMER_STOP,
+                            agoraMentorUid = state.callieUid,
+                            agoraCallId = state.callId,
+                            timeStamp = DateUtils.getCurrentTimeStamp()
+                        )
+                    }
                     if (counter <= 0) {
                         isIncomingCallHasNewChannel = false
                         WebRtcService.noUserFoundCallDisconnect()
@@ -1038,6 +1044,7 @@ class WebRtcActivity : AppCompatActivity() {
             binding.callerName.visibility = View.VISIBLE
             binding.callStatus.visibility = View.VISIBLE
             if (isCallConnected) {
+                Log.d(TAG, "stopAnimation: ---> CALL_CONNECT_SCREEN_VISUAL")
                 VoipAnalytics.push(
                     VoipAnalytics.Event.CALL_CONNECT_SCREEN_VISUAL,
                     agoraMentorUid = CurrentCallDetails.callieUid,

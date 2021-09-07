@@ -1910,6 +1910,13 @@ class WebRtcService : BaseWebRtcService() {
                                         data[RTC_CHANNEL_KEY] = newChannel
                                         data[RTC_TOKEN_KEY] = token
                                         data[RTC_UID_KEY] = uid
+                                        val oldState = CurrentCallDetails.state()
+                                        VoipAnalytics.push(
+                                            VoipAnalytics.Event.RECEIVE_TIMER_STOP,
+                                            agoraMentorUid = oldState.callieUid,
+                                            agoraCallId = oldState.callId,
+                                            timeStamp = DateUtils.getCurrentTimeStamp()
+                                        )
                                         CurrentCallDetails.set(
                                             channelName = newChannel ?: "",
                                             callId = response["agora_call_id"] ?: "",
