@@ -310,7 +310,7 @@ class ConversationActivity :
             conversationBinding.overlayLeaderboardTooltip.startAnimation(
                 AnimationUtils.loadAnimation(
                     this@ConversationActivity,
-                    R.anim.slide_in_left
+                    R.anim.slide_in_right
                 )
             )
             conversationBinding.labelTapToDismiss.visibility = GONE

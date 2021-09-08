@@ -16,6 +16,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+            <FrameLayout
+                android:id="@+id/toolbar_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent_blue_alpha_75"
+                android:clickable="true"
+                android:elevation="@dimen/_1sdp"
+                android:focusable="true"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
         <include
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +40,8 @@
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingBottom="@dimen/_2sdp"
+            android:elevation="@dimen/_2sdp"
+            android:fillViewport="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,6 +53,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <RelativeLayout
+                    android:id="@+id/content_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:elevation="@dimen/_5sdp"
+                    android:background="@color/transparent_blue_alpha_75"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+                        android:id="@+id/overlay_profile_tooltip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:layout_above="@id/label_tap_to_dismiss"
+                        android:elevation="@dimen/_8sdp"
+                        android:gravity="center"
+                        android:padding="@dimen/_18sdp"
+                        android:visibility="gone"
+                        app:tooltipText="हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_tap_to_dismiss"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="bottom|center"
+                        android:layout_marginHorizontal="@dimen/_12sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginBottom="@dimen/_60sdp"
+                        android:elevation="@dimen/_8sdp"
+                        android:text="Tap anywhere to continue"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                        android:textColor="@color/white"
+                        android:visibility="invisible"
+                        tools:visibility="visible" />
+                </RelativeLayout>
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/user_pic"
                     android:layout_width="@dimen/_86sdp"
@@ -49,7 +106,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:background="@color/black"
-                    tools:src="@drawable/circle" />
+                    tools:src="@drawable/ic_josh_course" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/edit_pic"
@@ -169,7 +226,7 @@
                     android:layout_marginTop="@dimen/_4sdp"
                     android:background="@drawable/ic_points_bg"
                     android:clickable="true"
-                    android:elevation="@dimen/_4sdp"
+                    android:elevation="@dimen/_6sdp"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
@@ -202,6 +259,26 @@
                         android:textColor="@color/white" />
 
                 </LinearLayout>
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/arrow_animation"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:rotationY="-180"
+                    android:visibility="gone"
+                    android:elevation="@dimen/_6sdp"
+                    app:layout_constraintBottom_toBottomOf="@+id/point_layout"
+                    app:layout_constraintEnd_toEndOf="@+id/minutes_layout"
+                    app:layout_constraintStart_toStartOf="@+id/point_layout"
+                    app:layout_constraintTop_toTopOf="@+id/point_layout"
+                    app:lottie_autoPlay="false"
+                    app:lottie_fileName="lottie/leaderboard_arrow.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true"
+                    app:lottie_repeatMode="reverse"
+                    app:lottie_scale="1"
+                    app:lottie_speed="1"
+                    tools:visibility="visible" />
 
                 <LinearLayout
                     android:id="@+id/minutes_layout"

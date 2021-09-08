@@ -1,20 +1,29 @@
 package com.joshtalks.joshskills.ui.userprofile
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AnimationUtils
+import android.view.animation.BounceInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.Interpolator
 import android.widget.ImageView
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -36,6 +45,7 @@ import io.reactivex.schedulers.Schedulers
 import java.text.DecimalFormat
 import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.android.synthetic.main.reading_practise_audio_view.duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -52,6 +62,33 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
+    private val TAG = "UserProfileActivity"
+    private val pointAnimator by lazy {
+        ValueAnimator.ofFloat(1.2f, 0.8f).apply {
+            duration = 780
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.REVERSE
+            addUpdateListener {
+                binding.points.scaleX = it.animatedValue as Float
+                binding.points.scaleY = it.animatedValue as Float
+            }
+            addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {}
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    if(isPointAnimatorCancel) {
+                        binding.points.scaleX = 1f
+                        binding.points.scaleY = 1f
+                    }
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {}
+
+                override fun onAnimationRepeat(animation: Animator?) {}
+            })
+        }
+    }
+    private var isPointAnimatorCancel = false
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -555,5 +592,101 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             Timber.e("Task Cancelled")
             // Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun animatePoints() {
+        isPointAnimatorCancel = false
+        pointAnimator.start()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showOverlayAnimation()
+    }
+
+    private fun stopPointAnimation() {
+        isPointAnimatorCancel = true
+        pointAnimator.cancel()
+        binding.points.scaleX = 1f
+        binding.points.scaleY = 1f
+    }
+
+    private fun showOverlayAnimation() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(1000)
+            binding.contentOverlay.visibility = View.VISIBLE
+            binding.arrowAnimation.visibility = View.VISIBLE
+            binding.arrowAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {
+                    animatePoints()
+                    Log.d(TAG, "onAnimationStart: ")
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    Log.d(TAG, "onAnimationEnd: ")
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                    Log.d(TAG, "onAnimationCancel: ")
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) {
+                    Log.d(TAG, "onAnimationRepeat: ")
+                }
+            })
+            binding.arrowAnimation.playAnimation()
+            binding.toolbarOverlay.visibility = View.VISIBLE
+            //animatePoints()
+            binding.labelTapToDismiss.visibility = View.INVISIBLE
+            binding.overlayProfileTooltip.visibility = View.VISIBLE
+            binding.overlayProfileTooltip.startAnimation(
+                AnimationUtils.loadAnimation(
+                    this@UserProfileActivity,
+                    R.anim.slide_in_right
+                )
+            )
+            delay(6500)
+            binding.contentOverlay.setOnClickListener {
+                Log.d(TAG, "showOverlayAnimation: contentOverlay")
+                hideOverlayAnimation()
+            }
+
+            binding.toolbarOverlay.setOnClickListener {
+                Log.d(TAG, "showOverlayAnimation: contentOverlay")
+                hideOverlayAnimation()
+            }
+
+            binding.overlayProfileTooltip.setOnClickListener {
+                Log.d(TAG, "showOverlayAnimation: overlayProfileTooltip")
+                hideOverlayAnimation()
+            }
+
+            /*binding.scrollView.setOnClickListener {
+                hideOverlayAnimation()
+            }
+*/
+            binding.labelTapToDismiss.visibility = View.VISIBLE
+            binding.labelTapToDismiss.setOnClickListener {
+                Log.d(TAG, "showOverlayAnimation: labelTapToDismiss")
+            }
+
+            binding.labelTapToDismiss.startAnimation(
+                AnimationUtils.loadAnimation(this@UserProfileActivity, R.anim.slide_up_dialog)
+            )
+        }
+    }
+
+    private fun hideOverlayAnimation() {
+        binding.contentOverlay.setOnClickListener(null)
+        binding.overlayProfileTooltip.setOnClickListener(null)
+        binding.labelTapToDismiss.setOnClickListener(null)
+        binding.toolbarOverlay.setOnClickListener(null)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
+        stopPointAnimation()
+        binding.arrowAnimation.visibility = View.GONE
+        binding.contentOverlay.visibility = View.GONE
+        binding.toolbarOverlay.visibility = View.GONE
+        binding.labelTapToDismiss.visibility = View.INVISIBLE
+        binding.overlayProfileTooltip.visibility = View.GONE
     }
 }

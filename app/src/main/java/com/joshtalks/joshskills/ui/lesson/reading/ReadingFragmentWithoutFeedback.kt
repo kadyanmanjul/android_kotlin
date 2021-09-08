@@ -1210,7 +1210,6 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onPlayerPause() {
         binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-        Log.d(TAG, "onPlayerPause: ")
         AppObjectController.uiHandler.removeCallbacks(pauseAnimationCallback)
         AppObjectController.uiHandler.postDelayed(pauseAnimationCallback, 1000)
     }

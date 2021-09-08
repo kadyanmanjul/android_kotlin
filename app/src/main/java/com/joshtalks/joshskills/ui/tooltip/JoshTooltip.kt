@@ -28,4 +28,8 @@ class JoshTooltip @JvmOverloads constructor(
                 }
             }
         }
+
+    fun setTooltipText(tooltipText : String) {
+        tooltipTextView.text = tooltipText
+    }
 }

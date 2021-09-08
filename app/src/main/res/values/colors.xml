@@ -169,6 +169,7 @@
     <color name="leaderboard_tooltip_text_color">#6E1232</color>
     <color name="leaderboard_tooltip_bg_color">#FBF0C4</color>
     <color name="transparent_blue_alpha_75">#BF173A50</color>
+    <color name="transparent_blue_alpha_33">#44173A50</color>
     <color name="leaderboard_overlay_status_bar">#14446A</color>
 
 </resources>
