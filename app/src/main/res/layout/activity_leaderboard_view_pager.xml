@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,12 +11,28 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/parent_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <!--<FrameLayout
+                android:id="@+id/list_item_overlay"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/transparent_blue_alpha_75"
+                android:clickable="true"
+                android:elevation="@dimen/_1sdp"
+                android:focusable="true"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/tab_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />-->
 
             <include
                 android:layout_width="match_parent"
@@ -49,6 +66,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tab_layout" />
+
+            <include
+                android:id="@+id/tab_overlay"
+                layout="@layout/winner_tooltip_layout"
+                android:visibility="invisible"
+                android:elevation="@dimen/_20sdp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

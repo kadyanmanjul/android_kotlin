@@ -23,7 +23,8 @@ import java.util.Locale
 class LeaderBoardWinnerItemViewHolder(
     var response: LeaderboardMentor,
     var context: Context,
-    val type: String
+    val type: String,
+    val onViewInflated: ViewInflated?
 ) {
 
     @View(R.id.award)
@@ -71,6 +72,7 @@ class LeaderBoardWinnerItemViewHolder(
             onlineStatusLayout.visibility = android.view.View.GONE
         }
 
+        onViewInflated?.onViewInflated(response)
     }
 
     @Click(R.id.user_pic)
@@ -96,4 +98,8 @@ class LeaderBoardWinnerItemViewHolder(
         }*/
         RxBus2.publish(OpenPreviousLeaderboard(type))
     }
+}
+
+interface ViewInflated {
+    fun onViewInflated(response: LeaderboardMentor)
 }

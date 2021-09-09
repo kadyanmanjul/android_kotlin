@@ -6,6 +6,7 @@ import com.google.android.material.tabs.TabLayout
 
 
 class CustomTabLayout : TabLayout {
+    private val tabWidthList = mutableListOf<Int>()
 
     constructor(context: Context) : super(context)
 
@@ -22,9 +23,10 @@ class CustomTabLayout : TabLayout {
         for (index in 0..tabCount) {
             val tab = getTabAt(index)
             val tabMeasuredWidth = tab?.view?.measuredWidth ?: equalTabWidth
-
+            //tabWidthList[index] = tabMeasuredWidth
             if (tabMeasuredWidth < equalTabWidth) {
                 tab?.view?.minimumWidth = equalTabWidth
+                //tabWidthList[index] = equalTabWidth
             }
         }
 
@@ -34,4 +36,6 @@ class CustomTabLayout : TabLayout {
     companion object {
         private const val DIVIDER_FACTOR = 3.7
     }
+
+    //fun getTabWidth(index : Int) = tabWidthList[index]
 }

@@ -43,15 +43,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/_16sdp"
         android:background="@drawable/josh_tooltip_gradient"
         android:gravity="center"
         android:padding="@dimen/_4sdp"
-        android:layout_marginStart="@dimen/_16sdp"
         android:text="Fantastic! You did it. But it's not over yet. Come let's see what else there is."
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
         android:textColor="@color/leaderboard_tooltip_text_color"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/josh_skill_img_container"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

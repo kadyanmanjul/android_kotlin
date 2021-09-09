@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity.Companion.tooltipTextList
+import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity.Companion.winnerMap
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.skydoves.balloon.*
@@ -33,8 +36,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LeaderBoardFragment : Fragment() {
-
+class LeaderBoardFragment : Fragment(), ViewInflated {
+    private val TAG = "LeaderBoardFragment"
     private lateinit var binding: FragmentLeaderboardViewPagerBinding
     private lateinit var type: String
     private lateinit var courseId: String
@@ -46,6 +49,7 @@ class LeaderBoardFragment : Fragment() {
     private var liveUserPosition = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate: ")
         super.onCreate(savedInstanceState)
         arguments?.let {
             type = it.getString(TYPE) ?: EMPTY
@@ -203,6 +207,7 @@ class LeaderBoardFragment : Fragment() {
         if (leaderboardResponse1.info.isNullOrBlank().not()) {
             // TODO handel this count as well in other places where using position of recycler view eg. in tooltip
             additionalIndexCount = additionalIndexCount.plus(1)
+            tooltipTextList[4] = leaderboardResponse1.info ?: ""
             binding.recyclerView.addView(
                 LeaderboardInfoItemViewHolder(
                     leaderboardResponse1.info!!,
@@ -215,15 +220,20 @@ class LeaderBoardFragment : Fragment() {
         leaderboardResponse1.current_mentor?.let {
             setCurrentUserDetails(it)
         }
+
         leaderboardResponse1.lastWinner?.let {
             if (it.id.isNullOrEmpty().not()) {
+                Log.d(TAG, "setData: lastWinner")
                 binding.recyclerView.addView(
                     LeaderBoardWinnerItemViewHolder(
                         it,
                         requireContext(),
-                        type
+                        type,
+                        onViewInflated = this
                     )
                 )
+                winnerMap[type] = it
+                //viewModel.overlayLiveData.postValue(it)
             }
         }
         binding.recyclerView.addView(
@@ -353,6 +363,7 @@ class LeaderBoardFragment : Fragment() {
         }
     }
 
+
     private fun addOnlineTooltip() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -412,5 +423,9 @@ class LeaderBoardFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
+    }
+
+    override fun onViewInflated(response: LeaderboardMentor) {
+        viewModel.overlayLiveData.postValue(response)
     }
 }

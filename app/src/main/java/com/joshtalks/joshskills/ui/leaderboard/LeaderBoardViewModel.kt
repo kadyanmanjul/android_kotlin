@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.IS_ENTERED_NAME_IN_FREE_TRIAL
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.*
@@ -26,6 +27,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfWeek: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfMonth: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfBatch: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val overlayLiveData: MutableLiveData<LeaderboardMentor> = MutableLiveData()
     val leaderBoardDataOfLifeTime: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userEnteredName: MutableLiveData<String> = MutableLiveData()
@@ -240,5 +242,12 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
             }
         }
+    }
+
+    fun showOverlay(response : LeaderboardMentor) = overlayLiveData.setValue(response)
+
+    override fun onCleared() {
+        super.onCleared()
+        LeaderBoardViewPagerActivity.winnerMap.clear()
     }
 }
