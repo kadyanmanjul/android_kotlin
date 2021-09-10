@@ -28,6 +28,7 @@
 
     <dimen name="tag_height">@dimen/_44sdp</dimen>
     <dimen name="rating_size">@dimen/_48sdp</dimen>
+    <dimen name="free_trial_payment_rating_size">@dimen/_12sdp</dimen>
     <dimen name="score_rating_size">@dimen/_23sdp</dimen>
 
     <dimen name="roundedBottomSheetCornerRadius">16dp</dimen>

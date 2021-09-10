@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.CouponCodeResponse
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
+import com.joshtalks.joshskills.repository.server.FreeTrialPaymentData
 import com.joshtalks.joshskills.repository.server.InstanceIdResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
@@ -168,5 +169,7 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/last-active")
     suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
+    @POST("$DIR/course/buy_expired_course/")
+    suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentData
 
 }

@@ -914,5 +914,7 @@
     <string name="label_vocab_spotlight_2">Appreciate का सही उच्चारण क्या है यहां से देखे</string>
     <string name="label_vocab_spotlight_3">अब ये तीन वाक्यों को साथ में पढ़ कर बोले</string>
     <string name="label_reading_spotlight">इस भाग में हम अपनी रीडिंग की प्रैक्टिस करेंगे</string>
+    <string name="price">MRP: <strike>%s</strike></string>
+    <string name="savings"><i>Save %s</i></string>
 
 </resources>

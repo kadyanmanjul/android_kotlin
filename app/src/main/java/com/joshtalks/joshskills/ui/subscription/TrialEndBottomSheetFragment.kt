@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
-import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 
 const val TRIAL_TEST_ID = 13
@@ -68,7 +68,7 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     fun unlockCourses() {
-        PaymentSummaryActivity.startPaymentSummaryActivity(
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
             requireActivity(),
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
