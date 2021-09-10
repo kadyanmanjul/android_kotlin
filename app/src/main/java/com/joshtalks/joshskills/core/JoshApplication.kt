@@ -145,6 +145,7 @@ class JoshApplication :
         isAppVisible = true
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+        WorkManagerAdmin.removeRepeatingNotificationWorker()
         //  UsageStatsService.activeUserService(this)
     }
 
@@ -155,6 +156,15 @@ class JoshApplication :
         isAppVisible = false
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+        if (PrefManager.getBoolValue(
+                CHAT_OPENED_FOR_NOTIFICATION,
+                defValue = false
+            ) && PrefManager.getBoolValue(
+                LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false
+            ).not()
+        ){
+            WorkManagerAdmin.setRepeatingNotificationWorker()
+        }
         //  UsageStatsService.inactiveUserService(this)
     }
 

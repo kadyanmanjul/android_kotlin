@@ -1874,6 +1874,7 @@ class NotificationId {
         const val INCOMING_CALL_NOTIFICATION_ID = 200001
         const val CONNECTED_CALL_NOTIFICATION_ID = 200002
         const val CALL_NOTIFICATION_CHANNEL = "Call Notifications"
+        const val LOCAL_NOTIFICATION_CHANNEL = "Local Notifications"
     }
 }
 

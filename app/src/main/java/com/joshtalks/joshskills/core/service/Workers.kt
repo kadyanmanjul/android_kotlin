@@ -1,8 +1,17 @@
 package com.joshtalks.joshskills.core.service
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
 import android.text.format.DateUtils
 import androidx.concurrent.futures.CallbackToFutureAdapter
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
@@ -11,11 +20,14 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -28,6 +40,8 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
+import com.joshtalks.joshskills.ui.launch.LauncherActivity
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.*
@@ -39,7 +53,12 @@ import timber.log.Timber
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
 const val IS_ACTIVE = "is_active"
+const val NOTIFICATION_TEXT = "notification_text"
+const val NOTIFICATION_TITLE = "notification_title"
 const val LANGUAGE_CODE = "language_code"
+val NOTIFICATION_DELAY= arrayOf(3L,30L,60L)
+val NOTIFICATION_TEXT_TEXT= arrayOf("Chalo speaking practice try karte hai","Try speaking practice ","Isko abhi complete kare")
+val NOTIFICATION_TITLE_TEXT= arrayOf("Shubham 58 students are online","Meet people from across the country.","Apka aaj ka goal hai Lesson 1 complete karna")
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -48,10 +67,10 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
                 var id = getGoogleAdId(context)
                 // TODO abhi ke lea crash ka jugaad
-                if (id.isNullOrEmpty()){
-                    id= getGoogleAdId(context)
+                if (id.isNullOrEmpty()) {
+                    id = getGoogleAdId(context)
                 }
-                if (id.isNullOrEmpty()){
+                if (id.isNullOrEmpty()) {
                     return Result.failure()
                 }
                 PrefManager.put(USER_UNIQUE_ID, id)
@@ -652,6 +671,101 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
     }
 }
 
+class SetLocalNotificationWorker(val context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+
+            val textDescription =
+                workerParams.inputData.getString(NOTIFICATION_TEXT) ?:"Atta boy ! Practise with 94 people who are online rightnow."
+
+            val title =
+                workerParams.inputData.getString(NOTIFICATION_TITLE) ?:"Missed your class"
+            val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                putExtra(HAS_NOTIFICATION, true)
+            }
+
+            intent?.run {
+                val activityList = arrayOf(this)
+                val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+                val defaultSound =
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                val pendingIntent = PendingIntent.getActivities(
+                    context,
+                    uniqueInt, activityList,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+
+                val style = NotificationCompat.BigTextStyle()
+                style.setBigContentTitle(title)
+                style.bigText(textDescription)
+                style.setSummaryText("")
+
+                val notificationBuilder =
+                    NotificationCompat.Builder(
+                        context,
+                        LOCAL_NOTIFICATION_CHANNEL
+                    )
+                        .setSmallIcon(R.drawable.ic_status_bar_notification)
+                        .setContentTitle(title)
+                        .setAutoCancel(true)
+                        .setSound(defaultSound)
+                        .setContentText(textDescription)
+                        .setContentIntent(pendingIntent)
+                        .setStyle(style)
+                        .setWhen(System.currentTimeMillis())
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.colorAccent
+                            )
+                        )
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
+                }
+
+                val dismissIntent =
+                    Intent(
+                        context.applicationContext,
+                        LocalNotificationDismissEventReceiver::class.java
+                    )
+                val dismissPendingIntent: PendingIntent =
+                    PendingIntent.getBroadcast(
+                        context.applicationContext,
+                        uniqueInt,
+                        dismissIntent,
+                        0
+                    )
+
+                notificationBuilder.setDeleteIntent(dismissPendingIntent)
+
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val notificationChannel = NotificationChannel(
+                        LOCAL_NOTIFICATION_CHANNEL,
+                        LOCAL_NOTIFICATION_CHANNEL,
+                        NotificationManager.IMPORTANCE_HIGH
+                    )
+                    notificationChannel.enableLights(true)
+                    notificationChannel.enableVibration(true)
+                    notificationBuilder.setChannelId(LOCAL_NOTIFICATION_CHANNEL)
+                    notificationManager.createNotificationChannel(notificationChannel)
+                }
+                notificationManager.notify(uniqueInt, notificationBuilder.build())
+
+            }
+        }catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        return Result.success()
+    }
+}
+
 class LanguageChangeWorker(var context: Context, private var workerParams: WorkerParameters) :
     ListenableWorker(context, workerParams) {
     override fun startWork(): ListenableFuture<Result> {
@@ -833,7 +947,7 @@ fun getGoogleAdId(context: Context): String? {
         MobileAds.initialize(context)
         val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
         return adInfo.id
-    } catch (e:Exception){
+    } catch (e: Exception) {
 
     }
     return null

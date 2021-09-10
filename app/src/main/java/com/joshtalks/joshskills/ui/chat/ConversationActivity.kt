@@ -241,6 +241,7 @@ class ConversationActivity :
         if (inboxEntity.isCourseLocked) {
             initEndTrialBottomSheet()
         }
+        PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
     }
 
     private fun showLessonTooltip() {

@@ -12,6 +12,8 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.LOCAL_NOTIFICATION_INDEX
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -258,6 +260,42 @@ object WorkManagerAdmin {
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+    }
+
+    fun setRepeatingNotificationWorker() {
+        val delay =
+            NOTIFICATION_DELAY.get(PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0))
+        val text =
+            NOTIFICATION_TEXT_TEXT.get(
+                PrefManager.getIntValue(
+                    LOCAL_NOTIFICATION_INDEX,
+                    defValue = 0
+                )
+            )
+        val title =
+            NOTIFICATION_TITLE_TEXT.get(
+                PrefManager.getIntValue(
+                    LOCAL_NOTIFICATION_INDEX,
+                    defValue = 0
+                )
+            )
+        val data = workDataOf(NOTIFICATION_TEXT to text, NOTIFICATION_TITLE to title)
+        val workRequest = OneTimeWorkRequestBuilder<SetLocalNotificationWorker>()
+            .setInputData(data)
+            .setInitialDelay(delay, TimeUnit.MINUTES)
+            .addTag(SetLocalNotificationWorker::class.java.name)
+            .build()
+
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
+            "set_notification",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
+    }
+
+    fun removeRepeatingNotificationWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .cancelAllWorkByTag(SetLocalNotificationWorker::class.java.name)
     }
 
     fun startVersionAndFlowWorker() {

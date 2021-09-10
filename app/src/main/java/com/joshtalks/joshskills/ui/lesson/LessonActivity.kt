@@ -573,6 +573,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                             lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (lessonCompleted) {
+                        PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
                         AppObjectController.uiHandler.post {
