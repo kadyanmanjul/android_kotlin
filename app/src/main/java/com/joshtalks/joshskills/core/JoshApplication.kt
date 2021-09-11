@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.core
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ComponentCallbacks2
 import android.content.Context
@@ -14,9 +16,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
+import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -145,8 +150,30 @@ class JoshApplication :
         isAppVisible = true
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-        WorkManagerAdmin.removeRepeatingNotificationWorker()
+        //WorkManagerAdmin.removeRepeatingNotificationWorker()
+        val startIndex= PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
+        for ( i in startIndex..2) {
+            //WorkManagerAdmin.setRepeatingNotificationWorker(i)
+            removeAlarmReminder(i)
+        }
         //  UsageStatsService.activeUserService(this)
+    }
+
+    private fun removeAlarmReminder(delay:Int) {
+        val alarmManager = this.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (alarmManager!=null){
+            val pIntent = Intent(this.applicationContext, LocalNotificationAlarmReciever::class.java)?.let { intent ->
+                intent.putExtra("id", delay)
+                intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                PendingIntent.getBroadcast(
+                    this.applicationContext,
+                    delay,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            }
+            alarmManager.cancel(pIntent)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -158,10 +185,39 @@ class JoshApplication :
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         if (getConditionForShowLocalNotifications()){
             val startIndex= PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
-            for ( i in startIndex..2)
-                WorkManagerAdmin.setRepeatingNotificationWorker(i)
+            for ( i in startIndex..2) {
+                //WorkManagerAdmin.setRepeatingNotificationWorker(i)
+                setAlarmReminder(i)
+            }
         }
         //  UsageStatsService.inactiveUserService(this)
+    }
+
+    private fun setAlarmReminder(delay:Int) {
+
+        val pIntent = Intent(this.applicationContext, LocalNotificationAlarmReciever::class.java)?.let { intent ->
+            intent.putExtra("id", delay)
+            intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+            PendingIntent.getBroadcast(
+                this.applicationContext,
+                delay,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+
+        val alarmManager: AlarmManager =
+            this.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+        }
+        alarmManager?.set(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis+60*1000* NOTIFICATION_DELAY.get(delay),
+            pIntent
+        )
+
     }
 
     private fun getConditionForShowLocalNotifications(): Boolean {

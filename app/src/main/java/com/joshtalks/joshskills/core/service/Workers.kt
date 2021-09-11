@@ -58,7 +58,7 @@ const val IS_ACTIVE = "is_active"
 const val NOTIFICATION_TEXT = "notification_text"
 const val NOTIFICATION_TITLE = "notification_title"
 const val LANGUAGE_CODE = "language_code"
-val NOTIFICATION_DELAY= arrayOf(3L,30L,60L)
+val NOTIFICATION_DELAY= arrayOf(3,30,60)
 val NOTIFICATION_TEXT_TEXT= arrayOf("Chalo speaking practice try karte hai","Try speaking practice ","Isko abhi complete kare")
 val NOTIFICATION_TITLE_TEXT= arrayOf("%name, %num students are online","Meet people from across the country.","Apka aaj ka goal hai Lesson 1 complete karna")
 

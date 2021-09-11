@@ -608,6 +608,14 @@
             </intent-filter>
         </receiver>
         <receiver
+            android:name=".core.notification.LocalNotificationAlarmReciever"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
             android:name=".core.notification.StartUpBootReceiver"
             android:enabled="true">
             <intent-filter>

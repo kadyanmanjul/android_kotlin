@@ -265,7 +265,7 @@ object WorkManagerAdmin {
 
     fun setRepeatingNotificationWorker(notificationIndex: Int) {
 
-        val delay = NOTIFICATION_DELAY.get(notificationIndex)
+        val delay = NOTIFICATION_DELAY.get(notificationIndex).toLong()
         val text = NOTIFICATION_TEXT_TEXT.get(notificationIndex)
         var title: String? = null
         if (notificationIndex == 0) {
