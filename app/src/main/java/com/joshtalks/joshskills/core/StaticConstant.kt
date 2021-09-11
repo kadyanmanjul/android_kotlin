@@ -233,6 +233,7 @@ class FirebaseRemoteConfigKey {
         const val FREE_TRIAL_PAYMENT_BTN_TXT = "FREE_TRIAL_PAYMENT_BTN_TXT"
         const val FREE_TRIAL_DIALOG_BTN_TXT = "FREE_TRIAL_DIALOG_BTN_TXT"
         const val FREE_TRIAL_DIALOG_TXT = "FREE_TRIAL_DIALOG_TXT"
+        const val SHOW_LOCAL_NOTIFICATIONS = "SHOW_LOCAL_NOTIFICATIONS"
 
     }
 }

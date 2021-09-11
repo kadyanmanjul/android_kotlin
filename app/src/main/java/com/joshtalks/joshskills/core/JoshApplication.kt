@@ -156,16 +156,19 @@ class JoshApplication :
         isAppVisible = false
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-        if (PrefManager.getBoolValue(
-                CHAT_OPENED_FOR_NOTIFICATION,
-                defValue = false
-            ) && PrefManager.getBoolValue(
-                LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false
-            ).not()
-        ){
-            WorkManagerAdmin.setRepeatingNotificationWorker()
+        if (getConditionForShowLocalNotifications()){
+            val startIndex= PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
+            for ( i in startIndex..2)
+                WorkManagerAdmin.setRepeatingNotificationWorker(i)
         }
         //  UsageStatsService.inactiveUserService(this)
+    }
+
+    private fun getConditionForShowLocalNotifications(): Boolean {
+        return  AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.SHOW_LOCAL_NOTIFICATIONS) &&
+                PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX,defValue = 0) < 3 &&
+                PrefManager.getBoolValue(CHAT_OPENED_FOR_NOTIFICATION, defValue = false)
+                && PrefManager.getBoolValue( LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false).not()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

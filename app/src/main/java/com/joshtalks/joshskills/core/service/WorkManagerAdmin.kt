@@ -12,13 +12,13 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.LOCAL_NOTIFICATION_INDEX
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.model.User
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import timber.log.Timber
 
 object WorkManagerAdmin {
 
@@ -262,23 +262,23 @@ object WorkManagerAdmin {
         )
     }
 
-    fun setRepeatingNotificationWorker() {
-        val delay =
-            NOTIFICATION_DELAY.get(PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0))
-        val text =
-            NOTIFICATION_TEXT_TEXT.get(
-                PrefManager.getIntValue(
-                    LOCAL_NOTIFICATION_INDEX,
-                    defValue = 0
-                )
-            )
-        val title =
-            NOTIFICATION_TITLE_TEXT.get(
-                PrefManager.getIntValue(
-                    LOCAL_NOTIFICATION_INDEX,
-                    defValue = 0
-                )
-            )
+    fun setRepeatingNotificationWorker(notificationIndex: Int) {
+
+        val delay = NOTIFICATION_DELAY.get(notificationIndex)
+        val text = NOTIFICATION_TEXT_TEXT.get(notificationIndex)
+        var title: String? = null
+        if (notificationIndex == 0) {
+            title =
+                NOTIFICATION_TITLE_TEXT.get(notificationIndex)
+                    .replace("%num", (24..78).random().toString())
+                    .replace("%name", User.getInstance().firstName.toString())
+        } else {
+            title =
+                NOTIFICATION_TITLE_TEXT.get(notificationIndex)
+        }
+        Timber.d(
+            "Local Notification Set LOCAL_NOTIFICATION_INDEX: ${notificationIndex}"
+        )
         val data = workDataOf(NOTIFICATION_TEXT to text, NOTIFICATION_TITLE to title)
         val workRequest = OneTimeWorkRequestBuilder<SetLocalNotificationWorker>()
             .setInputData(data)
@@ -288,7 +288,7 @@ object WorkManagerAdmin {
 
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
             "set_notification",
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

@@ -690,5 +690,9 @@
         <key>FREE_TRIAL_DIALOG_TXT</key>
         <value>Your 1 day trial has ended! Kya aapko mazaa aaya?\nAccess this courses now.</value>
     </entry>
+    <entry>
+        <key>SHOW_LOCAL_NOTIFICATIONS</key>
+        <value>true</value>
+    </entry>
 
 </defaultsMap>

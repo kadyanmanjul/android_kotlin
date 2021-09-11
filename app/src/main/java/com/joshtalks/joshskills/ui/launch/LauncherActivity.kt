@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.getGoogleAdId
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
@@ -92,6 +93,9 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun handleIntent() {
+        if (intent.hasExtra(HAS_LOCAL_NOTIFICATION) && intent.getBooleanExtra(HAS_LOCAL_NOTIFICATION,false)){
+            PrefManager.put(HAS_SEEN_LOCAL_NOTIFICATION,true)
+        }
         lifecycleScope.launch(Dispatchers.IO) {
             Branch.sessionBuilder(WeakReference(this@LauncherActivity).get())
                 .withCallback { referringParams, error ->

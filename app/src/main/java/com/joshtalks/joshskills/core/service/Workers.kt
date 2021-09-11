@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventRece
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -58,7 +59,7 @@ const val NOTIFICATION_TITLE = "notification_title"
 const val LANGUAGE_CODE = "language_code"
 val NOTIFICATION_DELAY= arrayOf(3L,30L,60L)
 val NOTIFICATION_TEXT_TEXT= arrayOf("Chalo speaking practice try karte hai","Try speaking practice ","Isko abhi complete kare")
-val NOTIFICATION_TITLE_TEXT= arrayOf("Shubham 58 students are online","Meet people from across the country.","Apka aaj ka goal hai Lesson 1 complete karna")
+val NOTIFICATION_TITLE_TEXT= arrayOf("%name %num students are online","Meet people from across the country.","Apka aaj ka goal hai Lesson 1 complete karna")
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -684,6 +685,7 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
             val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 putExtra(HAS_NOTIFICATION, true)
+                putExtra(HAS_LOCAL_NOTIFICATION, true)
             }
 
             intent?.run {
@@ -756,6 +758,7 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
                     notificationBuilder.setChannelId(LOCAL_NOTIFICATION_CHANNEL)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
+                Timber.d("Local Notification Set LOCAL_NOTIFICATION_INDEX: ${PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0)}")
                 notificationManager.notify(uniqueInt, notificationBuilder.build())
 
             }

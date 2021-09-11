@@ -58,7 +58,6 @@ import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -98,6 +97,7 @@ import timber.log.Timber
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
+const val HAS_LOCAL_NOTIFICATION = "has_local_notification"
 const val NOTIFICATION_ID = "notification_id"
 const val HAS_COURSE_REPORT = "has_course_report"
 const val QUESTION_ID = "question_id"
