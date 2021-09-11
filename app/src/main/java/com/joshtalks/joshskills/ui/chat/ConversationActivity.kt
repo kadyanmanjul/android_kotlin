@@ -59,6 +59,7 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
@@ -239,7 +240,8 @@ class ConversationActivity :
         fetchMessage()
         readMessageDatabaseUpdate()
         if (inboxEntity.isCourseLocked) {
-            initEndTrialBottomSheet()
+            //initEndTrialBottomSheet()
+            showFreeTrialPaymentScreen()
         }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
@@ -337,6 +339,17 @@ class ConversationActivity :
         TrialEndBottomSheetFragment.showDialog(
             supportFragmentManager
         )
+    }
+
+    fun showFreeTrialPaymentScreen() {
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            this,
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            )
+
+        )
+        finish()
     }
 
     private fun initToolbar() {

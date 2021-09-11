@@ -126,7 +126,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             binding.txtOgPrice.text = getString(R.string.price, it.actualAmount)
             binding.txtOgPrice.paintFlags =
                 binding.txtOgPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            binding.txtSaving.text = getString(R.string.price, it.savings)
+            binding.txtSaving.text = getString(R.string.savings, it.savings)
             binding.courseRating.rating = it.rating.toFloat()
             binding.txtTotalReviews.text = "(" + String.format("%,d", it.ratingsCount) + ")"
         }

@@ -49,7 +49,7 @@
                     android:layout_marginStart="@dimen/_32sdp"
                     android:layout_marginEnd="@dimen/_26sdp"
                     android:text="Your Free Trial has ended"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
