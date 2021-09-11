@@ -11,7 +11,6 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentData
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import java.net.SocketTimeoutException
@@ -35,7 +34,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             data["test_id"] = testId
             data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
 
-            if (Mentor.getInstance().getId().isNotEmpty() && User.getInstance().isVerified) {
+            if (Mentor.getInstance().getId().isNotEmpty()) {
                 data["mentor_id"] = Mentor.getInstance().getId()
             }
 
