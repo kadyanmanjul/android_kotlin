@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -59,7 +60,7 @@ const val NOTIFICATION_TITLE = "notification_title"
 const val LANGUAGE_CODE = "language_code"
 val NOTIFICATION_DELAY= arrayOf(3L,30L,60L)
 val NOTIFICATION_TEXT_TEXT= arrayOf("Chalo speaking practice try karte hai","Try speaking practice ","Isko abhi complete kare")
-val NOTIFICATION_TITLE_TEXT= arrayOf("%name %num students are online","Meet people from across the country.","Apka aaj ka goal hai Lesson 1 complete karna")
+val NOTIFICATION_TITLE_TEXT= arrayOf("%name, %num students are online","Meet people from across the country.","Apka aaj ka goal hai Lesson 1 complete karna")
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -682,6 +683,10 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
 
             val title =
                 workerParams.inputData.getString(NOTIFICATION_TITLE) ?:"Missed your class"
+
+            val index =
+                workerParams.inputData.getInt(NOTIFICATION_ID,0)
+
             val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 putExtra(HAS_NOTIFICATION, true)
@@ -690,7 +695,7 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
 
             intent?.run {
                 val activityList = arrayOf(this)
-                val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+                val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(index).toInt()
                 val defaultSound =
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 val pendingIntent = PendingIntent.getActivities(
@@ -707,7 +712,7 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
                 val notificationBuilder =
                     NotificationCompat.Builder(
                         context,
-                        LOCAL_NOTIFICATION_CHANNEL
+                        LOCAL_NOTIFICATION_CHANNEL+index
                     )
                         .setSmallIcon(R.drawable.ic_status_bar_notification)
                         .setContentTitle(title)
@@ -749,13 +754,13 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     val notificationChannel = NotificationChannel(
-                        LOCAL_NOTIFICATION_CHANNEL,
-                        LOCAL_NOTIFICATION_CHANNEL,
+                        LOCAL_NOTIFICATION_CHANNEL+index,
+                        LOCAL_NOTIFICATION_CHANNEL+index,
                         NotificationManager.IMPORTANCE_HIGH
                     )
                     notificationChannel.enableLights(true)
                     notificationChannel.enableVibration(true)
-                    notificationBuilder.setChannelId(LOCAL_NOTIFICATION_CHANNEL)
+                    notificationBuilder.setChannelId(LOCAL_NOTIFICATION_CHANNEL+index)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
                 Timber.d("Local Notification Set LOCAL_NOTIFICATION_INDEX: ${PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0)}")

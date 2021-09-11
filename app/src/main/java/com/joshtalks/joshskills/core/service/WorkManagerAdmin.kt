@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
+import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.model.User
 import java.util.UUID
@@ -279,16 +280,14 @@ object WorkManagerAdmin {
         Timber.d(
             "Local Notification Set LOCAL_NOTIFICATION_INDEX: ${notificationIndex}"
         )
-        val data = workDataOf(NOTIFICATION_TEXT to text, NOTIFICATION_TITLE to title)
+        val data = workDataOf(NOTIFICATION_TEXT to text, NOTIFICATION_TITLE to title , NOTIFICATION_ID to notificationIndex)
         val workRequest = OneTimeWorkRequestBuilder<SetLocalNotificationWorker>()
             .setInputData(data)
             .setInitialDelay(delay, TimeUnit.MINUTES)
             .addTag(SetLocalNotificationWorker::class.java.name)
             .build()
 
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
-            "set_notification",
-            ExistingWorkPolicy.KEEP,
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(
             workRequest
         )
     }
