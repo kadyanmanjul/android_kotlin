@@ -323,6 +323,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
+                ROOM_POSITION -> {
+                    appDatabase.lessonDao().updateRoomSectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.roomStatus = status
+                        }
+                    )
+                }
             }
         }
     }

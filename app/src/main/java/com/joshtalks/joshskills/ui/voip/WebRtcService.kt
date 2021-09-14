@@ -150,6 +150,7 @@ class WebRtcService : BaseWebRtcService() {
         var agoraUid: Int? = null
         var moderatorUid: Int? = null
         var roomId: String? = null
+        var roomQuestionId: Int? = null
         var conversationRoomChannelName: String? = null
         var conversationRoomToken: String? = null
         val roomReference = FirebaseFirestore.getInstance().collection("conversation_rooms")
@@ -568,9 +569,9 @@ class WebRtcService : BaseWebRtcService() {
                             Log.d("ABC", "OnUserOffline for moderator call $moderatorUid $reason")
                             if (documents.size() > 1) {
                                 if (documents.documents[0].id.toInt() == agoraUid) {
-                                    endRoom(roomId)
+                                    endRoom(roomId, roomQuestionId)
                                 } else if (documents.documents[1].id.toInt() == agoraUid) {
-                                    endRoom(roomId)
+                                    endRoom(roomId, roomQuestionId)
                                 }
                             }
 
@@ -622,10 +623,10 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    fun endRoom(roomId: String?) {
+    fun endRoom(roomId: String?,conversationQuestionId:Int?=null) {
         CoroutineScope(Dispatchers.IO).launch {
             val request =
-                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0)
+                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,conversationQuestionId)
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             Log.d("ABC", "end room api call ${response.code()}")
@@ -638,11 +639,11 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    fun leaveRoom(roomId: String?) {
+    fun leaveRoom(roomId: String?,conversationQuestionId:Int?=null) {
         if (roomId.isNullOrBlank().not()) {
             CoroutineScope(Dispatchers.IO).launch {
                 val request =
-                    JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0)
+                    JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,conversationQuestionId)
                 val response =
                     AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                         request
@@ -752,9 +753,9 @@ class WebRtcService : BaseWebRtcService() {
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
                     if (isConversionRoomActive) {
                         if (isRoomCreatedByUser) {
-                            endRoom(roomId)
+                            endRoom(roomId, roomQuestionId)
                         } else {
-                            leaveRoom(roomId)
+                            leaveRoom(roomId,roomQuestionId)
                         }
                     } else {
                         isOnPstnCall = true
@@ -1772,9 +1773,9 @@ class WebRtcService : BaseWebRtcService() {
 
     override fun onDestroy() {
         if (isRoomCreatedByUser) {
-            endRoom(roomId)
+            endRoom(roomId, roomQuestionId)
         } else {
-            leaveRoom(roomId)
+            leaveRoom(roomId,roomQuestionId)
         }
         Log.d("ABC", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         RtcEngine.destroy()
@@ -2160,17 +2161,10 @@ class WebRtcService : BaseWebRtcService() {
             }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
+        val intent = ConversationLiveRoomActivity.getIntent(this, conversationRoomChannelName,
+            agoraUid, conversationRoomToken, isRoomCreatedByUser, roomId?.toInt(), roomQuestionId)
+        Log.d("ABC", "channelName: $conversationRoomChannelName")
 
-        val intent = Intent(this, ConversationLiveRoomActivity::class.java)
-
-        intent.apply {
-            putExtra("CHANNEL_NAME", conversationRoomChannelName)
-            putExtra("UID", agoraUid)
-            putExtra("TOKEN", conversationRoomToken)
-            putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
-            putExtra("ROOM_ID", roomId)
-            Log.d("ABC", "channelName: $conversationRoomChannelName")
-        }
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
 
         val pendingIntent: PendingIntent =
@@ -2357,7 +2351,9 @@ class NotificationId {
         const val ACTION_NOTIFICATION_ID = 200000
         const val INCOMING_CALL_NOTIFICATION_ID = 200001
         const val CONNECTED_CALL_NOTIFICATION_ID = 200002
+        const val ROOM_CALL_NOTIFICATION_ID = 200003
         const val CALL_NOTIFICATION_CHANNEL = "Call Notifications"
+        const val ROOM_NOTIFICATION_CHANNEL = "Rooms Notifications"
     }
 }
 

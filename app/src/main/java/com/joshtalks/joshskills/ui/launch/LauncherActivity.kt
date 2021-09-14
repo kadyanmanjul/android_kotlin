@@ -46,6 +46,7 @@ class LauncherActivity : CoreJoshActivity() {
         animatedProgressBar()
         initAppInFirstTime()
         handleIntent()
+        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
         AppObjectController.uiHandler.postDelayed({
             analyzeAppRequirement()
         }, 700)

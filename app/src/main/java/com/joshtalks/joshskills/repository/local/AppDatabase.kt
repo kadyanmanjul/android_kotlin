@@ -105,7 +105,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class
     ],
-    version = 35,
+    version = 36,
     exportSchema = true
 )
 @TypeConverters(
@@ -185,7 +185,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_31_32,
                                 MIGRATION_32_33,
                                 MIGRATION_33_34,
-                                MIGRATION_34_35
+                                MIGRATION_34_35,
+                                MIGRATION_35_36,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -491,6 +492,13 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_question_feedback` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctAnswerHeading` TEXT, `correctAnswerText` TEXT, `wrongAnswerHeading` TEXT, `wrongAnswerText` TEXT, `wrongAnswerHeading2` TEXT, `wrongAnswerText2` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_question_feedback_questionId` ON `assessment_question_feedback` (`questionId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_question_feedback_localId` ON `assessment_question_feedback` (`localId`)")
+
+            }
+        }
+
+        private val MIGRATION_35_36: Migration = object : Migration(35,36) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE lesson_question ADD COLUMN conversation_question_id INTEGER ")
 
             }
         }

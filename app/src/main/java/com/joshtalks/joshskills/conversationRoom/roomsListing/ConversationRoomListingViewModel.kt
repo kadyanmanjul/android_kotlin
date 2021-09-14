@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.gson.Gson
+import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomDetailsResponse
 import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomResponse
 import com.joshtalks.joshskills.conversationRoom.model.CreateConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.model.EnterExitConversionRoomRequest
@@ -19,12 +20,13 @@ import kotlinx.coroutines.launch
 
 class ConversationRoomListingViewModel : ViewModel() {
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
+    val roomDetailsLivedata = MutableLiveData<ConversationRoomDetailsResponse>()
 
     fun joinRoom(item: ConversationRoomsListingItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val joinRoomRequest =
-                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.room_id ?: 0)
+                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.room_id ?: 0,item.conversationRoomQuestionId)
 
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.joinConversationRoom(
@@ -56,11 +58,11 @@ class ConversationRoomListingViewModel : ViewModel() {
         }
     }
 
-    fun createRoom(topic: String) {
+    fun createRoom(topic: String,isFavouritePracticePartner:Boolean?=false,conversationQuestionId:Int?=null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val createConversionRoomRequest =
-                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic)
+                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic,isFavouritePracticePartner,conversationQuestionId)
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.createConversationRoom(
                         createConversionRoomRequest
@@ -112,8 +114,23 @@ class ConversationRoomListingViewModel : ViewModel() {
     fun checkRoomsAvailableOrNot(value: QuerySnapshot?) {
         if (value == null || value.isEmpty) {
             navigation.postValue(ConversationRoomListingNavigation.NoRoomAvailable)
-        }else{
+        } else {
             navigation.postValue(ConversationRoomListingNavigation.AtleastOneRoomAvailable)
+        }
+    }
+
+    fun getConvoRoomDetails(questionId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.conversationRoomsNetworkService.getConvoRoomQuestionDetails(questionId)
+                if (response.isSuccessful&&response.body()!=null){
+                    roomDetailsLivedata.postValue(response.body())
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
         }
     }
 

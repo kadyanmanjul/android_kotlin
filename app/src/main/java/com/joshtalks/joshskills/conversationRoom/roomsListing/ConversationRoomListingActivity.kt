@@ -19,7 +19,6 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
@@ -150,7 +149,8 @@ class ConversationRoomListingActivity : BaseActivity(),
                             it["channel_name"]?.toString() ?: "",
                             it["topic"]?.toString(),
                             it["started_by"]?.toString()?.toInt(),
-                            roomId.toInt()
+                            roomId.toInt(),
+                            null
                         )
                     )
                 }
@@ -223,13 +223,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
-        val intent = Intent(this, ConversationLiveRoomActivity::class.java)
-        intent.putExtra("CHANNEL_NAME", channelName)
-        intent.putExtra("UID", uid)
-        intent.putExtra("TOKEN", token)
-        intent.putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
-        intent.putExtra("ROOM_ID", roomId)
-        startActivity(intent)
+        //ConversationLiveRoomActivity.startConversationLiveRoomActivity(this,channelName,uid,token,isRoomCreatedByUser,roomId)
     }
 
     private fun showApiCallErrorToast(error: String) {
@@ -283,7 +277,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
         dialogView.findViewById<MaterialTextView>(R.id.create_room).setOnClickListener {
             topic = dialogView.findViewById<EditText>(R.id.label_field).text.toString()
-            viewModel.createRoom(topic)
+            viewModel.createRoom(topic,false)
             alertDialog.dismiss()
         }
 

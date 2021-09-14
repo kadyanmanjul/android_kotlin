@@ -6,19 +6,62 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/conversation_room_color"
-        tools:context=".conversationRoom.roomsListing.ConversationRoomListingActivity">
+        android:background="@color/conversation_room_color">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/progress_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="@dimen/_5sdp"
+            android:padding="@dimen/_7sdp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:progressDrawable="@drawable/progress_background"
+                android:progressTint="@color/button_color"
+                android:secondaryProgress="0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:max="100"
+                tools:progress="40" />
+
+            <TextView
+                android:id="@+id/minutes_spoken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6 / 20 minutes"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_16sdp"
             android:paddingBottom="@dimen/_60sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progress_container"
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -31,11 +74,11 @@
             android:textColor="@color/pure_black"
             android:textSize="@dimen/_12sdp"
             android:visibility="gone"
-            app:layout_constraintWidth_percent="0.5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.5"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -47,31 +90,66 @@
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_room_listing_bottom_bg" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/create_room"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_40sdp"
-            android:backgroundTint="@color/colorPrimary"
-            android:drawableLeft="@drawable/create_room_plus"
-            android:drawablePadding="@dimen/_7sdp"
-            android:gravity="center"
-            android:paddingVertical="@dimen/_7sdp"
-            android:paddingLeft="@dimen/_17sdp"
-            android:paddingEnd="@dimen/_12sdp"
-            android:text="@string/start_a_room"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_16ssp"
-            app:cornerRadius="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:rippleColor="@color/white" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/create_room"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:backgroundTint="@color/colorPrimary"
+                android:drawableLeft="@drawable/create_room_plus"
+                android:drawablePadding="@dimen/_16sdp"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_9sdp"
+                android:paddingLeft="@dimen/_23sdp"
+                android:paddingRight="@dimen/_20sdp"
+                android:text="@string/start_a_conversation"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13ssp"
+                android:visibility="visible"
+                app:cornerRadius="@dimen/_16sdp"
+                app:layout_constraintBottom_toTopOf="@id/continue_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.75"
+                app:rippleColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/continue_btn"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
+                android:paddingVertical="@dimen/_9sdp"
+                android:text="@string/continue_label"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13ssp"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.75"
+                app:rippleColor="@color/white"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <com.joshtalks.joshskills.conversationRoom.notification.NotificationView
             android:id="@+id/notification_bar"
@@ -79,7 +157,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progress_container"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.network
 
+import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomDetailsResponse
 import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomResponse
 import com.joshtalks.joshskills.conversationRoom.model.ConversionLiveRoomExitResponse
 import com.joshtalks.joshskills.conversationRoom.model.CreateConversionRoomRequest
@@ -8,7 +9,9 @@ import com.joshtalks.joshskills.conversationRoom.model.EnterExitConversionRoomRe
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 const val DIR = "api/skill/v1"
 
@@ -33,4 +36,7 @@ interface ConversationRoomsNetworkService {
     @POST("$DIR/conversation_room/exit/")
     suspend fun exitConversationRoom(@Body enterExitConversionRoomRequest: EnterExitConversionRoomRequest)
             : Response<EnterExitConversationRoom>
+
+    @GET("$DIR/conversation_room/conversation_question/{id}/")
+    suspend fun getConvoRoomQuestionDetails(@Path("id") id: Int) : Response<ConversationRoomDetailsResponse>
 }

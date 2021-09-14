@@ -117,7 +117,7 @@
             app:cardElevation="0dp"
             app:contentPaddingBottom="@dimen/_2sdp"
             app:contentPaddingLeft="@dimen/_7sdp"
-            app:contentPaddingRight="@dimen/_7sdp"
+            app:contentPaddingRight="@dimen/_2sdp"
             app:contentPaddingTop="@dimen/_5sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/p2p_container"

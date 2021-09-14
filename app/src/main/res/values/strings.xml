@@ -513,6 +513,7 @@
     <string name="answer">Answer</string>
     <string name="call_back">CALL BACK</string>
     <string name="finding_practise_partner">Finding a Practice Partner</string>
+    <string name="finding_conversation_partner">Finding Conversation Partners</string>
     <string name="found_practise_partner">Practice Partner found Connecting Call</string>
     <string name="rating">Rating</string>
     <string name="rate_your_practise_partner">Rate Your  Practice Partner</string>
@@ -688,6 +689,7 @@
     <string name="preview">Preview</string>
     <string name="password">Password</string>
     <string name="join">Join</string>
+    <string name="join_conversation">Join Conversation</string>
     <string name="joining">Joining</string>
     <string name="incorrect">Incorrect</string>
     <string name="scale_type_not_supported">ScaleType %1$s not supported.</string>
@@ -846,6 +848,8 @@
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
+    <string name="convo_notification_title">%1s has started a conversation about %1s</string>
+    <string name="room_title">Join Conversation Room title</string>
     <string name="p2p_subtitle">Speaking Practice</string>
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
@@ -898,6 +902,7 @@
     <string name="let_s_go">Let’s Go</string>
     <string name="set_topic">Set Topic</string>
     <string name="start_a_room">Start a room</string>
+    <string name="start_a_conversation">Start a conversation</string>
     <string name="view_full_profile">View full profile</string>
     <string name="move_to_audience">Move to audience</string>
     <string name="move_to_speaker">Move to speaker</string>
@@ -929,6 +934,7 @@
 
     <!--    Lesson Spotlight-->
     <string name="label_lesson_spotlight">हर Lesson में चार भाग होते है</string>
+    <string name="label_convo_room_spotlight">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है </string>
     <string name="label_grammar_spotlight">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
     <string name="label_speaking_spotlight">एस भाग में आपको एक प्रैक्टिस पार्टनर के साथ 2 मिनट के लिए अंग्रेजी में बात करनी है</string>
     <string name="label_speaking_spotlight_2"> To complete this section you have to speak to a practice partner for 2 minutes</string>
@@ -939,5 +945,7 @@
     <!-- Convo room strings -->
     <string name="no_room_text">👋 Hi there! \n \n Start a new room to get a conversation going!</string>
     <string name="no_room_text_tooltip">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है</string>
+    <string name="convo_room_minutes_spoken">%1$d/%2$d minutes</string>
+
 
 </resources>

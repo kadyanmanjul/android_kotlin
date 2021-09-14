@@ -113,7 +113,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (!PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)) {
             conversation_room_launcher.visibility = GONE
         } else {
-            conversation_room_launcher.visibility = VISIBLE
+            conversation_room_launcher.visibility = GONE
         }
         conversation_room_launcher.apply {
             clipToOutline = true
@@ -171,7 +171,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
         when (PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)) {
-            true -> popupMenu?.menu?.findItem(R.id.menu_conversation_room)?.isVisible = true
+            true -> popupMenu?.menu?.findItem(R.id.menu_conversation_room)?.isVisible = false
             false -> popupMenu?.menu?.findItem(R.id.menu_conversation_room)?.isVisible = false
         }
 

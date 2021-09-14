@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
+import android.app.Activity
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
@@ -17,6 +19,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
@@ -30,6 +33,9 @@ import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBot
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.RaisedHandsBottomSheet
 import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
@@ -62,8 +68,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var roomReference: DocumentReference? = null
     var usersReference: CollectionReference? = null
     private var mBoundService: WebRtcService? = null
-
+    var isActivityOpenFromNotification: Boolean = false
     var roomId: Int? = null
+    var roomQuestionId: Int? = null
     var isRoomCreatedByUser: Boolean = false
     var isRoomUserSpeaker: Boolean = false
     var speakerAdapter: SpeakerAdapter? = null
@@ -90,6 +97,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
     var isBackPressed: Boolean = false
+    private val notebookRef = FirebaseFirestore.getInstance().collection("conversation_rooms")
+    private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +112,18 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        getIntentExtras()
+        isActivityOpenFromNotification =
+            intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
+        if (isActivityOpenFromNotification) {
+            getIntentExtras(intent)
+            addObservers()
+        } else {
+            getIntentExtras()
+            initData()
+        }
+    }
+
+    private fun initData() {
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
         roomReference = liveRoomReference.document(roomId.toString())
@@ -113,17 +133,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         updateUI()
         setNotificationStates()
         leaveRoomIfModeratorEndRoom()
-
         clickListener()
         switchRoles()
         speakerAdapter?.startListening()
         listenerAdapter?.startListening()
-        takePermissions()
+        if (isActivityOpenFromNotification.not())
+            takePermissions()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val newChannelName = intent?.getStringExtra("CHANNEL_NAME")
+        isActivityOpenFromNotification =
+            intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
+        if (isActivityOpenFromNotification) {
+            getIntentExtras(intent)
+        }
+        val newChannelName = intent?.getStringExtra(CHANNEL_NAME)
         Log.d("ABC", "onNewIntent old: $channelName new: $newChannelName")
         if (newChannelName != null && newChannelName != channelName) {
             Log.d(
@@ -137,6 +162,79 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
     }
 
+    private fun addObservers() {
+        showProgressBar()
+        viewModel.navigation.observe(this, {
+            when (it) {
+                is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
+                is ConversationRoomListingNavigation.OpenConversationLiveRoom -> setValues(
+                    it.channelName,
+                    it.uid,
+                    it.token,
+                    it.isRoomCreatedByUser,
+                    it.roomId
+                )
+                else -> {
+                    hideProgressBar()
+                }
+            }
+        })
+    }
+
+    private fun setValues(
+        channelName: String?,
+        uid: Int?,
+        token: String?,
+        roomCreatedByUser: Boolean,
+        roomId: Int?
+    ) {
+        this.channelName = channelName
+        this.agoraUid = uid
+        this.token = token
+        this.roomId = roomId
+        this.roomQuestionId = null
+        this.isRoomCreatedByUser = roomCreatedByUser
+        initData()
+        hideProgressBar()
+    }
+
+    private fun showApiCallErrorToast(error: String) {
+        hideProgressBar()
+        if (error.isNotEmpty()) {
+            binding.notificationBar.apply {
+                visibility = View.VISIBLE
+                hideActionLayout()
+                setHeading(error)
+                setBackgroundColor(false)
+                loadAnimationSlideDown()
+                startSound()
+                hideNotificationAfter4seconds()
+            }
+        } else {
+            Toast.makeText(this, "Something Went Wrong !!!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getIntentExtras(intent: Intent?) {
+        roomId = intent?.getIntExtra(ROOM_ID, 0)
+        if (isActivityOpenFromNotification && roomId != null) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                notebookRef.document(roomId.toString()).get().addOnSuccessListener {
+                    viewModel.joinRoom(
+                        ConversationRoomsListingItem(
+                            it["channel_name"]?.toString() ?: "",
+                            it["topic"]?.toString(),
+                            it["started_by"]?.toString()?.toInt(),
+                            roomId!!,
+                            null
+                        )
+                    )
+                }
+            }, 200)
+        }
+    }
+
+
     private fun callWebRtcService() {
         val intent = Intent(AppObjectController.joshApplication, WebRtcService::class.java)
         intent.action = ConversationRoomJoin().action
@@ -149,6 +247,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         WebRtcService.moderatorUid = moderatorUid
         WebRtcService.agoraUid = agoraUid
         WebRtcService.roomId = roomId?.toString()
+        WebRtcService.roomQuestionId = roomQuestionId
         WebRtcService.isRoomCreatedByUser = if (moderatorUid != null) {
             moderatorUid == agoraUid
         } else isRoomCreatedByUser
@@ -200,11 +299,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun getIntentExtras() {
-        channelName = intent?.getStringExtra("CHANNEL_NAME")
-        agoraUid = intent?.getIntExtra("UID", 0)
-        token = intent?.getStringExtra("TOKEN")
-        roomId = intent?.getIntExtra("ROOM_ID", 0)
-        isRoomCreatedByUser = intent.getBooleanExtra("IS_ROOM_CREATED_BY_USER", false)
+        channelName = intent?.getStringExtra(CHANNEL_NAME)
+        agoraUid = intent?.getIntExtra(UID, 0)
+        token = intent?.getStringExtra(TOKEN)
+        roomId = intent?.getIntExtra(ROOM_ID, 0)
+        roomQuestionId = intent?.getIntExtra(ROOM_QUESTION_ID, -1)
+        isRoomCreatedByUser = intent.getBooleanExtra(IS_ROOM_CREATED_BY_USER, false)
     }
 
     private fun updateUI() {
@@ -249,7 +349,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
                 showEndRoomPopup()
             } else {
-                mBoundService?.leaveRoom(roomId?.toString())
+                mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
             }
         }
 
@@ -774,6 +874,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                 setNotificationWithoutAction("Something Went Wrong", false)
                             }
                     }
+
                     override fun onDismiss() {
                         isBottomSheetVisible = false
                     }
@@ -813,7 +914,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
-            mBoundService?.endRoom(roomId?.toString())
+            mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
             alertDialog.dismiss()
             finish()
         }
@@ -851,7 +952,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
             showEndRoomPopup()
         } else {
-            mBoundService?.leaveRoom(roomId?.toString())
+            mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
             super.onBackPressed()
         }
     }
@@ -861,11 +962,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         listenerAdapter?.stopListening()
         if (!isBackPressed) {
             if (isRoomCreatedByUser) {
-                mBoundService?.endRoom(roomId?.toString())
-                Log.d("ABC", " ACTIVITY OnDestroy endRoom")
+                mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
             } else {
-                mBoundService?.leaveRoom(roomId?.toString())
-                Log.d("ABC", " ACTIVITY OnDestroy leaveRoom")
+                mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
             }
         }
         binding.notificationBar.destroyMediaPlayer()
@@ -922,5 +1021,77 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 }
         }
         binding.notificationBar.loadAnimationSlideUp()
+    }
+
+    companion object {
+        const val CHANNEL_NAME = "channel_name"
+        const val UID = "uid"
+        const val TOKEN = "TOKEN"
+        const val IS_ROOM_CREATED_BY_USER = "is_room_created_by_user"
+        const val ROOM_ID = "room_id"
+        const val OPEN_FROM_NOTIFICATION = "open_from_notification"
+        const val ROOM_QUESTION_ID = "room_question_id"
+
+        fun startConversationLiveRoomActivity(
+            activity: Activity,
+            channelName: String?,
+            uid: Int?,
+            token: String?,
+            isRoomCreatedByUser: Boolean,
+            roomId: Int?,
+            roomQuestionId: Int? = null,
+            flags: Array<Int> = arrayOf(),
+
+            ) {
+            Intent(activity, ConversationLiveRoomActivity::class.java).apply {
+                putExtra(CHANNEL_NAME, channelName)
+                putExtra(UID, uid)
+                putExtra(TOKEN, token)
+                putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
+                putExtra(ROOM_ID, roomId)
+                putExtra(ROOM_QUESTION_ID, roomQuestionId)
+
+                flags.forEach { flag ->
+                    this.addFlags(flag)
+                }
+            }.run {
+                activity.startActivity(this)
+            }
+        }
+
+        fun getIntent(
+            context: Context,
+            channelName: String?,
+            uid: Int?,
+            token: String?,
+            isRoomCreatedByUser: Boolean,
+            roomId: Int?,
+            roomQuestionId: Int? = null,
+            flags: Array<Int> = arrayOf()
+        ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
+
+            putExtra(CHANNEL_NAME, channelName)
+            putExtra(UID, uid)
+            putExtra(TOKEN, token)
+            putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
+            putExtra(ROOM_ID, roomId)
+            putExtra(ROOM_QUESTION_ID, roomQuestionId)
+            flags.forEach { flag ->
+                this.addFlags(flag)
+            }
+        }
+
+        fun getIntentForNotification(
+            context: Context,
+            roomId: String,
+            flags: Array<Int> = arrayOf()
+        ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
+
+            putExtra(OPEN_FROM_NOTIFICATION, true)
+            putExtra(ROOM_ID, roomId.toInt())
+            flags.forEach { flag ->
+                this.addFlags(flag)
+            }
+        }
     }
 }

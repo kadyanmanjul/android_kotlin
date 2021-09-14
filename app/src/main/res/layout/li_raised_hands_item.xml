@@ -31,7 +31,7 @@
             app:layout_constraintBottom_toBottomOf="@id/user_photo"
             app:layout_constraintStart_toEndOf="@id/user_photo"
             app:layout_constraintTop_toTopOf="@id/user_photo"
-            tools:text="Harsh Gupta" />
+            tools:text="s fsr " />
 
         <ImageView
             android:id="@+id/add_to_speaker"

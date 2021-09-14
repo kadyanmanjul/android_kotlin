@@ -25,6 +25,7 @@ import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -39,7 +40,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
+import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.ApiRespStatus
@@ -438,6 +439,35 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     )
                 ) {
                     callForceDisconnect()
+                }
+                return null
+            }
+            NotificationAction.JOIN_CONVERSATION_ROOM -> {
+                Log.d(
+                    FirebaseNotificationService.javaClass.name,
+                    "getIntentAccordingAction() called with: IS_CONVERSATION_ROOM_ACTIVE  ${PrefManager.getBoolValue(
+                                IS_CONVERSATION_ROOM_ACTIVE
+                            )} "
+                )
+                //if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+                if ( true) {
+                    /*actionData?.let { roomId->
+                        return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
+                            roomId
+                        )
+                    }*/
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
+                            putExtra(ConfigKey.ROOM_ID,actionData.toString())
+                        }
+                        startForegroundService(intent)
+                    } else {
+                        ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
+                            actionData!!
+                        )
+                    }
+                    return null
                 }
                 return null
             }
@@ -1200,11 +1230,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                     null
                 }
-                NotificationAction.JOIN_CONVERSATION_ROOM ->{
-                    val intent = Intent(AppObjectController.joshApplication, ConversationRoomListingActivity::class.java)
-                    intent.putExtra("open_from_notification", true)
-                    intent.putExtra("room_id", actionData)
-                    return intent
+                NotificationAction.JOIN_CONVERSATION_ROOM -> {
+
+                    if (actionData!=null){
+                        ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
+                            actionData
+                        )
+                    }
+                    null
                 }
                 else -> {
                     null

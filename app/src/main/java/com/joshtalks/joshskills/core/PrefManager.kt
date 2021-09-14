@@ -97,6 +97,7 @@ const val LESSON_COMPLETE_SNACKBAR_TEXT_STRING = "lesson_complete_snackbar_text_
 const val HAS_SEEN_LEADERBOARD_ANIMATION = "joshskills_has_seen_leaderboard_animation"
 const val HAS_SEEN_LESSON_SPOTLIGHT = "joshskills_has_seen_lesson_spotlight"
 const val HAS_SEEN_SPEAKING_SPOTLIGHT = "joshskills_has_seen_speaking_spotlight"
+const val HAS_SEEN_CONVO_ROOM_SPOTLIGHT = "joshskills_has_seen_convo_room_spotlight"
 
 object PrefManager {
 

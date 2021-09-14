@@ -617,6 +617,7 @@ enum class CHAT_TYPE(val type: String) {
     VP("VP"), // Vocabulary Practice
     RP("RP"), // Reading Practice
     SP("SP"), // Speaking Practice
+    CR("CR"), // Conversation room Practice
     OTHER("OTHER"),
     SOTD("SOTD"), // Student Of The Day
     SOTW("SOTW"), // Student Of The Week

@@ -141,7 +141,7 @@
                 android:elevation="@dimen/_8sdp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="0 Points"
+                android:text="10 Points"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"

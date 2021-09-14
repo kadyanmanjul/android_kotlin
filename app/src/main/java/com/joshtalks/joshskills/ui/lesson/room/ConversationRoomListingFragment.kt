@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.room
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -18,6 +19,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
@@ -34,23 +36,22 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
+import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
-import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.ROOM_POSITION
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isConversionRoomActive
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isRoomCreatedByUser
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-
-
-
-
 
 class ConversationRoomListingFragment : CoreJoshFragment(),
     ConversationRoomListAction {
@@ -59,6 +60,14 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     private val notebookRef = db.collection("conversation_rooms")
     private var conversationRoomsListingAdapter: ConversationRoomsListingAdapter? = null
     lateinit var viewModel: ConversationRoomListingViewModel
+    var lessonActivityListener: LessonActivityListener? = null
+
+    private val lessonViewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+    }
+    private var questionId: String? = null
+    private var conversationRoomQuestionId: Int? = null
+
     lateinit var binding: ActivityConversationsRoomsListingBinding
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
@@ -75,15 +84,23 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         fun getInstance() = ConversationRoomListingFragment()
     }
 
-   /* override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        getIntentExtras(intent)
-        openConversationRoomByNotificationIntent()
-    }*/
+    /* override fun onNewIntent(intent: Intent?) {
+         super.onNewIntent(intent)
+         getIntentExtras(intent)
+         openConversationRoomByNotificationIntent()
+     }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is LessonActivityListener) {
+            lessonActivityListener = context
+            lessonActivityListener = null
+        }
     }
 
     override fun onCreateView(
@@ -116,6 +133,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     private fun addObservers() {
 
         viewModel.navigation.observe(viewLifecycleOwner, {
+            FullScreenProgressDialog.hideProgressBar(requireActivity())
             when (it) {
                 is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
                 is ConversationRoomListingNavigation.OpenConversationLiveRoom -> openConversationLiveRoom(
@@ -129,6 +147,40 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
             }
         })
+
+
+        viewModel.roomDetailsLivedata.observe(viewLifecycleOwner, { response ->
+            if (response.alreadyConversed != null && response.alreadyConversed > 1) {
+                binding.progressContainer.visibility = View.VISIBLE
+                binding.progressBar.max = response.duration!!
+                binding.progressBar.progress = response.alreadyConversed
+                binding.minutesSpoken.text = getString(
+                    R.string.convo_room_minutes_spoken,
+                    response.alreadyConversed,
+                    response.duration!!
+                )
+            }
+            if (response.alreadyConversed != null && (response.alreadyConversed >= response.duration!!)) {
+                binding.continueBtn.visibility = View.VISIBLE
+                lessonActivityListener?.onQuestionStatusUpdate(
+                    QUESTION_STATUS.AT,
+                    questionId
+                )
+                lessonActivityListener?.onSectionStatusUpdate(ROOM_POSITION, true)
+            }
+        })
+
+        lessonViewModel.lessonQuestionsLiveData.observe(
+            viewLifecycleOwner,
+            {
+                val crQuestion = it.filter { it.chatType == CHAT_TYPE.CR }.getOrNull(0)
+                questionId = crQuestion?.id
+
+                crQuestion?.conversation_question_id?.let {
+                    this.conversationRoomQuestionId = it
+                }
+            }
+        )
     }
 
     private fun initViews() {
@@ -144,6 +196,12 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 clipToOutline = true
                 setOnSingleClickListener {
                     showPopup()
+                }
+            }
+            continueBtn.apply {
+                clipToOutline = true
+                setOnSingleClickListener {
+                    lessonActivityListener?.onNextTabCall(ROOM_POSITION)
                 }
             }
         }
@@ -192,7 +250,8 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                             it["channel_name"]?.toString() ?: "",
                             it["topic"]?.toString(),
                             it["started_by"]?.toString()?.toInt(),
-                            roomId.toInt()
+                            roomId.toInt(),
+                            conversationRoomQuestionId
                         )
                     )
                 }
@@ -204,15 +263,6 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         val intent = Intent(requireActivity(), WebRtcService::class.java)
         isConversionRoomActive = true
         requireActivity().startService(intent)
-    }
-
-    fun goToProfile() {
-        UserProfileActivity.startUserProfileActivity(
-            requireActivity(), Mentor.getInstance().getId(),
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null, USER_PROFILE_FLOW_FROM.AWARD.value,
-            conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
-        )
     }
 
     override fun onResume() {
@@ -227,7 +277,10 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
                     internetAvailableFlag = connectivity.available()
-                    Log.d("ABC", "internetAvailableFlag: $internetAvailableFlag ${connectivity.available()}")
+                    Log.d(
+                        "ABC",
+                        "internetAvailableFlag: $internetAvailableFlag ${connectivity.available()}"
+                    )
                     if (internetAvailableFlag) {
                         internetAvailable()
                     } else {
@@ -235,6 +288,9 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                     }
                 }
         )
+        conversationRoomQuestionId?.let {
+            viewModel.getConvoRoomDetails(it)
+        }
     }
 
     private fun internetNotAvailable() {
@@ -265,13 +321,28 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
-        val intent = Intent(requireActivity(), ConversationLiveRoomActivity::class.java)
-        intent.putExtra("CHANNEL_NAME", channelName)
-        intent.putExtra("UID", uid)
-        intent.putExtra("TOKEN", token)
-        intent.putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
-        intent.putExtra("ROOM_ID", roomId)
-        startActivity(intent)
+        if (isRoomCreatedByUser) {
+            SearchingRoomPartnerActivity.startUserForPractiseOnPhoneActivity(
+                requireActivity(),
+                channelName,
+                uid,
+                token,
+                isRoomCreatedByUser,
+                roomId,
+                conversationRoomQuestionId
+            )
+        } else {
+            ConversationLiveRoomActivity.startConversationLiveRoomActivity(
+                requireActivity(),
+                channelName,
+                uid,
+                token,
+                isRoomCreatedByUser,
+                roomId,
+                conversationRoomQuestionId
+            )
+
+        }
     }
 
     private fun showApiCallErrorToast(error: String) {
@@ -318,7 +389,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
 
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.show()
-        alertDialog.window?.let { window->
+        alertDialog.window?.let { window ->
             val width = AppObjectController.screenWidth * .91
             val height = ViewGroup.LayoutParams.WRAP_CONTENT
             val wlp: WindowManager.LayoutParams = window.getAttributes()
@@ -330,22 +401,26 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         }
 
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
-            showRoomPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
-            alertDialog.dismiss()
+            if (dialogView.findViewById<EditText>(R.id.label_field).text.toString().isNotBlank()){
+                showRoomPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
+                alertDialog.dismiss()
+            } else {
+                showToast("Please enter Topic name")
+            }
         }
     }
 
-    private fun showRoomPopup(topic:String) {
+    private fun showRoomPopup(topic: String) {
         var topic = topic
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.alert_room_picker, null)
         dialogBuilder.setView(dialogView)
-        var isP2Pselected=true
+        var isP2Pselected = true
 
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.show()
-        alertDialog.window?.let { window->
+        alertDialog.window?.let { window ->
             val width = AppObjectController.screenWidth * .91
             val height = ViewGroup.LayoutParams.WRAP_CONTENT
             val wlp: WindowManager.LayoutParams = window.getAttributes()
@@ -355,21 +430,30 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
 
+        if (viewModel.roomDetailsLivedata.value?.is_favourite_practice_partner_available == true) {
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).visibility = View.VISIBLE
+        } else {
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).visibility = View.GONE
+        }
+
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
-            viewModel.createRoom(topic)
+            FullScreenProgressDialog.showProgressBar(requireActivity())
+            viewModel.createRoom(topic, isP2Pselected.not(), conversationRoomQuestionId)
             alertDialog.dismiss()
         }
         dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setOnClickListener {
             dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setCardBackgroundColor(
                 ContextCompat.getColor(
-                requireContext(),
-                R.color.artboard_color
-            ))
+                    requireContext(),
+                    R.color.artboard_color
+                )
+            )
             dialogView.findViewById<MaterialCardView>(R.id.favt_container).setCardBackgroundColor(
                 ContextCompat.getColor(
-                requireContext(),
-                R.color.white
-            ))
+                    requireContext(),
+                    R.color.white
+                )
+            )
             isP2Pselected = true
         }
         dialogView.findViewById<MaterialCardView>(R.id.favt_container).setOnClickListener {
@@ -377,12 +461,14 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.white
-                ))
+                )
+            )
             dialogView.findViewById<MaterialCardView>(R.id.favt_container).setCardBackgroundColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.artboard_color
-                ))
+                )
+            )
             isP2Pselected = false
         }
     }
@@ -435,6 +521,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     }
 
     override fun onRoomClick(item: ConversationRoomsListingItem) {
+        item.conversationRoomQuestionId = conversationRoomQuestionId
         viewModel.joinRoom(item)
     }
 }

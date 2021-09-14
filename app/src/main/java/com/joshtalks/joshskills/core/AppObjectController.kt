@@ -104,9 +104,9 @@ const val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
 const val KEY_APP_ACCEPT_LANGUAGE = "Accept-Language"
 
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
-private const val READ_TIMEOUT = 30L
-private const val WRITE_TIMEOUT = 30L
-private const val CONNECTION_TIMEOUT = 30L
+private const val READ_TIMEOUT = 60L
+private const val WRITE_TIMEOUT = 60L
+private const val CONNECTION_TIMEOUT = 60L
 private const val CALL_TIMEOUT = 60L
 
 class AppObjectController {
