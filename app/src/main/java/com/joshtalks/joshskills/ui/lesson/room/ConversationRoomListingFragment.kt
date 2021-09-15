@@ -25,6 +25,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
@@ -34,6 +35,7 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsL
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
@@ -74,6 +76,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     private var isBackPressed: Boolean = false
     var isActivityOpenFromNotification: Boolean = false
     var roomId: String = ""
+    var lastRoomId: String? = null
     var handler: Handler? = null
     var runnable: Runnable? = null
 
@@ -93,6 +96,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
     }
 
     override fun onAttach(context: Context) {
@@ -170,6 +174,12 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             }
         })
 
+        viewModel.points.observe(viewLifecycleOwner, { pointsString ->
+            if (pointsString.isNotBlank()){
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
+            }
+        })
+
         lessonViewModel.lessonQuestionsLiveData.observe(
             viewLifecycleOwner,
             {
@@ -243,6 +253,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
 
     private fun openConversationRoomByNotificationIntent() {
         if (isActivityOpenFromNotification && roomId.isNotEmpty()) {
+            lastRoomId=roomId
             Handler(Looper.getMainLooper()).postDelayed({
                 notebookRef.document(roomId).get().addOnSuccessListener {
                     viewModel.joinRoom(
@@ -271,6 +282,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     }
 
     private fun observeNetwork() {
+
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(AppObjectController.joshApplication)
                 .subscribeOn(Schedulers.io())
@@ -290,6 +302,8 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         )
         conversationRoomQuestionId?.let {
             viewModel.getConvoRoomDetails(it)
+            viewModel.getPointsForConversationRoom(lastRoomId,it)
+            PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
         }
     }
 
@@ -321,6 +335,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
+        lastRoomId=roomId.toString()
         if (isRoomCreatedByUser) {
             SearchingRoomPartnerActivity.startUserForPractiseOnPhoneActivity(
                 requireActivity(),

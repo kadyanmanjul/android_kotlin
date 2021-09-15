@@ -16,11 +16,13 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ConversationRoomListingViewModel : ViewModel() {
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
     val roomDetailsLivedata = MutableLiveData<ConversationRoomDetailsResponse>()
+    val points = MutableLiveData<String>()
 
     fun joinRoom(item: ConversationRoomsListingItem) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -130,6 +132,22 @@ class ConversationRoomListingViewModel : ViewModel() {
 
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun getPointsForConversationRoom(roomId: String?, conversationQuestionId: Int?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(200)
+            try {
+                val response =
+                    AppObjectController.chatNetworkService.getSnackBarText(roomId = roomId,conversationQuestionId = conversationQuestionId.toString())
+                if (response.pointsList?.get(0)?.isNotBlank()== true) {
+                    points.postValue(response.pointsList.get(0))
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

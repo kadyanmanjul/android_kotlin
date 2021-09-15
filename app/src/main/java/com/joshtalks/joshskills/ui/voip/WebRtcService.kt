@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.IS_FOREGROUND
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
@@ -631,6 +632,7 @@ class WebRtcService : BaseWebRtcService() {
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             Log.d("ABC", "end room api call ${response.code()}")
             if (response.isSuccessful) {
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
                 removeNotifications()
                 conversationRoomChannelName = null
                 mRtcEngine?.leaveChannel()
@@ -650,6 +652,7 @@ class WebRtcService : BaseWebRtcService() {
                     )
                 Log.d("ABC", "leave room api call")
                 if (response.isSuccessful) {
+                    PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
                     removeNotifications()
                     conversationRoomChannelName = null
                     mRtcEngine?.leaveChannel()
