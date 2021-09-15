@@ -9,10 +9,12 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
@@ -21,7 +23,8 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivitySearchingRoomUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import io.reactivex.Observable
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -102,7 +105,6 @@ class SearchingRoomPartnerActivity : BaseActivity() {
             finish()
         }
         initView()
-        addReceiverTimeout()
         addObserver()
         startProgressBarCountDown()
     }
@@ -144,6 +146,12 @@ class SearchingRoomPartnerActivity : BaseActivity() {
                     }
                 }
         }, 200)
+
+        viewModel.isRoomEnded.observe(this, Observer {
+            if (it == true ){
+                finish()
+            }
+        })
 
     }
 
@@ -188,18 +196,40 @@ class SearchingRoomPartnerActivity : BaseActivity() {
         animation.start()
     }
 
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        addReceiverTimeout()
+    }
+
     private fun addReceiverTimeout() {
         compositeDisposable.add(
-            Observable.interval(2, TimeUnit.MINUTES, Schedulers.computation())
-                .timeInterval()
-                .subscribe(
-                    {
-                        viewModel.endRoom(roomId.toString(),roomQuestionId)
-                    },
-                    {
-                        it.printStackTrace()
-                    }
-                )
+            Completable.complete()
+                .delay(5, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete {
+                    Log.d("Manjul", "addReceiverTimeout() completed")
+                    viewModel.endRoom(roomId.toString(), roomQuestionId)
+                    //finish()
+                }
+                .doOnError {
+                    Log.d("Manjul", "addReceiverTimeout() doOnError called ${it.printStackTrace()}")
+                }
+                .subscribe()
+        )
+
+        compositeDisposable.add(
+            Completable.timer(5,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .doOnComplete {
+                    Log.d("Manjul", "addReceiverTimeout() Timer")
+                }
+                .subscribe()
         )
     }
 

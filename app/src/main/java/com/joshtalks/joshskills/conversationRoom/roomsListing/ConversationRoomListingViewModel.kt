@@ -26,6 +26,7 @@ class ConversationRoomListingViewModel : ViewModel() {
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
     val roomDetailsLivedata = MutableLiveData<ConversationRoomDetailsResponse>()
     val points = MutableLiveData<String>()
+    val isRoomEnded = MutableLiveData<Boolean>(false)
 
     fun joinRoom(item: ConversationRoomsListingItem) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -162,6 +163,7 @@ class ConversationRoomListingViewModel : ViewModel() {
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             if (response.isSuccessful) {
+                isRoomEnded.postValue(true)
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
             }
         }
