@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -290,4 +291,21 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     override fun onClick(inboxEntity: InboxEntity) {
         ConversationActivity.startConversionActivity(this, inboxEntity)
     }
+
+    companion object {
+
+        fun startInboxActivity(activity: Activity, hasNotification: Boolean = false) {
+            Intent(activity, InboxActivity::class.java).apply {
+                if (hasNotification) {
+                    putExtra(HAS_NOTIFICATION, hasNotification)
+                }
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }.run {
+                activity.startActivity(this)
+            }
+        }
+
+    }
+
 }

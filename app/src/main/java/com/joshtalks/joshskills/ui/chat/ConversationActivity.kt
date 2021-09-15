@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.core.extension.*
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
@@ -58,6 +59,7 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -160,6 +162,7 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
+    var hasNotification = false
 
     private var currentTooltipIndex = 0
     private val leaderboardTooltipList by lazy {
@@ -212,6 +215,9 @@ class ConversationActivity :
             intent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
                 scrollToPosition(this, animation = true)
             }
+        }
+        if (intent.hasExtra(HAS_NOTIFICATION)) {
+            hasNotification = intent.getBooleanExtra(HAS_NOTIFICATION, false)
         }
         conversationViewModel = ViewModelProvider(
             this, ConversationViewModelFactory(this, this.application, inboxEntity)
@@ -1623,6 +1629,9 @@ class ConversationActivity :
         } else {
             val resultIntent = Intent()
             setResult(Activity.RESULT_OK, resultIntent)
+            if (hasNotification) {
+                InboxActivity.startInboxActivity(this)
+            }
             this@ConversationActivity.finishAndRemoveTask()
         }
     }

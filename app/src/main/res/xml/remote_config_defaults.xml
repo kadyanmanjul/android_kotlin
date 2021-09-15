@@ -134,6 +134,18 @@
         <value>true</value>
     </entry>
     <entry>
+        <key>IS_OPEN_LESSON_NOTIFICATION_CRASH</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>IS_OPEN_SPEAKING_SECTION_NOTIFICATION_CRASH</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>IS_OPEN_PAYMENT_PAGE_NOTIFICATION_CRASH</key>
+        <value>true</value>
+    </entry>
+    <entry>
         <key>start_7_day_trial</key>
         <value>Start 7-Day Free Trial</value>
     </entry>

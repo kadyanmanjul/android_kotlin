@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.local.model
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 
 class NotificationObject {
 
@@ -18,9 +19,15 @@ class NotificationObject {
 
     @SerializedName("content_title")
     var contentTitle: String? = ""
+        get() {
+            return field?.replace("_username_", User.getInstance().firstName ?: EMPTY)
+        }
 
     @SerializedName("content_text")
     var contentText: String? = ""
+        get() {
+            return field?.replace("_username_", User.getInstance().firstName ?: EMPTY)
+        }
 
     @SerializedName("is_delivered")
     var isDelivered: Boolean = false
@@ -74,6 +81,15 @@ enum class NotificationAction(val type: String) {
 
     @SerializedName("open_conversation")
     ACTION_OPEN_CONVERSATION("open_conversation"),
+
+    @SerializedName("OPEN_LESSON")
+    ACTION_OPEN_LESSON("OPEN_LESSON"),
+
+    @SerializedName("OPEN_SPEAKING_SECTION")
+    ACTION_OPEN_SPEAKING_SECTION("OPEN_SPEAKING_SECTION"),
+
+    @SerializedName("OPEN_PAYMENT_PAGE")
+    ACTION_OPEN_PAYMENT_PAGE("OPEN_PAYMENT_PAGE"),
 
     @SerializedName("course_explorer")
     ACTION_OPEN_COURSE_EXPLORER("course_explorer"),

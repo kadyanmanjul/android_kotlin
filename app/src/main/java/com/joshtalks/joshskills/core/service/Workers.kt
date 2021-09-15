@@ -50,6 +50,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -277,6 +280,7 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
         FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(
                 OnCompleteListener { task ->
+                    Timber.d("FCMToken asdf : Refreshed")
                     if (!task.isSuccessful) {
                         task.exception?.run {
                             LogException.catchException(this)
@@ -284,11 +288,31 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                         task.exception?.printStackTrace()
                         return@OnCompleteListener
                     }
-                    task.result?.run {
-                        PrefManager.put(FCM_TOKEN, this)
+                    task.result?.let {
+                        PrefManager.put(FCM_TOKEN, it)
                         val fcmResponse = FCMResponse.getInstance()
                         fcmResponse?.apiStatus = ApiRespStatus.POST
                         fcmResponse?.update()
+                        Timber.d("FCMToken asdf : Updated")
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val userId = Mentor.getInstance().getId()
+                            if (fcmResponse != null && userId.isNotBlank()) {
+                                val data =
+                                    mutableMapOf("user_id" to userId, "registration_id" to it)
+                                val resp =
+                                    AppObjectController.signUpNetworkService.patchFCMToken(
+                                        fcmResponse.id,
+                                        data.toMap()
+                                    )
+                                if (resp.isSuccessful) {
+                                    Timber.d("FCMToken asdf : Updated on Server")
+                                    fcmResponse.userId = userId
+                                    fcmResponse.apiStatus = ApiRespStatus.PATCH
+                                    fcmResponse.update()
+                                }
+                            }
+                        }
                     }
                 }
             )
@@ -367,7 +391,7 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
         AppObjectController.clearDownloadMangerCallback()
         // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
-        WorkManagerAdmin.refreshFcmToken()
+        // WorkManagerAdmin.refreshFcmToken()
         WorkManagerAdmin.syncAppCourseUsage()
         AppAnalytics.updateUser()
         return Result.success()

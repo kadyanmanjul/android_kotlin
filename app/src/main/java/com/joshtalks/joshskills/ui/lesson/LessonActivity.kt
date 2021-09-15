@@ -25,6 +25,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -35,6 +36,7 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
@@ -53,6 +55,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -81,6 +84,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     val arrayFragment = arrayListOf<Fragment>()
     var lessonIsNewGrammar = false
     var lessonNumber = -1
+    var defaultSection = -1
+    var hasNotification = false
     private var ruleIdLeftList = ArrayList<Int>()
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
@@ -128,6 +133,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             isLesssonCompleted = intent.getBooleanExtra(IS_LESSON_COMPLETED, false)
         } else {
             isLesssonCompleted = false
+        }
+
+        if (intent.hasExtra(LESSON_SECTION)) {
+            defaultSection = intent.getIntExtra(LESSON_SECTION, 0)
+        }
+
+        if (intent.hasExtra(HAS_NOTIFICATION)) {
+            hasNotification = intent.getBooleanExtra(HAS_NOTIFICATION, false)
         }
 
         whatsappUrl =
@@ -750,7 +763,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         Handler().postDelayed(
             {
-                openIncompleteTab(arrayFragment.size - 1)
+                if (defaultSection != -1) {
+                    binding.lessonViewpager.currentItem = defaultSection
+                } else {
+                    openIncompleteTab(arrayFragment.size - 1)
+                }
             },
             50
         )
@@ -930,6 +947,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         super.onNewIntent(intent)
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
+            Timber.d("ghjk12 : onNewIntentLessonId -> $lessonId")
 
             viewModel.getLesson(lessonId)
             viewModel.getQuestions(lessonId, isDemo)
@@ -948,6 +966,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
             }
             setResult(RESULT_OK, resultIntent)
+            if (hasNotification) {
+                InboxActivity.startInboxActivity(this)
+            }
             this@LessonActivity.finish()
         }
     }
@@ -962,12 +983,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
     companion object {
         const val LESSON_ID = "lesson_id"
-        private const val IS_DEMO = "is_demo"
-        private const val IS_NEW_GRAMMAR = "is_new_grammar"
-        private const val IS_LESSON_COMPLETED = "is_lesson_completed"
+        const val IS_DEMO = "is_demo"
+        const val IS_NEW_GRAMMAR = "is_new_grammar"
+        const val IS_LESSON_COMPLETED = "is_lesson_completed"
         private const val WHATSAPP_URL = "whatsapp_url"
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
+        const val LESSON_SECTION = "lesson_section"
 
         fun getActivityIntent(
             context: Context,

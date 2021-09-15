@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.ApiRespStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
@@ -53,12 +54,14 @@ import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
@@ -69,6 +72,10 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.voip.OPPOSITE_USER_UID
@@ -111,6 +118,26 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val userId = Mentor.getInstance().getId()
+            val fcmResponse = FCMResponse.getInstance()
+            fcmResponse?.apiStatus = ApiRespStatus.POST
+            fcmResponse?.update()
+            if (fcmResponse != null && userId.isNotBlank()) {
+                val data = mutableMapOf("user_id" to userId, "registration_id" to token)
+                val resp =
+                    AppObjectController.signUpNetworkService.patchFCMToken(
+                        fcmResponse.id,
+                        data.toMap()
+                    )
+                if (resp.isSuccessful) {
+                    Timber.d("FCMToken asdf : Updated on Server")
+                    fcmResponse.userId = userId
+                    fcmResponse.apiStatus = ApiRespStatus.PATCH
+                    fcmResponse.update()
+                }
+            }
         }
     }
 
@@ -311,6 +338,43 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationChannelId = action.name
                 return processChatTypeNotification(notificationObject, action, actionData)
             }
+            NotificationAction.ACTION_OPEN_LESSON -> {
+                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    return null
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    importance = NotificationManager.IMPORTANCE_HIGH
+                }
+                notificationChannelId = action.name
+                return processOpenLessonNotification(notificationObject, action, actionData)
+            }
+            NotificationAction.ACTION_OPEN_SPEAKING_SECTION -> {
+                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    return null
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    importance = NotificationManager.IMPORTANCE_HIGH
+                }
+                notificationChannelId = action.name
+                return processOpenSpeakingSectionNotification(
+                    notificationObject,
+                    action,
+                    actionData
+                )
+            }
+            NotificationAction.ACTION_OPEN_PAYMENT_PAGE -> {
+                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    return null
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    importance = NotificationManager.IMPORTANCE_HIGH
+                }
+                notificationChannelId = action.name
+                return processOpenPaymentNotification(notificationObject, action, actionData)
+            }
             NotificationAction.ACTION_OPEN_COURSE_EXPLORER -> {
                 notificationChannelId = NotificationAction.ACTION_OPEN_COURSE_EXPLORER.name
                 return Intent(applicationContext, CourseExploreActivity::class.java).apply {
@@ -416,7 +480,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                 //if (User.getInstance().isVerified) {
-                    incomingCallNotificationAction(notificationObject.actionData)
+                incomingCallNotificationAction(notificationObject.actionData)
                 //}
                 return null
             }
@@ -426,7 +490,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
                 //if (User.getInstance().isVerified) {
-                    callForceConnect(notificationObject.actionData)
+                callForceConnect(notificationObject.actionData)
                 //}
                 return null
             }
@@ -519,7 +583,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
                 try {
                     data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
                 WebRtcService.forceConnect(data)
@@ -568,7 +632,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
                 try {
                     data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
 
@@ -623,6 +687,39 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             InboxActivity::class.java
         } else {
             ConversationActivity::class.java
+        }
+    }
+
+    private fun isOpenPaymentNotificationCrash(): Class<*> {
+        val isNotificationCrash =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean("IS_OPEN_PAYMENT_PAGE_NOTIFICATION_CRASH")
+        return if (isNotificationCrash) {
+            InboxActivity::class.java
+        } else {
+            FreeTrialPaymentActivity::class.java
+        }
+    }
+
+    private fun isOpenLessonNotificationCrash(): Class<*> {
+        val isNotificationCrash =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean("IS_OPEN_LESSON_NOTIFICATION_CRASH")
+        return if (isNotificationCrash) {
+            InboxActivity::class.java
+        } else {
+            LessonActivity::class.java
+        }
+    }
+
+    private fun isOpenSpeakingSectionNotificationCrash(): Class<*> {
+        val isNotificationCrash =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean("IS_OPEN_SPEAKING_SECTION_NOTIFICATION_CRASH")
+        return if (isNotificationCrash) {
+            InboxActivity::class.java
+        } else {
+            LessonActivity::class.java
         }
     }
 
@@ -705,6 +802,98 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
         }
         return rIntnet
+    }
+
+    private fun processOpenLessonNotification(
+        notificationObject: NotificationObject?,
+        action: NotificationAction?,
+        actionData: String?
+    ): Intent {
+
+        val rIntent = Intent(applicationContext, isOpenLessonNotificationCrash()).apply {
+            val obj = JSONObject(actionData)
+            Timber.d("ghjk12 : actionData -> $obj")
+            val lessonId = obj.getInt(LessonActivity.LESSON_ID)
+            Timber.d("ghjk12 : NotifLessonId -> $lessonId")
+            putExtra(LessonActivity.LESSON_ID, lessonId)
+            putExtra(LessonActivity.IS_DEMO, false)
+            putExtra(LessonActivity.IS_NEW_GRAMMAR, obj.getBoolean(LessonActivity.IS_NEW_GRAMMAR))
+            putExtra(
+                LessonActivity.IS_LESSON_COMPLETED,
+                obj.getBoolean(LessonActivity.IS_LESSON_COMPLETED)
+            )
+            putExtra(CONVERSATION_ID, obj.getString(CONVERSATION_ID))
+            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            putExtra(ACTION_TYPE, action)
+            putExtra(HAS_NOTIFICATION, true)
+            // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+//        notificationObject?.extraData?.let {
+//            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
+//            val map: Map<String, String> = Gson().fromJson(it, mapTypeToken)
+//            if (map.containsKey(LessonActivity.LESSON_ID)) {
+//                rIntnet.putExtra(LessonActivity.LESSON_ID, map[LessonActivity.LESSON_ID] ?: EMPTY)
+//            }
+//        }
+        return rIntent
+    }
+
+    private fun processOpenSpeakingSectionNotification(
+        notificationObject: NotificationObject?,
+        action: NotificationAction?,
+        actionData: String?
+    ): Intent {
+
+        val rIntent = Intent(applicationContext, isOpenLessonNotificationCrash()).apply {
+            val obj = JSONObject(actionData)
+            putExtra(LessonActivity.LESSON_ID, obj.getInt(LessonActivity.LESSON_ID))
+            putExtra(LessonActivity.IS_DEMO, false)
+            putExtra(LessonActivity.IS_NEW_GRAMMAR, obj.getBoolean(LessonActivity.IS_NEW_GRAMMAR))
+            putExtra(
+                LessonActivity.IS_LESSON_COMPLETED,
+                obj.getBoolean(LessonActivity.IS_LESSON_COMPLETED)
+            )
+            putExtra(CONVERSATION_ID, obj.getString(CONVERSATION_ID))
+            putExtra(LessonActivity.LESSON_SECTION, SPEAKING_POSITION)
+            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            putExtra(ACTION_TYPE, action)
+            putExtra(HAS_NOTIFICATION, true)
+            // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+//        notificationObject?.extraData?.let {
+//            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
+//            val map: Map<String, String> = Gson().fromJson(it, mapTypeToken)
+//            if (map.containsKey(LessonActivity.LESSON_ID)) {
+//                rIntnet.putExtra(LessonActivity.LESSON_ID, map[LessonActivity.LESSON_ID] ?: EMPTY)
+//            }
+//        }
+        return rIntent
+    }
+
+    private fun processOpenPaymentNotification(
+        notificationObject: NotificationObject?,
+        action: NotificationAction?,
+        actionData: String?
+    ): Intent {
+
+        val rIntent = Intent(applicationContext, isOpenPaymentNotificationCrash()).apply {
+            putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, actionData)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(ACTION_TYPE, action)
+            putExtra(HAS_NOTIFICATION, true)
+            // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+//        notificationObject?.extraData?.let {
+//            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
+//            val map: Map<String, Int> = Gson().fromJson(it, mapTypeToken)
+//            if (map.containsKey(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
+//                rIntent.putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, map[PaymentSummaryActivity.TEST_ID_PAYMENT])
+//            }
+//        }
+        return rIntent
     }
 
     private fun isAppRunning(): Boolean {
@@ -1139,7 +1328,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                     //if (User.getInstance().isVerified) {
-                        incomingCallNotificationAction(notificationObject.actionData)
+                    incomingCallNotificationAction(notificationObject.actionData)
                     //}
                     null
                 }
@@ -1149,7 +1338,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
                     //if (User.getInstance().isVerified) {
-                        callForceConnect(notificationObject.actionData)
+                    callForceConnect(notificationObject.actionData)
                     //}
                     null
                 }
@@ -1201,7 +1390,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
                     try {
                         data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                    } catch (e : Exception) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                     WebRtcService.forceConnect(data)
@@ -1226,7 +1415,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
                     try {
                         data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                    } catch (e : Exception) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
 
