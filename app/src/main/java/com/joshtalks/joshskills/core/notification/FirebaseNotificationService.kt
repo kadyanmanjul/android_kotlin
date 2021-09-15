@@ -203,7 +203,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
 
-                val activityList = arrayOf(this)
+                val activityList =
+                    if (notificationObject.action == NotificationAction.ACTION_OPEN_PAYMENT_PAGE
+                        || notificationObject.action == NotificationAction.ACTION_OPEN_SPEAKING_SECTION
+                        || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
+                        || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
+                    ) {
+                        val inboxIntent =
+                            InboxActivity.getInboxIntent(this@FirebaseNotificationService)
+                        arrayOf(inboxIntent, this)
+                    } else {
+                        arrayOf(this)
+                    }
+
                 /*   val activityList = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                        arrayOf(this)
                    } else {
@@ -826,7 +838,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)
-            // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
 //        notificationObject?.extraData?.let {
@@ -859,7 +871,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)
-            // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
 //        notificationObject?.extraData?.let {
@@ -883,7 +895,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)
-            // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
 //        notificationObject?.extraData?.let {

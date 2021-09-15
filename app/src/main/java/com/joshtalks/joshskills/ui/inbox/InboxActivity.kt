@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -15,7 +16,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -195,15 +195,24 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 inboxAdapter.addItems(temp)
             }
         }
-        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT)>=2) {
+        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(
+                INBOX_SCREEN_VISIT_COUNT
+            ) >= 2
+        ) {
             findMoreLayout.visibility = View.VISIBLE
         }
     }
 
     override fun onResume() {
         super.onResume()
-        PrefManager.put(INBOX_SCREEN_VISIT_COUNT,PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT).plus(1))
-        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT)>=2) {
+        PrefManager.put(
+            INBOX_SCREEN_VISIT_COUNT,
+            PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT).plus(1)
+        )
+        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(
+                INBOX_SCREEN_VISIT_COUNT
+            ) >= 2
+        ) {
             findMoreLayout.visibility = View.VISIBLE
         }
         Runtime.getRuntime().gc()
@@ -294,16 +303,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     companion object {
 
-        fun startInboxActivity(activity: Activity, hasNotification: Boolean = false) {
-            Intent(activity, InboxActivity::class.java).apply {
-                if (hasNotification) {
-                    putExtra(HAS_NOTIFICATION, hasNotification)
-                }
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            }.run {
-                activity.startActivity(this)
-            }
+        fun getInboxIntent(context: Context) = Intent(context, InboxActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
     }

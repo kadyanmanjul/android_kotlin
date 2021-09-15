@@ -125,13 +125,12 @@ class ConversationActivity :
 
     companion object {
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
-            Intent(activity, ConversationActivity::class.java).apply {
+            val intent = Intent(activity, ConversationActivity::class.java).apply {
                 putExtra(CHAT_ROOM_OBJECT, inboxEntity)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }.run {
-                activity.startActivity(this)
             }
+            activity.startActivity(intent)
         }
     }
 
@@ -162,7 +161,6 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
-    var hasNotification = false
 
     private var currentTooltipIndex = 0
     private val leaderboardTooltipList by lazy {
@@ -215,9 +213,6 @@ class ConversationActivity :
             intent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
                 scrollToPosition(this, animation = true)
             }
-        }
-        if (intent.hasExtra(HAS_NOTIFICATION)) {
-            hasNotification = intent.getBooleanExtra(HAS_NOTIFICATION, false)
         }
         conversationViewModel = ViewModelProvider(
             this, ConversationViewModelFactory(this, this.application, inboxEntity)
@@ -1629,9 +1624,6 @@ class ConversationActivity :
         } else {
             val resultIntent = Intent()
             setResult(Activity.RESULT_OK, resultIntent)
-            if (hasNotification) {
-                InboxActivity.startInboxActivity(this)
-            }
             this@ConversationActivity.finishAndRemoveTask()
         }
     }

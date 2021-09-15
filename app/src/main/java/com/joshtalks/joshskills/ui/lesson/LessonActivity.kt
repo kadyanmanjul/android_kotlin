@@ -85,7 +85,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     var lessonIsNewGrammar = false
     var lessonNumber = -1
     var defaultSection = -1
-    var hasNotification = false
     private var ruleIdLeftList = ArrayList<Int>()
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
@@ -123,6 +122,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         binding.viewbinding = this
         PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY, false)
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
+        if (lessonId == 0) {
+            // InboxActivity.startInboxActivity(this)
+            finish()
+        }
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
@@ -137,10 +140,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         if (intent.hasExtra(LESSON_SECTION)) {
             defaultSection = intent.getIntExtra(LESSON_SECTION, 0)
-        }
-
-        if (intent.hasExtra(HAS_NOTIFICATION)) {
-            hasNotification = intent.getBooleanExtra(HAS_NOTIFICATION, false)
         }
 
         whatsappUrl =
@@ -966,9 +965,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
             }
             setResult(RESULT_OK, resultIntent)
-            if (hasNotification) {
-                InboxActivity.startInboxActivity(this)
-            }
             this@LessonActivity.finish()
         }
     }

@@ -17,12 +17,10 @@ import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.getPhoneNumber
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
@@ -45,7 +43,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
     private var razorpayOrderId = EMPTY
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
-    var hasNotification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,10 +57,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)!!
-        }
-
-        if (intent.hasExtra(HAS_NOTIFICATION)) {
-            hasNotification = intent.getBooleanExtra(HAS_NOTIFICATION, false)
         }
 
         setObservers()
@@ -269,16 +262,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0
         )
         this.finish()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if (hasNotification) {
-            InboxActivity.startInboxActivity(this)
-            finish()
-        } else {
-            super.onBackPressed()
-        }
     }
 
     companion object {
