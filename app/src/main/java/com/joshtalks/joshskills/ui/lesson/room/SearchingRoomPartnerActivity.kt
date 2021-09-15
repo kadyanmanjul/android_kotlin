@@ -13,12 +13,18 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivitySearchingRoomUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 const val ROOM_ID = "room_id"
 
@@ -60,6 +66,7 @@ class SearchingRoomPartnerActivity : BaseActivity() {
         }
     }
 
+    private var compositeDisposable = CompositeDisposable()
     private lateinit var binding: ActivitySearchingRoomUserBinding
     private var timer: CountDownTimer? = null
     var channelName: String? = null
@@ -68,6 +75,9 @@ class SearchingRoomPartnerActivity : BaseActivity() {
     var roomId: Int? = null
     var roomQuestionId: Int? = null
     var isRoomCreatedByUser: Boolean = false
+    private val viewModel: ConversationRoomListingViewModel by lazy {
+        ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -88,10 +98,11 @@ class SearchingRoomPartnerActivity : BaseActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
         getIntentExtras()
-        if (roomId==null || roomId==0) {
+        if (roomId == null || roomId == 0) {
             finish()
         }
         initView()
+        addReceiverTimeout()
         addObserver()
         startProgressBarCountDown()
     }
@@ -114,10 +125,19 @@ class SearchingRoomPartnerActivity : BaseActivity() {
                     if (error != null) {
                         return@addSnapshotListener
                     }
+                    compositeDisposable.clear()
                     val list = value?.documents
                     list?.size?.let {
                         if (it >= 2) {
-                            ConversationLiveRoomActivity.startConversationLiveRoomActivity(this,channelName,agoraUid,token,isRoomCreatedByUser,roomId,roomQuestionId)
+                            ConversationLiveRoomActivity.startConversationLiveRoomActivity(
+                                this,
+                                channelName,
+                                agoraUid,
+                                token,
+                                isRoomCreatedByUser,
+                                roomId,
+                                roomQuestionId
+                            )
                             finish()
                             return@addSnapshotListener
                         }
@@ -166,6 +186,21 @@ class SearchingRoomPartnerActivity : BaseActivity() {
         animation.duration = 250
         animation.interpolator = AccelerateDecelerateInterpolator()
         animation.start()
+    }
+
+    private fun addReceiverTimeout() {
+        compositeDisposable.add(
+            Observable.interval(2, TimeUnit.MINUTES, Schedulers.computation())
+                .timeInterval()
+                .subscribe(
+                    {
+                        viewModel.endRoom(roomId.toString(),roomQuestionId)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
+        )
     }
 
 }

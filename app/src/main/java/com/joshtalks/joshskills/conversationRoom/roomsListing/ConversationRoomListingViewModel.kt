@@ -13,8 +13,11 @@ import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -148,6 +151,18 @@ class ConversationRoomListingViewModel : ViewModel() {
 
             } catch (ex: Exception) {
                 ex.printStackTrace()
+            }
+        }
+    }
+
+    fun endRoom(roomId: String?,conversationQuestionId:Int?=null) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val request =
+                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,conversationQuestionId)
+            val response =
+                AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
+            if (response.isSuccessful) {
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
             }
         }
     }
