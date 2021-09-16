@@ -125,10 +125,21 @@ class HeadsUpNotificationService : Service() {
                 val moderatorUid = it.get("started_by")?.toString()?.toInt()
 
                 FirebaseFirestore.getInstance().collection("conversation_rooms")
-                    .document(roomId.toString())?.collection("users").document(moderatorUid.toString())?.get()
+                    .document(roomId.toString())?.collection("users")
+                    .document(moderatorUid.toString())?.get()
                     ?.addOnSuccessListener { moderator ->
                         val moderatorName = moderator.get("name")?.toString()
-                        addNotification(moderatorName.toString(), topic.toString(), roomId!!, intent)
+                        if (topic.isNullOrBlank() || moderatorName.isNullOrBlank()) {
+                            stopForeground(true)
+                            stopSelf()
+                        } else {
+                            addNotification(
+                                moderatorName.toString(),
+                                topic.toString(),
+                                roomId!!,
+                                intent
+                            )
+                        }
                     }
 
 
@@ -255,7 +266,7 @@ class HeadsUpNotificationService : Service() {
 
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-        val customView = getRemoteViews(isFavorite = true,name,topic)
+        val customView = getRemoteViews(isFavorite = true, name, topic)
 
         customView.setOnClickPendingIntent(R.id.answer_btn, answerPendingIntent)
         customView.setOnClickPendingIntent(R.id.decline_btn, declinePendingIntent)
@@ -289,7 +300,7 @@ class HeadsUpNotificationService : Service() {
         val customView = RemoteViews(packageName, layout)
         customView.setTextViewText(
             R.id.name,
-            getString(R.string.convo_notification_title,name,topic)
+            getString(R.string.convo_notification_title, name, topic)
         )
         return customView
     }
