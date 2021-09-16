@@ -104,7 +104,6 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         super.onAttach(context)
         if (context is LessonActivityListener) {
             lessonActivityListener = context
-            lessonActivityListener = null
         }
     }
 
