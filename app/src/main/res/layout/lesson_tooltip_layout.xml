@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/tab_bar_overlay_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/transparent_blue_alpha_75"
+    android:layout_height="match_parent"
+    android:elevation="@dimen/_8sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/arrow_animation_lesson"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:rotation="90"
+        android:visibility="visible"
+        app:lottie_autoPlay="true"
+        android:elevation="@dimen/_1sdp"
+        app:lottie_fileName="lottie/leaderboard_arrow.json"
+        app:lottie_imageAssetsFolder="lottie"
+        app:lottie_loop="true"
+        app:lottie_repeatMode="reverse"
+        app:lottie_scale="1"
+        app:lottie_speed="1"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/main_item_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_josh_course"/>
+
+    <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+        android:id="@+id/tooltip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        app:tooltipText="बस ना? नहीं अभी भी नहीं. और तेज़ी से आगे बड़ने के लिए आप कल का lesson भी अभी कर सकते हैं" />
+
+</RelativeLayout>

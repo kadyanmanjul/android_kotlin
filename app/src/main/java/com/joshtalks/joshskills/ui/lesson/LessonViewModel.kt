@@ -66,6 +66,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val lessonSpotlightStateLiveData: MutableLiveData<LessonSpotlightState?> = MutableLiveData(null)
     val grammarSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
     val speakingSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
+    val eventLiveData: MutableLiveData<Unit> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {

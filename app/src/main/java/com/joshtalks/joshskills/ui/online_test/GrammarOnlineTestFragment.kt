@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
@@ -46,6 +47,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.lang.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -65,6 +67,8 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private var pointsList: String? = null
 
     private var currentTooltipIndex = 0
+    private var grammarAnimationListener : GrammarAnimation? = null
+
     private val lessonTooltipList by lazy {
         listOf(
             "हर पाठ में 4 भाग होते हैं \nGrammar, Vocabulary, Reading\nऔर Speaking",
@@ -117,6 +121,8 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         super.onAttach(context)
         if (context is LessonActivityListener)
             lessonActivityListener = context
+        if (context is GrammarAnimation)
+            grammarAnimationListener = context
     }
 
     override fun onCreateView(
@@ -217,19 +223,17 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         viewModel.grammarSpotlightClickLiveData.observe(viewLifecycleOwner, {
             startOnlineExamTest()
         })
+
+        viewModel.eventLiveData.observe(viewLifecycleOwner, {
+            binding.startBtn.performClick()
+        })
     }
 
-    /*override fun onResume() {
+    override fun onResume() {
         super.onResume()
-        try {
-            animationJob?.cancel()
-        } catch (e : Exception) {
-            e.printStackTrace()
-        }
-        animationJob = CoroutineScope(Dispatchers.Main).launch {
-            setOverlayAnimation()
-        }
-    }*/
+        if(!PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION))
+            showGrammarAnimation()
+    }
 
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -248,6 +252,21 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                     }
                 }
             }
+        }
+    }
+
+    @SuppressLint("LongLogTag")
+    fun showGrammarAnimation() {
+        try {
+            animationJob?.cancel()
+        } catch (e : Exception){
+            e.printStackTrace()
+        }
+
+        animationJob = CoroutineScope(Dispatchers.Main).launch {
+            val overlayButtonItem = TooltipUtils.getOverlayItemFromView(binding.startBtn)
+            Log.d(TAG, "showGrammarAnimation: $overlayButtonItem")
+            grammarAnimationListener?.showGrammarAnimation(overlayButtonItem)
         }
     }
 
@@ -486,4 +505,8 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }*/
 
+}
+
+interface GrammarAnimation {
+    fun showGrammarAnimation(overlayItem : ItemOverlay)
 }

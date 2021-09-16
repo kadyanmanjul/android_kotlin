@@ -3,12 +3,15 @@ package com.joshtalks.joshskills.ui.lesson
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -16,11 +19,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -40,12 +45,18 @@ import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEve
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.leaderboard.Event
+import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_ITEM_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
+import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -67,7 +78,7 @@ const val VOCAB_POSITION = 2
 const val READING_POSITION = 3
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 
-class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
+class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
 
     private lateinit var binding: LessonActivityBinding
 
@@ -949,7 +960,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     override fun onBackPressed() {
         if (binding.overlayLayout.visibility == View.VISIBLE) {
             hideSpotlight()
-        } else {
+        }else if(binding.itemOverlay.visibility == View.VISIBLE)
+            binding.itemOverlay.visibility = View.INVISIBLE
+            else {
             val resultIntent = Intent()
             viewModel.lessonLiveData.value?.let {
                 resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
@@ -1026,5 +1039,48 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         val metrics = DisplayMetrics()
         windowManager?.defaultDisplay?.getMetrics(metrics)
         return metrics.heightPixels to metrics.widthPixels
+    }
+
+    fun getStatusBarHeight() : Int {
+        val rectangle = Rect()
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
+        val statusBarHeight = rectangle.top
+        val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
+        val titleBarHeight = contentViewTop - statusBarHeight
+        Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
+        return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
+    }
+
+    override fun showGrammarAnimation(overlayItem: ItemOverlay) {
+        Log.d(TAG, "showGrammarAnimation : $overlayItem")
+        binding.itemOverlay.visibility = View.INVISIBLE
+        val OFFSET = getStatusBarHeight()
+        val itemImageView = binding.itemOverlay.findViewById<ImageView>(R.id.main_item_imageview)
+        val arrowView = binding.itemOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation_lesson)
+        val tooltipView = binding.itemOverlay.findViewById<JoshTooltip>(R.id.tooltip)
+        tooltipView.visibility = View.INVISIBLE
+        itemImageView.visibility = View.INVISIBLE
+        arrowView.visibility = View.INVISIBLE
+        itemImageView.setImageBitmap(overlayItem.viewBitmap)
+
+        arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
+        itemImageView.x = overlayItem.x.toFloat()
+        itemImageView.y = overlayItem.y.toFloat() - OFFSET
+        itemImageView.setOnClickListener {
+            binding.itemOverlay.visibility = View.INVISIBLE
+            viewModel.eventLiveData.postValue(Unit)
+        }
+        itemImageView.requestLayout()
+        arrowView.x = itemImageView.x + (itemImageView.width * 0.5).toFloat() - resources.getDimension(R.dimen._42sdp)
+        arrowView.requestLayout()
+        tooltipView.visibility = View.INVISIBLE
+        tooltipView.y = arrowView.y - resources.getDimension(R.dimen._60sdp) - OFFSET
+        tooltipView.requestLayout()
+        binding.itemOverlay.visibility = View.VISIBLE
+        arrowView.visibility = View.VISIBLE
+        itemImageView.visibility = View.VISIBLE
+        tooltipView.setTooltipText("आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे")
+        slideInAnimation(tooltipView)
+        PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
     }
 }
