@@ -302,8 +302,10 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         )
         conversationRoomQuestionId?.let {
             viewModel.getConvoRoomDetails(it)
-            viewModel.getPointsForConversationRoom(lastRoomId,it)
-            PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
+            if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS,defValue = false).not()){
+                viewModel.getPointsForConversationRoom(lastRoomId,it)
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
+            }
         }
     }
 

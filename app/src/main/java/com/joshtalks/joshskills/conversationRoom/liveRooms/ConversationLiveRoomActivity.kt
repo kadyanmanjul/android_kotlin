@@ -242,6 +242,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         intent.putExtra("channel_name", channelName)
         intent.putExtra("uid", agoraUid)
         intent.putExtra("isModerator", isRoomCreatedByUser)
+        WebRtcService.isConversionRoomActive = true
         AppObjectController.joshApplication.startService(intent)
         WebRtcService.isConversionRoomActive = true
         WebRtcService.moderatorUid = moderatorUid
