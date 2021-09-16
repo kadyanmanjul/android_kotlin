@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -23,11 +22,6 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivitySearchingRoomUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 const val ROOM_ID = "room_id"
 
@@ -69,7 +63,6 @@ class SearchingRoomPartnerActivity : BaseActivity() {
         }
     }
 
-    private var compositeDisposable = CompositeDisposable()
     private lateinit var binding: ActivitySearchingRoomUserBinding
     private var timer: CountDownTimer? = null
     var channelName: String? = null
@@ -78,6 +71,7 @@ class SearchingRoomPartnerActivity : BaseActivity() {
     var roomId: Int? = null
     var roomQuestionId: Int? = null
     var isRoomCreatedByUser: Boolean = false
+    var timeCreated: Int = 0
     private val viewModel: ConversationRoomListingViewModel by lazy {
         ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java)
     }
@@ -127,10 +121,10 @@ class SearchingRoomPartnerActivity : BaseActivity() {
                     if (error != null) {
                         return@addSnapshotListener
                     }
-                    compositeDisposable.clear()
                     val list = value?.documents
                     list?.size?.let {
                         if (it >= 2) {
+                            timer?.cancel()
                             ConversationLiveRoomActivity.startConversationLiveRoomActivity(
                                 this,
                                 channelName,
@@ -170,6 +164,11 @@ class SearchingRoomPartnerActivity : BaseActivity() {
             binding.progressBar.progress = 0
             timer = object : CountDownTimer(5000, 500) {
                 override fun onTick(millisUntilFinished: Long) {
+                    timeCreated= timeCreated + 1
+                    if (timeCreated>=(60*2)){
+                        timer?.cancel()
+                        viewModel.endRoom(roomId.toString(), roomQuestionId)
+                    }
                     val diff = binding.progressBar.progress + 10
                     fillProgressBar(diff)
                 }
@@ -196,41 +195,9 @@ class SearchingRoomPartnerActivity : BaseActivity() {
         animation.start()
     }
 
-    override fun onPause() {
-        super.onPause()
-        compositeDisposable.clear()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        addReceiverTimeout()
-    }
-
-    private fun addReceiverTimeout() {
-        compositeDisposable.add(
-            Completable.complete()
-                .delay(5, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnComplete {
-                    Log.d("Manjul", "addReceiverTimeout() completed")
-                    viewModel.endRoom(roomId.toString(), roomQuestionId)
-                    //finish()
-                }
-                .doOnError {
-                    Log.d("Manjul", "addReceiverTimeout() doOnError called ${it.printStackTrace()}")
-                }
-                .subscribe()
-        )
-
-        compositeDisposable.add(
-            Completable.timer(5,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .doOnComplete {
-                    Log.d("Manjul", "addReceiverTimeout() Timer")
-                }
-                .subscribe()
-        )
+    override fun onDestroy() {
+        timer?.cancel()
+        super.onDestroy()
     }
 
 }
