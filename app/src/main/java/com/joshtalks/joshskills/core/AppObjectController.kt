@@ -47,6 +47,7 @@ import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
 import com.smartlook.sdk.smartlook.Smartlook
@@ -150,6 +151,10 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var voipAnalyticsService: VoipAnalyticsService
+            private set
+
+        @JvmStatic
+        lateinit var seniorStudentService: SeniorStudentService
             private set
 
 
@@ -317,6 +322,7 @@ class AppObjectController {
                 chatNetworkService = retrofit.create(ChatNetworkService::class.java)
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)
                 voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
+                seniorStudentService = retrofit.create(SeniorStudentService::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
