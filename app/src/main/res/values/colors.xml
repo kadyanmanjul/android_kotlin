@@ -71,6 +71,7 @@
     <color name="green_snackbar">#48A429</color>
     <color name="transparent">#00000000</color>
     <color name="artboard_color">#F1F2F4</color>
+    <color name="artboard_stroke_color">#D2D9E3</color>
     <color name="green_right_answer">#129E88</color>
     <color name="lighter_green">#ECF8F6</color>
     <color name="wrong_answer">#9D1515</color>

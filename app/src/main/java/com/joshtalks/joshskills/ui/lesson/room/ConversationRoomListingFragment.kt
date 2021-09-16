@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
@@ -205,7 +206,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             createRoom.apply {
                 clipToOutline = true
                 setOnSingleClickListener {
-                    showPopup()
+                    showAddTopicPopup()
                 }
             }
             continueBtn.apply {
@@ -395,7 +396,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     }
 
 
-    private fun showPopup() {
+    private fun showAddTopicPopup() {
         var topic = ""
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
@@ -413,11 +414,17 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             window.setAttributes(wlp)
             window.setLayout(width.toInt(), height)
             window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            //window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
+
+        dialogView.findViewById<EditText>(R.id.label_field).requestFocus()
+        dialogView.findViewById<EditText>(R.id.label_field).isFocusable = true
 
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
             if (dialogView.findViewById<EditText>(R.id.label_field).text.toString().isNotBlank()){
-                showRoomPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
+                showPatnerChooserPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
+                hideKeyboard(requireActivity())
                 alertDialog.dismiss()
             } else {
                 showToast("Please enter Topic name")
@@ -425,7 +432,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         }
     }
 
-    private fun showRoomPopup(topic: String) {
+    private fun showPatnerChooserPopup(topic: String) {
         var topic = topic
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
@@ -443,6 +450,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             window.setAttributes(wlp)
             window.setLayout(width.toInt(), height)
             window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         }
 
         if (viewModel.roomDetailsLivedata.value?.is_favourite_practice_partner_available == true) {
@@ -469,6 +477,18 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                     R.color.white
                 )
             )
+            dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setStrokeColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.artboard_stroke_color
+                )
+            )
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).setStrokeColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
             isP2Pselected = true
         }
         dialogView.findViewById<MaterialCardView>(R.id.favt_container).setOnClickListener {
@@ -482,6 +502,18 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.artboard_color
+                )
+            )
+            dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setStrokeColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).setStrokeColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.artboard_stroke_color
                 )
             )
             isP2Pselected = false
