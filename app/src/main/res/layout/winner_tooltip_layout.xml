@@ -15,6 +15,11 @@
         android:background="@drawable/bg_rounded_bottom_sheet_2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+        <FrameLayout
+            android:id="@+id/tab_overlay_top_alpha"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_blue_alpha_75"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tab_bar_text"
@@ -163,6 +168,18 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+        android:id="@+id/batch_tooltip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/container"
+        android:visibility="invisible"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_16sdp"
+        app:tooltipText="" />
+
+    <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
         android:id="@+id/tooltip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -187,6 +204,32 @@
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        tools:visibility="visible" />
+
+    <FrameLayout
+        android:id="@+id/winner_card_overlay_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:background="@color/transparent_blue_alpha_75"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/swipe_hint"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:clickable="true"
+        android:elevation="@dimen/_2sdp"
+        android:focusable="true"
+        android:gravity="center"
+        android:visibility="gone"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="lottie/swipe_animation.json"
+        app:lottie_imageAssetsFolder="lottie"
+        app:lottie_loop="true"
+        android:layout_centerInParent="true"
+        app:lottie_repeatMode="restart"
+        app:lottie_scale="1"
+        app:lottie_speed="1"
         tools:visibility="visible" />
 
 </RelativeLayout>

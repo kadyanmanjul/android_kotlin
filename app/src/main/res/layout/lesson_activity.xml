@@ -324,27 +324,23 @@
             app:tabTextColor="@color/black"
             tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
             android:id="@+id/lesson_spotlight_tooltip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginHorizontal="@dimen/_24sdp"
             android:layout_marginVertical="@dimen/_60sdp"
-            android:background="@drawable/spotlight_gradient"
             android:elevation="@dimen/_8sdp"
-            android:gravity="center"
-            android:padding="@dimen/_18sdp"
-            android:text="@string/label_lesson_spotlight"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-            android:textColor="@color/leaderboard_tooltip_text_color"
-            android:visibility="gone"
+            app:tooltipText="@string/label_lesson_spotlight"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.76"
             tools:visibility="visible" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

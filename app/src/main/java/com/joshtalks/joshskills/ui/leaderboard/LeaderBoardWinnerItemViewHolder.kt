@@ -33,7 +33,7 @@ class LeaderBoardWinnerItemViewHolder(
     @View(R.id.title)
     lateinit var title: AppCompatTextView
 
-    @View(R.id.container)
+    @View(R.id.winner_parent_container)
     lateinit var container: ConstraintLayout
 
     @View(R.id.name)
@@ -91,7 +91,7 @@ class LeaderBoardWinnerItemViewHolder(
         RxBus2.publish(OpenPreviousLeaderboard(type))
     }
 
-    @Click(R.id.container)
+    @Click(R.id.winner_parent_container)
     fun onSecondClickContainer() {
         /*response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))

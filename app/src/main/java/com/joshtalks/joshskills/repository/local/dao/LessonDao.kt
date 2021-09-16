@@ -16,6 +16,9 @@ interface LessonDao {
     @Query("SELECT * FROM lessonmodel WHERE lesson_id=:lessonId ORDER BY lesson_no DESC")
     fun getLesson(lessonId: Int): LessonModel?
 
+    @Query("SELECT status FROM lessonmodel WHERE lesson_no=:lessonNo")
+    fun getLessonStatus(lessonNo: Int): LESSON_STATUS?
+
     @Query("SELECT * FROM lessonmodel WHERE chat_id=:chatId ORDER BY lesson_no DESC")
     fun getLessonFromChatId(chatId: String): LessonModel?
 

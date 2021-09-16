@@ -1,12 +1,15 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -45,6 +48,7 @@ import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -323,8 +327,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_lesson_spotlight)
+                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_lesson_spotlight).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -344,8 +347,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_grammar_spotlight)
+                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_grammar_spotlight).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -365,8 +367,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_speaking_spotlight)
+                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_speaking_spotlight).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -386,8 +387,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.VISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_vocab_spotlight_1)
+                    binding.lessonSpotlightTooltip.setTooltipText( resources.getText(R.string.label_vocab_spotlight_1).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -407,8 +407,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.VISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_vocab_spotlight_2)
+                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_vocab_spotlight_2).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -428,8 +427,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.VISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_vocab_spotlight_3)
+                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_vocab_spotlight_3).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -449,8 +447,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.VISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_reading_spotlight)
+                    binding.lessonSpotlightTooltip.setTooltipText(   resources.getText(R.string.label_reading_spotlight).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -470,8 +467,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_grammar_spotlight)
+                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_grammar_spotlight).toString())
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -487,11 +483,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.text =
-                        resources.getText(R.string.label_speaking_spotlight_2)
-                    binding.lessonSpotlightTooltip.startAnimation(
-                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
-                    )
+                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_speaking_spotlight_2).toString())
+                    slideInAnimation(binding.lessonSpotlightTooltip)
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.VISIBLE
                     binding.spotlightCallBtnText.visibility = View.VISIBLE
@@ -1008,5 +1001,30 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             }
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
+    }
+
+    fun slideInAnimation(tooltipView : JoshTooltip) {
+        tooltipView.visibility = View.INVISIBLE
+        val start = getScreenHeightAndWidth().second
+        val mid = start * 0.2 * -1
+        val end = tooltipView.x
+        tooltipView.x = start.toFloat()
+        tooltipView.requestLayout()
+        tooltipView.visibility = View.VISIBLE
+        val valueAnimation = ValueAnimator.ofFloat(start.toFloat(), mid.toFloat(), end).apply {
+            interpolator = AccelerateInterpolator()
+            duration = 500
+            addUpdateListener {
+                tooltipView.x = it.animatedValue as Float
+                tooltipView.requestLayout()
+            }
+        }
+        valueAnimation.start()
+    }
+
+    fun getScreenHeightAndWidth(): Pair<Int, Int> {
+        val metrics = DisplayMetrics()
+        windowManager?.defaultDisplay?.getMetrics(metrics)
+        return metrics.heightPixels to metrics.widthPixels
     }
 }

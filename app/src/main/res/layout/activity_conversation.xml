@@ -20,6 +20,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <include
+            android:id="@+id/overlay_view"
+            layout="@layout/unlock_class_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -496,27 +508,31 @@
                 android:text="Tap anywhere to continue"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/white"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                />
 
         </FrameLayout>
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/arrow_animation"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_alignTop="@+id/overlay_leaderboard_container"
-            android:layout_alignBottom="@+id/overlay_leaderboard_container"
-            android:elevation="@dimen/_6sdp"
-            android:visibility="gone"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="lottie/leaderboard_arrow.json"
-            app:lottie_imageAssetsFolder="lottie"
-            app:lottie_loop="true"
-            app:lottie_repeatMode="restart"
-            app:lottie_scale="1"
-            app:lottie_speed="1"
-            tools:visibility="visible" />
+            android:elevation="@dimen/_100sdp"
+            android:layout_alignTop="@id/overlay_leaderboard_container"
+            android:layout_alignBottom="@id/overlay_leaderboard_container"
+            android:layout_height="wrap_content">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/arrow_animation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="restart"
+                app:lottie_scale="1"
+                app:lottie_speed="1"
+                tools:visibility="visible" />
+
+        </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/overlay_leaderboard_container"
@@ -530,8 +546,7 @@
             android:backgroundTint="@color/white"
             android:elevation="@dimen/_5sdp"
             android:fillAfter="false"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/leaderboard_txt2"

@@ -19,7 +19,7 @@ class PointsSummaryDescViewHolder(
     var totalItems: Int
 ) {
 
-    @View(R.id.root_view)
+    @View(R.id.root_view_child)
     lateinit var rootView: ConstraintLayout
 
     @View(R.id.title)

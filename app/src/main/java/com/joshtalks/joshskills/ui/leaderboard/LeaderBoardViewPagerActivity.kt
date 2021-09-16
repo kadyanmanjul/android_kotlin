@@ -1,23 +1,26 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
-import android.view.ViewGroup
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.view.Window
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
-import androidx.appcompat.widget.ActionBarOverlayLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -26,6 +29,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -38,9 +42,16 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_BATCH_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_ITEM_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_MONTHS_WINNER_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TODAYS_WINNER_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_WEEKS_WINNER_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.NEED_VIEW_BITMAP
+import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
+import com.joshtalks.joshskills.ui.leaderboard.constants.SCROLL_TO_TOP
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
-import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
-import com.joshtalks.joshskills.ui.online_test.OnlineTestFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
@@ -51,17 +62,17 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.lang.Exception
 import java.util.*
-import kotlinx.android.synthetic.main.acitivity_unlock_next_class_layout.card
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
+
+
+class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     private val TAG = "LeaderBoardViewPagerAct"
     lateinit var binding: ActivityLeaderboardViewPagerBinding
     private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
@@ -70,6 +81,8 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     private var tabPosition = 0
     var isTooltipShow = false
     private var toolTipJob : Job? = null
+    private var currentAimation : Int? = null
+    private var ITEM_ANIMATION = 1
 
     val searchActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -97,6 +110,11 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         initToolbar()
         initViewPager()
         addObserver()
+        //PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, false)
+        //PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, false)
+        //PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, false)
+        //PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, false)
+        //PrefManager.put(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, false)
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
 
@@ -173,6 +191,14 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                         }
                         tabPosition = position
                         hideTabOverlay()
+                        hideItemTabOverlay()
+                        if(!(PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION) &&
+                            PrefManager.getBoolValue(HAS_SEEN_TODAYS_WINNER_ANIMATION) &&
+                            PrefManager.getBoolValue(HAS_SEEN_WEEKS_WINNER_ANIMATION) &&
+                            PrefManager.getBoolValue(HAS_SEEN_MONTHS_WINNER_ANIMATION) &&
+                            PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION) &&
+                            PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION))
+                        )
                         setTabOverlay(tabPosition)
                         mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
                         viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
@@ -188,7 +214,11 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                     when (it) {
                          ApiCallStatus.SUCCESS -> {
                             hideProgressBar()
+                             hideItemTabOverlay()
                              hideTabOverlay()
+                             if(!(PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION) &&
+                                         PrefManager.getBoolValue(HAS_SEEN_TODAYS_WINNER_ANIMATION))
+                             )
                              setTabOverlay(0)
                         }
                         ApiCallStatus.FAILED -> {
@@ -367,48 +397,116 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             binding.tabOverlay.setOnClickListener(null)
             if(isActive) {
                 withContext(Dispatchers.Main) {
-                    val tooltipView =
-                        binding.tabOverlay.findViewById<JoshTooltip>(R.id.tooltip)
-                    val topLayout =
-                        binding.tabOverlay.findViewById<FrameLayout>(R.id.tab_overlay_top)
-                    val cardLayout =
-                        binding.tabOverlay.findViewById<ConstraintLayout>(R.id.container)
-                    val tabToDismissView =
-                        binding.tabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
-                    //val overlayContainer = binding.tabOverlay.findViewById<RelativeLayout>(R.id.tab_bar_overlay_container)
-                    when(position) {
-                        in 0..2 -> {
-                            showWinnerOverlay(position, topLayout, cardLayout)
-                            showToolTip(tooltipView, tooltipTextList[position])
-                            showTapToDismiss(topLayout, cardLayout, tabToDismissView)
-                        }
-                        3 -> {
-                            binding.tabOverlay.visibility = View.VISIBLE
-                            cardLayout.visibility = GONE
-                            tooltipView.visibility = GONE
-                            //showToolTip(tooltipView, tooltipTextList[position])
-                            showTapToDismiss(topLayout, cardLayout, tabToDismissView)
-                        }
+                    if(PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION)) {
+                        viewModel.eventLiveData.postValue(Event(eventType = SCROLL_TO_TOP, type = getTabName(position)))
+                        delay(100)
+                        val tooltipView =
+                            binding.tabOverlay.findViewById<JoshTooltip>(R.id.tooltip)
+                        val batchTooltipView =
+                            binding.tabOverlay.findViewById<JoshTooltip>(R.id.batch_tooltip)
+                        val topLayout =
+                            binding.tabOverlay.findViewById<FrameLayout>(R.id.tab_overlay_top)
+                        val cardLayout =
+                            binding.tabOverlay.findViewById<ConstraintLayout>(R.id.container)
+                        val tabToDismissView =
+                            binding.tabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
+                        val swipeAnimationView = binding.tabOverlay.findViewById<LottieAnimationView>(R.id.swipe_hint)
+                        when(position) {
+                            0 -> {
+                                if(!PrefManager.getBoolValue(HAS_SEEN_TODAYS_WINNER_ANIMATION)) {
+                                    batchTooltipView.visibility = INVISIBLE
+                                    showWinnerOverlay(position, topLayout, cardLayout, tooltipView)
+                                    currentAimation = ITEM_ANIMATION
+                                    PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, true)
+                                    showTapToDismiss(
+                                        topLayout,
+                                        cardLayout,
+                                        tabToDismissView,
+                                        position
+                                    )
+                                }
+                            }
+                            1 -> {
+                                if(!PrefManager.getBoolValue(HAS_SEEN_WEEKS_WINNER_ANIMATION)) {
+                                    batchTooltipView.visibility = INVISIBLE
+                                    showWinnerOverlay(position, topLayout, cardLayout, tooltipView)
+                                    currentAimation = ITEM_ANIMATION
+                                    PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, true)
+                                    showTapToDismiss(
+                                        topLayout,
+                                        cardLayout,
+                                        tabToDismissView,
+                                        position
+                                    )
+                                }
+                            }
+                            2 -> {
+                                if(!PrefManager.getBoolValue(HAS_SEEN_MONTHS_WINNER_ANIMATION)) {
+                                    batchTooltipView.visibility = INVISIBLE
+                                    showWinnerOverlay(position, topLayout, cardLayout, tooltipView)
+                                    currentAimation = ITEM_ANIMATION
+                                    PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, true)
+                                    showTapToDismiss(
+                                        topLayout,
+                                        cardLayout,
+                                        tabToDismissView,
+                                        position
+                                    )
+                                }
+                            }
+                            3 -> {
+                                if(!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION)) {
+                                    binding.tabOverlay.visibility = View.VISIBLE
+                                    cardLayout.visibility = GONE
+                                    tooltipView.visibility = GONE
+                                    batchTooltipView.visibility = GONE
+                                    swipeAnimationView.visibility = VISIBLE
+                                    PrefManager.put(HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION, true)
+                                    currentAimation = ITEM_ANIMATION
+                                    showTapToDismiss(
+                                        topLayout,
+                                        cardLayout,
+                                        tabToDismissView,
+                                        position
+                                    )
+                                }
+                            }
 
-                        4 -> {
-                            binding.tabOverlay.visibility = View.VISIBLE
-                            cardLayout.visibility = GONE
-                            tooltipView.y = getFinalYAxis().toFloat()
-                            tooltipView.requestLayout()
-                            showToolTip(tooltipView, tooltipTextList[position])
-                            showTapToDismiss(topLayout, cardLayout, tabToDismissView)
+                            4 -> {
+                                if (!PrefManager.getBoolValue(
+                                        HAS_SEEN_LEADERBOARD_BATCH_ANIMATION
+                                    )
+                                ) {
+                                    binding.tabOverlay.visibility = View.VISIBLE
+                                    cardLayout.visibility = GONE
+                                    showToolTip(batchTooltipView, tooltipTextList[position])
+                                    PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, true)
+                                    currentAimation = ITEM_ANIMATION
+                                    showTapToDismiss(
+                                        topLayout,
+                                        cardLayout,
+                                        tabToDismissView,
+                                        position
+                                    )
+                                }
+                            }
                         }
+                    } else {
+                        //if(position == 0) {
+                            delay(3500)
+                            setRecyclerViewItemAnimation(position)
+                            //getView(position)
+                        //}
                     }
                 }
             }
         }
     }
 
-    private fun showWinnerOverlay(position : Int, topLayout : FrameLayout, cardLayout : ConstraintLayout) {
+    private fun showWinnerOverlay(position : Int, topLayout : FrameLayout, cardLayout : ConstraintLayout, tooltipView : JoshTooltip) {
         getOverlayData(position)?.let {
-            val OFFSET =
-                (getScreenHeightAndWidth().first - binding.parentContainer.height).toFloat()
-            val VIEW_PADDING_PX = (8 * getConverterValue()).toInt()
+            val STATUS_BAR_HEIGHT = getStatusBarHeight()
+            val VIEW_PADDING_PX = resources.getDimension(R.dimen._8sdp)
             val FIRST_ELEMENT_OFFSET = resources.getDimension(R.dimen._4sdp)
             val tabPosition = IntArray(2)
             val tab = binding.tabLayout.getTabAt(position)
@@ -416,8 +514,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             val height = tab.view.height
             val tabText = tab.view.tab?.text
             Log.d(TAG, "setTabOverlay: $tabText")
-            //x -- left
-            // y -- top
+            //tab.view.getLocationInWindow(tabPosition)
             tab.view.getLocationOnScreen(tabPosition)
             val tabView =
                 binding.tabOverlay.findViewById<AppCompatTextView>(R.id.tab_bar_text)
@@ -429,7 +526,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
 
             setOverlayData(cardLayout, it)
             topLayout.layoutParams.width = width
-            topLayout.layoutParams.height = height + VIEW_PADDING_PX
+            topLayout.layoutParams.height = (height + VIEW_PADDING_PX).toInt()
             if (position == 0) {
                 topLayout.x = tabPosition[0].toFloat() + FIRST_ELEMENT_OFFSET
                 cardLayout.background = ContextCompat.getDrawable(
@@ -443,46 +540,95 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                     R.drawable.winner_tooltip_background
                 )
             }
-            topLayout.y = tabPosition[1].toFloat() - OFFSET
+            topLayout.y = tabPosition[1].toFloat() - STATUS_BAR_HEIGHT
             topLayout.requestLayout()
             val topLayoutRect = Rect()
             topLayout.getGlobalVisibleRect(topLayoutRect)
-            cardLayout.y = (topLayoutRect.bottom.toFloat() - OFFSET)
+            cardLayout.y = topLayout.y + topLayout.height
             cardLayout.requestLayout()
+            val alphaView = binding.tabOverlay.findViewById<FrameLayout>(R.id.tab_overlay_top_alpha)
+            val alphaOverlayView = binding.tabOverlay.findViewById<FrameLayout>(R.id.winner_card_overlay_container)
+            val overlayPosition = IntArray(2)
+            alphaOverlayView.visibility = INVISIBLE
+            alphaOverlayView.layoutParams.width = cardLayout.width
+            alphaOverlayView.layoutParams.height = cardLayout.height
+            cardLayout.getLocationOnScreen(overlayPosition)
+            alphaOverlayView.x = overlayPosition[0].toFloat()
+            alphaOverlayView.y = overlayPosition[1].toFloat() - STATUS_BAR_HEIGHT
+            alphaOverlayView.requestLayout()
+            alphaOverlayView.visibility = View.VISIBLE
+            alphaView.visibility = View.VISIBLE
             cardLayout.visibility = View.VISIBLE
             topLayout.visibility = View.VISIBLE
+            cardLayout.setOnClickListener {
+                binding.tabOverlay.visibility = View.INVISIBLE
+                when(position) {
+                    0 -> RxBus2.publish(OpenPreviousLeaderboard("TODAY"))
+                    1 -> RxBus2.publish(OpenPreviousLeaderboard("WEEK"))
+                    2 -> RxBus2.publish(OpenPreviousLeaderboard("MONTH"))
+                }
+            }
             binding.tabOverlay.visibility = View.VISIBLE
+            animateAlpha(alphaView, alphaOverlayView, 1f, 0f, tooltipView, tooltipTextList[position])
         }
     }
 
-    fun getFinalYAxis() : Double {
-        val height = getScreenHeightAndWidth().first
-        val OFFSET =
-            ( height - binding.parentContainer.height).toFloat()
-       return ((height * 0.20) - OFFSET)
+    fun getStatusBarHeight() : Int {
+        val rectangle = Rect()
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
+        val statusBarHeight = rectangle.top
+        val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
+        val titleBarHeight = contentViewTop - statusBarHeight
+        Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
+        return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
+    }
+    /*fun getView(position : Int) {
+        val viewPagerChild = binding.viewPager.getChildAt(position)
+        Log.d(TAG, "getView: $viewPagerChild")
+        val view = viewPagerChild.findViewById<PlaceHolderView>(R.id.recycler_view)
+        val view1 = view.getChildAt(3)
+        Log.d(TAG, "needBitmapLiveData : $view1")
+        onViewBitmap(TooltipUtils.getOverlayItemFromView(view), )
+        //listener?.onViewBitmap(TooltipUtils.getOverlayItemFromView(view))
+    }*/
+
+    fun animateAlpha(alphaView : View, alphaOverlayView : View, start : Float, end : Float, tooltipView : JoshTooltip, tooltipText : String) {
+
+        ValueAnimator.ofFloat(start, end).apply {
+            duration = 700
+            addUpdateListener {
+                alphaView.alpha = it.animatedValue as Float
+                alphaOverlayView.alpha = it.animatedValue as Float
+            }
+            addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {
+                    showToolTip(tooltipView, tooltipText)
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {}
+
+                override fun onAnimationCancel(animation: Animator?) {}
+
+                override fun onAnimationRepeat(animation: Animator?) {}
+            })
+        }.start()
     }
 
     @MainThread
-    private suspend fun showToolTip(tooltipView : JoshTooltip, tooltipText : String) {
-        delay(300)
+    private fun showToolTip(tooltipView : JoshTooltip, tooltipText : String) {
         tooltipView.setTooltipText(tooltipText)
-        tooltipView.visibility = View.VISIBLE
-        tooltipView.startAnimation(
-            AnimationUtils.loadAnimation(
-                this,
-                R.anim.slide_in_right
-            )
-        )
+        slideInAnimation(tooltipView)
     }
 
     @MainThread
-    private suspend fun showTapToDismiss(topLayout : FrameLayout, cardLayout : ConstraintLayout, labelTapToDismiss : AppCompatTextView) {
+    private suspend fun showTapToDismiss(topLayout : FrameLayout, cardLayout : ConstraintLayout, labelTapToDismiss : AppCompatTextView, position : Int) {
         fun setDismissListener() {
             fun removeListener() {
                 labelTapToDismiss.setOnClickListener(null)
                 topLayout.setOnClickListener(null)
                 cardLayout.setOnClickListener(null)
                 binding.tabOverlay.setOnClickListener(null)
+                currentAimation = ITEM_ANIMATION
             }
 
             labelTapToDismiss.setOnClickListener {
@@ -496,6 +642,11 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
 
             cardLayout.setOnClickListener {
                 binding.tabOverlay.visibility = View.INVISIBLE
+                when(position) {
+                    0 -> RxBus2.publish(OpenPreviousLeaderboard("TODAY"))
+                    1 -> RxBus2.publish(OpenPreviousLeaderboard("WEEK"))
+                    2 -> RxBus2.publish(OpenPreviousLeaderboard("MONTH"))
+                }
                 removeListener()
             }
 
@@ -512,7 +663,46 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         )
     }
 
-    
+    @MainThread
+    private suspend fun showTapToDismiss(labelTapToDismiss : AppCompatTextView, arrowView : LottieAnimationView, tooltipView: JoshTooltip) {
+        withContext(Dispatchers.Main) {
+            labelTapToDismiss.visibility = View.INVISIBLE
+            fun setDismissListener() {
+                fun removeListener() {
+                    labelTapToDismiss.setOnClickListener(null)
+                    arrowView.setOnClickListener(null)
+                    tooltipView.setOnClickListener(null)
+                    binding.itemTabOverlay.setOnClickListener(null)
+                }
+
+                labelTapToDismiss.setOnClickListener {
+                    binding.tabOverlay.visibility = View.INVISIBLE
+                    removeListener()
+                }
+                arrowView.setOnClickListener {
+                    binding.itemTabOverlay.visibility = View.INVISIBLE
+                    removeListener()
+                }
+
+                tooltipView.setOnClickListener {
+                    binding.itemTabOverlay.visibility = View.INVISIBLE
+                    removeListener()
+                }
+
+                binding.itemTabOverlay.setOnClickListener {
+                    binding.itemTabOverlay.visibility = View.INVISIBLE
+                    removeListener()
+                }
+            }
+            delay(6500)
+            setDismissListener()
+            labelTapToDismiss.visibility = View.VISIBLE
+            labelTapToDismiss.startAnimation(
+                AnimationUtils.loadAnimation(this@LeaderBoardViewPagerActivity, R.anim.slide_up_dialog)
+            )
+        }
+    }
+
     private fun getOverlayData(position: Int) = when(position) {
         0 -> winnerMap["TODAY"]
         1 -> winnerMap["WEEK"]
@@ -529,11 +719,36 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             binding.tabOverlay.findViewById<ConstraintLayout>(R.id.container)
         val tabToDismissView =
             binding.tabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
+        val swipeAnimationView = binding.tabOverlay.findViewById<LottieAnimationView>(R.id.swipe_hint)
+        val alphaView = binding.tabOverlay.findViewById<FrameLayout>(R.id.tab_overlay_top_alpha)
+        val alphaOverlayView = binding.tabOverlay.findViewById<FrameLayout>(R.id.winner_card_overlay_container)
+        val batchTooltipView =
+            binding.tabOverlay.findViewById<JoshTooltip>(R.id.batch_tooltip)
         tooltipView.visibility = View.INVISIBLE
         topLayout.visibility = View.INVISIBLE
         cardLayout.visibility = View.INVISIBLE
         tabToDismissView.visibility = View.INVISIBLE
+        alphaView.visibility = INVISIBLE
+        swipeAnimationView.visibility = GONE
+        batchTooltipView.visibility = INVISIBLE
+        alphaOverlayView.visibility = INVISIBLE
         binding.tabOverlay.visibility = View.INVISIBLE
+    }
+
+    private fun hideItemTabOverlay() {
+        val tooltipView =
+            binding.itemTabOverlay.findViewById<JoshTooltip>(R.id.tooltip)
+        val itemImageView =
+            binding.itemTabOverlay.findViewById<ImageView>(R.id.profile_item_image)
+        val arrowView = binding.itemTabOverlay.findViewById<ImageView>(R.id.arrow_animation)
+        val tabToDismissView =
+            binding.itemTabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
+        tooltipView.visibility = View.INVISIBLE
+        tabToDismissView.visibility = View.INVISIBLE
+        itemImageView.visibility = View.INVISIBLE
+        arrowView.visibility = View.INVISIBLE
+        binding.itemTabOverlay.visibility = View.INVISIBLE
+        currentAimation = null
     }
 
     @MainThread
@@ -573,4 +788,98 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             onlineStatusLayout.visibility = View.GONE
         }
     }
+
+    fun setRecyclerViewItemAnimation(position: Int) {
+        if(!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION))
+            showOverlayLayoutForItem(position)
+    }
+
+    fun showOverlayLayoutForItem(position: Int) {
+        val itemImageView =
+            binding.itemTabOverlay.findViewById<ImageView>(R.id.profile_item_image)
+        val arrowView = binding.itemTabOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation)
+        val tooltipView = binding.itemTabOverlay.findViewById<JoshTooltip>(R.id.tooltip)
+        val tapToDismissView = binding.itemTabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
+        binding.itemTabOverlay.visibility = VISIBLE
+        binding.itemTabOverlay.setOnClickListener(null)
+        arrowView.visibility = INVISIBLE
+        itemImageView.visibility = INVISIBLE
+        tooltipView.visibility = INVISIBLE
+        tapToDismissView.visibility = INVISIBLE
+        viewModel.eventLiveData.postValue(Event(eventType = NEED_VIEW_BITMAP, type = getTabName(position)))
+    }
+
+    override fun onViewBitmap(overlayItem : ItemOverlay, type : String) {
+        Log.d(TAG, "onViewBitmap: $overlayItem")
+        val OFFSET = getStatusBarHeight()
+        val itemImageView =
+            binding.itemTabOverlay.findViewById<ImageView>(R.id.profile_item_image)
+        val arrowView = binding.itemTabOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation)
+        val tooltipView = binding.itemTabOverlay.findViewById<JoshTooltip>(R.id.tooltip)
+        val tapToDismissView = binding.itemTabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
+        itemImageView.setImageBitmap(overlayItem.viewBitmap)
+        arrowView.x = overlayItem.x.toFloat()
+        arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
+        itemImageView.x = overlayItem.x.toFloat()
+        //itemImageView.x = if(overlayItem.x.toFloat() < 0) 0f else overlayItem.x.toFloat()
+        itemImageView.y = overlayItem.y.toFloat() - OFFSET
+        itemImageView.setOnClickListener {
+            hideItemTabOverlay()
+            viewModel.eventLiveData.postValue(Event(eventType = PROFILE_ITEM_CLICKED, type = type))
+        }
+        itemImageView.requestLayout()
+        arrowView.requestLayout()
+        binding.itemTabOverlay.visibility = VISIBLE
+        arrowView.visibility = VISIBLE
+        itemImageView.visibility = VISIBLE
+        tooltipView.setTooltipText("आप किसी की भी Profile खोल सकते हैं")
+        slideInAnimation(tooltipView)
+        CoroutineScope(Dispatchers.IO).launch {
+            showTapToDismiss(tapToDismissView, arrowView, tooltipView)
+        }
+        currentAimation = ITEM_ANIMATION
+        PrefManager.put(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, true)
+    }
+
+    fun slideInAnimation(tooltipView : View) {
+        tooltipView.visibility = INVISIBLE
+        val start = getScreenHeightAndWidth().second
+        val mid = start * 0.2 * -1
+        val end = tooltipView.x
+        tooltipView.x = start.toFloat()
+        tooltipView.requestLayout()
+        tooltipView.visibility = VISIBLE
+        val valueAnimation = ValueAnimator.ofFloat(start.toFloat(), mid.toFloat(), end).apply {
+            interpolator = AccelerateInterpolator()
+            duration = 500
+            addUpdateListener {
+                tooltipView.x = it.animatedValue as Float
+                tooltipView.requestLayout()
+            }
+        }
+        valueAnimation.start()
+    }
+
+    override fun onBackPressed() {
+        if(currentAimation == null) {
+            super.onBackPressed()
+        } else {
+            hideItemTabOverlay()
+            hideTabOverlay()
+            currentAimation = null
+        }
+    }
+
+    fun getTabName(position : Int) = when(position) {
+        0 -> "TODAY"
+        1 -> "WEEK"
+        2 -> "MONTH"
+        3 -> "LIFETIME"
+        4 -> "BATCH"
+        else -> ""
+    }
 }
+
+data class ItemOverlay(val viewBitmap : Bitmap, val x : Int, val y : Int)
+
+data class Event(val eventType : Int, val type : String)

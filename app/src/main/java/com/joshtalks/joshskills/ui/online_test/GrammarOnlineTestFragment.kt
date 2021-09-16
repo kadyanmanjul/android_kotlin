@@ -1,17 +1,25 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.view.animation.AccelerateInterpolator
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -27,18 +35,25 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val TAG = "GrammarOnlineTest"
 class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineTestInterface {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
     private var lessonActivityListener: LessonActivityListener? = null
@@ -204,6 +219,18 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         })
     }
 
+    /*override fun onResume() {
+        super.onResume()
+        try {
+            animationJob?.cancel()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+        animationJob = CoroutineScope(Dispatchers.Main).launch {
+            setOverlayAnimation()
+        }
+    }*/
+
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_TOOLTIP, defValue = false)) {
@@ -350,6 +377,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         const val CURRENT_LESSON_NUMBER = "current_lesson_number"
         const val POINTS_LIST = "points_list"
         const val SCORE_TEXT = "score_text"
+        private var animationJob : Job? = null
 
         @JvmStatic
         fun getInstance(
@@ -372,5 +400,90 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     override fun testCompleted() {
         showGrammarCompleteLayout()
     }
+
+    /*private suspend fun setOverlayAnimation() {
+        delay(1000)
+        withContext(Dispatchers.Main) {
+                val overlayButtonItem = TooltipUtils.getOverlayItemFromView(binding.startBtn)
+                val overlayImageView =
+                    binding.grammarBtnAnimation.findViewById<ImageView>(R.id.card_item_image)
+                val overlayButtonImageView =
+                    binding.grammarBtnAnimation.findViewById<ImageView>(R.id.button_item_image)
+                overlayImageView.visibility = View.GONE
+                overlayButtonImageView.visibility = View.INVISIBLE
+                binding.grammarBtnAnimation.setOnClickListener {
+                    binding.grammarBtnAnimation.visibility = View.INVISIBLE
+                }
+                overlayButtonImageView.setOnClickListener {
+                    binding.grammarBtnAnimation.visibility = View.INVISIBLE
+                    binding.startBtn.performClick()
+                }
+                setOverlayView(
+                    overlayButtonItem,
+                    overlayButtonImageView
+                )
+        }
+    }
+
+    @SuppressLint("LongLogTag")
+    fun setOverlayView(overlayButtonItem : ItemOverlay, overlayButtonImageView : ImageView) {
+        val STATUS_BAR_HEIGHT = getStatusBarHeight()
+        Log.d(TAG, "setOverlayView: ${STATUS_BAR_HEIGHT}")
+        binding.grammarBtnAnimation.visibility = View.INVISIBLE
+        binding.grammarBtnAnimation.setOnClickListener{
+            binding.grammarBtnAnimation.visibility = View.INVISIBLE
+        }
+        val arrowView = binding.grammarBtnAnimation.findViewById<ImageView>(R.id.arrow_animation_unlock_class)
+        val tooltipView = binding.grammarBtnAnimation.findViewById<JoshTooltip>(R.id.tooltip)
+        overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
+        //arrowView.x = overlayButtonItem.x.toFloat() - resources.getDimension(R.dimen._40sdp) + (overlayButtonImageView.width / 2.0).toFloat() - resources.getDimension(R.dimen._45sdp)
+        arrowView.y = overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
+        overlayButtonImageView.x =  (getScreenHeightAndWidth().second / 2.0).toFloat() //overlayButtonItem.x.toFloat()
+        overlayButtonImageView.y = (getScreenHeightAndWidth().first / 2.0).toFloat() //overlayButtonItem.y.toFloat() - STATUS_BAR_HEIGHT
+        overlayButtonImageView.requestLayout()
+        arrowView.requestLayout()
+        tooltipView.y = arrowView.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._80sdp)
+        binding.grammarBtnAnimation.visibility = View.VISIBLE
+        arrowView.visibility = View.VISIBLE
+        overlayButtonImageView.visibility = View.VISIBLE
+        tooltipView.setTooltipText("बस ना? नहीं अभी भी नहीं. और तेज़ी से आगे बड़ने के लिए आप कल का lesson भी अभी कर सकते हैं")
+        tooltipView.requestLayout()
+        slideInAnimation(tooltipView)
+    }
+
+    fun getScreenHeightAndWidth(): Pair<Int, Int> {
+        val metrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+        return metrics.heightPixels to metrics.widthPixels
+    }
+
+    fun slideInAnimation(tooltipView : JoshTooltip) {
+        tooltipView.visibility = View.INVISIBLE
+        val start = getScreenHeightAndWidth().second
+        val mid = start * 0.2 * -1
+        val end = tooltipView.x
+        tooltipView.x = start.toFloat()
+        tooltipView.requestLayout()
+        tooltipView.visibility = View.VISIBLE
+        val valueAnimation = ValueAnimator.ofFloat(start.toFloat(), mid.toFloat(), end).apply {
+            interpolator = AccelerateInterpolator()
+            duration = 500
+            addUpdateListener {
+                tooltipView.x = it.animatedValue as Float
+                tooltipView.requestLayout()
+            }
+        }
+        valueAnimation.start()
+    }
+
+    fun getStatusBarHeight() : Int {
+        val rectangle = Rect()
+        activity?.window?.decorView?.getWindowVisibleDisplayFrame(rectangle)
+        val statusBarHeight = rectangle.top
+        val contentViewTop: Int = activity?.window?.findViewById<View>(Window.ID_ANDROID_CONTENT)?.top
+            ?: 0
+        val titleBarHeight = contentViewTop - statusBarHeight
+        return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
+    }*/
 
 }

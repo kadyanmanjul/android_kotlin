@@ -31,6 +31,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfLifeTime: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userEnteredName: MutableLiveData<String> = MutableLiveData()
+    val eventLiveData : MutableLiveData<Event?> = MutableLiveData()
 
     fun getFullLeaderBoardData(mentorId: String, course_id: String?) {
         viewModelScope.launch(Dispatchers.IO) {

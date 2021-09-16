@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +26,10 @@ import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity.Companion.tooltipTextList
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity.Companion.winnerMap
+import com.joshtalks.joshskills.ui.leaderboard.constants.NEED_VIEW_BITMAP
+import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
+import com.joshtalks.joshskills.ui.leaderboard.constants.SCROLL_TO_TOP
+import com.joshtalks.joshskills.ui.tooltip.TooltipUtils.Companion.getOverlayItemFromView
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.skydoves.balloon.*
@@ -34,6 +39,8 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LeaderBoardFragment : Fragment(), ViewInflated {
@@ -47,15 +54,85 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
     private var userRank: Int = Int.MAX_VALUE
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(LeaderBoardViewModel::class.java) }
     private var liveUserPosition = -1
+    private var listener : ViewBitmap? = null
+    private var winnerAnimationListener : WinnerAnimation? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is ViewBitmap)
+            listener = context
+        //if(context is WinnerAnimation)
+        //    winnerAnimationListener = context
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate: ")
+        Log.d(TAG, "onCreate: $this")
         super.onCreate(savedInstanceState)
         arguments?.let {
             type = it.getString(TYPE) ?: EMPTY
             courseId = it.getString(COURSE_ID) ?: EMPTY
         }
+            viewModel.eventLiveData.observe(this) {
+                Log.d(TAG, "onCreate: $this --- $it")
+                it?.let {
+                    Log.d(TAG, "onCreate: eventLiveData -->  $it --- $type")
+                    when(it.eventType) {
+                        NEED_VIEW_BITMAP -> {
+                            if(it.type == type) {
+                                getBitmap()
+                                viewModel.eventLiveData.postValue(null)
+                            }
+                        }
+                        PROFILE_ITEM_CLICKED -> {
+                            if(it.type == type) {
+                                val view = binding.recyclerView.getChildAt(3)
+                                view.performClick()
+                                viewModel.eventLiveData.postValue(null)
+                            }
+                        }
+                        SCROLL_TO_TOP -> {
+                            if(it.type == type) {
+                                binding.recyclerView.scrollToPosition(0)
+                            }
+                        }
+                    }
+                }
+            }
     }
+
+    fun scrollToTop() {
+        try {
+            scrollJob?.cancel()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+        scrollJob = CoroutineScope(Dispatchers.Main).launch {
+            binding.recyclerView.scrollToPosition(0)
+            //delay(300)
+            //val view = binding.recyclerView.getChildAt(3)
+            //Log.d(TAG, "scrollToTop : $view --- $type")
+            //winnerAnimationListener?.showWinnerAnimation()
+        }
+    }
+
+    fun getBitmap() {
+        try {
+            bitmapJob?.cancel()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+        bitmapJob = CoroutineScope(Dispatchers.Main).launch {
+            //binding.recyclerView.scrollToPosition(0)
+            binding.recyclerView.stopScroll()
+            //binding.recyclerView.scrollToPosition(0)
+            delay(200)
+            val view = binding.recyclerView.getChildAt(3)
+            Log.d(TAG, "needBitmapLiveData : $view --- $type")
+            listener?.onViewBitmap(getOverlayItemFromView(view), type)
+        }
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,6 +152,8 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
 
     companion object {
         private const val TYPE = "leadberboard_type"
+        private var bitmapJob : Job? = null
+        private var scrollJob : Job? = null
 
         @JvmStatic
         fun newInstance(type: String, courseId: String?) =
@@ -428,4 +507,12 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
     override fun onViewInflated(response: LeaderboardMentor) {
         viewModel.overlayLiveData.postValue(response)
     }
+}
+
+interface ViewBitmap {
+    fun onViewBitmap(overlayItem : ItemOverlay, type : String)
+}
+
+interface WinnerAnimation {
+    fun showWinnerAnimation()
 }

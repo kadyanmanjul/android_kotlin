@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -89,6 +90,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
     }
     private var isPointAnimatorCancel = false
+    private var isAnimationVisible = false
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -121,6 +123,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     private fun setOnClickListeners() {
         binding.pointLayout.setOnClickListener {
+            hideOverlayAnimation()
             openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
@@ -522,6 +525,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     override fun onBackPressed() {
         val count = supportFragmentManager.backStackEntryCount
+        if(isAnimationVisible) {
+            hideOverlayAnimation()
+            return
+        }
         if (count == 0) {
             startTime = System.currentTimeMillis().minus(startTime).div(1000)
             if (startTime > 0 && impressionId.isBlank().not()) {
@@ -601,7 +608,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     override fun onStart() {
         super.onStart()
-        showOverlayAnimation()
+        if(!PrefManager.getBoolValue(HAS_SEEN_PROFILE_ANIMATION))
+            showOverlayAnimation()
     }
 
     private fun stopPointAnimation() {
@@ -639,6 +647,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             //animatePoints()
             binding.labelTapToDismiss.visibility = View.INVISIBLE
             binding.overlayProfileTooltip.visibility = View.VISIBLE
+            PrefManager.put(HAS_SEEN_PROFILE_ANIMATION, true)
+            isAnimationVisible = true
             binding.overlayProfileTooltip.startAnimation(
                 AnimationUtils.loadAnimation(
                     this@UserProfileActivity,
@@ -647,17 +657,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             )
             delay(6500)
             binding.contentOverlay.setOnClickListener {
-                Log.d(TAG, "showOverlayAnimation: contentOverlay")
                 hideOverlayAnimation()
             }
 
             binding.toolbarOverlay.setOnClickListener {
-                Log.d(TAG, "showOverlayAnimation: contentOverlay")
                 hideOverlayAnimation()
             }
 
             binding.overlayProfileTooltip.setOnClickListener {
-                Log.d(TAG, "showOverlayAnimation: overlayProfileTooltip")
                 hideOverlayAnimation()
             }
 
@@ -667,7 +674,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 */
             binding.labelTapToDismiss.visibility = View.VISIBLE
             binding.labelTapToDismiss.setOnClickListener {
-                Log.d(TAG, "showOverlayAnimation: labelTapToDismiss")
+                hideOverlayAnimation()
             }
 
             binding.labelTapToDismiss.startAnimation(
@@ -688,5 +695,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.toolbarOverlay.visibility = View.GONE
         binding.labelTapToDismiss.visibility = View.INVISIBLE
         binding.overlayProfileTooltip.visibility = View.GONE
+        isAnimationVisible = false
     }
 }
