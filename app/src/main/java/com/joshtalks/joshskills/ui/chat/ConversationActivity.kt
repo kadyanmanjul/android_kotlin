@@ -908,10 +908,6 @@ class ConversationActivity :
                             25F
                         )
                     }
-                    if (PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION) &&
-                        !PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
-                        setOverlayAnimation()
-                    }
                 }
             }
         }
@@ -1008,10 +1004,11 @@ class ConversationActivity :
                             if(status == LESSON_STATUS.CO) {
                                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
                                     showOverlay()
+                                else if (!PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION))
+                                    setOverlayAnimation()
                             }
                             else
                                     showLeaderBoardSpotlight()
-                            //showLeaderBoardSpotlight()
                         }
                     }
                 }

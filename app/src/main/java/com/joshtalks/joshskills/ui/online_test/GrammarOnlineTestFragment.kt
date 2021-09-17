@@ -144,6 +144,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             )
         binding.lifecycleOwner = this
         binding.handler = this
+        PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, false)
         return binding.root
     }
 
