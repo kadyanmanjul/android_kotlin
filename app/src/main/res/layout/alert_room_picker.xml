@@ -58,7 +58,6 @@
             app:cardBackgroundColor="@color/artboard_color"
             app:cardCornerRadius="@dimen/_14sdp"
             app:cardElevation="0dp"
-            app:strokeColor="#D2D9E3"
             app:contentPaddingBottom="@dimen/_5sdp"
             app:contentPaddingLeft="@dimen/_7sdp"
             app:contentPaddingRight="@dimen/_7sdp"
@@ -66,6 +65,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/e_g_motivat"
             app:rippleColor="@color/dark_grey"
+            app:strokeColor="#D2D9E3"
             app:strokeWidth="@dimen/_1sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -92,13 +92,13 @@
                     android:id="@+id/choice_textview"
                     android:layout_width="@dimen/_90sdp"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:minLines="2"
-                    android:maxLines="2"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:minLines="2"
                     android:text="Invite Practice Partners"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-                    android:layout_marginTop="@dimen/_5sdp"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_9ssp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -119,7 +119,6 @@
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_14sdp"
             app:cardElevation="0dp"
-            app:strokeColor="@color/white"
             app:contentPaddingBottom="@dimen/_5sdp"
             app:contentPaddingLeft="@dimen/_7sdp"
             app:contentPaddingRight="@dimen/_2sdp"
@@ -127,6 +126,7 @@
             app:layout_constraintStart_toEndOf="@id/p2p_container"
             app:layout_constraintTop_toBottomOf="@id/e_g_motivat"
             app:rippleColor="@color/dark_grey"
+            app:strokeColor="@color/white"
             app:strokeWidth="@dimen/_1sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -152,15 +152,15 @@
                     android:id="@+id/choice_textview_favt"
                     android:layout_width="@dimen/_90sdp"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:minLines="2"
-                    android:maxLines="2"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:minLines="2"
                     android:text="Favorite Practice Partners"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-                    android:textSize="@dimen/_9ssp"
-                    android:layout_marginTop="@dimen/_5sdp"
                     android:textColor="@color/black"
+                    android:textSize="@dimen/_9ssp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -185,15 +185,32 @@
 
         <TextView
             android:id="@+id/tip"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_9sdp"
             android:layout_marginBottom="@dimen/_16sdp"
             android:gravity="center"
-            android:text="Start a conversation with my favorite practice partners"
+            android:text="Start a conversation with "
+            android:textColor="#747474"
+            app:layout_constraintBottom_toTopOf="@id/create_room"
+            app:layout_constraintEnd_toStartOf="@id/tip2"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <TextView
+            android:id="@+id/tip2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_9sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:gravity="center"
+            android:text="my favorite practice partners"
+            android:textColor="#747474"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/create_room"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tip"
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
 
