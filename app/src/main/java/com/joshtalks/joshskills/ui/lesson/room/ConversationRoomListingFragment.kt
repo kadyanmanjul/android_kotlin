@@ -423,7 +423,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         dialogView.findViewById<EditText>(R.id.label_field).requestFocus()
         dialogView.findViewById<EditText>(R.id.label_field).isFocusable = true
 
-        dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
+        dialogView.findViewById<MaterialButton>(R.id.create_room).setOnSingleClickListener {
             if (dialogView.findViewById<EditText>(R.id.label_field).text.toString().isNotBlank()){
                 showPatnerChooserPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
                 hideKeyboard(requireActivity())

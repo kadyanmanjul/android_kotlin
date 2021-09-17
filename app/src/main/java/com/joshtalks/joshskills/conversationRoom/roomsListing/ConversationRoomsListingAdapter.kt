@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiConversionRoomsIlistingItemBinding
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 
 
 class ConversationRoomsListingAdapter(
@@ -142,7 +143,7 @@ class ConversationRoomsListingAdapter(
                     speakerSize.text = "/ ${list2?.size ?: 0}"
                 }
 
-                container.setOnClickListener {
+                container.setOnSingleClickListener {
                     action.onRoomClick(model)
                 }
             }
