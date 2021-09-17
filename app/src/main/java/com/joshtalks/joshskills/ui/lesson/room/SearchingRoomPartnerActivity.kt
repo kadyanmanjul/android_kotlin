@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivitySearchingRoomUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 
@@ -182,6 +184,7 @@ class SearchingRoomPartnerActivity : BaseActivity() {
 
     private fun endRoom() {
         timer?.cancel()
+        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
         viewModel.endRoom(roomId.toString(), roomQuestionId)
     }
 

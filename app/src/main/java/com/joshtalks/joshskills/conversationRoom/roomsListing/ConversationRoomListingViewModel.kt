@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -140,14 +141,15 @@ class ConversationRoomListingViewModel : ViewModel() {
         }
     }
 
-    fun getPointsForConversationRoom(roomId: String?, conversationQuestionId: Int?) {
+    fun getPointsForConversationRoom(roomId: String?, conversationQuestionId: Int?,fromRoom:Boolean=false) {
         viewModelScope.launch(Dispatchers.IO) {
             delay(200)
             try {
                 val response =
                     AppObjectController.chatNetworkService.getSnackBarText(roomId = roomId,conversationQuestionId = conversationQuestionId.toString())
-                if (response.pointsList?.get(0)?.isNotBlank()== true) {
-                    points.postValue(response.pointsList.get(0))
+                if (response.pointsList?.get(0)?.isNotBlank()== true && fromRoom) {
+                    //points.postValue(response.pointsList.get(0))
+                    PrefManager.put(CONVO_ROOM_POINTS,response.pointsList.get(0))
                 }
 
             } catch (ex: Exception) {
@@ -165,6 +167,7 @@ class ConversationRoomListingViewModel : ViewModel() {
             if (response.isSuccessful) {
                 isRoomEnded.postValue(true)
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
+                getPointsForConversationRoom(roomId,conversationQuestionId,true)
             }
         }
     }

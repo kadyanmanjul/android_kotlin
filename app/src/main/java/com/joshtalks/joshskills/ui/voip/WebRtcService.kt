@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
@@ -633,6 +634,7 @@ class WebRtcService : BaseWebRtcService() {
             Log.d("ABC", "end room api call ${response.code()}")
             if (response.isSuccessful) {
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
+                getConvoRoomPoints(roomId,conversationQuestionId)
                 removeNotifications()
                 conversationRoomChannelName = null
                 mRtcEngine?.leaveChannel()
@@ -653,6 +655,7 @@ class WebRtcService : BaseWebRtcService() {
                 Log.d("ABC", "leave room api call")
                 if (response.isSuccessful) {
                     PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
+                    getConvoRoomPoints(roomId,conversationQuestionId)
                     removeNotifications()
                     conversationRoomChannelName = null
                     mRtcEngine?.leaveChannel()
@@ -662,6 +665,19 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
+    suspend fun getConvoRoomPoints(roomId: String?, conversationQuestionId: Int?) {
+        try {
+            val response =
+                AppObjectController.chatNetworkService.getSnackBarText(roomId,conversationQuestionId.toString())
+            if (response.pointsList?.get(0)?.isNotBlank()== true) {
+                //points.postValue(response.pointsList.get(0))
+                PrefManager.put(CONVO_ROOM_POINTS,response.pointsList.get(0))
+            }
+
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
 
     inner class CustomHandlerThread(name: String) : HandlerThread(name) {
         override fun onLooperPrepared() {

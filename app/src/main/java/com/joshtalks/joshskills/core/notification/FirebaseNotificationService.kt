@@ -25,7 +25,6 @@ import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -443,20 +442,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                Log.d(
-                    FirebaseNotificationService.javaClass.name,
-                    "getIntentAccordingAction() called with: IS_CONVERSATION_ROOM_ACTIVE  ${PrefManager.getBoolValue(
-                                IS_CONVERSATION_ROOM_ACTIVE
-                            )} "
-                )
-                //if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
-                if ( true) {
-                    /*actionData?.let { roomId->
-                        return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
-                            roomId
-                        )
-                    }*/
-
+                if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
                             putExtra(ConfigKey.ROOM_ID,actionData.toString())

@@ -99,6 +99,7 @@ const val HAS_SEEN_LESSON_SPOTLIGHT = "joshskills_has_seen_lesson_spotlight"
 const val HAS_SEEN_SPEAKING_SPOTLIGHT = "joshskills_has_seen_speaking_spotlight"
 const val HAS_SEEN_CONVO_ROOM_SPOTLIGHT = "joshskills_has_seen_convo_room_spotlight"
 const val HAS_SEEN_CONVO_ROOM_POINTS = "joshskills_has_seen_convo_room_points"
+const val CONVO_ROOM_POINTS = "joshskills_convo_room_points"
 
 object PrefManager {
 

@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +33,9 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingAdapter
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
@@ -97,7 +98,8 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
-        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
+        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+        PrefManager.put(CONVO_ROOM_POINTS, EMPTY)
     }
 
     override fun onAttach(context: Context) {
@@ -175,9 +177,9 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         })
 
         viewModel.points.observe(viewLifecycleOwner, { pointsString ->
-            if (pointsString.isNotBlank()){
+            if (pointsString.isNotBlank()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
             }
         })
 
@@ -254,7 +256,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
 
     private fun openConversationRoomByNotificationIntent() {
         if (isActivityOpenFromNotification && roomId.isNotEmpty()) {
-            lastRoomId=roomId
+            lastRoomId = roomId
             Handler(Looper.getMainLooper()).postDelayed({
                 notebookRef.document(roomId).get().addOnSuccessListener {
                     viewModel.joinRoom(
@@ -290,10 +292,6 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
                     internetAvailableFlag = connectivity.available()
-                    Log.d(
-                        "ABC",
-                        "internetAvailableFlag: $internetAvailableFlag ${connectivity.available()}"
-                    )
                     if (internetAvailableFlag) {
                         internetAvailable()
                     } else {
@@ -303,9 +301,15 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         )
         conversationRoomQuestionId?.let {
             viewModel.getConvoRoomDetails(it)
-            if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS,defValue = false).not()){
-                viewModel.getPointsForConversationRoom(lastRoomId,it)
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
+            if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false).not()) {
+                val point = PrefManager.getStringValue(CONVO_ROOM_POINTS)
+                if (point.isNotBlank()) {
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG,point)
+                    PrefManager.put(CONVO_ROOM_POINTS, EMPTY)
+                } else {
+                    viewModel.getPointsForConversationRoom(lastRoomId,it)
+                }
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
             }
         }
     }
@@ -338,7 +342,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
-        lastRoomId=roomId.toString()
+        lastRoomId = roomId.toString()
         if (isRoomCreatedByUser) {
             SearchingRoomPartnerActivity.startUserForPractiseOnPhoneActivity(
                 requireActivity(),
@@ -424,7 +428,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         dialogView.findViewById<EditText>(R.id.label_field).isFocusable = true
 
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnSingleClickListener {
-            if (dialogView.findViewById<EditText>(R.id.label_field).text.toString().isNotBlank()){
+            if (dialogView.findViewById<EditText>(R.id.label_field).text.toString().isNotBlank()) {
                 showPatnerChooserPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
                 hideKeyboard(requireActivity())
                 alertDialog.dismiss()
