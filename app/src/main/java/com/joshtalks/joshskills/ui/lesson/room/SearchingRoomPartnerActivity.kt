@@ -165,9 +165,8 @@ class SearchingRoomPartnerActivity : BaseActivity() {
             timer = object : CountDownTimer(5000, 500) {
                 override fun onTick(millisUntilFinished: Long) {
                     timeCreated= timeCreated + 1
-                    if (timeCreated>=(60*2)){
-                        timer?.cancel()
-                        viewModel.endRoom(roomId.toString(), roomQuestionId)
+                    if (timeCreated>=(60*2*2)){
+                        endRoom()
                     }
                     val diff = binding.progressBar.progress + 10
                     fillProgressBar(diff)
@@ -179,6 +178,16 @@ class SearchingRoomPartnerActivity : BaseActivity() {
             }
             timer?.start()
         }
+    }
+
+    private fun endRoom() {
+        timer?.cancel()
+        viewModel.endRoom(roomId.toString(), roomQuestionId)
+    }
+
+    override fun onBackPressed() {
+        endRoom()
+        super.onBackPressed()
     }
 
     private fun fillProgressBar(diff: Int) {

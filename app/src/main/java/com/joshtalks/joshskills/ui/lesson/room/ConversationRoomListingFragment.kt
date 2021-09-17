@@ -177,6 +177,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         viewModel.points.observe(viewLifecycleOwner, { pointsString ->
             if (pointsString.isNotBlank()){
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
             }
         })
 

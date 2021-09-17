@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:elevation="@dimen/_3sdp"
+            android:elevation="@dimen/_4sdp"
             android:padding="@dimen/_7sdp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
