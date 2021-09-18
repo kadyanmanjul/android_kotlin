@@ -514,7 +514,7 @@ enum class AnalyticsEvent(val NAME: String) {
     DELETE_PIC("delete_pic"),
     IS_FROM_REGISTRATION_SCREEN("is_from_registration_screen"),
     SKIP_PROFILE_PIC("skip_profile_pic"),
-    START_COURSE_CLICKED("start_course_clicked")
-
+    START_COURSE_CLICKED("start_course_clicked"),
+    FCM_TOKEN_CRASH_EVENT("fcm_token_crash_event")
 
 }

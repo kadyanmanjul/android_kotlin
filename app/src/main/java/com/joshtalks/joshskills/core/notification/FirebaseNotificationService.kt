@@ -47,6 +47,8 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
@@ -125,17 +127,28 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             fcmResponse?.apiStatus = ApiRespStatus.POST
             fcmResponse?.update()
             if (fcmResponse != null && userId.isNotBlank()) {
-                val data = mutableMapOf("user_id" to userId, "registration_id" to token)
-                val resp =
-                    AppObjectController.signUpNetworkService.patchFCMToken(
-                        fcmResponse.id,
-                        data.toMap()
-                    )
-                if (resp.isSuccessful) {
-                    Timber.d("FCMToken asdf : Updated on Server")
-                    fcmResponse.userId = userId
-                    fcmResponse.apiStatus = ApiRespStatus.PATCH
-                    fcmResponse.update()
+                try {
+                    val data = mutableMapOf("user_id" to userId, "registration_id" to token)
+                    val resp =
+                        AppObjectController.signUpNetworkService.patchFCMToken(
+                            fcmResponse.id,
+                            data.toMap()
+                        )
+                    if (resp.isSuccessful) {
+                        fcmResponse.userId = userId
+                        fcmResponse.apiStatus = ApiRespStatus.PATCH
+                        fcmResponse.update()
+                    }
+                } catch (ex:Exception){
+                    try {
+                        AppAnalytics.create(AnalyticsEvent.FCM_TOKEN_CRASH_EVENT.NAME)
+                            .addBasicParam()
+                            .addUserDetails()
+                            .push()
+                    } catch (ex:Exception){
+                        ex.printStackTrace()
+                    }
+                    ex.printStackTrace()
                 }
             }
         }
