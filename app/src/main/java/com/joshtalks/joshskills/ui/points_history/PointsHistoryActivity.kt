@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.points_history
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Point
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -143,12 +144,19 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
                     Log.d(TAG, "getOverlayView: $overlayItem")
                     val overlayImageView =
                         binding.overlayView.findViewById<ImageView>(R.id.profile_item_image)
+                    val arrowImageView = view.findViewById<ImageView>(R.id.expand_unexpand_view)
+                    val arrowPosition = IntArray(2)
+                    arrowImageView.getLocationOnScreen(arrowPosition)
+                    val arrowPoint = Point().apply {
+                        x = arrowPosition[0]
+                        y = arrowPosition[1]
+                    }
                     overlayImageView.setOnClickListener {
                         binding.overlayView.visibility = View.INVISIBLE
                         isAnimationVisible = false
                         view.performClick()
                     }
-                    setOverlayView(overlayItem, overlayImageView)
+                    setOverlayView(overlayItem, overlayImageView, arrowPoint, arrowImageView.width)
                     break
                 }
                 i++
@@ -156,7 +164,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         }
     }
 
-    fun setOverlayView(overlayItem : ItemOverlay, overlayImageView : ImageView) {
+    fun setOverlayView(overlayItem : ItemOverlay, overlayImageView : ImageView, arrowPoint : Point, arrowWidth : Int) {
         Log.d(TAG, "onViewBitmap: $overlayItem")
         val STATUS_BAR_HEIGHT = getStatusBarHeight()
         binding.overlayView.visibility = View.INVISIBLE
@@ -168,19 +176,22 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         val tooltipView = binding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
         val tapToDismissView = binding.overlayView.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
-        arrowView.x = overlayItem.x.toFloat()
-        arrowView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
         overlayImageView.x = overlayItem.x.toFloat()
         overlayImageView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT
         overlayImageView.requestLayout()
-        arrowView.requestLayout()
-        binding.overlayView.visibility = View.VISIBLE
-        tooltipView.setTooltipText("इस student ने points कैसे कमाए हम यहाँ से देख सकते हैं")
-        slideInAnimation(tooltipView)
-        PrefManager.put(HAS_SEEN_POINTS_HISTORY_ANIMATION, true)
-        isAnimationVisible = true
-        CoroutineScope(Dispatchers.IO).launch {
-            showTapToDismiss(tapToDismissView)
+        overlayImageView.post {
+            arrowView.x = (arrowPoint.x + arrowWidth/2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
+            arrowView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
+            arrowView.requestLayout()
+            arrowView.visibility = View.VISIBLE
+            binding.overlayView.visibility = View.VISIBLE
+            tooltipView.setTooltipText("इस student ने points कैसे कमाए हम यहाँ से देख सकते हैं")
+            slideInAnimation(tooltipView)
+            PrefManager.put(HAS_SEEN_POINTS_HISTORY_ANIMATION, true)
+            isAnimationVisible = true
+            CoroutineScope(Dispatchers.IO).launch {
+                showTapToDismiss(tapToDismissView)
+            }
         }
     }
 

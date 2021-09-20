@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -77,7 +78,7 @@ const val SPEAKING_POSITION = 1
 const val VOCAB_POSITION = 2
 const val READING_POSITION = 3
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
-
+private const val TAG = "LessonActivity"
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
 
     private lateinit var binding: LessonActivityBinding
@@ -179,6 +180,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.buyCourseLl.visibility = View.VISIBLE
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
+        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, false)
     }
 
     override fun onResume() {
@@ -495,7 +497,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
                     binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_speaking_spotlight_2).toString())
-                    slideInAnimation(binding.lessonSpotlightTooltip)
+                    binding.lessonSpotlightTooltip.post{
+                        slideInAnimation(binding.lessonSpotlightTooltip)
+                    }
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.VISIBLE
                     binding.spotlightCallBtnText.visibility = View.VISIBLE
@@ -1054,6 +1058,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     override fun showGrammarAnimation(overlayItem: ItemOverlay) {
         Log.d(TAG, "showGrammarAnimation : $overlayItem")
         binding.itemOverlay.visibility = View.INVISIBLE
+        binding.itemOverlay.setOnClickListener(null)
         val OFFSET = getStatusBarHeight()
         val itemImageView = binding.itemOverlay.findViewById<ImageView>(R.id.main_item_imageview)
         val arrowView = binding.itemOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation_lesson)
@@ -1062,7 +1067,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         itemImageView.visibility = View.INVISIBLE
         arrowView.visibility = View.INVISIBLE
         itemImageView.setImageBitmap(overlayItem.viewBitmap)
-
         arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
         itemImageView.x = overlayItem.x.toFloat()
         itemImageView.y = overlayItem.y.toFloat() - OFFSET
@@ -1071,16 +1075,21 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             viewModel.eventLiveData.postValue(Unit)
         }
         itemImageView.requestLayout()
-        arrowView.x = itemImageView.x + (itemImageView.width * 0.5).toFloat() - resources.getDimension(R.dimen._42sdp)
+        itemImageView.post{
+            arrowView.x = (itemImageView.x + itemImageView.width/2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
+            arrowView.requestLayout()
+        }
         arrowView.requestLayout()
-        tooltipView.visibility = View.INVISIBLE
-        tooltipView.y = arrowView.y - resources.getDimension(R.dimen._60sdp) - OFFSET
-        tooltipView.requestLayout()
-        binding.itemOverlay.visibility = View.VISIBLE
-        arrowView.visibility = View.VISIBLE
-        itemImageView.visibility = View.VISIBLE
-        tooltipView.setTooltipText("आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे")
-        slideInAnimation(tooltipView)
-        PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
+        arrowView.post {
+            tooltipView.visibility = View.INVISIBLE
+            tooltipView.y = arrowView.y - resources.getDimension(R.dimen._60sdp) - OFFSET
+            tooltipView.requestLayout()
+            binding.itemOverlay.visibility = View.VISIBLE
+            arrowView.visibility = View.VISIBLE
+            itemImageView.visibility = View.VISIBLE
+            tooltipView.setTooltipText("आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे")
+            slideInAnimation(tooltipView)
+            PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
+        }
     }
 }

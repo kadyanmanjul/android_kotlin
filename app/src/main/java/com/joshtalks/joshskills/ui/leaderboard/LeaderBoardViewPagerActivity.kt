@@ -63,6 +63,7 @@ import io.reactivex.schedulers.Schedulers
 import java.lang.Exception
 import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.android.synthetic.main.mini_player_controller_layout.img_full_screen_enter_exit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -110,11 +111,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         initToolbar()
         initViewPager()
         addObserver()
-        //PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, false)
-        //PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, false)
-        //PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, false)
-        //PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, false)
-        //PrefManager.put(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, false)
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
 
@@ -463,12 +459,13 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     swipeAnimationView.visibility = VISIBLE
                                     PrefManager.put(HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION, true)
                                     currentAimation = ITEM_ANIMATION
-                                    showTapToDismiss(
+                                    binding.tabOverlay.isClickable = false
+                                    /*showTapToDismiss(
                                         topLayout,
                                         cardLayout,
                                         tabToDismissView,
                                         position
-                                    )
+                                    )*/
                                 }
                             }
 
@@ -809,7 +806,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         viewModel.eventLiveData.postValue(Event(eventType = NEED_VIEW_BITMAP, type = getTabName(position)))
     }
 
-    override fun onViewBitmap(overlayItem : ItemOverlay, type : String) {
+    override fun onViewBitmap(overlayItem : ItemOverlay, type : String, arrowPosition : Float?) {
         Log.d(TAG, "onViewBitmap: $overlayItem")
         val OFFSET = getStatusBarHeight()
         val itemImageView =
@@ -818,10 +815,9 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         val tooltipView = binding.itemTabOverlay.findViewById<JoshTooltip>(R.id.tooltip)
         val tapToDismissView = binding.itemTabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
         itemImageView.setImageBitmap(overlayItem.viewBitmap)
-        arrowView.x = overlayItem.x.toFloat()
+        arrowView.x = (arrowPosition ?: (getScreenHeightAndWidth().second / 2.0).toFloat()).toFloat() - resources.getDimension(R.dimen._40sdp)
         arrowView.y = overlayItem.y.toFloat() - OFFSET - resources.getDimension(R.dimen._32sdp)
         itemImageView.x = overlayItem.x.toFloat()
-        //itemImageView.x = if(overlayItem.x.toFloat() < 0) 0f else overlayItem.x.toFloat()
         itemImageView.y = overlayItem.y.toFloat() - OFFSET
         itemImageView.setOnClickListener {
             hideItemTabOverlay()

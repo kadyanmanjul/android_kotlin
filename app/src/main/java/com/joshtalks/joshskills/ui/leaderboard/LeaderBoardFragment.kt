@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -61,8 +63,6 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
         super.onAttach(context)
         if(context is ViewBitmap)
             listener = context
-        //if(context is WinnerAnimation)
-        //    winnerAnimationListener = context
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,7 +128,20 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
             delay(200)
             val view = binding.recyclerView.getChildAt(3)
             Log.d(TAG, "needBitmapLiveData : $view --- $type")
-            listener?.onViewBitmap(getOverlayItemFromView(view), type)
+            var arrowPosition : Float? = null
+            try {
+                val userPicView = view.findViewById<AppCompatImageView>(R.id.user_pic)
+                val nameView = view.findViewById<AppCompatTextView>(R.id.name)
+                val userPosition = IntArray(2)
+                val namePosition = IntArray(2)
+                userPicView.getLocationOnScreen(userPosition)
+                nameView.getLocationOnScreen(namePosition)
+                arrowPosition = (userPosition[0] + userPicView.width + (namePosition[0] - (userPosition[0] + userPicView.width))/2.0).toFloat()
+            } catch (e : Exception) {
+                arrowPosition = null
+                e.printStackTrace()
+            }
+            listener?.onViewBitmap(getOverlayItemFromView(view), type, arrowPosition)
         }
     }
 
@@ -510,7 +523,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
 }
 
 interface ViewBitmap {
-    fun onViewBitmap(overlayItem : ItemOverlay, type : String)
+    fun onViewBitmap(overlayItem : ItemOverlay, type : String, arrowPosition : Float?)
 }
 
 interface WinnerAnimation {

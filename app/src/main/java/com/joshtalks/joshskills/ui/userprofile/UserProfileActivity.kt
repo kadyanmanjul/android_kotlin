@@ -64,7 +64,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
-    private val pointAnimator by lazy {
+    /*private val pointAnimator by lazy {
         ValueAnimator.ofFloat(1.2f, 0.8f).apply {
             duration = 780
             repeatCount = ValueAnimator.INFINITE
@@ -88,8 +88,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 override fun onAnimationRepeat(animation: Animator?) {}
             })
         }
-    }
-    private var isPointAnimatorCancel = false
+    }*/
+    //private var isPointAnimatorCancel = false
     private var isAnimationVisible = false
 
     init {
@@ -601,10 +601,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
     }
 
-    private fun animatePoints() {
+    /*private fun animatePoints() {
         isPointAnimatorCancel = false
         pointAnimator.start()
-    }
+    }*/
 
     override fun onStart() {
         super.onStart()
@@ -612,19 +612,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             showOverlayAnimation()
     }
 
-    private fun stopPointAnimation() {
+    /*private fun stopPointAnimation() {
         isPointAnimatorCancel = true
         pointAnimator.cancel()
         binding.points.scaleX = 1f
         binding.points.scaleY = 1f
-    }
+    }*/
 
     private fun showOverlayAnimation() {
         lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
             binding.contentOverlay.visibility = View.VISIBLE
             binding.arrowAnimation.visibility = View.VISIBLE
-            binding.arrowAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+            /*binding.arrowAnimation.addAnimatorListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator?) {
                     animatePoints()
                     Log.d(TAG, "onAnimationStart: ")
@@ -641,7 +641,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 override fun onAnimationRepeat(animation: Animator?) {
                     Log.d(TAG, "onAnimationRepeat: ")
                 }
-            })
+            })*/
             binding.arrowAnimation.playAnimation()
             binding.toolbarOverlay.visibility = View.VISIBLE
             //animatePoints()
@@ -689,7 +689,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.labelTapToDismiss.setOnClickListener(null)
         binding.toolbarOverlay.setOnClickListener(null)
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
-        stopPointAnimation()
+        //stopPointAnimation()
         binding.arrowAnimation.visibility = View.GONE
         binding.contentOverlay.visibility = View.GONE
         binding.toolbarOverlay.visibility = View.GONE

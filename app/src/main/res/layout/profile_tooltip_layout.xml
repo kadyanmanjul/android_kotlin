@@ -10,7 +10,7 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/arrow_animation"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_40sdp"
         android:rotation="90"
         android:visibility="visible"
