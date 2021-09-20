@@ -50,8 +50,10 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -61,9 +63,17 @@ const val IS_ACTIVE = "is_active"
 const val NOTIFICATION_TEXT = "notification_text"
 const val NOTIFICATION_TITLE = "notification_title"
 const val LANGUAGE_CODE = "language_code"
-val NOTIFICATION_DELAY= arrayOf(3,30,60)
-val NOTIFICATION_TEXT_TEXT= arrayOf("Chalo speaking practice try karte hai","Try speaking practice ","Isko abhi complete kare")
-val NOTIFICATION_TITLE_TEXT= arrayOf("%name, %num students are online","Meet people from across the country.","Apka aaj ka goal hai Lesson 1 complete karna")
+val NOTIFICATION_DELAY = arrayOf(3, 30, 60)
+val NOTIFICATION_TEXT_TEXT = arrayOf(
+    "Chalo speaking practice try karte hai",
+    "Try speaking practice ",
+    "Isko abhi complete kare"
+)
+val NOTIFICATION_TITLE_TEXT = arrayOf(
+    "%name, %num students are online",
+    "Meet people from across the country.",
+    "Apka aaj ka goal hai Lesson 1 complete karna"
+)
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -295,22 +305,30 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                         fcmResponse?.update()
                         Timber.d("FCMToken asdf : Updated")
 
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val userId = Mentor.getInstance().getId()
-                            if (fcmResponse != null && userId.isNotBlank()) {
-                                val data =
-                                    mutableMapOf("user_id" to userId, "registration_id" to it)
-                                val resp =
-                                    AppObjectController.signUpNetworkService.patchFCMToken(
-                                        fcmResponse.id,
-                                        data.toMap()
-                                    )
-                                if (resp.isSuccessful) {
-                                    Timber.d("FCMToken asdf : Updated on Server")
-                                    fcmResponse.userId = userId
-                                    fcmResponse.apiStatus = ApiRespStatus.PATCH
-                                    fcmResponse.update()
+                        CoroutineScope(
+                            SupervisorJob() +
+                                    Dispatchers.IO +
+                                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
+                        ).launch {
+                            try {
+                                val userId = Mentor.getInstance().getId()
+                                if (fcmResponse != null && userId.isNotBlank()) {
+                                    val data =
+                                        mutableMapOf("user_id" to userId, "registration_id" to it)
+                                    val resp =
+                                        AppObjectController.signUpNetworkService.patchFCMToken(
+                                            fcmResponse.id,
+                                            data.toMap()
+                                        )
+                                    if (resp.isSuccessful) {
+                                        Timber.d("FCMToken asdf : Updated on Server")
+                                        fcmResponse.userId = userId
+                                        fcmResponse.apiStatus = ApiRespStatus.PATCH
+                                        fcmResponse.update()
+                                    }
                                 }
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
                             }
                         }
                     }
@@ -703,13 +721,14 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
         try {
 
             val textDescription =
-                workerParams.inputData.getString(NOTIFICATION_TEXT) ?:"Atta boy ! Practise with 94 people who are online rightnow."
+                workerParams.inputData.getString(NOTIFICATION_TEXT)
+                    ?: "Atta boy ! Practise with 94 people who are online rightnow."
 
             val title =
-                workerParams.inputData.getString(NOTIFICATION_TITLE) ?:"Missed your class"
+                workerParams.inputData.getString(NOTIFICATION_TITLE) ?: "Missed your class"
 
             val index =
-                workerParams.inputData.getInt(NOTIFICATION_ID,0)
+                workerParams.inputData.getInt(NOTIFICATION_ID, 0)
 
             val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -736,7 +755,7 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
                 val notificationBuilder =
                     NotificationCompat.Builder(
                         context,
-                        LOCAL_NOTIFICATION_CHANNEL+index
+                        LOCAL_NOTIFICATION_CHANNEL + index
                     )
                         .setSmallIcon(R.drawable.ic_status_bar_notification)
                         .setContentTitle(title)
@@ -778,22 +797,29 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     val notificationChannel = NotificationChannel(
-                        LOCAL_NOTIFICATION_CHANNEL+index,
-                        LOCAL_NOTIFICATION_CHANNEL+index,
+                        LOCAL_NOTIFICATION_CHANNEL + index,
+                        LOCAL_NOTIFICATION_CHANNEL + index,
                         NotificationManager.IMPORTANCE_HIGH
                     )
                     notificationChannel.enableLights(true)
                     notificationChannel.enableVibration(true)
-                    notificationBuilder.setChannelId(LOCAL_NOTIFICATION_CHANNEL+index)
+                    notificationBuilder.setChannelId(LOCAL_NOTIFICATION_CHANNEL + index)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
-                Timber.d("Local Notification Set LOCAL_NOTIFICATION_INDEX: ${PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0)}")
+                Timber.d(
+                    "Local Notification Set LOCAL_NOTIFICATION_INDEX: ${
+                        PrefManager.getIntValue(
+                            LOCAL_NOTIFICATION_INDEX,
+                            defValue = 0
+                        )
+                    }"
+                )
                 notificationManager.notify(uniqueInt, notificationBuilder.build())
 
             }
-        }catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
         return Result.success()
     }
 }

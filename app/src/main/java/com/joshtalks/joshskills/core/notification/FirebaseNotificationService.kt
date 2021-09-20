@@ -98,8 +98,10 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import kotlin.collections.set
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
@@ -121,7 +123,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(
+            SupervisorJob() +
+                    Dispatchers.IO +
+                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
+        ).launch {
             val userId = Mentor.getInstance().getId()
             val fcmResponse = FCMResponse.getInstance()
             fcmResponse?.apiStatus = ApiRespStatus.POST
@@ -139,13 +145,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         fcmResponse.apiStatus = ApiRespStatus.PATCH
                         fcmResponse.update()
                     }
-                } catch (ex:Exception){
+                } catch (ex: Exception) {
                     try {
                         AppAnalytics.create(AnalyticsEvent.FCM_TOKEN_CRASH_EVENT.NAME)
                             .addBasicParam()
                             .addUserDetails()
                             .push()
-                    } catch (ex:Exception){
+                    } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
                     ex.printStackTrace()
