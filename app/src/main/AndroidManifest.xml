@@ -83,11 +83,10 @@
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
             android:exported="true" >
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
@@ -140,11 +139,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
