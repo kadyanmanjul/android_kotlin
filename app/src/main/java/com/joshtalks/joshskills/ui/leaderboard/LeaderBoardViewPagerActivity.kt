@@ -111,6 +111,10 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         initToolbar()
         initViewPager()
         addObserver()
+//        PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, false)
+//        PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, false)
+//        PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, false)
+//        PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, false)
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
 
@@ -414,12 +418,17 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     showWinnerOverlay(position, topLayout, cardLayout, tooltipView)
                                     currentAimation = ITEM_ANIMATION
                                     PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, true)
-                                    showTapToDismiss(
+                                    binding.tabOverlay.setOnClickListener(null)
+                                    delay(2000)
+                                    swipeAnimationView.visibility = VISIBLE
+                                    currentAimation = ITEM_ANIMATION
+                                    binding.tabOverlay.isClickable = false
+                                    /*showTapToDismiss(
                                         topLayout,
                                         cardLayout,
                                         tabToDismissView,
                                         position
-                                    )
+                                    )*/
                                 }
                             }
                             1 -> {
@@ -428,12 +437,17 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     showWinnerOverlay(position, topLayout, cardLayout, tooltipView)
                                     currentAimation = ITEM_ANIMATION
                                     PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, true)
-                                    showTapToDismiss(
+                                    /*showTapToDismiss(
                                         topLayout,
                                         cardLayout,
                                         tabToDismissView,
                                         position
-                                    )
+                                    )*/
+                                    binding.tabOverlay.setOnClickListener(null)
+                                    delay(2000)
+                                    swipeAnimationView.visibility = VISIBLE
+                                    currentAimation = ITEM_ANIMATION
+                                    binding.tabOverlay.isClickable = false
                                 }
                             }
                             2 -> {
@@ -442,12 +456,17 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     showWinnerOverlay(position, topLayout, cardLayout, tooltipView)
                                     currentAimation = ITEM_ANIMATION
                                     PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, true)
-                                    showTapToDismiss(
+                                    /*showTapToDismiss(
                                         topLayout,
                                         cardLayout,
                                         tabToDismissView,
                                         position
-                                    )
+                                    )*/
+                                    binding.tabOverlay.setOnClickListener(null)
+                                    delay(2000)
+                                    swipeAnimationView.visibility = VISIBLE
+                                    currentAimation = ITEM_ANIMATION
+                                    binding.tabOverlay.isClickable = false
                                 }
                             }
                             3 -> {
@@ -479,12 +498,17 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     showToolTip(batchTooltipView, tooltipTextList[position])
                                     PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, true)
                                     currentAimation = ITEM_ANIMATION
-                                    showTapToDismiss(
+                                    /*showTapToDismiss(
                                         topLayout,
                                         cardLayout,
                                         tabToDismissView,
                                         position
-                                    )
+                                    )*/
+                                    binding.tabOverlay.setOnClickListener(null)
+                                    delay(2000)
+                                    swipeAnimationView.visibility = VISIBLE
+                                    currentAimation = ITEM_ANIMATION
+                                    binding.tabOverlay.isClickable = false
                                 }
                             }
                         }

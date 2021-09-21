@@ -35,11 +35,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/label_tap_to_dismiss"
-        android:visibility="visible"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_16sdp"
+        android:visibility="visible"
         app:tooltipText="" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -50,6 +50,10 @@
         android:layout_marginHorizontal="@dimen/_12sdp"
         android:layout_marginVertical="@dimen/_32sdp"
         android:elevation="@dimen/_8sdp"
+        android:shadowColor="#BD6674"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="10"
         android:text="Tap anywhere to continue"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
         android:textColor="@color/white"
