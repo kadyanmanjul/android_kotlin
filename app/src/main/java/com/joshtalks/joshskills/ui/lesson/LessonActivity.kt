@@ -180,7 +180,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.buyCourseLl.visibility = View.VISIBLE
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
-        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, false)
     }
 
     override fun onResume() {
