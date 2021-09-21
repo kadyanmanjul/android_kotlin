@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.leaderboard.search
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -25,17 +26,22 @@ class LeaderboardSearchItemAdapter(val context: Context, val itemList: List<Lead
 
             binding.container.setOnClickListener {
                 response.id?.let {
-                    RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
+                    RxBus2.publish(OpenUserProfile(it, response.isOnline ?: false))
                 }
             }
             binding.userPic.setOnClickListener {
                 response.id?.let {
-                    RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
+                    RxBus2.publish(OpenUserProfile(it, response.isOnline ?: false))
                 }
             }
 
             binding.container.isClickable = true
             binding.container.isEnabled = true
+            if (response.isSeniorStudent) {
+                binding.imgSeniorStudentBadge.visibility = View.VISIBLE
+            } else {
+                binding.imgSeniorStudentBadge.visibility = View.GONE
+            }
             if (response.id.equals(Mentor.getInstance().getId())) {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     binding.container.setBackgroundColor(
@@ -63,7 +69,12 @@ class LeaderboardSearchItemAdapter(val context: Context, val itemList: List<Lead
             }
             binding.name.text = resp
             binding.points.text = response.points.toString()
-            binding.userPic.setUserImageOrInitials(response.photoUrl,response.name?:"User",16,true)
+            binding.userPic.setUserImageOrInitials(
+                response.photoUrl,
+                response.name ?: "User",
+                16,
+                true
+            )
 
             if (response.isOnline != null && response.isOnline) {
                 binding.onlineStatusIv.visibility = android.view.View.VISIBLE

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -92,15 +91,15 @@
                 android:id="@+id/iv_earn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/iv_help"
-                android:tint="@color/white"
                 android:layout_marginEnd="@dimen/_4sdp"
-                android:visibility="gone"
+                android:layout_toStartOf="@id/iv_help"
                 android:padding="@dimen/_4sdp"
-                tools:src="@drawable/ic_search"
+                android:tint="@color/white"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/iv_help"
                 app:layout_constraintEnd_toStartOf="@id/iv_help"
                 app:layout_constraintTop_toTopOf="@id/iv_help"
+                tools:src="@drawable/ic_search"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -133,5 +132,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.appbar.MaterialToolbar>
-</LinearLayout>
 
+</LinearLayout>

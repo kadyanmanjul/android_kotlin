@@ -379,7 +379,7 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     android:textColor="@color/colorPrimary"
                     android:visibility="gone"
-                    app:drawableStartCompat="@drawable/ic_info_small"
+                    app:drawableStartCompat="@drawable/ic_info_micro"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txt_label_senior_student"

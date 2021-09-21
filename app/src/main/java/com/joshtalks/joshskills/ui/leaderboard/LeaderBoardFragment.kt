@@ -402,6 +402,11 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                 .append(" ")
         }
         binding.name.text = resp
+        if (response.isSeniorStudent) {
+            binding.imgSeniorStudentBadge.visibility = View.VISIBLE
+        } else {
+            binding.imgSeniorStudentBadge.visibility = View.GONE
+        }
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(
             response.photoUrl,

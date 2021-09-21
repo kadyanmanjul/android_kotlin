@@ -60,10 +60,8 @@ import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.lang.Exception
 import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
-import kotlinx.android.synthetic.main.mini_player_controller_layout.img_full_screen_enter_exit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -395,11 +393,18 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         Log.d(TAG, "setTabOverlay: $position")
         toolTipJob = CoroutineScope(Dispatchers.IO).launch {
             delay(1000)
-            binding.tabOverlay.setOnClickListener(null)
-            if(isActive) {
+            withContext(Dispatchers.Main) {
+                binding.tabOverlay.setOnClickListener(null)
+            }
+            if (isActive) {
                 withContext(Dispatchers.Main) {
-                    if(PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION)) {
-                        viewModel.eventLiveData.postValue(Event(eventType = SCROLL_TO_TOP, type = getTabName(position)))
+                    if (PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION)) {
+                        viewModel.eventLiveData.postValue(
+                            Event(
+                                eventType = SCROLL_TO_TOP,
+                                type = getTabName(position)
+                            )
+                        )
                         delay(100)
                         val tooltipView =
                             binding.tabOverlay.findViewById<JoshTooltip>(R.id.tooltip)

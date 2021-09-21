@@ -199,7 +199,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                     binding.groupTwo.visibility = VISIBLE
                     if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
-                        binding.progressBar.visibility = GONE
+                        binding.progressBar.visibility = View.INVISIBLE
                         binding.tvPractiseTime.visibility = GONE
                         binding.progressBarAnim.visibility = VISIBLE
                         if (!isAnimationShown) {
