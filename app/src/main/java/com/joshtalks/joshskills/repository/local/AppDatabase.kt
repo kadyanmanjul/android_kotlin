@@ -105,7 +105,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class
     ],
-    version = 36,
+    version = 37,
     exportSchema = true
 )
 @TypeConverters(
@@ -187,6 +187,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_33_34,
                                 MIGRATION_34_35,
                                 MIGRATION_35_36,
+                                MIGRATION_36_37,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -477,7 +478,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_34_35: Migration = object : Migration(34,35) {
+        private val MIGRATION_34_35: Migration = object : Migration(34, 35) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE assessment_questions ADD COLUMN subText TEXT ")
                 database.execSQL("ALTER TABLE assessment_questions ADD COLUMN mediaUrl2 TEXT ")
@@ -495,9 +496,17 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_35_36 : Migration = object : Migration(35,36) {
+        private val MIGRATION_35_36: Migration = object : Migration(35, 36) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `voip_analytics` (`event` TEXT NOT NULL, `agoraCallId` TEXT NOT NULL, `agoraMentorUid` TEXT NOT NULL, `timeStamp` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+            }
+        }
+
+        private val MIGRATION_36_37: Migration = object : Migration(36, 37) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `total_new_student_calls` INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN  `required_new_student_calls` INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN  `is_new_student_calls_activated` INTEGER NOT NULL DEFAULT 0")
             }
         }
 
