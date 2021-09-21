@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "4f781d575081168932d40614f0b09413",
+    "identityHash": "86491d50222afeca348b603320897651",
     "entities": [
       {
         "tableName": "course",
@@ -2307,7 +2307,7 @@
       },
       {
         "tableName": "SpeakingTopic",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic_name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `already_talked` INTEGER NOT NULL, `total_new_student_calls` INTEGER NOT NULL, `required_new_student_calls` INTEGER NOT NULL, `is_new_student_calls_activated` INTEGER NOT NULL, `isFromDb` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic_name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `already_talked` INTEGER NOT NULL, `isFromDb` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -2330,24 +2330,6 @@
           {
             "fieldPath": "alreadyTalked",
             "columnName": "already_talked",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "totalNewStudentCalls",
-            "columnName": "total_new_student_calls",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "requiredNewStudentCalls",
-            "columnName": "required_new_student_calls",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isNewStudentCallsActivated",
-            "columnName": "is_new_student_calls_activated",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -2650,7 +2632,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4f781d575081168932d40614f0b09413')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '86491d50222afeca348b603320897651')"
     ]
   }
 }

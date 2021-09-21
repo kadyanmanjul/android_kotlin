@@ -111,10 +111,11 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         initToolbar()
         initViewPager()
         addObserver()
-//        PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, false)
-//        PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, false)
-//        PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, false)
-//        PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, false)
+        /*PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, false)
+        PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, false)
+        PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, false)
+        PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, false)
+        PrefManager.put(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, false)*/
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
 
@@ -213,7 +214,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                 it?.let {
                     when (it) {
                          ApiCallStatus.SUCCESS -> {
-                            hideProgressBar()
+                             hideProgressBar()
                              hideItemTabOverlay()
                              hideTabOverlay()
                              if(!(PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION) &&
@@ -411,6 +412,8 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                         val tabToDismissView =
                             binding.tabOverlay.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
                         val swipeAnimationView = binding.tabOverlay.findViewById<LottieAnimationView>(R.id.swipe_hint)
+                        swipeAnimationView.visibility = INVISIBLE
+                        swipeAnimationView.cancelAnimation()
                         when(position) {
                             0 -> {
                                 if(!PrefManager.getBoolValue(HAS_SEEN_TODAYS_WINNER_ANIMATION)) {
@@ -421,6 +424,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     binding.tabOverlay.setOnClickListener(null)
                                     delay(2000)
                                     swipeAnimationView.visibility = VISIBLE
+                                    swipeAnimationView.playAnimation()
                                     currentAimation = ITEM_ANIMATION
                                     binding.tabOverlay.isClickable = false
                                     /*showTapToDismiss(
@@ -446,6 +450,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     binding.tabOverlay.setOnClickListener(null)
                                     delay(2000)
                                     swipeAnimationView.visibility = VISIBLE
+                                    swipeAnimationView.playAnimation()
                                     currentAimation = ITEM_ANIMATION
                                     binding.tabOverlay.isClickable = false
                                 }
@@ -465,6 +470,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     binding.tabOverlay.setOnClickListener(null)
                                     delay(2000)
                                     swipeAnimationView.visibility = VISIBLE
+                                    swipeAnimationView.playAnimation()
                                     currentAimation = ITEM_ANIMATION
                                     binding.tabOverlay.isClickable = false
                                 }
@@ -476,6 +482,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                     tooltipView.visibility = GONE
                                     batchTooltipView.visibility = GONE
                                     swipeAnimationView.visibility = VISIBLE
+                                    swipeAnimationView.playAnimation()
                                     PrefManager.put(HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION, true)
                                     currentAimation = ITEM_ANIMATION
                                     binding.tabOverlay.isClickable = false
@@ -495,26 +502,22 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                                 ) {
                                     binding.tabOverlay.visibility = View.VISIBLE
                                     cardLayout.visibility = GONE
+                                    swipeAnimationView.visibility = GONE
                                     showToolTip(batchTooltipView, tooltipTextList[position])
                                     PrefManager.put(HAS_SEEN_LEADERBOARD_BATCH_ANIMATION, true)
                                     currentAimation = ITEM_ANIMATION
-                                    /*showTapToDismiss(
+                                    showTapToDismiss(
                                         topLayout,
                                         cardLayout,
                                         tabToDismissView,
                                         position
-                                    )*/
-                                    binding.tabOverlay.setOnClickListener(null)
-                                    delay(2000)
-                                    swipeAnimationView.visibility = VISIBLE
-                                    currentAimation = ITEM_ANIMATION
-                                    binding.tabOverlay.isClickable = false
+                                    )
                                 }
                             }
                         }
                     } else {
                         //if(position == 0) {
-                            delay(3500)
+                            delay(1250)
                             setRecyclerViewItemAnimation(position)
                             //getView(position)
                         //}
