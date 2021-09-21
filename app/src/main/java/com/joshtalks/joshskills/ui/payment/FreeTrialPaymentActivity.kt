@@ -157,7 +157,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             } else {
                 preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
             }
-            preFill.put("contact", "9999999999")
+            //preFill.put("contact", "9999999999")
 
             val options = JSONObject()
             options.put("key", orderDetails.razorpayKeyId)

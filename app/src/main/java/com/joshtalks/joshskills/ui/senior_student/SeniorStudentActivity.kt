@@ -99,7 +99,7 @@ class SeniorStudentActivity : CoreJoshActivity() {
 
     companion object {
         fun startSeniorStudentActivity(activity: Activity) {
-            Intent(activity, UserProfileActivity::class.java).let {
+            Intent(activity, SeniorStudentActivity::class.java).let {
                 activity.startActivity(it)
             }
         }
