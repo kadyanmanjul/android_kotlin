@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
+import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -706,7 +707,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     fun showSeniorStudentScreen() {
-        // TODO - Open SeniorStudent Screen here
+        SeniorStudentActivity.startSeniorStudentActivity(this)
     }
 
 }

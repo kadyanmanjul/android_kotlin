@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.senior_student
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -17,9 +19,11 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySeniorStudentBinding
 import com.joshtalks.joshskills.databinding.SeniorStudentRvItemBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.senior_student.viewmodel.SeniorStudentViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
 class SeniorStudentActivity : CoreJoshActivity() {
     lateinit var binding: ActivitySeniorStudentBinding
@@ -91,5 +95,13 @@ class SeniorStudentActivity : CoreJoshActivity() {
 
     private fun openSettingActivity() {
         openSettingActivity.launch(SettingsActivity.getIntent(this))
+    }
+
+    companion object {
+        fun startSeniorStudentActivity(activity: Activity) {
+            Intent(activity, UserProfileActivity::class.java).let {
+                activity.startActivity(it)
+            }
+        }
     }
 }

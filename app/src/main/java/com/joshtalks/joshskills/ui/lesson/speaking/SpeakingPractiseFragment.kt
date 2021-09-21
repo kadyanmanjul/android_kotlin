@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -385,7 +386,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun showSeniorStudentScreen() {
-        // TODO - Open SeniorStudent Screen here
+        SeniorStudentActivity.startSeniorStudentActivity(requireActivity())
     }
 
     companion object {
