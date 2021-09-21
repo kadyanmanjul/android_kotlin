@@ -247,6 +247,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
                         binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
                         binding.btnNewStudent.visibility = VISIBLE
+                        binding.infoContainer.visibility = GONE
                     } else {
                         binding.txtLabelNewStudentCalls.visibility = GONE
                         binding.progressNewStudentCalls.visibility = GONE
@@ -254,6 +255,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.txtCallsLeft.visibility = GONE
                         binding.txtLabelBecomeSeniorStudent.visibility = GONE
                         binding.btnNewStudent.visibility = GONE
+                        binding.infoContainer.visibility = VISIBLE
                     }
                 }
             }
