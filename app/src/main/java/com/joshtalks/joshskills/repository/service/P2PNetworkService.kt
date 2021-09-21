@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
-import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import java.util.HashMap
 import retrofit2.Response
@@ -44,5 +44,8 @@ interface P2PNetworkService {
 
     @POST("$DIR/voicecall/agora_favourite_token/")
     suspend fun getFavoriteUserAgoraToken(@Body params: Map<String, String>): Response<HashMap<String, String>>
+
+    @POST("$DIR/voicecall/agora_new_student_token/")
+    suspend fun getNewUserAgoraToken(@Body params: Map<String, String>): Response<HashMap<String, String>>
 
 }

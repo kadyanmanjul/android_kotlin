@@ -46,6 +46,9 @@ class LeaderBoardItemViewHolder(
     @View(R.id.online_status_iv)
     lateinit var onlineStatusLayout: FrameLayout
 
+    @View(R.id.img_senior_student_badge)
+    lateinit var imgSeniorStudentBadge: AppCompatImageView
+
     lateinit var linearLayoutManager: SmoothLinearLayoutManager
 
     @Resolve
@@ -78,6 +81,11 @@ class LeaderBoardItemViewHolder(
             }
             name.text = resp
             points.text = response.points.toString()
+            if (response.isSeniorStudent) {
+                imgSeniorStudentBadge.visibility = android.view.View.VISIBLE
+            } else {
+                imgSeniorStudentBadge.visibility = android.view.View.GONE
+            }
             user_pic.setImageDrawable(null)
             user_pic.setUserImageOrInitials(
                 response.photoUrl,

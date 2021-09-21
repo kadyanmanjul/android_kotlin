@@ -31,10 +31,10 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/user_pic"
             android:layout_width="@dimen/_40sdp"
-            android:background="@drawable/circle2"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginVertical="@dimen/_8sdp"
             android:layout_marginStart="@dimen/_64sdp"
+            android:background="@drawable/circle2"
             android:backgroundTint="@color/checkmark_blue"
             android:gravity="center_vertical|start"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -66,10 +66,11 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:ellipsize="end"
+            android:maxWidth="@dimen/_100sdp"
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:singleLine="true"
@@ -82,6 +83,19 @@
             app:layout_constraintTop_toTopOf="@+id/points"
             app:layout_goneMarginStart="@dimen/_84sdp"
             tools:text="@string/improve_answer" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_senior_student_badge"
+            android:layout_width="@dimen/_34sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/rank"
+            app:layout_constraintStart_toEndOf="@+id/name"
+            app:layout_constraintTop_toTopOf="@+id/rank"
+            app:srcCompat="@drawable/senior_student_badge"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/points"

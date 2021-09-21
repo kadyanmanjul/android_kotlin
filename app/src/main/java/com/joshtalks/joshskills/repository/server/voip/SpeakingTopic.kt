@@ -35,9 +35,21 @@ data class SpeakingTopic(
     @SerializedName("already_talked")
     val alreadyTalked: Int,
 
+    @ColumnInfo(name = "total_new_student_calls")
+    @SerializedName("total_new_student_calls")
+    val totalNewStudentCalls: Int = 0,
+
+    @ColumnInfo(name = "required_new_student_calls")
+    @SerializedName("required_new_student_calls")
+    val requiredNewStudentCalls: Int = 7,
+
+    @ColumnInfo(name = "is_new_student_calls_activated")
+    @SerializedName("call_new_student")
+    val isNewStudentCallsActivated: Boolean = false,
+
     @IgnoredOnParcel
     @Expose
-    var isFromDb: Boolean=false
+    var isFromDb: Boolean = false
 
 ) : Parcelable
 

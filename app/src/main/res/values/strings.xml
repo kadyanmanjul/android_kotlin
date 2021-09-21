@@ -916,5 +916,9 @@
     <string name="label_reading_spotlight">इस भाग में हम अपनी रीडिंग की प्रैक्टिस करेंगे</string>
     <string name="price">MRP: <strike>%s</strike></string>
     <string name="savings"><i>Save %s</i></string>
+    <string name="label_become_senior_student"><u>How to become a Senior Student?</u></string>
+    <string name="label_become_senior_student2"><u>Become a Senior Student</u></string>
+    <string name="label_senior_student">%s is a Senior Student</string>
+    <string name="call_new_student">Call New Student</string>
 
 </resources>

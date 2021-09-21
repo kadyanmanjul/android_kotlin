@@ -37,7 +37,12 @@ import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallOnGoing
+import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
+import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
+import com.joshtalks.joshskills.util.DateUtils
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -50,11 +55,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
-import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
-import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
-import com.joshtalks.joshskills.util.DateUtils
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
@@ -305,6 +305,16 @@ class WebRtcActivity : AppCompatActivity() {
             mBoundService?.setAsFavourite()
         }
         return (isSetAsFavourite == true || isFavouriteIntent)
+    }
+
+    private fun isNewUserCall(): Boolean {
+        val isSetAsNewUserCall = mBoundService?.isNewUserCall()
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        val isNewUserIntent = map != null && map.containsKey(RTC_IS_NEW_USER_CALL)
+        if (isSetAsNewUserCall == false && isNewUserIntent) {
+            mBoundService?.setAsNewUserCall()
+        }
+        return (isSetAsNewUserCall == true || isNewUserIntent)
     }
 
     private fun callMissedCallUser() {

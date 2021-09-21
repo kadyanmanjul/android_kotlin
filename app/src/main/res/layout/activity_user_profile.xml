@@ -16,22 +16,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-            <FrameLayout
-                android:id="@+id/toolbar_overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/transparent_blue_alpha_75"
-                android:clickable="true"
-                android:elevation="@dimen/_1sdp"
-                android:focusable="true"
-                android:visibility="gone"
-                tools:visibility="visible"/>
+        <FrameLayout
+            android:id="@+id/toolbar_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_blue_alpha_75"
+            android:clickable="true"
+            android:elevation="@dimen/_1sdp"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/toolbar_container"
             layout="@layout/base_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,21 +57,21 @@
                     android:id="@+id/content_overlay"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:elevation="@dimen/_5sdp"
                     android:background="@color/transparent_blue_alpha_75"
+                    android:elevation="@dimen/_5sdp"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" >
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible">
 
                     <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
                         android:id="@+id/overlay_profile_tooltip"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
                         android:layout_above="@id/label_tap_to_dismiss"
+                        android:clickable="true"
                         android:elevation="@dimen/_8sdp"
                         android:gravity="center"
                         android:padding="@dimen/_18sdp"
@@ -83,13 +83,13 @@
                         android:id="@+id/label_tap_to_dismiss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="bottom|center"
                         android:layout_marginHorizontal="@dimen/_12sdp"
                         android:layout_marginTop="@dimen/_20sdp"
                         android:layout_marginBottom="@dimen/_60sdp"
+                        android:clickable="true"
                         android:elevation="@dimen/_8sdp"
                         android:shadowColor="#BD6674"
                         android:shadowDx="0"
@@ -161,11 +161,25 @@
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/user_pic"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="User Name" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_senior_student_badge"
+                    android:layout_width="@dimen/_34sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/user_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/user_name"
+                    app:layout_constraintTop_toTopOf="@+id/user_name"
+                    app:srcCompat="@drawable/senior_student_badge"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/user_age_text"
@@ -228,13 +242,13 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_8ssp"
                     android:background="@drawable/ic_points_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_6sdp"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
-                    android:layout_marginEnd="@dimen/_8ssp"
                     app:layout_constraintEnd_toStartOf="@id/minutes_layout"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
@@ -268,9 +282,9 @@
                     android:id="@+id/arrow_animation"
                     android:layout_width="@dimen/_100sdp"
                     android:layout_height="@dimen/_60sdp"
+                    android:elevation="@dimen/_6sdp"
                     android:rotationY="-180"
                     android:visibility="gone"
-                    android:elevation="@dimen/_6sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/point_layout"
                     app:layout_constraintEnd_toEndOf="@+id/minutes_layout"
                     app:layout_constraintStart_toStartOf="@+id/point_layout"
@@ -288,8 +302,8 @@
                     android:id="@+id/minutes_layout"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_50sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginStart="@dimen/_8ssp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:background="@drawable/ic_minutes_spoken_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_4sdp"
@@ -338,6 +352,40 @@
                     tools:text="@string/user_streak_text" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_label_senior_student"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_14sdp"
+                    android:text="@string/label_senior_student"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="#687C90"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/streaks_text"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_label_become_senior_student"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_2sdp"
+                    android:drawablePadding="@dimen/_4sdp"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.showSeniorStudentScreen()}"
+                    android:text="@string/label_become_senior_student"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/colorPrimary"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_info_small"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txt_label_senior_student"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/awards_heading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -348,7 +396,7 @@
                     android:textColor="@color/black"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/streaks_text"
+                    app:layout_constraintTop_toBottomOf="@id/txt_label_become_senior_student"
                     tools:visibility="visible" />
 
 

@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -41,6 +40,7 @@ const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
 const val TOPIC_NAME = "topic_name"
 const val FAVORITE_USER_CALL = "favorite_user_call"
+const val IS_NEW_USER_CALL = "is_new_user_call"
 
 class SearchingUserActivity : BaseActivity() {
     companion object {
@@ -50,6 +50,7 @@ class SearchingUserActivity : BaseActivity() {
             topicId: Int,
             topicName: String,
             favoriteUserCall: Boolean,
+            isNewUserCall: Boolean = false,
             conversationId: String? = null,
         ): Intent {
             return Intent(activity, SearchingUserActivity::class.java).apply {
@@ -57,6 +58,7 @@ class SearchingUserActivity : BaseActivity() {
                 putExtra(TOPIC_ID, topicId)
                 putExtra(TOPIC_NAME, topicName)
                 putExtra(FAVORITE_USER_CALL, favoriteUserCall)
+                putExtra(IS_NEW_USER_CALL, isNewUserCall)
                 putExtra(CONVERSATION_ID, conversationId)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -72,6 +74,7 @@ class SearchingUserActivity : BaseActivity() {
     private var appAnalytics: AppAnalytics? = null
     private var mServiceBound = false
     private var isFavorite = false
+    private var isNewUserCall = false
 
     private val viewModel: VoipCallingViewModel by lazy {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
@@ -114,6 +117,9 @@ class SearchingUserActivity : BaseActivity() {
                     putExtra(CALL_USER_OBJ, data)
                     if (isFavorite) {
                         putExtra(RTC_IS_FAVORITE, "true")
+                    }
+                    if (isNewUserCall) {
+                        putExtra(RTC_IS_NEW_USER_CALL, "true")
                     }
                 }
             startActivity(callActivityIntent)
@@ -167,6 +173,7 @@ class SearchingUserActivity : BaseActivity() {
         topicId = intent.getIntExtra(TOPIC_ID, -1)
         topicName = intent.getStringExtra(TOPIC_NAME)
         isFavorite = intent.getBooleanExtra(FAVORITE_USER_CALL, false)
+        isNewUserCall = intent.getBooleanExtra(IS_NEW_USER_CALL, false)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SEARCH_SCREEN_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -286,6 +293,8 @@ class SearchingUserActivity : BaseActivity() {
         courseId?.let {
             if (isFavorite) {
                 viewModel.initCallForFavoriteCaller(it, topicId, location, ::callback)
+            } else if (isNewUserCall) {
+                viewModel.initCallForNewUser(it, topicId, location, ::callback)
             } else {
                 viewModel.getUserForTalk(it, topicId, location, ::callback)
             }
@@ -375,6 +384,9 @@ class SearchingUserActivity : BaseActivity() {
             }
             if (isFavorite) {
                 outgoingCallData[RTC_IS_FAVORITE] = "true"
+            }
+            if (isNewUserCall) {
+                outgoingCallData[RTC_IS_NEW_USER_CALL] = "true"
             }
         }
         return outgoingCallData

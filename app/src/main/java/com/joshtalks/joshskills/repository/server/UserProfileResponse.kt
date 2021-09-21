@@ -50,7 +50,9 @@ data class UserProfileResponse(
     @SerializedName("certificates")
     val certificates: List<Certificate>?,
     @SerializedName("group_info")
-    val groupInfo: List<GroupInfo>?
+    val groupInfo: List<GroupInfo>?,
+    @SerializedName("is_senior_student")
+    val isSeniorStudent: Boolean = false
 )
 
 data class GroupInfo(
@@ -80,10 +82,11 @@ data class Certificate(
     @SerializedName("certificate_description")
     val certificateDescription: String?,
     @SerializedName("is_achieved")
-    val is_achieved: Boolean=false,
+    val is_achieved: Boolean = false,
     @SerializedName("is_seen")
     val isSeen: Boolean?
 )
+
 @Parcelize
 data class AwardCategory(
     @SerializedName("id")
@@ -94,7 +97,7 @@ data class AwardCategory(
     val sortOrder: Int?,
     @SerializedName("awards")
     var awards: List<Award>?
-) :Parcelable
+) : Parcelable
 
 @Parcelize
 data class Award(
@@ -111,7 +114,7 @@ data class Award(
     @SerializedName("award_description")
     val awardDescription: String?,
     @SerializedName("is_achieved")
-    val is_achieved: Boolean=false,
+    val is_achieved: Boolean = false,
     @SerializedName("is_seen")
     val isSeen: Boolean?
 ) : Parcelable

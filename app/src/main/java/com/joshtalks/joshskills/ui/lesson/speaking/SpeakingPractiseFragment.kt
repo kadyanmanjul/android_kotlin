@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,6 +42,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -223,6 +225,36 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     } else {
                         binding.btnStart.playAnimation()
                     }
+
+                    if (response.isNewStudentCallsActivated) {
+                        binding.txtLabelNewStudentCalls.visibility = VISIBLE
+                        binding.progressNewStudentCalls.visibility = VISIBLE
+                        binding.progressNewStudentCalls.progress = response.totalNewStudentCalls
+                        binding.progressNewStudentCalls.max = response.requiredNewStudentCalls
+                        binding.txtProgressCount.visibility = VISIBLE
+                        binding.txtProgressCount.text =
+                            "${response.totalNewStudentCalls}/${response.requiredNewStudentCalls}"
+                        binding.txtCallsLeft.visibility = VISIBLE
+                        binding.txtCallsLeft.text = when (val dayOfWeek =
+                            Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                            Calendar.SUNDAY ->
+                                "1 day left"
+                            else -> {
+                                "${7 - (dayOfWeek - 1)} days left"
+                            }
+                        }
+                        binding.txtLabelBecomeSeniorStudent.paintFlags =
+                            binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                        binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
+                        binding.btnNewStudent.visibility = VISIBLE
+                    } else {
+                        binding.txtLabelNewStudentCalls.visibility = GONE
+                        binding.progressNewStudentCalls.visibility = GONE
+                        binding.txtProgressCount.visibility = GONE
+                        binding.txtCallsLeft.visibility = GONE
+                        binding.txtLabelBecomeSeniorStudent.visibility = GONE
+                        binding.btnNewStudent.visibility = GONE
+                    }
                 }
             }
         )
@@ -232,6 +264,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             } else {
                 showToast(getString(R.string.empty_favorite_list_message))
             }
+        }
+        binding.btnNewStudent.setOnClickListener {
+            startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
         lifecycleScope.launchWhenStarted {
             viewModel.favoriteCaller.collect {
@@ -281,9 +316,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
-    private fun startPractise(favoriteUserCall: Boolean = false) {
+    private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false) {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            startPractiseSearchScreen(favoriteUserCall = favoriteUserCall)
+            startPractiseSearchScreen(
+                favoriteUserCall = favoriteUserCall,
+                isNewUserCall = isNewUserCall
+            )
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -299,7 +337,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             return
                         }
                         if (flag) {
-                            startPractiseSearchScreen(favoriteUserCall = favoriteUserCall)
+                            startPractiseSearchScreen(
+                                favoriteUserCall = favoriteUserCall,
+                                isNewUserCall = isNewUserCall
+                            )
                             return
                         } else {
                             MaterialDialog(requireActivity()).show {
@@ -320,7 +361,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         )
     }
 
-    private fun startPractiseSearchScreen(favoriteUserCall: Boolean = false) {
+    private fun startPractiseSearchScreen(
+        favoriteUserCall: Boolean = false,
+        isNewUserCall: Boolean = false
+    ) {
         viewModel.speakingTopicLiveData.value?.run {
             if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
                 openCallActivity.launch(
@@ -330,11 +374,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         topicId = id,
                         topicName = topicName,
                         favoriteUserCall = favoriteUserCall,
+                        isNewUserCall = isNewUserCall,
                         conversationId = getConversationId()
                     )
                 )
             }
         }
+    }
+
+    fun showSeniorStudentScreen() {
+        // TODO - Open SeniorStudent Screen here
     }
 
     companion object {

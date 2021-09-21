@@ -27,14 +27,12 @@ import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -49,7 +47,6 @@ import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.printAll
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
@@ -74,27 +71,18 @@ import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
-import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
-import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
-import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
-import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
-import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -109,6 +97,7 @@ const val RTC_CALL_ID = "rtc_call_id"
 const val RTC_NAME = "caller_name"
 const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
+const val RTC_IS_NEW_USER_CALL = "is_new_user_call"
 const val RTC_PARTNER_ID = "partner_id"
 
 class WebRtcService : BaseWebRtcService() {
@@ -1045,6 +1034,9 @@ class WebRtcService : BaseWebRtcService() {
                     if (isFavorite()) {
                         put(RTC_IS_FAVORITE, "true")
                     }
+                    if (isNewUserCall()) {
+                        put(RTC_IS_NEW_USER_CALL, "true")
+                    }
                 }
                 putExtra(CALL_TYPE, CallType.INCOMING)
                 putExtra(AUTO_PICKUP_CALL, autoPick)
@@ -1060,6 +1052,9 @@ class WebRtcService : BaseWebRtcService() {
             callData?.apply {
                 if (isFavorite()) {
                     put(RTC_IS_FAVORITE, "true")
+                }
+                if (isNewUserCall()) {
+                    put(RTC_IS_NEW_USER_CALL, "true")
                 }
             }
             putExtra(CALL_TYPE, callType)
@@ -1097,6 +1092,9 @@ class WebRtcService : BaseWebRtcService() {
             data.apply {
                 if (isFavorite()) {
                     put(RTC_IS_FAVORITE, "true")
+                }
+                if (isNewUserCall()) {
+                    put(RTC_IS_NEW_USER_CALL, "true")
                 }
             }
             putExtra(CALL_USER_OBJ, data)
@@ -1277,8 +1275,19 @@ class WebRtcService : BaseWebRtcService() {
         return false
     }
 
+    fun isNewUserCall(): Boolean {
+        if (callData != null && callData!!.containsKey(RTC_IS_NEW_USER_CALL)) {
+            return true
+        }
+        return false
+    }
+
     fun setAsFavourite() {
         callData?.put(RTC_IS_FAVORITE, "true")
+    }
+
+    fun setAsNewUserCall() {
+        callData?.put(RTC_IS_NEW_USER_CALL, "true")
     }
 
     private fun getCallerName(): String {
@@ -1771,6 +1780,9 @@ class WebRtcService : BaseWebRtcService() {
             callData?.apply {
                 if (isFavorite()) {
                     put(RTC_IS_FAVORITE, "true")
+                }
+                if (isNewUserCall()) {
+                    put(RTC_IS_NEW_USER_CALL, "true")
                 }
             }
             putExtra(CALL_USER_OBJ, callData)

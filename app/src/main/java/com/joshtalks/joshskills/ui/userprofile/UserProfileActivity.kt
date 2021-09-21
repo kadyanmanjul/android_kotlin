@@ -11,9 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.view.animation.BounceInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.Interpolator
 import android.widget.ImageView
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatDelegate
@@ -46,7 +43,6 @@ import io.reactivex.schedulers.Schedulers
 import java.text.DecimalFormat
 import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
-import kotlinx.android.synthetic.main.reading_practise_audio_view.duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -77,7 +73,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 override fun onAnimationStart(animation: Animator?) {}
 
                 override fun onAnimationEnd(animation: Animator?) {
-                    if(isPointAnimatorCancel) {
+                    if (isPointAnimatorCancel) {
                         binding.points.scaleX = 1f
                         binding.points.scaleY = 1f
                     }
@@ -168,7 +164,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         text_message_title.text = getString(R.string.profile)
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
-            .getId()
+                .getId()
         ) {
             with(iv_setting) {
                 visibility = View.VISIBLE
@@ -290,6 +286,17 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         if (userData.isOnline!!) {
             binding.onlineStatusIv.visibility = View.VISIBLE
         }
+        if (userData.isSeniorStudent) {
+            binding.txtLabelSeniorStudent.text = getString(R.string.label_senior_student, resp)
+            binding.txtLabelSeniorStudent.visibility = View.VISIBLE
+            binding.txtLabelBecomeSeniorStudent.visibility = View.VISIBLE
+            binding.imgSeniorStudentBadge.visibility = View.VISIBLE
+        } else {
+            binding.txtLabelSeniorStudent.visibility = View.GONE
+            binding.txtLabelBecomeSeniorStudent.visibility = View.GONE
+            binding.imgSeniorStudentBadge.visibility = View.GONE
+        }
+
         userData.points?.let {
             var incrementalPoints = 0
             val incrementalValue = it.div(50)
@@ -331,7 +338,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
-        binding.streaksText.visibility=View.GONE
+        binding.streaksText.visibility = View.GONE
 
         if (userData.awardCategory.isNullOrEmpty()) {
             binding.awardsHeading.visibility = View.GONE
@@ -525,7 +532,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     override fun onBackPressed() {
         val count = supportFragmentManager.backStackEntryCount
-        if(isAnimationVisible) {
+        if (isAnimationVisible) {
             hideOverlayAnimation()
             return
         }
@@ -588,8 +595,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }*/
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            val url= data?.data?.path?: EMPTY
-            if (url.isNotBlank()){
+            val url = data?.data?.path ?: EMPTY
+            if (url.isNotBlank()) {
                 addUserImageInView(url)
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
@@ -608,7 +615,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     override fun onStart() {
         super.onStart()
-        if(!PrefManager.getBoolValue(HAS_SEEN_PROFILE_ANIMATION))
+        if (!PrefManager.getBoolValue(HAS_SEEN_PROFILE_ANIMATION))
             showOverlayAnimation()
     }
 
@@ -697,4 +704,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.overlayProfileTooltip.visibility = View.GONE
         isAnimationVisible = false
     }
+
+    fun showSeniorStudentScreen() {
+        // TODO - Open SeniorStudent Screen here
+    }
+
 }
