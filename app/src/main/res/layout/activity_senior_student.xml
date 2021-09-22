@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_29sdp"
                     android:layout_marginTop="@dimen/_25sdp"
-                    android:text="How to become a Senior Student"
+                    android:text="What will you get?"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/senior_student_rv" />
