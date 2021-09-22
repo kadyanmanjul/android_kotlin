@@ -991,25 +991,19 @@ class ConversationActivity :
                 // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 // showLeaderBoardTooltip()
-                val hasSeenLeaderBoardAnim =
-                    PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION, false, false)
-                if (hasSeenLeaderBoardAnim) {
-                    hideLeaderBoardSpotlight()
-                } else {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        delay(1000)
-                        val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
-                        Log.d(TAG, "initScoreCardView: $status")
-                        withContext(Dispatchers.Main) {
-                            if(status == LESSON_STATUS.CO) {
-                                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
-                                    showOverlay()
-                                else if (!PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION))
-                                    setOverlayAnimation()
-                            }
-                            else
-                                    showLeaderBoardSpotlight()
+                CoroutineScope(Dispatchers.IO).launch {
+                    delay(1000)
+                    val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
+                    Log.d(TAG, "initScoreCardView: $status")
+                    withContext(Dispatchers.Main) {
+                        if(status == LESSON_STATUS.CO) {
+                            if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
+                                showOverlay()
+                            else if (!PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION))
+                                setOverlayAnimation()
                         }
+                        else if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
+                            showLeaderBoardSpotlight()
                     }
                 }
             } else {

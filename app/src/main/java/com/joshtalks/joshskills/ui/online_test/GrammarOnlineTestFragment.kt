@@ -47,7 +47,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.lang.Exception
+import kotlin.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -225,7 +225,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         })
 
         viewModel.eventLiveData.observe(viewLifecycleOwner, {
-            binding.startBtn.performClick()
+            it.getContentIfNotHandledOrReturnNull()?.let {
+                binding.startBtn.performClick()
+            }
         })
     }
 
