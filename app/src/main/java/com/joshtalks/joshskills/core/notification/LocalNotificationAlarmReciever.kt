@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
@@ -48,10 +47,6 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
         notificationIndex:Int
 
     ) {
-        Log.d(
-            "Manjul",
-            "showNotificationWithFullScreenIntent() called with: context = $context, channelId = $channelId, notificationIndex = $notificationIndex"
-        )
 
         val delay = NOTIFICATION_DELAY.get(notificationIndex)
         val description = NOTIFICATION_TEXT_TEXT.get(notificationIndex)
@@ -65,8 +60,6 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
             title =
                 NOTIFICATION_TITLE_TEXT.get(notificationIndex)
         }
-        val defaultSound =
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
 
         val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
@@ -78,8 +71,8 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
             intent?.run {
                 val activityList = arrayOf(this)
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(delay).toInt()
-                val defaultSound =
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+
                 val pendingIntent = PendingIntent.getActivities(
                     context,
                     uniqueInt, activityList,
@@ -103,7 +96,7 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
                     .setSmallIcon(R.drawable.ic_status_bar_notification)
                     .setContentTitle(title)
                     .setContentIntent(pendingIntent)
-                    .setSound(defaultSound)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setAutoCancel(true)
                     .setContentText(description)
                     .setCategory(Notification.CATEGORY_REMINDER)
@@ -112,12 +105,6 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
                         ContextCompat.getColor(
                             context,
                             R.color.colorAccent
-                        )
-                    )
-                    .setSound(
-                        RingtoneManager.getActualDefaultRingtoneUri(
-                            context,
-                            RingtoneManager.TYPE_ALARM
                         )
                     )
                 val dismissIntent =
