@@ -715,7 +715,7 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun acceptCallForNormal() {
-        if (PermissionUtils.isCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionEnabled(AppObjectController.joshApplication)) {
             answerCall()
             return
         }
