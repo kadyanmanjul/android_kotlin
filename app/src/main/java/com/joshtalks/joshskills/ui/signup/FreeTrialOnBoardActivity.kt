@@ -108,6 +108,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
+    fun showPrivacyPolicyDialog() {
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        showWebViewDialog(url)
+    }
+
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
             this@FreeTrialOnBoardActivity.finish()

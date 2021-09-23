@@ -44,8 +44,8 @@
             android:id="@+id/cardViewHighlights"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_24sdp"
             android:layout_marginHorizontal="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_24sdp"
             app:cardElevation="@dimen/_4sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -153,6 +153,22 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@+id/btnStartTrial" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view_privacy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:gravity="center"
+            android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
+            android:text="@string/privacy_label"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textColor="@color/grey"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtLogin"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.9" />
 
         <FrameLayout
             android:id="@+id/container"
