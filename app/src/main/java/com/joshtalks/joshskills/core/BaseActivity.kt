@@ -207,7 +207,11 @@ abstract class BaseActivity :
     private fun initIdentifierForTools() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
-                Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+                try {
+                    Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+                } catch (ex:Exception){
+                    ex.printStackTrace()
+                }
                 initNewRelic()
                 initFlurry()
                 UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
