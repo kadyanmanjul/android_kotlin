@@ -70,6 +70,12 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
-        jobs.forEach { it.cancel() } // cancels the job and waits for its completion
+        jobs.forEach {
+            try {
+                it.cancel()
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
+        } // cancels the job and waits for its completion
     }
 }

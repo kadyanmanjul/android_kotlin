@@ -180,6 +180,12 @@ class OnBoardViewModel(application: Application) :
 
     override fun onCleared() {
         super.onCleared()
-        jobs.forEach { it.cancel() }
+        jobs.forEach {
+            try {
+                it.cancel()
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }

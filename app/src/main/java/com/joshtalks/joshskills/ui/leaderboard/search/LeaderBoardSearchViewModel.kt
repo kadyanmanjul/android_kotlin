@@ -39,7 +39,11 @@ class LeaderBoardSearchViewModel : ViewModel() {
     }
 
     fun performSearch(key: String) {
-        debounceJob?.cancel()
+        try {
+            debounceJob?.cancel()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
         currentSearchedKey = key
         searchedKeyLiveData.postValue(currentSearchedKey)
         debounceJob = viewModelScope.launch(Dispatchers.IO) {

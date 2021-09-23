@@ -911,7 +911,11 @@ abstract class BaseActivity :
 
     @SuppressLint("MissingPermission")
     fun startLocationUpdates() {
-        locationUpdatesJob?.cancel()
+        try {
+            locationUpdatesJob?.cancel()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         locationUpdatesJob = lifecycleScope.launch(Dispatchers.IO) {
             try {
                 coLocation.getLocationUpdates(locationRequest).collectLatest {
