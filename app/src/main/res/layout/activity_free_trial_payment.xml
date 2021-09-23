@@ -377,7 +377,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:layout_marginBottom="@dimen/_30sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
                     android:background="@drawable/bg_cta_button"
                     android:gravity="center"
                     android:onClick="@{()->handler.startPayment()}"
@@ -385,10 +385,26 @@
                     android:text="Buy Now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintVertical_bias="1" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_privacy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
+                    android:text="@string/privacy_label"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/grey"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.9" />
 
                 <FrameLayout
                     android:id="@+id/progress_bar"

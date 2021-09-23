@@ -264,6 +264,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         this.finish()
     }
 
+    fun showPrivacyPolicyDialog() {
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        showWebViewDialog(url)
+    }
+
     companion object {
 
         fun startFreeTrialPaymentActivity(activity: Activity, testId: String) {
