@@ -41,7 +41,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
@@ -60,6 +59,7 @@ import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -625,16 +625,20 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    fun endRoom(roomId: String?,conversationQuestionId:Int?=null) {
+    fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             val request =
-                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,conversationQuestionId)
+                JoinConversionRoomRequest(
+                    Mentor.getInstance().getId(),
+                    roomId?.toInt() ?: 0,
+                    conversationQuestionId
+                )
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             Log.d("ABC", "end room api call ${response.code()}")
             if (response.isSuccessful) {
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
-                getConvoRoomPoints(roomId,conversationQuestionId)
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
+                RxBus2.publish(ConvoRoomPointsEventBus(null))
                 removeNotifications()
                 conversationRoomChannelName = null
                 mRtcEngine?.leaveChannel()
@@ -643,39 +647,29 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    fun leaveRoom(roomId: String?,conversationQuestionId:Int?=null) {
+    fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
         if (roomId.isNullOrBlank().not()) {
             CoroutineScope(Dispatchers.IO).launch {
                 val request =
-                    JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,conversationQuestionId)
+                    JoinConversionRoomRequest(
+                        Mentor.getInstance().getId(),
+                        roomId?.toInt() ?: 0,
+                        conversationQuestionId
+                    )
                 val response =
                     AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                         request
                     )
                 Log.d("ABC", "leave room api call")
                 if (response.isSuccessful) {
-                    PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
-                    getConvoRoomPoints(roomId,conversationQuestionId)
+                    PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
+                    RxBus2.publish(ConvoRoomPointsEventBus(null))
                     removeNotifications()
                     conversationRoomChannelName = null
                     mRtcEngine?.leaveChannel()
                     joshAudioManager?.endCommunication()
                 }
             }
-        }
-    }
-
-    suspend fun getConvoRoomPoints(roomId: String?, conversationQuestionId: Int?) {
-        try {
-            val response =
-                AppObjectController.chatNetworkService.getSnackBarText(roomId,conversationQuestionId.toString())
-            if (response.pointsList?.get(0)?.isNotBlank()== true) {
-                //points.postValue(response.pointsList.get(0))
-                PrefManager.put(CONVO_ROOM_POINTS,response.pointsList.get(0))
-            }
-
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 
@@ -774,7 +768,7 @@ class WebRtcService : BaseWebRtcService() {
                         if (isRoomCreatedByUser) {
                             endRoom(roomId, roomQuestionId)
                         } else {
-                            leaveRoom(roomId,roomQuestionId)
+                            leaveRoom(roomId, roomQuestionId)
                         }
                     } else {
                         isOnPstnCall = true
@@ -1794,7 +1788,7 @@ class WebRtcService : BaseWebRtcService() {
         if (isRoomCreatedByUser) {
             endRoom(roomId, roomQuestionId)
         } else {
-            leaveRoom(roomId,roomQuestionId)
+            leaveRoom(roomId, roomQuestionId)
         }
         Log.d("ABC", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         RtcEngine.destroy()
@@ -2180,8 +2174,10 @@ class WebRtcService : BaseWebRtcService() {
             }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        val intent = ConversationLiveRoomActivity.getIntent(this, conversationRoomChannelName,
-            agoraUid, conversationRoomToken, isRoomCreatedByUser, roomId?.toInt(), roomQuestionId)
+        val intent = ConversationLiveRoomActivity.getIntent(
+            this, conversationRoomChannelName,
+            agoraUid, conversationRoomToken, isRoomCreatedByUser, roomId?.toInt(), roomQuestionId
+        )
         Log.d("ABC", "channelName: $conversationRoomChannelName")
 
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()

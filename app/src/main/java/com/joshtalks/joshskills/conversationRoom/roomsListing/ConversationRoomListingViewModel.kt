@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,14 +14,11 @@ import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CONVO_ROOM_POINTS
-import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ConversationRoomListingViewModel : ViewModel() {
@@ -141,15 +139,18 @@ class ConversationRoomListingViewModel : ViewModel() {
         }
     }
 
-    fun getPointsForConversationRoom(roomId: String?, conversationQuestionId: Int?,fromRoom:Boolean=false) {
+    fun getPointsForConversationRoom(roomId: String?, conversationQuestionId: Int?) {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(200)
             try {
+                Log.d("Manjul", "getPointsForConversationRoom() called")
                 val response =
                     AppObjectController.chatNetworkService.getSnackBarText(roomId = roomId,conversationQuestionId = conversationQuestionId.toString())
-                if (response.pointsList?.get(0)?.isNotBlank()== true && fromRoom) {
-                    //points.postValue(response.pointsList.get(0))
-                    PrefManager.put(CONVO_ROOM_POINTS,response.pointsList.get(0))
+                Log.d("Manjul", "response() ${response}")
+                if (response.pointsList?.get(0)?.isNotBlank()== true) {
+                    Log.d("Manjul", "response() ${response}")
+                    points.postValue(response.pointsList.get(0))
+                } else{
+                    points.postValue(EMPTY)
                 }
 
             } catch (ex: Exception) {
@@ -166,8 +167,7 @@ class ConversationRoomListingViewModel : ViewModel() {
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             if (response.isSuccessful) {
                 isRoomEnded.postValue(true)
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
-                getPointsForConversationRoom(roomId,conversationQuestionId,true)
+                //PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
             }
         }
     }

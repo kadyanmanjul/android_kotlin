@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +34,6 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingAdapter
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
@@ -44,8 +44,11 @@ import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -55,6 +58,7 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isConversionRoom
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isRoomCreatedByUser
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class ConversationRoomListingFragment : CoreJoshFragment(),
@@ -76,6 +80,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
     private var isBackPressed: Boolean = false
+    private var hasSeenpoints: Boolean = false
     var isActivityOpenFromNotification: Boolean = false
     var roomId: String = ""
     var lastRoomId: String? = null
@@ -99,7 +104,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         super.onCreate(savedInstanceState)
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-        PrefManager.put(CONVO_ROOM_POINTS, EMPTY)
+        hasSeenpoints = false
     }
 
     override fun onAttach(context: Context) {
@@ -177,9 +182,15 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         })
 
         viewModel.points.observe(viewLifecycleOwner, { pointsString ->
+            Log.d("Manjul", "addObservers() called with: pointsString = $pointsString")
             if (pointsString.isNotBlank()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+                hasSeenpoints=true
+            } else{
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+                Log.d("Manjul", "observer compositeDisposable.add called")
+                compositeDisposable.add(getPointsDisposable())
             }
         })
 
@@ -285,7 +296,8 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     }
 
     private fun observeNetwork() {
-
+        Log.d("Manjul", "observeNetwork() called $hasSeenpoints ${PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false)}")
+        hasSeenpoints = false
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(AppObjectController.joshApplication)
                 .subscribeOn(Schedulers.io())
@@ -301,17 +313,36 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         )
         conversationRoomQuestionId?.let {
             viewModel.getConvoRoomDetails(it)
+
             if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false).not()) {
-                val point = PrefManager.getStringValue(CONVO_ROOM_POINTS)
-                if (point.isNotBlank()) {
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG,point)
-                    PrefManager.put(CONVO_ROOM_POINTS, EMPTY)
-                } else {
-                    viewModel.getPointsForConversationRoom(lastRoomId,it)
-                }
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+                Log.d("Manjul", "compositeDisposable.add called")
+                compositeDisposable.remove(getPointsDisposable())
+                Log.d("Manjul", "HAS_SEEN_CONVO_ROOM_POINTS() called $hasSeenpoints ${PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false)}")
+                viewModel.getPointsForConversationRoom(lastRoomId, it)
+                hasSeenpoints=true
+                //PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+            } else{
+                Log.d("Manjul", "compositeDisposable.add called")
+                compositeDisposable.add(getPointsDisposable())
             }
         }
+    }
+
+    fun getPointsDisposable(): Disposable {
+        return RxBus2.listenWithoutDelay(ConvoRoomPointsEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.d("Manjul", "getPointsDisposable() called $hasSeenpoints ${PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false)}")
+                if (hasSeenpoints.not()) {
+                    conversationRoomQuestionId?.let {
+                        viewModel.getPointsForConversationRoom(
+                            lastRoomId,
+                            conversationRoomQuestionId
+                        )
+                    }
+                }
+            }
     }
 
     private fun internetNotAvailable() {
@@ -379,7 +410,8 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 hideNotificationAfter4seconds()
             }
         } else {
-            Toast.makeText(requireActivity(), "Something Went Wrong !!!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), "Something Went Wrong !!!", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -428,7 +460,9 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         dialogView.findViewById<EditText>(R.id.label_field).isFocusable = true
 
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnSingleClickListener {
-            if (dialogView.findViewById<EditText>(R.id.label_field).text.toString().isNotBlank()) {
+            if (dialogView.findViewById<EditText>(R.id.label_field).text.toString()
+                    .isNotBlank()
+            ) {
                 showPatnerChooserPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
                 hideKeyboard(requireActivity())
                 alertDialog.dismiss()
@@ -460,9 +494,11 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         }
 
         if (viewModel.roomDetailsLivedata.value?.is_favourite_practice_partner_available == true) {
-            dialogView.findViewById<MaterialCardView>(R.id.favt_container).visibility = View.VISIBLE
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).visibility =
+                View.VISIBLE
         } else {
-            dialogView.findViewById<MaterialCardView>(R.id.favt_container).visibility = View.GONE
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container).visibility =
+                View.GONE
         }
 
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
@@ -471,18 +507,20 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             alertDialog.dismiss()
         }
         dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setOnClickListener {
-            dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setCardBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.artboard_color
+            dialogView.findViewById<MaterialCardView>(R.id.p2p_container)
+                .setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.artboard_color
+                    )
                 )
-            )
-            dialogView.findViewById<MaterialCardView>(R.id.favt_container).setCardBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container)
+                .setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
                 )
-            )
             dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setStrokeColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -498,18 +536,20 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             isP2Pselected = true
         }
         dialogView.findViewById<MaterialCardView>(R.id.favt_container).setOnClickListener {
-            dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setCardBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white
+            dialogView.findViewById<MaterialCardView>(R.id.p2p_container)
+                .setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
                 )
-            )
-            dialogView.findViewById<MaterialCardView>(R.id.favt_container).setCardBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.artboard_color
+            dialogView.findViewById<MaterialCardView>(R.id.favt_container)
+                .setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.artboard_color
+                    )
                 )
-            )
             dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setStrokeColor(
                 ContextCompat.getColor(
                     requireContext(),
