@@ -44,7 +44,6 @@ import com.joshtalks.joshskills.core.extension.*
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
@@ -67,7 +66,6 @@ import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -229,18 +227,20 @@ class ConversationActivity :
                 scrollToPosition(this, animation = true)
             }
         }
-        conversationViewModel = ViewModelProvider(
-            this, ConversationViewModelFactory(this, this.application, inboxEntity)
-        ).get(ConversationViewModel::class.java)
-        conversationBinding.viewmodel = conversationViewModel
-        conversationBinding.lifecycleOwner = this
+        if (::inboxEntity.isInitialized) {
+            conversationViewModel = ViewModelProvider(
+                this, ConversationViewModelFactory(this, this.application, inboxEntity)
+            ).get(ConversationViewModel::class.java)
+            conversationBinding.viewmodel = conversationViewModel
+            conversationBinding.lifecycleOwner = this
 
-        utilConversationViewModel = ViewModelProvider(
-            this, ConversationViewModelFactory(this, this.application, inboxEntity)
-        ).get(UtilConversationViewModel::class.java)
-        unlockClassViewModel = ViewModelProvider(
-            this, ConversationViewModelFactory(this, this.application, inboxEntity)
-        ).get(UnlockClassViewModel::class.java)
+            utilConversationViewModel = ViewModelProvider(
+                this, ConversationViewModelFactory(this, this.application, inboxEntity)
+            ).get(UtilConversationViewModel::class.java)
+            unlockClassViewModel = ViewModelProvider(
+                this, ConversationViewModelFactory(this, this.application, inboxEntity)
+            ).get(UnlockClassViewModel::class.java)
+        }
 
         super.processIntent(intent)
     }
