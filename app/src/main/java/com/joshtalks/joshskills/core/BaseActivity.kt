@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.core
 
+//import com.uxcam.OnVerificationListener
+//import com.uxcam.UXCam
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
@@ -87,8 +89,6 @@ import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.patloew.colocation.CoLocation
-import com.uxcam.OnVerificationListener
-import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.lang.reflect.Type
@@ -96,7 +96,6 @@ import java.util.*
 import kotlin.random.Random
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -214,10 +213,10 @@ abstract class BaseActivity :
                 }
                 initNewRelic()
                 initFlurry()
-                UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+                //UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
                 // UXCam.setUserProperty(String propertyName , String value)
 
-                UXCam.addVerificationListener(object : OnVerificationListener {
+                /*UXCam.addVerificationListener(object : OnVerificationListener {
                     override fun onVerificationSuccess() {
                         FirebaseCrashlytics.getInstance()
                             .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
@@ -226,9 +225,9 @@ abstract class BaseActivity :
                     override fun onVerificationFailed(errorMessage: String) {
                         Timber.e(errorMessage)
                     }
-                })
+                })*/
             }
-            UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+            /*UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
             // UXCam.setUserProperty(String propertyName , String value)
 
             UXCam.addVerificationListener(object : OnVerificationListener {
@@ -240,7 +239,7 @@ abstract class BaseActivity :
                 override fun onVerificationFailed(errorMessage: String) {
                     Timber.e(errorMessage)
                 }
-            })
+            })*/
         }
     }
 

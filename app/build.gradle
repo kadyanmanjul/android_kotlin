@@ -31,13 +31,13 @@ android {
         /*buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
         buildConfigField "String", "SINCH_API_SECRET", "\"0A42yytE7kqLGwYOGGidng==\""
         buildConfigField "String", "SINCH_SERVER", "\"clientapi.sinch.com\""*/
-        buildConfigField "String", "WX_CAM_KEY", "\"300rqcct068ggy3\""
+        //buildConfigField "String", "WX_CAM_KEY", "\"300rqcct068ggy3\""
         //buildConfigField "String", "COMETCHAT_REGION", "\"us\""
         //buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         //buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
         buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
-        buildConfigField "String", "BUGSEE_API_KEY", "\"fd4b6776-752e-44ce-a975-ce4d2e428bc3\""
-        buildConfigField "String", "SMARTLOOK_API_KEY", "\"62418dde1661c1a8190b2c76f25de26a843629a7\""
+        //buildConfigField "String", "BUGSEE_API_KEY", "\"fd4b6776-752e-44ce-a975-ce4d2e428bc3\""
+        //buildConfigField "String", "SMARTLOOK_API_KEY", "\"62418dde1661c1a8190b2c76f25de26a843629a7\""
 
         manifestPlaceholders = [file_provider: "com.joshtalks.joshskills"]
         javaCompileOptions {
@@ -388,7 +388,6 @@ dependencies {
         exclude group: 'com.sinch', module: 'android-rtc'
     })*/
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'com.uxcam:uxcam:3.3.3@aar'
     implementation 'io.agora.rtc:voice-sdk:3.3.2'
 
     testImplementation 'junit:junit:4.13.2'
@@ -408,9 +407,5 @@ dependencies {
 
     //Flow Layout
     implementation 'com.nex3z:flow-layout:1.2.2'
-    //Bugsee
-    implementation 'com.bugsee:bugsee-android:1.19.18'
-    //smartLook
-    implementation 'com.smartlook.recording:app:1.8.1-native'
     implementation 'com.userexperior:userexperior-android:6.0.6'
 }

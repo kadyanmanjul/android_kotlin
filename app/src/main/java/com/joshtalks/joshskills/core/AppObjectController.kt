@@ -9,8 +9,8 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.airbnb.lottie.L
-import com.bugsee.library.Bugsee
-import com.bugsee.library.data.VideoMode
+//import com.bugsee.library.Bugsee
+//import com.bugsee.library.data.VideoMode
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -50,7 +50,7 @@ import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
-import com.smartlook.sdk.smartlook.Smartlook
+//import com.smartlook.sdk.smartlook.Smartlook
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -58,7 +58,7 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
-import com.uxcam.UXCam
+//import com.uxcam.UXCam
 import com.yariksoffice.lingver.Lingver
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -348,7 +348,7 @@ class AppObjectController {
                 com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
-                initUXCam()
+                //initUXCam()
                 //initBugsee()
                 //initSmartLookCam()
                 initUserExperionCam()
@@ -391,7 +391,7 @@ class AppObjectController {
             return mRtcEngine
         }
 
-        private fun initUXCam() {
+        /*private fun initUXCam() {
             if (BuildConfig.DEBUG.not()) {
                 UXCam.setAutomaticScreenNameTagging(true)
             }
@@ -410,7 +410,7 @@ class AppObjectController {
             } else {
                 Bugsee.launch(joshApplication, BuildConfig.BUGSEE_API_KEY,options)
             }
-        }
+        }*/
 
         @SuppressLint("RestrictedApi")
         private fun initDebugService() {
@@ -585,7 +585,7 @@ class AppObjectController {
             return FirebaseRemoteConfig.getInstance()
         }
 
-        private fun initSmartLookCam() {
+        /*private fun initSmartLookCam() {
             val builder = Smartlook.SetupOptionsBuilder((BuildConfig.SMARTLOOK_API_KEY))
                 .setExperimental(true)
 
@@ -597,7 +597,7 @@ class AppObjectController {
             //.setEventTrackingModes(eventTrackingModes: List<EventTrackingMode>)
             Smartlook.setupAndStartRecording(builder.build())
 
-        }
+        }*/
 
         private fun initUserExperionCam() {
             UserExperior.startRecording(Companion.joshApplication, "942a0473-e1ca-40e5-af83-034cb7f57ee9")
