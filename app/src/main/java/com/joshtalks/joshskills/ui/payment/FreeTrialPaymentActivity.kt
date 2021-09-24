@@ -43,6 +43,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
     private var razorpayOrderId = EMPTY
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
+    var isSubscriptionSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +68,50 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private fun setListeners() {
         binding.ivBack.setOnClickListener {
             onBackPressed()
+        }
+        binding.englishCard.setOnClickListener {
+            isSubscriptionSelected = false
+            binding.subscriptionCard.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.light_shade_of_gray
+                )
+            )
+            binding.subscriptionCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
+            binding.title1.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            binding.title2.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.englishCard.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.colorPrimary_alfa_6
+                )
+            )
+            binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.colorPrimary))
+
+        }
+        binding.subscriptionCard.setOnClickListener {
+            isSubscriptionSelected = true
+            binding.englishCard.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.light_shade_of_gray
+                )
+            )
+            binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
+            binding.title1.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.title2.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            binding.subscriptionCard.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.colorPrimary_alfa_6
+                )
+            )
+            binding.subscriptionCard.setStrokeColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.colorPrimary
+                )
+            )
         }
     }
 
@@ -121,14 +166,14 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                 }
             }
-            binding.txtCurrency.text = it.discount[0].toString()
-            binding.txtFinalPrice.text = it.discount.substring(1)
-            binding.txtOgPrice.text = getString(R.string.price, it.actualAmount)
-            binding.txtOgPrice.paintFlags =
-                binding.txtOgPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            binding.txtSaving.text = getString(R.string.savings, it.savings)
-            binding.courseRating.rating = it.rating.toFloat()
-            binding.txtTotalReviews.text = "(" + String.format("%,d", it.ratingsCount) + ")"
+            binding.txtCurrency1.text = it.discount[0].toString()
+            binding.txtFinalPrice1.text = it.discount.substring(1)
+            binding.txtOgPrice1.text = getString(R.string.price, it.actualAmount)
+            binding.txtOgPrice1.paintFlags =
+                binding.txtOgPrice1.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            binding.txtSaving1.text = getString(R.string.savings, it.savings)
+            binding.courseRating1.rating = it.rating.toFloat()
+            binding.txtTotalReviews1.text = "(" + String.format("%,d", it.ratingsCount) + ")"
         }
 
         viewModel.orderDetailsLiveData.observe(this) {
