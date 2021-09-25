@@ -116,6 +116,30 @@
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/free_trial_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_name"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:background="@drawable/free_trial_bg_timer"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/_6sdp"
+                android:paddingVertical="@dimen/_2sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textColor="#FF0000"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+                app:layout_constraintEnd_toEndOf="@+id/tv_last_message_time"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/tv_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                tools:ignore="MissingPrefix"
+                tools:text="Free Trial ends in 06:00:00"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_last_message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,19 +157,19 @@
                 android:layout_width="@dimen/_16sdp"
                 android:layout_height="@dimen/_16sdp"
                 android:layout_alignBottom="@id/tv_last_message"
+                android:layout_marginEnd="@dimen/_12sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="@color/colorPrimary"
-                android:maxLines="1"
                 android:gravity="center"
+                android:maxLines="1"
                 android:paddingHorizontal="@dimen/_2sdp"
-                android:layout_marginEnd="@dimen/_12sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:textColor="@color/white"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_last_message"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="3" />
+                tools:text="3"
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/horizontal_line"

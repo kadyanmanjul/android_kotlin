@@ -68,6 +68,7 @@
 
 
     <string name="find_more_courses">Find More Courses</string>
+    <string name="buy_english_course">Buy English Course</string>
     <string name="add_more_courses">Add More Courses</string>
     <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
 
@@ -359,7 +360,7 @@
         \nAccess this courses now.</string>
     <string name="unlock_all_courses">Unlock All Courses</string>
     <string name="get_one_year_pass">Get All Course Access Pass</string>
-    <string name="free_trial_ended">Free trial has ended</string>
+    <string name="free_trial_ended">Your Free trial has ended</string>
     <string name="free_trial_last_day">Last day for free subscription</string>
     <string name="free_trial_enjoy">Enjoy Your Free Trial!</string>
     <string name="trial_heading"><![CDATA[Enroll in any course & learn for free]]></string>
@@ -920,5 +921,6 @@
     <string name="label_become_senior_student2"><u>Become a Senior Student</u></string>
     <string name="label_senior_student">%sis a Senior Student</string>
     <string name="call_new_student">Call New Student</string>
+    <string name="free_trial_end_in">Free Trial ends in %s</string>
 
 </resources>

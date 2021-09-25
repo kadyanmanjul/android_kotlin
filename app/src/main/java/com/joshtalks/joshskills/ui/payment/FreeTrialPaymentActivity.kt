@@ -21,6 +21,8 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
@@ -43,7 +45,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
     private var razorpayOrderId = EMPTY
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
-    var isSubscriptionSelected = false
+    var index = 0
+    var buttonText = mutableListOf<String>()
+    var headingText = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,16 +74,16 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             onBackPressed()
         }
         binding.englishCard.setOnClickListener {
-            isSubscriptionSelected = false
+            index = 0
             binding.subscriptionCard.setCardBackgroundColor(
                 ContextCompat.getColor(
                     this,
-                    R.color.light_shade_of_gray
+                    R.color.white
                 )
             )
             binding.subscriptionCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
             binding.title1.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
-            binding.title2.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.title2.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding.englishCard.setCardBackgroundColor(
                 ContextCompat.getColor(
                     this,
@@ -87,19 +91,25 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 )
             )
             binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            binding.materialTextView.text=buttonText.get(index)
+            binding.txtLabelHeading.text=headingText.get(index)
+            binding.seeCourseList.visibility=View.GONE
 
         }
         binding.subscriptionCard.setOnClickListener {
-            isSubscriptionSelected = true
+            index = 1
+
             binding.englishCard.setCardBackgroundColor(
                 ContextCompat.getColor(
                     this,
-                    R.color.light_shade_of_gray
+                    R.color.white
                 )
             )
             binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
-            binding.title1.setTextColor(ContextCompat.getColor(this, R.color.white))
+
+            binding.title1.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding.title2.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
+
             binding.subscriptionCard.setCardBackgroundColor(
                 ContextCompat.getColor(
                     this,
@@ -112,68 +122,128 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     R.color.colorPrimary
                 )
             )
+            binding.materialTextView.text=buttonText.get(index)
+            binding.txtLabelHeading.text=headingText.get(index)
+            binding.seeCourseList.visibility=View.VISIBLE
+        }
+        binding.seeCourseList.setOnClickListener {
+            CourseExploreActivity.startCourseExploreActivity(
+                this,
+                COURSE_EXPLORER_CODE,
+                null,
+                state = ActivityEnum.FreeTrial,
+                isClickable = false
+            )
         }
     }
 
     private fun setObservers() {
         viewModel.paymentDetailsLiveData.observe(this) {
-            binding.txtLabelHeading.text = it.heading
-            for (i in it.subHeadings.indices) {
-                when (i) {
-                    0 -> {
-                        binding.txtPointer1.text = it.subHeadings[i]
-                        binding.txtPointer1.visibility = View.VISIBLE
-                    }
-                    1 -> {
-                        binding.txtPointer2.text = it.subHeadings[i]
-                        binding.txtPointer2.visibility = View.VISIBLE
-                    }
-                    2 -> {
-                        binding.txtPointer3.text = it.subHeadings[i]
-                        binding.txtPointer3.visibility = View.VISIBLE
-                    }
-                    3 -> {
-                        binding.txtPointer4.text = it.subHeadings[i]
-                        binding.txtPointer4.visibility = View.VISIBLE
-                    }
-                    4 -> {
-                        binding.txtPointer5.text = it.subHeadings[i]
-                        binding.txtPointer5.visibility = View.VISIBLE
-                    }
-                    5 -> {
-                        binding.txtPointer6.text = it.subHeadings[i]
-                        binding.txtPointer6.visibility = View.VISIBLE
-                    }
-                    6 -> {
-                        binding.txtPointer7.text = it.subHeadings[i]
-                        binding.txtPointer7.visibility = View.VISIBLE
-                    }
-                    7 -> {
-                        binding.txtPointer8.text = it.subHeadings[i]
-                        binding.txtPointer8.visibility = View.VISIBLE
-                    }
-                    8 -> {
-                        binding.txtPointer9.text = it.subHeadings[i]
-                        binding.txtPointer9.visibility = View.VISIBLE
-                    }
-                    9 -> {
-                        binding.txtPointer10.text = it.subHeadings[i]
-                        binding.txtPointer10.visibility = View.VISIBLE
-                    }
-                    10 -> {
-                        binding.txtPointer11.text = it.subHeadings[i]
-                        binding.txtPointer11.visibility = View.VISIBLE
+            try {
+                buttonText = mutableListOf<String>()
+                headingText = mutableListOf<String>()
+                it.subHeadings?.let { list ->
+                    for (i in list.indices) {
+                        when (i) {
+                            0 -> {
+                                binding.txtPointer1.text = list[i]
+                                binding.txtPointer1.visibility = View.VISIBLE
+                            }
+                            1 -> {
+                                binding.txtPointer2.text = list[i]
+                                binding.txtPointer2.visibility = View.VISIBLE
+                            }
+                            2 -> {
+                                binding.txtPointer3.text = list[i]
+                                binding.txtPointer3.visibility = View.VISIBLE
+                            }
+                            3 -> {
+                                binding.txtPointer4.text = list[i]
+                                binding.txtPointer4.visibility = View.VISIBLE
+                            }
+                            4 -> {
+                                binding.txtPointer5.text = list[i]
+                                binding.txtPointer5.visibility = View.VISIBLE
+                            }
+                            5 -> {
+                                binding.txtPointer6.text = list[i]
+                                binding.txtPointer6.visibility = View.VISIBLE
+                            }
+                            6 -> {
+                                binding.txtPointer7.text = list[i]
+                                binding.txtPointer7.visibility = View.VISIBLE
+                            }
+                            7 -> {
+                                binding.txtPointer8.text = list[i]
+                                binding.txtPointer8.visibility = View.VISIBLE
+                            }
+                            8 -> {
+                                binding.txtPointer9.text = list[i]
+                                binding.txtPointer9.visibility = View.VISIBLE
+                            }
+                            9 -> {
+                                binding.txtPointer10.text = list[i]
+                                binding.txtPointer10.visibility = View.VISIBLE
+                            }
+                            10 -> {
+                                binding.txtPointer11.text = list[i]
+                                binding.txtPointer11.visibility = View.VISIBLE
+                            }
+                        }
                     }
                 }
+
+                it.courseData?.let {
+                    val data1 = it.get(0)
+                    if (data1 != null) {
+                        data1.buttonText?.let { it1 -> buttonText.add(it1) }
+                        data1.heading?.let { it1 -> headingText.add(it1) }
+                        binding.materialTextView.text=buttonText.get(index)
+                        binding.txtLabelHeading.text = headingText.get(index)
+                        binding.title1.text = data1.courseHeading
+                        binding.txtCurrency1.text = data1.discount?.get(0).toString()
+                        binding.txtFinalPrice1.text = data1.discount?.substring(1)
+                        binding.txtOgPrice1.text = getString(R.string.price, data1.actualAmount)
+                        binding.txtOgPrice1.paintFlags =
+                            binding.txtOgPrice1.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        binding.txtSaving1.text = getString(R.string.savings, data1.savings)
+                        binding.courseRating1.rating = data1.rating?.toFloat() ?: 4f
+                        binding.txtTotalReviews1.text =
+                            "(" + String.format("%,d", data1.ratingsCount) + ")"
+                    } else {
+                        binding.englishCard.visibility=View.GONE
+                    }
+
+                    val data2 = it.get(1)
+                    if (data2 != null) {
+                        data2.buttonText?.let { it1 -> buttonText.add(it1) }
+                        data2.heading?.let { it1 -> headingText.add(it1) }
+                        binding.title2.text = data2.courseHeading
+                        binding.txtCurrency2.text = data2.discount?.get(0).toString()
+                        binding.txtFinalPrice2.text = data2.discount?.substring(1)
+                        binding.txtOgPrice2.text = getString(R.string.price, data2.actualAmount)
+                        binding.txtOgPrice2.paintFlags =
+                            binding.txtOgPrice2.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        binding.txtSaving2.text = getString(R.string.savings, data2.savings)
+                        binding.courseRating2.rating = data2.rating?.toFloat() ?: 4f
+                        binding.txtTotalReviews2.text =
+                            "(" + String.format("%,d", data2.ratingsCount) + ")"
+                    } else {
+                        binding.subscriptionCard.visibility=View.GONE
+                    }
+                }
+                //TODO condition
+                //if(it.expireTime){
+                if(true){
+                    binding.freeTrialTimer.text = getString(R.string.free_trial_end_in)
+                    //start a timer
+                } else {
+                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                }
+
+            } catch (ex:Exception){
+                ex.printStackTrace()
             }
-            binding.txtCurrency1.text = it.discount[0].toString()
-            binding.txtFinalPrice1.text = it.discount.substring(1)
-            binding.txtOgPrice1.text = getString(R.string.price, it.actualAmount)
-            binding.txtOgPrice1.paintFlags =
-                binding.txtOgPrice1.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            binding.txtSaving1.text = getString(R.string.savings, it.savings)
-            binding.courseRating1.rating = it.rating.toFloat()
-            binding.txtTotalReviews1.text = "(" + String.format("%,d", it.ratingsCount) + ")"
         }
 
         viewModel.orderDetailsLiveData.observe(this) {
@@ -207,7 +277,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val options = JSONObject()
             options.put("key", orderDetails.razorpayKeyId)
             options.put("name", "Josh Skills")
-            options.put("description", viewModel.paymentDetailsLiveData.value?.courseName + "_app")
+            options.put("description", viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName + "_app")
             options.put("order_id", orderDetails.razorpayOrderId)
             options.put("currency", orderDetails.currency)
             options.put("amount", orderDetails.amount * 100)
@@ -231,7 +301,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             phoneNumber = "+919999999999"
         }
 
-        viewModel.getOrderDetails(testId.toInt(), phoneNumber)
+        viewModel.getOrderDetails(testId.toInt(), phoneNumber,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.encryptedText?: EMPTY)
     }
 
     private fun String.verifyPayment() {
@@ -301,9 +371,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private fun navigateToStartCourseActivity() {
         StartCourseActivity.openStartCourseActivity(
             this,
-            viewModel.paymentDetailsLiveData.value?.courseName ?: EMPTY,
-            viewModel.paymentDetailsLiveData.value?.teacherName ?: EMPTY,
-            viewModel.paymentDetailsLiveData.value?.imageUrl ?: EMPTY,
+            viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,
+            viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.teacherName ?: EMPTY,
+            viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.imageUrl ?: EMPTY,
             viewModel.orderDetailsLiveData.value?.joshtalksOrderId ?: 0
         )
         this.finish()

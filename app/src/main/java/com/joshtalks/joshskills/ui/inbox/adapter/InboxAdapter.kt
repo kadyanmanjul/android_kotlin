@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
@@ -165,6 +166,21 @@ class InboxAdapter(
                 }
                 if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
                     horizontalLine.visibility = android.view.View.GONE
+                }
+                if (inboxEntity.expiredDate != null) {
+                    freeTrialTimer.visibility = View.VISIBLE
+                    tvLastMessage.visibility = View.INVISIBLE
+                    // TODO Condition
+                    //if (inboxEntity.expiredDate <= System.currentTimeMillis()) {
+                    if (true) {
+                        freeTrialTimer.text = getAppContext().getString(R.string.free_trial_end_in)
+                        //start a timer
+                    } else {
+                        freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                    }
+                } else {
+                    freeTrialTimer.visibility = View.INVISIBLE
+                    tvLastMessage.visibility = View.VISIBLE
                 }
             }
         }

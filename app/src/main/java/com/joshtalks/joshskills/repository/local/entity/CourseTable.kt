@@ -62,7 +62,10 @@ data class Course(
     @SerializedName("is_points_active") val isPointsActive: Boolean = false,
 
     @ColumnInfo(name = "is_course_locked")
-    @SerializedName("is_course_locked") val isCourseLocked: Boolean = false
+    @SerializedName("is_course_locked") val isCourseLocked: Boolean = false,
+
+    @ColumnInfo(name = "expire_date")
+    @SerializedName("expire_date") val expireDate: Int?
 
 ) : Serializable
 

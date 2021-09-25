@@ -255,7 +255,7 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        if (inboxEntity.isCourseLocked) {
+        if (true) {
             //initEndTrialBottomSheet()
             showFreeTrialPaymentScreen()
         }
