@@ -1227,10 +1227,18 @@ class WebRtcService : BaseWebRtcService() {
     fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT, reason : VoipEvent, hasDisconnected: Boolean = false) {
         Timber.tag(TAG).e("call_status%s", mRtcEngine?.connectionState)
         if (apiCall) {
-            callData?.let {
-                callStatusNetworkApi(it, action, hasDisconnected = hasDisconnected)
+            if(apiCall && reason == DISCONNECT.BACK_BUTTON_FAILURE) {
+                val data : HashMap<String, String?> = HashMap()
+                data["uid"] = CurrentCallDetails.callieUid
+                data["channel_name"] = CurrentCallDetails.channelName
+                callStatusNetworkApi(data, action, hasDisconnected = true)
             }
+             else
+                callData?.let {
+                    callStatusNetworkApi(it, action, hasDisconnected = hasDisconnected)
+                }
         }
+
         joshAudioManager?.endCommunication()
         val state = CurrentCallDetails.state()
         VoipAnalytics.push(
@@ -1884,7 +1892,12 @@ class WebRtcService : BaseWebRtcService() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val time = getTimeOfTalk()
-                data["mentor_id"] = Mentor.getInstance().getId()
+                data.remove("is_favorite")
+                data.remove("mentor_id")
+                data.remove("token")
+                data.remove("is_new_user_call")
+                data.remove("course_id")
+
                 data["call_response"] = callAction.action
                 data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time).toString()
                 data["has_disconnected"] = hasDisconnected.toString()

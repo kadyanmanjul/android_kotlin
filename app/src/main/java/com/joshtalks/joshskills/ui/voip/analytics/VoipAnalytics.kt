@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.analytics
 
+import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
@@ -18,6 +19,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
 
+private const val TAG = "VoipAnalytics"
 object VoipAnalytics {
     private val database by lazy {
         AppDatabase.getDatabase(AppObjectController.joshApplication)
@@ -74,8 +76,10 @@ object VoipAnalytics {
     }
 
     fun push(event: VoipEvent, agoraCallId: String, agoraMentorUid: String, timeStamp: String) {
-        if(agoraCallId.isEmpty() || agoraMentorUid.isEmpty())
+        if(agoraCallId.isEmpty() || agoraMentorUid.isEmpty()) {
+            Log.d(TAG, "push: ${event}")
             return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             val analyticsData = VoipAnalyticsEntity(
                 event.value,

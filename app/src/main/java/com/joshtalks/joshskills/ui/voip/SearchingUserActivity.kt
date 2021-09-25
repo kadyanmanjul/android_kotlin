@@ -8,12 +8,14 @@ import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.location.Location
 import android.os.*
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -22,6 +24,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
+import com.joshtalks.joshskills.ui.voip.constants.MSG_REGISTER_CLIENT
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -34,6 +37,13 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 const val COURSE_ID = "course_id"
@@ -41,9 +51,13 @@ const val TOPIC_ID = "topic_id"
 const val TOPIC_NAME = "topic_name"
 const val FAVORITE_USER_CALL = "favorite_user_call"
 const val IS_NEW_USER_CALL = "is_new_user_call"
+private const val TAG = "SearchingUserActivity"
+class SearchingUserActivity : BaseActivity(), ServiceConnection {
+    var pressedBack = false
 
-class SearchingUserActivity : BaseActivity() {
     companion object {
+        var backPressMutex = Mutex()
+
         fun startUserForPractiseOnPhoneActivity(
             activity: Activity,
             courseId: String,
@@ -82,6 +96,9 @@ class SearchingUserActivity : BaseActivity() {
     private var outgoingCallData: HashMap<String, String?> = HashMap()
     private var uiHandler: Handler? = null
     private var compositeDisposable = CompositeDisposable()
+    private val serviceMessageReceiver = Messenger(ServiceMessageHandler())
+    private lateinit var serviceMessageSender : Messenger
+    private var isServiceMessengerBound = false
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -105,6 +122,7 @@ class SearchingUserActivity : BaseActivity() {
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
             WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
+            Log.d(TAG, "onConnect: 121")
             this@SearchingUserActivity.finish()
         }
 
@@ -124,8 +142,10 @@ class SearchingUserActivity : BaseActivity() {
                         putExtra(RTC_IS_NEW_USER_CALL, "true")
                     }
                 }
+            Log.d(TAG, "switchChannel: 138")
             startActivity(callActivityIntent)
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
+            Log.d(TAG, "switchChannel: 142")
             this@SearchingUserActivity.finish()
         }
 
@@ -200,8 +220,10 @@ class SearchingUserActivity : BaseActivity() {
             {
                 if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
                     showToast(getString(R.string.did_not_answer_message))
+                    Log.d(TAG, "addObserver: 217")
                     finishAndRemoveTask()
                 } else if (ApiCallStatus.INVALIDED == it) {
+                    Log.d(TAG, "addObserver: 220")
                     this@SearchingUserActivity.finishAndRemoveTask()
                 }
             }
@@ -282,6 +304,7 @@ class SearchingUserActivity : BaseActivity() {
         MaterialDialog(this).show {
             message(R.string.call_start_permission_message_rational)
             positiveButton(R.string.exit) {
+                Log.d(TAG, "onDenyLocation: 301")
                 finish()
             }
         }
@@ -316,6 +339,7 @@ class SearchingUserActivity : BaseActivity() {
             .addUserDetails()
             .push()
         timer?.cancel()
+        Log.d(TAG, "stopCalling: 336")
         finishAndRemoveTask()
     }
 
@@ -327,15 +351,18 @@ class SearchingUserActivity : BaseActivity() {
             .addUserDetails()
             .push()
         timer?.cancel()
+        Log.d(TAG, "stopSearching: 348")
         finishAndRemoveTask()
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME) {
+    /*override fun onKeyDown(keyCode: Int, event: KeyEvent?) : Boolean {
+        if (keyCode == KeyEvent.KEYCODE_HOME) {
+            Log.d(TAG, "onKeyDown: HOME")
             stopCalling(DISCONNECT.BACK_BUTTON_FAILURE)
-        }
-        return super.onKeyDown(keyCode, event)
-    }
+            return true
+        } else
+            return false
+    }*/
 
     override fun onDestroy() {
         super.onDestroy()
@@ -347,8 +374,19 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        viewModel.saveImpression(IMPRESSION_SEARCHING_SCREEN_BACK_PRESS)
-        stopSearching(DISCONNECT.BACK_BUTTON_FAILURE)
+        if(backPressMutex.isLocked) {
+            Log.d(TAG, "onBackPressed: backPressMutex?.isLocked")
+            viewModel.saveImpression(IMPRESSION_SEARCHING_SCREEN_BACK_PRESS)
+            stopSearching(DISCONNECT.BACK_BUTTON_FAILURE)
+        } else {
+            showToast("Please press back again")
+            Log.d(TAG, "onBackPressed: Please press back again")
+            CoroutineScope(Dispatchers.Main).launch {
+                backPressMutex.withLock {
+                    delay(1000)
+                }
+            }
+        }
     }
 
     override fun onStart() {
@@ -368,6 +406,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
+        Log.d(TAG, "onStop: 396")
         compositeDisposable.clear()
         unbindService(myConnection)
     }
@@ -422,5 +461,30 @@ class SearchingUserActivity : BaseActivity() {
                     }
                 )
         )
+    }
+
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        serviceMessageSender = Messenger(service)
+        try{
+            val msg: Message = Message.obtain(
+                null,
+                MSG_REGISTER_CLIENT
+            )
+            msg.replyTo = serviceMessageReceiver
+            serviceMessageSender.send(msg)
+
+        } catch (e : RemoteException) {
+
+        }
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+
+    }
+
+    inner class ServiceMessageHandler : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+
+        }
     }
 }
