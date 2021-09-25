@@ -105,7 +105,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class
     ],
-    version = 37,
+    version = 38,
     exportSchema = true
 )
 @TypeConverters(
@@ -188,6 +188,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_34_35,
                                 MIGRATION_35_36,
                                 MIGRATION_36_37,
+                                MIGRATION_37_38
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -507,6 +508,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN `total_new_student_calls` INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN  `required_new_student_calls` INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE SpeakingTopic ADD COLUMN  `is_new_student_calls_activated` INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        private val MIGRATION_37_38: Migration = object : Migration(37,38) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE course ADD COLUMN expire_date INTEGER")
             }
         }
 

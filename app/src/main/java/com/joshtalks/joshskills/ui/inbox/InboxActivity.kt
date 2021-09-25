@@ -9,6 +9,7 @@ import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -24,6 +25,7 @@ import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
@@ -102,6 +104,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         find_more.setOnClickListener {
             courseExploreClick()
         }
+        find_more_new.setOnClickListener {
+            courseExploreClick()
+        }
+        buy_english_course.setOnClickListener {
+            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                this,
+                AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                )
+
+            )
+        }
     }
 
     private fun openPopupMenu(view: View) {
@@ -174,8 +188,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (items.isEmpty()) {
             return
         }
+        var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
             val temp: ArrayList<InboxEntity> = arrayListOf()
+            temp.forEach {
+                if (it.expiredDate != null) {
+                    haveFreeTrialCourse = true
+                }
+            }
             items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
                 temp.addAll(it)
             }
@@ -200,6 +220,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             ) >= 2
         ) {
             findMoreLayout.visibility = View.VISIBLE
+        }
+        if (haveFreeTrialCourse) {
+            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.GONE
+            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.VISIBLE
+            findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.VISIBLE
+        } else {
+            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.VISIBLE
+            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.GONE
+            findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.GONE
         }
     }
 

@@ -10,7 +10,7 @@ import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.CouponCodeResponse
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
-import com.joshtalks.joshskills.repository.server.FreeTrialPaymentData
+import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.InstanceIdResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
@@ -116,7 +116,10 @@ interface SignUpNetworkService {
     ): DeviceDetailsResponse
 
     @PATCH("$DIR/mentor/fcm/{id}/")
-    suspend fun patchFCMToken(@Path("id") id: Int, @Body params: Map<String, String>): Response<Void>
+    suspend fun patchFCMToken(
+        @Path("id") id: Int,
+        @Body params: Map<String, String>
+    ): Response<Void>
 
     @FormUrlEncoded
     @POST("$DIR/mentor/fcm/")
@@ -169,7 +172,7 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/last-active")
     suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
-    @POST("$DIR/course/buy_expired_course/")
-    suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentData
+    @POST("$DIR/course/buy_expired_course_v2/")
+    suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
 
 }

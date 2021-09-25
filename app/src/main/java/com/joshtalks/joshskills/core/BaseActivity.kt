@@ -123,7 +123,8 @@ abstract class BaseActivity :
         Onboard,
         Signup,
         Empty,
-        DeepLink
+        DeepLink,
+        FreeTrial
     }
 
     var openSettingActivity: ActivityResultLauncher<Intent> = registerForActivityResult(

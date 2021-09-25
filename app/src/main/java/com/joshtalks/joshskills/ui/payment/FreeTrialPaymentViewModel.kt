@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.FreeTrialPaymentData
+import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -23,7 +23,7 @@ import retrofit2.Response
 
 class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(application) {
 
-    var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentData>()
+    var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
 
@@ -59,13 +59,13 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun getOrderDetails(testId: Int, mobileNumber: String) {
+    fun getOrderDetails(testId: Int, mobileNumber: String,encryptedText:String) {
         // viewState?.postValue(PaymentSummaryViewModel.ViewState.PROCESSING)
         viewModelScope.launch(Dispatchers.IO) {
             isProcessing.postValue(true)
             try {
                 val data = mutableMapOf(
-                    "encrypted_text" to paymentDetailsLiveData.value?.encryptedText,
+                    "encrypted_text" to encryptedText,
                     "instance_id" to PrefManager.getStringValue(INSTANCE_ID, false),
                     "mobile" to mobileNumber,
                     "test_id" to testId.toString(),

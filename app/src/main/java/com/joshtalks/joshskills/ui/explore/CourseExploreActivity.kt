@@ -36,6 +36,7 @@ import kotlinx.coroutines.withContext
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
+const val IS_COURSES_CLICKABLE = "is_courses_clickable"
 const val PREV_ACTIVITY = "previous_activity"
 
 class CourseExploreActivity : CoreJoshActivity() {
@@ -43,6 +44,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
     private lateinit var appAnalytics: AppAnalytics
     private var prevAct: String? = EMPTY
+    private var isClickable: Boolean = true
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
     private val tabName: MutableList<String> = ArrayList()
@@ -53,14 +55,15 @@ class CourseExploreActivity : CoreJoshActivity() {
             requestCode: Int,
             list: MutableSet<InboxEntity>?,
             clearBackStack: Boolean = false,
-            state: ActivityEnum
+            state: ActivityEnum,
+            isClickable: Boolean = true
         ) {
             val intent = Intent(context, CourseExploreActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             list?.run {
                 intent.putParcelableArrayListExtra(USER_COURSES, ArrayList(this))
             }
-
+            intent.putExtra(IS_COURSES_CLICKABLE, isClickable)
             intent.putExtra(PREV_ACTIVITY, state.toString())
             if (clearBackStack) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -168,6 +171,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                 if (intent.hasExtra(USER_COURSES)) {
                     list = intent.getParcelableArrayListExtra(USER_COURSES)
                 }
+                if (intent.hasExtra(IS_COURSES_CLICKABLE)) {
+                    isClickable = intent.getBooleanExtra(IS_COURSES_CLICKABLE, true)
+                }
                 val data = HashMap<String, String>()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
@@ -270,31 +276,32 @@ class CourseExploreActivity : CoreJoshActivity() {
                     applicationContext,
                     courseExploreModel
                 )
+                if (isClickable) {
+                    when (courseExploreModel.cardType) {
 
-                when (courseExploreModel.cardType) {
+                        ExploreCardType.NORMAL -> {
+                            courseExploreModel.id?.let { testId ->
+                                CourseDetailsActivity.startCourseDetailsActivity(
+                                    activity = this,
+                                    testId = testId,
+                                    whatsappUrl = courseExploreModel.whatsappUrl,
+                                    startedFrom = this@CourseExploreActivity.javaClass.simpleName,
+                                    buySubscription = false
 
-                    ExploreCardType.NORMAL -> {
-                        courseExploreModel.id?.let { testId ->
-                            CourseDetailsActivity.startCourseDetailsActivity(
-                                activity = this,
-                                testId = testId,
-                                whatsappUrl = courseExploreModel.whatsappUrl,
-                                startedFrom = this@CourseExploreActivity.javaClass.simpleName,
-                                buySubscription = false
-
-                            )
+                                )
+                            }
                         }
-                    }
 
-                    ExploreCardType.FFCOURSE,
-                    ExploreCardType.FREETRIAL -> {
-                        courseExploreModel.id?.let { testId ->
-                            StartSubscriptionActivity.startActivity(
-                                this,
-                                testId,
-                                courseExploreModel.cardType,
-                                this::class.simpleName!!
-                            )
+                        ExploreCardType.FFCOURSE,
+                        ExploreCardType.FREETRIAL -> {
+                            courseExploreModel.id?.let { testId ->
+                                StartSubscriptionActivity.startActivity(
+                                    this,
+                                    testId,
+                                    courseExploreModel.cardType,
+                                    this::class.simpleName!!
+                                )
+                            }
                         }
                     }
                 }
