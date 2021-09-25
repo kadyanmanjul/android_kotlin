@@ -5,6 +5,7 @@ import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.flurry.sdk.ex
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
@@ -43,13 +44,14 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                     AppObjectController.p2pNetworkService.getAgoraClientToken(request)
                 if (response.isSuccessful && response.code() in 200..203) {
                     response.body()?.let {
+                        CurrentCallDetails.set(
+                            it["channel_name"] ?: "",
+                            callId = it["agora_call_id"] ?: "",
+                            callieUid = it["uid"] ?: "",
+                            callerUid = ""
+                        )
+                        AppObjectController.p2pNetworkService.sendAgoraTokenConformation(mapOf("agora_call_id" to it["agora_call_id"]))
                         location?.let { location ->
-                            CurrentCallDetails.set(
-                                it["channel_name"] ?: "",
-                                callId = it["agora_call_id"] ?: "",
-                                callieUid = it["uid"] ?: "",
-                                callerUid = ""
-                            )
                             uploadUserCurrentLocation(it["channel_name"]!!, location)
                         }
                         aFunction.invoke(

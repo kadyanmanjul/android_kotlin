@@ -81,7 +81,7 @@ const val IS_CALL_CONNECTED = "is_call_connected"
 const val OPPOSITE_USER_UID = "opp_user_uid"
 
 class WebRtcActivity : AppCompatActivity() {
-
+    private val TAG = "WebRtcActivity"
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
@@ -409,6 +409,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     // TODO: TIMEOUT DISCONNECT
     private fun addTimeOutUserDidNotPickCall() {
+        Log.d(TAG, "addTimeOutUserDidNotPickCall: 346")
         AppObjectController.uiHandler.postDelayed(
             {
                 onDisconnectCall(DISCONNECT.NO_USER_FOUND_FAILURE)
@@ -429,6 +430,7 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     override fun onNewIntent(nIntent: Intent) {
+        Log.d(TAG, "onNewIntent: 367")
         super.onNewIntent(nIntent)
         Log.d(TAG, "onNewIntent: ")
         try {
@@ -437,7 +439,7 @@ class WebRtcActivity : AppCompatActivity() {
 
             val oMap = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val oChannel = oMap?.get(RTC_CHANNEL_KEY)
-
+            Log.d(TAG, "onNewIntent(375): $nChannel .... $oChannel")
             if (nChannel != oChannel) {
                 finish()
                 startActivity(nIntent)

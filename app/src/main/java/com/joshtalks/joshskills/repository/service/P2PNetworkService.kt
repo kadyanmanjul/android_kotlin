@@ -15,6 +15,9 @@ interface P2PNetworkService {
     @POST("$DIR/voicecall/agora_token/")
     suspend fun getAgoraClientToken(@Body params: AgoraTokenRequest): Response<HashMap<String, String>>
 
+    @POST("$DIR/voicecall/agora_token/")
+    suspend fun sendAgoraTokenConformation(@Body params: Map<String, String?>): Response<HashMap<String, String>>
+
     @POST("$DIR/voicecall/agora_call_response/")
     suspend fun getAgoraCallResponse(@Body params: Map<String, String?>): Response<HashMap<String, String>>
 
