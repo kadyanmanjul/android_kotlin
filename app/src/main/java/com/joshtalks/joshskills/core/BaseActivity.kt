@@ -208,7 +208,7 @@ abstract class BaseActivity :
             if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                 try {
                     Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
-                } catch (ex:Exception){
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
                 initNewRelic()
@@ -376,9 +376,9 @@ abstract class BaseActivity :
     protected fun processIntent(mIntent: Intent?) {
         try {
             lifecycleScope.launch(Dispatchers.IO) {
-                if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) && mIntent.hasExtra(
-                        NOTIFICATION_ID
-                    ) && mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
+                if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) &&
+                    mIntent.hasExtra(NOTIFICATION_ID) &&
+                    mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
                 ) {
                     EngagementNetworkHelper.clickNotification(
                         mIntent.getStringExtra(

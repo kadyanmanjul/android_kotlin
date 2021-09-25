@@ -144,7 +144,7 @@ object EngagementNetworkHelper {
                     notificationId,
                     data
                 )
-                Timber.d("notifEngage12 : ( $notificationId , clickedFalse)")
+                Timber.d("notifEngage12 : ( $notificationId , dismissed)")
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
