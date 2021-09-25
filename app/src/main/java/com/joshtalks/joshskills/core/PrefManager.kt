@@ -98,6 +98,7 @@ const val HAS_SEEN_LOCAL_NOTIFICATION = "has_seen_local_notification"
 const val LOCAL_NOTIFICATION_INDEX = "local_notification_index"
 const val CHAT_OPENED_FOR_NOTIFICATION = "chat_opened_for_notification"
 const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
+const val HAS_SEEN_QUIZ_VIDEO_BUTTON = "has_seen_quiz_video_button"
 
 object PrefManager {
 

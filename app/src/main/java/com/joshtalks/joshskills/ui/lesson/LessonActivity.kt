@@ -14,13 +14,11 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -34,7 +32,6 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -45,12 +42,8 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.leaderboard.Event
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_ITEM_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
@@ -178,6 +171,23 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
+        }
+        if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON)){
+            binding.tooltipFrame.setOnClickListener {
+                binding.tooltipFrame.visibility=View.GONE
+                binding.videoBtnTooltip.visibility=View.GONE
+                binding.overlayTooltipLayout.visibility=View.GONE
+            }
+            binding.tooltipFrame.setOnClickListener {
+                binding.tooltipFrame.visibility=View.GONE
+                binding.videoBtnTooltip.visibility=View.GONE
+                binding.overlayTooltipLayout.visibility=View.GONE
+            }
+            binding.videoIvBtn.setOnClickListener {
+                binding.tooltipFrame.visibility=View.GONE
+                binding.videoBtnTooltip.visibility=View.GONE
+                binding.overlayTooltipLayout.visibility=View.GONE
+            }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
@@ -659,6 +669,24 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    override fun setOverlayVisibility(shouldShow: Boolean,wrongAnswerHeading:String?,wrongAnswerText:String?) {
+        if (shouldShow){
+            Log.d(
+                "Manjul",
+                "setOverlayVisibility() called with: shouldShow = $shouldShow, wrongAnswerHeading = $wrongAnswerHeading, wrongAnswerText = $wrongAnswerText"
+            )
+            binding.wrongAnswerTitle.text = wrongAnswerHeading
+            binding.wrongAnswerDesc.text = wrongAnswerText
+            binding.tooltipFrame.visibility=View.VISIBLE
+            binding.videoBtnTooltip.visibility=View.VISIBLE
+            binding.overlayTooltipLayout.visibility=View.VISIBLE
+        }else{
+            binding.tooltipFrame.visibility=View.GONE
+            binding.videoBtnTooltip.visibility=View.GONE
+            binding.overlayTooltipLayout.visibility=View.GONE
         }
     }
 

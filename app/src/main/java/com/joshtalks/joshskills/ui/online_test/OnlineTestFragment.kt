@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.online_test
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
+import com.joshtalks.joshskills.core.HAS_SEEN_QUIZ_VIDEO_BUTTON
 import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
@@ -124,6 +126,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         setObservers()
         binding.progressContainer.visibility = View.VISIBLE
         viewModel.fetchAssessmentDetails(lessonId)
+        PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON,false)
         return binding.root
     }
 
@@ -361,6 +364,19 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
                 override fun nextQuestion() {
                     moveToNextGrammarQuestion()
+                }
+
+                override fun onVideoButtonAppear(isClicked:Boolean, wrongAnswerHeading:String?, wrongAnswerText:String?) {
+                    Log.d(
+                        "Manjul",
+                        "onVideoButtonAppear() called with: isClicked = $isClicked, wrongAnswerHeading = $wrongAnswerHeading, wrongAnswerText = $wrongAnswerText"
+                    )
+                    if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON,false,false).not() && isClicked.not()){
+                        PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON,true)
+                        lessonActivityListener?.setOverlayVisibility(true,wrongAnswerHeading,wrongAnswerText)
+                    } else {
+                        lessonActivityListener?.setOverlayVisibility(false, null, null)
+                    }
                 }
             })
         }
