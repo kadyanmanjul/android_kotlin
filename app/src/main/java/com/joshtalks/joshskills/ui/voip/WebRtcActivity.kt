@@ -69,11 +69,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
-import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
-import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
-import com.joshtalks.joshskills.util.DateUtils
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_ACCEPT = "web_rtc_call_accept"
