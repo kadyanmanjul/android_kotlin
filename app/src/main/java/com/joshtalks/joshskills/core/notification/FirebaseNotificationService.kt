@@ -41,12 +41,13 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.ApiRespStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
@@ -56,7 +57,6 @@ import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
@@ -129,21 +129,26 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
         ).launch {
             val userId = Mentor.getInstance().getId()
-            val fcmResponse = FCMResponse.getInstance()
-            fcmResponse?.apiStatus = ApiRespStatus.POST
-            fcmResponse?.update()
-            if (fcmResponse != null && userId.isNotBlank()) {
+//            val fcmResponse = FCMResponse.getInstance()
+//            fcmResponse?.apiStatus = ApiRespStatus.POST
+//            fcmResponse?.update()
+            if (userId.isNotBlank()) {
                 try {
-                    val data = mutableMapOf("user_id" to userId, "registration_id" to token)
+                    val data = mutableMapOf(
+                        "user_id" to userId,
+                        "registration_id" to token,
+                        "name" to Utils.getDeviceName(),
+                        "device_id" to Utils.getDeviceId(),
+                        "active" to "true",
+                        "type" to "android",
+                        "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
+                    )
                     val resp =
-                        AppObjectController.signUpNetworkService.patchFCMToken(
-                            fcmResponse.id,
+                        AppObjectController.signUpNetworkService.postFCMToken(
                             data.toMap()
                         )
                     if (resp.isSuccessful) {
-                        fcmResponse.userId = userId
-                        fcmResponse.apiStatus = ApiRespStatus.PATCH
-                        fcmResponse.update()
+                        resp.body()?.update()
                     }
                 } catch (ex: Exception) {
                     try {

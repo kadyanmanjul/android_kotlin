@@ -43,7 +43,7 @@ object WorkManagerAdmin {
             )
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build(),
                     OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build(),
                     //  OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build(),
                 )
@@ -68,7 +68,7 @@ object WorkManagerAdmin {
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build(),
                     OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build(),
                 )
             )
@@ -155,21 +155,21 @@ object WorkManagerAdmin {
             )
     }
 
-    fun refreshFcmToken() {
-        val workRequest = PeriodicWorkRequest.Builder(
-            RefreshFCMTokenWorker::class.java,
-            15,
-            TimeUnit.MINUTES,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-            TimeUnit.MILLISECONDS
-        ).setInitialDelay(1, TimeUnit.MINUTES)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
-            "fcm_refresh",
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
-        )
-    }
+//    fun refreshFcmToken() {
+//        val workRequest = PeriodicWorkRequest.Builder(
+//            RefreshFCMTokenWorker::class.java,
+//            15,
+//            TimeUnit.MINUTES,
+//            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+//            TimeUnit.MILLISECONDS
+//        ).setInitialDelay(1, TimeUnit.MINUTES)
+//            .build()
+//        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
+//            "fcm_refresh",
+//            ExistingPeriodicWorkPolicy.KEEP,
+//            workRequest
+//        )
+//    }
 
     fun forceRefreshFcmToken() {
         val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>()
@@ -280,7 +280,11 @@ object WorkManagerAdmin {
         Timber.d(
             "Local Notification Set LOCAL_NOTIFICATION_INDEX: ${notificationIndex}"
         )
-        val data = workDataOf(NOTIFICATION_TEXT to text, NOTIFICATION_TITLE to title , NOTIFICATION_ID to notificationIndex)
+        val data = workDataOf(
+            NOTIFICATION_TEXT to text,
+            NOTIFICATION_TITLE to title,
+            NOTIFICATION_ID to notificationIndex
+        )
         val workRequest = OneTimeWorkRequestBuilder<SetLocalNotificationWorker>()
             .setInputData(data)
             .setInitialDelay(delay, TimeUnit.MINUTES)

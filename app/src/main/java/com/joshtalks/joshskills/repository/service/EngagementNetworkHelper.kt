@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val VIDEO_TIME_LEAP = 6
 
@@ -94,6 +95,7 @@ object EngagementNetworkHelper {
                 val data = mapOf("is_delivered" to "true")
                 notificationObject.id?.let {
                     AppObjectController.chatNetworkService.engageNotificationAsync(it, data)
+                    Timber.d("notifEngage12 : ( $it , delivered)")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -118,6 +120,7 @@ object EngagementNetworkHelper {
                     notificationId,
                     data
                 )
+                Timber.d("notifEngage12 : ( $notificationId , clicked)")
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -141,6 +144,7 @@ object EngagementNetworkHelper {
                     notificationId,
                     data
                 )
+                Timber.d("notifEngage12 : ( $notificationId , clickedFalse)")
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
