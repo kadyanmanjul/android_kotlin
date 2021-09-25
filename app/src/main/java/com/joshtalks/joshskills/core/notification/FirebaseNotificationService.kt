@@ -141,12 +141,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         "device_id" to Utils.getDeviceId(),
                         "active" to "true",
                         "type" to "android",
-                        "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
+                        "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
+                        "newToken" to "true"
                     )
-                    val resp =
-                        AppObjectController.signUpNetworkService.postFCMToken(
-                            data.toMap()
-                        )
+                    val resp = AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
                     if (resp.isSuccessful) {
                         resp.body()?.update()
                     }

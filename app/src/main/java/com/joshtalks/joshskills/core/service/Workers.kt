@@ -277,11 +277,11 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
 //        if (User.getInstance().isVerified) {
 //            regenerateFCM()
 //        } else {
-            FirebaseInstallations.getInstance().delete().addOnCompleteListener {
-                FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
-                    regenerateFCM()
-                }
+        FirebaseInstallations.getInstance().delete().addOnCompleteListener {
+            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
+                regenerateFCM()
             }
+        }
 //        }
         return Result.success()
     }
@@ -321,12 +321,11 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                                             "device_id" to Utils.getDeviceId(),
                                             "active" to "true",
                                             "type" to "android",
-                                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
+                                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
+                                            "forceRefreshToken" to "true"
                                         )
                                     val resp =
-                                        AppObjectController.signUpNetworkService.postFCMToken(
-                                            data.toMap()
-                                        )
+                                        AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
                                     if (resp.isSuccessful) {
                                         Timber.d("FCMToken asdf : Updated on Server")
                                         resp.body()?.update()
