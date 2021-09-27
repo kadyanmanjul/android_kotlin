@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.material.button.MaterialButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
@@ -37,6 +38,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -146,7 +148,7 @@ class ConversationActivity :
             activity.startActivity(intent)
         }
     }
-
+    private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
     private lateinit var unlockClassViewModel: UnlockClassViewModel
@@ -255,13 +257,38 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        if (true) {
+        if (inboxEntity.isCourseLocked) {
             //initEndTrialBottomSheet()
             showFreeTrialPaymentScreen()
+        }else if (inboxEntity.isCourseBought.not() && inboxEntity.expiredDate!=null){
+            if (inboxEntity.expiredDate!!.toDouble().toLong() >= System.currentTimeMillis()){
+                conversationBinding.freeTrialContainer.visibility=View.VISIBLE
+                startTimer(
+                    (inboxEntity.expiredDate!!.toDouble()
+                        .toLong() - System.currentTimeMillis().div(1000)).times(1000)
+                )            }
         }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
+    }
+
+    private fun startTimer(startTimeInMilliSeconds: Long) {
+        countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
+            override fun onTimerTick(millis: Long) {
+                AppObjectController.uiHandler.post {
+                    conversationBinding.freeTrialText.text = getString(
+                        R.string.free_trial_end_in,
+                        UtilTime.timeFormatted(millis)
+                    )
+                }
+            }
+
+            override fun onTimerFinish() {
+                conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+            }
+        }
+        countdownTimerBack?.startTimer()
     }
 
     private fun showLessonTooltip() {
@@ -364,8 +391,8 @@ class ConversationActivity :
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-            )
-
+            ),
+            inboxEntity.expiredDate?.toDouble()?.toLong()
         )
         finish()
     }
@@ -568,6 +595,21 @@ class ConversationActivity :
         }
         conversationBinding.btnNextStep.setOnClickListener {
             showNextTooltip()
+        }
+        conversationBinding.trialClose.setOnClickListener {
+            conversationBinding.freeTrialContainer.visibility=View.GONE
+            countdownTimerBack?.stop()
+        }
+
+        conversationBinding.buyBtn.setOnClickListener {
+            FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                this,
+                AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                ),inboxEntity.expiredDate?.toDouble()?.toLong()
+            )
+            conversationBinding.freeTrialContainer.visibility=View.GONE
+            countdownTimerBack?.stop()
         }
     }
 
@@ -1638,6 +1680,7 @@ class ConversationActivity :
 
     override fun onDestroy() {
         super.onDestroy()
+        countdownTimerBack?.stop()
         AppObjectController.currentPlayingAudioObject = null
         audioPlayerManager?.release()
     }

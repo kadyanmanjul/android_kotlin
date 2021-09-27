@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.getPhoneNumber
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
@@ -46,8 +48,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var razorpayOrderId = EMPTY
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var index = 0
+    var expiredTime:Long = -1
     var buttonText = mutableListOf<String>()
     var headingText = mutableListOf<String>()
+    private var countdownTimerBack: CountdownTimerBack? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,10 +67,23 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)!!
         }
+        if (intent.hasExtra(EXPIRED_TIME)) {
+            expiredTime = intent.getLongExtra(EXPIRED_TIME,-1)
+        }
 
         setObservers()
         setListeners()
+        freeTrialTimerInit()
         viewModel.getPaymentDetails(testId.toInt())
+    }
+
+    private fun freeTrialTimerInit() {
+        if (expiredTime > 0){
+            binding.freeTrialTimer.visibility=View.VISIBLE
+            startTimer(expiredTime)
+        }else{
+            binding.freeTrialTimer.visibility=View.GONE
+        }
     }
 
     private fun setListeners() {
@@ -135,6 +152,25 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 isClickable = false
             )
         }
+    }
+
+    private fun startTimer(startTimeInMilliSeconds: Long) {
+        countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
+            override fun onTimerTick(millis: Long) {
+                AppObjectController.uiHandler.post {
+                    binding.freeTrialTimer
+                    binding.freeTrialTimer.text = getString(
+                        R.string.free_trial_end_in,
+                        UtilTime.timeFormatted(millis)
+                    )
+                }
+            }
+
+            override fun onTimerFinish() {
+                binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+            }
+        }
+        countdownTimerBack?.startTimer()
     }
 
     private fun setObservers() {
@@ -384,11 +420,18 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         showWebViewDialog(url)
     }
 
-    companion object {
+    override fun onDestroy() {
+        super.onDestroy()
+        countdownTimerBack?.stop()
+    }
 
-        fun startFreeTrialPaymentActivity(activity: Activity, testId: String) {
+    companion object {
+        const val EXPIRED_TIME = "expired_time"
+
+        fun startFreeTrialPaymentActivity(activity: Activity, testId: String,expiredTime:Long?=null) {
             Intent(activity, FreeTrialPaymentActivity::class.java).apply {
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
+                putExtra(EXPIRED_TIME, expiredTime)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
