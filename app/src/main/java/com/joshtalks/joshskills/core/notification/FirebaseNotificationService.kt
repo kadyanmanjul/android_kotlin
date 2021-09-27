@@ -72,7 +72,6 @@ import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
@@ -233,6 +232,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     ) {
                         val inboxIntent =
                             InboxActivity.getInboxIntent(this@FirebaseNotificationService)
+                        inboxIntent.putExtra(HAS_NOTIFICATION, true)
+                        inboxIntent.putExtra(NOTIFICATION_ID, notificationObject.id)
                         arrayOf(inboxIntent, this)
                     } else {
                         arrayOf(this)
@@ -435,6 +436,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
+                    putExtra(NOTIFICATION_ID, notificationObject?.id)
                 }
             }
             NotificationAction.ACTION_UP_SELLING_POPUP -> {
@@ -445,6 +447,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
+                    putExtra(NOTIFICATION_ID, notificationObject?.id)
                     putExtra(COURSE_ID, actionData)
                     putExtra(ACTION_TYPE, action)
                     putExtra(ARG_PLACEHOLDER_URL, notificationObject.bigPicture)
@@ -564,6 +567,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Intent(applicationContext, LeaderBoardViewPagerActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
+                    putExtra(NOTIFICATION_ID, notificationObject?.id)
                 }
                 return null
             }
@@ -688,12 +692,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
     }
 
-    private fun returnDefaultIntent(): Intent {
-        return Intent(applicationContext, LauncherActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            putExtra(HAS_NOTIFICATION, true)
-        }
-    }
+//    private fun returnDefaultIntent(): Intent {
+//        return Intent(applicationContext, LauncherActivity::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            putExtra(HAS_NOTIFICATION, true)
+//        }
+//    }
 
     private fun deleteConversationData(courseId: String) {
         try {
@@ -821,6 +825,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)
+            putExtra(NOTIFICATION_ID, notificationObject?.id)
             putExtra(QUESTION_ID, actionData)
             // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -860,6 +865,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)
+            putExtra(NOTIFICATION_ID, notificationObject?.id)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
@@ -893,6 +899,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)
+            putExtra(NOTIFICATION_ID, notificationObject?.id)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
@@ -917,6 +924,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)
+            putExtra(NOTIFICATION_ID, notificationObject?.id)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
