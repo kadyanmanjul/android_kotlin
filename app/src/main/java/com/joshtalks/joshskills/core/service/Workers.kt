@@ -50,11 +50,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -305,36 +300,36 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
 //                        fcmResponse?.update()
 //                        Timber.d("FCMToken asdf : Updated")
 
-                        CoroutineScope(
-                            SupervisorJob() +
-                                    Dispatchers.IO +
-                                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
-                        ).launch {
-                            try {
-                                val userId = Mentor.getInstance().getId()
-                                if (userId.isNotBlank()) {
-                                    val data =
-                                        mutableMapOf(
-                                            "user_id" to userId,
-                                            "registration_id" to it,
-                                            "name" to Utils.getDeviceName(),
-                                            "device_id" to Utils.getDeviceId(),
-                                            "active" to "true",
-                                            "type" to "android",
-                                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
-                                            "forceRefreshToken" to "true"
-                                        )
-                                    val resp =
-                                        AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
-                                    if (resp.isSuccessful) {
-                                        Timber.d("FCMToken asdf : Updated on Server")
-                                        resp.body()?.update()
-                                    }
-                                }
-                            } catch (ex: Exception) {
-                                ex.printStackTrace()
-                            }
-                        }
+//                        CoroutineScope(
+//                            SupervisorJob() +
+//                                    Dispatchers.IO +
+//                                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
+//                        ).launch {
+//                            try {
+//                                val userId = Mentor.getInstance().getId()
+//                                if (userId.isNotBlank()) {
+//                                    val data =
+//                                        mutableMapOf(
+//                                            "user_id" to userId,
+//                                            "registration_id" to it,
+//                                            "name" to Utils.getDeviceName(),
+//                                            "device_id" to Utils.getDeviceId(),
+//                                            "active" to "true",
+//                                            "type" to "android",
+//                                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
+//                                            "forceRefreshToken" to "true"
+//                                        )
+//                                    val resp =
+//                                        AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
+//                                    if (resp.isSuccessful) {
+//                                        Timber.d("FCMToken asdf : Updated on Server")
+//                                        resp.body()?.update()
+//                                    }
+//                                }
+//                            } catch (ex: Exception) {
+//                                ex.printStackTrace()
+//                            }
+//                        }
                     }
                 }
             )
