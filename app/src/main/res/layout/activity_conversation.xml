@@ -132,10 +132,71 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/user_point_container"
+            android:id="@+id/free_trial_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/toolbar_container"
+            android:background="#FFFBB9"
+            android:elevation="@dimen/_1sdp"
+            android:fillAfter="false"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/free_trial_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_4sdp"
+                android:layout_marginStart="@dimen/_25sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="#FF0000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/free_trial_end_in" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/buy_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_4sdp"
+                android:layout_marginStart="@dimen/_25sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:background="@drawable/rounded_rectangle_attach_2px"
+                android:backgroundTint="#F09436"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_5sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="Buy now"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/trial_close"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/trial_close"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:tint="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_cross" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/user_point_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/free_trial_container"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@drawable/rounded_rectangle_with_border"
@@ -143,7 +204,7 @@
             android:elevation="@dimen/_3sdp"
             android:fillAfter="false"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/points"
@@ -495,7 +556,7 @@
             android:elevation="@dimen/_4sdp"
             android:focusable="true"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_tap_to_dismiss"
@@ -511,17 +572,18 @@
                 android:shadowRadius="10"
                 android:text="Tap anywhere to continue"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/white"
-                />
+                android:textColor="@color/white" />
 
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:elevation="@dimen/_100sdp"
+            android:layout_height="wrap_content"
             android:layout_alignTop="@id/overlay_leaderboard_container"
             android:layout_alignBottom="@id/overlay_leaderboard_container"
-            android:layout_height="wrap_content">
+            android:elevation="@dimen/_100sdp"
+            tools:visibility="gone">
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/arrow_animation"
                 android:layout_width="match_parent"
@@ -586,8 +648,8 @@
             android:gravity="center"
             android:padding="@dimen/_18sdp"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:tooltipText="आपके सहपाठी कौन है आप यहाँ से देख सकते है" />
+            app:tooltipText="आपके सहपाठी कौन है आप यहाँ से देख सकते है"
+            tools:visibility="gone" />
 
 
         <FrameLayout
@@ -599,7 +661,7 @@
             android:layout_gravity="end"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="@dimen/_180sdp"

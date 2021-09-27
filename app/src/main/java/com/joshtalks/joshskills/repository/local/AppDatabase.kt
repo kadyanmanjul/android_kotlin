@@ -89,6 +89,7 @@ import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
+import java.math.BigDecimal
 import java.util.Collections
 import java.util.Date
 
@@ -136,7 +137,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ConvectorForPhoneticClass::class,
     ConverterForLessonQuestionType::class,
     ConverterForLessonMaterialType::class,
-    AwardTypeConverter::class
+    AwardTypeConverter::class,
+    BigDecimalConverters::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -514,6 +516,7 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_37_38: Migration = object : Migration(37,38) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN expire_date INTEGER")
+                database.execSQL("ALTER TABLE course ADD COLUMN is_course_bought INTEGER NOT NULL DEFAULT 0")
             }
         }
 
@@ -934,5 +937,21 @@ class AwardTypeConverter {
     @TypeConverter
     fun fromMatType(enumVal: AwardTypes): String {
         return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}
+
+class BigDecimalConverters {
+    @TypeConverter
+    fun fromString(value: String?): BigDecimal? {
+        return value?.let { BigDecimal(it) }
+    }
+
+    @TypeConverter
+    fun amountToString(bigDecimal: BigDecimal?): Double? {
+        return if (bigDecimal == null) {
+            null
+        } else {
+            bigDecimal.toDouble()
+        }
     }
 }

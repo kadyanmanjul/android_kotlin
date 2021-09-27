@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.LifecycleOwner
@@ -18,6 +19,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
+import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
@@ -27,6 +29,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.YYYY_MM_DD
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.databinding.InboxItemLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -53,6 +56,8 @@ class InboxAdapter(
             .getBoolean(FirebaseRemoteConfigKey.INBOX_SCREEN_COURSE_PROGRESS)
         setHasStableIds(true)
     }
+
+    private var countdownTimerBack: CountdownTimerBack? = null
 
     fun getAppContext() = AppObjectController.joshApplication
 
@@ -167,22 +172,50 @@ class InboxAdapter(
                 if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
                     horizontalLine.visibility = android.view.View.GONE
                 }
-                if (inboxEntity.expiredDate != null) {
+                if (inboxEntity.isCourseBought) {
+                    freeTrialTimer.visibility = View.INVISIBLE
+                    tvLastMessage.visibility = View.VISIBLE
+                } else if (inboxEntity.isCourseLocked) {
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
-                    // TODO Condition
-                    //if (inboxEntity.expiredDate <= System.currentTimeMillis()) {
-                    if (true) {
-                        freeTrialTimer.text = getAppContext().getString(R.string.free_trial_end_in)
-                        //start a timer
-                    } else {
+                    freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                } else if (inboxEntity.expiredDate != null && inboxEntity.isCourseBought.not()) {
+                    freeTrialTimer.visibility = View.VISIBLE
+                    tvLastMessage.visibility = View.INVISIBLE
+                    if (inboxEntity.expiredDate.toDouble().toLong() <= System.currentTimeMillis()
+                            .div(1000)
+                    ) {
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                    } else {
+                        startTimer(
+                            (inboxEntity.expiredDate.toDouble()
+                                .toLong() - System.currentTimeMillis().div(1000)).times(1000),
+                            freeTrialTimer
+                        )
                     }
                 } else {
                     freeTrialTimer.visibility = View.INVISIBLE
                     tvLastMessage.visibility = View.VISIBLE
                 }
             }
+        }
+
+        private fun startTimer(startTimeInMilliSeconds: Long, freeTrialTimer: AppCompatTextView) {
+            countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
+                override fun onTimerTick(millis: Long) {
+                    AppObjectController.uiHandler.post {
+                        freeTrialTimer.text = getAppContext().getString(
+                            R.string.free_trial_end_in,
+                            UtilTime.timeFormatted(millis)
+                        )
+                    }
+                }
+
+                override fun onTimerFinish() {
+                    freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                }
+            }
+            countdownTimerBack?.startTimer()
         }
 
         fun imageUrl(imageView: ImageView, url: String?) {
@@ -320,5 +353,10 @@ class InboxAdapter(
             openCourseListener.onClick(inboxEntity)
             //   RxBus2.publish(OpenCourseEventBus(inboxEntity))
         }
+    }
+
+    override fun onViewDetachedFromWindow(holder: InboxViewHolder) {
+        countdownTimerBack?.stop()
+        super.onViewDetachedFromWindow(holder)
     }
 }
