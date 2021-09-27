@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import java.lang.reflect.Type
@@ -118,9 +117,9 @@ class EngageToUseAppNotificationWorker(var context: Context, workerParams: Worke
         )
 
         intent?.run {
-            this.putExtra(HAS_NOTIFICATION, true)
+            putExtra(HAS_NOTIFICATION, true)
+            putExtra(NOTIFICATION_ID, notificationObject.id)
             val activityList = arrayOf(this)
-            intent.putExtra(NOTIFICATION_ID, notificationObject.id)
             val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivities(
@@ -153,7 +152,6 @@ class EngageToUseAppNotificationWorker(var context: Context, workerParams: Worke
                 Intent(applicationContext, DismissNotifEventReceiver::class.java).apply {
                     putExtra(NOTIFICATION_ID, notificationObject.id)
                     putExtra(HAS_NOTIFICATION, true)
-
                 }
             val dismissPendingIntent: PendingIntent =
                 PendingIntent.getBroadcast(applicationContext, uniqueInt, dismissIntent, 0)
