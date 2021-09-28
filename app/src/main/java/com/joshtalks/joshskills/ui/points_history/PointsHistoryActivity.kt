@@ -141,22 +141,24 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
                 val view = binding.recyclerView.getChildAt(i) ?: break
                 if(view.id == R.id.root_view) {
                     val overlayItem = TooltipUtils.getOverlayItemFromView(view)
-                    Log.d(TAG, "getOverlayView: $overlayItem")
-                    val overlayImageView =
-                        binding.overlayView.findViewById<ImageView>(R.id.profile_item_image)
-                    val arrowImageView = view.findViewById<ImageView>(R.id.expand_unexpand_view)
-                    val arrowPosition = IntArray(2)
-                    arrowImageView.getLocationOnScreen(arrowPosition)
-                    val arrowPoint = Point().apply {
-                        x = arrowPosition[0]
-                        y = arrowPosition[1]
+                    overlayItem?.let {
+                        Log.d(TAG, "getOverlayView: $overlayItem")
+                        val overlayImageView =
+                            binding.overlayView.findViewById<ImageView>(R.id.profile_item_image)
+                        val arrowImageView = view.findViewById<ImageView>(R.id.expand_unexpand_view)
+                        val arrowPosition = IntArray(2)
+                        arrowImageView.getLocationOnScreen(arrowPosition)
+                        val arrowPoint = Point().apply {
+                            x = arrowPosition[0]
+                            y = arrowPosition[1]
+                        }
+                        overlayImageView.setOnClickListener {
+                            binding.overlayView.visibility = View.INVISIBLE
+                            isAnimationVisible = false
+                            view.performClick()
+                        }
+                        setOverlayView(overlayItem, overlayImageView, arrowPoint, arrowImageView.width)
                     }
-                    overlayImageView.setOnClickListener {
-                        binding.overlayView.visibility = View.INVISIBLE
-                        isAnimationVisible = false
-                        view.performClick()
-                    }
-                    setOverlayView(overlayItem, overlayImageView, arrowPoint, arrowImageView.width)
                     break
                 }
                 i++

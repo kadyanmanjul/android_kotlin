@@ -10,9 +10,11 @@ private const val TAG = "TooltipUtils"
 class TooltipUtils {
 
     companion object {
-        fun getOverlayItemFromView(view: View): ItemOverlay {
+        fun getOverlayItemFromView(view: View): ItemOverlay? {
             Log.d(TAG, "getBitmapFromView: Width -- ${view.width}")
             Log.d(TAG, "getBitmapFromView: Height -- ${view.height}")
+            if(view.width <=0 || view.height <=0)
+                return null
             val position = IntArray(2)
             view.getLocationOnScreen(position)
             Log.d(TAG, "getBitmapFromView: X -- ${position[0]}")

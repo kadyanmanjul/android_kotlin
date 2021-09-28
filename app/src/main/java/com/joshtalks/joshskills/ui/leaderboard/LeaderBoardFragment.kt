@@ -141,7 +141,9 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                 arrowPosition = null
                 e.printStackTrace()
             }
-            listener?.onViewBitmap(getOverlayItemFromView(view), type, arrowPosition)
+            getOverlayItemFromView(view)?.let {
+                listener?.onViewBitmap(it, type, arrowPosition)
+            }
         }
     }
 

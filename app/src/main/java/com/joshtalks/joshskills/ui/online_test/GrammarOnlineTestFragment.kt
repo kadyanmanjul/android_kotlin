@@ -268,7 +268,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         animationJob = CoroutineScope(Dispatchers.Main).launch {
             val overlayButtonItem = TooltipUtils.getOverlayItemFromView(binding.startBtn)
             Log.d(TAG, "showGrammarAnimation: $overlayButtonItem")
-            grammarAnimationListener?.showGrammarAnimation(overlayButtonItem)
+            overlayButtonItem?.let {
+                grammarAnimationListener?.showGrammarAnimation(it)
+            }
         }
     }
 
