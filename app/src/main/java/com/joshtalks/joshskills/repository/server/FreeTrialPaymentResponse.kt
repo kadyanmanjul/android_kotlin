@@ -7,7 +7,7 @@ data class FreeTrialPaymentResponse(
     @SerializedName("course_data")
     val courseData: List<CourseData>?,
     @SerializedName("expire_time")
-    val expireTime: Double?,
+    val expireTime: String?,
     @SerializedName("start_time")
     val startTime: Double?,
     @SerializedName("sub_headings")
