@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -48,7 +49,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var razorpayOrderId = EMPTY
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var index = 0
-    var expiredTime:Long = -1
+    var expiredTime: Long = -1
     var buttonText = mutableListOf<String>()
     var headingText = mutableListOf<String>()
     private var countdownTimerBack: CountdownTimerBack? = null
@@ -68,21 +69,21 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)!!
         }
         if (intent.hasExtra(EXPIRED_TIME)) {
-            expiredTime = intent.getLongExtra(EXPIRED_TIME,-1)
+            expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)
         }
 
         setObservers()
         setListeners()
-        freeTrialTimerInit()
         viewModel.getPaymentDetails(testId.toInt())
     }
 
-    private fun freeTrialTimerInit() {
-        if (expiredTime > 0){
-            binding.freeTrialTimer.visibility=View.VISIBLE
-            startTimer(expiredTime)
-        }else{
-            binding.freeTrialTimer.visibility=View.GONE
+    private fun freeTrialTimerInit(expireTime: String?) {
+        if (expireTime != null && expireTime.toDouble().toLong() > 0) {
+            binding.freeTrialTimer.visibility = View.VISIBLE
+            Log.d("Manjul", "freeTrialTimerInit() called with: expireTime = ${expireTime.toDouble().toLong()}  ${System.currentTimeMillis().div(1000)}")
+            startTimer((expireTime.toDouble().toLong() - System.currentTimeMillis().div(1000)).times(1000))
+        } else {
+            binding.freeTrialTimer.visibility = View.GONE
         }
     }
 
@@ -108,9 +109,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 )
             )
             binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.colorPrimary))
-            binding.materialTextView.text=buttonText.get(index)
-            binding.txtLabelHeading.text=headingText.get(index)
-            binding.seeCourseList.visibility=View.GONE
+            binding.materialTextView.text = buttonText.get(index)
+            binding.txtLabelHeading.text = headingText.get(index)
+            binding.seeCourseList.visibility = View.GONE
 
         }
         binding.subscriptionCard.setOnClickListener {
@@ -139,9 +140,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     R.color.colorPrimary
                 )
             )
-            binding.materialTextView.text=buttonText.get(index)
-            binding.txtLabelHeading.text=headingText.get(index)
-            binding.seeCourseList.visibility=View.VISIBLE
+            binding.materialTextView.text = buttonText.get(index)
+            binding.txtLabelHeading.text = headingText.get(index)
+            binding.seeCourseList.visibility = View.VISIBLE
         }
         binding.seeCourseList.setOnClickListener {
             CourseExploreActivity.startCourseExploreActivity(
@@ -234,7 +235,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     if (data1 != null) {
                         data1.buttonText?.let { it1 -> buttonText.add(it1) }
                         data1.heading?.let { it1 -> headingText.add(it1) }
-                        binding.materialTextView.text=buttonText.get(index)
+                        binding.materialTextView.text = buttonText.get(index)
                         binding.txtLabelHeading.text = headingText.get(index)
                         binding.title1.text = data1.courseHeading
                         binding.txtCurrency1.text = data1.discount?.get(0).toString()
@@ -247,7 +248,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         binding.txtTotalReviews1.text =
                             "(" + String.format("%,d", data1.ratingsCount) + ")"
                     } else {
-                        binding.englishCard.visibility=View.GONE
+                        binding.englishCard.visibility = View.GONE
                     }
 
                     val data2 = it.get(1)
@@ -265,19 +266,20 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         binding.txtTotalReviews2.text =
                             "(" + String.format("%,d", data2.ratingsCount) + ")"
                     } else {
-                        binding.subscriptionCard.visibility=View.GONE
+                        binding.subscriptionCard.visibility = View.GONE
                     }
                 }
                 //TODO condition
                 //if(it.expireTime){
-                if(true){
+                if (true) {
                     binding.freeTrialTimer.text = getString(R.string.free_trial_end_in)
                     //start a timer
                 } else {
                     binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                 }
+                freeTrialTimerInit(it.expireTime)
 
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -313,7 +315,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val options = JSONObject()
             options.put("key", orderDetails.razorpayKeyId)
             options.put("name", "Josh Skills")
-            options.put("description", viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName + "_app")
+            options.put(
+                "description",
+                viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName + "_app"
+            )
             options.put("order_id", orderDetails.razorpayOrderId)
             options.put("currency", orderDetails.currency)
             options.put("amount", orderDetails.amount * 100)
@@ -337,7 +342,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             phoneNumber = "+919999999999"
         }
 
-        viewModel.getOrderDetails(testId.toInt(), phoneNumber,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.encryptedText?: EMPTY)
+        viewModel.getOrderDetails(
+            testId.toInt(),
+            phoneNumber,
+            viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.encryptedText ?: EMPTY
+        )
     }
 
     private fun String.verifyPayment() {
@@ -428,7 +437,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     companion object {
         const val EXPIRED_TIME = "expired_time"
 
-        fun startFreeTrialPaymentActivity(activity: Activity, testId: String,expiredTime:Long?=null) {
+        fun startFreeTrialPaymentActivity(
+            activity: Activity,
+            testId: String,
+            expiredTime: Long? = null
+        ) {
             Intent(activity, FreeTrialPaymentActivity::class.java).apply {
                 putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
                 putExtra(EXPIRED_TIME, expiredTime)

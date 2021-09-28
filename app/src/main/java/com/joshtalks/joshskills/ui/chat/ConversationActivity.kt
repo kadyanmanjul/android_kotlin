@@ -261,7 +261,7 @@ class ConversationActivity :
             //initEndTrialBottomSheet()
             showFreeTrialPaymentScreen()
         }else if (inboxEntity.isCourseBought.not() && inboxEntity.expiredDate!=null){
-            if (inboxEntity.expiredDate!!.toDouble().toLong() >= System.currentTimeMillis()){
+            if (inboxEntity.expiredDate!!.toDouble().toLong() >= System.currentTimeMillis().div(1000)){
                 conversationBinding.freeTrialContainer.visibility=View.VISIBLE
                 startTimer(
                     (inboxEntity.expiredDate!!.toDouble()

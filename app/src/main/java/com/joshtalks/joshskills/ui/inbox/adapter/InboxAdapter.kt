@@ -57,8 +57,6 @@ class InboxAdapter(
         setHasStableIds(true)
     }
 
-    private var countdownTimerBack: CountdownTimerBack? = null
-
     fun getAppContext() = AppObjectController.joshApplication
 
     private fun getDrawablePadding() = Utils.dpToPx(getAppContext(), 4f)
@@ -96,6 +94,7 @@ class InboxAdapter(
 
     inner class InboxViewHolder(val binding: InboxItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        private var countdownTimerBack: CountdownTimerBack? = null
 
         fun bind(inboxEntity: InboxEntity, indexPos: Int) {
             with(binding) {
@@ -201,6 +200,8 @@ class InboxAdapter(
         }
 
         private fun startTimer(startTimeInMilliSeconds: Long, freeTrialTimer: AppCompatTextView) {
+            countdownTimerBack?.stop()
+            countdownTimerBack = null
             countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
                 override fun onTimerTick(millis: Long) {
                     AppObjectController.uiHandler.post {
@@ -353,10 +354,5 @@ class InboxAdapter(
             openCourseListener.onClick(inboxEntity)
             //   RxBus2.publish(OpenCourseEventBus(inboxEntity))
         }
-    }
-
-    override fun onViewDetachedFromWindow(holder: InboxViewHolder) {
-        countdownTimerBack?.stop()
-        super.onViewDetachedFromWindow(holder)
     }
 }

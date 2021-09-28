@@ -89,6 +89,14 @@
         app:layout_constraintTop_toBottomOf="@+id/top_line"
         app:rippleColor="@color/white" />
 
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="find_more,find_more_new" />
+
     <View
         android:id="@+id/bottom_line"
         android:layout_width="match_parent"
@@ -97,7 +105,7 @@
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@color/lighter_grey"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/bb_tip_below_find_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/barrier_button" />
 
     <com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
         android:id="@+id/bb_tip_below_find_btn"
@@ -108,7 +116,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/find_more"
+        app:layout_constraintTop_toBottomOf="@id/barrier_button"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.9" />
 

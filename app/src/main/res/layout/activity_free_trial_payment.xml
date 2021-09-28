@@ -12,16 +12,21 @@
             type="com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity" />
     </data>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent_Container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@drawable/bg_free_trial_payment"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            app:layout_constraintBottom_toTopOf="@id/floating_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -46,25 +51,24 @@
                     android:id="@+id/free_trial_timer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_32sdp"
-                    android:layout_marginEnd="@dimen/_26sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
                     android:background="@drawable/free_trial_bg_timer"
-                    tools:text="Free Trial ends in 06:00:00"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="#FF0000"
                     app:layout_constraintBottom_toTopOf="@id/txt_label_heading"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintVertical_bias="0.09" />
+                    tools:text="Free Trial ends in 06:00:00" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_label_heading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_32sdp"
-                    android:layout_marginEnd="@dimen/_26sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
                     android:text="Your Free Trial has ended"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
@@ -73,13 +77,13 @@
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.145" />
+                    app:layout_constraintVertical_bias="0.12" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/linearLayoutCompat2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_32sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:layout_marginEnd="@dimen/_26sdp"
                     android:orientation="vertical"
@@ -314,10 +318,12 @@
                     android:id="@+id/english_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    app:cardBackgroundColor="@color/colorPrimary_alfa_6"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:padding="@dimen/_2sdp"
                     android:visibility="visible"
+                    app:cardElevation="@dimen/_2sdp"
+                    app:cardBackgroundColor="@color/colorPrimary_alfa_6"
                     app:cardCornerRadius="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -335,12 +341,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_5sdp"
-                            tools:text="Buy The Ultimate Spoken English Course"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                             android:textColor="@color/colorPrimary"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Buy The Ultimate Spoken English Course" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_currency_1"
@@ -359,13 +365,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_2sdp"
-                            tools:text="499"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_27ssp"
                             app:layout_constraintStart_toEndOf="@+id/txt_currency_1"
                             app:layout_constraintTop_toBottomOf="@id/title_1"
-                            app:layout_constraintVertical_bias="1" />
+                            app:layout_constraintVertical_bias="1"
+                            tools:text="499" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_og_price_1"
@@ -373,24 +379,24 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_2sdp"
-                            tools:text="@string/price"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                             android:textColor="#515151"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txt_final_price_1" />
+                            app:layout_constraintTop_toBottomOf="@+id/txt_final_price_1"
+                            tools:text="@string/price" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_saving_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_2sdp"
-                            tools:text="@string/savings"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                             android:textColor="#A62E2D"
                             android:textStyle="italic"
                             app:layout_constraintBottom_toBottomOf="@id/txt_og_price_1"
                             app:layout_constraintStart_toEndOf="@id/txt_og_price_1"
-                            app:layout_constraintTop_toTopOf="@id/txt_og_price_1" />
+                            app:layout_constraintTop_toTopOf="@id/txt_og_price_1"
+                            tools:text="@string/savings" />
 
                         <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
                             android:id="@+id/course_rating_1"
@@ -415,11 +421,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_2sdp"
-                            tools:text="(44,000)"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                             android:textColor="#888888"
                             app:layout_constraintStart_toEndOf="@+id/course_rating_1"
-                            app:layout_constraintTop_toTopOf="@+id/course_rating_1" />
+                            app:layout_constraintTop_toTopOf="@+id/course_rating_1"
+                            tools:text="(44,000)" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/validity_1"
@@ -443,10 +449,15 @@
                     android:id="@+id/subscription_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:padding="@dimen/_2sdp"
+                    app:cardElevation="@dimen/_2sdp"
                     android:visibility="visible"
                     app:cardCornerRadius="@dimen/_5sdp"
+                    app:layout_constraintBottom_toTopOf="@id/see_course_list"
+                    app:layout_constraintVertical_bias="0"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/english_card"
@@ -463,12 +474,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_5sdp"
-                            tools:text="Ultimate Spoken English Course &amp; 65 more courses (Subscription Pack)"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                             android:textColor="@color/black"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Ultimate Spoken English Course &amp; 65 more courses (Subscription Pack)" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_currency_2"
@@ -487,13 +498,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_2sdp"
-                            tools:text="999"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_27ssp"
                             app:layout_constraintStart_toEndOf="@+id/txt_currency_2"
                             app:layout_constraintTop_toBottomOf="@id/title_2"
-                            app:layout_constraintVertical_bias="1" />
+                            app:layout_constraintVertical_bias="1"
+                            tools:text="999" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_og_price_2"
@@ -501,24 +512,24 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_12sdp"
                             android:layout_marginTop="@dimen/_2sdp"
-                            tools:text="@string/price"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                             android:textColor="#515151"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txt_final_price_2" />
+                            app:layout_constraintTop_toBottomOf="@+id/txt_final_price_2"
+                            tools:text="@string/price" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_saving_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_2sdp"
-                            tools:text="@string/savings"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                             android:textColor="#A62E2D"
                             android:textStyle="italic"
                             app:layout_constraintBottom_toBottomOf="@id/txt_og_price_2"
                             app:layout_constraintStart_toEndOf="@id/txt_og_price_2"
-                            app:layout_constraintTop_toTopOf="@id/txt_og_price_2" />
+                            app:layout_constraintTop_toTopOf="@id/txt_og_price_2"
+                            tools:text="@string/savings" />
 
                         <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
                             android:id="@+id/course_rating_2"
@@ -543,11 +554,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_2sdp"
-                            tools:text="(32,861)"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                             android:textColor="#888888"
                             app:layout_constraintStart_toEndOf="@+id/course_rating_2"
-                            app:layout_constraintTop_toTopOf="@+id/course_rating_2" />
+                            app:layout_constraintTop_toTopOf="@+id/course_rating_2"
+                            tools:text="(32,861)" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/validity_2"
@@ -570,16 +581,19 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/see_course_list"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:text="See course list >>>"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/colorPrimary"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/subscription_card"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/subscription_card"
                     app:layout_constraintTop_toBottomOf="@id/subscription_card"
-                    app:layout_constraintEnd_toEndOf="@id/subscription_card"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    app:layout_constraintHorizontal_bias="0"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:textColor="@color/colorPrimary"
-                    android:text="See course list >>>"
-                    android:visibility="gone"
-                    android:layout_height="wrap_content"/>
+                    app:layout_constraintVertical_bias="0.509" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/barrier_phone"
@@ -588,49 +602,13 @@
                     app:barrierDirection="bottom"
                     app:constraint_referenced_ids="see_course_list,subscription_card" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/materialTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:layout_marginVertical="@dimen/_10sdp"
-                    android:background="@drawable/bg_cta_button"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.startPayment()}"
-                    android:padding="@dimen/_10sdp"
-                    android:text="Buy Now"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                    android:textColor="@color/black"
-                    app:layout_constraintTop_toBottomOf="@+id/barrier_phone"
-                    app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintVertical_bias="1" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_privacy"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
-                    android:text="@string/privacy_label"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                    android:textColor="@color/grey"
-                    app:layout_constraintTop_toBottomOf="@id/materialTextView"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.9" />
-
                 <FrameLayout
                     android:id="@+id/progress_bar"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:background="@color/transparent_black_alpha_70"
-                    android:visibility="gone"
                     android:elevation="@dimen/_2sdp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -653,6 +631,54 @@
 
         </ScrollView>
 
-    </FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/floating_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:background="@drawable/bg_cta_button"
+                android:gravity="center"
+                android:onClick="@{()->handler.startPayment()}"
+                android:padding="@dimen/_10sdp"
+                android:text="Buy Now"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_privacy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:gravity="center"
+                android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
+                android:text="@string/privacy_label"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/grey"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/materialTextView"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

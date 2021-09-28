@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
@@ -190,12 +191,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
             val temp: ArrayList<InboxEntity> = arrayListOf()
-            temp.forEach {
-                if (it.expiredDate != null) {
-                    haveFreeTrialCourse = true
-                }
-            }
             items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
+                it.forEach {
+                    Log.d("Manjul", "addCourseInRecyclerView() called $it")
+                    if (it.expiredDate != null || it.isCourseBought.not()) {
+                        haveFreeTrialCourse = true
+                    }
+                }
                 temp.addAll(it)
             }
 
@@ -212,6 +214,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             courseListSet.addAll(temp)
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
+                if (haveFreeTrialCourse) {
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.VISIBLE
+                } else {
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.GONE
+                }
             }
         }
         if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(
@@ -219,15 +230,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             ) >= 2
         ) {
             findMoreLayout.visibility = View.VISIBLE
-        }
-        if (haveFreeTrialCourse) {
-            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.GONE
-            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.VISIBLE
-            findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.VISIBLE
-        } else {
-            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.VISIBLE
-            findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.GONE
-            findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.GONE
         }
     }
 
