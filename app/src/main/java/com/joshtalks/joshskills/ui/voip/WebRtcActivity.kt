@@ -968,7 +968,7 @@ class WebRtcActivity : AppCompatActivity() {
         binding.callerName.visibility = View.INVISIBLE
         binding.callStatus.visibility = View.INVISIBLE
         setIncomingText()
-        var counter = 25
+        var counter = 35
         progressAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) {}
 

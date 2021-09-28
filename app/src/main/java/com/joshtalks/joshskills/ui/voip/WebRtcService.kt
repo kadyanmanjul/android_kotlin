@@ -1163,7 +1163,7 @@ class WebRtcService : BaseWebRtcService() {
         incomingTimer = CoroutineScope(Dispatchers.IO)
         try {
             incomingTimer?.launch {
-                delay(20000)
+                delay(30000)
                 WebRtcActivity.isTimerCanceled = true
                 if (isCallConnected().not() && isActive) {
                     isTimeOutToPickCall = true
