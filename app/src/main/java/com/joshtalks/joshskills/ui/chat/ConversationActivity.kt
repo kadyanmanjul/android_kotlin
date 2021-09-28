@@ -1924,25 +1924,29 @@ class ConversationActivity :
                 val view = conversationBinding.chatRv.getChildAt(i) ?: break
                 if(view.id == R.id.unlock_class_item_container) {
                     val overlayItem = TooltipUtils.getOverlayItemFromView(view)
-                    val overlayImageView =
-                        conversationBinding.overlayView.findViewById<ImageView>(R.id.card_item_image)
-                    val overlayButtonImageView =
-                        conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
-                    val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
-                    val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
-                    overlayImageView.visibility = View.INVISIBLE
-                    overlayButtonImageView.visibility = View.INVISIBLE
-                    conversationBinding.overlayView.setOnClickListener {
-                        conversationBinding.overlayView.visibility = View.INVISIBLE
+                    overlayItem?.let {
+                        val overlayImageView =
+                            conversationBinding.overlayView.findViewById<ImageView>(R.id.card_item_image)
+                        val overlayButtonImageView =
+                            conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
+                        val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
+                        val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
+                        overlayImageView.visibility = View.INVISIBLE
+                        overlayButtonImageView.visibility = View.INVISIBLE
+                        conversationBinding.overlayView.setOnClickListener {
+                            conversationBinding.overlayView.visibility = View.INVISIBLE
+                        }
+                        overlayImageView.setOnClickListener{
+                            conversationBinding.overlayView.visibility = View.INVISIBLE
+                        }
+                        overlayButtonImageView.setOnClickListener {
+                            conversationBinding.overlayView.visibility = View.INVISIBLE
+                            unlockBtnView.performClick()
+                        }
+                        overlayButtonItem?.let {
+                            setOverlayView(overlayItem, overlayImageView, overlayButtonItem, overlayButtonImageView)
+                        }
                     }
-                    overlayImageView.setOnClickListener{
-                        conversationBinding.overlayView.visibility = View.INVISIBLE
-                    }
-                    overlayButtonImageView.setOnClickListener {
-                        conversationBinding.overlayView.visibility = View.INVISIBLE
-                        unlockBtnView.performClick()
-                    }
-                    setOverlayView(overlayItem, overlayImageView, overlayButtonItem, overlayButtonImageView)
                     break
                 }
                 i++
