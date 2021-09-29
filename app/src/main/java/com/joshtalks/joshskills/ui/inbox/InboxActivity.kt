@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
@@ -193,8 +192,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             val temp: ArrayList<InboxEntity> = arrayListOf()
             items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
                 it.forEach {
-                    Log.d("Manjul", "addCourseInRecyclerView() called $it")
-                    if (it.expiredDate != null || it.isCourseBought.not()) {
+                    if (it.expiredDate != null && it.isCourseBought.not()) {
                         haveFreeTrialCourse = true
                     }
                 }
