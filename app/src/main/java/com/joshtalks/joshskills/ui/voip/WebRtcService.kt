@@ -1892,11 +1892,11 @@ class WebRtcService : BaseWebRtcService() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val time = getTimeOfTalk()
-                data.remove("is_favorite")
-                data.remove("mentor_id")
-                data.remove("token")
-                data.remove("is_new_user_call")
-                data.remove("course_id")
+//                data.remove("is_favorite")
+//                data.remove("mentor_id")
+//                data.remove("token")
+//                data.remove("is_new_user_call")
+//                data.remove("course_id")
 
                 data["call_response"] = callAction.action
                 data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time).toString()
