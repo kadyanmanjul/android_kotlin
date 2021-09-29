@@ -137,7 +137,7 @@ class ConversationActivity :
     OnDismissWithSuccess {
 
     companion object {
-        private var unlockOverlayJob : Job? = null
+        private var unlockOverlayJob: Job? = null
 
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
             val intent = Intent(activity, ConversationActivity::class.java).apply {
@@ -148,6 +148,7 @@ class ConversationActivity :
             activity.startActivity(intent)
         }
     }
+
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
@@ -257,16 +258,16 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        if (inboxEntity.isCourseLocked) {
+        if (inboxEntity.isCourseBought.not() &&
+            inboxEntity.expiryDate != null &&
+            inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
+        ) {
             //initEndTrialBottomSheet()
-            showFreeTrialPaymentScreen()
-        }else if (inboxEntity.isCourseBought.not() && inboxEntity.expiredDate!=null){
-            if (inboxEntity.expiredDate!!.toDouble().toLong() >= System.currentTimeMillis().div(1000)){
-                conversationBinding.freeTrialContainer.visibility=View.VISIBLE
-                startTimer(
-                    (inboxEntity.expiredDate!!.toDouble()
-                        .toLong() - System.currentTimeMillis().div(1000)).times(1000)
-                )            }
+            // showFreeTrialPaymentScreen()
+            conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            startTimer(
+                (inboxEntity.expiryDate!!.time - System.currentTimeMillis()).times(1000)
+            )
         }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
@@ -338,8 +339,10 @@ class ConversationActivity :
         PrefManager.put(HAS_SEEN_LEADERBOARD_TOOLTIP, true)
     }
 
-    private fun showLeaderBoardSpotlight(hasDelay : Boolean = true) {
+    private fun showLeaderBoardSpotlight(hasDelay: Boolean = true) {
         lifecycleScope.launch(Dispatchers.Main) {
+            if (hasDelay)
+                delay(1000)
             window.statusBarColor = ContextCompat.getColor(
                 this@ConversationActivity,
                 R.color.leaderboard_overlay_status_bar
@@ -390,7 +393,7 @@ class ConversationActivity :
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
             ),
-            inboxEntity.expiredDate?.toDouble()?.toLong()
+            inboxEntity.expiryDate?.time
         )
         finish()
     }
@@ -595,7 +598,7 @@ class ConversationActivity :
             showNextTooltip()
         }
         conversationBinding.trialClose.setOnClickListener {
-            conversationBinding.freeTrialContainer.visibility=View.GONE
+            conversationBinding.freeTrialContainer.visibility = View.GONE
             countdownTimerBack?.stop()
         }
 
@@ -604,9 +607,10 @@ class ConversationActivity :
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
-                ),inboxEntity.expiredDate?.toDouble()?.toLong()
+                ),
+                inboxEntity.expiryDate?.time
             )
-            conversationBinding.freeTrialContainer.visibility=View.GONE
+            conversationBinding.freeTrialContainer.visibility = View.GONE
             countdownTimerBack?.stop()
         }
     }
@@ -1031,16 +1035,18 @@ class ConversationActivity :
                 // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 // showLeaderBoardTooltip()
-                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
-                    showLeaderBoardSpotlight()
-                else
                 CoroutineScope(Dispatchers.IO).launch {
                     delay(1000)
                     val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
                     Log.d(TAG, "initScoreCardView: $status")
                     withContext(Dispatchers.Main) {
-                        if(status == LESSON_STATUS.CO && !PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION))
-                            setOverlayAnimation()
+                        if (status == LESSON_STATUS.CO) {
+                            if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
+                                showOverlay()
+                            else if (!PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION))
+                                setOverlayAnimation()
+                        } else if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
+                            showLeaderBoardSpotlight()
                     }
                 }
             } else {
@@ -1684,7 +1690,7 @@ class ConversationActivity :
         audioPlayerManager?.onPause()
         if (conversationBinding.overlayLayout.visibility == VISIBLE) {
             hideLeaderBoardSpotlight()
-        } else if(conversationBinding.overlayView.visibility == VISIBLE)
+        } else if (conversationBinding.overlayView.visibility == VISIBLE)
             conversationBinding.overlayView.visibility = View.INVISIBLE
         else {
             val resultIntent = Intent()
@@ -1958,33 +1964,34 @@ class ConversationActivity :
         delay(1000)
         withContext(Dispatchers.Main) {
             var i = 0
-            while(true) {
+            while (true) {
                 val view = conversationBinding.chatRv.getChildAt(i) ?: break
-                if(view.id == R.id.unlock_class_item_container) {
+                if (view.id == R.id.unlock_class_item_container) {
                     val overlayItem = TooltipUtils.getOverlayItemFromView(view)
-                    overlayItem?.let {
-                        val overlayImageView =
-                            conversationBinding.overlayView.findViewById<ImageView>(R.id.card_item_image)
-                        val overlayButtonImageView =
-                            conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
-                        val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
-                        val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
-                        overlayImageView.visibility = View.INVISIBLE
-                        overlayButtonImageView.visibility = View.INVISIBLE
-                        conversationBinding.overlayView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = View.INVISIBLE
-                        }
-                        overlayImageView.setOnClickListener{
-                            conversationBinding.overlayView.visibility = View.INVISIBLE
-                        }
-                        overlayButtonImageView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = View.INVISIBLE
-                            unlockBtnView.performClick()
-                        }
-                        overlayButtonItem?.let {
-                            setOverlayView(overlayItem, overlayImageView, overlayButtonItem, overlayButtonImageView)
-                        }
+                    val overlayImageView =
+                        conversationBinding.overlayView.findViewById<ImageView>(R.id.card_item_image)
+                    val overlayButtonImageView =
+                        conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
+                    val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
+                    val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
+                    overlayImageView.visibility = View.INVISIBLE
+                    overlayButtonImageView.visibility = View.INVISIBLE
+                    conversationBinding.overlayView.setOnClickListener {
+                        conversationBinding.overlayView.visibility = View.INVISIBLE
                     }
+                    overlayImageView.setOnClickListener {
+                        conversationBinding.overlayView.visibility = View.INVISIBLE
+                    }
+                    overlayButtonImageView.setOnClickListener {
+                        conversationBinding.overlayView.visibility = View.INVISIBLE
+                        unlockBtnView.performClick()
+                    }
+                    setOverlayView(
+                        overlayItem,
+                        overlayImageView,
+                        overlayButtonItem,
+                        overlayButtonImageView
+                    )
                     break
                 }
                 i++
@@ -1992,18 +1999,50 @@ class ConversationActivity :
         }
     }
 
-    fun setOverlayView(overlayItem : ItemOverlay, overlayImageView : ImageView, overlayButtonItem : ItemOverlay, overlayButtonImageView : ImageView,) {
+    fun showOverlay() {
+        conversationBinding.overlayView.visibility = View.INVISIBLE
+        //hideLeaderBoardSpotlight()
+        val arrowView =
+            conversationBinding.overlayView.findViewById<LottieAnimationView>(R.id.arrow_animation_unlock_class)
+        val tooltipView = conversationBinding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
+        val overlayImageView =
+            conversationBinding.overlayView.findViewById<ImageView>(R.id.card_item_image)
+        val overlayButtonImageView =
+            conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
+        arrowView.visibility = View.INVISIBLE
+        overlayImageView.visibility = View.INVISIBLE
+        overlayButtonImageView.visibility = View.INVISIBLE
+        conversationBinding.overlayView.setOnClickListener {
+            conversationBinding.overlayView.visibility = View.GONE
+            showLeaderBoardSpotlight(hasDelay = false)
+        }
+        tooltipView.setTooltipText("Fantastic! You did it. But it's not over yet. Come let's see what else there is.")
+        conversationBinding.overlayView.visibility = View.VISIBLE
+        slideInAnimation(tooltipView)
+    }
+
+    fun setOverlayView(
+        overlayItem: ItemOverlay,
+        overlayImageView: ImageView,
+        overlayButtonItem: ItemOverlay,
+        overlayButtonImageView: ImageView,
+    ) {
         val STATUS_BAR_HEIGHT = getStatusBarHeight()
         conversationBinding.overlayView.visibility = View.INVISIBLE
-        conversationBinding.overlayView.setOnClickListener{
+        conversationBinding.overlayView.setOnClickListener {
             conversationBinding.overlayView.visibility = View.INVISIBLE
         }
-        val arrowView = conversationBinding.overlayView.findViewById<ImageView>(R.id.arrow_animation_unlock_class)
+        val arrowView =
+            conversationBinding.overlayView.findViewById<ImageView>(R.id.arrow_animation_unlock_class)
         val tooltipView = conversationBinding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
-        arrowView.x = overlayButtonItem.x.toFloat() - resources.getDimension(R.dimen._40sdp) + (overlayButtonImageView.width / 2.0).toFloat() - resources.getDimension(R.dimen._45sdp)
-        arrowView.y = overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
+        arrowView.x =
+            overlayButtonItem.x.toFloat() - resources.getDimension(R.dimen._40sdp) + (overlayButtonImageView.width / 2.0).toFloat() - resources.getDimension(
+                R.dimen._45sdp
+            )
+        arrowView.y =
+            overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
         overlayImageView.x = overlayItem.x.toFloat()
         overlayImageView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT
         overlayButtonImageView.x = overlayButtonItem.x.toFloat()
@@ -2026,7 +2065,7 @@ class ConversationActivity :
         return metrics.heightPixels to metrics.widthPixels
     }
 
-    fun slideInAnimation(tooltipView : JoshTooltip) {
+    fun slideInAnimation(tooltipView: JoshTooltip) {
         tooltipView.visibility = INVISIBLE
         val start = getScreenHeightAndWidth().second
         val mid = start * 0.2 * -1
@@ -2045,13 +2084,13 @@ class ConversationActivity :
         valueAnimation.start()
     }
 
-    fun getStatusBarHeight() : Int {
+    fun getStatusBarHeight(): Int {
         val rectangle = Rect()
         window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
         val statusBarHeight = rectangle.top
         val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
         val titleBarHeight = contentViewTop - statusBarHeight
         Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
-        return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
+        return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 }

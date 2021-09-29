@@ -19,24 +19,64 @@
         <include
             android:id="@+id/overlay_view"
             layout="@layout/profile_tooltip_layout"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            android:elevation="@dimen/_10sdp"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:elevation="@dimen/_10sdp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
         <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/toolbar_container"
             layout="@layout/base_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/freeTrialExpiryLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:background="@drawable/black_gradient"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginBottom="@dimen/_60sdp"
+                android:gravity="center"
+                android:text="Your Free Trial has ended"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:background="@drawable/bg_cta_button"
+                android:gravity="center"
+                android:padding="@dimen/_10sdp"
+                android:text="Buy Now"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1" />
+
+        </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/user_score_container"
@@ -82,49 +122,49 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:onClick="@{()-> handler.openPointsInfoTable()}"
-            app:layout_constraintTop_toBottomOf="@id/user_score_container"
-            android:layout_height="wrap_content">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/info_icon"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:onClick="@{()-> handler.openPointsInfoTable()}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:tint="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_help_outline" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/info_icon_text"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:onClick="@{()-> handler.openPointsInfoTable()}"
-            android:text="@string/how_points_work"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-            android:textColor="@color/grey_68"
-            app:layout_constraintBottom_toBottomOf="@+id/info_icon"
-            app:layout_constraintStart_toEndOf="@id/info_icon"
-            app:layout_constraintTop_toTopOf="@+id/info_icon" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/info_icon_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_12sdp"
-            android:onClick="@{()-> handler.openPointsInfoTable()}"
-            android:text=">>"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textColor="@color/black"
-            android:tint="@color/grey"
-            app:layout_constraintBottom_toBottomOf="@+id/info_icon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/info_icon" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_score_container">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/info_icon"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:onClick="@{()-> handler.openPointsInfoTable()}"
+                android:tint="@color/colorPrimary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_help_outline" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/info_icon_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:onClick="@{()-> handler.openPointsInfoTable()}"
+                android:text="@string/how_points_work"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/grey_68"
+                app:layout_constraintBottom_toBottomOf="@+id/info_icon"
+                app:layout_constraintStart_toEndOf="@id/info_icon"
+                app:layout_constraintTop_toTopOf="@+id/info_icon" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/info_icon_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_12sdp"
+                android:onClick="@{()-> handler.openPointsInfoTable()}"
+                android:text=">>"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/black"
+                android:tint="@color/grey"
+                app:layout_constraintBottom_toBottomOf="@+id/info_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/info_icon" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

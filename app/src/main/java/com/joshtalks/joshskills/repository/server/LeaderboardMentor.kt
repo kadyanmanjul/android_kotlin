@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.server
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -24,4 +25,8 @@ data class LeaderboardMentor(
     var isOnline: Boolean = false,
     @SerializedName("is_senior_student")
     val isSeniorStudent: Boolean = false,
+    @SerializedName("is_course_bought")
+    val isCourseBought: Boolean = false,
+    @SerializedName("expire_date")
+    val expiryDate: Date? = null,
 ) : Parcelable

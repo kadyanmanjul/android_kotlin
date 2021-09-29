@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.server.points
 
 
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 
 data class PointsHistoryResponse(
     @SerializedName("points_history_date_list")
@@ -9,7 +10,11 @@ data class PointsHistoryResponse(
     @SerializedName("total_points")
     val totalPoints: Int?,
     @SerializedName("total_points_text")
-    val totalPointsText: String?
+    val totalPointsText: String?,
+    @SerializedName("is_course_bought")
+    val isCourseBought: Boolean = false,
+    @SerializedName("expire_date")
+    val expiryDate: Date? = null,
 )
 
 data class PointsHistoryDate(
@@ -29,5 +34,5 @@ data class PointsHistory(
     @SerializedName("sub_title")
     val subTitle: String?,
     @SerializedName("title")
-    val title: Int?=0
+    val title: Int? = 0
 )

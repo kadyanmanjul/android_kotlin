@@ -4,6 +4,7 @@ package com.joshtalks.joshskills.repository.server
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
+import java.util.Date
 import kotlinx.android.parcel.Parcelize
 
 data class UserProfileResponse(
@@ -52,7 +53,11 @@ data class UserProfileResponse(
     @SerializedName("group_info")
     val groupInfo: List<GroupInfo>?,
     @SerializedName("is_senior_student")
-    val isSeniorStudent: Boolean = false
+    val isSeniorStudent: Boolean = false,
+    @SerializedName("is_course_bought")
+    val isCourseBought: Boolean = false,
+    @SerializedName("expire_date")
+    val expiryDate: Date? = null,
 )
 
 data class GroupInfo(
