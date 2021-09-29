@@ -179,11 +179,13 @@ class InboxAdapter(
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                    countdownTimerBack?.stop()
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
                     if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                        countdownTimerBack?.stop()
                     } else {
                         startTimer(
                             (inboxEntity.expiryDate.time - System.currentTimeMillis()).times(1000),
@@ -212,6 +214,7 @@ class InboxAdapter(
 
                 override fun onTimerFinish() {
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
+                    countdownTimerBack?.stop()
                 }
             }
             countdownTimerBack?.startTimer()
