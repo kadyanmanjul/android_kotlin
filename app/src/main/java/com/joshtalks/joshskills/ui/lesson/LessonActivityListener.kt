@@ -16,9 +16,13 @@ interface LessonActivityListener {
     fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean)
 
     fun onLessonUpdate()
+
     fun setOverlayVisibility(
         shouldShow: Boolean,
         wrongAnswerHeading: String?,
-        wrongAnswerText: String?
+        wrongAnswerText: String?,
+        videoTitle: String?,
+        videoId: String?,
+        videoUrl: String?
     )
 }

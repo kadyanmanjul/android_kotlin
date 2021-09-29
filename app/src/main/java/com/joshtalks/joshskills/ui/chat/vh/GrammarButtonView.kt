@@ -172,7 +172,9 @@ class GrammarButtonView : FrameLayout {
         grammarBtn.setOnTouchListener(onTouchListener3)
         videoIv.setOnClickListener {
             if (reviseVideoObject?.video_url.isNullOrBlank().not()){
-                callback?.onVideoButtonAppear(true,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText)
+                callback?.onVideoButtonAppear(true,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText,EMPTY,
+                    reviseVideoObject?.id,
+                    reviseVideoObject?.video_url)
                 openVideoObject()
             }
         }
@@ -358,7 +360,9 @@ class GrammarButtonView : FrameLayout {
             videoIv.visibility = GONE
         }else {
             videoIv.visibility = VISIBLE
-            callback?.onVideoButtonAppear(false,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText)
+            callback?.onVideoButtonAppear(false,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText,EMPTY,
+                reviseVideoObject?.id,
+                reviseVideoObject?.video_url)
             updateImageTint(videoIv, R.color.grammar_red_color_dark)
         }
         textContainer.slideUpAnimation(context)
@@ -425,7 +429,7 @@ class GrammarButtonView : FrameLayout {
     interface CheckQuestionCallback {
         fun checkQuestionCallBack(): Boolean?
         fun nextQuestion()
-        fun onVideoButtonAppear(isClicked: Boolean, wrongAnswerHeading: String?, wrongAnswerText: String?)
+        fun onVideoButtonAppear(isClicked: Boolean, wrongAnswerHeading: String?, wrongAnswerText: String?, videoTitle: String?, videoId: String?, videoUrl: String?)
     }
 
     enum class GrammarButtonState(state: String) {

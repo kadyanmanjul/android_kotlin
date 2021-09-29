@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
+import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -72,6 +73,7 @@ const val VOCAB_POSITION = 2
 const val READING_POSITION = 3
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 private const val TAG = "LessonActivity"
+
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
 
     private lateinit var binding: LessonActivityBinding
@@ -172,23 +174,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
-        if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON)){
-            binding.tooltipFrame.setOnClickListener {
-                binding.tooltipFrame.visibility=View.GONE
-                binding.videoBtnTooltip.visibility=View.GONE
-                binding.overlayTooltipLayout.visibility=View.GONE
-            }
-            binding.tooltipFrame.setOnClickListener {
-                binding.tooltipFrame.visibility=View.GONE
-                binding.videoBtnTooltip.visibility=View.GONE
-                binding.overlayTooltipLayout.visibility=View.GONE
-            }
-            binding.videoIvBtn.setOnClickListener {
-                binding.tooltipFrame.visibility=View.GONE
-                binding.videoBtnTooltip.visibility=View.GONE
-                binding.overlayTooltipLayout.visibility=View.GONE
-            }
-        }
+        //PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, false)
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
 
@@ -349,7 +335,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_lesson_spotlight).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_lesson_spotlight).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -369,7 +357,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_grammar_spotlight).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_grammar_spotlight).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -389,7 +379,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_speaking_spotlight).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_speaking_spotlight).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -409,7 +401,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.VISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText( resources.getText(R.string.label_vocab_spotlight_1).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_vocab_spotlight_1).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -429,7 +423,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.VISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_vocab_spotlight_2).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_vocab_spotlight_2).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -449,7 +445,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.VISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_vocab_spotlight_3).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_vocab_spotlight_3).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -469,7 +467,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.VISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(   resources.getText(R.string.label_reading_spotlight).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_reading_spotlight).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -489,7 +489,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_grammar_spotlight).toString())
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_grammar_spotlight).toString()
+                    )
                     binding.lessonSpotlightTooltip.startAnimation(
                         AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
                     )
@@ -505,8 +507,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(resources.getText(R.string.label_speaking_spotlight_2).toString())
-                    binding.lessonSpotlightTooltip.post{
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        resources.getText(R.string.label_speaking_spotlight_2).toString()
+                    )
+                    binding.lessonSpotlightTooltip.post {
                         slideInAnimation(binding.lessonSpotlightTooltip)
                     }
                     binding.spotlightStartGrammarTest.visibility = View.GONE
@@ -672,21 +676,44 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
-    override fun setOverlayVisibility(shouldShow: Boolean,wrongAnswerHeading:String?,wrongAnswerText:String?) {
-        if (shouldShow){
-            Log.d(
-                "Manjul",
-                "setOverlayVisibility() called with: shouldShow = $shouldShow, wrongAnswerHeading = $wrongAnswerHeading, wrongAnswerText = $wrongAnswerText"
-            )
+    override fun setOverlayVisibility(
+        shouldShow: Boolean,
+        wrongAnswerHeading: String?,
+        wrongAnswerText: String?,
+        videoTitle: String?,
+        videoId: String?,
+        videoUrl: String?
+    ) {
+        if (shouldShow) {
             binding.wrongAnswerTitle.text = wrongAnswerHeading
             binding.wrongAnswerDesc.text = wrongAnswerText
-            binding.tooltipFrame.visibility=View.VISIBLE
-            binding.videoBtnTooltip.visibility=View.VISIBLE
-            binding.overlayTooltipLayout.visibility=View.VISIBLE
-        }else{
-            binding.tooltipFrame.visibility=View.GONE
-            binding.videoBtnTooltip.visibility=View.GONE
-            binding.overlayTooltipLayout.visibility=View.GONE
+            binding.tooltipFrame.visibility = View.VISIBLE
+            binding.videoBtnTooltip.visibility = View.VISIBLE
+            binding.overlayTooltipLayout.visibility = View.VISIBLE
+
+            binding.tooltipFrame.setOnClickListener {
+                binding.tooltipFrame.visibility = View.GONE
+                binding.videoBtnTooltip.visibility = View.GONE
+                binding.overlayTooltipLayout.visibility = View.GONE
+            }
+            binding.videoIvBtn.setOnClickListener {
+                binding.tooltipFrame.visibility = View.GONE
+                binding.videoBtnTooltip.visibility = View.GONE
+                binding.overlayTooltipLayout.visibility = View.GONE
+                if (videoUrl.isNullOrBlank().not()) {
+                    RxBus2.publish(
+                        VideoShowEvent(
+                            EMPTY, videoId,
+                            videoUrl
+                        )
+                    )
+                }
+            }
+
+        } else {
+            binding.tooltipFrame.visibility = View.GONE
+            binding.videoBtnTooltip.visibility = View.GONE
+            binding.overlayTooltipLayout.visibility = View.GONE
         }
     }
 
@@ -991,9 +1018,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     override fun onBackPressed() {
         if (binding.overlayLayout.visibility == View.VISIBLE) {
             hideSpotlight()
-        }else if(binding.itemOverlay.visibility == View.VISIBLE)
+        } else if (binding.itemOverlay.visibility == View.VISIBLE)
             binding.itemOverlay.visibility = View.INVISIBLE
-            else {
+        else {
             val resultIntent = Intent()
             viewModel.lessonLiveData.value?.let {
                 resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
@@ -1047,7 +1074,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
-    fun slideInAnimation(tooltipView : JoshTooltip) {
+    fun slideInAnimation(tooltipView: JoshTooltip) {
         tooltipView.visibility = View.INVISIBLE
         val start = getScreenHeightAndWidth().second
         val mid = start * 0.2 * -1
@@ -1072,14 +1099,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         return metrics.heightPixels to metrics.widthPixels
     }
 
-    fun getStatusBarHeight() : Int {
+    fun getStatusBarHeight(): Int {
         val rectangle = Rect()
         window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
         val statusBarHeight = rectangle.top
         val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
         val titleBarHeight = contentViewTop - statusBarHeight
         Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
-        return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
+        return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 
     override fun showGrammarAnimation(overlayItem: ItemOverlay) {
@@ -1088,7 +1115,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.itemOverlay.setOnClickListener(null)
         val OFFSET = getStatusBarHeight()
         val itemImageView = binding.itemOverlay.findViewById<ImageView>(R.id.main_item_imageview)
-        val arrowView = binding.itemOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation_lesson)
+        val arrowView =
+            binding.itemOverlay.findViewById<LottieAnimationView>(R.id.arrow_animation_lesson)
         val tooltipView = binding.itemOverlay.findViewById<JoshTooltip>(R.id.tooltip)
         tooltipView.visibility = View.INVISIBLE
         itemImageView.visibility = View.INVISIBLE
@@ -1102,8 +1130,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             viewModel.eventLiveData.postValue(Event(Unit))
         }
         itemImageView.requestLayout()
-        itemImageView.post{
-            arrowView.x = (itemImageView.x + itemImageView.width/2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
+        itemImageView.post {
+            arrowView.x =
+                (itemImageView.x + itemImageView.width / 2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
             arrowView.requestLayout()
         }
         arrowView.requestLayout()

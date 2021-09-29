@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.online_test
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -126,7 +125,6 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         setObservers()
         binding.progressContainer.visibility = View.VISIBLE
         viewModel.fetchAssessmentDetails(lessonId)
-        PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON,false)
         return binding.root
     }
 
@@ -366,16 +364,18 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     moveToNextGrammarQuestion()
                 }
 
-                override fun onVideoButtonAppear(isClicked:Boolean, wrongAnswerHeading:String?, wrongAnswerText:String?) {
-                    Log.d(
-                        "Manjul",
-                        "onVideoButtonAppear() called with: isClicked = $isClicked, wrongAnswerHeading = $wrongAnswerHeading, wrongAnswerText = $wrongAnswerText"
-                    )
+                override fun onVideoButtonAppear(
+                    isClicked: Boolean,
+                    wrongAnswerHeading: String?,
+                    wrongAnswerText: String?,
+                    videoTitle: String?,
+                    videoId: String?,
+                    videoUrl: String?
+                ) {
                     if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON,false,false).not() && isClicked.not()){
-                        PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON,true)
-                        lessonActivityListener?.setOverlayVisibility(true,wrongAnswerHeading,wrongAnswerText)
+                        lessonActivityListener?.setOverlayVisibility(true,wrongAnswerHeading,wrongAnswerText,videoTitle,videoId,videoUrl)
                     } else {
-                        lessonActivityListener?.setOverlayVisibility(false, null, null)
+                        lessonActivityListener?.setOverlayVisibility(false, null, null,videoTitle,videoId,videoUrl)
                     }
                 }
             })
@@ -552,6 +552,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON,true)
                     binding.videoContainer.visibility = View.VISIBLE
                     binding.videoPlayer.apply {
                         visibility = View.VISIBLE
@@ -562,6 +563,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         setPlayListener(object : JoshGrammarVideoPlayer.PlayerFullScreenListener {
 
                             override fun onFullScreen() {
+                                binding.videoContainer.visibility = View.GONE
                                 val currentVideoProgressPosition = binding.videoPlayer.progress
                                 startActivity(
                                     VideoPlayerActivity.getActivityIntent(
@@ -578,6 +580,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
                             override fun onClose() {
                                 onPause()
+                                binding.videoContainer.visibility = View.GONE
                                 visibility = View.GONE
                             }
                         })
