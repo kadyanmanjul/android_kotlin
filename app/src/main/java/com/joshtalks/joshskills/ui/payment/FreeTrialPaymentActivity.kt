@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -80,7 +79,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private fun freeTrialTimerInit(expireTime: String?) {
         if (expireTime != null && expireTime.toDouble().toLong() > 0) {
             binding.freeTrialTimer.visibility = View.VISIBLE
-            Log.d("Manjul", "freeTrialTimerInit() called with: expireTime = ${expireTime.toDouble().toLong()}  ${System.currentTimeMillis().div(1000)}")
             startTimer((expireTime.toDouble().toLong() - System.currentTimeMillis().div(1000)).times(1000))
         } else {
             binding.freeTrialTimer.visibility = View.GONE
@@ -100,8 +98,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 )
             )
             binding.subscriptionCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
-            binding.title1.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
-            binding.title2.setTextColor(ContextCompat.getColor(this, R.color.black))
+            //binding.title1.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            //binding.title2.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding.englishCard.setCardBackgroundColor(
                 ContextCompat.getColor(
                     this,
@@ -125,8 +123,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             )
             binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
 
-            binding.title1.setTextColor(ContextCompat.getColor(this, R.color.black))
-            binding.title2.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            //binding.title1.setTextColor(ContextCompat.getColor(this, R.color.black))
+            //binding.title2.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
 
             binding.subscriptionCard.setCardBackgroundColor(
                 ContextCompat.getColor(
