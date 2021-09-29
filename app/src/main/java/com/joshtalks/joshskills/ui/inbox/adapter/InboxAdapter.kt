@@ -179,17 +179,14 @@ class InboxAdapter(
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
                     freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
-                } else if (inboxEntity.expiredDate != null && inboxEntity.isCourseBought.not()) {
+                } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
-                    if (inboxEntity.expiredDate.toDouble().toLong() <= System.currentTimeMillis()
-                            .div(1000)
-                    ) {
+                    if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                     } else {
                         startTimer(
-                            (inboxEntity.expiredDate.toDouble()
-                                .toLong() - System.currentTimeMillis().div(1000)).times(1000),
+                            (inboxEntity.expiryDate.time - System.currentTimeMillis()).times(1000),
                             freeTrialTimer
                         )
                     }

@@ -181,5 +181,45 @@
             tools:listitem="@layout/recent_search_item"
             tools:visibility="gone" />
 
+        <FrameLayout
+            android:id="@+id/freeTrialExpiryLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:background="@drawable/black_gradient"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginBottom="@dimen/_60sdp"
+                android:gravity="center"
+                android:text="Your Free Trial has ended"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:background="@drawable/bg_cta_button"
+                android:gravity="center"
+                android:padding="@dimen/_10sdp"
+                android:text="Buy Now"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1" />
+
+        </FrameLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

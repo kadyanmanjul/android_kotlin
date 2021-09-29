@@ -4,11 +4,13 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import java.util.Date
 
 data class CourseOverviewBaseResponse(
     @SerializedName("message")
     @Expose
     var message: String? = null,
+
     @SerializedName("response_data")
     @Expose
     val responseData: List<CourseOverviewResponse>? = null,
@@ -16,14 +18,23 @@ data class CourseOverviewBaseResponse(
     @SerializedName("Success")
     @Expose
     val success: Boolean,
+
     @SerializedName("pdf_info")
     @Expose
     val pdfInfo: PdfInfo,
+
     @SerializedName("conversationId")
     @Expose
     var conversationId: String?,
 
-    )
+    @SerializedName("is_course_bought")
+    @Expose
+    val isCourseBought: Boolean = false,
+
+    @SerializedName("expire_date")
+    @Expose
+    val expiryDate: Date? = null,
+)
 
 data class CourseOverviewResponse(
 
@@ -38,7 +49,7 @@ data class CourseOverviewResponse(
     var totalCount: Int?,
     @SerializedName("total_left")
     @Expose
-    var unLockCount: Int=-1,
+    var unLockCount: Int = -1,
     @SerializedName("certificateExamId")
     @Expose
     var certificateExamId: Int?,
@@ -59,21 +70,21 @@ data class CourseOverviewResponse(
     @SerializedName("ce_que")
     @Expose
     var ceQue: Int?,
-    var type: Int=-1
+    var type: Int = -1
 ) {
     constructor() : this(
-        title="",
-        chatId=null,
-        totalCount=null,
-        unLockCount=-1,
-        certificateExamId=null,
-        examStatus=null,
-        data= emptyList(),
-        examInstructions= emptyList(),
-        ceMarks=null,
-        ceMin=null,
-        ceQue=null,
-        type=-1
+        title = "",
+        chatId = null,
+        totalCount = null,
+        unLockCount = -1,
+        certificateExamId = null,
+        examStatus = null,
+        data = emptyList(),
+        examInstructions = emptyList(),
+        ceMarks = null,
+        ceMin = null,
+        ceQue = null,
+        type = -1
     )
 }
 
@@ -105,7 +116,7 @@ data class CourseOverviewItem(
     var speakingPercentage: String?,
     @SerializedName("show_new_grammar_screen")
     @Expose
-    var isNewGrammar: Boolean?=false
+    var isNewGrammar: Boolean? = false
 )
 
 data class PdfInfo(

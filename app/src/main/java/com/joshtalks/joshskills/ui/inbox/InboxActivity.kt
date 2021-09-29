@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
@@ -190,14 +191,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
             val temp: ArrayList<InboxEntity> = arrayListOf()
-            items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
-                it.forEach {
-                    if (it.expiredDate != null && it.isCourseBought.not()) {
-                        haveFreeTrialCourse = true
+            items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }
+                .let { courseList ->
+                    courseList.forEach { inboxEntity ->
+                        if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
+                            haveFreeTrialCourse = true
+                        }
                     }
+                    temp.addAll(courseList)
                 }
-                temp.addAll(it)
-            }
 
             items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
                 .sortedByDescending { it.courseCreatedDate }.let {

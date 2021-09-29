@@ -68,7 +68,7 @@ data class Course(
     @SerializedName("is_course_bought") val isCourseBought: Boolean = false,
 
     @ColumnInfo(name = "expire_date")
-    @SerializedName("expire_date") val expireDate: String?
+    @SerializedName("expire_date") val expiryDate: Date? = null
 
 ) : Serializable
 

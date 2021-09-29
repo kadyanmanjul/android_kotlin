@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.local.minimalentity
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
+import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.User
@@ -46,13 +47,13 @@ data class InboxEntity constructor(
     @ColumnInfo(name = "lesson_no")
     val lessonNo: Int? = 0,
     @ColumnInfo(name = "is_course_locked")
-    val isCourseLocked: Boolean = false,
+    @SerializedName("is_course_locked") val isCourseLocked: Boolean = false,
     @ColumnInfo(name = "is_course_bought")
-    val isCourseBought: Boolean = false,
+    @SerializedName("is_course_bought") val isCourseBought: Boolean = false,
     @ColumnInfo(name = "expire_date")
-    val expiredDate: String?
+    @SerializedName("expire_date") val expiryDate: Date? = null
 
-    ) : Parcelable {
+) : Parcelable {
     override fun hashCode(): Int {
         return conversation_id.hashCode()
     }
