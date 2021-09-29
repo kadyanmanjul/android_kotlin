@@ -245,6 +245,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         ) {
             findMoreLayout.visibility = View.VISIBLE
         }
+        try {
+            inboxAdapter.notifyDataSetChanged()
+
+        } catch (ex:Exception){
+
+        }
         Runtime.getRuntime().gc()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
