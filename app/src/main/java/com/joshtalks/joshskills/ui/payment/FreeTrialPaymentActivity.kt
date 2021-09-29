@@ -97,7 +97,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     R.color.white
                 )
             )
-            binding.subscriptionCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
+            binding.subscriptionCard.setStrokeColor(ContextCompat.getColor(this, R.color.light_shade_of_gray))
             //binding.title1.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
             //binding.title2.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding.englishCard.setCardBackgroundColor(
@@ -121,7 +121,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     R.color.white
                 )
             )
-            binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.white))
+            binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.light_shade_of_gray))
 
             //binding.title1.setTextColor(ContextCompat.getColor(this, R.color.black))
             //binding.title2.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
@@ -254,6 +254,13 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         data2.buttonText?.let { it1 -> buttonText.add(it1) }
                         data2.heading?.let { it1 -> headingText.add(it1) }
                         binding.title2.text = data2.courseHeading
+                        binding.txtCurrency2.text = data2.discount?.get(0).toString()
+                        if (data2.perCoursePrice.isNullOrBlank()){
+                            binding.perCourseText.visibility=View.GONE
+                        } else{
+                            binding.perCourseText.visibility=View.VISIBLE
+                            binding.perCourseText.text=data2.perCoursePrice
+                        }
                         binding.txtCurrency2.text = data2.discount?.get(0).toString()
                         binding.txtFinalPrice2.text = data2.discount?.substring(1)
                         binding.txtOgPrice2.text = getString(R.string.price, data2.actualAmount)

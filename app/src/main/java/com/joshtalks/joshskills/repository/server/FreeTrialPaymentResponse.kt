@@ -41,5 +41,7 @@ data class CourseData(
     @SerializedName("teacher_name")
     val teacherName: String?,
     @SerializedName("heading")
-    val heading: String
+    val heading: String,
+    @SerializedName("per_course_price")
+    val perCoursePrice: String?
 )

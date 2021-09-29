@@ -171,6 +171,7 @@ class InboxAdapter(
                 if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
                     horizontalLine.visibility = android.view.View.GONE
                 }
+                freeTrialTimer.visibility = View.INVISIBLE
                 if (inboxEntity.isCourseBought) {
                     freeTrialTimer.visibility = View.INVISIBLE
                     tvLastMessage.visibility = View.VISIBLE
