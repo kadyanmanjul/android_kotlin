@@ -15,14 +15,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout="@layout/student_of_day_stub" />
+            android:layout="@layout/student_of_day_new_stub" />
 
         <ViewStub
             android:id="@+id/student_of_week_stub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout="@layout/student_of_week_stub" />
+            android:layout="@layout/student_of_week_new_stub" />
 
         <ViewStub
             android:id="@+id/student_of_month_stub"

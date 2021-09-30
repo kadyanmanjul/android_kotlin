@@ -566,6 +566,7 @@ enum class BASE_MESSAGE_TYPE(val type: String) {
     P2P("P2P"), // Voice Calling
     LESSON("LESSON"),
     BEST_PERFORMER("BEST_PERFORMER"),
+    BEST_PERFORMER_RACE("BEST_PERFORMER_RACE"),
     NEW_CLASS("NEW_CLASS"),
 }
 
