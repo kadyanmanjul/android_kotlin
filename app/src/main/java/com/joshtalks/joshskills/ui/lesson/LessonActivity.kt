@@ -1020,7 +1020,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             hideSpotlight()
         } else if (binding.itemOverlay.visibility == View.VISIBLE)
             binding.itemOverlay.visibility = View.INVISIBLE
-        else {
+        else if (binding.videoBtnTooltip.visibility == View.VISIBLE) {
+            binding.tooltipFrame.visibility = View.GONE
+            binding.videoBtnTooltip.visibility = View.GONE
+            binding.overlayTooltipLayout.visibility = View.GONE
+        } else {
             val resultIntent = Intent()
             viewModel.lessonLiveData.value?.let {
                 resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)

@@ -373,7 +373,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     videoUrl: String?
                 ) {
                     if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON,false,false).not() && isClicked.not()){
-                        lessonActivityListener?.setOverlayVisibility(true,wrongAnswerHeading,wrongAnswerText,videoTitle,videoId,videoUrl)
+                        AppObjectController.uiHandler.postDelayed( {
+                            lessonActivityListener?.setOverlayVisibility(true,wrongAnswerHeading,wrongAnswerText,videoTitle,videoId,videoUrl)
+                        },500)
                     } else {
                         lessonActivityListener?.setOverlayVisibility(false, null, null,videoTitle,videoId,videoUrl)
                     }
