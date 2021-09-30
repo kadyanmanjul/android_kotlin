@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -76,10 +77,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         viewModel.getPaymentDetails(testId.toInt())
     }
 
-    private fun freeTrialTimerInit(expireTime: String?) {
-        if (expireTime != null && expireTime.toDouble().toLong() > 0) {
+    private fun freeTrialTimerInit(expireTime: Long?) {
+        if (expireTime != null && expireTime > 0) {
+            Log.d("Manjul", "freeTrialTimerInit() called ${expireTime} ${ expireTime - System.currentTimeMillis()}  ${System.currentTimeMillis()}" )
             binding.freeTrialTimer.visibility = View.VISIBLE
-            startTimer((expireTime.toDouble().toLong() - System.currentTimeMillis().div(1000)).times(1000))
+            startTimer(expireTime - System.currentTimeMillis())
         } else {
             binding.freeTrialTimer.visibility = View.GONE
         }
@@ -282,7 +284,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 } else {
                     binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                 }
-                freeTrialTimerInit(it.expireTime)
+                freeTrialTimerInit(it.expireTime?.time)
 
             } catch (ex: Exception) {
                 ex.printStackTrace()

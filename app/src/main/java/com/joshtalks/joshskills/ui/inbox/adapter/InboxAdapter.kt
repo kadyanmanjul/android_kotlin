@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.inbox.adapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -183,14 +184,12 @@ class InboxAdapter(
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
+                    Log.d("Manjul", "bind() called ${inboxEntity.expiryDate} ${inboxEntity.expiryDate.time} ${ inboxEntity.expiryDate.time - System.currentTimeMillis()}  ${System.currentTimeMillis()}" )
                     if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                         countdownTimerBack?.stop()
                     } else {
-                        startTimer(
-                            (inboxEntity.expiryDate.time - System.currentTimeMillis()).times(1000),
-                            freeTrialTimer
-                        )
+                        startTimer(inboxEntity.expiryDate.time - System.currentTimeMillis(), freeTrialTimer)
                     }
                 } else {
                     freeTrialTimer.visibility = View.INVISIBLE

@@ -2,12 +2,13 @@ package com.joshtalks.joshskills.repository.server
 
 
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 
 data class FreeTrialPaymentResponse(
     @SerializedName("course_data")
     val courseData: List<CourseData>?,
     @SerializedName("expire_time")
-    val expireTime: String?,
+    val expireTime: Date?,
     @SerializedName("start_time")
     val startTime: Double?,
     @SerializedName("sub_headings")

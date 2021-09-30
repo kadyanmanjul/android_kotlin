@@ -264,9 +264,7 @@ class ConversationActivity :
             //initEndTrialBottomSheet()
             // showFreeTrialPaymentScreen()
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
-            startTimer(
-                (inboxEntity.expiryDate!!.time - System.currentTimeMillis()).times(1000)
-            )
+            startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
         }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
