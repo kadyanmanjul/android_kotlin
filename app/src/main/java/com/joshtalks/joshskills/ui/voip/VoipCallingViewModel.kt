@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.app.Application
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -18,10 +19,13 @@ import java.net.ProtocolException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import retrofit2.Response
 import timber.log.Timber
 
+private const val TAG = "VoipCallingViewModel"
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
@@ -50,7 +54,15 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                             callieUid = it["uid"] ?: "",
                             callerUid = ""
                         )
-                        AppObjectController.p2pNetworkService.sendAgoraTokenConformation(mapOf("agora_call_id" to it["agora_call_id"]))
+
+                        try {
+                            AppObjectController.p2pNetworkService.sendAgoraTokenConformation(mapOf("agora_call_id" to it["agora_call_id"]))
+                        } catch (e : Exception) {
+                            e.printStackTrace()
+                            WebRtcService.tokenConformationApiFailed()
+                            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                            return@launch
+                        }
                         location?.let { location ->
                             uploadUserCurrentLocation(it["channel_name"]!!, location)
                         }
