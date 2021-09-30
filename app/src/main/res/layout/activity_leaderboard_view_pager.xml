@@ -35,10 +35,10 @@
                 tools:visibility="visible" />-->
 
             <include
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/toolbar_container"
                 layout="@layout/base_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -52,12 +52,12 @@
                 app:layout_constraintTop_toBottomOf="@id/toolbar_container"
                 app:tabGravity="fill"
                 app:tabIndicatorColor="@color/button_color"
-                app:tabTextColor="#666666"
                 app:tabIndicatorFullWidth="false"
                 app:tabIndicatorHeight="@dimen/_2sdp"
                 app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/button_color"
-                app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"/>
+                app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"
+                app:tabTextColor="#666666" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
@@ -70,10 +70,10 @@
             <include
                 android:id="@+id/tab_overlay"
                 layout="@layout/winner_tooltip_layout"
-                android:visibility="invisible"
-                android:elevation="@dimen/_20sdp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:elevation="@dimen/_20sdp"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -107,6 +107,7 @@
                     android:layout_marginVertical="@dimen/_10sdp"
                     android:background="@drawable/bg_cta_button"
                     android:gravity="center"
+                    android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                     android:padding="@dimen/_10sdp"
                     android:text="Buy Now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
@@ -122,14 +123,14 @@
             <include
                 android:id="@+id/item_tab_overlay"
                 layout="@layout/profile_tooltip_layout"
-                android:visibility="invisible"
-                android:elevation="@dimen/_20sdp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:elevation="@dimen/_20sdp"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

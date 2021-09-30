@@ -262,12 +262,19 @@ class ConversationActivity :
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
-            //initEndTrialBottomSheet()
-            // showFreeTrialPaymentScreen()
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
             startTimer(
                 (inboxEntity.expiryDate!!.time - System.currentTimeMillis()).times(1000)
             )
+        } else if (inboxEntity.isCourseBought.not() &&
+            inboxEntity.expiryDate != null &&
+            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+        ) {
+            //initEndTrialBottomSheet()
+            // showFreeTrialPaymentScreen()
+            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+        } else {
+            conversationBinding.freeTrialExpiryLayout.visibility = GONE
         }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
@@ -395,7 +402,7 @@ class ConversationActivity :
             ),
             inboxEntity.expiryDate?.time
         )
-        finish()
+        // finish()
     }
 
     private fun initToolbar() {
@@ -1476,16 +1483,23 @@ class ConversationActivity :
                 .subscribeOn(Schedulers.computation())
                 .subscribe(
                     {
-                        startActivityForResult(
-                            LessonActivity.getActivityIntent(
-                                this,
-                                it.lessonId,
-                                conversationId = inboxEntity.conversation_id,
-                                isNewGrammar = it.isNewGrammar,
-                                isLessonCompleted = it.isLessonCompleted
-                            ),
-                            LESSON_REQUEST_CODE
-                        )
+                        if (inboxEntity.isCourseBought.not() &&
+                            inboxEntity.expiryDate != null &&
+                            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+                        ) {
+                            showFreeTrialPaymentScreen()
+                        } else {
+                            startActivityForResult(
+                                LessonActivity.getActivityIntent(
+                                    this,
+                                    it.lessonId,
+                                    conversationId = inboxEntity.conversation_id,
+                                    isNewGrammar = it.isNewGrammar,
+                                    isLessonCompleted = it.isLessonCompleted
+                                ),
+                                LESSON_REQUEST_CODE
+                            )
+                        }
                     },
                     {
                         it.printStackTrace()

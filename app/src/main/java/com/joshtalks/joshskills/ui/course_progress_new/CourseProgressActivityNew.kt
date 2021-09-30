@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.chat.vh.PdfCourseProgressView
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -102,6 +103,15 @@ class CourseProgressActivityNew :
         viewModel.progressLiveData.observe(
             this,
             { response ->
+
+                if (response.isCourseBought.not() &&
+                    response.expiryDate != null &&
+                    response.expiryDate.time < System.currentTimeMillis()
+                ) {
+                    binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+                } else {
+                    binding.freeTrialExpiryLayout.visibility = View.GONE
+                }
 
                 binding.progressLayout.visibility = View.GONE
                 val isAnyDifference = courseOverviewResponse?.deepEquals(response.responseData!!)
@@ -225,7 +235,12 @@ class CourseProgressActivityNew :
         CoroutineScope(Dispatchers.IO).launch {
             val lessonModel = viewModel.getLesson(item.lessonId)
             runOnUiThread {
-                if (lessonModel != null) {
+                if (viewModel.progressLiveData.value?.isCourseBought == false &&
+                    viewModel.progressLiveData.value?.expiryDate != null &&
+                    viewModel.progressLiveData.value?.expiryDate!!.time < System.currentTimeMillis()
+                ) {
+                    showFreeTrialPaymentScreen()
+                } else if (lessonModel != null) {
                     activityListener.launch(
                         LessonActivity.getActivityIntent(
                             this@CourseProgressActivityNew,
@@ -296,6 +311,17 @@ class CourseProgressActivityNew :
             title,
             message
         ).show()
+    }
+
+    fun showFreeTrialPaymentScreen() {
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            this,
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            ),
+            viewModel.progressLiveData.value?.expiryDate?.time
+        )
+        // finish()
     }
 
     override fun onBackPressed() {

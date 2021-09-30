@@ -209,6 +209,7 @@
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:background="@drawable/bg_cta_button"
                 android:gravity="center"
+                android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"

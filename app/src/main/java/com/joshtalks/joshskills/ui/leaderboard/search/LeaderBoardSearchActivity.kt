@@ -15,10 +15,14 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardSearchBinding
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.track.COURSE_EXPIRY_TIME
+import com.joshtalks.joshskills.track.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import java.util.ArrayList
 import java.util.Locale
 
@@ -71,6 +75,14 @@ class LeaderBoardSearchActivity : BaseActivity() {
         })
         binding.searchView.isFocusableInTouchMode = true
         binding.searchView.requestFocus()
+        if (intent.getBooleanExtra(IS_COURSE_BOUGHT, false).not() &&
+            intent.getLongExtra(COURSE_EXPIRY_TIME, -1L) != -1L &&
+            intent.getLongExtra(COURSE_EXPIRY_TIME, -1L) < System.currentTimeMillis()
+        ) {
+            binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+        } else {
+            binding.freeTrialExpiryLayout.visibility = View.GONE
+        }
     }
 
     override fun getConversationId(): String? {
@@ -154,21 +166,22 @@ class LeaderBoardSearchActivity : BaseActivity() {
                 }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {
-                if (position == 4){
+                if (position == 4) {
                     tab.text = getString(R.string.my_batch)
                 } else {
                     tab.text =
                         map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                 }
             } else {
-                if (position==4){
+                if (position == 4) {
                     tab.text = getString(R.string.my_batch).plus('\n')
                         .plus(map.get(list)?.intervalTabText)
-                } else{
+                } else {
                     tab.text =
                         map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                             .plus('\n')
-                            .plus(map.get(list)?.intervalTabText)}
+                            .plus(map.get(list)?.intervalTabText)
+                }
 
             }
         }.attach()
@@ -213,6 +226,17 @@ class LeaderBoardSearchActivity : BaseActivity() {
         }
     }
 
+    fun showFreeTrialPaymentScreen() {
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            this,
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            ),
+            intent.getLongExtra(COURSE_EXPIRY_TIME, -1L)
+        )
+        // finish()
+    }
+
     fun clearSearchText() {
         binding.searchView.setText(EMPTY)
     }
@@ -222,10 +246,14 @@ class LeaderBoardSearchActivity : BaseActivity() {
             context: Context,
             value: HashMap<String, LeaderboardResponse>?,
             conversationId: String? = null,
+            isCourseBought: Boolean = false,
+            expiredTime: Long? = null,
         ): Intent {
             return Intent(context, LeaderBoardSearchActivity::class.java).apply {
                 putExtra("hash_map", value)
                 putExtra(CONVERSATION_ID, conversationId)
+                putExtra(IS_COURSE_BOUGHT, isCourseBought)
+                putExtra(COURSE_EXPIRY_TIME, expiredTime)
             }
         }
     }

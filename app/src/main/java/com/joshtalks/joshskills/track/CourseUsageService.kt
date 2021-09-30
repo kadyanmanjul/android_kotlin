@@ -10,6 +10,8 @@ import timber.log.Timber
 
 const val CONVERSATION_ID = "conversation_id"
 const val SCREEN_NAME = "screen_name"
+const val IS_COURSE_BOUGHT = "is_course_bought"
+const val COURSE_EXPIRY_TIME = "course_expiry_time"
 
 class CourseUsageService : JobIntentService() {
     private val courseUsageDao = AppObjectController.appDatabase.courseUsageDao()

@@ -20,12 +20,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_POINTS_HISTORY_ANIMATION
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
@@ -66,6 +69,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         viewModel.getPointsSummary(mentorId)
         showProgressBar()
     }
+
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
     }
@@ -88,10 +92,18 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
 
     private fun addObserver() {
         viewModel.pointsHistoryLiveData.observe(
-            this,
-            Observer {
+            this, {
                 binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalPoints)
                 binding.userScoreText.text = it.totalPointsText
+
+                if (it.isCourseBought.not() &&
+                    it.expiryDate != null &&
+                    it.expiryDate.time < System.currentTimeMillis()
+                ) {
+                    binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+                } else {
+                    binding.freeTrialExpiryLayout.visibility = View.GONE
+                }
 
                 it.pointsHistoryDateList?.forEachIndexed { index, list ->
                     if (list.pointsSum != null) {
@@ -121,10 +133,10 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
             this,
             Observer {
                 hideProgressBar()
-                when(it) {
+                when (it) {
                     ApiCallStatus.SUCCESS -> {
                         CoroutineScope(Dispatchers.IO).launch {
-                            if(!PrefManager.getBoolValue(HAS_SEEN_POINTS_HISTORY_ANIMATION))
+                            if (!PrefManager.getBoolValue(HAS_SEEN_POINTS_HISTORY_ANIMATION))
                                 getOverlayView()
                         }
                     }
@@ -137,9 +149,9 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         delay(1000)
         withContext(Dispatchers.Main) {
             var i = 0
-            while(true) {
+            while (true) {
                 val view = binding.recyclerView.getChildAt(i) ?: break
-                if(view.id == R.id.root_view) {
+                if (view.id == R.id.root_view) {
                     val overlayItem = TooltipUtils.getOverlayItemFromView(view)
                     overlayItem?.let {
                         Log.d(TAG, "getOverlayView: $overlayItem")
@@ -166,24 +178,32 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         }
     }
 
-    fun setOverlayView(overlayItem : ItemOverlay, overlayImageView : ImageView, arrowPoint : Point, arrowWidth : Int) {
+    fun setOverlayView(
+        overlayItem: ItemOverlay,
+        overlayImageView: ImageView,
+        arrowPoint: Point,
+        arrowWidth: Int
+    ) {
         Log.d(TAG, "onViewBitmap: $overlayItem")
         val STATUS_BAR_HEIGHT = getStatusBarHeight()
         binding.overlayView.visibility = View.INVISIBLE
-        binding.overlayView.setOnClickListener{
+        binding.overlayView.setOnClickListener {
             binding.overlayView.visibility = View.INVISIBLE
             isAnimationVisible = false
         }
         val arrowView = binding.overlayView.findViewById<ImageView>(R.id.arrow_animation)
         val tooltipView = binding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
-        val tapToDismissView = binding.overlayView.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
+        val tapToDismissView =
+            binding.overlayView.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayImageView.x = overlayItem.x.toFloat()
         overlayImageView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT
         overlayImageView.requestLayout()
         overlayImageView.post {
-            arrowView.x = (arrowPoint.x + arrowWidth/2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
-            arrowView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
+            arrowView.x =
+                (arrowPoint.x + arrowWidth / 2.0).toFloat() - resources.getDimension(R.dimen._40sdp)
+            arrowView.y =
+                overlayItem.y.toFloat() - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
             arrowView.requestLayout()
             arrowView.visibility = View.VISIBLE
             binding.overlayView.visibility = View.VISIBLE
@@ -203,7 +223,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         return metrics.heightPixels to metrics.widthPixels
     }
 
-    fun slideInAnimation(tooltipView : JoshTooltip) {
+    fun slideInAnimation(tooltipView: JoshTooltip) {
         tooltipView.visibility = View.INVISIBLE
         val start = getScreenHeightAndWidth().second
         val mid = start * 0.2 * -1
@@ -223,7 +243,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
     }
 
     @MainThread
-    private suspend fun showTapToDismiss(labelTapToDismiss : AppCompatTextView) {
+    private suspend fun showTapToDismiss(labelTapToDismiss: AppCompatTextView) {
         withContext(Dispatchers.Main) {
             labelTapToDismiss.visibility = View.INVISIBLE
             delay(6500)
@@ -240,6 +260,17 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
                 putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
             }
         )
+    }
+
+    fun showFreeTrialPaymentScreen() {
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            this,
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            ),
+            viewModel.pointsHistoryLiveData.value?.expiryDate?.time
+        )
+        // finish()
     }
 
     companion object {
@@ -259,19 +290,19 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
     }
 
     override fun onBackPressed() {
-        if(isAnimationVisible) {
+        if (isAnimationVisible) {
             binding.overlayView.visibility = View.INVISIBLE
             isAnimationVisible = false
         } else
             super.onBackPressed()
     }
 
-    fun getStatusBarHeight() : Int {
+    fun getStatusBarHeight(): Int {
         val rectangle = Rect()
         window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
         val statusBarHeight = rectangle.top
         val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
         val titleBarHeight = contentViewTop - statusBarHeight
-        return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
+        return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 }

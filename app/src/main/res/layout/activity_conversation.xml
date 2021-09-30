@@ -576,6 +576,7 @@
                 android:gravity="center"
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
+                android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toTopOf="@id/text_view_privacy"

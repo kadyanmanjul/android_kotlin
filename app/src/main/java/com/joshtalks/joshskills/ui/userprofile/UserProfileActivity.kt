@@ -1,13 +1,10 @@
 package com.joshtalks.joshskills.ui.userprofile
 
-import android.animation.Animator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -36,6 +33,7 @@ import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -224,6 +222,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         viewModel.userData.observe(
             this,
             {
+                if (it.isCourseBought.not() &&
+                    it.expiryDate != null &&
+                    it.expiryDate.time < System.currentTimeMillis()
+                ) {
+                    binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+                } else {
+                    binding.freeTrialExpiryLayout.visibility = View.GONE
+                }
                 it?.let {
                     impressionId = it.userProfileImpressionId ?: EMPTY
                     hideProgressBar()
@@ -708,6 +714,17 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     fun showSeniorStudentScreen() {
         SeniorStudentActivity.startSeniorStudentActivity(this)
+    }
+
+    fun showFreeTrialPaymentScreen() {
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            this,
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            ),
+            viewModel.userData.value?.expiryDate?.time
+        )
+        // finish()
     }
 
 }
