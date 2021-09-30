@@ -320,7 +320,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_14sdp"
-                    android:padding="@dimen/_2sdp"
                     android:visibility="visible"
                     app:cardBackgroundColor="@color/colorPrimary_alfa_6"
                     app:cardCornerRadius="@dimen/_5sdp"
@@ -332,7 +331,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_2sdp">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/title_1"
@@ -456,16 +456,17 @@
                     android:visibility="visible"
                     app:cardCornerRadius="@dimen/_5sdp"
                     app:layout_constraintBottom_toTopOf="@id/see_course_list"
-                    app:layout_constraintVertical_bias="0"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/english_card"
+                    app:layout_constraintVertical_bias="0"
                     app:strokeColor="@color/light_shade_of_gray"
                     app:strokeWidth="@dimen/_1sdp">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_2sdp">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/title_2"
@@ -511,14 +512,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_4sdp"
-                            tools:text="(₹15/course)"
-                            android:visibility="gone"
-                            tools:visibility="visible"
                             android:layout_marginBottom="@dimen/_3sdp"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                             android:textColor="#6C706E"
+                            android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="@id/txt_final_price_2"
-                            app:layout_constraintStart_toEndOf="@id/txt_final_price_2" />
+                            app:layout_constraintStart_toEndOf="@id/txt_final_price_2"
+                            tools:text="(₹15/course)"
+                            tools:visibility="visible" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_og_price_2"
