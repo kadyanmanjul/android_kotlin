@@ -261,10 +261,11 @@ class ConversationActivity :
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
-            //initEndTrialBottomSheet()
-            // showFreeTrialPaymentScreen()
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
             startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+        } else if (inboxEntity.expiryDate != null && inboxEntity.expiryDate!!.time < System.currentTimeMillis()){
+            conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            conversationBinding.freeTrialText.text=getString(R.string.free_trial_ended)
         }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)

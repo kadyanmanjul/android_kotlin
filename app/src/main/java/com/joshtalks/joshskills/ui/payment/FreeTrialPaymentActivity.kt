@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -75,16 +74,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
-    }
-
-    private fun freeTrialTimerInit(expireTime: Long?) {
-        if (expireTime != null && expireTime > 0) {
-            Log.d("Manjul", "freeTrialTimerInit() called ${expireTime} ${ expireTime - System.currentTimeMillis()}  ${System.currentTimeMillis()}" )
-            binding.freeTrialTimer.visibility = View.VISIBLE
-            startTimer(expireTime - System.currentTimeMillis())
-        } else {
-            binding.freeTrialTimer.visibility = View.GONE
-        }
     }
 
     private fun setListeners() {
@@ -276,15 +265,16 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         binding.subscriptionCard.visibility = View.GONE
                     }
                 }
-                //TODO condition
-                //if(it.expireTime){
-                if (true) {
-                    binding.freeTrialTimer.text = getString(R.string.free_trial_end_in)
-                    //start a timer
-                } else {
-                    binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                if (it.expireTime!=null){
+                    binding.freeTrialTimer.visibility = View.VISIBLE
+                    if (it.expireTime!!.time>=System.currentTimeMillis()){
+                        startTimer(it.expireTime.time - System.currentTimeMillis())
+                    } else {
+                        binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                    }
+                } else{
+                    binding.freeTrialTimer.visibility = View.GONE
                 }
-                freeTrialTimerInit(it.expireTime?.time)
 
             } catch (ex: Exception) {
                 ex.printStackTrace()
