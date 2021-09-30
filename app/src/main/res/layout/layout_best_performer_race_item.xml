@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_2sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_view_fl"
+        android:layout_width="@dimen/_210sdp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:background="@drawable/bg_student_race"
+        android:padding="@dimen/_3sdp"
+        android:paddingHorizontal="@dimen/_12sdp"
+        android:paddingVertical="@dimen/_6sdp">
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textSize="@dimen/_9ssp"
+            android:letterSpacing="0"
+            android:textColor="#E4BD71"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="THE Race to the Student of the Day" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/thumbnail_image"
+            android:layout_width="@dimen/_175sdp"
+            android:layout_height="@dimen/_88sdp"
+            android:background="@drawable/rounded_grey_bg_2dp"
+            android:backgroundTint="#E4BD71"
+            android:layout_marginVertical="@dimen/_6sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/thumbnail_image"
+            app:layout_constraintEnd_toEndOf="@id/thumbnail_image"
+            app:layout_constraintTop_toTopOf="@id/thumbnail_image"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="#707070"
+            android:textSize="@dimen/_6ssp"
+            android:text="Click to play" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/play_icon"
+            android:layout_width="@dimen/_44sdp"
+            android:layout_height="@dimen/_44sdp"
+            app:srcCompat="@drawable/ic_play_icon_race"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail_image"
+            app:layout_constraintStart_toStartOf="@id/thumbnail_image"
+            app:layout_constraintEnd_toEndOf="@id/thumbnail_image"
+            app:layout_constraintTop_toTopOf="@id/thumbnail_image"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
+

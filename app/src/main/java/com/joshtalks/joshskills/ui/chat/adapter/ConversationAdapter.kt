@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.AudioViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.BestPerformerRaceViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.BestStudentPerformerViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.CertificationExamViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.DateItemHolder
@@ -316,6 +317,12 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view.tag = BEST_PERFORMER_EXAM_MESSAGE
                 BestStudentPerformerViewHolder(view, userId)
             }
+            BEST_PERFORMER_RACE -> {
+                view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.layout_best_performer_race_item, parent, false)
+                view.tag = BEST_PERFORMER_RACE
+                BestPerformerRaceViewHolder(view, userId)
+            }
             NEW_CLASS_MESSAGE -> {
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.new_message_layout, parent, false)
@@ -416,6 +423,8 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
             }
             BASE_MESSAGE_TYPE.BEST_PERFORMER ->
                 return BEST_PERFORMER_EXAM_MESSAGE
+            BASE_MESSAGE_TYPE.BEST_PERFORMER_RACE ->
+                return BEST_PERFORMER_RACE
             BASE_MESSAGE_TYPE.NEW_CLASS -> {
                 return NEW_CLASS_MESSAGE
             }
@@ -522,6 +531,7 @@ private const val ASSESSMENT_MESSAGE = 17
 private const val LESSON_MESSAGE = 19
 
 private const val BEST_PERFORMER_EXAM_MESSAGE = 21
+private const val BEST_PERFORMER_RACE = 42
 // private const val BEST_PERFORMER_EXAM_MESSAGE = 21
 
 private const val NEW_CLASS_MESSAGE = 40
