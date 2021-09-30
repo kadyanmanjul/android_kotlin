@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import java.util.Locale
 
-class StudentOfTheWeekView : FrameLayout {
+class StudentOfTheDayNewView : FrameLayout {
     private lateinit var userPic: AppCompatImageView
     private lateinit var awardImage: AppCompatImageView
     private lateinit var studentName: AppCompatTextView
@@ -45,7 +45,7 @@ class StudentOfTheWeekView : FrameLayout {
     }
 
     private fun init() {
-        View.inflate(context, R.layout.cell_best_performer_of_the_week_message, this)
+        View.inflate(context, R.layout.cell_best_performer_of_the_day_new_message, this)
 
         awardImage = findViewById(R.id.iv_award)
         studentName = findViewById(R.id.student_name)
