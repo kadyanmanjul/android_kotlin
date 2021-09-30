@@ -187,6 +187,18 @@ class WebRtcService : BaseWebRtcService() {
         @Volatile
         private var callCallback: WeakReference<WebRtcCallback>? = null
 
+        fun tokenConformationApiFailed() {
+            val data : HashMap<String, String?> = HashMap()
+            data["uid"] = CurrentCallDetails.callieUid
+            data["channel_name"] = CurrentCallDetails.channelName
+            data["call_response"] = CallAction.DISCONNECT.action
+            data["duration"] = "0"
+            data["has_disconnected"] = "false"
+            CoroutineScope(Dispatchers.IO).launch {
+                AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
+            }
+        }
+
         fun initLibrary() {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
