@@ -134,7 +134,7 @@ interface SignUpNetworkService {
     @POST("$DIR/payment/create_order_v2")
     fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
 
-    @GET("$DIR/course/test/")
+    @GET("$DIR/course/test_v2/")
     suspend fun exploreCourses(@QueryMap params: Map<String, String>? = mapOf("is_default" to "true")): List<CourseExploreModel>
 
     @GET("$DIR/payment/coupon/")
