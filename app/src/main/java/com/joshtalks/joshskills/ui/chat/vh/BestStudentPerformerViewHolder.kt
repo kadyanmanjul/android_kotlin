@@ -12,9 +12,9 @@ class BestStudentPerformerViewHolder(view: View, userId: String) : BaseViewHolde
 
     val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)
 
-    private var studentOfDayStub: Stub<StudentOfTheDayView> =
+    private var studentOfWeekNewStub: Stub<StudentOfTheWeekNewView> =
         Stub(view.findViewById(R.id.student_of_day_stub))
-    private var studentOfWeekStub: Stub<StudentOfTheWeekView> =
+    private var studentOfDayNewStub: Stub<StudentOfTheDayNewView> =
         Stub(view.findViewById(R.id.student_of_week_stub))
     private var studentOfMonthStub: Stub<StudentOfTheMonthView> =
         Stub(view.findViewById(R.id.student_of_month_stub))
@@ -32,21 +32,21 @@ class BestStudentPerformerViewHolder(view: View, userId: String) : BaseViewHolde
     private fun setupUI(mentorModel: AwardMentorModel) {
         if (mentorModel.awardType == AwardTypes.SOTD) {
             studentOfMonthStub.get().visibility = View.GONE
-            studentOfWeekStub.get().visibility = View.GONE
-            studentOfDayStub.resolved().let {
-                studentOfDayStub.get().visibility = View.VISIBLE
-                studentOfDayStub.get().setup(mentorModel)
+            studentOfWeekNewStub.get().visibility = View.GONE
+            studentOfDayNewStub.resolved().let {
+                studentOfDayNewStub.get().visibility = View.VISIBLE
+                studentOfDayNewStub.get().setup(mentorModel)
             }
         } else if (mentorModel.awardType == AwardTypes.SOTW) {
             studentOfMonthStub.get().visibility = View.GONE
-            studentOfDayStub.get().visibility = View.GONE
-            studentOfWeekStub.resolved().let {
-                studentOfWeekStub.get().visibility = View.VISIBLE
-                studentOfWeekStub.get().setup(mentorModel)
+            studentOfDayNewStub.get().visibility = View.GONE
+            studentOfWeekNewStub.resolved().let {
+                studentOfWeekNewStub.get().visibility = View.VISIBLE
+                studentOfWeekNewStub.get().setup(mentorModel)
             }
-        }else if (mentorModel.awardType == AwardTypes.SOTM) {
-            studentOfWeekStub.get().visibility = View.GONE
-            studentOfDayStub.get().visibility = View.GONE
+        } else if (mentorModel.awardType == AwardTypes.SOTM) {
+            studentOfDayNewStub.get().visibility = View.GONE
+            studentOfWeekNewStub.get().visibility = View.GONE
             studentOfMonthStub.resolved().let {
                 studentOfMonthStub.get().visibility = View.VISIBLE
                 studentOfMonthStub.get().setup(mentorModel)

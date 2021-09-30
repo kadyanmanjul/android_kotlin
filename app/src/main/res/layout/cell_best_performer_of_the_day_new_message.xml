@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_175sdp"
+        android:layout_width="@dimen/_210sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/_16sdp"
@@ -23,9 +23,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_award"
-                android:layout_width="@dimen/_66sdp"
-                android:layout_height="@dimen/_64sdp"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_width="@dimen/_57sdp"
+                android:layout_height="@dimen/_78sdp"
+                android:layout_marginTop="@dimen/_14sdp"
                 android:gravity="center_vertical|start"
                 android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_14sdp"
-                android:layout_marginTop="@dimen/_8ssp"
+                android:layout_marginTop="@dimen/_10ssp"
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:background="@drawable/rect_round_4dp_yellow"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -53,9 +53,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_9sdp"
                     android:layout_marginEnd="@dimen/_4sdp"
-                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_13sdp"
                     android:gravity="start"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="#511615"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/user_pic"
@@ -71,7 +71,7 @@
                     android:gravity="center"
                     android:paddingVertical="@dimen/_2sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                    android:textSize="@dimen/_8ssp"
+                    android:textSize="@dimen/_9ssp"
                     android:textColor="#511615"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/student_name"
@@ -80,10 +80,10 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/user_pic"
-                    android:layout_width="@dimen/_32sdp"
-                    android:layout_height="@dimen/_32sdp"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:layout_width="@dimen/_44sdp"
+                    android:layout_height="@dimen/_44sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_11sdp"
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
@@ -120,8 +120,9 @@
                     android:layout_marginTop="@dimen/_5sdp"
                     android:gravity="start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textSize="@dimen/_7ssp"
+                    android:textSize="@dimen/_9ssp"
                     android:textColor="#511615"
+                    android:lineSpacingMultiplier="0.9"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/divider"
@@ -138,11 +139,11 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Italic"
                     android:textColor="#511615"
                     android:textStyle="italic"
-                    android:textSize="@dimen/_8sdp"
+                    android:textSize="@dimen/_9sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@id/user_text"
                     app:layout_constraintTop_toBottomOf="@id/user_text"
-                    tools:text="10th Jan 20 - 17th Jan 20" />
+                    tools:text="29 September 2021" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
