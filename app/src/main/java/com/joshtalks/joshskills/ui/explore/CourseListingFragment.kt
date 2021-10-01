@@ -19,12 +19,16 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 class CourseListingFragment : Fragment() {
     private lateinit var binding: FragmentCourseListingBinding
     private var courseList: ArrayList<CourseExploreModel> = arrayListOf()
+    private var isClickable: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             courseList =
                 it.getParcelableArrayList<CourseExploreModel>(ARG_COURSE_LIST_OBJ) as ArrayList<CourseExploreModel>
+
+            isClickable =
+                it.getBoolean(IS_CLICKABLE)
         }
     }
 
@@ -62,7 +66,7 @@ class CourseListingFragment : Fragment() {
         )
 
         val filterList = courseList.filter { it.cardType.ordinal == ExploreCardType.NORMAL.ordinal }
-        val adapter = CourseExploreAdapter(filterList)
+        val adapter = CourseExploreAdapter(filterList,isClickable)
         binding.recyclerView.adapter = adapter
         addOfferCard()
     }
@@ -78,15 +82,17 @@ class CourseListingFragment : Fragment() {
 
     companion object {
         private const val ARG_COURSE_LIST_OBJ = "course-list-obj"
+        private const val IS_CLICKABLE = "is_clickable"
 
         @JvmStatic
-        fun newInstance(conversationPractiseModel: List<CourseExploreModel>) =
+        fun newInstance(conversationPractiseModel: List<CourseExploreModel>, isClickable: Boolean=true) =
             CourseListingFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList(
                         ARG_COURSE_LIST_OBJ,
                         ArrayList(conversationPractiseModel)
                     )
+                    putBoolean(IS_CLICKABLE,isClickable)
                 }
             }
     }

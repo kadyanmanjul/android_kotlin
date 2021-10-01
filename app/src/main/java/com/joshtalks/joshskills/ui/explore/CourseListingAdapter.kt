@@ -6,7 +6,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
 class PractiseViewPagerAdapter(
-    fragmentActivity: FragmentActivity, private val courseByMap: Map<Int, List<CourseExploreModel>>
+    fragmentActivity: FragmentActivity,
+    private val courseByMap: Map<Int, List<CourseExploreModel>>,
+    private val isClickable: Boolean
 ) :
     FragmentStateAdapter(fragmentActivity) {
     private val mKeys: IntArray = courseByMap.keys.toIntArray()
@@ -16,7 +18,7 @@ class PractiseViewPagerAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
-        return CourseListingFragment.newInstance(getItem(position))
+        return CourseListingFragment.newInstance(getItem(position),isClickable)
     }
 
     private fun getItem(position: Int): List<CourseExploreModel> {

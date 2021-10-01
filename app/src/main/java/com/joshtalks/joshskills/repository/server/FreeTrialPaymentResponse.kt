@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.repository.server
 
 
 import com.google.gson.annotations.SerializedName
-import java.util.Date
+import java.util.*
 
 data class FreeTrialPaymentResponse(
     @SerializedName("course_data")
@@ -44,5 +44,7 @@ data class CourseData(
     @SerializedName("heading")
     val heading: String,
     @SerializedName("per_course_price")
-    val perCoursePrice: String?
+    val perCoursePrice: String?,
+    @SerializedName("test_id")
+    val testId: String
 )

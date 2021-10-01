@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
@@ -194,7 +193,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }
                 .let { courseList ->
                     courseList.forEach { inboxEntity ->
-                        if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
+                        if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
                         }
                     }

@@ -13,13 +13,13 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import java.util.*
 
 class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -59,7 +59,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun getOrderDetails(testId: Int, mobileNumber: String,encryptedText:String) {
+    fun getOrderDetails(testId: String, mobileNumber: String,encryptedText:String) {
         // viewState?.postValue(PaymentSummaryViewModel.ViewState.PROCESSING)
         viewModelScope.launch(Dispatchers.IO) {
             isProcessing.postValue(true)
@@ -68,7 +68,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                     "encrypted_text" to encryptedText,
                     "instance_id" to PrefManager.getStringValue(INSTANCE_ID, false),
                     "mobile" to mobileNumber,
-                    "test_id" to testId.toString(),
+                    "test_id" to testId,
                     "mentor_id" to Mentor.getInstance().getId()
                 )
 

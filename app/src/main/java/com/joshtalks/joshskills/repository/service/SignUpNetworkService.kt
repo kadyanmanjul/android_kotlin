@@ -1,26 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
-import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
-import com.joshtalks.joshskills.repository.local.model.FCMResponse
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.LastLoginResponse
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.ActiveUserRequest
-import com.joshtalks.joshskills.repository.server.CouponCodeResponse
-import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.repository.server.CreateOrderResponse
-import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
-import com.joshtalks.joshskills.repository.server.InstanceIdResponse
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
-import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
-import com.joshtalks.joshskills.repository.server.ProfileResponse
-import com.joshtalks.joshskills.repository.server.ReferralCouponDetailResponse
-import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
-import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
-import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
-import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
 import com.joshtalks.joshskills.repository.server.onboarding.LogGetStartedEventRequest
@@ -32,17 +13,7 @@ import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpReq
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Multipart
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 const val DIR = "api/skill/v1"
 
@@ -136,6 +107,9 @@ interface SignUpNetworkService {
 
     @GET("$DIR/course/test_v2/")
     suspend fun exploreCourses(@QueryMap params: Map<String, String>? = mapOf("is_default" to "true")): List<CourseExploreModel>
+
+    @GET("$DIR/course/subscription_course_list/")
+    suspend fun getFreeTrialCourses(): List<CourseExploreModel>
 
     @GET("$DIR/payment/coupon/")
     fun validateOrGetAndReferralOrCouponAsync(@QueryMap params: Map<String, String>): Deferred<List<CouponCodeResponse>>

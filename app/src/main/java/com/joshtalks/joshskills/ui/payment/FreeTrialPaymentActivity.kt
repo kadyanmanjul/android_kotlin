@@ -10,16 +10,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
-import com.joshtalks.joshskills.core.getPhoneNumber
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
@@ -82,22 +75,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         binding.englishCard.setOnClickListener {
             index = 0
-            binding.subscriptionCard.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.white
-                )
-            )
-            binding.subscriptionCard.setStrokeColor(ContextCompat.getColor(this, R.color.light_shade_of_gray))
-            //binding.title1.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
-            //binding.title2.setTextColor(ContextCompat.getColor(this, R.color.black))
-            binding.englishCard.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.colorPrimary_alfa_6
-                )
-            )
-            binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.colorPrimary))
+
+            binding.subscriptionCard.background =
+                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+            binding.englishCard.background =
+                ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
             binding.materialTextView.text = buttonText.get(index)
             binding.txtLabelHeading.text = headingText.get(index)
             binding.seeCourseList.visibility = View.GONE
@@ -105,30 +87,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         binding.subscriptionCard.setOnClickListener {
             index = 1
-
-            binding.englishCard.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.white
-                )
-            )
-            binding.englishCard.setStrokeColor(ContextCompat.getColor(this, R.color.light_shade_of_gray))
-
-            //binding.title1.setTextColor(ContextCompat.getColor(this, R.color.black))
-            //binding.title2.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary))
-
-            binding.subscriptionCard.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.colorPrimary_alfa_6
-                )
-            )
-            binding.subscriptionCard.setStrokeColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.colorPrimary
-                )
-            )
+            binding.subscriptionCard.background =
+                ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
+            binding.englishCard.background =
+                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
             binding.materialTextView.text = buttonText.get(index)
             binding.txtLabelHeading.text = headingText.get(index)
             binding.seeCourseList.visibility = View.VISIBLE
@@ -246,11 +208,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         data2.heading?.let { it1 -> headingText.add(it1) }
                         binding.title2.text = data2.courseHeading
                         binding.txtCurrency2.text = data2.discount?.get(0).toString()
-                        if (data2.perCoursePrice.isNullOrBlank()){
-                            binding.perCourseText.visibility=View.GONE
-                        } else{
-                            binding.perCourseText.visibility=View.VISIBLE
-                            binding.perCourseText.text=data2.perCoursePrice
+                        if (data2.perCoursePrice.isNullOrBlank()) {
+                            binding.perCourseText.visibility = View.GONE
+                        } else {
+                            binding.perCourseText.visibility = View.VISIBLE
+                            binding.perCourseText.text = data2.perCoursePrice
                         }
                         binding.txtCurrency2.text = data2.discount?.get(0).toString()
                         binding.txtFinalPrice2.text = data2.discount?.substring(1)
@@ -265,14 +227,14 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         binding.subscriptionCard.visibility = View.GONE
                     }
                 }
-                if (it.expireTime!=null){
+                if (it.expireTime != null) {
                     binding.freeTrialTimer.visibility = View.VISIBLE
-                    if (it.expireTime!!.time>=System.currentTimeMillis()){
+                    if (it.expireTime!!.time >= System.currentTimeMillis()) {
                         startTimer(it.expireTime.time - System.currentTimeMillis())
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
                     }
-                } else{
+                } else {
                     binding.freeTrialTimer.visibility = View.GONE
                 }
 
@@ -340,7 +302,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         viewModel.getOrderDetails(
-            testId.toInt(),
+            viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId ?: testId,
             phoneNumber,
             viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.encryptedText ?: EMPTY
         )

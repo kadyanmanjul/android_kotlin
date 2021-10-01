@@ -25,14 +25,14 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -174,22 +174,27 @@ class CourseExploreActivity : CoreJoshActivity() {
                 if (intent.hasExtra(IS_COURSES_CLICKABLE)) {
                     isClickable = intent.getBooleanExtra(IS_COURSES_CLICKABLE, true)
                 }
-                val data = HashMap<String, String>()
-                if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
-                    data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+                var response = emptyList<CourseExploreModel>()
+                if (isClickable) {
+                    val data = HashMap<String, String>()
+                    if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
+                        data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+                    }
+                    if (PrefManager.getStringValue(INSTANCE_ID, false).isNotEmpty()) {
+                        data["instance"] = PrefManager.getStringValue(INSTANCE_ID, false)
+                    }
+                    if (Mentor.getInstance().getId().isNotEmpty()) {
+                        data["mentor"] = Mentor.getInstance().getId()
+                    }
+                    if (data.isNullOrEmpty()) {
+                        data["is_default"] = "true"
+                    }
+                    response =
+                        AppObjectController.signUpNetworkService.exploreCourses(data)
+                } else {
+                    response =
+                        AppObjectController.signUpNetworkService.getFreeTrialCourses()
                 }
-                if (PrefManager.getStringValue(INSTANCE_ID, false).isNotEmpty()) {
-                    data["instance"] = PrefManager.getStringValue(INSTANCE_ID, false)
-                }
-                if (Mentor.getInstance().getId().isNotEmpty()) {
-                    data["mentor"] = Mentor.getInstance().getId()
-                }
-                if (data.isNullOrEmpty()) {
-                    data["is_default"] = "true"
-                }
-
-                val response: List<CourseExploreModel> =
-                    AppObjectController.signUpNetworkService.exploreCourses(data)
 
                 val languageSet: LinkedHashSet<String> = linkedSetOf()
 
@@ -210,7 +215,11 @@ class CourseExploreActivity : CoreJoshActivity() {
 
                 withContext(Dispatchers.Main) {
                     courseExploreBinding.courseListingRv.adapter =
-                        PractiseViewPagerAdapter(this@CourseExploreActivity, courseByMap)
+                        PractiseViewPagerAdapter(
+                            this@CourseExploreActivity,
+                            courseByMap,
+                            isClickable
+                        )
                     courseExploreBinding.progressBar.visibility = View.GONE
                     initViewPagerTab()
                 }

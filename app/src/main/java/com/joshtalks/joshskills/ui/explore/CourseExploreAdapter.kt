@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
-class CourseExploreAdapter(private var courseList: List<CourseExploreModel>) :
+class CourseExploreAdapter(private var courseList: List<CourseExploreModel>,private val isClickable: Boolean) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val context = AppObjectController.joshApplication
     private var isStaticHeader = false
@@ -86,6 +86,11 @@ class CourseExploreAdapter(private var courseList: List<CourseExploreModel>) :
                                 .getString(FirebaseRemoteConfigKey.FFCOURSE_CARD_CLICK_MSG)
                         )
                     }
+                }
+                if (isClickable){
+                    buyNowButton.visibility= VISIBLE
+                } else{
+                    buyNowButton.visibility= GONE
                 }
 
                 Glide.with(context)

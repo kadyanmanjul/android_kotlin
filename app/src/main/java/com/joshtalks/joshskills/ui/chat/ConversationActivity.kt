@@ -606,8 +606,8 @@ class ConversationActivity :
                 ),
                 inboxEntity.expiryDate?.time
             )
-            conversationBinding.freeTrialContainer.visibility = View.GONE
-            countdownTimerBack?.stop()
+            //conversationBinding.freeTrialContainer.visibility = View.GONE
+            //countdownTimerBack?.stop()
         }
     }
 
