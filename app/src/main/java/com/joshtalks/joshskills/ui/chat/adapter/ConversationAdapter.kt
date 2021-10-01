@@ -16,34 +16,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils.dateHeaderDateFormat
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.Sender
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.AudioViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BestPerformerRaceViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BestStudentPerformerViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.CertificationExamViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.DateItemHolder
-import com.joshtalks.joshskills.ui.chat.vh.ImageViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.LessonViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.NewMessageViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.PdfViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.PracticeOldViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.TextViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.UnlockNextClassViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.VideoViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.*
 import com.joshtalks.joshskills.util.StickyHeaderAdapter
 import com.joshtalks.joshskills.util.Utils
-import java.lang.ref.WeakReference
-import java.util.ArrayList
-import java.util.Locale
-import java.util.NoSuchElementException
 import timber.log.Timber
+import java.lang.ref.WeakReference
+import java.util.*
 
 class ConversationAdapter(private val activityRef: WeakReference<FragmentActivity>) :
     RecyclerView.Adapter<BaseViewHolder>(),
@@ -317,6 +297,12 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view.tag = BEST_PERFORMER_EXAM_MESSAGE
                 BestStudentPerformerViewHolder(view, userId)
             }
+            FIRST_DAY_ACHIEVEMENT -> {
+                view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.layout_first_day_achievement_item, parent, false)
+                view.tag = FIRST_DAY_ACHIEVEMENT
+                FirstDayAchievementViewHolder(view, userId)
+            }
             BEST_PERFORMER_RACE -> {
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.layout_best_performer_race_item, parent, false)
@@ -425,6 +411,8 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 return BEST_PERFORMER_EXAM_MESSAGE
             BASE_MESSAGE_TYPE.BEST_PERFORMER_RACE ->
                 return BEST_PERFORMER_RACE
+            BASE_MESSAGE_TYPE.FIRST_DAY_ACHIEVEMENT ->
+                return FIRST_DAY_ACHIEVEMENT
             BASE_MESSAGE_TYPE.NEW_CLASS -> {
                 return NEW_CLASS_MESSAGE
             }
@@ -532,6 +520,7 @@ private const val LESSON_MESSAGE = 19
 
 private const val BEST_PERFORMER_EXAM_MESSAGE = 21
 private const val BEST_PERFORMER_RACE = 42
+private const val FIRST_DAY_ACHIEVEMENT = 43
 // private const val BEST_PERFORMER_EXAM_MESSAGE = 21
 
 private const val NEW_CLASS_MESSAGE = 40

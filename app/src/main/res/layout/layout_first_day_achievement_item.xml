@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="@dimen/_270sdp"
+    android:layout_height="@dimen/_320sdp"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_2sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_view_fl"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="@dimen/_320sdp"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:background="@drawable/rect_round_4dp_yellow"
+            android:backgroundTint="#000000"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/thumbnail_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/rounded_grey_bg_2dp"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:backgroundTint="#E4BD71" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/play_icon"
+                android:layout_width="@dimen/_44sdp"
+                android:layout_height="@dimen/_44sdp"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/thumbnail_image"
+                app:layout_constraintEnd_toEndOf="@id/thumbnail_image"
+                app:layout_constraintStart_toStartOf="@id/thumbnail_image"
+                app:layout_constraintTop_toTopOf="@id/thumbnail_image"
+                app:srcCompat="@drawable/ic_play_icon_race" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/logo"
+                android:layout_width="@dimen/_64sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                app:layout_constraintBottom_toTopOf="@id/first_day_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/josh_skill_logo"
+                tools:text="मेरा पहला दिन" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/first_day_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toTopOf="@id/date"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="मेरा पहला दिन" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginBottom="@dimen/_30sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="27 Sept, 2021" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/badge"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_150sdp"
+            app:layout_constraintEnd_toEndOf="@id/root_view_fl"
+            app:layout_constraintStart_toEndOf="@id/root_view_fl"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="lottie/winner_badge.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="false" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
+

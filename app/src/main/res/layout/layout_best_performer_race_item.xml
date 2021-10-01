@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_210sdp"
+        android:layout_width="@dimen/_220sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/_16sdp"
@@ -45,6 +45,7 @@
             android:backgroundTint="#E4BD71"
             android:layout_marginVertical="@dimen/_6sdp"
             app:layout_constraintStart_toStartOf="parent"
+            android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
             app:layout_constraintBottom_toBottomOf="parent"/>

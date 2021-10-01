@@ -13,9 +13,9 @@ class BestStudentPerformerViewHolder(view: View, userId: String) : BaseViewHolde
     val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)
 
     private var studentOfWeekNewStub: Stub<StudentOfTheWeekNewView> =
-        Stub(view.findViewById(R.id.student_of_day_stub))
-    private var studentOfDayNewStub: Stub<StudentOfTheDayNewView> =
         Stub(view.findViewById(R.id.student_of_week_stub))
+    private var studentOfDayNewStub: Stub<StudentOfTheDayNewView> =
+        Stub(view.findViewById(R.id.student_of_day_stub))
     private var studentOfMonthStub: Stub<StudentOfTheMonthView> =
         Stub(view.findViewById(R.id.student_of_month_stub))
 

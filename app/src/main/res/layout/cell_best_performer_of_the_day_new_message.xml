@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_210sdp"
+        android:layout_width="@dimen/_220sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/_16sdp"
