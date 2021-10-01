@@ -239,7 +239,7 @@ class CourseProgressActivityNew :
                     viewModel.progressLiveData.value?.expiryDate != null &&
                     viewModel.progressLiveData.value?.expiryDate!!.time < System.currentTimeMillis()
                 ) {
-                    showFreeTrialPaymentScreen()
+                    showToast(getString(R.string.feature_locked))
                 } else if (lessonModel != null) {
                     activityListener.launch(
                         LessonActivity.getActivityIntent(

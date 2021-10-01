@@ -8,7 +8,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivityPreviousLeaderboardBinding
@@ -18,6 +20,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -40,7 +43,7 @@ class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_previous_leaderboard)
         binding.lifecycleOwner = this
-        intervalType = intent.getStringExtra(INTERVAL_TYPE)?: EMPTY
+        intervalType = intent.getStringExtra(INTERVAL_TYPE) ?: EMPTY
         addObserver()
         initRV()
         initToolbar()
@@ -64,6 +67,9 @@ class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
     }
 
     private fun setOnClickListeners() {
+        binding.btnBuyNow.setOnClickListener {
+            showFreeTrialPaymentScreen()
+        }
     }
 
     private fun initToolbar() {
@@ -80,6 +86,16 @@ class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
             this,
             { response ->
                 response?.let {
+
+                    if (it.currentMentor?.isCourseBought == false &&
+                        it.currentMentor.expiryDate != null &&
+                        it.currentMentor.expiryDate.time < System.currentTimeMillis()
+                    ) {
+                        binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+                    } else {
+                        binding.freeTrialExpiryLayout.visibility = View.GONE
+                    }
+
                     initToolbarTitle(it.title)
                     setData(it)
                 }
@@ -201,6 +217,17 @@ class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
             USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
             conversationId = intent.getStringExtra(CONVERSATION_ID)
         )
+    }
+
+    fun showFreeTrialPaymentScreen() {
+        FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+            this,
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            ),
+            viewModel.previousLeaderBoardData.value?.currentMentor?.expiryDate?.time
+        )
+        // finish()
     }
 
     override fun onStop() {

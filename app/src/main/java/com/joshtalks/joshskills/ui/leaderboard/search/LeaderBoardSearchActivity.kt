@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.track.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import java.util.ArrayList
 import java.util.Locale
+import timber.log.Timber
 
 
 class LeaderBoardSearchActivity : BaseActivity() {
@@ -40,8 +41,13 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_leaderboard_search)
         binding.lifecycleOwner = this
         binding.handler = this
-        if (intent.hasExtra("hash_map")) {
-            map = intent.getSerializableExtra("hash_map") as HashMap<String, LeaderboardResponse>
+        try {
+            if (intent.hasExtra("hash_map")) {
+                map =
+                    intent.getSerializableExtra("hash_map") as HashMap<String, LeaderboardResponse>
+            }
+        } catch (ex: Exception) {
+            Timber.d(ex)
         }
         initViewPager()
         initRecentSearchRecyclerview()

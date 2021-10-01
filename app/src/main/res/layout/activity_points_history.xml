@@ -43,6 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_200sdp"
             android:background="@drawable/black_gradient"
+            android:elevation="@dimen/_4sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:visibility="visible">

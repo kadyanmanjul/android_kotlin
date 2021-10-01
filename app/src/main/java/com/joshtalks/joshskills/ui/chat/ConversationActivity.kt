@@ -263,9 +263,13 @@ class ConversationActivity :
         ) {
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
             startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
-        } else if (inboxEntity.expiryDate != null && inboxEntity.expiryDate!!.time < System.currentTimeMillis()){
+        } else if (inboxEntity.isCourseBought.not() &&
+            inboxEntity.expiryDate != null &&
+            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+        ) {
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
-            conversationBinding.freeTrialText.text=getString(R.string.free_trial_ended)
+            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
@@ -391,7 +395,7 @@ class ConversationActivity :
             ),
             inboxEntity.expiryDate?.time
         )
-        finish()
+        // finish()
     }
 
     private fun initToolbar() {
@@ -1473,16 +1477,23 @@ class ConversationActivity :
                 .subscribeOn(Schedulers.computation())
                 .subscribe(
                     {
-                        startActivityForResult(
-                            LessonActivity.getActivityIntent(
-                                this,
-                                it.lessonId,
-                                conversationId = inboxEntity.conversation_id,
-                                isNewGrammar = it.isNewGrammar,
-                                isLessonCompleted = it.isLessonCompleted
-                            ),
-                            LESSON_REQUEST_CODE
-                        )
+                        if (inboxEntity.isCourseBought.not() &&
+                            inboxEntity.expiryDate != null &&
+                            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+                        ) {
+                            showToast(getString(R.string.feature_locked))
+                        } else {
+                            startActivityForResult(
+                                LessonActivity.getActivityIntent(
+                                    this,
+                                    it.lessonId,
+                                    conversationId = inboxEntity.conversation_id,
+                                    isNewGrammar = it.isNewGrammar,
+                                    isLessonCompleted = it.isLessonCompleted
+                                ),
+                                LESSON_REQUEST_CODE
+                            )
+                        }
                     },
                     {
                         it.printStackTrace()
