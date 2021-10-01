@@ -85,6 +85,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             binding.seeCourseList.visibility = View.GONE
 
         }
+
         binding.subscriptionCard.setOnClickListener {
             index = 1
             binding.subscriptionCard.background =
@@ -94,6 +95,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             binding.materialTextView.text = buttonText.get(index)
             binding.txtLabelHeading.text = headingText.get(index)
             binding.seeCourseList.visibility = View.VISIBLE
+            scrollToBottom()
         }
         binding.seeCourseList.setOnClickListener {
             CourseExploreActivity.startCourseExploreActivity(
@@ -123,6 +125,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
         countdownTimerBack?.startTimer()
+    }
+
+    fun scrollToBottom() {
+        binding.scrollView.post {
+            binding.scrollView.fullScroll(View.FOCUS_DOWN)
+        }
     }
 
     private fun setObservers() {

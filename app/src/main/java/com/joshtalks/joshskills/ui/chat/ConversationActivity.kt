@@ -95,18 +95,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -256,8 +251,15 @@ class ConversationActivity :
         initView()
         initFuture()
         addObservable()
+        initFreeTrialTimer()
         fetchMessage()
         readMessageDatabaseUpdate()
+        if (inboxEntity.isCapsuleCourse) {
+            PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
+        }
+    }
+
+    private fun initFreeTrialTimer() {
         if (inboxEntity.isCourseBought.not() &&
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
@@ -271,9 +273,6 @@ class ConversationActivity :
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
-        }
-        if (inboxEntity.isCapsuleCourse) {
-            PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
     }
 
@@ -348,6 +347,7 @@ class ConversationActivity :
                 this@ConversationActivity,
                 R.color.leaderboard_overlay_status_bar
             )
+            conversationBinding.freeTrialContainer.visibility = GONE
             conversationBinding.overlayLayout.visibility = VISIBLE
             conversationBinding.arrowAnimation.visibility = VISIBLE
             conversationBinding.overlayLeaderboardContainer.visibility = VISIBLE
@@ -373,6 +373,7 @@ class ConversationActivity :
     }
 
     private fun hideLeaderBoardSpotlight() {
+        initFreeTrialTimer()
         conversationBinding.overlayLayout.setOnClickListener(null)
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
         conversationBinding.overlayLayout.visibility = GONE
@@ -380,6 +381,7 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardContainer.visibility = GONE
         conversationBinding.labelTapToDismiss.visibility = GONE
         conversationBinding.overlayLeaderboardTooltip.visibility = GONE
+
     }
 
     private fun initEndTrialBottomSheet() {
