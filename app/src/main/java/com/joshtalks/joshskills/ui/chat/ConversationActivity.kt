@@ -54,6 +54,7 @@ import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
@@ -1481,7 +1482,9 @@ class ConversationActivity :
                             inboxEntity.expiryDate != null &&
                             inboxEntity.expiryDate!!.time < System.currentTimeMillis()
                         ) {
-                            showToast(getString(R.string.feature_locked))
+                            val nameArr = User.getInstance().firstName?.split(" ")
+                            val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                            showToast(getString(R.string.feature_locked, firstName))
                         } else {
                             startActivityForResult(
                                 LessonActivity.getActivityIntent(

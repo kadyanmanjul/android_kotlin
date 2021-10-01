@@ -922,6 +922,6 @@
     <string name="label_senior_student">%sis a Senior Student</string>
     <string name="call_new_student">Call New Student</string>
     <string name="free_trial_end_in">Free Trial ends in %s</string>
-    <string name="feature_locked">This feature is locked</string>
+    <string name="feature_locked">%s आपका free trial खतम हो गया है. Please course में admission लें.</string>
 
 </resources>

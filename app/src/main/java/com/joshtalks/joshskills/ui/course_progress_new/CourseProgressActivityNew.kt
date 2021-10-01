@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecorati
 import com.joshtalks.joshskills.core.extension.deepEquals
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -239,7 +240,9 @@ class CourseProgressActivityNew :
                     viewModel.progressLiveData.value?.expiryDate != null &&
                     viewModel.progressLiveData.value?.expiryDate!!.time < System.currentTimeMillis()
                 ) {
-                    showToast(getString(R.string.feature_locked))
+                    val nameArr = User.getInstance().firstName?.split(" ")
+                    val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                    showToast(getString(R.string.feature_locked, firstName))
                 } else if (lessonModel != null) {
                     activityListener.launch(
                         LessonActivity.getActivityIntent(
