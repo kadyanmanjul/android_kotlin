@@ -60,12 +60,12 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -126,6 +126,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, false)
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity
@@ -174,7 +175,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
-        //PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, false)
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
 
@@ -689,6 +689,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.wrongAnswerDesc.text = wrongAnswerText
             binding.tooltipFrame.visibility = View.VISIBLE
             binding.videoBtnTooltip.visibility = View.VISIBLE
+            binding.videoIvBtn.playAnimation()
             binding.overlayTooltipLayout.visibility = View.VISIBLE
 
             binding.tooltipFrame.setOnClickListener {

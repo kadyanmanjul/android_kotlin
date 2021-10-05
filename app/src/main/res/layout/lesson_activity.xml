@@ -372,6 +372,7 @@
             android:layout_marginBottom="@dimen/_minus35sdp"
             android:elevation="@dimen/_8sdp"
             android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintBottom_toTopOf="@id/video_btn_tooltip"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -414,18 +415,19 @@
                     app:layout_constraintTop_toBottomOf="@id/tooltip_tv"
                     app:srcCompat="@drawable/ic_down_arrow" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/video_iv_btn"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_33sdp"
-                    android:tint="@color/grammar_red_color_dark"
                     android:elevation="@dimen/_16sdp"
-                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/arrow"
-                    app:srcCompat="@drawable/ic_video_clip" />
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="lottie/play.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -439,6 +441,7 @@
             android:background="@color/grammar_wrong_answer_bg"
             android:orientation="vertical"
             android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -471,7 +474,7 @@
                     android:layout_marginEnd="@dimen/_16sdp"
                     android:tint="@color/grammar_red_color_dark"
                     android:elevation="@dimen/_16sdp"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/flag_iv"
                     app:layout_constraintTop_toTopOf="@id/flag_iv"
