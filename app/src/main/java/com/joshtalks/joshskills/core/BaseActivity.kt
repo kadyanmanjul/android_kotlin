@@ -811,7 +811,8 @@ abstract class BaseActivity :
     protected fun downloadFile(
         url: String,
         message: String = "Downloading file",
-        title: String = "Josh Skills"
+        title: String = "Josh Skills",
+        saveToGallery:Boolean = false
     ) {
         lifecycleScope.launch(Dispatchers.IO) {
             var fileName = Utils.getFileNameFromURL(url)
@@ -822,6 +823,12 @@ abstract class BaseActivity :
             }
             registerDownloadReceiver(fileName)
 
+            var env= if (saveToGallery){
+                Environment.DIRECTORY_DOWNLOADS
+            } else {
+                Environment.DIRECTORY_MOVIES
+            }
+
             val request: DownloadManager.Request =
                 DownloadManager.Request(Uri.parse(url))
                     .setTitle(title)
@@ -830,7 +837,7 @@ abstract class BaseActivity :
                     .setAllowedOverMetered(true)
                     .setAllowedOverRoaming(true)
                     .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                    .setDestinationInExternalPublicDir(env, fileName)
 
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 

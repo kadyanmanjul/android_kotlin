@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +15,12 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
+import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.dynamiclinks.ktx.androidParameters
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.dynamiclinks.ktx.googleAnalyticsParameters
+import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
+import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -31,6 +38,7 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
@@ -38,6 +46,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
+import com.joshtalks.joshskills.ui.referral.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,6 +61,7 @@ const val TAG = "video_watch_time"
 const val DURATION = "duration"
 const val VIDEO_URL = "video_url"
 const val VIDEO_ID = "video_id"
+const val IS_SHARABLE_VIDEO = "is_sharable_video"
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventListener {
 
@@ -62,6 +72,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoTitle: String,
             duration: Int? = 0,
             conversationId: String? = null,
+            isSharableVideo: Boolean? = null
         ) {
             val intent = Intent(activity, VideoPlayerActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -69,6 +80,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             intent.putExtra(COURSE_NAME, videoTitle)
             intent.putExtra(DURATION, duration)
             intent.putExtra(CONVERSATION_ID, conversationId)
+            isSharableVideo?.let {
+                intent.putExtra(IS_SHARABLE_VIDEO, isSharableVideo)
+            }
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
         }
 
@@ -79,12 +93,17 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoUrl: String?,
             currentVideoProgressPosition: Long = 0,
             conversationId: String? = null,
+            isSharableVideo: Boolean? = null
+
         ) {
             val intent = Intent(context, VideoPlayerActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.putExtra(VIDEO_URL, videoUrl)
             intent.putExtra(VIDEO_ID, videoId)
             intent.putExtra(COURSE_NAME, videoTitle)
+            isSharableVideo?.let {
+                intent.putExtra(IS_SHARABLE_VIDEO, isSharableVideo)
+            }
             intent.putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
             intent.putExtra(CONVERSATION_ID, conversationId)
             context.startActivity(intent)
@@ -97,11 +116,15 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoUrl: String?,
             currentVideoProgressPosition: Long = 0,
             conversationId: String? = null,
+            isSharableVideo: Boolean? = null
         ): Intent {
             return Intent(context, VideoPlayerActivity::class.java).apply {
                 putExtra(VIDEO_URL, videoUrl)
                 putExtra(VIDEO_ID, videoId)
                 putExtra(COURSE_NAME, videoTitle)
+                isSharableVideo?.let {
+                    putExtra(IS_SHARABLE_VIDEO, isSharableVideo)
+                }
                 putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
                 putExtra(CONVERSATION_ID, conversationId)
             }
@@ -123,6 +146,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var videoId: String? = null
     private var videoUrl: String? = null
     private var currentVideoProgressPosition: Long = 0
+    private var isSharableVideo: Boolean = false
     private lateinit var appAnalytics: AppAnalytics
     private var videoDuration: Long? = 0
     private var courseDuration: Int = 0
@@ -135,6 +159,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var maxInterval: Int = -1
     private var interval = -1
     private var courseId: Int = -1
+    private var userReferralURL: String = EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -195,6 +220,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         if (intent.hasExtra(CURRENT_VIDEO_PROGRESS_POSITION)) {
             currentVideoProgressPosition = intent.getLongExtra(CURRENT_VIDEO_PROGRESS_POSITION, 0)
         }
+        if (intent.hasExtra(IS_SHARABLE_VIDEO)) {
+            isSharableVideo = intent.getBooleanExtra(IS_SHARABLE_VIDEO, false)
+            if (isSharableVideo) {
+                getRefferalCodes()
+            }
+        }
 
         videoUrl?.run {
             binding.videoPlayer.setUrl(this)
@@ -225,6 +256,43 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             AnalyticsEvent.COURSE_NAME.NAME,
             binding.textMessageTitle.text.toString()
         )
+    }
+
+    private fun getRefferalCodes() {
+        if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
+            userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+
+        }
+        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+            link = Uri.parse("https://joshskill.app.link")
+            domainUriPrefix = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+
+            androidParameters(BuildConfig.APPLICATION_ID) {
+                minimumVersion = 69
+            }
+            googleAnalyticsParameters {
+                source = Mentor.getInstance().referralCode
+                medium = "Mobile"
+                campaign = "user_referer"
+            }
+
+        }.addOnSuccessListener { result ->
+            result?.shortLink?.let {
+                try {
+                    if (it.toString().isNotEmpty()) {
+                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                        userReferralURL = it.toString()
+
+                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }
+            .addOnFailureListener {
+                it.printStackTrace()
+
+            }
     }
 
     override fun getConversationId(): String? {
@@ -279,13 +347,71 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             appAnalytics.addParam(AnalyticsEvent.VIDEO_PAUSE.NAME, true)
         }
         if (playbackState == Player.STATE_ENDED) {
-            if (nextButtonVisible.not()) {
-                onBackPressed()
-            } else {
+            if (isSharableVideo) {
+                binding.saveVideoFrame.visibility = View.VISIBLE
+                binding.toolbar.visibility = View.GONE
                 binding.videoPlayer.hideButtons()
-                binding.imageBlack.visibility = View.VISIBLE
+                //setClickListeners()
+            } else {
+                if (nextButtonVisible.not()) {
+                    onBackPressed()
+                } else {
+                    binding.videoPlayer.hideButtons()
+                    binding.imageBlack.visibility = View.VISIBLE
+                }
             }
         }
+    }
+
+    private fun setClickListeners() {
+        binding.share.setOnClickListener {
+            inviteFriends()
+        }
+
+        binding.saveGallery.setOnClickListener {
+            videoUrl?.let {
+                showToast("Downloading ...")
+                downloadVideo(videoUrl!!)
+            }
+        }
+    }
+
+    private fun downloadVideo(videoUrl: String) {
+        downloadFile(videoUrl,saveToGallery = true)
+    }
+
+    fun inviteFriends(packageString: String? = null) {
+        var referralText = com.joshtalks.joshskills.ui.referral.VIDEO_URL.plus("\n").plus(
+            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
+        )
+        val refAmount =
+            AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
+                .toString()
+        referralText = referralText.replace(REPLACE_HOLDER, Mentor.getInstance().referralCode)
+        referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
+
+        referralText = if (userReferralURL.isEmpty()) {
+            referralText.plus("\n").plus(getAppShareUrl())
+        } else {
+            referralText.plus("\n").plus(userReferralURL)
+        }
+
+        try {
+            val waIntent = Intent(Intent.ACTION_SEND)
+            waIntent.type = "text/plain"
+            if (packageString.isNullOrEmpty().not()) {
+                waIntent.setPackage(packageString)
+            }
+            waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
+            startActivity(Intent.createChooser(waIntent, "Share with"))
+
+        } catch (e: PackageManager.NameNotFoundException) {
+            showToast(getString(R.string.whatsApp_not_installed))
+        }
+    }
+
+    private fun getAppShareUrl(): String {
+        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D${Mentor.getInstance().referralCode}"
     }
 
     private fun showUsbConnectedMsg() {
@@ -323,7 +449,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoDuration?.compareTo(0L)!! > 0 &&
             (videoDuration?.minus(time))!! < 2500 &&
             chatObject?.conversationId.isNullOrBlank().not() &&
-            chatObject?.sender?.user?.id.isNullOrBlank().not()
+            chatObject?.sender?.user?.id.isNullOrBlank().not() &&
+            isSharableVideo.not()
         ) {
             getNextClassUrl()
         }

@@ -68,7 +68,7 @@
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toTopOf="@id/date"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="मेरा पहला दिन" />
+                android:text="मेरा पहला दिन" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/date"
@@ -86,15 +86,15 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/badge"
-            android:layout_width="@dimen/_150sdp"
-            android:layout_height="@dimen/_150sdp"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_60sdp"
             app:layout_constraintEnd_toEndOf="@id/root_view_fl"
             app:layout_constraintStart_toEndOf="@id/root_view_fl"
             app:layout_constraintTop_toTopOf="parent"
             app:lottie_autoPlay="false"
-            app:lottie_fileName="lottie/winner_badge.json"
+            app:lottie_fileName="lottie/badge.json"
             app:lottie_imageAssetsFolder="lottie"
-            app:lottie_loop="false" />
+            app:lottie_loop="true" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

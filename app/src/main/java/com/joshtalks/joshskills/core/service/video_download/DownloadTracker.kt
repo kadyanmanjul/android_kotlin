@@ -4,12 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.RenderersFactory
-import com.google.android.exoplayer2.offline.Download
-import com.google.android.exoplayer2.offline.DownloadHelper
-import com.google.android.exoplayer2.offline.DownloadIndex
-import com.google.android.exoplayer2.offline.DownloadManager
-import com.google.android.exoplayer2.offline.DownloadRequest
-import com.google.android.exoplayer2.offline.DownloadService
+import com.google.android.exoplayer2.offline.*
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
@@ -28,9 +23,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import java.io.IOException
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.CopyOnWriteArraySet
 
 /**
@@ -282,8 +275,10 @@ class DownloadTracker internal constructor(
             for (listener in listeners) {
                 if (lessonQuestion != null) {
                     listener.onError(gsonMapper.toJson(lessonQuestion), e)
-                } else {
+                } else if(chatObj!=null){
                     listener.onError(gsonMapper.toJson(chatObj), e)
+                }else {
+                    listener.onError(DownloadHelper::class.java.name, e)
                 }
             }
             publish(
@@ -293,10 +288,16 @@ class DownloadTracker internal constructor(
                         gsonMapper.toJson(lessonQuestion),
                         0f
                     )
-                } else {
+                } else if (chatObj != null) {
                     MediaProgressEventBus(
                         Download.STATE_STOPPED,
                         gsonMapper.toJson(chatObj),
+                        0f
+                    )
+                }else {
+                    MediaProgressEventBus(
+                        Download.STATE_STOPPED,
+                        DownloadHelper::class.java.name,
                         0f
                     )
                 }
@@ -327,8 +328,10 @@ class DownloadTracker internal constructor(
             return downloadHelper.getDownloadRequest(
                 if (lessonQuestion != null) {
                     Util.getUtf8Bytes(gsonMapper.toJson(lessonQuestion))
-                } else {
+                } else if (chatObj != null) {
                     Util.getUtf8Bytes(gsonMapper.toJson(chatObj))
+                }else {
+                    Util.getUtf8Bytes(DownloadHelper::class.java.name)
                 }
 
             )

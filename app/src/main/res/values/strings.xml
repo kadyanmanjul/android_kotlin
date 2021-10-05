@@ -923,5 +923,6 @@
     <string name="call_new_student">Call New Student</string>
     <string name="free_trial_end_in">Free Trial ends in %s</string>
     <string name="feature_locked">%s आपका free trial खतम हो गया है. Please course में admission लें.</string>
+    <string name="my_day_review_title">"My day in review"</string>
 
 </resources>

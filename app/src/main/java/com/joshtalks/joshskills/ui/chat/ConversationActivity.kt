@@ -1103,7 +1103,8 @@ class ConversationActivity :
                             it.chatModel,
                             inboxEntity.course_name,
                             inboxEntity.duration,
-                            conversationId = inboxEntity.conversation_id
+                            conversationId = inboxEntity.conversation_id,
+                            isSharableVideo = true
                         )
                     },
                     {
@@ -1515,6 +1516,30 @@ class ConversationActivity :
                 .subscribe(
                     {
                         showAward(listOf(it.award), true)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
+        )
+
+        compositeDisposable.add(
+            RxBus2.listen(OpenBestPerformerRaceEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        var title: String = EMPTY
+                        if (it.isSharable) {
+                            title = getString(R.string.my_day_review_title)
+                        }
+                        VideoPlayerActivity.startVideoActivity(
+                            this,
+                            title,
+                            null,
+                            it.videoUrl,
+                            isSharableVideo = it.isSharable
+                        )
                     },
                     {
                         it.printStackTrace()
