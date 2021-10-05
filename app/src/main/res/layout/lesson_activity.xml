@@ -425,7 +425,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/arrow"
                     app:lottie_autoPlay="true"
-                    app:lottie_fileName="lottie/play.json"
+                    app:lottie_fileName="lottie/play2.json"
                     app:lottie_imageAssetsFolder="lottie"
                     app:lottie_loop="true" />
 
@@ -472,13 +472,14 @@
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_16sdp"
                     android:layout_marginEnd="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_minus1sdp"
                     android:tint="@color/grammar_red_color_dark"
                     android:elevation="@dimen/_16sdp"
                     android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/flag_iv"
                     app:layout_constraintTop_toTopOf="@id/flag_iv"
-                    app:srcCompat="@drawable/ic_video_clip" />
+                    app:srcCompat="@drawable/ic_play_red" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView

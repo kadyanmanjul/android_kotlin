@@ -303,7 +303,7 @@ class GrammarButtonView : FrameLayout {
             videoIv.visibility = GONE
         }else {
             videoIv.visibility = VISIBLE
-            updateImageTint(videoIv, R.color.grammar_green_color)
+            updateImageDrawable(videoIv, R.drawable.ic_play_green)
         }
         textContainer.slideUpAnimation(context)
 
@@ -363,7 +363,7 @@ class GrammarButtonView : FrameLayout {
             callback?.onVideoButtonAppear(false,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText,EMPTY,
                 reviseVideoObject?.id,
                 reviseVideoObject?.video_url)
-            updateImageTint(videoIv, R.color.grammar_red_color_dark)
+            updateImageDrawable(videoIv, R.drawable.ic_play_red)
         }
         textContainer.slideUpAnimation(context)
 
@@ -409,6 +409,11 @@ class GrammarButtonView : FrameLayout {
 
     private fun updateImageTint(view: AppCompatImageView, color: Int) {
         view.imageTintList = ContextCompat.getColorStateList(context, color)
+    }
+
+    private fun updateImageDrawable(view: AppCompatImageView, drawableId: Int) {
+        view.background =
+            ContextCompat.getDrawable(context, drawableId)
     }
 
     private fun updateBgColor(view: View, color: Int) {

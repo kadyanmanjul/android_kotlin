@@ -126,7 +126,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, false)
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity

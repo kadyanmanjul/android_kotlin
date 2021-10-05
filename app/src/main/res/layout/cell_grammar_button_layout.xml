@@ -34,14 +34,15 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/video_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_12sdp"
                 app:layout_constraintEnd_toStartOf="@id/flag_iv"
+                android:layout_marginTop="@dimen/_minus1sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:visibility="visible"
                 app:layout_constraintTop_toTopOf="@id/flag_iv"
-                app:srcCompat="@drawable/ic_video_clip" />
+                tools:srcCompat="@drawable/ic_play_red" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/correct_answer_title"
