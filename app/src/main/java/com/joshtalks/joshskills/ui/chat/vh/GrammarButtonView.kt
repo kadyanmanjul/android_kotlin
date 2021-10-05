@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -37,7 +38,8 @@ class GrammarButtonView : FrameLayout {
     private lateinit var wrongAnswerTitle: AppCompatTextView
     private lateinit var wrongAnswerDesc: AppCompatTextView
     private lateinit var flagIv: AppCompatImageView
-    private lateinit var videoIv: AppCompatImageView
+    private lateinit var videoIvRed: LottieAnimationView
+    private lateinit var videoIvGreen: LottieAnimationView
     private lateinit var grammarBtn: MaterialTextView
     private lateinit var wrongAnswerGroup: Group
     private lateinit var rightAnswerGroup: Group
@@ -141,7 +143,8 @@ class GrammarButtonView : FrameLayout {
         wrongAnswerGroup = findViewById(R.id.wrong_answer_group)
         rightAnswerGroup = findViewById(R.id.right_answer_group)
         flagIv = findViewById(R.id.flag_iv)
-        videoIv = findViewById(R.id.video_iv)
+        videoIvRed = findViewById(R.id.video_iv_red)
+        videoIvGreen = findViewById(R.id.video_iv_green)
         grammarBtn = findViewById(R.id.grammar_btn)
         setGrammarButtonListners()
     }
@@ -170,7 +173,15 @@ class GrammarButtonView : FrameLayout {
             }
         }
         grammarBtn.setOnTouchListener(onTouchListener3)
-        videoIv.setOnClickListener {
+        videoIvRed.setOnClickListener {
+            if (reviseVideoObject?.video_url.isNullOrBlank().not()){
+                callback?.onVideoButtonAppear(true,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText,EMPTY,
+                    reviseVideoObject?.id,
+                    reviseVideoObject?.video_url)
+                openVideoObject()
+            }
+        }
+        videoIvGreen.setOnClickListener {
             if (reviseVideoObject?.video_url.isNullOrBlank().not()){
                 callback?.onVideoButtonAppear(true,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText,EMPTY,
                     reviseVideoObject?.id,
@@ -258,7 +269,8 @@ class GrammarButtonView : FrameLayout {
         currentState = GrammarButtonState.DISABLED
         updateGrammarButtonDrawable(grammarBtn, R.drawable.gray_btn_pressed_state)
         flagIv.visibility = GONE
-        videoIv.visibility = GONE
+        videoIvRed.visibility = GONE
+        videoIvGreen.visibility = GONE
         //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
         updateBgColor(rootView, R.color.white)
         isAnswerChecked = false
@@ -300,10 +312,12 @@ class GrammarButtonView : FrameLayout {
         updateGrammarButtonDrawable(grammarBtn, R.drawable.green_btn_grammar_selector)
         updateImageTint(flagIv, R.color.grammar_green_color)
         if (reviseVideoObject?.video_url.isNullOrBlank()){
-            videoIv.visibility = GONE
+            videoIvRed.visibility = GONE
+            videoIvGreen.visibility = GONE
         }else {
-            videoIv.visibility = VISIBLE
-            updateImageDrawable(videoIv, R.drawable.ic_play_green)
+            videoIvGreen.visibility = VISIBLE
+            videoIvRed.visibility = GONE
+            videoIvGreen.playAnimation()
         }
         textContainer.slideUpAnimation(context)
 
@@ -357,13 +371,15 @@ class GrammarButtonView : FrameLayout {
         updateGrammarButtonDrawable(grammarBtn, R.drawable.red_btn_grammar_selector)
         updateImageTint(flagIv, R.color.grammar_red_color_dark)
         if (reviseVideoObject?.video_url.isNullOrBlank()){
-            videoIv.visibility = GONE
+            videoIvRed.visibility = GONE
+            videoIvGreen.visibility = GONE
         }else {
-            videoIv.visibility = VISIBLE
+            videoIvRed.visibility = VISIBLE
+            videoIvGreen.visibility = GONE
+            videoIvRed.playAnimation()
             callback?.onVideoButtonAppear(false,this.questionFeedback?.wrongAnswerHeading,this.questionFeedback?.wrongAnswerText,EMPTY,
                 reviseVideoObject?.id,
                 reviseVideoObject?.video_url)
-            updateImageDrawable(videoIv, R.drawable.ic_play_red)
         }
         textContainer.slideUpAnimation(context)
 
@@ -409,11 +425,6 @@ class GrammarButtonView : FrameLayout {
 
     private fun updateImageTint(view: AppCompatImageView, color: Int) {
         view.imageTintList = ContextCompat.getColorStateList(context, color)
-    }
-
-    private fun updateImageDrawable(view: AppCompatImageView, drawableId: Int) {
-        view.background =
-            ContextCompat.getDrawable(context, drawableId)
     }
 
     private fun updateBgColor(view: View, color: Int) {
