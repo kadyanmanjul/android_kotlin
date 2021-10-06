@@ -1,15 +1,16 @@
-package com.joshtalks.joshskills.ui.chat.vh
+package com.joshtalks .joshskills.ui.chat.vh
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -23,19 +24,22 @@ import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
 
+private const val TAG = "LessonInProgressView"
 class LessonInProgressView : FrameLayout {
     private lateinit var rootView: FrameLayout
     private var lessonModel: LessonModel? = null
+    var lastLessonPosition:Int = 0
 
     private lateinit var imageView: AppCompatImageView
     private lateinit var lessonNameTv: AppCompatTextView
     private lateinit var startLessonTv: AppCompatTextView
     private lateinit var startLessonTvShimmer: LottieAnimationView
     private lateinit var continueLessonTv: AppCompatTextView
-    private lateinit var grammarStatus: ImageView
-    private lateinit var vocabStatus: ImageView
-    private lateinit var readingStatus: ImageView
-    private lateinit var speakingStatus: ImageView
+
+    private lateinit var grammarStatus: LottieAnimationView
+    private lateinit var vocabStatus: LottieAnimationView
+    private lateinit var readingStatus: LottieAnimationView
+    private lateinit var speakingStatus: LottieAnimationView
 
     private val drawableAttempted: Drawable? by lazy {
         ResourcesCompat.getDrawable(
@@ -115,7 +119,7 @@ class LessonInProgressView : FrameLayout {
         }
     }
 
-    fun setup(lesson: LessonModel) {
+    fun setup(lesson: LessonModel,lastLesson:Int?) {
         this.lessonModel = lesson
         lessonNameTv.text = context.getString(
             R.string.lesson_name,
@@ -123,10 +127,12 @@ class LessonInProgressView : FrameLayout {
             lesson.lessonName
         )
         imageView.setImageInLessonView(lesson.thumbnailUrl)
-        setupUI(lesson)
+        setupUI(lesson,lastLesson)
     }
 
-    private fun setupUI(lesson: LessonModel) {
+     fun setupUI(lesson: LessonModel,lastLesson: Int?) {
+        var lastLessonNumber:Int? = lastLesson
+        lastLessonPosition = lesson.lessonNo
         if (lesson.status == LESSON_STATUS.AT) {
             startLessonTv.visibility = GONE
             startLessonTvShimmer.visibility = GONE
@@ -137,26 +143,42 @@ class LessonInProgressView : FrameLayout {
             speakingStatus.visibility = View.VISIBLE
 
             if (lesson.grammarStatus == LESSON_STATUS.CO) {
-                grammarStatus.setImageDrawable(drawableAttempted)
+                setUpLottieGreen(grammarStatus)
             } else {
-                grammarStatus.setImageDrawable(drawableUnattempted)
-            }
-            if (lesson.vocabStatus == LESSON_STATUS.CO) {
-                vocabStatus.setImageDrawable(drawableAttempted)
-            } else {
-                vocabStatus.setImageDrawable(drawableUnattempted)
-            }
-            if (lesson.readingStatus == LESSON_STATUS.CO) {
-                readingStatus.setImageDrawable(drawableAttempted)
-            } else {
-                readingStatus.setImageDrawable(drawableUnattempted)
+                showBounce(lesson,lastLessonNumber)
             }
             if (lesson.speakingStatus == LESSON_STATUS.CO) {
-                speakingStatus.setImageDrawable(drawableAttempted)
+                setUpLottieGreen(speakingStatus)
             } else {
-                speakingStatus.setImageDrawable(drawableUnattempted)
+                showBounce(lesson,lastLessonNumber)
             }
-        } else {
+            if (lesson.vocabStatus == LESSON_STATUS.CO) {
+                setUpLottieGreen(vocabStatus)
+            } else {
+                showBounce(lesson,lastLessonNumber)
+            }
+            if (lesson.readingStatus == LESSON_STATUS.CO) {
+                setUpLottieGreen(readingStatus)
+            } else {
+                showBounce(lesson,lastLessonNumber)
+            }
+
+            if (lesson.grammarStatus == LESSON_STATUS.CO && lesson.speakingStatus == LESSON_STATUS.CO
+                && lesson.vocabStatus == LESSON_STATUS.CO && lesson.readingStatus == LESSON_STATUS.CO){
+//                //MOVE TO PREVIOUS LESSON
+//                lastLessonNumber = lastLessonNumber?.minus(1)
+//                lastLessonPosition=  lastLessonPosition.minus(1)
+//                showBounce(lesson,lastLessonNumber)
+            }
+
+        } else if(lesson.status == LESSON_STATUS.NO || lesson.status == LESSON_STATUS.CO){
+//            lastLessonNumber = lastLessonNumber?.minus(1)
+//            lastLessonPosition=  lastLessonPosition.minus(1)
+//
+//            //previous par ja ke check karna hoga ki kon sa complete ho gaya kon sa bacha hai or acsending order bhi maintain karna hoga
+//            //yaha par showBounce method ko nahi call karna hai yaha par setUPUI ko vapis se call call karna hai lesson last = lastlesson -1 pass karna hai
+//            showBounce(lesson,lastLessonNumber)
+        } else{
             grammarStatus.visibility = GONE
             vocabStatus.visibility = GONE
             readingStatus.visibility = GONE
@@ -166,5 +188,70 @@ class LessonInProgressView : FrameLayout {
             continueLessonTv.visibility = GONE
         }
     }
+
+    fun showBounce(lesson: LessonModel,position:Int?) {
+        if (position == lastLessonPosition && lesson.status == LESSON_STATUS.AT) {
+            if (lesson.grammarStatus != LESSON_STATUS.CO) {
+                setUpLottie(grammarStatus, GRAMMAR_POSITION)
+            } else if (lesson.speakingStatus != LESSON_STATUS.CO) {
+                setUpLottie(speakingStatus, SPEAKING_POSITION)
+            } else if (lesson.vocabStatus != LESSON_STATUS.CO) {
+                setUpLottie(vocabStatus, VOCAB_POSITION)
+            } else if (lesson.readingStatus != LESSON_STATUS.CO) {
+                setUpLottie(readingStatus, READING_POSITION)
+            } else {
+                if (lesson.grammarStatus == LESSON_STATUS.CO)
+                    setUpLottieGreen(grammarStatus)
+                if (lesson.speakingStatus == LESSON_STATUS.CO)
+                    setUpLottieGreen(speakingStatus)
+                if (lesson.vocabStatus == LESSON_STATUS.CO)
+                    setUpLottieGreen(vocabStatus)
+                if (lesson.readingStatus == LESSON_STATUS.CO)
+                    setUpLottieGreen(readingStatus)
+            }
+        }
+    }
+    fun setUpLottie(lottieAnimationView:LottieAnimationView,position: Int){
+        Log.d(
+            "sagar",
+            "setUpLottie() called with: lottieAnimationView = ${lottieAnimationView.isAnimating}, position = $position , lesson = ${lessonModel?.lessonNo}"
+        )
+        when (position) {
+            GRAMMAR_POSITION -> {
+                lottieAnimationView.loop(true)
+                lottieAnimationView.scale = 1f
+                lottieAnimationView.speed = 1f
+                lottieAnimationView.playAnimation()
+            }
+            SPEAKING_POSITION -> {
+                lottieAnimationView.loop(true)
+                lottieAnimationView.scale = 1f
+                lottieAnimationView.speed = 1f
+                lottieAnimationView.playAnimation()
+            }
+            VOCAB_POSITION -> {
+                lottieAnimationView.loop(true)
+                lottieAnimationView.scale = 1f
+                lottieAnimationView.speed = 1f
+                lottieAnimationView.playAnimation()
+            }
+            READING_POSITION -> {
+                lottieAnimationView.loop(true)
+                lottieAnimationView.scale = 1f
+                lottieAnimationView.speed = 1f
+                lottieAnimationView.playAnimation()
+            }
+        }
+        Log.d("sagar1", "setUpLottie: ${lottieAnimationView.isAnimating}")
+    }
+
+    fun setUpLottieGreen(lottieAnimationView:LottieAnimationView){
+        lottieAnimationView.setAnimation("lottie/green.json")
+    }
+
+    fun setUpLottieUnAttempted(lottieAnimationView:LottieAnimationView){
+        lottieAnimationView.setAnimation("lottie/tickbounce.json")
+    }
+
 
 }

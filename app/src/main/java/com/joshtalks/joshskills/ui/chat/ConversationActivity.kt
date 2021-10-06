@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.animation.*
@@ -53,7 +54,9 @@ import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
+import com.joshtalks.joshskills.ui.chat.adapter.LESSON_MESSAGE
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
+import com.joshtalks.joshskills.ui.chat.vh.LessonViewHolder
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
@@ -87,12 +90,17 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.fragment_chat_screen.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.mindorks.placeholderview.`$`.R.id.recyclerView
+
+
+
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -109,7 +117,7 @@ const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
 const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
-
+var isScroll : Boolean?=false
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 
@@ -417,6 +425,10 @@ class ConversationActivity :
                 } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     conversationBinding.scrollToEndButton.visibility = VISIBLE
                 }
+
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+//                    animateItem(recyclerView)
+//                }
                 visibleItem()
             }
 
@@ -424,9 +436,32 @@ class ConversationActivity :
                 super.onScrolled(recyclerView, dx, dy)
                 if (recyclerView.canScrollVertically(-1)) {
                     getPreviousRecord()
+//                    if (!isScroll!!){
+//                        animateItem(recyclerView)
+//                    }
                 }
             }
         })
+    }
+
+    fun animateItem(recyclerView: RecyclerView){
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+        var firstItemPosition = layoutManager.findFirstVisibleItemPosition()
+        var lastItemPosition = layoutManager.findLastVisibleItemPosition()
+
+        for (position in lastItemPosition downTo firstItemPosition) {
+            var chatModel: ChatModel = conversationAdapter.getItemAtPosition(position)
+            if (conversationAdapter.isLessonType() && recyclerView.findViewHolderForAdapterPosition(position) is LessonViewHolder){
+                    if (chatModel.lesson?.status != LESSON_STATUS.CO || chatModel.lesson?.status != LESSON_STATUS.NO){
+                        isScroll =true
+                        var lessonViewHolder: LessonViewHolder = recyclerView.findViewHolderForAdapterPosition(position) as LessonViewHolder
+                        chatModel.lesson?.let {
+                            lessonViewHolder.lessonInProgressStub.get().setupUI(
+                                chatModel.lesson!!,lastItemPosition)
+                        }
+                    }
+            }
+        }
     }
 
     private fun getLayoutManager(): SmoothScrollingLinearLayoutManager {
@@ -834,6 +869,7 @@ class ConversationActivity :
         lifecycleScope.launchWhenCreated {
             conversationViewModel.updateChatMessage.collectLatest { chat ->
                 chat?.let {
+                    Log.d("sagar", "addObservable: ${chat.lesson?.lessonNo}")
                     conversationAdapter.updateItem(it)
                     unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
                 }
@@ -1492,16 +1528,21 @@ class ConversationActivity :
             } else if (resultCode == Activity.RESULT_OK) {
                 when (requestCode) {
                     ASSESSMENT_REQUEST_CODE,
-                    LESSON_REQUEST_CODE,
-                    CERTIFICATION_REQUEST_CODE -> {
-                        data?.getStringExtra(CHAT_ROOM_ID)?.let {
-                            conversationViewModel.refreshMessageObject(it)
-                        }
-                    }
-                    COURSE_PROGRESS_NEW_REQUEST_CODE -> {
-                        data?.getIntExtra(COURSE_ID, -1)?.let {
+                   // LESSON_REQUEST_CODE,
+                    LESSON_REQUEST_CODE -> {
+                        data?.getIntExtra(LessonActivity.LESSON_ID, -1)?.let {
                             conversationViewModel.refreshLesson(it)
                         }
+                    }
+                    CERTIFICATION_REQUEST_CODE -> {
+                            data?.getStringExtra(CHAT_ROOM_ID)?.let {
+                                conversationViewModel.refreshMessageObject(it)
+                            }
+                    }
+                    COURSE_PROGRESS_NEW_REQUEST_CODE -> {
+                                data?.getIntExtra(COURSE_ID, -1)?.let {
+                                    conversationViewModel.refreshLesson(it)
+                                }
                     }
                 }
             }

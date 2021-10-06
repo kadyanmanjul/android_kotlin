@@ -16,33 +16,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils.dateHeaderDateFormat
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.Sender
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.AudioViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BestStudentPerformerViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.CertificationExamViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.DateItemHolder
-import com.joshtalks.joshskills.ui.chat.vh.ImageViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.LessonViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.NewMessageViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.PdfViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.PracticeOldViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.TextViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.UnlockNextClassViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.VideoViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.*
+import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
+import com.joshtalks.joshskills.ui.lesson.READING_POSITION
+import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
 import com.joshtalks.joshskills.util.StickyHeaderAdapter
 import com.joshtalks.joshskills.util.Utils
-import java.lang.ref.WeakReference
-import java.util.ArrayList
-import java.util.Locale
-import java.util.NoSuchElementException
 import timber.log.Timber
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.List
+import kotlin.collections.MutableSet
+import kotlin.collections.arrayListOf
+import kotlin.collections.findLast
+import kotlin.collections.first
+import kotlin.collections.indexOfFirst
+import kotlin.collections.indexOfLast
+import kotlin.collections.last
+import kotlin.collections.lastOrNull
+import kotlin.collections.mutableSetOf
 
 class ConversationAdapter(private val activityRef: WeakReference<FragmentActivity>) :
     RecyclerView.Adapter<BaseViewHolder>(),
@@ -118,8 +113,10 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     }
 
     fun getMessagePositionById(id: String): Int {
-        return messageList.indexOfLast { it.chatId == id }
+         return messageList.indexOfLast { it.chatId == id }
     }
+
+
 
     fun updateItem(newMessage: ChatModel) {
         try {
@@ -170,6 +167,12 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
 
     fun getLastLesson(): LessonModel? {
         return messageList.lastOrNull { it.type == BASE_MESSAGE_TYPE.LESSON }?.lesson
+    }
+
+
+
+    fun getLastLessonNumber(): Int? {
+        return messageList.lastOrNull { it.type == BASE_MESSAGE_TYPE.LESSON }?.lesson?.lessonNo
     }
 
     fun isUserAttemptedLesson(): Boolean {
@@ -308,7 +311,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.layout_lesson_item, parent, false)
                 view.tag = LESSON_MESSAGE
-                LessonViewHolder(view, userId)
+                LessonViewHolder(view, userId,getLastLessonNumber())
             }
             BEST_PERFORMER_EXAM_MESSAGE -> {
                 view = LayoutInflater.from(parent.context)
@@ -344,10 +347,29 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         if (messageList[position].type == BASE_MESSAGE_TYPE.LESSON) {
             holder.setIsRecyclable(false)
         }
+
+//        for (item in messageList.size - 1 downTo 0) {
+//            if (messageList[item].type == BASE_MESSAGE_TYPE.LESSON) {
+//                val h = holder as? LessonViewHolder
+//                if (h==holder){
+//                    showBounce(messageList.get(position).lesson, getLastLessonNumber(), h)
+//                    break
+//                }
+//            } else {
+//                continue
+//            }
+//        }
+
         holder.bind(messageList[position], getPreviousMessage(position))
         if (animateUI) {
             animateUI(holder.itemView)
             animateUI = false
+        }
+    }
+
+    fun showBounce(lesson: LessonModel?,position:Int?,lessonViewHolder: LessonViewHolder) {
+        if (position == getLastLessonNumber() && lesson?.status == LESSON_STATUS.AT) {
+            lessonViewHolder.lessonInProgressStub.get().setupUI(lesson,getLastLessonNumber())
         }
     }
 
@@ -519,7 +541,7 @@ private const val CERTIFICATION_EXAM_MESSAGE = 15
 
 private const val ASSESSMENT_MESSAGE = 17
 
-private const val LESSON_MESSAGE = 19
+const val LESSON_MESSAGE = 19
 
 private const val BEST_PERFORMER_EXAM_MESSAGE = 21
 // private const val BEST_PERFORMER_EXAM_MESSAGE = 21

@@ -324,6 +324,18 @@
             app:tabTextColor="@color/black"
             tools:visibility="visible" />
 
+        <ImageView
+            android:id="@+id/image_anim"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:src="@drawable/ic_lesson_green_tick"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            ></ImageView>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/lesson_spotlight_tooltip"
             android:layout_width="match_parent"

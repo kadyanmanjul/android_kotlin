@@ -2,18 +2,25 @@ package com.joshtalks.joshskills.ui.lesson
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.transition.Visibility
+import android.util.DisplayMetrics
+import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
+import android.view.WindowManager
+import android.view.animation.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -48,11 +55,12 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
+import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -68,6 +76,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
 
+    lateinit var imageAnim: ImageView
     lateinit var titleView: TextView
     private var isDemo = false
     private var isNewGrammar = false
@@ -642,14 +651,36 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
+        var imageView: ImageView = findViewById(R.id.image_anim)
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.lessonLiveData.value?.let { lesson ->
                 val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
                 when (tabPosition) {
-                    GRAMMAR_POSITION -> lesson.grammarStatus = status
-                    VOCAB_POSITION -> lesson.vocabStatus = status
-                    READING_POSITION -> lesson.readingStatus = status
-                    SPEAKING_POSITION -> lesson.speakingStatus = status
+                    GRAMMAR_POSITION -> {
+                        lesson.grammarStatus = status
+                        tabs.getChildAt(GRAMMAR_POSITION)
+                        if (isSectionCompleted){
+                            showElements(imageView, tabs.getChildAt(GRAMMAR_POSITION), GRAMMAR_POSITION)
+                        }
+                    }
+                    VOCAB_POSITION -> {
+                        lesson.vocabStatus = status
+                        if (isSectionCompleted) {
+                            showElements(imageView, tabs.getChildAt(VOCAB_POSITION), VOCAB_POSITION)
+                        }
+                    }
+                    READING_POSITION -> {
+                        lesson.readingStatus = status
+                        if (isSectionCompleted) {
+                            showElements(imageView, tabs.getChildAt(READING_POSITION), READING_POSITION)
+                        }
+                    }
+                    SPEAKING_POSITION -> {
+                        lesson.speakingStatus = status
+                        if (isSectionCompleted) {
+                            showElements(imageView, tabs.getChildAt(SPEAKING_POSITION), SPEAKING_POSITION)
+                        }
+                    }
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
@@ -842,12 +873,137 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private fun setTabCompletionStatus(tab: View?, isSectionCompleted: Boolean) {
         tab?.let {
             if (isSectionCompleted) {
-                it.findViewById<ImageView>(R.id.tab_iv).visibility = View.VISIBLE
+                imageAnim = it.findViewById(R.id.tab_iv)
+                imageAnim.visibility = View.VISIBLE
+                // showAnim(imageAnim)
             } else {
                 it.findViewById<ImageView>(R.id.tab_iv).visibility = View.GONE
             }
         }
     }
+
+    /* private fun showAnim(imageView: ImageView) {
+
+        // Animate the hidden linear layout as visible and set
+        // the alpha as 0.0. Otherwise the animation won't be shown
+        /*val point = Point()
+         val manager = applicationContext.getSystemService(WINDOW_SERVICE) as WindowManager
+         manager.defaultDisplay.getSize(point)
+
+         val centerX = point.x / 2
+         val centerY = point.y / 2
+
+         imageView.translationX = (centerX - (imageView.width/2f))
+         imageView.translationY = (centerY - (imageView.height/2f))*/
+         anim = AnimationUtils.loadAnimation(this, R.anim.slide_out)
+         anim?.duration = 6000
+         imageView.visibility = View.VISIBLE
+         imageView.startAnimation(anim)
+    }*/
+
+
+    private fun showElements(imageView: ImageView, tab: View, pos: Int) {
+        var heightOfRoot: Int = root_view.height
+        imageAnim = tab.findViewById(R.id.tab_iv)
+        if (!imageAnim.isVisible){
+            imageView.visibility = View.GONE
+            imageAnim.visibility = View.GONE
+            var anim: Animation? = AnimationUtils.loadAnimation(this, R.anim.slide_out)
+            anim?.duration = 1500
+            val dimensionInPixel = 80
+            val dimensionInDp = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dimensionInPixel.toFloat(),
+                resources.displayMetrics
+            ).toInt()
+            imageView.layoutParams.height = dimensionInDp
+            imageView.layoutParams.width = dimensionInDp
+            anim?.setAnimationListener(
+                MyCustomClass(
+                    application,
+                    imageView,
+                    anim,
+                    getHeight(pos),
+                    getWidth(pos),
+                    pos
+                )
+            )
+            this@LessonActivity.runOnUiThread(java.lang.Runnable {
+                imageView.visibility = View.VISIBLE
+            })
+            imageView.startAnimation(anim)
+        }
+    }
+
+    fun convertPixelsToDp(px: Float, context: Context): Float {
+        return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+    }
+
+    private fun getHeight(pos: Int): Int {
+        var height: Int = 0
+        val displayMetrics = DisplayMetrics()
+
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        when (pos) {
+            GRAMMAR_POSITION -> height = getCenterScreenHeight()
+
+            VOCAB_POSITION -> height = getCenterScreenHeight()
+
+            READING_POSITION -> height = getCenterScreenHeight()
+
+            SPEAKING_POSITION -> height = getCenterScreenHeight()
+
+        }
+        return height
+    }
+
+    private fun getWidth(pos: Int): Int {
+        var width: Int = 0
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        var v: Int = (((displayMetrics.widthPixels) / resources.displayMetrics.density).toInt())
+
+        when (pos) {
+
+            GRAMMAR_POSITION -> width = -(getCenterScreenWidth() - 135)
+
+            SPEAKING_POSITION -> width = -137 //it will always static for all devices because it's inside tab length
+
+            VOCAB_POSITION -> width = 137 //it will always static for all devices because it's inside tab length
+
+            READING_POSITION -> width = (getCenterScreenWidth() - 135)
+
+        }
+        return width
+    }
+
+    private fun getActionBarSize(): Int {
+        val tv = TypedValue()
+        application.theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)
+        return resources.getDimensionPixelSize(tv.resourceId)
+    }
+
+    private fun getCenterScreenHeight(): Int {
+        val point = Point()
+        val manager = applicationContext.getSystemService(WINDOW_SERVICE) as WindowManager
+        manager.defaultDisplay.getSize(point)
+        val centerY = point.y / 2   //height
+        Log.d("height", "getCenterScreenHeight: "+centerY + getActionBarSize())
+        //screen size = ex. 1088 from center to tick
+        //action bar size = 154
+        // tab height + 77 + mid heigh = 24
+        return (centerY-(getActionBarSize() + 77+24))
+    }
+
+    private fun getCenterScreenWidth(): Int {
+        val point = Point()
+        val manager = applicationContext.getSystemService(WINDOW_SERVICE) as WindowManager
+        manager.defaultDisplay.getSize(point)
+        val centerX = point.x / 2   // width
+        Log.d("height", "getCenterScreenHeight: "+centerX)
+        return (centerX)
+    }
+
 
     private fun setSelectedColor(tab: TabLayout.Tab?) {
         tab?.let {
@@ -944,6 +1100,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
                 resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
                 resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+                resultIntent.putExtra(LESSON_ID, it.id)
             }
             setResult(RESULT_OK, resultIntent)
             this@LessonActivity.finish()
@@ -988,5 +1145,63 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             }
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
+    }
+
+    class MyCustomClass(
+        var context: Context?,
+        imageView: ImageView,
+        anim: Animation,
+        height: Int,
+        width: Int,
+        type: Int
+    ) : Animation.AnimationListener {
+        var context1: Context? = null
+        var imageView: ImageView? = null
+        var anim: Animation? = null
+        var height: Int? = null
+        var width: Int? = null
+        var type: Int? = null
+
+        init {
+            context1 = context
+            this.imageView = imageView
+            this.anim = anim
+            this.height = height
+            this.width = width
+            this.type = type
+        }
+
+        override fun onAnimationStart(animation: Animation?) {
+        }
+        override fun onAnimationEnd(animation: Animation?) {
+            if (animation === anim) {
+                imageView?.clearAnimation()
+                scaleView(imageView, width, height)
+                imageView?.visibility=View.GONE
+            }
+        }
+        override fun onAnimationRepeat(animation: Animation?) {
+
+        }
+
+        fun scaleView(imageView: ImageView?, width: Int?, height: Int?) {
+            val scaleAnimation = ScaleAnimation(
+                1f,
+                0.2f,
+                1f,
+                0.2f,
+                Animation.RELATIVE_TO_SELF,
+                0.5f,
+                Animation.RELATIVE_TO_SELF,
+                0.5f
+            )
+            val translate = TranslateAnimation(0f, width?.toFloat() ?: 0f, 0f, (-height!!).toFloat())
+            val animSet = AnimationSet(true)
+            animSet.duration = 1000
+            animSet.addAnimation(scaleAnimation)
+            animSet.addAnimation(translate)
+            imageView?.startAnimation(animSet)
+        }
+
     }
 }
