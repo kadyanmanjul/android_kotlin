@@ -172,6 +172,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("GROUP_CHAT_PIN_MESSAGE")
     GROUP_CHAT_PIN_MESSAGE("GROUP_CHAT_PIN_MESSAGE"),
 
+    @SerializedName("ACTION_COMPLETE_ONBOARDING")
+    ACTION_COMPLETE_ONBOARDING("ACTION_COMPLETE_ONBOARDING"),
+
 }
 
 enum class NotificationChannelNames(val type: String) {

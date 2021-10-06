@@ -21,12 +21,17 @@ import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
 import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
+const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
@@ -44,6 +49,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
+        if (intent.getBooleanExtra(SHOW_SIGN_UP_FRAGMENT, false) &&
+            Mentor.getInstance().getId().isNotEmpty()
+        ) {
+            openProfileDetailFragment()
+        }
     }
 
     override fun onStart() {
@@ -67,6 +77,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     fun showStartTrialPopup() {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
+        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         layout.btnStartTrial.pauseAnimation()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
@@ -85,6 +96,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
+                PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
                 openProfileDetailFragment()
                 alertDialog.dismiss()
             }

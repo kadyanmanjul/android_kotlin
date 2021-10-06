@@ -240,6 +240,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 //            requestMap["mobile"] = mobNo
 //        }
         viewModel.completingProfile(requestMap, false)
+        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
     }
 
     private fun moveToInboxScreen() {

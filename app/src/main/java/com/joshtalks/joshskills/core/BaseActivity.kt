@@ -300,7 +300,6 @@ abstract class BaseActivity :
                         Intent(this, SignUpActivity::class.java)
                     }
                     PrefManager.getBoolValue(IS_FREE_TRIAL, false, false) -> {
-                        // TODO -> change defValue from true to false
                         Intent(this, FreeTrialOnBoardActivity::class.java)
                     }
                     else -> {
@@ -661,7 +660,7 @@ abstract class BaseActivity :
 
     override fun messageClicked(inAppMessage: InAppMessage, action: Action) {
         lifecycleScope.launch(Dispatchers.IO) {
-            Uri.parse(action.actionUrl).host?.trim()?.toLowerCase(Locale.getDefault()).run {
+            Uri.parse(action.actionUrl).host?.trim()?.lowercase(Locale.getDefault()).run {
                 when {
                     this == getString(R.string.conversation_open_dlink) -> {
                         val courseId = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY

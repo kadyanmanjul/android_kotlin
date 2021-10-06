@@ -333,6 +333,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onClick(inboxEntity: InboxEntity) {
+        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
         ConversationActivity.startConversionActivity(this, inboxEntity)
     }
 

@@ -46,6 +46,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
@@ -81,6 +83,8 @@ import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
+import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
+import com.joshtalks.joshskills.ui.signup.SHOW_SIGN_UP_FRAGMENT
 import com.joshtalks.joshskills.ui.voip.OPPOSITE_USER_UID
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
@@ -120,12 +124,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
         try {
-            if(PrefManager.hasKey(FCM_TOKEN)) {
+            if (PrefManager.hasKey(FCM_TOKEN)) {
                 val fcmResponse = FCMResponse.getInstance()
                 fcmResponse?.apiStatus = ApiRespStatus.POST
                 fcmResponse?.update()
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
@@ -1434,6 +1438,23 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         }
                     }
                     null
+                }
+                NotificationAction.ACTION_COMPLETE_ONBOARDING -> {
+                    val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
+                    if (onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
+                        onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value
+                    ) {
+                        Intent(
+                            AppObjectController.joshApplication,
+                            FreeTrialOnBoardActivity::class.java
+                        ).apply {
+                            if (onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value) {
+                                putExtra(SHOW_SIGN_UP_FRAGMENT, true)
+                            }
+                        }
+                    } else {
+                        null
+                    }
                 }
                 else -> {
                     null
