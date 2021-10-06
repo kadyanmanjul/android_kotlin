@@ -1292,7 +1292,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(NOTIFICATION_ID, notificationObject.id)
 
-                    val activityList = arrayOf(this)
+                    val activityList =
+                        if (notificationObject.action == NotificationAction.ACTION_OPEN_PAYMENT_PAGE
+                            || notificationObject.action == NotificationAction.ACTION_OPEN_SPEAKING_SECTION
+                            || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
+                            || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
+                        ) {
+                            val inboxIntent =
+                                InboxActivity.getInboxIntent(context)
+                            inboxIntent.putExtra(HAS_NOTIFICATION, true)
+                            inboxIntent.putExtra(NOTIFICATION_ID, notificationObject.id)
+                            arrayOf(inboxIntent, this)
+                        } else {
+                            arrayOf(this)
+                        }
                     val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
                     val defaultSound =
                         RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

@@ -5,8 +5,6 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothHeadset
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -19,7 +17,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.BounceInterpolator
@@ -30,7 +27,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -44,6 +40,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.cancelCallieDisconnectTimer
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallOnGoing
 import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
@@ -62,12 +59,8 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
@@ -288,7 +281,7 @@ class WebRtcActivity : AppCompatActivity() {
                 //      binding.connectionLost.text = EMPTY
                 if (binding.connectionLost.text != getString(R.string.ringing)) {
                     val state = CurrentCallDetails.state()
-                    if(state.isOnHold) {
+                    if (state.isOnHold) {
                         VoipAnalytics.push(
                             VoipAnalytics.Event.RESUME,
                             agoraMentorUid = state.callieUid,
@@ -701,7 +694,7 @@ class WebRtcActivity : AppCompatActivity() {
         binding.callTime.start()
         Log.d(TAG, "startCallTimer: ")
         if (WebRtcService.pstnCallState == CallState.CALL_STATE_IDLE) {
-            if(binding.connectionLost.text == getString(R.string.reconnecting)) {
+            if (binding.connectionLost.text == getString(R.string.reconnecting)) {
                 val state = CurrentCallDetails.state()
                 VoipAnalytics.push(
                     VoipAnalytics.Event.CALL_RESTORED,
@@ -739,8 +732,22 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun acceptCall(callAcceptApi: Boolean = true, isUserPickUp: Boolean = false) {
-        Log.d(TAG, "acceptCall: ")
-        if (!isTimerCanceled) {
+        Timber.d("acceptCall: ")
+        val courseExpiryTime = PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS)
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
+            courseExpiryTime != 0L &&
+            courseExpiryTime < System.currentTimeMillis()
+        ) {
+            startActivity(
+                FreeTrialPaymentActivity.getFreeTrialPaymentActivityIntent(
+                    this,
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID),
+                    courseExpiryTime,
+                    true
+                )
+            )
+        } else if (!isTimerCanceled) {
             if (isUserPickUp) {
                 val state = CurrentCallDetails.state()
                 VoipAnalytics.push(
@@ -836,7 +843,7 @@ class WebRtcActivity : AppCompatActivity() {
         )
     }
 
-    fun onDisconnectCall(reason : VoipEvent) {
+    fun onDisconnectCall(reason: VoipEvent) {
         WebRtcService.disconnectCall(reason)
         AppObjectController.uiHandler.postDelayed(
             {
@@ -981,7 +988,7 @@ class WebRtcActivity : AppCompatActivity() {
                     textAnimator.start()
                     progressAnimator.start()
                 } else {
-                    if(!isIncomingCallHasNewChannel) {
+                    if (!isIncomingCallHasNewChannel) {
                         val state = CurrentCallDetails.state()
                         VoipAnalytics.push(
                             VoipAnalytics.Event.RECEIVE_TIMER_STOP,

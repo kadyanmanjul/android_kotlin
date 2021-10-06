@@ -11,7 +11,10 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
@@ -299,6 +302,23 @@ object WorkManagerAdmin {
     fun removeRepeatingNotificationWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(SetLocalNotificationWorker::class.java.name)
+    }
+
+    fun setFakeCallNotificationWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .cancelAllWorkByTag(FakeCallNotificationWorker::class.java.name)
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
+            PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
+            PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis()
+        ) {
+            val delay = (1L..120L).random()
+            val workRequest = OneTimeWorkRequestBuilder<FakeCallNotificationWorker>()
+                .setInputData(workDataOf())
+                .setInitialDelay(delay, TimeUnit.SECONDS)
+                .addTag(FakeCallNotificationWorker::class.java.name)
+                .build()
+            WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        }
     }
 
     fun startVersionAndFlowWorker() {

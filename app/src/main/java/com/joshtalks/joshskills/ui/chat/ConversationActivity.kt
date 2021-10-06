@@ -95,13 +95,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -270,6 +270,8 @@ class ConversationActivity :
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time < System.currentTimeMillis()
         ) {
+            PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
+            PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE

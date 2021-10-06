@@ -56,6 +56,7 @@ class LauncherActivity : CoreJoshActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             WorkManager.getInstance(applicationContext).cancelAllWork()
             WorkManagerAdmin.appInitWorker()
+            WorkManagerAdmin.setFakeCallNotificationWorker()
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
             if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {

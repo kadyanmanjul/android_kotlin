@@ -17,7 +17,6 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -35,13 +34,13 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -49,16 +48,17 @@ import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.printAll
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
@@ -75,16 +75,12 @@ import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
-import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
-import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
-import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
-import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
@@ -93,7 +89,6 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -188,7 +183,7 @@ class WebRtcService : BaseWebRtcService() {
         private var callCallback: WeakReference<WebRtcCallback>? = null
 
         fun tokenConformationApiFailed() {
-            val data : HashMap<String, String?> = HashMap()
+            val data: HashMap<String, String?> = HashMap()
             data["uid"] = CurrentCallDetails.callieUid
             data["channel_name"] = CurrentCallDetails.channelName
             data["call_response"] = CallAction.DISCONNECT.action
@@ -244,20 +239,20 @@ class WebRtcService : BaseWebRtcService() {
                 WebRtcService::class.java
             ).apply {
                 action = CallDisconnect().action
-                val reasonEnum = if(reason is VoipAnalytics.Event) reason else reason as DISCONNECT
+                val reasonEnum = if (reason is VoipAnalytics.Event) reason else reason as DISCONNECT
                 putExtra(DISCONNECT_REASON, reasonEnum)
             }
             serviceIntent.startServiceForWebrtc()
         }
 
-        fun disconnectCallFromCallie(isFromNotification : Boolean = true) {
+        fun disconnectCallFromCallie(isFromNotification: Boolean = true) {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
                 WebRtcService::class.java
             ).apply {
                 action = CallStop().action
             }
-            if(isFromNotification) {
+            if (isFromNotification) {
                 val state = CurrentCallDetails.state()
                 VoipAnalytics.push(
                     DISCONNECT.CALL_DISCONNECT_NOTIFICATION_FAILURE,
@@ -354,16 +349,16 @@ class WebRtcService : BaseWebRtcService() {
         ) {
             super.onAudioVolumeIndication(speakers, totalVolume)
             log.d("${speakers}")
-                val isSpeaking = (speakers?.find { it.uid == 0 }) != null
-                val isListening = (speakers?.find { it.uid > 0 }) != null
-                if (isSpeaking)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        saveMicState()
-                    }
-                if(isListening)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        saveSpeakerState()
-                    }
+            val isSpeaking = (speakers?.find { it.uid == 0 }) != null
+            val isListening = (speakers?.find { it.uid > 0 }) != null
+            if (isSpeaking)
+                CoroutineScope(Dispatchers.IO).launch {
+                    saveMicState()
+                }
+            if (isListening)
+                CoroutineScope(Dispatchers.IO).launch {
+                    saveSpeakerState()
+                }
         }
 
         suspend fun saveMicState() {
@@ -373,7 +368,7 @@ class WebRtcService : BaseWebRtcService() {
                 val currentCallDetails = CurrentCallDetails.state()
                 log.d("$currentCallDetails")
                 val timestamp = DateUtils.getCurrentTimeStamp()
-                if(!currentCallDetails.isSpeakingPushed && currentCallDetails.isCallConnectedScreenVisible) {
+                if (!currentCallDetails.isSpeakingPushed && currentCallDetails.isCallConnectedScreenVisible) {
                     val agoraMentorUid = currentCallDetails.callieUid
                     val agoraCallId = currentCallDetails.callId
 
@@ -398,7 +393,7 @@ class WebRtcService : BaseWebRtcService() {
                 val currentCallDetails = CurrentCallDetails.state()
                 log.d("$currentCallDetails")
                 val timestamp = DateUtils.getCurrentTimeStamp()
-                if(!currentCallDetails.isListeningPushed && currentCallDetails.isCallConnectedScreenVisible) {
+                if (!currentCallDetails.isListeningPushed && currentCallDetails.isCallConnectedScreenVisible) {
                     val agoraMentorUid = currentCallDetails.callieUid
                     val agoraCallId = currentCallDetails.callId
 
@@ -542,9 +537,17 @@ class WebRtcService : BaseWebRtcService() {
                 Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
                     if (isCallerJoined) {
-                        endCall(apiCall = true, action = CallAction.DISCONNECT, reason = DISCONNECT.AGORA_USER_OFFLINE_FAILURE)
+                        endCall(
+                            apiCall = true,
+                            action = CallAction.DISCONNECT,
+                            reason = DISCONNECT.AGORA_USER_OFFLINE_FAILURE
+                        )
                     } else {
-                        endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT, reason = DISCONNECT.AGORA_USER_OFFLINE_FAILURE)
+                        endCall(
+                            apiCall = true,
+                            action = CallAction.AUTO_DISCONNECT,
+                            reason = DISCONNECT.AGORA_USER_OFFLINE_FAILURE
+                        )
                     }
                     isCallOnGoing.postValue(false)
                 } else if (id != uid && reason == Constants.USER_OFFLINE_DROPPED) {
@@ -743,7 +746,7 @@ class WebRtcService : BaseWebRtcService() {
         FirestoreDB.setNotificationListener(listener = object : AgoraNotificationListener {
             override fun onReceived(firestoreNotification: FirestoreNotificationObject) {
                 val nc = firestoreNotification.toNotificationObject(null)
-                if(nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
+                if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
                     nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }
                 FirebaseNotificationService.sendFirestoreNotification(nc, this@WebRtcService)
             }
@@ -895,9 +898,10 @@ class WebRtcService : BaseWebRtcService() {
                             }
                             this == CallDisconnect().action -> {
                                 addNotification(CallDisconnect().action, null)
-                                val reasonEnum  =
+                                val reasonEnum =
                                     intent.getSerializableExtra(DISCONNECT_REASON)
-                                val reason = if(reasonEnum is VoipAnalytics.Event) reasonEnum else reasonEnum as DISCONNECT
+                                val reason =
+                                    if (reasonEnum is VoipAnalytics.Event) reasonEnum else reasonEnum as DISCONNECT
                                 callData?.let {
                                     callStatusNetworkApi(
                                         it,
@@ -912,14 +916,14 @@ class WebRtcService : BaseWebRtcService() {
                                     callStatusNetworkApi(it, CallAction.NOUSERFOUND)
                                 }
                                 mRtcEngine?.leaveChannel()
-                                if(callCallback?.get() == null) {
+                                if (callCallback?.get() == null) {
                                     val state = CurrentCallDetails.state()
                                     VoipAnalytics.push(
                                         DISCONNECT.NO_USER_FOUND_FAILURE,
                                         agoraCallId = state.callId,
                                         agoraMentorUid = state.callieUid,
                                         timeStamp = DateUtils.getCurrentTimeStamp()
-                                        )
+                                    )
                                 }
                                 callCallback?.get()?.onNoUserFound()
                                 disconnectService()
@@ -934,7 +938,10 @@ class WebRtcService : BaseWebRtcService() {
                                 if (JoshApplication.isAppVisible.not()) {
                                     addNotification(CallDisconnect().action, null)
                                 }
-                                endCall(apiCall = false, reason = DISCONNECT.FORCE_DISCONNECT_NOTIFICATION_FAILURE)
+                                endCall(
+                                    apiCall = false,
+                                    reason = DISCONNECT.FORCE_DISCONNECT_NOTIFICATION_FAILURE
+                                )
                                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                             }
                             this == CallForceConnect().action -> {
@@ -1236,16 +1243,20 @@ class WebRtcService : BaseWebRtcService() {
         disconnectService()
     }
 
-    fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT, reason : VoipEvent, hasDisconnected: Boolean = false) {
+    fun endCall(
+        apiCall: Boolean = false,
+        action: CallAction = CallAction.DISCONNECT,
+        reason: VoipEvent,
+        hasDisconnected: Boolean = false
+    ) {
         Timber.tag(TAG).e("call_status%s", mRtcEngine?.connectionState)
         if (apiCall) {
-            if(apiCall && reason == DISCONNECT.BACK_BUTTON_FAILURE) {
-                val data : HashMap<String, String?> = HashMap()
+            if (apiCall && reason == DISCONNECT.BACK_BUTTON_FAILURE) {
+                val data: HashMap<String, String?> = HashMap()
                 data["uid"] = CurrentCallDetails.callieUid
                 data["channel_name"] = CurrentCallDetails.channelName
                 callStatusNetworkApi(data, action, hasDisconnected = true)
-            }
-             else
+            } else
                 callData?.let {
                     callStatusNetworkApi(it, action, hasDisconnected = hasDisconnected)
                 }
@@ -1272,7 +1283,7 @@ class WebRtcService : BaseWebRtcService() {
         isCallOnGoing.postValue(false)
     }
 
-    fun answerCall(data: HashMap<String, String?>,  callAcceptApi: Boolean = false) {
+    fun answerCall(data: HashMap<String, String?>, callAcceptApi: Boolean = false) {
         executor.execute {
             try {
                 stopRing()
@@ -1644,8 +1655,9 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         val declineActionIntent =
-            Intent(AppObjectController.joshApplication, WebRtcService::class.java)
-        declineActionIntent.action = CallReject().action
+            Intent(AppObjectController.joshApplication, WebRtcService::class.java).apply {
+                action = CallReject().action
+            }
         val declinePendingIntent: PendingIntent =
             PendingIntent.getService(
                 this,
@@ -1661,15 +1673,48 @@ class WebRtcService : BaseWebRtcService() {
             )
         )
 
+        val courseExpiryTime =
+            PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
+        val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT)
         val answerActionIntent =
-            Intent(this, WebRtcService::class.java)
-                .apply {
-                    action = CallConnect().action
-                    putExtra(CALL_USER_OBJ, incomingData)
-                }
+            if (isCourseBought.not() &&
+                courseExpiryTime != 0L &&
+                courseExpiryTime < System.currentTimeMillis()
+            ) {
+                FreeTrialPaymentActivity.getFreeTrialPaymentActivityIntent(
+                    this,
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID),
+                    courseExpiryTime,
+                    true
+                )
+            } else {
+                Intent(this, WebRtcService::class.java)
+                    .apply {
+                        action = CallConnect().action
+                        putExtra(CALL_USER_OBJ, incomingData)
+                    }
+            }
 
-        val answerPendingIntent: PendingIntent =
+        val answerPendingIntent: PendingIntent = if (isCourseBought.not() &&
+            courseExpiryTime != 0L &&
+            courseExpiryTime < System.currentTimeMillis()
+        ) {
+            val uniqueRequestCode = (System.currentTimeMillis() and 0xfffffff).toInt()
+            val inboxIntent =
+                InboxActivity.getInboxIntent(this)
+            inboxIntent.putExtra(HAS_NOTIFICATION, true)
+            //inboxIntent.putExtra(NOTIFICATION_ID, notificationObject.id)
+            PendingIntent.getActivities(
+                this,
+                uniqueRequestCode,
+                arrayOf(inboxIntent, answerActionIntent),
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        } else {
             PendingIntent.getService(this, 0, answerActionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
 
         builder.addAction(
             NotificationCompat.Action(

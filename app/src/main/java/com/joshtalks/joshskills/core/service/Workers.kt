@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventRece
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
@@ -44,6 +45,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.*
@@ -1000,6 +1002,26 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
         return Result.success()
     }
 }
+
+class FakeCallNotificationWorker(
+    val context: Context,
+    workerParams: WorkerParameters
+) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val resp = AppObjectController.p2pNetworkService.getFakeCall()
+            val nc = resp.toNotificationObject(null)
+            if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
+                nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }
+            FirebaseNotificationService.sendFirestoreNotification(nc, context)
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
 
 fun getGoogleAdId(context: Context): String? {
     try {

@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.databinding.ActivityLeaderboardSearchBinding
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.track.COURSE_EXPIRY_TIME
+import com.joshtalks.joshskills.track.COURSE_EXPIRY_TIME_IN_MS
 import com.joshtalks.joshskills.track.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import java.util.ArrayList
@@ -82,8 +82,8 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.searchView.isFocusableInTouchMode = true
         binding.searchView.requestFocus()
         if (intent.getBooleanExtra(IS_COURSE_BOUGHT, false).not() &&
-            intent.getLongExtra(COURSE_EXPIRY_TIME, -1L) != -1L &&
-            intent.getLongExtra(COURSE_EXPIRY_TIME, -1L) < System.currentTimeMillis()
+            intent.getLongExtra(COURSE_EXPIRY_TIME_IN_MS, -1L) != -1L &&
+            intent.getLongExtra(COURSE_EXPIRY_TIME_IN_MS, -1L) < System.currentTimeMillis()
         ) {
             binding.freeTrialExpiryLayout.visibility = View.VISIBLE
         } else {
@@ -238,7 +238,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
             AppObjectController.getFirebaseRemoteConfig().getString(
                 FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
             ),
-            intent.getLongExtra(COURSE_EXPIRY_TIME, -1L)
+            intent.getLongExtra(COURSE_EXPIRY_TIME_IN_MS, -1L)
         )
         // finish()
     }
@@ -259,7 +259,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
                 putExtra("hash_map", value)
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(IS_COURSE_BOUGHT, isCourseBought)
-                putExtra(COURSE_EXPIRY_TIME, expiredTime)
+                putExtra(COURSE_EXPIRY_TIME_IN_MS, expiredTime)
             }
         }
     }

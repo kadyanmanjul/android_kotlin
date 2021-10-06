@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -20,7 +21,9 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
+import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +33,7 @@ import org.json.JSONObject
 import retrofit2.HttpException
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
+const val IS_FAKE_CALL = "is_fake_call"
 
 class FreeTrialPaymentActivity : CoreJoshActivity(),
     PaymentResultListener {
@@ -63,10 +67,26 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (intent.hasExtra(EXPIRED_TIME)) {
             expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)
         }
+        if (intent.hasExtra(IS_FAKE_CALL)) {
+            forceDisconnectCall()
+            val nameArr = User.getInstance().firstName?.split(" ")
+            val firstName = if (nameArr != null) nameArr[0] else EMPTY
+            showToast(getString(R.string.feature_locked, firstName))
+        }
 
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
+    }
+
+    private fun forceDisconnectCall() {
+        val serviceIntent = Intent(
+            this,
+            WebRtcService::class.java
+        ).apply {
+            action = CallForceDisconnect().action
+        }
+        serviceIntent.startServiceForWebrtc()
     }
 
     private fun setListeners() {
@@ -418,6 +438,21 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 activity.overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
             }
         }
+
+        fun getFreeTrialPaymentActivityIntent(
+            context: Context,
+            testId: String,
+            expiredTime: Long? = null,
+            isFakeCall: Boolean = false
+        ) =
+            Intent(context, FreeTrialPaymentActivity::class.java).apply {
+                putExtra(PaymentSummaryActivity.TEST_ID_PAYMENT, testId)
+                putExtra(EXPIRED_TIME, expiredTime)
+                if (isFakeCall) {
+                    putExtra(IS_FAKE_CALL, isFakeCall)
+                }
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
 
     }
 

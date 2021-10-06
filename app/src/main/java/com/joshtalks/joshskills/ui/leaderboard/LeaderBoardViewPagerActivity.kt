@@ -186,6 +186,8 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                     currentMentor.expiryDate != null &&
                     currentMentor.expiryDate.time < System.currentTimeMillis()
                 ) {
+                    PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, currentMentor.expiryDate.time)
+                    PrefManager.put(IS_COURSE_BOUGHT, currentMentor.isCourseBought)
                     binding.freeTrialExpiryLayout.visibility = VISIBLE
                 } else {
                     binding.freeTrialExpiryLayout.visibility = GONE
