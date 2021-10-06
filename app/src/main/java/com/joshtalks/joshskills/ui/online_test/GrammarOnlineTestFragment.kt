@@ -144,13 +144,14 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         binding.scoreStartBtn.setOnTouchListener(onTouchListener3)
         // showTooltip()
         when {
-            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED,defValue = 1)
+            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED, defValue = 1)
                 .plus(1) == lessonNumber) -> {
                 binding.startTestContainer.visibility = View.VISIBLE
                 binding.testCompletedContainer.visibility = View.GONE
                 binding.testScoreContainer.visibility = View.GONE
                 if (PrefManager.getIntValue(
-                        ONLINE_TEST_LAST_LESSON_ATTEMPTED
+                        ONLINE_TEST_LAST_LESSON_ATTEMPTED,
+                        defValue = 1
                     ) == lessonNumber
                 ) {
                     binding.description.text = getString(R.string.grammar_continue_test_text)
@@ -158,7 +159,8 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 }
             }
             (PrefManager.getIntValue(
-                ONLINE_TEST_LAST_LESSON_COMPLETED,defValue = 1
+                ONLINE_TEST_LAST_LESSON_COMPLETED,
+                defValue = 1
             ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
                 if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
@@ -201,7 +203,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 )
                 binding.description.text = getString(
                     R.string.grammar_lock_text, PrefManager.getIntValue(
-                        ONLINE_TEST_LAST_LESSON_COMPLETED,defValue = 1
+                        ONLINE_TEST_LAST_LESSON_COMPLETED, defValue = 1
                     ).plus(1)
                 )
             }
