@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -71,7 +72,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             forceDisconnectCall()
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
-            showToast(getString(R.string.feature_locked, firstName))
+            showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
 
         setObservers()
@@ -85,6 +86,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             WebRtcService::class.java
         ).apply {
             action = CallForceDisconnect().action
+            putExtra(IS_FAKE_CALL, true)
         }
         serviceIntent.startServiceForWebrtc()
     }
@@ -213,7 +215,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     val data1 = it.get(0)
                     if (data1 != null) {
                         data1.buttonText?.let { it1 -> buttonText.add(it1) }
-                        data1.heading?.let { it1 -> headingText.add(it1) }
+                        data1.heading.let { it1 -> headingText.add(it1) }
                         binding.materialTextView.text = buttonText.get(index)
                         binding.txtLabelHeading.text = headingText.get(index)
                         binding.title1.text = data1.courseHeading
@@ -233,7 +235,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     val data2 = it.get(1)
                     if (data2 != null) {
                         data2.buttonText?.let { it1 -> buttonText.add(it1) }
-                        data2.heading?.let { it1 -> headingText.add(it1) }
+                        data2.heading.let { it1 -> headingText.add(it1) }
                         binding.title2.text = data2.courseHeading
                         binding.txtCurrency2.text = data2.discount?.get(0).toString()
                         if (data2.perCoursePrice.isNullOrBlank()) {
@@ -257,7 +259,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 }
                 if (it.expireTime != null) {
                     binding.freeTrialTimer.visibility = View.VISIBLE
-                    if (it.expireTime!!.time >= System.currentTimeMillis()) {
+                    if (it.expireTime.time >= System.currentTimeMillis()) {
                         startTimer(it.expireTime.time - System.currentTimeMillis())
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
@@ -360,6 +362,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
+        }
+        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+        if (testId == freeTrialTestId) {
+            PrefManager.put(IS_COURSE_BOUGHT, true)
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()

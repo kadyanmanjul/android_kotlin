@@ -145,7 +145,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             this.testId = temp
             appAnalytics.addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, temp)
         }
-        isFromNewFreeTrial = intent.getBooleanExtra(IS_FROM_NEW_FREE_TRIAL,false)
+        isFromNewFreeTrial = intent.getBooleanExtra(IS_FROM_NEW_FREE_TRIAL, false)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
@@ -411,7 +411,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     MarketingAnalytics.sevenDayFreeTrialStart(testId)
                 }
                 PrefManager.put(IS_PAYMENT_DONE, true)
-                if (isFromNewFreeTrial){
+                if (isFromNewFreeTrial) {
                     if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
                         PrefManager.put(
                             PAYMENT_MOBILE_NUMBER,
@@ -736,11 +736,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         showToast(getString(R.string.please_enter_valid_number))
                         return
                     }
-                    isFromNewFreeTrial ->{
+                    isFromNewFreeTrial -> {
                         showPopup()
                         return
                     }
-                    viewModel.getCourseDiscountedAmount() < 1  -> {
+                    viewModel.getCourseDiscountedAmount() < 1 -> {
                         viewModel.createFreeOrder(
                             viewModel.getPaymentTestId(),
                             binding.mobileEt.text.toString()
@@ -758,7 +758,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         }
                 }
             }
-            isFromNewFreeTrial ->{
+            isFromNewFreeTrial -> {
                 showPopup()
                 return
             }
@@ -783,9 +783,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+        dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+            getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
-            val mobileNumber = if (getPhoneNumber().isBlank()) binding.mobileEt.text.toString() else getPhoneNumber()
+            val mobileNumber =
+                if (getPhoneNumber().isBlank()) binding.mobileEt.text.toString() else getPhoneNumber()
             viewModel.createFreeOrder(
                 viewModel.getPaymentTestId(),
                 mobileNumber
@@ -819,6 +821,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
+        }
+        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+        if (testId == freeTrialTestId) {
+            PrefManager.put(IS_COURSE_BOUGHT, true)
         }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)

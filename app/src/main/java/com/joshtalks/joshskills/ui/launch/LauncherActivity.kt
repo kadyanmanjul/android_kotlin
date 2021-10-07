@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.getGoogleAdId
@@ -22,8 +21,6 @@ import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -60,31 +57,12 @@ class LauncherActivity : CoreJoshActivity() {
             WorkManager.getInstance(applicationContext).cancelAllWork()
             WorkManagerAdmin.appInitWorker()
             WorkManagerAdmin.setFakeCallNotificationWorker()
-            checkOnBoardingStage()
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
             if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {
                 PrefManager.put(IS_FREE_TRIAL, true, false)
             }
         }
-    }
-
-    private fun checkOnBoardingStage() {
-        val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
-        val isOnBoardingUnfinished = onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
-                onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value
-        if (User.getInstance().isVerified.not() && isOnBoardingUnfinished) {
-            showOnBoardingCompletionNotification()
-        }
-    }
-
-    private fun showOnBoardingCompletionNotification() {
-        val nc = NotificationObject().apply {
-            contentTitle = "Complete Onboarding"
-            contentText = "Please complete your Onboarding"
-            action = NotificationAction.ACTION_COMPLETE_ONBOARDING
-        }
-        FirebaseNotificationService.sendFirestoreNotification(nc, this)
     }
 
     private fun animatedProgressBar() {

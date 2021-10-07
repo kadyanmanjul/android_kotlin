@@ -44,8 +44,9 @@ import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.*
@@ -295,43 +296,43 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                         task.exception?.printStackTrace()
                         return@OnCompleteListener
                     }
-                    task.result?.let {
+                    task.result.let {
                         PrefManager.put(FCM_TOKEN, it)
-//                        val fcmResponse = FCMResponse.getInstance()
-//                        fcmResponse?.apiStatus = ApiRespStatus.POST
-//                        fcmResponse?.update()
-//                        Timber.d("FCMToken asdf : Updated")
+                        //                        val fcmResponse = FCMResponse.getInstance()
+                        //                        fcmResponse?.apiStatus = ApiRespStatus.POST
+                        //                        fcmResponse?.update()
+                        //                        Timber.d("FCMToken asdf : Updated")
 
-//                        CoroutineScope(
-//                            SupervisorJob() +
-//                                    Dispatchers.IO +
-//                                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
-//                        ).launch {
-//                            try {
-//                                val userId = Mentor.getInstance().getId()
-//                                if (userId.isNotBlank()) {
-//                                    val data =
-//                                        mutableMapOf(
-//                                            "user_id" to userId,
-//                                            "registration_id" to it,
-//                                            "name" to Utils.getDeviceName(),
-//                                            "device_id" to Utils.getDeviceId(),
-//                                            "active" to "true",
-//                                            "type" to "android",
-//                                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
-//                                            "forceRefreshToken" to "true"
-//                                        )
-//                                    val resp =
-//                                        AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
-//                                    if (resp.isSuccessful) {
-//                                        Timber.d("FCMToken asdf : Updated on Server")
-//                                        resp.body()?.update()
-//                                    }
-//                                }
-//                            } catch (ex: Exception) {
-//                                ex.printStackTrace()
-//                            }
-//                        }
+                        //                        CoroutineScope(
+                        //                            SupervisorJob() +
+                        //                                    Dispatchers.IO +
+                        //                                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
+                        //                        ).launch {
+                        //                            try {
+                        //                                val userId = Mentor.getInstance().getId()
+                        //                                if (userId.isNotBlank()) {
+                        //                                    val data =
+                        //                                        mutableMapOf(
+                        //                                            "user_id" to userId,
+                        //                                            "registration_id" to it,
+                        //                                            "name" to Utils.getDeviceName(),
+                        //                                            "device_id" to Utils.getDeviceId(),
+                        //                                            "active" to "true",
+                        //                                            "type" to "android",
+                        //                                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
+                        //                                            "forceRefreshToken" to "true"
+                        //                                        )
+                        //                                    val resp =
+                        //                                        AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
+                        //                                    if (resp.isSuccessful) {
+                        //                                        Timber.d("FCMToken asdf : Updated on Server")
+                        //                                        resp.body()?.update()
+                        //                                    }
+                        //                                }
+                        //                            } catch (ex: Exception) {
+                        //                                ex.printStackTrace()
+                        //                            }
+                        //                        }
                     }
                 }
             )
@@ -739,7 +740,7 @@ class SetLocalNotificationWorker(val context: Context, private var workerParams:
                 putExtra(HAS_LOCAL_NOTIFICATION, true)
             }
 
-            intent?.run {
+            intent.run {
                 val activityList = arrayOf(this)
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(index).toInt()
                 val defaultSound =
@@ -1010,15 +1011,54 @@ class FakeCallNotificationWorker(
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val resp = AppObjectController.p2pNetworkService.getFakeCall()
-            val nc = resp.toNotificationObject(null)
-            if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
-                nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }
-            FirebaseNotificationService.sendFirestoreNotification(nc, context)
+            if (PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
+                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
+                PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis() &&
+                AppObjectController.currentActivityClass != PaymentSummaryActivity::class.java.simpleName &&
+                AppObjectController.currentActivityClass != FreeTrialPaymentActivity::class.java.simpleName
+            ) {
+                val resp = AppObjectController.p2pNetworkService.getFakeCall()
+                val nc = resp.toNotificationObject(null)
+                FirebaseNotificationService.sendFirestoreNotification(nc, context)
+            }
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
         return Result.success()
+    }
+}
+
+class LocalNotificationWorker(
+    val context: Context,
+    workerParams: WorkerParameters
+) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            checkOnBoardingStage()
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+
+    private fun checkOnBoardingStage() {
+        val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
+        val isOnBoardingUnfinished = onBoardingStage == OnBoardingStage.APP_INSTALLED.value ||
+                onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
+                onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value
+        if (User.getInstance().isVerified.not() && isOnBoardingUnfinished) {
+            showOnBoardingCompletionNotification()
+        }
+    }
+
+    private fun showOnBoardingCompletionNotification() {
+        val nc = NotificationObject().apply {
+            contentTitle = "You are just one step away from"
+            contentText = "Fulfilling your dream of speaking in English"
+            action = NotificationAction.ACTION_COMPLETE_ONBOARDING
+        }
+        FirebaseNotificationService.sendFirestoreNotification(nc, context)
     }
 }
 

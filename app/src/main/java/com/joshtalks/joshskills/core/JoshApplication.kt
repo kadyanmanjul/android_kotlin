@@ -151,18 +151,22 @@ class JoshApplication :
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         //WorkManagerAdmin.removeRepeatingNotificationWorker()
-        val startIndex= PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
-        for ( i in startIndex..2) {
+        val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
+        for (i in startIndex..2) {
             //WorkManagerAdmin.setRepeatingNotificationWorker(i)
             removeAlarmReminder(i)
         }
         //  UsageStatsService.activeUserService(this)
     }
 
-    private fun removeAlarmReminder(delay:Int) {
-        val alarmManager = this.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (alarmManager!=null){
-            val pIntent = Intent(this.applicationContext, LocalNotificationAlarmReciever::class.java)?.let { intent ->
+    private fun removeAlarmReminder(delay: Int) {
+        val alarmManager =
+            this.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (alarmManager != null) {
+            val pIntent = Intent(
+                this.applicationContext,
+                LocalNotificationAlarmReciever::class.java
+            ).let { intent ->
                 intent.putExtra("id", delay)
                 intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
                 PendingIntent.getBroadcast(
@@ -183,19 +187,23 @@ class JoshApplication :
         isAppVisible = false
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-        if (getConditionForShowLocalNotifications()){
-            val startIndex= PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
-            for ( i in startIndex..2) {
+        if (getConditionForShowLocalNotifications()) {
+            val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
+            for (i in startIndex..2) {
                 //WorkManagerAdmin.setRepeatingNotificationWorker(i)
                 setAlarmReminder(i)
             }
         }
         //  UsageStatsService.inactiveUserService(this)
+        WorkManagerAdmin.setLocalNotificationWorker()
     }
 
-    private fun setAlarmReminder(delay:Int) {
+    private fun setAlarmReminder(delay: Int) {
 
-        val pIntent = Intent(this.applicationContext, LocalNotificationAlarmReciever::class.java)?.let { intent ->
+        val pIntent = Intent(
+            this.applicationContext,
+            LocalNotificationAlarmReciever::class.java
+        ).let { intent ->
             intent.putExtra("id", delay)
             intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
             PendingIntent.getBroadcast(
@@ -212,19 +220,21 @@ class JoshApplication :
         val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
         }
-        alarmManager?.set(
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis+60*1000* NOTIFICATION_DELAY.get(delay),
+            calendar.timeInMillis + 60 * 1000 * NOTIFICATION_DELAY.get(delay),
             pIntent
         )
 
     }
 
     private fun getConditionForShowLocalNotifications(): Boolean {
-        return  AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.SHOW_LOCAL_NOTIFICATIONS) &&
-                PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX,defValue = 0) < 3 &&
+        return AppObjectController.getFirebaseRemoteConfig()
+            .getBoolean(FirebaseRemoteConfigKey.SHOW_LOCAL_NOTIFICATIONS) &&
+                PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0) < 3 &&
                 PrefManager.getBoolValue(CHAT_OPENED_FOR_NOTIFICATION, defValue = false)
-                && PrefManager.getBoolValue( LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false).not()
+                && PrefManager.getBoolValue(LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false)
+            .not()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

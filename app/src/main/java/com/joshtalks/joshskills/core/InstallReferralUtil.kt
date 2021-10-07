@@ -15,6 +15,7 @@ import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 object InstallReferralUtil {
 
@@ -22,6 +23,7 @@ object InstallReferralUtil {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val obj = InstallReferrerModel.getPrefObject()
+                Timber.d("refer123 : $obj")
                 val appAnalytics = AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME)
                 if (obj == null) {
                     val referrerClient = InstallReferrerClient.newBuilder(context).build()

@@ -54,6 +54,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         ) {
             openProfileDetailFragment()
         }
+        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
     }
 
     override fun onStart() {

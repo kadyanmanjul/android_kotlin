@@ -311,7 +311,7 @@ object WorkManagerAdmin {
             PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
             PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis()
         ) {
-            val delay = (1L..120L).random()
+            val delay = (10L..60L).random()
             val workRequest = OneTimeWorkRequestBuilder<FakeCallNotificationWorker>()
                 .setInputData(workDataOf())
                 .setInitialDelay(delay, TimeUnit.SECONDS)
@@ -319,6 +319,18 @@ object WorkManagerAdmin {
                 .build()
             WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         }
+    }
+
+    fun setLocalNotificationWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .cancelAllWorkByTag(LocalNotificationWorker::class.java.name)
+        val delay = 600L
+        val workRequest = OneTimeWorkRequestBuilder<LocalNotificationWorker>()
+            .setInputData(workDataOf())
+            .setInitialDelay(delay, TimeUnit.SECONDS)
+            .addTag(LocalNotificationWorker::class.java.name)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
     fun startVersionAndFlowWorker() {

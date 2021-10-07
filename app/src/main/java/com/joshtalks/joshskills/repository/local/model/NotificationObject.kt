@@ -175,6 +175,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("ACTION_COMPLETE_ONBOARDING")
     ACTION_COMPLETE_ONBOARDING("ACTION_COMPLETE_ONBOARDING"),
 
+    @SerializedName("OPEN_FREE_TRIAL_SCREEN")
+    ACTION_OPEN_FREE_TRIAL_SCREEN("OPEN_FREE_TRIAL_SCREEN"),
+
 }
 
 enum class NotificationChannelNames(val type: String) {

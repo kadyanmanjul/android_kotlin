@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 enum class OnBoardingStage(val value: String) {
 
+    @SerializedName("APP_INSTALLED")
+    APP_INSTALLED("APP_INSTALLED"),
+
     @SerializedName("START_NOW_CLICKED")
     START_NOW_CLICKED("START_NOW_CLICKED"),
 

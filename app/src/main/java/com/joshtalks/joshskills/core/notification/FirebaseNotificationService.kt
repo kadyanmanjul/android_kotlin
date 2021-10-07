@@ -451,7 +451,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject?.id)
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
             }
             NotificationAction.ACTION_UP_SELLING_POPUP -> {
@@ -462,7 +462,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject?.id)
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
                     putExtra(COURSE_ID, actionData)
                     putExtra(ACTION_TYPE, action)
                     putExtra(ARG_PLACEHOLDER_URL, notificationObject.bigPicture)
@@ -582,9 +582,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Intent(applicationContext, LeaderBoardViewPagerActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject?.id)
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
                 return null
+            }
+            NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN -> {
+                Intent(
+                    AppObjectController.joshApplication,
+                    FreeTrialOnBoardActivity::class.java
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    putExtra(HAS_NOTIFICATION, true)
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
+                }
             }
 //            NotificationAction.GROUP_CHAT_REPLY -> {
 //                if (Mentor.getInstance().hasId()) {
@@ -718,7 +728,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             AppObjectController.appDatabase.run {
                 val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
-                conversationId?.let {
+                conversationId.let {
                     PrefManager.removeKey(it)
                     LastSyncPrefManager.removeKey(it)
                 }
@@ -1280,7 +1290,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         @RequiresApi(Build.VERSION_CODES.N)
         private var importance = NotificationManager.IMPORTANCE_DEFAULT
 
-        public fun sendFirestoreNotification(
+        fun sendFirestoreNotification(
             notificationObject: NotificationObject,
             context: Context
         ) {
@@ -1441,7 +1451,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 NotificationAction.ACTION_COMPLETE_ONBOARDING -> {
                     val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
-                    if (onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
+                    if (onBoardingStage == OnBoardingStage.APP_INSTALLED.value ||
+                        onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
                         onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value
                     ) {
                         Intent(
