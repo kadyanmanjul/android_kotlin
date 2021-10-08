@@ -4,17 +4,12 @@ package com.joshtalks.joshskills.core
 //import com.uxcam.UXCam
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.DownloadManager
 import android.app.LauncherActivity
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.location.Location
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.View
@@ -52,6 +47,7 @@ import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -113,7 +109,7 @@ abstract class BaseActivity :
     private lateinit var referrerClient: InstallReferrerClient
     private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
     private var versionResponse: VersionResponse? = null
-    private var downloadID: Long = -1
+    var videoChatObject:ChatModel? = null
 
     enum class ActivityEnum {
         Conversation,
@@ -135,15 +131,6 @@ abstract class BaseActivity :
     ) { result ->
         if (AppObjectController.isSettingUpdate) {
             reCreateActivity()
-        }
-    }
-
-    protected var onDownloadComplete = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            if (id > -1) {
-                showToast(getString(R.string.downloading_complete))
-            }
         }
     }
 
@@ -808,51 +795,6 @@ abstract class BaseActivity :
         }
     }
 
-    protected fun downloadFile(
-        url: String,
-        message: String = "Downloading file",
-        title: String = "Josh Skills",
-        saveToGallery:Boolean = false
-    ) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            var fileName = Utils.getFileNameFromURL(url)
-            if (fileName.isEmpty()) {
-                url.let {
-                    fileName = it + Random(5).nextInt().toString().plus(it.getExtension())
-                }
-            }
-            registerDownloadReceiver(fileName)
-
-            var env= if (saveToGallery){
-                Environment.DIRECTORY_DOWNLOADS
-            } else {
-                Environment.DIRECTORY_MOVIES
-            }
-
-            val request: DownloadManager.Request =
-                DownloadManager.Request(Uri.parse(url))
-                    .setTitle(title)
-                    .setDescription(message)
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                    .setAllowedOverMetered(true)
-                    .setAllowedOverRoaming(true)
-                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                    .setDestinationInExternalPublicDir(env, fileName)
-
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                request.setRequiresCharging(false).setRequiresDeviceIdle(false)
-            }
-
-            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
-            downloadID = downloadManager.enqueue(request)
-        }
-    }
-
-    private fun registerDownloadReceiver(fileName: String) {
-        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-    }
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -894,14 +836,6 @@ abstract class BaseActivity :
                 supportFragmentManager,
                 outrankData, lessonInterval, chatId, lessonNo
             )
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        try {
-            unregisterReceiver(onDownloadComplete)
-        } catch (ex: Exception) {
         }
     }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 38,
-    "identityHash": "90fe34de70da2cd9f2011d5369200f47",
+    "identityHash": "d872b964119c0f4915907d26b6bd273d",
     "entities": [
       {
         "tableName": "course",
@@ -122,7 +122,7 @@
       },
       {
         "tableName": "chat_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chat_id` TEXT NOT NULL, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `is_seen` INTEGER NOT NULL, `text` TEXT, `type` TEXT, `url` TEXT, `duration` INTEGER NOT NULL, `message_deliver_status` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, `chat_local_id` TEXT, `is_delete_message` INTEGER NOT NULL, `download_progress` INTEGER NOT NULL, `status` TEXT, `question_id` INTEGER, `content_download_date` INTEGER NOT NULL, `message_time` REAL NOT NULL, `last_use_time` INTEGER, `award_mentor_id` INTEGER NOT NULL, `award_user_id` INTEGER, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, `id` TEXT, `user` TEXT, `user_type` TEXT, PRIMARY KEY(`chat_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chat_id` TEXT NOT NULL, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `is_seen` INTEGER NOT NULL, `text` TEXT, `type` TEXT, `url` TEXT, `duration` INTEGER NOT NULL, `message_deliver_status` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, `chat_local_id` TEXT, `is_delete_message` INTEGER NOT NULL, `download_progress` INTEGER NOT NULL, `status` TEXT, `question_id` INTEGER, `content_download_date` INTEGER NOT NULL, `message_time` REAL NOT NULL, `last_use_time` INTEGER, `award_mentor_id` INTEGER NOT NULL, `award_user_id` INTEGER, `sharableVideoDownloadedLocalPath` TEXT, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, `id` TEXT, `user` TEXT, `user_type` TEXT, PRIMARY KEY(`chat_id`))",
         "fields": [
           {
             "fieldPath": "chatId",
@@ -248,6 +248,12 @@
             "fieldPath": "awardUserId",
             "columnName": "award_user_id",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sharableVideoDownloadedLocalPath",
+            "columnName": "sharableVideoDownloadedLocalPath",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -2662,7 +2668,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '90fe34de70da2cd9f2011d5369200f47')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd872b964119c0f4915907d26b6bd273d')"
     ]
   }
 }

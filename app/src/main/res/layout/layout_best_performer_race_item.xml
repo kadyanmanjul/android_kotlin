@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_220sdp"
+        android:layout_width="@dimen/_175sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/_16sdp"
@@ -39,11 +39,12 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/thumbnail_image"
-            android:layout_width="@dimen/_175sdp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_88sdp"
             android:background="@drawable/rounded_grey_bg_2dp"
             android:backgroundTint="#E4BD71"
             android:layout_marginVertical="@dimen/_6sdp"
+            android:layout_marginHorizontal="@dimen/_8sdp"
             app:layout_constraintStart_toStartOf="parent"
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"

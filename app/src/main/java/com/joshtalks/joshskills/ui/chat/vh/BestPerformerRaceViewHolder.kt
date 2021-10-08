@@ -21,7 +21,7 @@ class BestPerformerRaceViewHolder(view: View, userId: String) : BaseViewHolder(v
     private var message: ChatModel? = null
 
     init {
-        playImage.also {
+        view.also {
             it.setOnClickListener {
                 publishEvent()
             }
@@ -40,7 +40,7 @@ class BestPerformerRaceViewHolder(view: View, userId: String) : BaseViewHolder(v
             val urlList = message.url?.split('$')
 
             if (urlList.isNullOrEmpty().not() && urlList?.size!! > 1) {
-                thumbnailImage.setRoundImage(urlList.get(1))
+                thumbnailImage.setRoundImage(urlList.get(1),roundCorner = 6)
             }
         }
     }
@@ -53,7 +53,7 @@ class BestPerformerRaceViewHolder(view: View, userId: String) : BaseViewHolder(v
         message?.run {
             val urlList = this.url?.split('$')
             if (urlList.isNullOrEmpty().not()) {
-                RxBus2.publish(OpenBestPerformerRaceEventBus(urlList?.get(0) ?: EMPTY,false))
+                RxBus2.publish(OpenBestPerformerRaceEventBus(this,urlList?.get(0) ?: EMPTY,false))
             }
         }
     }

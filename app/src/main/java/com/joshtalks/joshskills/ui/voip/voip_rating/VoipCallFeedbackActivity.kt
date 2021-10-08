@@ -13,21 +13,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.setRoundImage
-import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
-import java.util.HashMap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
 const val ARG_CALLER_NAME = "caller_name"
@@ -89,7 +82,11 @@ class VoipCallFeedbackActivity : BaseActivity() {
                         Snackbar.LENGTH_LONG,
                         it.pointsList!!.get(0)
                     )
-                    PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,it.pointsList!!.last(),false)
+                    PrefManager.put(
+                        LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                        it.pointsList!!.last(),
+                        false
+                    )
 
                 }
             }

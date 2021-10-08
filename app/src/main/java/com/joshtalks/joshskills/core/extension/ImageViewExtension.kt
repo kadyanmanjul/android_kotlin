@@ -59,6 +59,17 @@ fun ImageView.setResourceImageDefault(
         .into(this)
 }
 
+fun ImageView.setImageFromUrl(url: String, context: Context = AppObjectController.joshApplication) {
+    Glide.with(context)
+        .load(url)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
+}
+
 fun ShimmerImageView.setImageViewPH(
     url: String,
     callback: Runnable? = null,

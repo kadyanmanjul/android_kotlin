@@ -12,22 +12,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/root_view_fl"
             android:layout_width="@dimen/_180sdp"
             android:layout_height="@dimen/_320sdp"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/_16sdp"
-            android:background="@drawable/rect_round_4dp_yellow"
-            android:backgroundTint="#000000"
+            app:cardBackgroundColor="#E4BD71"
+            app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/thumbnail_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/rounded_grey_bg_2dp"
                 android:scaleType="fitXY"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -81,13 +84,15 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="27 Sept, 2021" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/badge"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_60sdp"
+            android:elevation="@dimen/_2sdp"
             app:layout_constraintEnd_toEndOf="@id/root_view_fl"
             app:layout_constraintStart_toEndOf="@id/root_view_fl"
             app:layout_constraintTop_toTopOf="parent"

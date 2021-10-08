@@ -175,9 +175,21 @@
             android:id="@+id/save_video_Frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent_black_alpha_70"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="#000000"
             android:visibility="gone"
             tool:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/play_icon"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
+                app:srcCompat="@drawable/ic_play_icon_race"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toTopOf="@id/save_gallery"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <LinearLayout
                 android:id="@+id/save_gallery"
@@ -186,6 +198,7 @@
                 android:layout_marginHorizontal="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_12sdp"
                 android:background="@drawable/round_rectangle"
+                android:foreground="?attr/selectableItemBackground"
                 android:backgroundTint="@color/colorPrimary"
                 android:gravity="center"
                 android:orientation="horizontal"
@@ -216,6 +229,7 @@
                 android:layout_marginHorizontal="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_24sdp"
                 android:background="@drawable/round_rectangle"
+                android:foreground="?attr/selectableItemBackground"
                 android:backgroundTint="@color/colorPrimary"
                 android:gravity="center"
                 android:orientation="horizontal"

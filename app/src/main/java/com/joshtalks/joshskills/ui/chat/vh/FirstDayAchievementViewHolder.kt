@@ -3,19 +3,19 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.extension.setImageFromUrl
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
 
 class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 
-    private val subRootView: ConstraintLayout = view.findViewById(R.id.root_view_fl)
+    private val subRootView: MaterialCardView = view.findViewById(R.id.root_view_fl)
     private val tvTitle: AppCompatTextView = view.findViewById(R.id.date)
     private val thumbnailImage: AppCompatImageView = view.findViewById(R.id.thumbnail_image)
     private val playImage: AppCompatImageView = view.findViewById(R.id.play_icon)
@@ -23,7 +23,7 @@ class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder
     private var message: ChatModel? = null
 
     init {
-        playImage.also {
+        subRootView.also {
             it.setOnClickListener {
                 publishEvent()
             }
@@ -43,7 +43,7 @@ class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder
 
             if (urlList.isNullOrEmpty().not() && urlList?.size!! > 1) {
                 badge.playAnimation()
-                thumbnailImage.setRoundImage(urlList.get(1))
+                thumbnailImage.setImageFromUrl(urlList.get(1))
             }
         }
     }
@@ -56,7 +56,7 @@ class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder
         message?.run {
             val urlList = this.url?.split('$')
             if (urlList.isNullOrEmpty().not()) {
-                RxBus2.publish(OpenBestPerformerRaceEventBus(urlList?.get(0) ?: EMPTY,true))
+                RxBus2.publish(OpenBestPerformerRaceEventBus(this, urlList?.get(0) ?: EMPTY, true))
             }
         }
     }

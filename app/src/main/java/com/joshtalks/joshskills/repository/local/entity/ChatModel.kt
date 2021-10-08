@@ -110,6 +110,9 @@ data class ChatModel(
     @SerializedName("award_mentor")
     var awardMentorModel: AwardMentorModel? = null,
 
+    @ColumnInfo
+    var sharableVideoDownloadedLocalPath: String? = "",
+
     @Ignore
     var playProgress: Int = 0,
 

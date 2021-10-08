@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
@@ -13,7 +14,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import java.util.Locale
+import java.util.*
 
 class StudentOfTheWeekNewView : FrameLayout {
     private lateinit var studentOfDash: AppCompatTextView
@@ -22,6 +23,7 @@ class StudentOfTheWeekNewView : FrameLayout {
     private lateinit var studentName: AppCompatTextView
     private lateinit var totalPoints: AppCompatTextView
     private lateinit var userText: AppCompatTextView
+    private lateinit var date: AppCompatTextView
     private lateinit var rootView: FrameLayout
     private var awardMentorModel: AwardMentorModel? = null
 
@@ -51,6 +53,7 @@ class StudentOfTheWeekNewView : FrameLayout {
         studentName = findViewById(R.id.student_name)
         totalPoints = findViewById(R.id.total_points)
         userText = findViewById(R.id.user_text)
+        date = findViewById(R.id.date)
         rootView = findViewById(R.id.root_view_fl)
     }
 
@@ -69,7 +72,14 @@ class StudentOfTheWeekNewView : FrameLayout {
                 .append(" ")
         }
         studentName.text = resp
-        totalPoints.text = awardMentorModel.totalPointsText
+        totalPoints.text =
+            awardMentorModel.totalPointsText?.let {
+                HtmlCompat.fromHtml(
+                    it,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            }
+        date.text = awardMentorModel.dateText
         userText.text = awardMentorModel.description
         studentOfDash.text = awardMentorModel.awardText
         userPic.post {

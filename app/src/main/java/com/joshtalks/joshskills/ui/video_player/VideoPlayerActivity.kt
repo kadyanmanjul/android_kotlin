@@ -2,25 +2,27 @@ package com.joshtalks.joshskills.ui.video_player
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
-import com.google.firebase.dynamiclinks.ShortDynamicLink
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.dynamiclinks.ktx.googleAnalyticsParameters
-import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
-import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -44,12 +46,18 @@ import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.referral.*
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 const val VIDEO_OBJECT = "video_"
 const val VIDEO_WATCH_TIME = "video_watch_time"
@@ -71,8 +79,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             chatModel: ChatModel,
             videoTitle: String,
             duration: Int? = 0,
-            conversationId: String? = null,
-            isSharableVideo: Boolean? = null
+            conversationId: String? = null
         ) {
             val intent = Intent(activity, VideoPlayerActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -80,9 +87,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             intent.putExtra(COURSE_NAME, videoTitle)
             intent.putExtra(DURATION, duration)
             intent.putExtra(CONVERSATION_ID, conversationId)
-            isSharableVideo?.let {
-                intent.putExtra(IS_SHARABLE_VIDEO, isSharableVideo)
-            }
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
         }
 
@@ -93,17 +97,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoUrl: String?,
             currentVideoProgressPosition: Long = 0,
             conversationId: String? = null,
-            isSharableVideo: Boolean? = null
-
         ) {
             val intent = Intent(context, VideoPlayerActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.putExtra(VIDEO_URL, videoUrl)
             intent.putExtra(VIDEO_ID, videoId)
             intent.putExtra(COURSE_NAME, videoTitle)
-            isSharableVideo?.let {
-                intent.putExtra(IS_SHARABLE_VIDEO, isSharableVideo)
-            }
             intent.putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
             intent.putExtra(CONVERSATION_ID, conversationId)
             context.startActivity(intent)
@@ -115,18 +114,67 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoId: String?,
             videoUrl: String?,
             currentVideoProgressPosition: Long = 0,
-            conversationId: String? = null,
-            isSharableVideo: Boolean? = null
+            conversationId: String? = null
         ): Intent {
             return Intent(context, VideoPlayerActivity::class.java).apply {
                 putExtra(VIDEO_URL, videoUrl)
                 putExtra(VIDEO_ID, videoId)
                 putExtra(COURSE_NAME, videoTitle)
-                isSharableVideo?.let {
-                    putExtra(IS_SHARABLE_VIDEO, isSharableVideo)
-                }
                 putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
                 putExtra(CONVERSATION_ID, conversationId)
+            }
+        }
+
+        fun getActivityIntentForSharable(
+            context: Context,
+            chatModel: ChatModel,
+            videoTitle: String?,
+            videoId: String?,
+            videoUrl: String?,
+            currentVideoProgressPosition: Long = 0,
+            conversationId: String? = null,
+            isSharableVideo: Boolean? = null
+        ) {
+            val intent = Intent(context, VideoPlayerActivity::class.java).apply {
+                putExtra(VIDEO_OBJECT, chatModel)
+                putExtra(VIDEO_URL, videoUrl)
+                putExtra(VIDEO_ID, videoId)
+                putExtra(COURSE_NAME, videoTitle)
+                putExtra(IS_SHARABLE_VIDEO, isSharableVideo)
+                putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
+                putExtra(CONVERSATION_ID, conversationId)
+            }
+            context.startActivity(intent)
+        }
+    }
+
+    protected var onDownloadComplete = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            Log.d("Manjul", "onReceive() called with: context = $context, intent = $intent ${chatObject}")
+            if (id > -1) {
+                try {
+                    val downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    val uri: Uri = downloadManager.getUriForDownloadedFile(id)
+                    chatObject?.sharableVideoDownloadedLocalPath = uri.toString()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        chatObject?.let {
+                            AppObjectController.appDatabase.chatDao().updateChatMessageOnAnyThread(
+                                it
+                            )
+                        }
+                    }
+
+                    if (isVideoDownloadingStarted.not()) {
+                        showToast(getString(R.string.downloading_complete))
+                    } else {
+                        isVideoDownloaded.postValue(true)
+                    }
+                    isVideoDownloadingStarted = false
+                } catch (Ex:Exception){
+                    showToast(getString(R.string.something_went_wrong))
+                }
+
             }
         }
     }
@@ -139,12 +187,16 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         countUpTimer.lap()
     }
 
+    private var downloadID: Long = -1
+    private var videoDownloadPath: String? = null
+
     private lateinit var binding: ActivityVideoPlayer1Binding
     private var chatObject: ChatModel? = null
     private var videoViewGraphList = mutableSetOf<Graph>()
     private var graph: Graph? = null
     private var videoId: String? = null
     private var videoUrl: String? = null
+    private var isVideoDownloadingStarted: Boolean = false
     private var currentVideoProgressPosition: Long = 0
     private var isSharableVideo: Boolean = false
     private lateinit var appAnalytics: AppAnalytics
@@ -159,7 +211,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var maxInterval: Int = -1
     private var interval = -1
     private var courseId: Int = -1
-    private var userReferralURL: String = EMPTY
+    private var isVideoDownloaded: MutableLiveData<Boolean> = MutableLiveData(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -172,8 +224,17 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         binding.handler = this
         setToolbar()
         binding.videoPlayer.setVideoPlayerEventListener(this)
+        var hasSharableVideo = false
 
-        if (intent.hasExtra(VIDEO_OBJECT)) {
+        if (intent.hasExtra(IS_SHARABLE_VIDEO)) {
+            hasSharableVideo = true
+            isSharableVideo = intent.getBooleanExtra(IS_SHARABLE_VIDEO, false)
+            if (isSharableVideo) {
+                addObserver()
+            }
+        }
+
+        if (intent.hasExtra(VIDEO_OBJECT) && hasSharableVideo.not()) {
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel?
             chatObject?.run {
                 question?.let { question ->
@@ -207,10 +268,37 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
                 interval = chatObject!!.question?.interval ?: -1
             }
-        }
-        if (intent.hasExtra(VIDEO_URL)) {
+        } else if (hasSharableVideo) {
+            var isVideoUrlAvailable = false
+            if (intent.hasExtra(VIDEO_URL)) {
+                isVideoUrlAvailable = true
+                videoUrl = intent.getStringExtra(VIDEO_URL)
+            }
+            chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel?
+            chatObject?.run {
+                Log.d("Manjul", "onCreate() called chat ${this}")
+                CoroutineScope(Dispatchers.IO).launch {
+                    Log.d("Manjul", "onCreate() called chat from db: chat ${AppObjectController.appDatabase.chatDao().getChatObject(chatObject!!.chatId)}")
+                }
+                if (chatObject?.url != null) {
+                    if (chatObject?.downloadedLocalPath.isNullOrEmpty() && isVideoUrlAvailable.not()) {
+                        videoUrl = this.url?.split("$")?.get(0)
+                    } else {
+                        Utils.fileUrl(this.downloadedLocalPath, videoUrl)?.run {
+                            AppObjectController.videoDownloadTracker.download(
+                                chatObject,
+                                Uri.parse(videoUrl),
+                                VideoDownloadController.getInstance().buildRenderersFactory(true)
+                            )
+                        }
+                    }
+                }
+            }
+
+        } else if (intent.hasExtra(VIDEO_URL)) {
             videoUrl = intent.getStringExtra(VIDEO_URL)
         }
+
         if (intent.hasExtra(DURATION)) {
             courseDuration = intent.getIntExtra(DURATION, 0)
         }
@@ -219,12 +307,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         }
         if (intent.hasExtra(CURRENT_VIDEO_PROGRESS_POSITION)) {
             currentVideoProgressPosition = intent.getLongExtra(CURRENT_VIDEO_PROGRESS_POSITION, 0)
-        }
-        if (intent.hasExtra(IS_SHARABLE_VIDEO)) {
-            isSharableVideo = intent.getBooleanExtra(IS_SHARABLE_VIDEO, false)
-            if (isSharableVideo) {
-                getRefferalCodes()
-            }
         }
 
         videoUrl?.run {
@@ -258,41 +340,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         )
     }
 
-    private fun getRefferalCodes() {
-        if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
-            userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-
-        }
-        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-            link = Uri.parse("https://joshskill.app.link")
-            domainUriPrefix = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
-
-            androidParameters(BuildConfig.APPLICATION_ID) {
-                minimumVersion = 69
+    private fun addObserver() {
+        isVideoDownloaded.observe(this, Observer {
+            if (it){
+                inviteFriends()
             }
-            googleAnalyticsParameters {
-                source = Mentor.getInstance().referralCode
-                medium = "Mobile"
-                campaign = "user_referer"
-            }
-
-        }.addOnSuccessListener { result ->
-            result?.shortLink?.let {
-                try {
-                    if (it.toString().isNotEmpty()) {
-                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                        userReferralURL = it.toString()
-
-                    }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-            .addOnFailureListener {
-                it.printStackTrace()
-
-            }
+        })
     }
 
     override fun getConversationId(): String? {
@@ -349,9 +402,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         if (playbackState == Player.STATE_ENDED) {
             if (isSharableVideo) {
                 binding.saveVideoFrame.visibility = View.VISIBLE
-                binding.toolbar.visibility = View.GONE
+                binding.toolbar.visibility = View.VISIBLE
                 binding.videoPlayer.hideButtons()
-                //setClickListeners()
+                setClickListeners()
             } else {
                 if (nextButtonVisible.not()) {
                     onBackPressed()
@@ -365,48 +418,131 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     private fun setClickListeners() {
         binding.share.setOnClickListener {
-            inviteFriends()
+            if (chatObject?.sharableVideoDownloadedLocalPath.isNullOrEmpty()) {
+                isVideoDownloadingStarted = true
+                downloadVideo(videoUrl!!, true)
+            } else {
+                inviteFriends()
+            }
         }
 
-        binding.saveGallery.setOnClickListener {
-            videoUrl?.let {
-                showToast("Downloading ...")
-                downloadVideo(videoUrl!!)
+        binding.saveGallery.setOnSingleClickListener {
+            if (chatObject?.sharableVideoDownloadedLocalPath.isNullOrEmpty()) {
+                downloadVideo(videoUrl!!, false)
+            } else {
+                showToast("Already Downloaded")
             }
+        }
+
+        binding.playIcon.setOnSingleClickListener {
+            binding.saveVideoFrame.visibility = View.GONE
+            binding.toolbar.visibility = View.VISIBLE
+            binding.videoPlayer.playNextVideo(videoUrl!!)
         }
     }
 
-    private fun downloadVideo(videoUrl: String) {
-        downloadFile(videoUrl,saveToGallery = true)
+    private fun downloadVideo(videoUrl: String, isSharing: Boolean = false) {
+        if (chatObject?.sharableVideoDownloadedLocalPath.isNullOrEmpty().not()) {
+            if (isSharing.not())
+                showToast("Already Downloaded")
+        } else {
+            if (isSharing.not())
+                showToast("Downloading ...")
+            getPermissionAndDownloadFile(videoUrl)
+        }
+    }
+
+    private fun getPermissionAndDownloadFile(videoUrl:String) {
+        if (PermissionUtils.isStoragePermissionEnabled(this)) {
+            downloadFile(videoUrl)
+        } else {
+            PermissionUtils.storageReadAndWritePermission(this,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                downloadFile(videoUrl)
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(this@VideoPlayerActivity)
+                                return
+                            }
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+            return
+        }
+    }
+
+    protected fun downloadFile(
+        url: String,
+        message: String = "Downloading file",
+        title: String = "Josh Skills"
+    ) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            var fileName = Utils.getFileNameFromURL(url)
+            if (fileName.isEmpty()) {
+                url.let {
+                    fileName = it + Random(5).nextInt().toString().plus(it.getExtension())
+                }
+            }
+            videoDownloadPath = fileName
+            registerDownloadReceiver(fileName)
+
+            val env = Environment.DIRECTORY_DOWNLOADS
+
+            val request: DownloadManager.Request =
+                DownloadManager.Request(Uri.parse(url))
+                    .setTitle(title)
+                    .setDescription(message)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                    .setAllowedOverMetered(true)
+                    .setAllowedOverRoaming(true)
+                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                    .setDestinationInExternalPublicDir(env, fileName)
+
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                request.setRequiresCharging(false).setRequiresDeviceIdle(false)
+            }
+
+            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
+            downloadID = downloadManager.enqueue(request)
+        }
+    }
+
+    private fun registerDownloadReceiver(fileName: String) {
+        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
     fun inviteFriends(packageString: String? = null) {
-        var referralText = com.joshtalks.joshskills.ui.referral.VIDEO_URL.plus("\n").plus(
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
-        )
-        val refAmount =
-            AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
-                .toString()
-        referralText = referralText.replace(REPLACE_HOLDER, Mentor.getInstance().referralCode)
-        referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
+        chatObject?.run {
+            try {
+                val waIntent = Intent(Intent.ACTION_SEND)
+                waIntent.type = "video/*"
+                if (packageString.isNullOrEmpty().not()) {
+                    waIntent.setPackage(packageString)
+                }
+                waIntent.putExtra(
+                    Intent.EXTRA_STREAM,
+                    Uri.parse(this.sharableVideoDownloadedLocalPath!!)
+                )
+                waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                startActivity(Intent.createChooser(waIntent, "Share with"))
 
-        referralText = if (userReferralURL.isEmpty()) {
-            referralText.plus("\n").plus(getAppShareUrl())
-        } else {
-            referralText.plus("\n").plus(userReferralURL)
-        }
-
-        try {
-            val waIntent = Intent(Intent.ACTION_SEND)
-            waIntent.type = "text/plain"
-            if (packageString.isNullOrEmpty().not()) {
-                waIntent.setPackage(packageString)
+            } catch (e: PackageManager.NameNotFoundException) {
+                showToast(getString(R.string.whatsApp_not_installed))
             }
-            waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
-            startActivity(Intent.createChooser(waIntent, "Share with"))
-
-        } catch (e: PackageManager.NameNotFoundException) {
-            showToast(getString(R.string.whatsApp_not_installed))
         }
     }
 
@@ -682,6 +818,14 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             return
         }
         setBroadcastReceivers()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(onDownloadComplete)
+        } catch (ex: Exception) {
+        }
     }
 
     override fun onUsbConnect() {

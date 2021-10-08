@@ -1103,8 +1103,7 @@ class ConversationActivity :
                             it.chatModel,
                             inboxEntity.course_name,
                             inboxEntity.duration,
-                            conversationId = inboxEntity.conversation_id,
-                            isSharableVideo = true
+                            conversationId = inboxEntity.conversation_id
                         )
                     },
                     {
@@ -1533,13 +1532,18 @@ class ConversationActivity :
                         if (it.isSharable) {
                             title = getString(R.string.my_day_review_title)
                         }
-                        VideoPlayerActivity.startVideoActivity(
-                            this,
-                            title,
-                            null,
-                            it.videoUrl,
-                            isSharableVideo = it.isSharable
-                        )
+
+                        it.chatObj?.let { chatObj ->
+                            VideoPlayerActivity.getActivityIntentForSharable(
+                                this,
+                                chatObj,
+                                title,
+                                null,
+                                it.videoUrl,
+                                conversationId = inboxEntity.conversation_id,
+                                isSharableVideo = true
+                            )
+                        }
                     },
                     {
                         it.printStackTrace()
