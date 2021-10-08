@@ -148,8 +148,8 @@ class SignUpActivity : BaseActivity() {
                     binding.ivBack.visibility = View.GONE
                     lifecycleScope.launch(Dispatchers.IO) {
                         PrefManager.clearDatabase()
-                        PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
-                        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 1)
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 1)
                     }
                     openProfileDetailFragment(true)
                 }
