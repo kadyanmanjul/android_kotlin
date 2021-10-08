@@ -34,6 +34,7 @@ import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
 import com.google.android.gms.location.LocationRequest
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingImpressionListener
@@ -53,6 +54,7 @@ import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
@@ -96,6 +98,7 @@ import java.util.*
 import kotlin.random.Random
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -160,6 +163,7 @@ abstract class BaseActivity :
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
+            processFirebaseDynamicLinks()
             //addScreenRecording()
         }
     }
@@ -203,6 +207,30 @@ abstract class BaseActivity :
             }
         }
     }*/
+
+    private fun processFirebaseDynamicLinks() {
+        FirebaseDynamicLinks.getInstance()
+            .getDynamicLink(intent)
+            .addOnSuccessListener {
+                try {
+                    val referralCode = it.utmParameters.getString("utm_source", EMPTY) ?: EMPTY
+                    //it.
+                    val installReferrerModel =
+                        InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
+                    if (referralCode != EMPTY) {
+                        installReferrerModel.utmSource = referralCode
+                    }
+                    InstallReferrerModel.update(installReferrerModel)
+                    Timber.d("DeepLink : $referralCode")
+                    Timber.d("installReferrerModel : $installReferrerModel")
+                } catch (ex: java.lang.Exception) {
+                    Timber.e(ex)
+                }
+            }
+            .addOnFailureListener {
+                Timber.w("getDynamicLink:onFailure : $it")
+            }
+    }
 
     private fun initIdentifierForTools() {
         lifecycleScope.launch(Dispatchers.IO) {

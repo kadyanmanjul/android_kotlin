@@ -117,6 +117,10 @@ const val IMPRESSION_SEARCHING_SCREEN_BACK_PRESS = "SEARCHING_SCREEN_BACK_PRESS"
 const val IMPRESSION_OPEN_GRAMMAR_SCREEN = "OPEN_GRAMMAR_SCREEN"
 const val IMPRESSION_OPEN_READING_SCREEN = "OPEN_READING_SCREEN"
 const val IMPRESSION_OPEN_VOCABULARY_SCREEN = "OPEN_VOCABULARY_SCREEN"
+const val IMPRESSION_OPEN_REFERRAL_SCREEN = "OPEN_REFERRAL_SCREEN"
+const val IMPRESSION_REFERRAL_CODE_COPIED = "REFERRAL_CODE_COPIED"
+const val IMPRESSION_REFER_VIA_WHATSAPP_CLICKED = "REFER_VIA_WHATSAPP_CLICKED"
+const val IMPRESSION_REFER_VIA_OTHER_CLICKED = "REFER_VIA_OTHER_CLICKED"
 
 object Utils {
 
@@ -169,7 +173,7 @@ object Utils {
     }
 
     fun messageTimeConversion(old: Date): String {
-        return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault())
+        return CHAT_TIME_FORMATTER.format(old.time).lowercase(Locale.getDefault())
             .replace("AM", "am").replace("PM", "pm")
     }
 
@@ -181,7 +185,7 @@ object Utils {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
-                CHAT_TIME_FORMATTER.format(date.time).toLowerCase(Locale.getDefault())
+                CHAT_TIME_FORMATTER.format(date.time).lowercase(Locale.getDefault())
             }
             isYesterday(date) -> {
                 "Yesterday"
@@ -193,7 +197,7 @@ object Utils {
     }
 
     fun getMessageTimeInHours(date: Date): String {
-        return CHAT_TIME_FORMATTER.format(date.time).toLowerCase(Locale.getDefault())
+        return CHAT_TIME_FORMATTER.format(date.time).lowercase(Locale.getDefault())
     }
 
     private fun isYesterday(d: Date): Boolean {
@@ -799,7 +803,7 @@ object Utils {
             val bitmap: Bitmap
             val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
             connection.connect()
-            val input: InputStream = connection.getInputStream()
+            val input: InputStream = connection.inputStream
             bitmap = BitmapFactory.decodeStream(input)
             BitmapDrawable(Resources.getSystem(), bitmap)
         } catch (ex: Exception) {
@@ -817,7 +821,8 @@ fun convertCamelCase(string: String): String {
     val words = string.split(" ").toMutableList()
     val output = StringBuilder()
     for (word in words) {
-        output.append(word.capitalize()).append(" ")
+        output.append(word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
+            .append(" ")
     }
     return output.toString().trim()
 }
@@ -835,7 +840,7 @@ fun showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
 }
 
 fun getUserNameInShort(
-    name: String = User.getInstance().firstName?.trim()?.toUpperCase(Locale.ROOT) ?: EMPTY
+    name: String = User.getInstance().firstName?.trim()?.uppercase(Locale.ROOT) ?: EMPTY
 ): String {
     return try {
         val nameSplit = name.split(" ")
@@ -1344,7 +1349,7 @@ fun getScreenSize(context: Context): IntArray {
     widthHeight[HEIGHT_INDEX] = 0
     val windowManager: WindowManager =
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    val display: Display = windowManager.getDefaultDisplay()
+    val display: Display = windowManager.defaultDisplay
     val size = Point()
     display.getSize(size)
     widthHeight[WIDTH_INDEX] = size.x
@@ -1357,8 +1362,8 @@ fun getScreenSize(context: Context): IntArray {
     }
     // Last defense. Use deprecated API that was introduced in lower than API 13
     if (!isScreenSizeRetrieved(widthHeight)) {
-        widthHeight[0] = display.getWidth() // deprecated
-        widthHeight[1] = display.getHeight() // deprecated
+        widthHeight[0] = display.width // deprecated
+        widthHeight[1] = display.height // deprecated
     }
     return widthHeight
 }
@@ -1370,5 +1375,5 @@ private fun isScreenSizeRetrieved(widthHeight: IntArray): Boolean {
 fun getDefaultCountryIso(context: Context): String {
     val telephoneManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
     val simState: Int? = telephoneManager?.simState
-    return if (simState == 5) telephoneManager.simCountryIso.toUpperCase(Locale.ROOT) else Locale.getDefault().country
+    return if (simState == 5) telephoneManager.simCountryIso.uppercase(Locale.ROOT) else Locale.getDefault().country
 }

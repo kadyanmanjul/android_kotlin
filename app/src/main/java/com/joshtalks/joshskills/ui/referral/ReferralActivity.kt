@@ -21,6 +21,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.dynamiclinks.ktx.androidParameters
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
@@ -32,6 +33,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IMPRESSION_OPEN_REFERRAL_SCREEN
+import com.joshtalks.joshskills.core.IMPRESSION_REFERRAL_CODE_COPIED
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_OTHER_CLICKED
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_WHATSAPP_CLICKED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -56,6 +61,7 @@ const val REFERRAL_AMOUNT_HOLDER = "**"
 const val DRAWABLE_RIGHT = 2
 const val USER_SHARE_SHORT_URL = "user_share_url"
 const val FROM_CLASS = "parent_class"
+const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
 class ReferralActivity : BaseActivity() {
     companion object {
@@ -70,6 +76,9 @@ class ReferralActivity : BaseActivity() {
     }
 
     private lateinit var activityReferralBinding: ActivityReferralBinding
+    private val viewModel: ReferralViewModel by lazy {
+        ViewModelProvider(this).get(ReferralViewModel::class.java)
+    }
     private var userReferralCode: String = EMPTY
     private var userReferralURL: String = EMPTY
     var flowFrom: String? = null
@@ -113,7 +122,7 @@ class ReferralActivity : BaseActivity() {
             }
 
         }.addOnSuccessListener { result ->
-            result?.shortLink?.let {
+            result.shortLink?.let {
                 try {
                     if (it.toString().isNotEmpty()) {
                         PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
@@ -139,6 +148,7 @@ class ReferralActivity : BaseActivity() {
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
             .push()
+        viewModel.saveImpression(IMPRESSION_OPEN_REFERRAL_SCREEN)
     }
 
 
@@ -232,7 +242,7 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteOnlyWhatsapp() {
-        inviteFriends("com.whatsapp")
+        inviteFriends(WHATSAPP_PACKAGE_STRING)
     }
 
     fun inviteFriends(packageString: String? = null) {
@@ -268,6 +278,11 @@ class ReferralActivity : BaseActivity() {
 
         } catch (e: PackageManager.NameNotFoundException) {
             showToast(getString(R.string.whatsApp_not_installed))
+        }
+        if (packageString == WHATSAPP_PACKAGE_STRING) {
+            viewModel.saveImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
+        } else {
+            viewModel.saveImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
         }
     }
 
@@ -307,6 +322,7 @@ class ReferralActivity : BaseActivity() {
             .addBasicParam()
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
             .push()
+        viewModel.saveImpression(IMPRESSION_REFERRAL_CODE_COPIED)
     }
 
     override fun onBackPressed() {
