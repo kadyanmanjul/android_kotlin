@@ -9,6 +9,7 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.BaseApplication
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DOWNLOAD_OBJECT
@@ -67,7 +68,7 @@ class DownloadMediaService : Service(), FetchListener {
                 putExtra(DOWNLOAD_CHAT_OBJECT, chatModel)
                 putExtra(DOWNLOAD_FILE_URL, url)
             }
-            if (JoshApplication.isAppVisible) {
+            if (BaseApplication.isAppVisible) {
                 AppObjectController.joshApplication.startService(serviceIntent)
             } else {
                 ContextCompat.startForegroundService(
@@ -86,7 +87,7 @@ class DownloadMediaService : Service(), FetchListener {
                 putExtra(DOWNLOAD_LESSON_QUESTION_OBJECT, lessonQuestion)
                 putExtra(DOWNLOAD_FILE_URL, url)
             }
-            if (JoshApplication.isAppVisible) {
+            if (BaseApplication.isAppVisible) {
                 AppObjectController.joshApplication.startService(serviceIntent)
             } else {
                 ContextCompat.startForegroundService(

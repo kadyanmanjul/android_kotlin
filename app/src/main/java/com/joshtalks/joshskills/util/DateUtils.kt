@@ -13,9 +13,3 @@ object DateUtils {
         return dateFormat.format(Date())
     }
 }
-
-
-/*
-fun main() {
-    print(DateUtils.getCurrentTimeStamp())
-}*/

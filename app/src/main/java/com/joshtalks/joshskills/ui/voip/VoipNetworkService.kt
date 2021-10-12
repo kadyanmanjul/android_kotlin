@@ -17,7 +17,7 @@ class VoipNetworkService : Service() {
     private val clients = mutableListOf<Messenger>()
     private val messenger = Messenger(VoipNetworkHandler(this))
 
-    // NOTE : Should not use any postdelayed msg
+    // NOTE : Should not use any post delayed msg
     internal inner class VoipNetworkHandler(context: Context,
                              private val applicationContext: Context = context.applicationContext
     ) : Handler(Looper.getMainLooper()) {

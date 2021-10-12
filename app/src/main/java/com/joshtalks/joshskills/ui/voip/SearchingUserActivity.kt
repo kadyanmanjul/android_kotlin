@@ -52,6 +52,7 @@ const val TOPIC_NAME = "topic_name"
 const val FAVORITE_USER_CALL = "favorite_user_call"
 const val IS_NEW_USER_CALL = "is_new_user_call"
 private const val TAG = "SearchingUserActivity"
+
 class SearchingUserActivity : BaseActivity(), ServiceConnection {
     var pressedBack = false
 

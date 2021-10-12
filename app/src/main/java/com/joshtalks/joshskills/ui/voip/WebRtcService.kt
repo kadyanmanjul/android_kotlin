@@ -38,6 +38,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.BaseApplication
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
@@ -931,7 +932,7 @@ class WebRtcService : BaseWebRtcService() {
                             this == CallForceDisconnect().action -> {
                                 stopRing()
                                 callForceDisconnect = true
-                                if (JoshApplication.isAppVisible.not()) {
+                                if (BaseApplication.isAppVisible.not()) {
                                     addNotification(CallDisconnect().action, null)
                                 }
                                 endCall(apiCall = false, reason = DISCONNECT.FORCE_DISCONNECT_NOTIFICATION_FAILURE)

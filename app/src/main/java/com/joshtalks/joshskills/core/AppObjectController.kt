@@ -12,6 +12,7 @@ import com.airbnb.lottie.L
 //import com.bugsee.library.Bugsee
 //import com.bugsee.library.data.VideoMode
 import com.clevertap.android.sdk.ActivityLifecycleCallback
+import com.clevertap.android.sdk.Application
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
@@ -34,6 +35,8 @@ import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.BaseApplication
+import com.joshtalks.joshskills.base.BaseApplication.Companion.isAppVisible
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -118,7 +121,7 @@ class AppObjectController {
             AppObjectController()
 
         @JvmStatic
-        lateinit var joshApplication: JoshApplication
+        lateinit var joshApplication: BaseApplication
             private set
 
         @JvmStatic
@@ -342,7 +345,7 @@ class AppObjectController {
             return INSTANCE
         }
 
-        fun init(context: JoshApplication) {
+        fun init(context: BaseApplication) {
             joshApplication = context
             CoroutineScope(Dispatchers.IO).launch {
                 com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
@@ -752,7 +755,7 @@ class StatusCodeInterceptor : Interceptor {
                 )
             ) {
                 PrefManager.logoutUser()
-                if (JoshApplication.isAppVisible) {
+                if (isAppVisible) {
                     val intent =
                         Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
                     intent.apply {
@@ -764,7 +767,7 @@ class StatusCodeInterceptor : Interceptor {
                 }
             }
         }
-        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
+        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         Timber.i("Status code: %s", response.code)
         return response
     }

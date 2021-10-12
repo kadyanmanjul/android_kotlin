@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.BaseApplication
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
@@ -381,7 +382,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener,
     }
 
     override fun onProgressUpdate(progress: Long) {
-        if (!JoshApplication.isAppVisible)
+        if (!BaseApplication.isAppVisible)
             onPausePlayer()
         seekPlayerProgress.progress = progress.toInt()
     }

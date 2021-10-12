@@ -65,6 +65,7 @@ import com.bumptech.glide.request.target.Target
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.tabs.TabLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.BaseApplication
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.TouchableSpan
@@ -1141,7 +1142,7 @@ fun Intent.serviceStart() {
 
 fun Intent.startServiceForWebrtc() {
 
-    if (JoshApplication.isAppVisible) {
+    if (BaseApplication.isAppVisible) {
         AppObjectController.joshApplication.startService(this)
     } else {
         ContextCompat.startForegroundService(
