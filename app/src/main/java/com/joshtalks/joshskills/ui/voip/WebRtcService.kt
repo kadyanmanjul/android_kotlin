@@ -139,6 +139,9 @@ class WebRtcService : BaseWebRtcService() {
     var speakingUsersOldList = arrayListOf<Int>()
     private var notificationState = NotificationState.NOT_VISIBLE
     private val timber = Timber.tag(TAG)
+    private val audioManager by lazy {
+        getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
 
     companion object {
         var incomingTimer: CoroutineScope? = null
@@ -1124,6 +1127,9 @@ class WebRtcService : BaseWebRtcService() {
                                     conversationRoomChannelName =
                                         intent.getStringExtra(RTC_CHANNEL_KEY)
                                     val statusCode = agoraUid.let {
+                                        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                                        mRtcEngine?.setEnableSpeakerphone(true)
+                                        audioManager.isSpeakerphoneOn = true
                                         mRtcEngine?.joinChannel(
                                             conversationRoomToken,
                                             conversationRoomChannelName, "test",
