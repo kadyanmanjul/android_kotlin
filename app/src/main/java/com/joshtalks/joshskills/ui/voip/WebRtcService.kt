@@ -1,13 +1,9 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
-import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
@@ -16,13 +12,7 @@ import android.graphics.Bitmap
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.os.Binder
-import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.IBinder
-import android.os.Message
-import android.os.SystemClock
+import android.os.*
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.text.Spannable
@@ -40,24 +30,11 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
-import com.joshtalks.joshskills.core.IS_FOREGROUND
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
-import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
-import com.joshtalks.joshskills.core.printAll
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.startServiceForWebrtc
-import com.joshtalks.joshskills.core.textDrawableBitmap
-import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
@@ -73,31 +50,19 @@ import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.util.DateUtils
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
-import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
-import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
-import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
-import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
-import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
-import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
-import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
-import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
+import io.agora.rtc.Constants.*
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
-import java.util.LinkedList
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
+import java.lang.ref.WeakReference
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
+import kotlin.collections.set
 
 
 const val RTC_TOKEN_KEY = "token"
@@ -595,7 +560,7 @@ class WebRtcService : BaseWebRtcService() {
                     "ABC",
                     "${speakers?.size} ${speakers?.get(0)?.uid} ${speakers?.get(0)?.volume} , moderatorUid: $moderatorUid"
                 )
-                if (isRoomCreatedByUser) {
+                /*if (isRoomCreatedByUser) {
                     speakingUsersOldList.clear()
                     speakingUsersOldList.addAll(speakingUsersNewList)
                     speakingUsersNewList.clear()
@@ -613,6 +578,19 @@ class WebRtcService : BaseWebRtcService() {
                     )
                     Log.d(TAG, "moderatorUid in onAudioIndication: $moderatorUid")
                     updateFirestoreData()
+                }*/
+                try {
+                    val user = speakers?.filter { it.uid == agoraUid!! }
+                    if (user!=null && user.size!! > 0){
+                        if (user[0].volume > 0) {
+                            roomReference.document(roomId.toString()).collection("users").document(user[0].uid.toString()).update("is_speaking", true)
+                        }
+                        else {
+                            roomReference.document(roomId.toString()).collection("users").document(user[0].uid.toString()).update("is_speaking", false)
+                        }
+                    }
+                } catch (ex:Exception){
+                    ex.printStackTrace()
                 }
             }
 
@@ -630,11 +608,16 @@ class WebRtcService : BaseWebRtcService() {
 
     fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
         CoroutineScope(Dispatchers.IO).launch {
+            removeNotifications()
+            var qId :Int? = null
+            if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
+                qId = conversationQuestionId
+            }
             val request =
                 JoinConversionRoomRequest(
                     Mentor.getInstance().getId(),
                     roomId?.toInt() ?: 0,
-                    conversationQuestionId
+                    qId
                 )
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
@@ -642,10 +625,9 @@ class WebRtcService : BaseWebRtcService() {
             if (response.isSuccessful) {
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
                 RxBus2.publish(ConvoRoomPointsEventBus(null))
-                removeNotifications()
                 conversationRoomChannelName = null
                 mRtcEngine?.leaveChannel()
-                joshAudioManager?.endCommunication()
+                //joshAudioManager?.endCommunication()
             }
         }
     }
@@ -653,11 +635,16 @@ class WebRtcService : BaseWebRtcService() {
     fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
         if (roomId.isNullOrBlank().not()) {
             CoroutineScope(Dispatchers.IO).launch {
+                removeNotifications()
+                var qId :Int? = null
+                if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
+                    qId = conversationQuestionId
+                }
                 val request =
                     JoinConversionRoomRequest(
                         Mentor.getInstance().getId(),
                         roomId?.toInt() ?: 0,
-                        conversationQuestionId
+                        qId
                     )
                 val response =
                     AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
@@ -667,10 +654,9 @@ class WebRtcService : BaseWebRtcService() {
                 if (response.isSuccessful) {
                     PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
                     RxBus2.publish(ConvoRoomPointsEventBus(null))
-                    removeNotifications()
                     conversationRoomChannelName = null
                     mRtcEngine?.leaveChannel()
-                    joshAudioManager?.endCommunication()
+                    //joshAudioManager?.endCommunication()
                 }
             }
         }
@@ -896,7 +882,7 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
-                setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
+                setParameters("{\"che.audio.enable.aec\":true}")
 
                 when (isConversionRoomActive) {
                     true -> {
@@ -906,6 +892,7 @@ class WebRtcService : BaseWebRtcService() {
                             AUDIO_PROFILE_SPEECH_STANDARD,
                             AUDIO_SCENARIO_GAME_STREAMING
                         )
+                        setDefaultAudioRoutetoSpeakerphone(true)
                         if (isRoomCreatedByUser) {
                             setClientRole(CLIENT_ROLE_BROADCASTER)
                             Log.d("ABC", "Broadcaster role set")

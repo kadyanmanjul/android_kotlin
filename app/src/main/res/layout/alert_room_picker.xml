@@ -190,27 +190,13 @@
             android:layout_marginTop="@dimen/_9sdp"
             android:layout_marginBottom="@dimen/_16sdp"
             android:gravity="center"
-            android:text="Start a conversation with "
+            android:text="Start a conversation with practice partners"
             android:textColor="#747474"
-            app:layout_constraintBottom_toTopOf="@id/create_room"
-            app:layout_constraintEnd_toStartOf="@id/tip2"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
-
-        <TextView
-            android:id="@+id/tip2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_9sdp"
-            android:layout_marginBottom="@dimen/_16sdp"
-            android:gravity="center"
-            android:text="my favorite practice partners"
-            android:textColor="#747474"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             app:layout_constraintBottom_toTopOf="@id/create_room"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tip"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
 

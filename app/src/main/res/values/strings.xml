@@ -856,6 +856,7 @@
     <string name="hold_call">Call On Hold</string>
     <string name="call_start_permission_message_rational">To start speaking practice, please allow permissions for location, making calls, storage and microphone.</string>
     <string name="call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
+    <string name="convo_room_start_permission_message">To enter/start room practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
     <string name="demo_call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Phone on.</string>
     <string name="spoke_for_minute">Spoke for %1$s </string>
     <string name="block">Block</string>
@@ -946,6 +947,8 @@
     <string name="no_room_text">👋 Hi there! \n \n Start a new room to get a conversation going!</string>
     <string name="no_room_text_tooltip">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है</string>
     <string name="convo_room_minutes_spoken">%1$d/%2$d minutes</string>
+    <string name="convo_room_dialog_desc_favt">Start a conversation with my favorite practice partners</string>
+    <string name="convo_room_dialog_desc">Start a conversation with practice partners</string>
 
 
 </resources>

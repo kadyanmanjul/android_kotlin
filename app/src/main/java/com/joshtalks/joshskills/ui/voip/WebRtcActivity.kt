@@ -829,13 +829,13 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun acceptCallForDemo(callAcceptApi: Boolean = true) {
-        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             Log.d(TAG, "acceptCallForDemo: ")
             answerCall(callAcceptApi)
             return
         }
 
-        PermissionUtils.demoCallingFeaturePermission(
+        PermissionUtils.onlyCallingFeaturePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {

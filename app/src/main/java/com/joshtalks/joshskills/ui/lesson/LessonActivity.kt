@@ -47,11 +47,11 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -206,6 +206,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 }
                 lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }
                     .isNotEmpty() && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
+                //lessonIsConvoRoomActive = true
 
                 if (lessonIsNewGrammar) {
 

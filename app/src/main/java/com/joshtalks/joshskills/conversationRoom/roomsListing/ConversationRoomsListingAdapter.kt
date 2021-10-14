@@ -47,14 +47,14 @@ class ConversationRoomsListingAdapter(
         val id = documentSnapshot.id
 
         model.room_id = id.toInt()
-        holder.bind(model)
+        holder.bind(model,position)
     }
 
     inner class ConversationRoomViewHolder(
         val binding: LiConversionRoomsIlistingItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(model: ConversationRoomsListingItem) {
-            val query1: Query = FirebaseFirestore.getInstance().collection("conversation_rooms")
+        fun bind(model: ConversationRoomsListingItem, position: Int) {
+            val query1: Query = firebaseFirestore
                 .document(model.room_id.toString()).collection("users")
             val options1: FirestoreRecyclerOptions<LiveRoomUser> =
                 FirestoreRecyclerOptions.Builder<LiveRoomUser>()
@@ -77,6 +77,8 @@ class ConversationRoomsListingAdapter(
                 roomItemAdapter?.notifyDataSetChanged()
 
                 query1.get().addOnSuccessListener { documents ->
+                    documents.forEach {
+                    }
                     if (documents.size() == 1) {
                         photo1.visibility = View.VISIBLE
                         photo1.clipToOutline = true

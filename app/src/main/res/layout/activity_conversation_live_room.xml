@@ -190,6 +190,7 @@
                 android:padding="@dimen/_7sdp"
                 app:srcCompat="@drawable/ic_mic_off"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -202,6 +203,7 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
+                tools:visibility="gone"
                 app:srcCompat="@drawable/ic_mic_black_on"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"

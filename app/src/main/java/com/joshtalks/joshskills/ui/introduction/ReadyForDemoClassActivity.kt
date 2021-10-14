@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -98,12 +97,12 @@ class ReadyForDemoClassActivity : AppCompatActivity() {
     }
 
     private fun addRequesting(topicId: String) {
-        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             requestForSearchUser(topicId)
             return
         }
 
-        PermissionUtils.demoCallingFeaturePermission(
+        PermissionUtils.onlyCallingFeaturePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -190,7 +189,7 @@ class ReadyForDemoClassActivity : AppCompatActivity() {
             val topicId = PrefManager.getStringValue(DEMO_LESSON_TOPIC_ID)
             if (topicId.isBlank()) {
                 viewModel.getDemoLesson()
-            } else if (PermissionUtils.isDemoCallingPermissionEnabled(this).not()) {
+            } else if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this).not()) {
                 addRequesting(topicId)
             } else {
                 startDemoSpeakingActivity(

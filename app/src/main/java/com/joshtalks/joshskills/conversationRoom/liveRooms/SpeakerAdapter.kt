@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
@@ -21,7 +20,6 @@ class SpeakerAdapter(
     val isModerator: Boolean
 ) : FirestoreRecyclerAdapter<LiveRoomUser, SpeakerAdapter.SpeakerViewHolder>(rooms) {
 
-    val firebaseFirestore = FirebaseFirestore.getInstance().collection("conversation_rooms")
     private var listenerUserAction: OnUserItemClickListener? = null
 
     inner class SpeakerViewHolder(val binding: LiSpeakersItemBinding) :

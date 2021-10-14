@@ -7,11 +7,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -36,13 +32,8 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
-import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -63,40 +54,41 @@ import io.reactivex.schedulers.Schedulers
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
     NotificationView.NotificationViewAction {
     private var mServiceBound: Boolean = false
-    lateinit var binding: ActivityConversationLiveRoomBinding
-    val database = FirebaseFirestore.getInstance()
-    var roomReference: DocumentReference? = null
-    var usersReference: CollectionReference? = null
+    private lateinit var binding: ActivityConversationLiveRoomBinding
+    private val database = FirebaseFirestore.getInstance()
+    private var roomReference: DocumentReference? = null
+    private var usersReference: CollectionReference? = null
     private var mBoundService: WebRtcService? = null
-    var isActivityOpenFromNotification: Boolean = false
-    var roomId: Int? = null
-    var roomQuestionId: Int? = null
-    var isRoomCreatedByUser: Boolean = false
-    var isRoomUserSpeaker: Boolean = false
-    var speakerAdapter: SpeakerAdapter? = null
-    var listenerAdapter: AudienceAdapter? = null
-    var channelName: String? = null
-    var agoraUid: Int? = null
-    var token: String? = null
-    var moderatorUid: Int? = null
-    var moderatorName: String? = null
-    var moderatorMentorId: String? = null
-    var currentUserName: String? = null
-    var iSSoundOn = true
-    var isBottomSheetVisible = false
-    var isHandRaised = true
-    var topicName: String? = null
-    var notificationTo: HashMap<String, String>? = null
-    var notificationFrom: HashMap<String, String>? = null
-    var notificationType: String? = null
-    var speakingUsersNewList = arrayListOf<Int>()
-    var speakingUsersOldList = arrayListOf<Int>()
-    var handler: Handler? = null
-    var runnable: Runnable? = null
+    private var isActivityOpenFromNotification: Boolean = false
+    private var roomId: Int? = null
+    private var roomQuestionId: Int? = null
+    private var isRoomCreatedByUser: Boolean = false
+    private var isRoomUserSpeaker: Boolean = false
+    private var speakerAdapter: SpeakerAdapter? = null
+    private var listenerAdapter: AudienceAdapter? = null
+    private var channelName: String? = null
+    private var agoraUid: Int? = null
+    private var token: String? = null
+    private var moderatorUid: Int? = null
+    private var moderatorName: String? = null
+    private var moderatorMentorId: String? = null
+    private var currentUserName: String? = null
+    private var iSSoundOn = true
+    private var isBottomSheetVisible = false
+    private var isHandRaised = true
+    private var topicName: String? = null
+    private var notificationTo: HashMap<String, String>? = null
+    private var notificationFrom: HashMap<String, String>? = null
+    private var notificationType: String? = null
+    private var speakingUsersNewList = arrayListOf<Int>()
+    private var speakingUsersOldList = arrayListOf<Int>()
+    private var handler: Handler? = null
+    private var runnable: Runnable? = null
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
-    var isBackPressed: Boolean = false
+    private var isBackPressed: Boolean = false
+    private var isRoomEnded: Boolean = false
     private val notebookRef = FirebaseFirestore.getInstance().collection("conversation_rooms")
     private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
 
@@ -304,7 +296,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         agoraUid = intent?.getIntExtra(UID, 0)
         token = intent?.getStringExtra(TOKEN)
         roomId = intent?.getIntExtra(ROOM_ID, 0)
-        roomQuestionId = intent?.getIntExtra(ROOM_QUESTION_ID, -1)
+        roomQuestionId = intent?.getIntExtra(ROOM_QUESTION_ID, 0)
         isRoomCreatedByUser = intent.getBooleanExtra(IS_ROOM_CREATED_BY_USER, false)
     }
 
@@ -389,60 +381,47 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun clickHandRaisedButton(isRaised: Boolean, type: String) {
-        val reference = usersReference?.document(agoraUid.toString())
-        usersReference?.whereEqualTo("is_speaker", true)
-            ?.get()
-            ?.addOnSuccessListener { documents ->
-                if (documents.size() < 16) {
-                    reference?.update("is_hand_raised", isRaised)
-                        ?.addOnSuccessListener {
-                            isHandRaised = !isHandRaised
-                            when (isRaised) {
-                                true -> {
-                                    binding.apply {
-                                        handRaiseBtn.visibility = View.VISIBLE
-                                        handUnraiseBtn.visibility = View.GONE
-                                    }
-                                    setNotificationWithoutAction(
-                                        String.format(
-                                            "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
-                                                    "know you want to talk..."
-                                        ), true
-                                    )
-                                }
-                                false -> {
-                                    binding.apply {
-                                        handRaiseBtn.visibility = View.GONE
-                                        handUnraiseBtn.visibility = View.VISIBLE
-                                    }
-                                }
+        try {
+            usersReference?.document(agoraUid.toString())?.update("is_hand_raised", isRaised)
+                ?.addOnSuccessListener {
+                    isHandRaised = !isHandRaised
+                    when (isRaised) {
+                        true -> {
+                            binding.apply {
+                                handRaiseBtn.visibility = View.VISIBLE
+                                handUnraiseBtn.visibility = View.GONE
                             }
-                            sendNotification(
-                                type,
-                                agoraUid?.toString(),
-                                currentUserName ?: "User",
-                                moderatorUid?.toString(),
-                                moderatorName ?: "Moderator"
+                            setNotificationWithoutAction(
+                                String.format(
+                                    "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
+                                            "know you want to talk..."
+                                ), true
                             )
-                        }?.addOnFailureListener {
-                            setNotificationWithoutAction("Something Went Wrong", false)
                         }
-                } else {
-                    setNotificationWithoutAction(
-                        "Room has reached maximum allowed number of speakers." +
-                                " Please try again after sometime.", false
+                        false -> {
+                            binding.apply {
+                                handRaiseBtn.visibility = View.GONE
+                                handUnraiseBtn.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                    sendNotification(
+                        type,
+                        agoraUid?.toString(),
+                        currentUserName ?: "User",
+                        moderatorUid?.toString(),
+                        moderatorName ?: "Moderator"
                     )
+                }?.addOnFailureListener {
+                    setNotificationWithoutAction("Something Went Wrong", false)
                 }
-            }
-            ?.addOnFailureListener { exception ->
-                setNotificationWithoutAction("Something Went Wrong", false)
-            }
-
+        } catch (ex:Exception){
+            showToast(ex.toString())
+        }
     }
 
     private fun changeMuteButtonState(isMicOn: Boolean) {
-        val reference = usersReference?.document(agoraUid.toString())
-        reference?.update("is_mic_on", isMicOn)
+        usersReference?.document(agoraUid.toString())?.update("is_mic_on", isMicOn)
             ?.addOnSuccessListener {
                 iSSoundOn = isMicOn
                 updateMuteButtonState()
@@ -590,7 +569,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             hideActionLayout()
             setBackgroundColor(false)
             setHeading("This room has ended")
-            startSound()
+            //startSound()
             loadAnimationSlideDown()
         }
         Handler(Looper.getMainLooper()).postDelayed({
@@ -660,7 +639,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (error != null) {
                 return@addSnapshotListener
             } else {
-                if (value?.exists() == false) {
+                if (value?.exists() == false && isRoomEnded.not()) {
+                    isRoomEnded= true
                     mBoundService?.leaveChannel()
                     showRoomEndNotification()
                 }
@@ -670,7 +650,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (error != null) {
                 return@addSnapshotListener
             } else {
-                if (value?.isEmpty == true) {
+                if (value?.isEmpty == true && isRoomEnded.not()) {
+                    isRoomEnded= true
                     mBoundService?.leaveChannel()
                     showRoomEndNotification()
                 }
@@ -680,12 +661,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun takePermissions() {
-        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             callWebRtcService()
             return
         }
 
-        PermissionUtils.demoCallingFeaturePermission(
+        PermissionUtils.onlyCallingFeaturePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {

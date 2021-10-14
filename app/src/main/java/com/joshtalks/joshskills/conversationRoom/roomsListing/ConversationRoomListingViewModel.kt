@@ -1,16 +1,11 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.gson.Gson
-import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomDetailsResponse
-import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomResponse
-import com.joshtalks.joshskills.conversationRoom.model.CreateConversionRoomRequest
-import com.joshtalks.joshskills.conversationRoom.model.EnterExitConversionRoomRequest
-import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
+import com.joshtalks.joshskills.conversationRoom.model.*
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.core.AppObjectController
@@ -30,8 +25,12 @@ class ConversationRoomListingViewModel : ViewModel() {
     fun joinRoom(item: ConversationRoomsListingItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                var qId :Int? = null
+                if (item.conversationRoomQuestionId!=null && ( item.conversationRoomQuestionId!=0 || item.conversationRoomQuestionId != -1) ){
+                    qId = item.conversationRoomQuestionId
+                }
                 val joinRoomRequest =
-                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.room_id ?: 0,item.conversationRoomQuestionId)
+                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.room_id ?: 0,qId)
 
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.joinConversationRoom(
@@ -66,8 +65,12 @@ class ConversationRoomListingViewModel : ViewModel() {
     fun createRoom(topic: String,isFavouritePracticePartner:Boolean?=false,conversationQuestionId:Int?=null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                var qId :Int? = null
+                if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
+                    qId = conversationQuestionId
+                }
                 val createConversionRoomRequest =
-                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic,isFavouritePracticePartner,conversationQuestionId)
+                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic,isFavouritePracticePartner,qId)
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.createConversationRoom(
                         createConversionRoomRequest
@@ -142,12 +145,9 @@ class ConversationRoomListingViewModel : ViewModel() {
     fun getPointsForConversationRoom(roomId: String?, conversationQuestionId: Int?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                Log.d("Manjul", "getPointsForConversationRoom() called")
                 val response =
                     AppObjectController.chatNetworkService.getSnackBarText(roomId = roomId,conversationQuestionId = conversationQuestionId.toString())
-                Log.d("Manjul", "response() ${response}")
                 if (response.pointsList?.get(0)?.isNotBlank()== true) {
-                    Log.d("Manjul", "response() ${response}")
                     points.postValue(response.pointsList.get(0))
                 } else{
                     points.postValue(EMPTY)
@@ -161,8 +161,12 @@ class ConversationRoomListingViewModel : ViewModel() {
 
     fun endRoom(roomId: String?,conversationQuestionId:Int?=null) {
         CoroutineScope(Dispatchers.IO).launch {
+            var qId :Int? = null
+            if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
+                qId = conversationQuestionId
+            }
             val request =
-                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,conversationQuestionId)
+                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,qId)
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             if (response.isSuccessful) {

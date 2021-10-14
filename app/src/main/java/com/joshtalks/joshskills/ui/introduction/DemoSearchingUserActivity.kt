@@ -191,12 +191,12 @@ class DemoSearchingUserActivity : AppCompatActivity() {
     }
 
     private fun addRequesting() {
-        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             requestForSearchUser()
             return
         }
 
-        PermissionUtils.demoCallingFeaturePermission(
+        PermissionUtils.onlyCallingFeaturePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {

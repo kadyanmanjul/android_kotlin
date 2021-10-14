@@ -4,18 +4,19 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -33,22 +34,14 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingAdapter
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
-import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -56,10 +49,15 @@ import com.joshtalks.joshskills.ui.lesson.ROOM_POSITION
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isConversionRoomActive
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isRoomCreatedByUser
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+
 
 class ConversationRoomListingFragment : CoreJoshFragment(),
     ConversationRoomListAction {
@@ -102,7 +100,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+        //PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
         hasSeenpoints = false
     }
@@ -182,14 +180,12 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         })
 
         viewModel.points.observe(viewLifecycleOwner, { pointsString ->
-            Log.d("Manjul", "addObservers() called with: pointsString = $pointsString")
             if (pointsString.isNotBlank()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
                 hasSeenpoints=true
             } else{
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-                Log.d("Manjul", "observer compositeDisposable.add called")
                 compositeDisposable.add(getPointsDisposable())
             }
         })
@@ -219,7 +215,35 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             createRoom.apply {
                 clipToOutline = true
                 setOnSingleClickListener {
-                    showAddTopicPopup()
+                    if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireActivity())) {
+                        showAddTopicPopup()
+                        return@setOnSingleClickListener
+                    }
+
+                    PermissionUtils.onlyCallingFeaturePermission(
+                        requireActivity(),
+                        object : MultiplePermissionsListener {
+                            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                                report?.areAllPermissionsGranted()?.let { flag ->
+                                    if (flag) {
+                                        showAddTopicPopup()
+                                        return
+                                    }
+                                    if (report.isAnyPermissionPermanentlyDenied) {
+                                        PermissionUtils.callingPermissionPermanentlyDeniedDialog(requireActivity(),R.string.convo_room_start_permission_message)
+                                        return
+                                    }
+                                }
+                            }
+
+                            override fun onPermissionRationaleShouldBeShown(
+                                permissions: MutableList<PermissionRequest>?,
+                                token: PermissionToken?
+                            ) {
+                                token?.continuePermissionRequest()
+                            }
+                        }
+                    )
                 }
             }
             continueBtn.apply {
@@ -296,7 +320,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     }
 
     private fun observeNetwork() {
-        Log.d("Manjul", "observeNetwork() called $hasSeenpoints ${PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false)}")
+        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
         hasSeenpoints = false
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(AppObjectController.joshApplication)
@@ -315,25 +339,21 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             viewModel.getConvoRoomDetails(it)
 
             if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false).not()) {
-                Log.d("Manjul", "compositeDisposable.add called")
                 compositeDisposable.remove(getPointsDisposable())
-                Log.d("Manjul", "HAS_SEEN_CONVO_ROOM_POINTS() called $hasSeenpoints ${PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false)}")
                 viewModel.getPointsForConversationRoom(lastRoomId, it)
                 hasSeenpoints=true
                 //PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
             } else{
-                Log.d("Manjul", "compositeDisposable.add called")
                 compositeDisposable.add(getPointsDisposable())
             }
         }
     }
 
     fun getPointsDisposable(): Disposable {
-        return RxBus2.listenWithoutDelay(ConvoRoomPointsEventBus::class.java)
+        return RxBus2.listen(ConvoRoomPointsEventBus::class.java)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                Log.d("Manjul", "getPointsDisposable() called $hasSeenpoints ${PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false)}")
                 if (hasSeenpoints.not()) {
                     conversationRoomQuestionId?.let {
                         viewModel.getPointsForConversationRoom(
@@ -361,6 +381,36 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             visibility = View.GONE
             endSound()
         }
+    }
+
+    private fun takePermissions() {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireActivity())) {
+            return
+        }
+
+        PermissionUtils.onlyCallingFeaturePermission(
+            requireActivity(),
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(requireActivity(),R.string.convo_room_start_permission_message)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     private fun openConversationLiveRoom(
@@ -501,6 +551,19 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 View.GONE
         }
 
+        val temp =  getString(R.string.convo_room_dialog_desc)
+        val sBuilder = SpannableStringBuilder(temp)
+        sBuilder.setSpan(
+            StyleSpan(Typeface.BOLD),
+            26,
+            temp.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        dialogView.findViewById<TextView>(R.id.tip).setText(
+            sBuilder,
+            TextView.BufferType.SPANNABLE
+        )
+
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
             FullScreenProgressDialog.showProgressBar(requireActivity())
             viewModel.createRoom(topic, isP2Pselected.not(), conversationRoomQuestionId)
@@ -533,6 +596,18 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                     R.color.white
                 )
             )
+            val temp =  getString(R.string.convo_room_dialog_desc)
+            val sBuilder = SpannableStringBuilder(temp)
+            sBuilder.setSpan(
+                StyleSpan(Typeface.BOLD),
+                26,
+                temp.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            dialogView.findViewById<TextView>(R.id.tip).setText(
+                sBuilder,
+                TextView.BufferType.SPANNABLE
+            )
             isP2Pselected = true
         }
         dialogView.findViewById<MaterialCardView>(R.id.favt_container).setOnClickListener {
@@ -562,6 +637,18 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                     R.color.artboard_stroke_color
                 )
             )
+            val temp =  getString(R.string.convo_room_dialog_desc_favt)
+            val sBuilder = SpannableStringBuilder(temp)
+            sBuilder.setSpan(
+                StyleSpan(Typeface.BOLD),
+                26,
+                temp.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            dialogView.findViewById<TextView>(R.id.tip).setText(
+                sBuilder,
+                TextView.BufferType.SPANNABLE
+            )
             isP2Pselected = false
         }
     }
@@ -587,7 +674,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             viewModel.makeEnterExitConversationRoom(false)
         }
         super.onDestroy()
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
+        //PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
         isConversionRoomActive = false
         isRoomCreatedByUser = false
     }
@@ -614,7 +701,38 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     }
 
     override fun onRoomClick(item: ConversationRoomsListingItem) {
-        item.conversationRoomQuestionId = conversationRoomQuestionId
-        viewModel.joinRoom(item)
+            if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireActivity())) {
+                FullScreenProgressDialog.showProgressBar(requireActivity())
+                item.conversationRoomQuestionId = conversationRoomQuestionId
+                viewModel.joinRoom(item)
+                return
+            }
+
+            PermissionUtils.onlyCallingFeaturePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                FullScreenProgressDialog.showProgressBar(requireActivity())
+                                item.conversationRoomQuestionId = conversationRoomQuestionId
+                                viewModel.joinRoom(item)
+                                return
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.callingPermissionPermanentlyDeniedDialog(requireActivity(),R.string.convo_room_start_permission_message)
+                                return
+                            }
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                }
+            )
     }
 }
