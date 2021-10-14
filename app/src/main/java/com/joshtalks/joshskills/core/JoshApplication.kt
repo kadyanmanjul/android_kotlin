@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.di.ApplicationComponent
+import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +35,9 @@ class JoshApplication :
     MultiDexApplication(),
     LifecycleObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
+    val applicationGraph: ApplicationComponent by lazy {
+        DaggerApplicationComponent.create()
+    }
 
     companion object {
         @Volatile
