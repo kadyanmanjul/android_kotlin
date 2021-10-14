@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.base
 
+import android.os.Message
 import androidx.lifecycle.LifecycleOwner
 
 /**
@@ -12,20 +13,20 @@ import androidx.collection.ArraySet
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 
-class SingleLiveEvent<T> : MediatorLiveData<T>() {
+object EventLiveData : MediatorLiveData<Message>() {
 
-    private val observers = ArraySet<ObserverWrapper<in T>>()
+    private val observers = ArraySet<ObserverWrapper<in Message>>()
 
     @MainThread
-    override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
+    override fun observe(owner: LifecycleOwner, observer: Observer<in Message>) {
         val wrapper = ObserverWrapper(observer)
         observers.add(wrapper)
         super.observe(owner, wrapper)
     }
 
     @MainThread
-    override fun removeObserver(observer: Observer<in T>) {
-        if (observers.remove(observer)) {
+    override fun removeObserver(observer: Observer<in Message>) {
+        if (observer is ObserverWrapper && observers.remove(observer)) {
             super.removeObserver(observer)
             return
         }
@@ -42,7 +43,7 @@ class SingleLiveEvent<T> : MediatorLiveData<T>() {
     }
 
     @MainThread
-    override fun setValue(t: T?) {
+    override fun setValue(t: Message?) {
         observers.forEach { it.newValue() }
         super.setValue(t)
     }

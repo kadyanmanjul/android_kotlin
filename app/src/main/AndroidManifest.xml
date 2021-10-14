@@ -81,12 +81,18 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".ui.group.JoshGroupActivity"
+            android:exported="true" />
+        <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
-            android:exported="true" >
-            <!--<intent-filter>
+            android:exported="true">
+
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
@@ -141,6 +147,7 @@
             android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>

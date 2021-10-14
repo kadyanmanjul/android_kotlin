@@ -131,6 +131,15 @@
             </com.google.android.material.appbar.MaterialToolbar>
         </LinearLayout>
 
+        <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_groups"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cross"
+            android:layout_below="@id/free_trial_container"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/_16sdp"/>-->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/free_trial_container"
             android:layout_width="match_parent"
@@ -140,7 +149,7 @@
             android:elevation="@dimen/_1sdp"
             android:fillAfter="false"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/free_trial_text"

@@ -8,18 +8,15 @@ import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    @Inject
-    protected lateinit var liveData: SingleLiveEvent<Message>
+    protected var liveData = EventLiveData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViewModel()
         initViewBinding()
         onCreated()
         initViewState()
     }
 
-    protected abstract fun initViewModel()
     protected abstract fun initViewBinding()
     protected abstract fun onCreated()
     protected abstract fun initViewState()
