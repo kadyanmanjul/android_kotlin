@@ -13,7 +13,6 @@ import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
@@ -704,6 +703,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireActivity())) {
                 FullScreenProgressDialog.showProgressBar(requireActivity())
                 item.conversationRoomQuestionId = conversationRoomQuestionId
+                lastRoomId = (item.room_id?:lastRoomId).toString()
                 viewModel.joinRoom(item)
                 return
             }
@@ -716,6 +716,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                             if (flag) {
                                 FullScreenProgressDialog.showProgressBar(requireActivity())
                                 item.conversationRoomQuestionId = conversationRoomQuestionId
+                                lastRoomId = (item.room_id?:lastRoomId).toString()
                                 viewModel.joinRoom(item)
                                 return
                             }

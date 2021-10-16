@@ -2,12 +2,8 @@ package com.joshtalks.joshskills.core.notification
 
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -28,9 +24,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.voip.NotificationId
-import java.util.Objects
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 
 
 class HeadsUpNotificationService : Service() {
@@ -63,7 +57,6 @@ class HeadsUpNotificationService : Service() {
                     || intent.getStringExtra(ConfigKey.CALL_RESPONSE_ACTION_KEY) == ConfigKey.CALL_RECEIVE_ACTION)
         ) {
             if (intent.getStringExtra(ConfigKey.CALL_RESPONSE_ACTION_KEY) == ConfigKey.CALL_CANCEL_ACTION) {
-
 
                 mNotificationManager?.cancelAll()
                 stopForeground(true)
@@ -115,7 +108,7 @@ class HeadsUpNotificationService : Service() {
                 stopSelf()
             }
         }
-        timer.schedule(task, 150000)
+        timer.schedule(task, 120000)
     }
 
     private fun addObserver(roomId: String?, intent: Intent?) {
@@ -165,14 +158,14 @@ class HeadsUpNotificationService : Service() {
     ): NotificationCompat.Builder {
 
         val importance =
-            if (canHeadsUpNotification()) NotificationManager.IMPORTANCE_HIGH else NotificationManager.IMPORTANCE_LOW
+            if (canHeadsUpNotification()) NotificationCompat.PRIORITY_HIGH else NotificationManager.IMPORTANCE_LOW
 
         val builder = NotificationCompat.Builder(this, NotificationId.ROOM_NOTIFICATION_CHANNEL)
             .setContentTitle(getString(R.string.room_title))
             .setContentText("Join Conversation Room")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setChannelId(NotificationId.ROOM_NOTIFICATION_CHANNEL)
-            .setAutoCancel(true)
+            .setAutoCancel(false)
             .setColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
@@ -277,6 +270,7 @@ class HeadsUpNotificationService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setVibrate(LongArray(0))
             builder.setCategory(Notification.CATEGORY_CALL)
+            builder.setOngoing(true)
         }
         if (canHeadsUpNotification()) {
             builder.setCustomHeadsUpContentView(customView)

@@ -109,6 +109,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     companion object {
+        var isRoomEnded = false
         var incomingTimer: CoroutineScope? = null
         var conversationRoomTopicName: String? = ""
         private val TAG = WebRtcService::class.java.simpleName
@@ -531,12 +532,12 @@ class WebRtcService : BaseWebRtcService() {
                 if (isRoomCreatedByUser) {
                     if (isUserLeave) {
                         usersReference.document(uid.toString()).delete()
-                        Log.d("ABC", "OnUserOffline remove user by moderator $moderatorUid")
+                        Log.d("ABC", "isRoomCreatedByUser ${isRoomCreatedByUser} service OnUserOffline remove user by moderator $moderatorUid")
                     }
                 } else {
                     if (uid == moderatorUid && isUserLeave) {
                         usersReference.get().addOnSuccessListener { documents ->
-                            Log.d("ABC", "OnUserOffline for moderator call $moderatorUid $reason")
+                            Log.d("ABC", "isRoomCreatedByUser ${isRoomCreatedByUser}  service OnUserOffline for moderator call $moderatorUid $reason")
                             if (documents.size() > 1) {
                                 if (documents.documents[0].id.toInt() == agoraUid) {
                                     endRoom(roomId, roomQuestionId)
@@ -560,7 +561,7 @@ class WebRtcService : BaseWebRtcService() {
                     "ABC",
                     "${speakers?.size} ${speakers?.get(0)?.uid} ${speakers?.get(0)?.volume} , moderatorUid: $moderatorUid"
                 )
-                /*if (isRoomCreatedByUser) {
+                if (isRoomCreatedByUser) {
                     speakingUsersOldList.clear()
                     speakingUsersOldList.addAll(speakingUsersNewList)
                     speakingUsersNewList.clear()
@@ -578,8 +579,8 @@ class WebRtcService : BaseWebRtcService() {
                     )
                     Log.d(TAG, "moderatorUid in onAudioIndication: $moderatorUid")
                     updateFirestoreData()
-                }*/
-                try {
+                }
+                /*try {
                     val user = speakers?.filter { it.uid == agoraUid!! }
                     if (user!=null && user.size!! > 0){
                         if (user[0].volume > 0) {
@@ -591,7 +592,7 @@ class WebRtcService : BaseWebRtcService() {
                     }
                 } catch (ex:Exception){
                     ex.printStackTrace()
-                }
+                }*/
             }
 
         }
@@ -607,37 +608,16 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
+        Log.d(
+            "ABC",
+            "endRoom() service called with: roomId = $roomId, conversationQuestionId = $conversationQuestionId"
+        )
         CoroutineScope(Dispatchers.IO).launch {
             removeNotifications()
-            var qId :Int? = null
-            if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
-                qId = conversationQuestionId
-            }
-            val request =
-                JoinConversionRoomRequest(
-                    Mentor.getInstance().getId(),
-                    roomId?.toInt() ?: 0,
-                    qId
-                )
-            val response =
-                AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
-            Log.d("ABC", "end room api call ${response.code()}")
-            if (response.isSuccessful) {
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
-                RxBus2.publish(ConvoRoomPointsEventBus(null))
-                conversationRoomChannelName = null
-                mRtcEngine?.leaveChannel()
-                //joshAudioManager?.endCommunication()
-            }
-        }
-    }
-
-    fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
-        if (roomId.isNullOrBlank().not()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                removeNotifications()
-                var qId :Int? = null
-                if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
+            //removeConversationNotifications()
+            if (isRoomEnded.not()) {
+                var qId: Int? = null
+                if (conversationQuestionId != null && (conversationQuestionId != 0 || conversationQuestionId != -1)) {
                     qId = conversationQuestionId
                 }
                 val request =
@@ -647,16 +627,50 @@ class WebRtcService : BaseWebRtcService() {
                         qId
                     )
                 val response =
-                    AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
+                    AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
                         request
                     )
-                Log.d("ABC", "leave room api call")
+                Log.d("ABC", "end room api call ${response.code()}")
                 if (response.isSuccessful) {
+                    isRoomEnded = true
                     PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
                     RxBus2.publish(ConvoRoomPointsEventBus(null))
                     conversationRoomChannelName = null
                     mRtcEngine?.leaveChannel()
                     //joshAudioManager?.endCommunication()
+                }
+            }
+        }
+    }
+
+    fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
+        if (roomId.isNullOrBlank().not()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (isRoomEnded.not()) {
+                    removeNotifications()
+                    var qId: Int? = null
+                    if (conversationQuestionId != null && (conversationQuestionId != 0 || conversationQuestionId != -1)) {
+                        qId = conversationQuestionId
+                    }
+                    val request =
+                        JoinConversionRoomRequest(
+                            Mentor.getInstance().getId(),
+                            roomId?.toInt() ?: 0,
+                            qId
+                        )
+                    val response =
+                        AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
+                            request
+                        )
+                    Log.d("ABC", "leave room api call")
+                    if (response.isSuccessful) {
+                        isRoomEnded = true
+                        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
+                        RxBus2.publish(ConvoRoomPointsEventBus(null))
+                        conversationRoomChannelName = null
+                        mRtcEngine?.leaveChannel()
+                        //joshAudioManager?.endCommunication()
+                    }
                 }
             }
         }
@@ -755,6 +769,10 @@ class WebRtcService : BaseWebRtcService() {
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
                     if (isConversionRoomActive) {
                         if (isRoomCreatedByUser) {
+                            Log.d(
+                                "ABC",
+                                "CALL_STATE_OFFHOOK  called with: state = $state, phoneNumber = $phoneNumber"
+                            )
                             endRoom(roomId, roomQuestionId)
                         } else {
                             leaveRoom(roomId, roomQuestionId)
@@ -1778,6 +1796,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onDestroy() {
+        Log.d("ABC", "service onDestroy() called")
         if (isRoomCreatedByUser) {
             endRoom(roomId, roomQuestionId)
         } else {

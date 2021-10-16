@@ -18,11 +18,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
-import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
-import com.joshtalks.joshskills.ui.lesson.READING_POSITION
-import com.joshtalks.joshskills.ui.lesson.ROOM_POSITION
-import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
-import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
+import com.joshtalks.joshskills.ui.lesson.*
 
 class LessonInProgressView : FrameLayout {
     private lateinit var rootView: FrameLayout
@@ -129,7 +125,7 @@ class LessonInProgressView : FrameLayout {
         }
     }
 
-    fun setup(lesson: LessonModel) {
+    fun setup(lesson: LessonModel, isConversationRoomActive: Boolean) {
         this.lessonModel = lesson
         lessonNameTv.text = context.getString(
             R.string.lesson_name,
@@ -137,10 +133,11 @@ class LessonInProgressView : FrameLayout {
             lesson.lessonName
         )
         imageView.setImageInLessonView(lesson.thumbnailUrl)
-        setupUI(lesson)
+        setupUI(lesson,isConversationRoomActive)
+
     }
 
-    private fun setupUI(lesson: LessonModel) {
+    private fun setupUI(lesson: LessonModel,isConversationRoomActive: Boolean) {
         if (lesson.status == LESSON_STATUS.AT) {
             startLessonTv.visibility = GONE
             startLessonTvShimmer.visibility = GONE
@@ -149,7 +146,8 @@ class LessonInProgressView : FrameLayout {
             vocabStatus.visibility = View.VISIBLE
             readingStatus.visibility = View.VISIBLE
             speakingStatus.visibility = View.VISIBLE
-            roomStatus.visibility = View.VISIBLE
+            roomStatus.visibility = if (isConversationRoomActive) View.VISIBLE else View.INVISIBLE
+
 
             if (lesson.grammarStatus == LESSON_STATUS.CO) {
                 grammarStatus.setImageDrawable(drawableAttempted)

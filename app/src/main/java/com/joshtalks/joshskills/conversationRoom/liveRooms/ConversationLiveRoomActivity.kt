@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
 import android.app.Activity
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -107,8 +108,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         isActivityOpenFromNotification =
             intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
         if (isActivityOpenFromNotification) {
-            getIntentExtras(intent)
             addObservers()
+            getIntentExtras(intent)
         } else {
             getIntentExtras()
             initData()
@@ -129,8 +130,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         switchRoles()
         speakerAdapter?.startListening()
         listenerAdapter?.startListening()
-        if (isActivityOpenFromNotification.not())
-            takePermissions()
+        takePermissions()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -244,6 +244,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         WebRtcService.isRoomCreatedByUser = if (moderatorUid != null) {
             moderatorUid == agoraUid
         } else isRoomCreatedByUser
+        removeIncomingNotification()
+    }
+
+    private fun removeIncomingNotification() {
+        val notificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(9999)
     }
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
@@ -563,18 +570,21 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         hideNotificationAfter4seconds()
     }
 
-    private fun showRoomEndNotification() {
-        binding.notificationBar.apply {
-            visibility = View.VISIBLE
-            hideActionLayout()
-            setBackgroundColor(false)
-            setHeading("This room has ended")
-            //startSound()
-            loadAnimationSlideDown()
+    private fun showRoomEndNotification(roomId: Int?) {
+        Log.d("ABC", "showRoomEndNotification() called with: roomId = $roomId")
+        if (this.roomId == roomId) {
+            binding.notificationBar.apply {
+                visibility = View.VISIBLE
+                hideActionLayout()
+                setBackgroundColor(false)
+                setHeading("This room has ended")
+                //startSound()
+                loadAnimationSlideDown()
+            }
+            Handler(Looper.getMainLooper()).postDelayed({
+                finish()
+            }, 4000)
         }
-        Handler(Looper.getMainLooper()).postDelayed({
-            finish()
-        }, 4000)
     }
 
     private fun switchRoles() {
@@ -583,6 +593,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 return@addSnapshotListener
             }
             if (value?.exists() == false) {
+                Log.d("ABC", "switchRoles() called with: value = $value, error = $error")
                 finish()
             }
             if (value != null) {
@@ -642,7 +653,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 if (value?.exists() == false && isRoomEnded.not()) {
                     isRoomEnded= true
                     mBoundService?.leaveChannel()
-                    showRoomEndNotification()
+                    Log.d(
+                        "ABC",
+                        "roomReference error = $error"
+                    )
+                    showRoomEndNotification(roomId)
                 }
             }
         }
@@ -652,8 +667,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             } else {
                 if (value?.isEmpty == true && isRoomEnded.not()) {
                     isRoomEnded= true
+                    Log.d(
+                        "ABC",
+                        "usersReference error = $error"
+                    )
                     mBoundService?.leaveChannel()
-                    showRoomEndNotification()
+                    showRoomEndNotification(roomId)
                 }
             }
         }
@@ -896,6 +915,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
+            Log.d("ABC", "activity showEndRoomPopup() called")
             mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
             alertDialog.dismiss()
             finish()
@@ -942,6 +962,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onDestroy() {
         speakerAdapter?.stopListening()
         listenerAdapter?.stopListening()
+        Log.d("ABC", "activity onDestroy() called")
         if (!isBackPressed) {
             if (isRoomCreatedByUser) {
                 mBoundService?.endRoom(roomId?.toString(), roomQuestionId)

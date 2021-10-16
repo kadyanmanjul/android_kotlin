@@ -235,6 +235,9 @@ class FirebaseRemoteConfigKey {
         const val FREE_TRIAL_DIALOG_BTN_TXT = "FREE_TRIAL_DIALOG_BTN_TXT"
         const val FREE_TRIAL_DIALOG_TXT = "FREE_TRIAL_DIALOG_TXT"
 
+        //
+        const val IS_CONVERSATION_ROOM_ACTIVE = "IS_CONVERSATION_ROOM_ACTIVE"
+
     }
 }
 

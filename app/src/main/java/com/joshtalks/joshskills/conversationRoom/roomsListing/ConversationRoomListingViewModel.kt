@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -160,6 +161,10 @@ class ConversationRoomListingViewModel : ViewModel() {
     }
 
     fun endRoom(roomId: String?,conversationQuestionId:Int?=null) {
+        Log.d(
+            "ABC",
+            " View model endRoom() called with: roomId = $roomId, conversationQuestionId = $conversationQuestionId"
+        )
         CoroutineScope(Dispatchers.IO).launch {
             var qId :Int? = null
             if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){

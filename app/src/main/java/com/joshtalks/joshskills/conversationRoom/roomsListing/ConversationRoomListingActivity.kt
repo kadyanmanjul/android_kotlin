@@ -19,11 +19,7 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -222,6 +218,7 @@ class ConversationRoomListingActivity : BaseActivity(),
     ) {
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         WebRtcService.isRoomCreatedByUser = true
+        WebRtcService.isRoomEnded = false
         isConversionRoomActive = true
         //ConversationLiveRoomActivity.startConversationLiveRoomActivity(this,channelName,uid,token,isRoomCreatedByUser,roomId)
     }

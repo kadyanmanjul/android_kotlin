@@ -204,8 +204,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     lessonNumber = it.lessonNo
                     lessonIsNewGrammar = it.isNewGrammar
                 }
-                lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }
-                    .isNotEmpty() && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
+                lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
+                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
+                        && AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE))
                 //lessonIsConvoRoomActive = true
 
                 if (lessonIsNewGrammar) {
@@ -583,10 +585,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
-                    val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                    var lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
+
+                    if (AppObjectController.getFirebaseRemoteConfig()
+                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
+                        lessonCompleted = lessonCompleted &&
+                                lesson.roomStatus == LESSON_STATUS.CO
+                    }
 
                     if (lessonCompleted) {
                         lesson.status = LESSON_STATUS.CO
@@ -610,11 +618,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
-                    val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                    var lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
-                            lesson.roomStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
+
+                    if (AppObjectController.getFirebaseRemoteConfig()
+                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
+                        lessonCompleted = lessonCompleted &&
+                                lesson.roomStatus == LESSON_STATUS.CO
+                    }
 
                     if (lessonCompleted) {
                         lesson.status = LESSON_STATUS.CO

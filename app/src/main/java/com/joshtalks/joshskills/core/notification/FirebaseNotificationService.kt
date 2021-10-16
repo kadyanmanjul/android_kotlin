@@ -7,21 +7,10 @@ package com.joshtalks.joshskills.core.notification
 // import com.cometchat.pro.models.TextMessage
 // import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
 // import com.joshtalks.joshskills.ui.groupchat.utils.Utils
-import android.app.ActivityManager
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
+import android.graphics.*
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -40,28 +29,15 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.ApiRespStatus
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.FCMResponse
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -86,6 +62,11 @@ import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -93,11 +74,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import kotlin.collections.set
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.json.JSONObject
-import timber.log.Timber
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -443,11 +419,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
                 if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
                             putExtra(ConfigKey.ROOM_ID,actionData.toString())
                         }
-                        startForegroundService(intent)
+                        AppObjectController.joshApplication.startForegroundService(intent)
                     } else {
                         ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
                             actionData!!
@@ -1217,11 +1193,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     null
                 }
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
-
-                    if (actionData!=null){
-                        ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
-                            actionData
-                        )
+                    if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+                        if (actionData != null) {
+                            ConversationLiveRoomActivity.getIntentForNotification(
+                                AppObjectController.joshApplication,
+                                actionData
+                            )
+                        }
                     }
                     null
                 }

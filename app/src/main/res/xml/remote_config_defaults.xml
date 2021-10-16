@@ -613,6 +613,11 @@
     </entry>
 
     <entry>
+        <key>IS_CONVERSATION_ROOM_ACTIVE</key>
+        <value>true</value>
+    </entry>
+
+    <entry>
         <key>VOIP_CALL_RECONNECT_TIME</key>
         <value>5000</value>
     </entry>

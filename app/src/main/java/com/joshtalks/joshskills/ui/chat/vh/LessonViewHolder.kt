@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.view.View
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -27,17 +29,27 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
     }
 
     private fun setupUI(lesson: LessonModel) {
-        if (lesson.status == LESSON_STATUS.CO && lesson.roomStatus == LESSON_STATUS.CO) {
+        val isLessonCompleted=
+        if (AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
+            lesson.status == LESSON_STATUS.CO && lesson.roomStatus == LESSON_STATUS.CO
+        } else {
+            lesson.status == LESSON_STATUS.CO
+        }
+
+        if (isLessonCompleted) {
             lessonInProgressStub.get().visibility = View.GONE
             lessonCompleteStub.resolved().let {
                 lessonCompleteStub.get().visibility = View.VISIBLE
-                lessonCompleteStub.get().setup(lesson)
+                lessonCompleteStub.get().setup(lesson,AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE))
             }
         } else {
             lessonCompleteStub.get().visibility = View.GONE
             lessonInProgressStub.resolved().let {
                 lessonInProgressStub.get().visibility = View.VISIBLE
-                lessonInProgressStub.get().setup(lesson)
+                lessonInProgressStub.get().setup(lesson,AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE))
             }
         }
     }

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.*
+import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -166,6 +167,10 @@ class SearchingRoomPartnerActivity : BaseActivity() {
                 override fun onTick(millisUntilFinished: Long) {
                     timeCreated= timeCreated + 1
                     if (timeCreated>=(60*2*2)){
+                        Log.d(
+                            "ABC",
+                            "onTick() called with: millisUntilFinished = $millisUntilFinished"
+                        )
                         endRoom()
                     }
                     val diff = binding.progressBar.progress + 10
@@ -181,6 +186,7 @@ class SearchingRoomPartnerActivity : BaseActivity() {
     }
 
     private fun endRoom() {
+        Log.d("ABC", "endRoom() called")
         timer?.cancel()
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
@@ -188,6 +194,7 @@ class SearchingRoomPartnerActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        Log.d("ABC", "onBackPressed() called")
         endRoom()
         super.onBackPressed()
     }
