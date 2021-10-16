@@ -632,7 +632,7 @@ class WebRtcService : BaseWebRtcService() {
                     )
                 Log.d("ABC", "end room api call ${response.code()}")
                 if (response.isSuccessful) {
-                    isRoomEnded = true
+                    isRoomEnded = false
                     PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
                     RxBus2.publish(ConvoRoomPointsEventBus(null))
                     conversationRoomChannelName = null
@@ -664,7 +664,7 @@ class WebRtcService : BaseWebRtcService() {
                         )
                     Log.d("ABC", "leave room api call")
                     if (response.isSuccessful) {
-                        isRoomEnded = true
+                        isRoomEnded = false
                         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
                         RxBus2.publish(ConvoRoomPointsEventBus(null))
                         conversationRoomChannelName = null
