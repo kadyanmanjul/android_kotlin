@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.group.JoshGroupActivity">
-
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,9 +20,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-            <include
-                layout="@layout/inbox_toolbar"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:has_sub_title="true"
+                app:img_url=" "
+                app:title="Home" />
         </com.google.android.material.appbar.AppBarLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
