@@ -110,7 +110,6 @@ class DownloadMediaService : Service(), FetchListener {
         Timber.tag(TAG).e("onCreate")
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
         fetch.addListener(this)
-
     }
 
 

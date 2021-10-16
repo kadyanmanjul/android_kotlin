@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unmute">UnMute</string>
+    <string name="mute">Mute</string>
+    <string name="raised">Raised</string>
+    <string name="unraised">UnRaised</string>
+</resources>

@@ -122,7 +122,6 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
             WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
-            Log.d(TAG, "onConnect: 121")
             this@SearchingUserActivity.finish()
         }
 
@@ -142,10 +141,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
                         putExtra(RTC_IS_NEW_USER_CALL, "true")
                     }
                 }
-            Log.d(TAG, "switchChannel: 138")
             startActivity(callActivityIntent)
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
-            Log.d(TAG, "switchChannel: 142")
             this@SearchingUserActivity.finish()
         }
 
@@ -220,10 +217,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             {
                 if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
                     showToast(getString(R.string.did_not_answer_message))
-                    Log.d(TAG, "addObserver: 217")
                     finishAndRemoveTask()
                 } else if (ApiCallStatus.INVALIDED == it) {
-                    Log.d(TAG, "addObserver: 220")
                     this@SearchingUserActivity.finishAndRemoveTask()
                 }
             }
@@ -304,7 +299,6 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
         MaterialDialog(this).show {
             message(R.string.call_start_permission_message_rational)
             positiveButton(R.string.exit) {
-                Log.d(TAG, "onDenyLocation: 301")
                 finish()
             }
         }
@@ -339,7 +333,6 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             .addUserDetails()
             .push()
         timer?.cancel()
-        Log.d(TAG, "stopCalling: 336")
         finishAndRemoveTask()
     }
 
@@ -351,7 +344,6 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             .addUserDetails()
             .push()
         timer?.cancel()
-        Log.d(TAG, "stopSearching: 348")
         finishAndRemoveTask()
     }
 
@@ -406,7 +398,6 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG, "onStop: 396")
         compositeDisposable.clear()
         unbindService(myConnection)
     }

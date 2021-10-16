@@ -114,6 +114,7 @@ data class FirestoreNotificationObject(
             FirestoreNotificationAction.CALL_ONHOLD_NOTIFICATION -> NotificationAction.CALL_ON_HOLD_NOTIFICATION
             FirestoreNotificationAction.CALL_RESUME_NOTIFICATION -> NotificationAction.CALL_RESUME_NOTIFICATION
             FirestoreNotificationAction.CALL_CONNECTED_NOTIFICATION -> NotificationAction.CALL_CONNECTED_NOTIFICATION
+            FirestoreNotificationAction.JOIN_CONVERSATION_ROOM -> NotificationAction.JOIN_CONVERSATION_ROOM
             else -> null
         }
     }
@@ -143,4 +144,7 @@ enum class FirestoreNotificationAction(val value: String) {
 
     @SerializedName("CALL_CONNECTED_NOTIFICATION")
     CALL_CONNECTED_NOTIFICATION("CALL_CONNECTED_NOTIFICATION"),
+
+    @SerializedName("JOIN_CONVERSATION_ROOM")
+    JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM")
 }

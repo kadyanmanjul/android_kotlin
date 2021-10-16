@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirectio
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
@@ -48,6 +49,7 @@ import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
+import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
@@ -64,12 +66,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 import timber.log.Timber
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
 const val VOCAB_POSITION = 2
 const val READING_POSITION = 3
+const val ROOM_POSITION = 4
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 private const val TAG = "LessonActivity"
 
@@ -93,6 +97,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
     var lessonIsNewGrammar = false
+    var lessonIsConvoRoomActive = false
     var lessonNumber = -1
     var defaultSection = -1
     private var ruleIdLeftList = ArrayList<Int>()
@@ -233,6 +238,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     lessonNumber = it.lessonNo
                     lessonIsNewGrammar = it.isNewGrammar
                 }
+                lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
+                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
+                        && AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE))
+                //lessonIsConvoRoomActive = true
+
                 if (lessonIsNewGrammar) {
 
                     totalRuleList = AppObjectController.gsonMapper.fromJson(
@@ -516,6 +527,23 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightCallBtnText.visibility = View.VISIBLE
                     binding.arrowAnimation.visibility = View.VISIBLE
                 }
+                LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.spotlightTabConvo.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.INVISIBLE
+                    binding.convoRoomSpotlightTooltip.visibility = View.VISIBLE
+                    binding.convoRoomSpotlightTooltip.startAnimation(
+                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
+                    )
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.GONE
+                    binding.spotlightCallBtnText.visibility = View.GONE
+                    binding.arrowAnimation.visibility = View.GONE
+                }
                 else -> {
                     // Hide lesson Spotlight
                     binding.overlayLayout.visibility = View.GONE
@@ -523,6 +551,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabSpeaking.visibility = View.INVISIBLE
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.spotlightTabConvo.visibility = View.INVISIBLE
+                    binding.convoRoomSpotlightTooltip.visibility = View.GONE
                     binding.lessonSpotlightTooltip.visibility = View.GONE
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
@@ -598,10 +628,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
-                    val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                    var lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
+
+                    if (AppObjectController.getFirebaseRemoteConfig()
+                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
+                        lessonCompleted = lessonCompleted &&
+                                lesson.roomStatus == LESSON_STATUS.CO
+                    }
 
                     if (lessonCompleted) {
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
@@ -626,10 +662,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
-                    val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                    var lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
+
+                    if (AppObjectController.getFirebaseRemoteConfig()
+                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
+                        lessonCompleted = lessonCompleted &&
+                                lesson.roomStatus == LESSON_STATUS.CO
+                    }
 
                     if (lessonCompleted) {
                         lesson.status = LESSON_STATUS.CO
@@ -683,6 +725,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
                     SPEAKING_POSITION -> lesson.speakingStatus = status
+                    ROOM_POSITION -> lesson.roomStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
@@ -695,7 +738,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private fun setUpTabLayout(
         lessonNo: Int,
         lessonIsNewGrammar: Boolean,
-        isTestCompleted: Boolean = false
+        isTestCompleted: Boolean = false,
     ) {
 
         if (lessonIsNewGrammar) {
@@ -715,6 +758,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         arrayFragment.add(SPEAKING_POSITION, SpeakingPractiseFragment.newInstance())
         arrayFragment.add(VOCAB_POSITION, VocabularyFragment.getInstance())
         arrayFragment.add(READING_POSITION, ReadingFragmentWithoutFeedback.getInstance())
+        if (lessonIsConvoRoomActive) {
+            arrayFragment.add(ROOM_POSITION, ConversationRoomListingFragment.getInstance())
+        }
+         val adapter: LessonPagerAdapter =
+            LessonPagerAdapter(
+                supportFragmentManager,
+                FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+                arrayFragment,
+                lessonIsConvoRoomActive
+            )
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.lessonViewpager.offscreenPageLimit = 4
@@ -760,8 +813,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                 }
+                ROOM_POSITION -> {
+                    setUnselectedColor(tab)
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.ROOM_TITLE)
+                }
             }
-        }.attach()
+        }
+
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
@@ -835,6 +895,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             } else {
                                 nextTabIndex++
                             }
+                        ROOM_POSITION ->
+                            if (lesson.roomStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = ROOM_POSITION
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
                         else -> {
                             binding.lessonViewpager.currentItem = arrayFragment.size - 1
                             return
@@ -866,6 +933,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 setTabCompletionStatus(
                     tabs.getChildAt(SPEAKING_POSITION),
                     lesson.speakingStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(ROOM_POSITION),
+                    lesson.roomStatus == LESSON_STATUS.CO
                 )
             }
             if (isLesssonCompleted.not()) {
@@ -907,6 +978,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_READING_SCREEN)
                 }
+                ROOM_POSITION -> {
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.convo_room_tab_bg)
+                    viewModel.saveImpression(IMPRESSION_OPEN_ROOM_SCREEN)
+                    if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_SPOTLIGHT)) {
+                        hideSpotlight()
+                    } else {
+                        showConvoRoomSpotlight()
+                    }
+                }
                 SPEAKING_POSITION -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
@@ -924,6 +1005,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private fun showSpeakingSpotlight() {
         viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
         PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+    }
+
+    private fun showConvoRoomSpotlight() {
+        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.CONVO_ROOM_SPOTLIGHT)
+        PrefManager.put(HAS_SEEN_CONVO_ROOM_SPOTLIGHT, true)
+        binding.overlayLayout.setOnClickListener {
+            hideSpotlight()
+        }
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
@@ -965,7 +1054,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         super.onNewIntent(intent)
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
-            Timber.d("ghjk12 : onNewIntentLessonId -> $lessonId")
 
             viewModel.getLesson(lessonId)
             viewModel.getQuestions(lessonId, isDemo)

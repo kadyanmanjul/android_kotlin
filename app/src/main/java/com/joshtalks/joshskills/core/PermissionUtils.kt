@@ -328,7 +328,7 @@ object PermissionUtils {
     }
 
 
-    fun isDemoCallingPermissionEnabled(context: Context): Boolean {
+    fun isCallingPermissionWithoutLocationEnabled(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_PHONE_STATE
@@ -348,7 +348,7 @@ object PermissionUtils {
     }
 
 
-    fun demoCallingFeaturePermission(
+    fun onlyCallingFeaturePermission(
         activity: Activity,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
@@ -371,6 +371,19 @@ object PermissionUtils {
             positiveButton(R.string.settings) {
                 openSettings(activity)
 
+            }
+            negativeButton(R.string.not_now)
+        }
+    }
+
+    fun convoRoomPermissionPermanentlyDeniedDialog(
+        activity: Activity,
+        message: Int = R.string.call_start_permission_message
+    ) {
+        MaterialDialog(activity).show {
+            message(message)
+            positiveButton(R.string.settings) {
+                openSettings(activity)
             }
             negativeButton(R.string.not_now)
         }

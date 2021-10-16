@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.util
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.util.Log
+import androidx.lifecycle.Lifecycle
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
@@ -19,6 +21,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer {
+    private val TAG = "vocab"
     private var progressTracker: ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
     var context: Context? = AppObjectController.joshApplication
@@ -51,7 +54,6 @@ class ExoAudioPlayer {
                     playerListener?.onPlayerPause()
             }
         }
-
         initializePlayer()
     }
 
@@ -65,7 +67,7 @@ class ExoAudioPlayer {
 
         @JvmStatic
         @Synchronized
-        fun getInstance(): ExoAudioPlayer? {
+        fun getInstance(lifecycle: Lifecycle? = null): ExoAudioPlayer? {
             if (manager == null) {
                 manager = ExoAudioPlayer()
             }
@@ -78,6 +80,7 @@ class ExoAudioPlayer {
     }
 
     private fun initializePlayer() {
+        Log.d(TAG, "initializePlayer: ")
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
@@ -104,17 +107,20 @@ class ExoAudioPlayer {
     }
 
     fun onPause() {
+        Log.d(TAG, "onPause: Audio Manager ${player?.playWhenReady}")
         player?.playWhenReady = false
+        Log.d(TAG, "onPause: Audio Manager ${player?.playWhenReady}")
         playerListener?.onPlayerPause()
         progressTracker?.let { it.handler.removeCallbacks(it) }
     }
 
-
     private fun initListener() {
+        Log.d(TAG, "initListener: ")
         player?.addListener(playerEventListener)
     }
 
     fun play(audioUrl: String, id: String = "", seekDuration: Long = 0) {
+        Log.d(TAG, "play: ")
         currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
             context,
@@ -132,12 +138,14 @@ class ExoAudioPlayer {
     }
 
     fun isPlaying(): Boolean {
+        Log.d(TAG, "isPlaying: ")
         return player?.isPlaying ?: false
     }
 
     fun getDuration() = audioDuration
 
     fun resumeOrPause() {
+        Log.d(TAG, "resumeOrPause: ")
         player?.playWhenReady = player?.playWhenReady!!.not()
         if (isPlaying())
             progressTracker?.let { it.handler.post(it) }
@@ -159,6 +167,7 @@ class ExoAudioPlayer {
     }
 
     fun release() {
+        Log.d(TAG, "release: Audio Manager")
         player?.playWhenReady = false
         progressTracker?.let { it.handler.removeCallbacks(it) }
         currentPlayingUrl = EMPTY

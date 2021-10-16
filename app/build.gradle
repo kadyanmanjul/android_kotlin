@@ -9,10 +9,10 @@ if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
 //-PdevBuild command
-//-PdevBuild --warning-mode=all --stacktrace
-def majorVersion = 4
-def minorVersion = 1
-def patchVersion = 42
+//-PdevBuild --warning-mode=all --full-stacktrace --scan
+def majorVersion = 5
+def minorVersion = 0
+def patchVersion = 1
 
 android {
     compileSdkVersion 30
@@ -169,7 +169,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9003\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -213,6 +213,12 @@ android {
     }
     kapt {
         generateStubs = true
+    }
+
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
     }
 }
 
@@ -290,6 +296,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-installations:17.0.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:23.0.3'
+    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
 
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
@@ -388,7 +395,11 @@ dependencies {
         exclude group: 'com.sinch', module: 'android-rtc'
     })*/
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'io.agora.rtc:voice-sdk:3.3.2'
+    implementation 'com.uxcam:uxcam:3.3.3@aar'
+    //implementation 'io.agora.rtc:voice-sdk:3.3.2'
+    //implementation 'io.agora.rtc:voice-sdk:3.4.5'
+    //implementation 'com.github.agorabuilder:native-voice-sdk:3.4.5'
+    implementation files("libs/agora-rtc-sdk.jar")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'

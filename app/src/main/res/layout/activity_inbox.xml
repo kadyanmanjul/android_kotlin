@@ -56,4 +56,45 @@
         android:layout_gravity="center"
         android:layout="@layout/new_user_layout_stub" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conversation_room_launcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/_12sdp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/groupchatIcon"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/white_button_round_enabled"
+            android:backgroundTint="@color/colorPrimary"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="@dimen/_4sdp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_groupchat" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/roomsNumber"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:background="@drawable/ic_circle_small"
+            android:backgroundTint="@color/white"
+            android:foregroundGravity="center"
+            android:gravity="center"
+            android:textColor="@color/red"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/groupchatIcon"
+            app:layout_constraintTop_toTopOf="@id/groupchatIcon"
+            tools:text="2" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

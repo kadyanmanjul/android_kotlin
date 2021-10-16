@@ -783,13 +783,13 @@ abstract class BaseActivity :
         overridePendingTransition(0, 0)
     }
 
-    protected fun showProgressBar() {
+    fun showProgressBar() {
         lifecycleScope.launch(Dispatchers.Main) {
             FullScreenProgressDialog.showProgressBar(this@BaseActivity)
         }
     }
 
-    protected fun hideProgressBar() {
+    fun hideProgressBar() {
         lifecycleScope.launch(Dispatchers.Main) {
             FullScreenProgressDialog.hideProgressBar(this@BaseActivity)
         }

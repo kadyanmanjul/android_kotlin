@@ -58,6 +58,8 @@ data class UserProfileResponse(
     val isCourseBought: Boolean = false,
     @SerializedName("expire_date")
     val expiryDate: Date? = null,
+    @SerializedName("is_conv_room_active")
+    val isConvRoomActive: Boolean
 )
 
 data class GroupInfo(

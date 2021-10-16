@@ -39,6 +39,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.ApiRespStatus
@@ -96,6 +97,12 @@ import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -124,12 +131,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
         try {
-            if (PrefManager.hasKey(FCM_TOKEN)) {
+            if(PrefManager.hasKey(FCM_TOKEN)) {
                 val fcmResponse = FCMResponse.getInstance()
                 fcmResponse?.apiStatus = ApiRespStatus.POST
                 fcmResponse?.update()
             }
-        } catch (e: Exception) {
+        } catch (e:Exception){
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
@@ -531,9 +538,28 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                //if (User.getInstance().isVerified) {
-                incomingCallNotificationAction(notificationObject.actionData)
-                //}
+                if ( !PrefManager.getBoolValue(
+                        IS_CONVERSATION_ROOM_ACTIVE
+                    )
+                ) {
+                    incomingCallNotificationAction(notificationObject.actionData)
+                }
+                return null
+            }
+            NotificationAction.JOIN_CONVERSATION_ROOM -> {
+                if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
+                            putExtra(ConfigKey.ROOM_ID,actionData.toString())
+                        }
+                        AppObjectController.joshApplication.startForegroundService(intent)
+                    } else {
+                        ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
+                            actionData!!
+                        )
+                    }
+                    return null
+                }
                 return null
             }
             NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -728,7 +754,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             AppObjectController.appDatabase.run {
                 val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
-                conversationId.let {
+                conversationId?.let {
                     PrefManager.removeKey(it)
                     LastSyncPrefManager.removeKey(it)
                 }
@@ -1407,9 +1433,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ): Intent? {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                    //if (User.getInstance().isVerified) {
-                    incomingCallNotificationAction(notificationObject.actionData)
-                    //}
+                    if ( !PrefManager.getBoolValue(
+                            IS_CONVERSATION_ROOM_ACTIVE
+                        )
+                    ) {
+                        incomingCallNotificationAction(notificationObject.actionData)
+                    }
                     null
                 }
                 NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -1466,6 +1495,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     } else {
                         null
                     }
+                }
+                NotificationAction.JOIN_CONVERSATION_ROOM -> {
+                    if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+                        if (actionData != null) {
+                            ConversationLiveRoomActivity.getIntentForNotification(
+                                AppObjectController.joshApplication,
+                                actionData
+                            )
+                        }
+                    }
+                    null
                 }
                 else -> {
                     null

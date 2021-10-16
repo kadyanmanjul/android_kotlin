@@ -164,8 +164,10 @@ interface ChatNetworkService {
 
     @GET("$DIR/reputation/vp_rp_snackbar/")
     suspend fun getSnackBarText(
-        @Query("question_id") questionId: String?,
+        @Query("question_id") questionId: String? = null,
         @Query("channel_name") channelName: String? = null,
+        @Query("room_id") roomId: String? = null,
+        @Query("conversation_question_id") conversationQuestionId: String? = null,
     ): PointsListResponse
 
     @GET("$DIR/course/get_demo_lesson/")

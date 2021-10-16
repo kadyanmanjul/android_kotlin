@@ -72,6 +72,7 @@
     <color name="green_snackbar">#48A429</color>
     <color name="transparent">#00000000</color>
     <color name="artboard_color">#F1F2F4</color>
+    <color name="artboard_stroke_color">#D2D9E3</color>
     <color name="green_right_answer">#129E88</color>
     <color name="lighter_green">#ECF8F6</color>
     <color name="wrong_answer">#9D1515</color>
@@ -136,6 +137,12 @@
     <color name="grammar_green_color_btn">#57CC02</color>
     <color name="grammar_red_color_btn">#FF4B4C</color>
     <color name="a3a3a3">#A3A3A3</color>
+    <color name="pure_black">#000000</color>
+    <color name="notification_red_color">#EC5858</color>
+    <color name="notification_green_color">#27AE61</color>
+    <color name="notification_orange_color">#F3792B</color>
+    <color name="conversation_room_gray">#ACA9A9</color>
+    <color name="conversation_room_color">#F2F0E4</color>
     <color name="grammar_wrong_answer_bg">#FFDFE0</color>
     <color name="grammar_right_answer_bg">#D7FFB8</color>
 

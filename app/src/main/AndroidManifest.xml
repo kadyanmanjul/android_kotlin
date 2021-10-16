@@ -103,6 +103,12 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".conversationRoom.liveRooms.ConversationLiveRoomActivity"
+            android:launchMode="singleTask"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.introduction.IntroductionActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTask"
@@ -383,6 +389,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
         <activity
+            android:name=".ui.lesson.room.SearchingRoomPartnerActivity"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
+        <activity
             android:name=".ui.introduction.DemoSearchingUserActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
@@ -428,7 +440,9 @@
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
             android:theme="@style/AppNoBarTheme"
+            android:fitsSystemWindows="true"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity
             android:name=".ui.voip.voip_rating.VoipCallFeedbackActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -436,6 +450,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -498,6 +513,9 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
+        <activity android:name=".conversationRoom.roomsListing.ConversationRoomListingActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
@@ -765,6 +783,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <service
+            android:name=".core.notification.HeadsUpNotificationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="phoneCall"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:stopWithTask="true" />
+
     </application>
 
 </manifest>

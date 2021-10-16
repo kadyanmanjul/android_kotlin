@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.lesson.vocabulary
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +24,6 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -58,7 +58,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     private lateinit var adapter: VocabularyPracticeAdapter
 
     private var compositeDisposable = CompositeDisposable()
-
+    private val TAG = "VocabularyFragment"
     private lateinit var binding: FragmentVocabularyBinding
     private var isVideoRecordDone = false
     private var isDocumentAttachDone = false
@@ -69,6 +69,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     private var lessonActivityListener: LessonActivityListener? = null
     private var aPosition: Int = -1
+    private var playingAudioPositionInList = -1
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
@@ -100,9 +101,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
-        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
 
@@ -197,12 +198,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 )
             }
 
+        Log.d(TAG, "initAdapter: Init Adapter")
+
         adapter.setHasStableIds(true)
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
         binding.practiceRv.setHasFixedSize(true)
         binding.practiceRv.setItemViewCacheSize(5)
-        binding.practiceRv.enforceSingleScrollDirection()
+        //binding.practiceRv.enforceSingleScrollDirection()
     }
 
     override fun submitQuiz(
@@ -472,24 +475,25 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     override fun onPause() {
+        Log.d(TAG, "onPause: ")
         super.onPause()
         if (::adapter.isInitialized) {
-            adapter.audioManager?.onPause()
+            Log.d(TAG, "onPause: isInitialized")
+            //adapter.audioManager?.onPause()
+            adapter.itemList.forEachIndexed { index, lessonQuestion ->
+                if (lessonQuestion.type != LessonQuestionType.QUIZ)
+                    binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
+                        (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.stopAudio()
+                    }
+            }
         }
-//        adapter.itemList.forEachIndexed { index, lessonQuestion ->
-//            if (lessonQuestion.type != LessonQuestionType.QUIZ)
-//                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
-//                    (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.pauseAudio()
-//                }
-//        }
-//        aPosition = -1
     }
 
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
         try {
-            adapter.audioManager?.onPause()
+            //adapter.audioManager?.onPause()
         } catch (ex: Exception) {
         }
     }
@@ -509,4 +513,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         @JvmStatic
         fun getInstance() = VocabularyFragment()
     }
+
+    private fun getCurrentPlayingViewHolder() =
+        binding.practiceRv.findViewHolderForAdapterPosition(aPosition)
+                as? VocabularyPracticeAdapter.VocabularyViewHolder
+
 }
