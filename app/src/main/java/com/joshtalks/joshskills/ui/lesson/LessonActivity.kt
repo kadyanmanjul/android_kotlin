@@ -814,7 +814,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             .getString(FirebaseRemoteConfigKey.ROOM_TITLE)
                 }
             }
-        }
+        }.attach()
 
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
