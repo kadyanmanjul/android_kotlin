@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.group.model.GroupItemData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_11sdp"
+        android:layout_marginTop="@dimen/_13sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_logo"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/white_button_round_enabled"
+            android:gravity="center_vertical|start"
+            android:src="@drawable/ic_josh_course"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/title_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_logo"
+            app:layout_constraintTop_toTopOf="@+id/img_logo">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="start"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                android:textColor="@color/black"
+                android:text="@{itemData.title}"
+                tools:text="Hello" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sub_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="start"
+                android:singleLine="true"
+                android:textSize="@dimen/_12sdp"
+                android:text="@{itemData.subTitle}"
+                android:textColor="@color/grey_7A"
+                tools:text="tap here for group info" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
