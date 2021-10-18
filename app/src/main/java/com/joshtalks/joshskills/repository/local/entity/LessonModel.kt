@@ -59,9 +59,9 @@ data class LessonModel(
     @SerializedName("speakingStatus")
     var speakingStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
-    @ColumnInfo(name = "roomStatus")
-    @SerializedName("roomStatus")
-    var roomStatus: LESSON_STATUS? = LESSON_STATUS.NO,
+    @ColumnInfo(name = "conversationStatus")
+    @SerializedName("conversationStatus")
+    var conversationStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
     @ColumnInfo(name = "created")
     @SerializedName("created")

@@ -32,7 +32,7 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
         val isLessonCompleted=
         if (AppObjectController.getFirebaseRemoteConfig()
                 .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
-            lesson.status == LESSON_STATUS.CO && lesson.roomStatus == LESSON_STATUS.CO
+            lesson.status == LESSON_STATUS.CO && lesson.conversationStatus == LESSON_STATUS.CO
         } else {
             lesson.status == LESSON_STATUS.CO
         }

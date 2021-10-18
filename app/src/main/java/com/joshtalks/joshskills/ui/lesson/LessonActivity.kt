@@ -629,7 +629,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
                     ) {
                         lessonCompleted = lessonCompleted &&
-                                lesson.roomStatus == LESSON_STATUS.CO
+                                lesson.conversationStatus == LESSON_STATUS.CO
                     }
 
                     if (lessonCompleted) {
@@ -664,7 +664,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
                     ) {
                         lessonCompleted = lessonCompleted &&
-                                lesson.roomStatus == LESSON_STATUS.CO
+                                lesson.conversationStatus == LESSON_STATUS.CO
                     }
 
                     if (lessonCompleted) {
@@ -719,7 +719,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
                     SPEAKING_POSITION -> lesson.speakingStatus = status
-                    ROOM_POSITION -> lesson.roomStatus = status
+                    ROOM_POSITION -> lesson.conversationStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
@@ -890,7 +890,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                                 nextTabIndex++
                             }
                         ROOM_POSITION ->
-                            if (lesson.roomStatus != LESSON_STATUS.CO) {
+                            if (lesson.conversationStatus != LESSON_STATUS.CO) {
                                 binding.lessonViewpager.currentItem = ROOM_POSITION
                                 return
                             } else {
@@ -930,7 +930,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 )
                 setTabCompletionStatus(
                     tabs.getChildAt(ROOM_POSITION),
-                    lesson.roomStatus == LESSON_STATUS.CO
+                    lesson.conversationStatus == LESSON_STATUS.CO
                 )
             }
             if (isLesssonCompleted.not()) {

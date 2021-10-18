@@ -328,7 +328,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     appDatabase.lessonDao().updateRoomSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
-                            this.roomStatus = status
+                            this.conversationStatus = status
                         }
                     )
                 }

@@ -169,7 +169,7 @@ class LessonInProgressView : FrameLayout {
             } else {
                 speakingStatus.setImageDrawable(drawableUnattempted)
             }
-            if (lesson.roomStatus == LESSON_STATUS.CO) {
+            if (lesson.conversationStatus == LESSON_STATUS.CO) {
                 roomStatus.setImageDrawable(drawableAttempted)
             } else {
                 roomStatus.setImageDrawable(drawableUnattempted)
