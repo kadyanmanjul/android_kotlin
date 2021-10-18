@@ -25,6 +25,7 @@
                 android:layout_height="match_parent"
                 app:has_sub_title="true"
                 app:img_url=" "
+                onBackPressed="@{vm::onBackPress}"
                 app:title="Home" />
         </com.google.android.material.appbar.AppBarLayout>
 

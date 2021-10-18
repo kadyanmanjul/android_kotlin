@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.group.views
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -30,6 +31,10 @@ class GroupsAppBar @JvmOverloads constructor(
 
     val toolbarImageView : CircleImageView by lazy {
         this.findViewById(R.id.image_view_logo)
+    }
+
+    val backImageView : ImageView by lazy {
+        this.findViewById(R.id.iv_back)
     }
 
     val firstIconImageView : ImageView by lazy {
@@ -96,6 +101,25 @@ class GroupsAppBar @JvmOverloads constructor(
 
     private fun setDrawableImage(drawableRes : Int, imageView : ImageView) {
         imageView.setImageResource(drawableRes)
+    }
+
+    // Listeners
+    fun onBackPressed(function : () -> Unit) {
+        backImageView.setOnClickListener {
+            function.invoke()
+        }
+    }
+
+    fun onFirstIconPressed(function : () -> Unit) {
+        firstIconImageView.setOnClickListener {
+            function.invoke()
+        }
+    }
+
+    fun onSecondIconPressed(function : () -> Unit) {
+        secondIconImageView.setOnClickListener {
+            function.invoke()
+        }
     }
 
 }
