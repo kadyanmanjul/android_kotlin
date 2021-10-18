@@ -158,7 +158,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
 
 
         viewModel.roomDetailsLivedata.observe(viewLifecycleOwner, { response ->
-            if (response.alreadyConversed != null && response.alreadyConversed > 1) {
+            if (response.alreadyConversed != null && response.alreadyConversed >= 1) {
                 binding.progressContainer.visibility = View.VISIBLE
                 binding.progressBar.max = response.duration!!
                 binding.progressBar.progress = response.alreadyConversed
