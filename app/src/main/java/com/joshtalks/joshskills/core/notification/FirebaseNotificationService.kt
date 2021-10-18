@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.core.ApiRespStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.ONBOARDING_STAGE
 import com.joshtalks.joshskills.core.OnBoardingStage
@@ -97,12 +98,7 @@ import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -114,7 +110,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -539,7 +534,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                 if ( !PrefManager.getBoolValue(
-                        IS_CONVERSATION_ROOM_ACTIVE
+                        PREF_IS_CONVERSATION_ROOM_ACTIVE
                     )
                 ) {
                     incomingCallNotificationAction(notificationObject.actionData)
@@ -547,7 +542,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+                if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
                             putExtra(ConfigKey.ROOM_ID,actionData.toString())
@@ -1434,7 +1429,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                     if ( !PrefManager.getBoolValue(
-                            IS_CONVERSATION_ROOM_ACTIVE
+                            PREF_IS_CONVERSATION_ROOM_ACTIVE
                         )
                     ) {
                         incomingCallNotificationAction(notificationObject.actionData)
@@ -1497,7 +1492,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                 }
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                    if ( !PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+                    if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
                         if (actionData != null) {
                             ConversationLiveRoomActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,

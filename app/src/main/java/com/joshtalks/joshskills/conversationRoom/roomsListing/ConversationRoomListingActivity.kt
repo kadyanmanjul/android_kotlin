@@ -62,7 +62,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationsRoomsListingBinding.inflate(layoutInflater)
         val view = binding.root
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -301,7 +301,7 @@ class ConversationRoomListingActivity : BaseActivity(),
             viewModel.makeEnterExitConversationRoom(false)
         }
         super.onDestroy()
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         isConversionRoomActive = false
         isRoomCreatedByUser = false
     }

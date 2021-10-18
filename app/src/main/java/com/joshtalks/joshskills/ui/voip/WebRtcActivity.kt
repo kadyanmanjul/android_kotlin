@@ -56,12 +56,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_ACCEPT = "web_rtc_call_accept"
@@ -777,12 +777,12 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun acceptCallForDemo(callAcceptApi: Boolean = true) {
-        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionEnabled(this)) {
             answerCall(callAcceptApi)
             return
         }
 
-        PermissionUtils.demoCallingFeaturePermission(
+        PermissionUtils.callingFeaturePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {

@@ -102,7 +102,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         isBackPressed = false
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
         isActivityOpenFromNotification =

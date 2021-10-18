@@ -40,22 +40,12 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
-import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.core.printAll
-import com.joshtalks.joshskills.core.startServiceForWebrtc
-import com.joshtalks.joshskills.core.textDrawableBitmap
-import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
@@ -76,14 +66,7 @@ import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.util.DateUtils
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
-import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
-import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
-import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
-import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
-import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
-import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
-import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
+import io.agora.rtc.Constants.*
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
@@ -104,7 +87,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
 
 
 const val RTC_TOKEN_KEY = "token"
@@ -146,7 +128,6 @@ class WebRtcService : BaseWebRtcService() {
     private var userDetailMap: HashMap<String, String>? = null
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
-    private var notificationState = NotificationState.NOT_VISIBLE
     private val timber = Timber.tag(TAG)
     private val audioManager by lazy {
         getSystemService(Context.AUDIO_SERVICE) as AudioManager

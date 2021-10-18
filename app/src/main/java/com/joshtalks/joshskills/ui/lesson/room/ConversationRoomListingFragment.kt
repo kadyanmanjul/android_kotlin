@@ -319,7 +319,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     }
 
     private fun observeNetwork() {
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         hasSeenpoints = false
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(AppObjectController.joshApplication)

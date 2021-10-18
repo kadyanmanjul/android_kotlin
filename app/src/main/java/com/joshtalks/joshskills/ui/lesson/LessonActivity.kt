@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
@@ -61,13 +62,11 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import timber.log.Timber
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -103,13 +102,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var ruleIdLeftList = ArrayList<Int>()
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
-    private val adapter: LessonPagerAdapter by lazy {
-        LessonPagerAdapter(
-            supportFragmentManager,
-            this.lifecycle,
-            arrayFragment
-        )
-    }
 
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -634,7 +626,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (AppObjectController.getFirebaseRemoteConfig()
-                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
+                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
+                    ) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.roomStatus == LESSON_STATUS.CO
                     }
@@ -668,7 +661,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (AppObjectController.getFirebaseRemoteConfig()
-                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
+                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
+                    ) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.roomStatus == LESSON_STATUS.CO
                     }
@@ -761,9 +755,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         if (lessonIsConvoRoomActive) {
             arrayFragment.add(ROOM_POSITION, ConversationRoomListingFragment.getInstance())
         }
-         val adapter: LessonPagerAdapter =
+        val adapter: LessonPagerAdapter =
             LessonPagerAdapter(
-                supportFragmentManager,
+                this,
                 FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
                 arrayFragment,
                 lessonIsConvoRoomActive

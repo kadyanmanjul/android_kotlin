@@ -106,7 +106,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
         if (!isScreenOpenByConversationRoom) {
             bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
         }else{
-            PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+            PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         }
     }
 

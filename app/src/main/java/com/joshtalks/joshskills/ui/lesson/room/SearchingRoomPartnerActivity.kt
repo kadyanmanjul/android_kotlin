@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomA
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivitySearchingRoomUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -90,7 +90,7 @@ class SearchingRoomPartnerActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_searching_room_user)
         binding.lifecycleOwner = this
@@ -188,7 +188,7 @@ class SearchingRoomPartnerActivity : BaseActivity() {
     private fun endRoom() {
         Log.d("ABC", "endRoom() called")
         timer?.cancel()
-        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,true)
         viewModel.endRoom(roomId.toString(), roomQuestionId)
     }
