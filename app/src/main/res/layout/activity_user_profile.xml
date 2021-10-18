@@ -24,7 +24,7 @@
             android:elevation="@dimen/_4sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -67,7 +67,7 @@
             android:elevation="@dimen/_1sdp"
             android:focusable="true"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <include
             android:id="@+id/toolbar_container"
@@ -89,7 +89,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/root_view"
                 android:layout_width="match_parent"
@@ -106,7 +105,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
                         android:id="@+id/overlay_profile_tooltip"
@@ -158,13 +157,14 @@
                     android:id="@+id/edit_pic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:padding="@dimen/_6sdp"
                     android:text="Edit"
                     android:textColor="@color/black"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/user_pic"
                     app:layout_constraintEnd_toEndOf="@id/user_pic"
-                    app:layout_constraintStart_toStartOf="@id/user_pic" />
+                    app:layout_constraintStart_toStartOf="@id/user_pic"
+                    tools:visibility="visible" />
 
                 <FrameLayout
                     android:id="@+id/online_status_iv"
@@ -194,8 +194,8 @@
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginTop="@dimen/_18sdp"
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -228,7 +228,7 @@
                     android:id="@+id/user_age_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
                     android:text="@string/age"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
@@ -248,6 +248,29 @@
                     tools:text="22" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_label_hometown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:text="Hometown:"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@id/user_age_text"
+                    app:layout_constraintTop_toBottomOf="@id/user_age_text" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_user_hometown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/grey_7A"
+                    app:layout_constraintStart_toEndOf="@id/txt_label_hometown"
+                    app:layout_constraintTop_toTopOf="@id/txt_label_hometown"
+                    tools:text="Patiala" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/joined_on_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -255,8 +278,8 @@
                     android:text="@string/batch"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="@id/user_age_text"
-                    app:layout_constraintTop_toBottomOf="@id/user_age_text" />
+                    app:layout_constraintStart_toStartOf="@id/txt_label_hometown"
+                    app:layout_constraintTop_toBottomOf="@id/txt_label_hometown" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/joined_on"
@@ -269,46 +292,89 @@
                     app:layout_constraintTop_toTopOf="@id/joined_on_text"
                     tools:text="22 Oct 2020" />
 
-                <View
-                    android:id="@+id/divider"
+                <RelativeLayout
+                    android:id="@+id/previous_profile_pic_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:layout_margin="@dimen/_8sdp"
-                    android:background="@color/grey"
-                    android:visibility="invisible"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:background="#f2f2f2"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_pic" />
+                    app:layout_constraintTop_toBottomOf="@id/user_pic">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_previous_dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="Previous Profile Photos (4)"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_view_more_dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/label_previous_dp"
+                        android:layout_alignBottom="@+id/label_previous_dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:gravity="center"
+                        android:text="View More"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                        android:textColor="@color/colorPrimary"
+                        app:drawableEndCompat="@drawable/ic_arrow_right"
+                        app:drawableTint="@color/colorPrimary" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/highlights_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="#f2f2f2"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center|start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/previous_profile_pic_layout">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_highlights"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="Highlights"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/point_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginEnd="@dimen/_8ssp"
+                    android:layout_width="@dimen/_126sdp"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     android:background="@drawable/ic_points_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_6sdp"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toStartOf="@id/minutes_layout"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/divider"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.33">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/points"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_6sdp"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_18ssp"
-                        tools:text="22,234" />
+                    app:layout_constraintTop_toBottomOf="@id/highlights_layout">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/point_text"
@@ -316,8 +382,19 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/points"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_18ssp"
+                        tools:text="22,234" />
 
                 </LinearLayout>
 
@@ -339,37 +416,24 @@
                     app:lottie_repeatMode="reverse"
                     app:lottie_scale="1"
                     app:lottie_speed="1"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/minutes_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:layout_marginStart="@dimen/_8ssp"
-                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_width="@dimen/_126sdp"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:background="@drawable/ic_minutes_spoken_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_4sdp"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/point_layout"
-                    app:layout_constraintTop_toBottomOf="@id/divider"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.36">
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/minutes"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_6sdp"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_18ssp"
-                        tools:text="8322" />
+                    app:layout_constraintTop_toBottomOf="@id/highlights_layout">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/minutes_text"
@@ -377,8 +441,19 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/user_min_text"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/minutes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_18ssp"
+                        tools:text="8322" />
 
                 </LinearLayout>
 
@@ -407,7 +482,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/streaks_text"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_label_become_senior_student"
@@ -426,43 +501,59 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txt_label_senior_student"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/awards_heading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginVertical="@dimen/_10sdp"
-                    android:text="@string/awards"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textColor="@color/black"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_label_become_senior_student"
-                    tools:visibility="visible" />
-
-
-                <View
-                    android:id="@+id/award_divider"
+                <RelativeLayout
+                    android:id="@+id/awards_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:layout_marginVertical="@dimen/_3sdp"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:background="@color/light_shade_of_gray"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="#f2f2f2"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/awards_heading" />
+                    app:layout_constraintTop_toBottomOf="@id/txt_label_become_senior_student">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_awards"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="Awards Cabinet"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_view_more_awards"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/label_awards"
+                        android:layout_alignBottom="@+id/label_awards"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:gravity="center"
+                        android:text="View More"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                        android:textColor="@color/colorPrimary"
+                        app:drawableEndCompat="@drawable/ic_arrow_right"
+                        app:drawableTint="@color/colorPrimary" />
+
+                </RelativeLayout>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/no_award_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_32sdp"
+                    android:elevation="@dimen/_1sdp"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/award_divider"
+                    app:layout_constraintTop_toBottomOf="@id/awards_layout"
                     app:srcCompat="@drawable/ic_no_award"
                     tools:visibility="visible" />
 
@@ -471,9 +562,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_6sdp"
+                    android:elevation="@dimen/_1sdp"
                     android:text="No Awards won yet"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -484,16 +576,65 @@
                     android:id="@+id/multi_line_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_4sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/bg_wood"
                     android:orientation="vertical"
-                    android:padding="@dimen/_2sdp"
+                    android:paddingHorizontal="@dimen/_6sdp"
+                    android:paddingVertical="@dimen/_2sdp"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/award_divider"
+                    app:layout_constraintTop_toBottomOf="@id/awards_layout"
                     tools:visibility="visible" />
 
+                <RelativeLayout
+                    android:id="@+id/enrolled_courses_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="#f2f2f2"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center|start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/multi_line_ll">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_enrolled_courses"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="Courses Enrolled"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/enrolled_courses_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/_2sdp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/enrolled_courses_layout">
+                    <!--
+                                        <include layout="@layout/enrolled_courses_row_item" />
+                                        <include layout="@layout/enrolled_courses_row_item" />
+                                        <include layout="@layout/enrolled_courses_row_item" />
+                    -->
+
+                </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </ScrollView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

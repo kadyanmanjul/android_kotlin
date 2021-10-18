@@ -6,7 +6,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_6sdp"
-    android:layout_marginEnd="@dimen/_28sdp">
+    android:layout_marginEnd="@dimen/_28sdp"
+    android:layout_marginBottom="@dimen/_6sdp"
+    tools:background="@drawable/bg_wood">
 
     <ImageView
         android:id="@+id/image"
@@ -16,17 +18,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/josh_skill" />
+        tools:src="@drawable/sample_award" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
         android:layout_width="@dimen/_72sdp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_3sdp"
-        android:paddingHorizontal="@dimen/_4sdp"
         android:gravity="center|top"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/_8ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,9 +39,11 @@
         android:layout_width="@dimen/_72sdp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_3ssp"
+        android:background="#F7F78D"
         android:gravity="center|top"
+        android:padding="@dimen/_4sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-        android:textColor="@color/grey_68"
+        android:textColor="#884605"
         android:textSize="@dimen/_8ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/change_dp"
+        android:id="@+id/edit_profile"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
         android:visible="true"
-        android:title="@string/change_profile_dp"
+        android:title="@string/edit_profile"
         app:showAsAction="collapseActionView" />
 
     <item

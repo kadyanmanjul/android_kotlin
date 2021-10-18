@@ -35,7 +35,8 @@ class SeeAllAwardActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        awardCategory = intent.getParcelableArrayListExtra<AwardCategory>(AWARD_CATEGORY) as List<AwardCategory>
+        awardCategory =
+            intent.getParcelableArrayListExtra<AwardCategory>(AWARD_CATEGORY) as List<AwardCategory>
         binding = DataBindingUtil.setContentView(this, R.layout.fragment_see_all_award)
         binding.lifecycleOwner = this
         binding.fragment = this
@@ -81,8 +82,8 @@ class SeeAllAwardActivity : BaseActivity() {
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
         val title = view.findViewById(R.id.title) as AppCompatTextView
-        val viewDivider = view.findViewById(R.id.view) as View
-        viewDivider.visibility = View.VISIBLE
+//        val viewDivider = view.findViewById(R.id.view) as View
+//        viewDivider.visibility = View.VISIBLE
         val recyclerView = view.findViewById(R.id.rv) as PlaceHolderView
         recyclerView.visibility = View.VISIBLE
         title.text = awardCategory.label
@@ -94,7 +95,7 @@ class SeeAllAwardActivity : BaseActivity() {
         awardCategory.awards?.forEach {
             recyclerView.addView(AwardItemViewHolder(it, this))
         }
-        recyclerView.isNestedScrollingEnabled=true
+        recyclerView.isNestedScrollingEnabled = true
         return view
     }
 

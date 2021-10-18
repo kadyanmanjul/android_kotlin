@@ -78,7 +78,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         jobs.forEach {
             try {
                 it.cancel()
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -190,7 +190,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getUserProfileData(
+                val response = AppObjectController.commonNetworkService.getUserProfileDataV3(
                     mentorId,
                     intervalType,
                     previousPage
