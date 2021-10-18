@@ -29,13 +29,7 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
     }
 
     private fun setupUI(lesson: LessonModel) {
-        val isLessonCompleted=
-        if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)){
-            lesson.status == LESSON_STATUS.CO && lesson.conversationStatus == LESSON_STATUS.CO
-        } else {
-            lesson.status == LESSON_STATUS.CO
-        }
+        val isLessonCompleted= lesson.status == LESSON_STATUS.CO
 
         if (isLessonCompleted) {
             lessonInProgressStub.get().visibility = View.GONE

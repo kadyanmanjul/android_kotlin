@@ -625,9 +625,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
 
-                    if (AppObjectController.getFirebaseRemoteConfig()
-                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
-                    ) {
+                    if (lessonIsConvoRoomActive) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
@@ -660,9 +658,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
 
-                    if (AppObjectController.getFirebaseRemoteConfig()
-                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
-                    ) {
+                    if (lessonIsConvoRoomActive) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
