@@ -21,14 +21,20 @@ class JoshGroupViewModel : BaseViewModel() {
         message.obj = it
         singleLiveEvent.value = message
     }
-
-    val flow = Pager(PagingConfig(10, enablePlaceholders = false)) {
+    val pager = Pager(PagingConfig(10, enablePlaceholders = false)) {
         GroupPagingNetworkSource()
-    }.flow.cachedIn(viewModelScope)
+    }
+
+    val flow = pager.flow.cachedIn(viewModelScope)
+
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
         singleLiveEvent.value = message
+    }
+
+    fun updateData() {
+
     }
 
 }
