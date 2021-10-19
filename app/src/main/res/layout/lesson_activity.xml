@@ -349,7 +349,7 @@
             android:id="@+id/spotlight_tab_convo"
             android:layout_width="0dp"
             app:layout_constraintWidth_percent="0.2"
-            android:layout_height="@dimen/_36sdp"
+            android:layout_height="@dimen/_40sdp"
             android:maxLines="1"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"

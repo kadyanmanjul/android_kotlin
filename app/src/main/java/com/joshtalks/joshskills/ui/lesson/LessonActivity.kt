@@ -96,7 +96,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
     var lessonIsNewGrammar = false
-    var lessonIsConvoRoomActive = false
     var lessonNumber = -1
     var defaultSection = -1
     private var ruleIdLeftList = ArrayList<Int>()
@@ -230,7 +229,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     lessonNumber = it.lessonNo
                     lessonIsNewGrammar = it.isNewGrammar
                 }
-                lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
+                viewModel.lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
                         && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
                         && AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE))
@@ -625,7 +624,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
 
-                    if (lessonIsConvoRoomActive) {
+                    if (viewModel.lessonIsConvoRoomActive) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
@@ -658,7 +657,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
 
-                    if (lessonIsConvoRoomActive) {
+                    if (viewModel.lessonIsConvoRoomActive) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
@@ -748,7 +747,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         arrayFragment.add(SPEAKING_POSITION, SpeakingPractiseFragment.newInstance())
         arrayFragment.add(VOCAB_POSITION, VocabularyFragment.getInstance())
         arrayFragment.add(READING_POSITION, ReadingFragmentWithoutFeedback.getInstance())
-        if (lessonIsConvoRoomActive) {
+        if (viewModel.lessonIsConvoRoomActive) {
             arrayFragment.add(ROOM_POSITION, ConversationRoomListingFragment.getInstance())
         }
         val adapter: LessonPagerAdapter =
@@ -756,7 +755,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 this,
                 FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
                 arrayFragment,
-                lessonIsConvoRoomActive
+                viewModel.lessonIsConvoRoomActive
             )
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)

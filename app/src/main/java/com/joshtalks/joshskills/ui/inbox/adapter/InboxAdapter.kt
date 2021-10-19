@@ -184,7 +184,6 @@ class InboxAdapter(
                 } else if (inboxEntity.expiryDate != null && inboxEntity.isCourseBought.not()) {
                     freeTrialTimer.visibility = View.VISIBLE
                     tvLastMessage.visibility = View.INVISIBLE
-                    Log.d("Manjul", "bind() called ${inboxEntity.expiryDate} ${inboxEntity.expiryDate.time} ${ inboxEntity.expiryDate.time - System.currentTimeMillis()}  ${System.currentTimeMillis()}" )
                     if (inboxEntity.expiryDate.time <= System.currentTimeMillis()) {
                         freeTrialTimer.text = getAppContext().getString(R.string.free_trial_ended)
                         countdownTimerBack?.stop()
