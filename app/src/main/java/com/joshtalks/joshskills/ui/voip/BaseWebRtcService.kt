@@ -3,11 +3,7 @@ package com.joshtalks.joshskills.ui.voip
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
-import android.media.AudioAttributes
-import android.media.AudioFocusRequest
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.media.RingtoneManager
+import android.media.*
 import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
@@ -211,11 +207,13 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
     }
 
     protected fun executeEvent(event: String) {
-        executor.execute {
-            AppAnalytics.create(event)
-                .addUserDetails()
-                .push()
-        }
+        try {
+            executor.execute {
+                AppAnalytics.create(event)
+                    .addUserDetails()
+                    .push()
+            }
+        } catch (ex:Exception) { ex.printStackTrace() }
     }
 
     /*   private fun showIncomingCallScreen(
