@@ -96,28 +96,40 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             onBackPressed()
         }
         binding.englishCard.setOnClickListener {
-            index = 0
-
-            binding.subscriptionCard.background =
-                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-            binding.englishCard.background =
-                ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
-            binding.materialTextView.text = buttonText.get(index)
-            binding.txtLabelHeading.text = headingText.get(index)
-            binding.seeCourseList.visibility = View.GONE
-
+            try {
+                index = 0
+                binding.subscriptionCard.background =
+                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+                binding.englishCard.background =
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.blue_rectangle_with_blue_bound_stroke
+                    )
+                binding.materialTextView.text = buttonText.get(index)
+                binding.txtLabelHeading.text = headingText.get(index)
+                binding.seeCourseList.visibility = View.GONE
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
 
         binding.subscriptionCard.setOnClickListener {
-            index = 1
-            binding.subscriptionCard.background =
-                ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
-            binding.englishCard.background =
-                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-            binding.materialTextView.text = buttonText.get(index)
-            binding.txtLabelHeading.text = headingText.get(index)
-            binding.seeCourseList.visibility = View.VISIBLE
-            scrollToBottom()
+            try {
+                index = 1
+                binding.subscriptionCard.background =
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.blue_rectangle_with_blue_bound_stroke
+                    )
+                binding.englishCard.background =
+                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+                binding.materialTextView.text = buttonText.get(index)
+                binding.txtLabelHeading.text = headingText.get(index)
+                binding.seeCourseList.visibility = View.VISIBLE
+                scrollToBottom()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
         binding.seeCourseList.setOnClickListener {
             CourseExploreActivity.startCourseExploreActivity(
@@ -216,8 +228,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     if (data1 != null) {
                         data1.buttonText?.let { it1 -> buttonText.add(it1) }
                         data1.heading.let { it1 -> headingText.add(it1) }
-                        binding.materialTextView.text = buttonText.get(index)
-                        binding.txtLabelHeading.text = headingText.get(index)
+                        try {
+                            binding.materialTextView.text = buttonText.get(index)
+                            binding.txtLabelHeading.text = headingText.get(index)
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
                         binding.title1.text = data1.courseHeading
                         binding.txtCurrency1.text = data1.discount?.get(0).toString()
                         binding.txtFinalPrice1.text = data1.discount?.substring(1)
@@ -304,10 +320,14 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val options = JSONObject()
             options.put("key", orderDetails.razorpayKeyId)
             options.put("name", "Josh Skills")
-            options.put(
-                "description",
-                viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName + "_app"
-            )
+            try {
+                options.put(
+                    "description",
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName + "_app"
+                )
+            } catch (ex:Exception){
+                ex.printStackTrace()
+            }
             options.put("order_id", orderDetails.razorpayOrderId)
             options.put("currency", orderDetails.currency)
             options.put("amount", orderDetails.amount * 100)

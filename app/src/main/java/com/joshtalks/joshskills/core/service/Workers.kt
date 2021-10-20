@@ -26,11 +26,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
-import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
+import com.joshtalks.joshskills.core.notification.*
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -49,11 +45,11 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
-import timber.log.Timber
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
@@ -275,10 +271,15 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
 //        if (User.getInstance().isVerified) {
 //            regenerateFCM()
 //        } else {
-        FirebaseInstallations.getInstance().delete().addOnCompleteListener {
-            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
-                regenerateFCM()
+        try {
+            FirebaseInstallations.getInstance().delete().addOnCompleteListener {
+                FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
+                    regenerateFCM()
+                }
             }
+        } catch (ex:Exception){
+            ex.printStackTrace()
+            return Result.failure()
         }
 //        }
         return Result.success()
