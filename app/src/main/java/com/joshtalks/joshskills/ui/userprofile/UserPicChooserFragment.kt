@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentManager
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,6 +25,8 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     private lateinit var binding: UserPicChooserDialogBinding
     private var isUserProfilePicEmpty: Boolean = false
     private var isFromRegistration:Boolean=false
+    private var isFromGroup : Boolean = false
+    val header = ObservableField("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +35,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         arguments?.let {
             isUserProfilePicEmpty = it.getBoolean(IS_PROFILE_PIC_PRESENT)
             isFromRegistration = it.getBoolean(IS_FROM_REGISTRATION)
+            isFromGroup = it.getBoolean(IS_FROM_GROUP, false)
         }
     }
 
@@ -68,6 +72,10 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
             binding.deleteIcon.visibility = View.VISIBLE
             binding.removeText.visibility = View.VISIBLE
         }
+        if(isFromGroup)
+            header.set("Group Icon")
+        else
+            header.set(resources.getString(R.string.profile_photo))
         logChooserAnalyticsEvent(AnalyticsEvent.UPLOAD_PIC_CHOOSER_OPENED.NAME,isFromRegistration)
     }
 
@@ -118,17 +126,20 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         const val TAG = "UserPicChooserFragment"
         const val IS_PROFILE_PIC_PRESENT = "is_profile_pic_present"
         const val IS_FROM_REGISTRATION = "is_from_registration"
-        fun newInstance(isProfileEmpty: Boolean,isFromRegistration:Boolean) =
+        const val IS_FROM_GROUP = "is_from_group"
+        fun newInstance(isProfileEmpty: Boolean,isFromRegistration:Boolean, isFromGroup : Boolean = false) =
             UserPicChooserFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean(IS_PROFILE_PIC_PRESENT, isProfileEmpty)
                     putBoolean(IS_FROM_REGISTRATION, isFromRegistration)
+                    putBoolean(IS_FROM_GROUP, isFromGroup)
                 }
             }
 
         fun showDialog(
             supportFragmentManager: FragmentManager,
             isProfileEmpty: Boolean,
+            isFromGroup : Boolean = false,
             isFromRegistration:Boolean=false
         ) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
@@ -137,7 +148,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
                 fragmentTransaction.remove(prev)
             }
             fragmentTransaction.addToBackStack(null)
-            newInstance(isProfileEmpty,isFromRegistration)
+            newInstance(isProfileEmpty,isFromRegistration, isFromGroup = isFromGroup)
                 .show(supportFragmentManager, TAG)
         }
     }

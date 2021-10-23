@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected var liveData = EventLiveData
+    protected var event = EventLiveData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

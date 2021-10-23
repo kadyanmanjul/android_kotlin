@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <data>
-
+        <import type="android.view.View"/>
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -12,6 +15,43 @@
         android:background="@color/lighter_grey"
         tools:context=".ui.group.NewGroupFragment">
 
+        <FrameLayout
+            android:id="@+id/loading"
+            android:visibility="@{vm.addingNewGroup ? View.VISIBLE : View.GONE}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:elevation="@dimen/_8sdp"
+            android:background="@color/transparent_blue_alpha_75"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:elevation="@dimen/_1sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+                android:id="@+id/group_app_bar"
+                onBackPressed="@{vm::onBackPress}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                groupSubHeader="@{`Add group name`}"
+                groupHeader="@{`New group`}"/>
+        </com.google.android.material.appbar.AppBarLayout>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_group"
             android:layout_width="@dimen/_42sdp"
@@ -19,13 +59,14 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginStart="@dimen/_8sdp"
             android:elevation="1dp"
+            android:onClick="@{vm::openImageChooser}"
             android:layout_centerVertical="true"
             android:background="@drawable/white_button_round_enabled"
             android:gravity="center_vertical|start"
-            android:src="@drawable/ic_josh_course"
+            android:src="@drawable/group_image"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -74,15 +115,16 @@
             app:layout_constraintBottom_toBottomOf="@+id/tv_group_name_hint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_group"
             android:layout_width="@dimen/_48sdp"
             android:layout_height="@dimen/_48sdp"
             android:backgroundTint="@color/blue33"
-            android:src="@drawable/ic_search"
-            android:tint="@color/white"
+            android:src="@drawable/add_groups"
+            android:scaleType="fitCenter"
+            android:onClick="@{vm::saveGroupInfo}"
             app:layout_constraintBottom_toBottomOf="@+id/background_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.96"

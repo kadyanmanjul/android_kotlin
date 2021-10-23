@@ -66,6 +66,7 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
@@ -522,11 +523,16 @@ class ConversationActivity :
             scrollToEnd()
         }
 
+        conversationBinding.imgGroupChat.setOnClickListener {
+            val intent = Intent(this, JoshGroupActivity::class.java)
+            startActivity(intent)
+        }
+
         conversationBinding.leaderboardBtnClose.setOnClickListener {
-            conversationBinding.userPointContainer.slideOutAnimation(
-                conversationBinding.imgGroupChat,
-                conversationBinding.txtUnreadCount
-            )
+//            conversationBinding.userPointContainer.slideOutAnimation(
+//                conversationBinding.imgGroupChat,
+//                conversationBinding.txtUnreadCount
+//            )
             // hideLeaderboardTooltip()
         }
 
@@ -545,7 +551,7 @@ class ConversationActivity :
             )
         }
 
-        conversationBinding.imgGroupChat.visibility = if (inboxEntity.isGroupActive) GONE else GONE
+        //conversationBinding.imgGroupChat.visibility = if (inboxEntity.isGroupActive) GONE else GONE
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            utilConversationViewModel.initCometChat()
@@ -850,7 +856,7 @@ class ConversationActivity :
             utilConversationViewModel.unreadMessageCount.collectLatest { count ->
                 if (inboxEntity.isGroupActive) {
                     conversationBinding.txtUnreadCount.visibility = VISIBLE
-                    conversationBinding.imgGroupChat.visibility = VISIBLE
+                    //conversationBinding.imgGroupChat.visibility = VISIBLE
                     when {
                         count in 1..99 -> {
                             conversationBinding.txtUnreadCount.text = String.format("%d", count)
@@ -865,7 +871,7 @@ class ConversationActivity :
                         }
                     }
                 } else {
-                    conversationBinding.imgGroupChat.visibility = GONE
+                    //conversationBinding.imgGroupChat.visibility = GONE
                     conversationBinding.txtUnreadCount.visibility = GONE
                 }
             }
@@ -1036,7 +1042,7 @@ class ConversationActivity :
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
-                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                //conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 // showLeaderBoardTooltip()
@@ -1057,7 +1063,7 @@ class ConversationActivity :
                     }
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
-                conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
+                //conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
             }
         }
         val unseenAwards: ArrayList<Award> = ArrayList()

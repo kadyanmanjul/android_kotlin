@@ -11,5 +11,7 @@ data class AgoraTokenRequest(
     @SerializedName("is_demo")
     var isDemo: Boolean,
     @SerializedName("topic_id")
-    var topicId: String?
+    var topicId: String?,
+    @SerializedName("group_id")
+    var groupId: String? = null
 )

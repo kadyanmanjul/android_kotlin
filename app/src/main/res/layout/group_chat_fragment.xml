@@ -3,16 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <import type="android.view.View"/>
+        <import type="com.joshtalks.joshskills.R"/>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.GroupChatViewModel" />
+            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_grey"
+        android:background="@drawable/group_chat_bg"
         tools:context=".ui.group.GroupChatFragment">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:elevation="@dimen/_1sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+                android:id="@+id/group_app_bar"
+                onBackPressed="@{vm::onBackPress}"
+                secondIcon="@{R.drawable.group_call}"
+                onSecondIconPressed="@{vm::callGroup}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                groupSubHeader="@{vm.groupSubHeader}"
+                groupImage="@{vm.imageUrl}"
+                groupHeader="@{vm.groupHeader}" />
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/date_card"
@@ -24,7 +47,7 @@
             app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -32,7 +55,7 @@
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_2sdp"
                 android:textColor="@color/black"
-                android:text="Today" />
+                android:text="@{vm.groupCreatedAt}" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
@@ -53,7 +76,7 @@
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_2sdp"
                 android:textColor="@color/md_grey_600"
-                android:text="Adi created this group" />
+                android:text="@{vm.groupCreator}" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
@@ -70,14 +93,15 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
             android:textColor="@color/white"
             android:textSize="@dimen/_12ssp"
-            android:visibility="gone"
             app:cornerRadius="@dimen/_36sdp"
+            android:onClick="@{view -> vm.callGroup()}"
             android:layout_marginBottom="@dimen/_32sdp"
             app:layout_constraintBottom_toTopOf="@+id/appCompatTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.8"
+            android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
             app:rippleColor="@color/white"
             tools:visibility="visible" />
 
@@ -90,6 +114,7 @@
             android:paddingVertical="@dimen/_2sdp"
             android:text="@{vm.hasJoinedGroup ? `Chat function will be comming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"
             android:background="@color/white"
+            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
             android:textSize="@{vm.hasJoinedGroup ? @dimen/_12ssp : @dimen/_14ssp, default=@dimen/_14ssp}"
             android:textColor="@{vm.hasJoinedGroup ? @color/black : @color/green, default=@color/green}"
             app:layout_constraintBottom_toBottomOf="parent"

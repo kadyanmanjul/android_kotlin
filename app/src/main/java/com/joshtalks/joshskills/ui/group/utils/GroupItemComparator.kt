@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.group
+package com.joshtalks.joshskills.ui.group.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import com.joshtalks.joshskills.ui.group.model.GroupItemData

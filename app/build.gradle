@@ -61,6 +61,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        viewBinding true
     }
 
     configurations.all {
@@ -169,7 +170,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9005\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -252,6 +253,8 @@ dependencies {
     implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
     def room_version = "2.3.0"
 

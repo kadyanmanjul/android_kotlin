@@ -34,7 +34,8 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         topicId: Int?,
         location: Location?,
         aFunction: (String, String, Int) -> Unit,
-        is_demo: Boolean = PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)
+        is_demo: Boolean = PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false),
+        groupId : String? = null
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -42,7 +43,8 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                     Mentor.getInstance().getId(),
                     courseId,
                     is_demo,
-                    topicId.toString()
+                    topicId.toString(),
+                    groupId = groupId
                 )
                 val response =
                     AppObjectController.p2pNetworkService.getAgoraClientToken(request)

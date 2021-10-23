@@ -4,9 +4,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <import type="com.joshtalks.joshskills.R"/>
+        <import type="android.view.View"/>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,16 +16,99 @@
         android:layout_height="match_parent"
         tools:context=".ui.group.JoshGroupActivity">
 
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+                android:id="@+id/group_app_bar"
+                firstIcon="@{R.drawable.ic_search}"
+                groupHeader="@{`Groups`}"
+                groupSubHeader="@{` `}"
+                onBackPressed="@{vm::onBackPress}"
+                onFirstIconPressed="@{vm::onSearch}"
+                onSecondIconPressed="@{vm::onMoreOption}"
+                secondIcon="@{R.drawable.ic_more_option}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/group_description"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@color/white"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_4sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:text="Groups are a way to find like minded people and connect with them."
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/group_search_description"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@color/white"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_4sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:text="Find the first group you want to join by clicking on the button below"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/group_description" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_call_practice_partner"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:onClick="@{view -> vm.onSearch()}"
+            android:text="Find Groups to join"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="gone"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/appBarLayout"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:rippleColor="@color/white"
+            tools:visibility="visible" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_rv"
             groupAdapter="@{vm.adapter}"
             onGroupItemClick="@{vm.onItemClick}"
+            stateAdapter="@{vm.stateAdapter}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/no_groups_group"
+            android:visibility="@{vm.hasGroupData ? View.GONE : View.VISIBLE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:visibility="gone"
+            app:constraint_referenced_ids="group_search_description,group_description,btn_call_practice_partner" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

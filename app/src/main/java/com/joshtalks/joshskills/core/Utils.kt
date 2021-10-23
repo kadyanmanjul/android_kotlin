@@ -181,11 +181,14 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long): String {
+    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
-                CHAT_TIME_FORMATTER.format(date.time).lowercase(Locale.getDefault())
+                if(timeNeeded)
+                    CHAT_TIME_FORMATTER.format(date.time).lowercase(Locale.getDefault())
+                else
+                    "Today"
             }
             isYesterday(date) -> {
                 "Yesterday"

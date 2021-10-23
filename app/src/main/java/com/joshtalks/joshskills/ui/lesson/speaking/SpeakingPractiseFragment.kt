@@ -31,6 +31,8 @@ import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
+import com.joshtalks.joshskills.ui.group.views.GroupBottomSheet
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -159,6 +161,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         )
         binding.btnStart.setOnClickListener {
             startPractise(favoriteUserCall = false)
+        }
+
+        binding.btnGroupCall.setOnClickListener {
+            //startPractise(favoriteUserCall = false)
+            val intent = Intent(requireActivity(), JoshGroupActivity::class.java)
+            startActivity(intent)
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner, {
@@ -366,7 +374,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen(
         favoriteUserCall: Boolean = false,
-        isNewUserCall: Boolean = false
+        isNewUserCall: Boolean = false,
     ) {
         viewModel.speakingTopicLiveData.value?.run {
             if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
