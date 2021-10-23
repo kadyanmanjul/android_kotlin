@@ -4,34 +4,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <import type="com.joshtalks.joshskills.R"/>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.group.JoshGroupActivity">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
-                android:id="@+id/group_app_bar"
-                onBackPressed="@{vm::onBackPress}"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:has_sub_title="true"
-                app:img_url=" "
-                app:title="Home" />
-        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/group_fragment_container"
@@ -40,7 +22,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBarLayout"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

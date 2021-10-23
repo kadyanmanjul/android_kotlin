@@ -65,6 +65,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             topicName: String,
             favoriteUserCall: Boolean,
             isNewUserCall: Boolean = false,
+            isGroupCallCall: Boolean = false,
+            groupId : String? = null,
             conversationId: String? = null,
         ): Intent {
             return Intent(activity, SearchingUserActivity::class.java).apply {
@@ -73,6 +75,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
                 putExtra(TOPIC_NAME, topicName)
                 putExtra(FAVORITE_USER_CALL, favoriteUserCall)
                 putExtra(IS_NEW_USER_CALL, isNewUserCall)
+                putExtra(RTC_IS_GROUP_CALL, isGroupCallCall)
+                putExtra(RTC_IS_GROUP_CALL_ID, groupId)
                 putExtra(CONVERSATION_ID, conversationId)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -89,6 +93,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
     private var mServiceBound = false
     private var isFavorite = false
     private var isNewUserCall = false
+    private var isGroupCall = false
+    private var groupId : String? = null
 
     private val viewModel: VoipCallingViewModel by lazy {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
@@ -140,6 +146,9 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
                     }
                     if (isNewUserCall) {
                         putExtra(RTC_IS_NEW_USER_CALL, "true")
+                    }
+                    if (isGroupCall) {
+                        putExtra(RTC_IS_GROUP_CALL, "true")
                     }
                 }
             Log.d(TAG, "switchChannel: 138")
@@ -196,6 +205,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
         topicName = intent.getStringExtra(TOPIC_NAME)
         isFavorite = intent.getBooleanExtra(FAVORITE_USER_CALL, false)
         isNewUserCall = intent.getBooleanExtra(IS_NEW_USER_CALL, false)
+        isGroupCall = intent.getBooleanExtra(RTC_IS_GROUP_CALL, false)
+        groupId = intent.getStringExtra(RTC_IS_GROUP_CALL_ID)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SEARCH_SCREEN_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -320,6 +331,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
                 viewModel.initCallForFavoriteCaller(it, topicId, location, ::callback)
             } else if (isNewUserCall) {
                 viewModel.initCallForNewUser(it, topicId, location, ::callback)
+            } else if(isGroupCall) {
+                viewModel.getUserForTalk(it, topicId, location, ::callback, groupId = groupId)
             } else {
                 viewModel.getUserForTalk(it, topicId, location, ::callback)
             }
@@ -428,6 +441,9 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             }
             if (isNewUserCall) {
                 outgoingCallData[RTC_IS_NEW_USER_CALL] = "true"
+            }
+            if (isGroupCall) {
+                outgoingCallData[RTC_IS_GROUP_CALL] = "true"
             }
         }
         return outgoingCallData

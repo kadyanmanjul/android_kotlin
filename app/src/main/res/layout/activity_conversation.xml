@@ -355,7 +355,6 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:padding="@dimen/_4sdp"
-                android:visibility="gone"
                 app:elevation="@dimen/_4sdp"
                 app:srcCompat="@drawable/ic_groupchat"
                 tools:visibility="visible" />

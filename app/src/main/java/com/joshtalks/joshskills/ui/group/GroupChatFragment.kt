@@ -2,15 +2,22 @@ package com.joshtalks.joshskills.ui.group
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableField
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
+import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 
-class GroupChatFragment : Fragment() {
+private const val TAG = "GroupChatFragment"
+class GroupChatFragment : BaseFragment() {
     lateinit var binding : GroupChatFragmentBinding
 
     val vm by lazy {
@@ -25,9 +32,22 @@ class GroupChatFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initViewBinding() {
+        binding.vm = vm
         binding.executePendingBindings()
     }
 
+    override fun initViewState() {}
+
+    override fun setArguments() {
+        arguments?.let {
+            vm.groupHeader.set(it.getString(GROUPS_TITLE,""))
+            vm.hasJoinedGroup.set(it.getBoolean(HAS_JOINED_GROUP, false))
+            vm.groupSubHeader.set("tap for group info")
+            vm.groupId = it.getString(GROUPS_ID, "")
+            vm.imageUrl.set(it.getString(GROUPS_IMAGE, ""))
+            vm.groupCreatedAt.set(it.getString(GROUPS_CREATED_TIME, ""))
+            vm.groupCreator.set(it.getString(GROUPS_CREATOR, ""))
+        }
+    }
 }

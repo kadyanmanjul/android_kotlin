@@ -21,6 +21,10 @@ class GroupsAppBar @JvmOverloads constructor(
         this.findViewById(R.id.title)
     }
 
+    val subTitleTv : TextView by lazy {
+        this.findViewById(R.id.sub_title)
+    }
+
     val toolBarTitleTv : TextView by lazy {
         this.findViewById(R.id.toolbar_title)
     }
@@ -52,51 +56,41 @@ class GroupsAppBar @JvmOverloads constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        attrs?.let {
-            val attrsValue = context.obtainStyledAttributes(it, R.styleable.GroupsAppBar)
-            try {
-                val title = (attrsValue.getString(R.styleable.GroupsAppBar_title) ?: "Groups")
-                val hasSubTitle = attrsValue.getBoolean(R.styleable.GroupsAppBar_has_sub_title, false)
-                val imageUrl = attrsValue.getString(R.styleable.GroupsAppBar_img_url)
-                val firstIcon = attrsValue.getString(R.styleable.GroupsAppBar_first_right_icon_src)
-                val secondIcon = attrsValue.getString(R.styleable.GroupsAppBar_second_right_icon_src)
-                if(hasSubTitle) {
-                    toolBarTitleTv.visibility = View.GONE
-                    toolBarContainer.visibility = View.VISIBLE
-                    titleTv.text = title
-                } else {
-                    toolBarContainer.visibility = View.GONE
-                    toolBarTitleTv.visibility = View.VISIBLE
-                    toolBarTitleTv.text = title
-                }
-
-                when(imageUrl) {
-                    null -> toolbarImageView.visibility = View.GONE
-                    "" -> setDrawableImage(R.drawable.josh_skill_logo, toolbarImageView)
-                    else -> setGroupImage(imageUrl)
-                }
-
-                if(firstIcon == null)
-                    firstIconImageView.visibility = GONE
-                else
-                    setDrawableImage(R.drawable.josh_skill_logo, firstIconImageView)
-
-                if(secondIcon == null)
-                    secondIconImageView.visibility = GONE
-                else
-                    setDrawableImage(R.drawable.josh_skill_logo, secondIconImageView)
-
-            } finally {
-                attrsValue.recycle()
-            }
-        }
     }
 
     //TODO: Explicitly Handle low end device issue
-    private fun setGroupImage(url : String) {
-        Glide.with(toolbarImageView)
-            .load(url)
-            .into(toolbarImageView)
+    fun setImage(url : String) {
+        toolbarImageView.visibility = View.VISIBLE
+        if(url.isEmpty())
+            toolbarImageView.setImageResource(R.drawable.josh_skill_logo)
+        else
+            Glide.with(toolbarImageView)
+                .load(url)
+                .into(toolbarImageView)
+
+    }
+
+    fun setGroupSubTitle(subTitle : String, title : String) {
+        if(subTitle.isNotBlank()) {
+            toolBarTitleTv.visibility = View.GONE
+            toolBarContainer.visibility = View.VISIBLE
+            titleTv.text = title
+            subTitleTv.text = subTitle
+        } else {
+            toolBarContainer.visibility = View.GONE
+            toolBarTitleTv.visibility = View.VISIBLE
+            toolBarTitleTv.text = title
+        }
+    }
+
+    fun setFirstIcon(drawableRes: Int) {
+        firstIconImageView.visibility = View.VISIBLE
+        setDrawableImage(drawableRes, firstIconImageView)
+    }
+
+    fun setSecondIcon(drawableRes: Int) {
+        secondIconImageView.visibility = View.VISIBLE
+        setDrawableImage(drawableRes, secondIconImageView)
     }
 
     private fun setDrawableImage(drawableRes : Int, imageView : ImageView) {

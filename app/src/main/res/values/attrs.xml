@@ -15,10 +15,8 @@
 
     <declare-styleable name="GroupsAppBar">
         <attr name="title" format="string" />
-        <attr name="has_sub_title" format="boolean"/>
+        <attr name="sub_title" format="string"/>
         <attr name="img_url" format="string"/>
-        <attr name="first_right_icon_src" format="integer"/>
-        <attr name="second_right_icon_src" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="AttachmentView">

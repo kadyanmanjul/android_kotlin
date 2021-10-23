@@ -52,5 +52,6 @@
     <dimen name="grammar_button_default_padding_top">5dp</dimen>
     <dimen name="grammar_button_default_padding_bottom">5dp</dimen>
     <dimen name="grammar_button_default_shadow_height">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

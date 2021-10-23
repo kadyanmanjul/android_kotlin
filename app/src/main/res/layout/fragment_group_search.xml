@@ -6,7 +6,7 @@
     <data>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.JoshGroupViewModel" />
+            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupSearchViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,6 +40,7 @@
                     android:paddingVertical="@dimen/_4sdp"
                     android:src="@drawable/ic_arrow_back"
                     android:tint="@color/black"
+                    android:onClick="@{vm::onBackPress}"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -57,18 +58,20 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/search_view"
+                    android:transitionName="group_search_appbar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@color/transparent"
                     android:hint="Search Groups"
+                    onSearch="@{vm.query}"
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:maxLines="1"
                     android:minHeight="@dimen/_20sdp"
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:paddingVertical="@dimen/_4sdp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toStartOf="@+id/img_clear"
                     app:layout_constraintStart_toEndOf="@id/back_iv"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -82,6 +85,7 @@
                     android:paddingEnd="@dimen/_8sdp"
                     android:src="@drawable/ic_cross"
                     android:tint="@color/black"
+                    android:onClick="@{vm::onClearSearch}"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -93,14 +97,19 @@
             android:id="@+id/lable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:text="Currently active groups:"
+            android:textColor="@color/black"
+            android:layout_margin="@dimen/_12sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:paddingVertical="@dimen/_4sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_layout_card" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_rv"
             groupAdapter="@{vm.adapter}"
             onGroupItemClick="@{vm.onItemClick}"
+            stateAdapter="@{vm.stateAdapter}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"

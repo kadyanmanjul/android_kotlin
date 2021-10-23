@@ -1,14 +1,9 @@
-package com.joshtalks.joshskills.ui.group
+package com.joshtalks.joshskills.ui.group.views
 
 import android.app.Activity
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -23,14 +18,29 @@ import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
 import com.joshtalks.joshskills.constants.SEARCH_GROUP
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.ui.group.ADD_GROUP_FRAGMENT
+import com.joshtalks.joshskills.ui.group.CHAT_FRAGMENT
+import com.joshtalks.joshskills.ui.group.GROUPS_CREATED_TIME
+import com.joshtalks.joshskills.ui.group.GROUPS_CREATOR
+import com.joshtalks.joshskills.ui.group.GROUPS_ID
+import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
+import com.joshtalks.joshskills.ui.group.GROUPS_STACK
+import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
+import com.joshtalks.joshskills.ui.group.GroupChatFragment
+import com.joshtalks.joshskills.ui.group.GroupListFragment
+import com.joshtalks.joshskills.ui.group.GroupSearchFragment
+import com.joshtalks.joshskills.ui.group.HAS_JOINED_GROUP
+import com.joshtalks.joshskills.ui.group.LIST_FRAGMENT
+import com.joshtalks.joshskills.ui.group.NewGroupFragment
+import com.joshtalks.joshskills.ui.group.SEARCH_FRAGMENT
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import timber.log.Timber
 
-private const val TAG = "JoshGroupActivity"
-class JoshGroupActivity : BaseActivity() {
+class JoshVoipGroupActivity : BaseActivity() {
+
     val vm by lazy {
         ViewModelProvider(this)[JoshGroupViewModel::class.java]
     }

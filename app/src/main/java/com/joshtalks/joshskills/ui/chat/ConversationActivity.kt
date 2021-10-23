@@ -66,6 +66,7 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
@@ -95,13 +96,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -265,6 +266,7 @@ class ConversationActivity :
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
         } else if (inboxEntity.isCourseBought.not() &&
             inboxEntity.expiryDate != null &&
@@ -273,6 +275,7 @@ class ConversationActivity :
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
@@ -522,11 +525,16 @@ class ConversationActivity :
             scrollToEnd()
         }
 
+        conversationBinding.imgGroupChat.setOnClickListener {
+            val intent = Intent(this, JoshGroupActivity::class.java)
+            startActivity(intent)
+        }
+
         conversationBinding.leaderboardBtnClose.setOnClickListener {
-            conversationBinding.userPointContainer.slideOutAnimation(
-                conversationBinding.imgGroupChat,
-                conversationBinding.txtUnreadCount
-            )
+//            conversationBinding.userPointContainer.slideOutAnimation(
+//                conversationBinding.imgGroupChat,
+//                conversationBinding.txtUnreadCount
+//            )
             // hideLeaderboardTooltip()
         }
 
@@ -545,7 +553,7 @@ class ConversationActivity :
             )
         }
 
-        conversationBinding.imgGroupChat.visibility = if (inboxEntity.isGroupActive) GONE else GONE
+        //conversationBinding.imgGroupChat.visibility = if (inboxEntity.isGroupActive) GONE else GONE
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            utilConversationViewModel.initCometChat()
@@ -850,7 +858,7 @@ class ConversationActivity :
             utilConversationViewModel.unreadMessageCount.collectLatest { count ->
                 if (inboxEntity.isGroupActive) {
                     conversationBinding.txtUnreadCount.visibility = VISIBLE
-                    conversationBinding.imgGroupChat.visibility = VISIBLE
+                    //conversationBinding.imgGroupChat.visibility = VISIBLE
                     when {
                         count in 1..99 -> {
                             conversationBinding.txtUnreadCount.text = String.format("%d", count)
@@ -865,7 +873,7 @@ class ConversationActivity :
                         }
                     }
                 } else {
-                    conversationBinding.imgGroupChat.visibility = GONE
+                    //conversationBinding.imgGroupChat.visibility = GONE
                     conversationBinding.txtUnreadCount.visibility = GONE
                 }
             }

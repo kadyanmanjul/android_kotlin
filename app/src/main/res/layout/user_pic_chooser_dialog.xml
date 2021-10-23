@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_6sdp"
-            android:text="@string/profile_photo"
+            android:text="@{fragment.header}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
