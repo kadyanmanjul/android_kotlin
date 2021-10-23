@@ -57,7 +57,7 @@
             app:layout_constraintBottom_toBottomOf="@id/user_image"
             app:layout_constraintEnd_toEndOf="@id/user_image"
             app:srcCompat="@drawable/ic_hand_raised_icon"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"

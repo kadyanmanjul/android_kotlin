@@ -855,7 +855,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         name.text = resp
         points.text = (response.points.toString()).plus(" points")
         userPic.post {
-            userPic.setUserImageOrInitials(response.photoUrl, response.name ?: "User")
+            userPic.setUserImageOrInitials(response.photoUrl, response.name ?: DEFAULT_NAME)
         }
         response.award_url?.let {
             award.setImage(it)

@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms;
 
-public class LiveRoomUser {
+public class OldLiveRoomUser {
 
     private String name;
     private boolean is_speaker;
@@ -13,12 +13,12 @@ public class LiveRoomUser {
     private int sort_order = 0;
     private boolean is_speaker_invite_sent = false;
 
-    public LiveRoomUser(){
+    public OldLiveRoomUser(){
 
     }
 
-    public LiveRoomUser(String name, boolean is_speaker, boolean is_moderator, boolean is_hand_raised, boolean is_mic_on, String photo_url,
-                        String mentor_id, boolean is_speaking, int sort_order, boolean is_speaker_invite_sent) {
+    public OldLiveRoomUser(String name, boolean is_speaker, boolean is_moderator, boolean is_hand_raised, boolean is_mic_on, String photo_url,
+                           String mentor_id, boolean is_speaking, int sort_order, boolean is_speaker_invite_sent) {
         this.name = name;
         this.is_speaker = is_speaker;
         this.is_moderator = is_moderator;

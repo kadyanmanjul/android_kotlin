@@ -1,3 +1,4 @@
+/*
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
 import android.annotation.SuppressLint
@@ -22,7 +23,8 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 
 class ConversationRoomsListingAdapter(
     rooms: FirestoreRecyclerOptions<ConversationRoomsListingItem>,
-    val action: ConversationRoomListAction
+    val action: ConversationRoomListAction,
+    val listRooms: List<ConversationRoomsListingItem>
 ) :
     FirestoreRecyclerAdapter<ConversationRoomsListingItem, ConversationRoomsListingAdapter.ConversationRoomViewHolder>(
         rooms
@@ -155,3 +157,4 @@ class ConversationRoomsListingAdapter(
     }
 
 }
+*/

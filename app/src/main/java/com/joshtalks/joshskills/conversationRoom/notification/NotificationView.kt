@@ -6,11 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.acceptButton
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.action_layout
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.heading
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.notification_bar
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.rejectButton
+import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.*
 
 
 class NotificationView @JvmOverloads constructor(
@@ -19,6 +15,8 @@ class NotificationView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
     private var enquiryAction: NotificationViewAction? = null
     var mediaPlayer: MediaPlayer? = null
+    var userRequestedUuid: Int? = null
+    var isSpeakerInviteNotification: Int? = null
 
     interface NotificationViewAction {
         fun onAcceptNotification()
@@ -34,6 +32,14 @@ class NotificationView @JvmOverloads constructor(
         this.rejectButton.setOnClickListener {
             this.enquiryAction?.onRejectNotification()
         }
+    }
+
+    fun setUserUuid(id: Int?) {
+        this.userRequestedUuid = id
+    }
+
+    fun getUserUuid() :Int?{
+        return this.userRequestedUuid
     }
 
     fun setAcceptButtonText(text: String) {

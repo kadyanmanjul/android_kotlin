@@ -1,13 +1,9 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
-import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
@@ -16,13 +12,7 @@ import android.graphics.Bitmap
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.os.Binder
-import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.IBinder
-import android.os.Message
-import android.os.SystemClock
+import android.os.*
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.text.Spannable
@@ -72,21 +62,15 @@ import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.LinkedList
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 import kotlin.collections.set
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 
 const val RTC_TOKEN_KEY = "token"
@@ -702,11 +686,7 @@ class WebRtcService : BaseWebRtcService() {
                 totalVolume: Int
             ) {
                 super.onAudioVolumeIndication(speakers, totalVolume)
-                Log.d(
-                    "ABC",
-                    "${speakers?.size} ${speakers?.get(0)?.uid} ${speakers?.get(0)?.volume} , moderatorUid: $moderatorUid"
-                )
-                if (isRoomCreatedByUser) {
+                /*if (isRoomCreatedByUser) {
                     speakingUsersOldList.clear()
                     speakingUsersOldList.addAll(speakingUsersNewList)
                     speakingUsersNewList.clear()
@@ -718,13 +698,8 @@ class WebRtcService : BaseWebRtcService() {
                             speakingUsersNewList.add(agoraUid ?: 0)
                         }
                     }
-                    Log.d(
-                        "ABC",
-                        "new list : ${speakingUsersNewList.size} old list : ${speakingUsersOldList.size}"
-                    )
-                    Log.d(TAG, "moderatorUid in onAudioIndication: $moderatorUid")
                     updateFirestoreData()
-                }
+                }*/
                 /*try {
                     val user = speakers?.filter { it.uid == agoraUid!! }
                     if (user!=null && user.size!! > 0){
@@ -769,7 +744,7 @@ class WebRtcService : BaseWebRtcService() {
                     JoinConversionRoomRequest(
                         Mentor.getInstance().getId(),
                         roomId?.toInt() ?: 0,
-                        qId
+                        1
                     )
                 val response =
                     AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
@@ -801,7 +776,7 @@ class WebRtcService : BaseWebRtcService() {
                         JoinConversionRoomRequest(
                             Mentor.getInstance().getId(),
                             roomId?.toInt() ?: 0,
-                            qId
+                            1
                         )
                     val response =
                         AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
@@ -2263,9 +2238,15 @@ class WebRtcService : BaseWebRtcService() {
             }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        val intent = ConversationLiveRoomActivity.getIntent(
-            this, conversationRoomChannelName,
-            agoraUid, conversationRoomToken, isRoomCreatedByUser, roomId?.toInt(), roomQuestionId
+        val intent  = ConversationLiveRoomActivity.getIntent(
+            context = this,
+            channelName = conversationRoomChannelName,
+            uid = agoraUid,
+            token = conversationRoomToken,
+            isRoomCreatedByUser = isRoomCreatedByUser,
+            roomId = roomId?.toInt(),
+            moderatorId = moderatorUid,
+            roomQuestionId = roomQuestionId
         )
         Log.d("ABC", "channelName: $conversationRoomChannelName")
 

@@ -36,14 +36,14 @@ import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 
 private const val TAG = "VocabularyPracticeAdapter"
 const val PAUSE_AUDIO = "PAUSE_AUDIO"
@@ -125,7 +125,6 @@ class VocabularyPracticeAdapter(
                 (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
                 holder.positionInList = position
                 holder.bind(position)
-                Log.d(TAG, "onBindViewHolder: ${holder.lessonQuestion?.filePath}")
                 if (!holder.lessonQuestion?.filePath.isNullOrBlank())
                     holder.audioAttachmentInit(holder.lessonQuestion!!)
             }
@@ -659,10 +658,6 @@ class VocabularyPracticeAdapter(
                     }
 
                     override fun onStopTrackingTouch(seekBar: SeekBar) {
-                        Log.d(
-                            TAG,
-                            "onStopTrackingTouch() called with: userSelectedPosition = $userSelectedPosition, userSelectedPosition.toLong() = ${userSelectedPosition.toLong()}, layoutPosition = $layoutPosition"
-                        )
                         if (currentPlayingPosition == layoutPosition)
                             audioManager?.seekTo(userSelectedPosition.toLong())
                     }
@@ -771,7 +766,6 @@ class VocabularyPracticeAdapter(
 
         // Called to bind data
         private fun showRecordHintAnimation() {
-            Log.d(TAG, "showRecordHintAnimation: ")
             if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
                     HAS_SEEN_VOCAB_HAND_TOOLTIP
                 ).not()
@@ -811,7 +805,6 @@ class VocabularyPracticeAdapter(
         }
 
         private fun hideRecordHindAnimation() {
-            Log.d(TAG, "hideRecordHindAnimation: ")
             if (PrefManager.hasKey(HAS_SEEN_VOCAB_HAND_TOOLTIP).not() || PrefManager.getBoolValue(
                     HAS_SEEN_VOCAB_HAND_TOOLTIP
                 ).not()
@@ -1091,7 +1084,6 @@ class VocabularyPracticeAdapter(
         }
 
         fun stopAudio() {
-            Log.d(TAG, "stopAudio: ")
             audioManager?.onPause()
             lessonQuestion?.let {
                 currentQuestion?.isPlaying = false

@@ -36,6 +36,9 @@ android {
         //buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         //buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
         buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
+        buildConfigField "String", "PUBNUB_PUB_API_KEY", "\"pub-c-b8485bb5-70b0-4a50-9e4c-46352847fbea\""
+        buildConfigField "String", "PUBNUB_SUB_API_KEY", "\"sub-c-5807b5bc-30d3-11ec-ab4c-7aa074450caf\""
+        buildConfigField "String", "PUBNUB_SECRET_API_KEY", "\"sec-c-NTViOTliNjItMTQ4YS00MDgzLThlN2QtNmFlNDIyMTI0MzQ1\""
         //buildConfigField "String", "BUGSEE_API_KEY", "\"fd4b6776-752e-44ce-a975-ce4d2e428bc3\""
         //buildConfigField "String", "SMARTLOOK_API_KEY", "\"62418dde1661c1a8190b2c76f25de26a843629a7\""
 
@@ -169,7 +172,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9003\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -419,4 +422,7 @@ dependencies {
     //Flow Layout
     implementation 'com.nex3z:flow-layout:1.2.2'
     implementation 'com.userexperior:userexperior-android:6.0.6'
+
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'
+
 }

@@ -1,4 +1,3 @@
-/*
 package com.joshtalks.joshskills.ui.lesson.room
 
 import android.app.AlertDialog
@@ -27,9 +26,12 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
+import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.conversationRoom.roomsListing.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
@@ -53,13 +55,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
-import com.pubnub.api.callbacks.PNCallback
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
-import com.pubnub.api.models.consumer.objects_api.channel.PNGetAllChannelsMetadataResult
-import com.pubnub.api.models.consumer.objects_api.channel.PNGetChannelMetadataResult
-import com.pubnub.api.models.consumer.objects_api.channel.PNSetChannelMetadataResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult
@@ -71,18 +69,25 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.collections.ArrayList
 
-
-class ConversationRoomListingFragment : CoreJoshFragment(),
+class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     ConversationRoomListAction {
     private var pubnub: PubNub? = null
     private var conversationRoomsListAdapter: ConversationRoomsListAdapter? = null
-    lateinit var viewModel: ConversationRoomListingViewModel
     var lessonActivityListener: LessonActivityListener? = null
 
     private val lessonViewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+    }
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity()).get(
+            ConversationRoomListingViewModel::class.java
+        )
     }
     private var questionId: String? = null
     private var conversationRoomQuestionId: Int? = null
@@ -91,23 +96,16 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
     private var isBackPressed: Boolean = false
-    private var hasSeenpoints: Boolean = false
     var isActivityOpenFromNotification: Boolean = false
     var roomId: String = ""
     var lastRoomId: String? = null
     var handler: Handler? = null
     var runnable: Runnable? = null
+    private var rooomList: ArrayList<RoomListResponseItem>? = arrayListOf()
 
     companion object {
         @JvmStatic
-        fun getInstance() = ConversationRoomListingFragment()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
-        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-        hasSeenpoints = false
+        fun getInstance() = ConversationRoomListingPubNubFragment()
     }
 
     override fun onAttach(context: Context) {
@@ -137,6 +135,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 this.resources.getColor(R.color.conversation_room_color, requireActivity().theme)
         }
         handler = Handler(Looper.getMainLooper())
+        viewModel.makeEnterExitConversationRoom(true)
         initPubNub()
         initViews()
         addObservers()
@@ -149,122 +148,92 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         val pnConf = PNConfiguration()
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
         pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
+        pnConf.uuid = Mentor.getInstance().getId()
         //pnConf.origin = "com.joshtalks.joshskills"
         pnConf.isSecure = false
-        pnConf.uuid = Mentor.getInstance().getId()
         pubnub = PubNub(pnConf)
-        pubnub?.hereNow()
-            ?.channels(Arrays.asList("channel_id1"))
-            ?.includeUUIDs(true)
-            ?.async { result, status ->
-                Log.d("ABC", "pubnub hereNow() called with: result = $result, status = $status")
-                if (status.isError) {
-                    //handle error
-                } else {
-                    //handle result
-                }
-            }
+
         pubnub?.addListener(object : SubscribeCallback() {
-            override fun status(pubnub: PubNub, pnStatus: PNStatus) {
-                Log.d("ABC", "status() called with: pubnub = $pubnub, pnStatus = $pnStatus")
-            }
+            override fun status(pubnub: PubNub, pnStatus: PNStatus) { }
 
             override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
                 Log.d(
                     "ABC",
-                    "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
+                    "message() called with: pubnub = [$pubnub], pnMessageResult = [$pnMessageResult]"
                 )
+                val msg = pnMessageResult.message.asJsonObject
+                val act = msg["action"].asString
+                if (msg != null) {
+                    when (act) {
+                        "CREATE_ROOM" -> addNewRoomToList(msg)
+                        "LEAVE_ROOM" -> updateRoom(msg, true)
+                        "JOIN_ROOM" -> updateRoom(msg, false)
+                        "END_ROOM" -> removeRoomFromList(msg)
+                    }
+                }
             }
 
-            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
-                Log.d(
-                    "ABC",
-                    "presence() called with: pubnub = $pubnub, pnPresenceEventResult = $pnPresenceEventResult"
-                )
-            }
+            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {}
 
-            override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
-                Log.d(
-                    "ABC",
-                    "signal() called with: pubnub = $pubnub, pnSignalResult = $pnSignalResult"
-                )
-            }
+            override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
 
-            override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
-                Log.d(
-                    "ABC",
-                    "uuid() called with: pubnub = $pubnub, pnUUIDMetadataResult = $pnUUIDMetadataResult"
-                )
-            }
+            override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
 
-            override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
-                Log.d(
-                    "ABC",
-                    "channel() called with: pubnub = $pubnub, pnChannelMetadataResult = $pnChannelMetadataResult"
-                )
-            }
+            override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {}
 
-            override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
-                Log.d(
-                    "ABC",
-                    "membership() called with: pubnub = $pubnub, pnMembershipResult = $pnMembershipResult"
-                )
-            }
+            override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
 
             override fun messageAction(
                 pubnub: PubNub,
                 pnMessageActionResult: PNMessageActionResult
-            ) {
-                Log.d(
-                    "ABC",
-                    "messageAction() called with: pubnub = $pubnub, pnMessageActionResult = $pnMessageActionResult"
-                )
-            }
+            ) {}
 
-            override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {
-                Log.d(
-                    "ABC",
-                    "file() called with: pubnub = $pubnub, pnFileEventResult = $pnFileEventResult"
-                )
-            }
+            override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
         })
-
-        pubnub?.setChannelMetadata()
-            ?.channel("channel_id1")
-            ?.description("Some Description")
-            ?.includeCustom(true)
-            ?.async(object : PNCallback<PNSetChannelMetadataResult>{
-                override fun onResponse(result: PNSetChannelMetadataResult?, status: PNStatus) {
-                    Log.d("ABC", "setChannelsMetadata() called with: result = $result, status = $status")
-                }
-
-            })
 
         pubnub?.subscribe()
-            ?.channels(Arrays.asList("channel_id1"))
+            ?.channels(Arrays.asList("conversation_room_broadcast"))
             ?.withPresence()
             ?.execute()
+    }
 
-        pubnub?.channelMetadata
-            ?.channel("c094fe02-12a4-4e3e-ac75-37406a598849")
-            ?.includeCustom(true)
-            ?.async(object : PNCallback<PNGetChannelMetadataResult>{
-            override fun onResponse(result: PNGetChannelMetadataResult?, status: PNStatus) {
-                Log.d("ABC", "channelMetadata() called with: result = $result, status = $status")
-            }
-        })
+    private fun updateRoom(msg: JsonObject, isUserLeaving: Boolean) {
+        val data = msg["data"].asJsonObject
+        val matType = object : TypeToken<RoomListResponseItem>() {}.type
+        if (data == null) {
+            return
+        }
+        val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
+        CoroutineScope(Dispatchers.Main).launch {
+            updateItemInAdapter(room, isUserLeaving)
+        }
+    }
 
-        pubnub?.allChannelsMetadata
-            ?.filter("custom.is_conversation_room == true")
-            ?.includeCustom(true)
-            ?.async(object : PNCallback<PNGetAllChannelsMetadataResult>{
-                override fun onResponse(result: PNGetAllChannelsMetadataResult?, status: PNStatus) {
-                    Log.d("ABC", "allChannelsMetadata list () called with: result = ${result?.data}, status = $status")
-                    result?.data?.forEach {
-                        Log.d(TAG, "allChannelsMetadata result list entries : ${it}")
-                    }
-                }
-            })
+    private fun removeRoomFromList(msg: JsonObject) {
+        val data = msg["data"].asJsonObject
+        val matType = object : TypeToken<RoomListResponseItem>() {}.type
+        if (data == null) {
+            return
+        }
+        val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
+        CoroutineScope(Dispatchers.Main).launch {
+            removeItemsFromAdapter(room)
+        }
+    }
+
+    private fun addNewRoomToList(msg: JsonObject) {
+        val data = msg["data"].asJsonObject
+        Log.d("ABC", "addNewRoomToList() called with: msg = $data")
+        val matType = object : TypeToken<RoomListResponseItem>() {}.type
+        if (data == null) {
+            return
+        }
+        val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
+        CoroutineScope(Dispatchers.Main).launch {
+            showRecyclerView()
+            Log.d("ABC", "addNewRoomToList() called $room")
+            addNewItemsToAdapter(room)
+        }
     }
 
     private fun addObservers() {
@@ -278,7 +247,8 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                     it.uid,
                     it.token,
                     it.isRoomCreatedByUser,
-                    it.roomId
+                    it.roomId,
+                    it.startedBy
                 )
                 ConversationRoomListingNavigation.AtleastOneRoomAvailable -> showRecyclerView()
                 ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
@@ -307,11 +277,20 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             }
         })
 
+        viewModel.roomListLiveData.observe(this.viewLifecycleOwner, { rooms ->
+            if (rooms.isNullOrEmpty().not()) {
+                showRecyclerView()
+                rooomList?.clear()
+                rooomList?.addAll(rooms)
+                conversationRoomsListAdapter?.addItems(ArrayList(rooomList))
+            } else {
+                showNoRoomAvailableText()
+            }
+        })
         viewModel.points.observe(viewLifecycleOwner, { pointsString ->
             if (pointsString.isNotBlank()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-                hasSeenpoints = true
             } else {
                 PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
                 compositeDisposable.add(getPointsDisposable())
@@ -333,11 +312,8 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
 
     private fun initViews() {
 
-        viewModel = ConversationRoomListingViewModel()
-        getIntentExtras(requireActivity().intent)
         setUpRecyclerView()
         setFlagInWebRtcServie()
-        viewModel.makeEnterExitConversationRoom(true)
 
         with(binding) {
             createRoom.apply {
@@ -383,14 +359,14 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                     lessonActivityListener?.onNextTabCall(ROOM_POSITION)
                 }
             }
+            showNoRoomAvailableText()
+            recyclerView.apply {
+                setHasFixedSize(true)
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = conversationRoomsListAdapter
+            }
         }
 
-    }
-
-    private fun getIntentExtras(intent: Intent?) {
-        isActivityOpenFromNotification =
-            intent?.getBooleanExtra("open_from_notification", false) == true
-        roomId = intent?.getStringExtra("room_id") ?: ""
     }
 
     private fun showNoRoomAvailableText() {
@@ -413,9 +389,6 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             }
             recyclerView.apply {
                 visibility = View.VISIBLE
-                setHasFixedSize(true)
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = conversationRoomsListAdapter
             }
         }
     }
@@ -423,8 +396,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     private fun openConversationRoomByNotificationIntent() {
         if (isActivityOpenFromNotification && roomId.isNotEmpty()) {
             lastRoomId = roomId
-            */
-/*Handler(Looper.getMainLooper()).postDelayed({
+            /*Handler(Looper.getMainLooper()).postDelayed({
                 notebookRef.document(roomId).get().addOnSuccessListener {
                     viewModel.joinRoom(
                         ConversationRoomsListingItem(
@@ -436,8 +408,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                         )
                     )
                 }
-            }, 200)*//*
-
+            }, 200)*/
         }
     }
 
@@ -454,7 +425,6 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
 
     private fun observeNetwork() {
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
-        hasSeenpoints = false
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(AppObjectController.joshApplication)
                 .subscribeOn(Schedulers.io())
@@ -474,12 +444,12 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false).not()) {
                 compositeDisposable.remove(getPointsDisposable())
                 viewModel.getPointsForConversationRoom(lastRoomId, it)
-                hasSeenpoints = true
                 //PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
             } else {
                 compositeDisposable.add(getPointsDisposable())
             }
         }
+        viewModel.getListRooms()
     }
 
     fun getPointsDisposable(): Disposable {
@@ -487,13 +457,12 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                if (hasSeenpoints.not()) {
-                    conversationRoomQuestionId?.let {
-                        viewModel.getPointsForConversationRoom(
-                            lastRoomId,
-                            conversationRoomQuestionId
-                        )
-                    }
+                //if (hasSeenpoints.not()) {
+                conversationRoomQuestionId?.let {
+                    viewModel.getPointsForConversationRoom(
+                        lastRoomId,
+                        conversationRoomQuestionId
+                    )
                 }
             }
     }
@@ -554,33 +523,23 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         uid: Int?,
         token: String?,
         isRoomCreatedByUser: Boolean,
-        roomId: Int?
+        roomId: Int?,
+        moderatorId:Int?
     ) {
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
         lastRoomId = roomId.toString()
-        if (isRoomCreatedByUser) {
-            SearchingRoomPartnerActivity.startUserForPractiseOnPhoneActivity(
-                requireActivity(),
-                channelName,
-                uid,
-                token,
-                isRoomCreatedByUser,
-                roomId,
-                conversationRoomQuestionId
-            )
-        } else {
-            ConversationLiveRoomActivity.startConversationLiveRoomActivity(
-                requireActivity(),
-                channelName,
-                uid,
-                token,
-                isRoomCreatedByUser,
-                roomId,
-                conversationRoomQuestionId
-            )
 
-        }
+        this.startActivity(ConversationLiveRoomActivity.getIntent(
+            context = requireActivity(),
+            channelName = channelName,
+            uid = uid,
+            token = token,
+            isRoomCreatedByUser = isRoomCreatedByUser,
+            roomId = roomId,
+            moderatorId = moderatorId,
+            roomQuestionId = conversationRoomQuestionId
+        ))
     }
 
     private fun showApiCallErrorToast(error: String) {
@@ -618,47 +577,47 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         }
     }
 
-
     private fun showAddTopicPopup() {
-        var topic = ""
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.alert_label_editor, null)
         dialogBuilder.setView(dialogView)
 
         val alertDialog: AlertDialog = dialogBuilder.create()
-        alertDialog.show()
-        alertDialog.window?.let { window ->
-            val width = AppObjectController.screenWidth * .91
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT
-            val wlp: WindowManager.LayoutParams = window.getAttributes()
-            wlp.gravity = Gravity.BOTTOM
-            //wlp.flags = wlp.flags and WindowManager.LayoutParams.FLAG_DIM_BEHIND.inv()
-            window.setAttributes(wlp)
-            window.setLayout(width.toInt(), height)
-            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            //window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        }
-
-        dialogView.findViewById<EditText>(R.id.label_field).requestFocus()
-        dialogView.findViewById<EditText>(R.id.label_field).isFocusable = true
-
-        dialogView.findViewById<MaterialButton>(R.id.create_room).setOnSingleClickListener {
-            if (dialogView.findViewById<EditText>(R.id.label_field).text.toString()
-                    .isNotBlank()
-            ) {
-                showPatnerChooserPopup(dialogView.findViewById<EditText>(R.id.label_field).text.toString())
-                hideKeyboard(requireActivity())
-                alertDialog.dismiss()
-            } else {
-                showToast("Please enter Topic name")
+        alertDialog.apply {
+            this.show()
+            this.window?.let { window ->
+                val width = AppObjectController.screenWidth * .91
+                val height = ViewGroup.LayoutParams.WRAP_CONTENT
+                val wlp: WindowManager.LayoutParams = window.getAttributes()
+                wlp.gravity = Gravity.BOTTOM
+                window.setAttributes(wlp)
+                window.setLayout(width.toInt(), height)
+                window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
             }
         }
+
+        dialogView.apply {
+            this.findViewById<EditText>(R.id.label_field).requestFocus()
+            this.findViewById<EditText>(R.id.label_field).isFocusable = true
+
+            this.findViewById<MaterialButton>(R.id.create_room).setOnSingleClickListener {
+                if (this.findViewById<EditText>(R.id.label_field).text.toString()
+                        .isNotBlank()
+                ) {
+                    showPartnerChooserPopup(this.findViewById<EditText>(R.id.label_field).text.toString())
+                    hideKeyboard(requireActivity())
+                    alertDialog.dismiss()
+                } else {
+                    showToast("Please enter Topic name")
+                }
+            }
+        }
+
     }
 
-    private fun showPatnerChooserPopup(topic: String) {
-        var topic = topic
+    private fun showPartnerChooserPopup(topic: String) {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.alert_room_picker, null)
@@ -666,16 +625,18 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         var isP2Pselected = true
 
         val alertDialog: AlertDialog = dialogBuilder.create()
-        alertDialog.show()
-        alertDialog.window?.let { window ->
-            val width = AppObjectController.screenWidth * .91
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT
-            val wlp: WindowManager.LayoutParams = window.getAttributes()
-            wlp.gravity = Gravity.BOTTOM
-            window.setAttributes(wlp)
-            window.setLayout(width.toInt(), height)
-            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.apply {
+            this.show()
+            this.window?.let { window ->
+                val width = AppObjectController.screenWidth * .91
+                val height = ViewGroup.LayoutParams.WRAP_CONTENT
+                val wlp: WindowManager.LayoutParams = window.getAttributes()
+                wlp.gravity = Gravity.BOTTOM
+                window.setAttributes(wlp)
+                window.setLayout(width.toInt(), height)
+                window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+            }
         }
 
         if (viewModel.roomDetailsLivedata.value?.is_favourite_practice_partner_available == true) {
@@ -702,18 +663,6 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         dialogView.findViewById<MaterialButton>(R.id.create_room).setOnClickListener {
             FullScreenProgressDialog.showProgressBar(requireActivity())
             viewModel.createRoom(topic, isP2Pselected.not(), conversationRoomQuestionId)
-            */
-/*val data = JsonObject()
-            data.addProperty("text", topic)
-            pubnub!!.publish()
-                .channel("channel_id1")
-                .message(data)
-                .async(object : PNCallback<PNPublishResult> {
-                    override fun onResponse(result: PNPublishResult?, status: PNStatus) {
-                        Log.d("ABC", "onResponse() called with: result = $result, status = $status")
-                    }
-                })*//*
-
             alertDialog.dismiss()
         }
         dialogView.findViewById<MaterialCardView>(R.id.p2p_container).setOnClickListener {
@@ -784,16 +733,16 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                     R.color.artboard_stroke_color
                 )
             )
-            val temp = getString(R.string.convo_room_dialog_desc_favt)
-            val sBuilder = SpannableStringBuilder(temp)
-            sBuilder.setSpan(
+            val temp2 = getString(R.string.convo_room_dialog_desc_favt)
+            val sBuilder2 = SpannableStringBuilder(temp2)
+            sBuilder2.setSpan(
                 StyleSpan(Typeface.BOLD),
                 26,
-                temp.length,
+                temp2.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             dialogView.findViewById<TextView>(R.id.tip).setText(
-                sBuilder,
+                sBuilder2,
                 TextView.BufferType.SPANNABLE
             )
             isP2Pselected = false
@@ -803,7 +752,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
     override fun onStart() {
         super.onStart()
         pubnub?.subscribe()?.channels(
-            Arrays.asList("channel_id1")
+            Arrays.asList("conversation_room_broadcast")
         )?.withPresence()
             ?.execute()
     }
@@ -833,16 +782,25 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
         conversationRoomsListAdapter = ConversationRoomsListAdapter(this)
     }
 
-    private fun addItemsToAdapter(items: List<ConversationRoomsListingItem>) {
+    private fun addItemsToAdapter(items: ArrayList<RoomListResponseItem>) {
         conversationRoomsListAdapter?.addItems(items)
     }
 
-    override fun onRoomClick(item: ConversationRoomsListingItem) {
+    private fun addNewItemsToAdapter(items: RoomListResponseItem) {
+        conversationRoomsListAdapter?.addSingleItem(items)
+    }
+
+    private fun removeItemsFromAdapter(items: RoomListResponseItem) {
+        conversationRoomsListAdapter?.removeSingleItem(items)
+    }
+
+    private fun updateItemInAdapter(items: RoomListResponseItem, isUserLeaving: Boolean) {
+        conversationRoomsListAdapter?.updateItemWithoutPosition(items, isUserLeaving)
+    }
+
+    override fun onRoomClick(item: RoomListResponseItem) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireActivity())) {
-            FullScreenProgressDialog.showProgressBar(requireActivity())
-            item.conversationRoomQuestionId = conversationRoomQuestionId
-            lastRoomId = (item.room_id ?: lastRoomId).toString()
-            viewModel.joinRoom(item)
+            openRoom(item)
             return
         }
 
@@ -852,10 +810,7 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            FullScreenProgressDialog.showProgressBar(requireActivity())
-                            item.conversationRoomQuestionId = conversationRoomQuestionId
-                            lastRoomId = (item.room_id ?: lastRoomId).toString()
-                            viewModel.joinRoom(item)
+                            openRoom(item)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -877,5 +832,11 @@ class ConversationRoomListingFragment : CoreJoshFragment(),
             }
         )
     }
+
+    private fun openRoom(item: RoomListResponseItem) {
+        FullScreenProgressDialog.showProgressBar(requireActivity())
+        item.conversationRoomQuestionId = conversationRoomQuestionId
+        lastRoomId = (item.roomId).toString()
+        viewModel.joinRoom(item)
+    }
 }
-*/

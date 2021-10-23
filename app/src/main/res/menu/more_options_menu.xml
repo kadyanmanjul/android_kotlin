@@ -21,10 +21,4 @@
         android:orderInCategory="100"
         android:title="@string/settings"
         app:showAsAction="collapseActionView" />
-    <item
-        android:id="@+id/menu_conversation_room"
-        android:actionLayout="@layout/base_toolbar"
-        android:orderInCategory="100"
-        android:title="@string/conversation_room"
-        app:showAsAction="collapseActionView" />
 </menu>

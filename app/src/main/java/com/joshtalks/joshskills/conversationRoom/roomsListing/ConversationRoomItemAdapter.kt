@@ -3,18 +3,31 @@ package com.joshtalks.joshskills.conversationRoom.roomsListing
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
+import com.joshtalks.joshskills.conversationRoom.model.LiveRoomUser
 import com.joshtalks.joshskills.databinding.LiConversionRoomsSpeakersBinding
 
-class ConversationRoomItemAdapter(
-    rooms: FirestoreRecyclerOptions<LiveRoomUser>
-) :
-    FirestoreRecyclerAdapter<LiveRoomUser, ConversationRoomItemAdapter.ConversationRoomSpeakerViewHolder>(
-        rooms
-    ) {
+class ConversationRoomItemAdapter :
+    RecyclerView.Adapter<ConversationRoomItemAdapter.ConversationRoomSpeakerViewHolder>() {
+
+    val listSpeakers: ArrayList<LiveRoomUser> = arrayListOf()
+
+    fun addItems(newList: List<LiveRoomUser>) {
+        if (newList.isEmpty()) {
+            return
+        }
+        val diffCallback = ConversationRoomSpeakerDiffCallback(listSpeakers, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        listSpeakers.clear()
+        listSpeakers.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun updateItem(user: LiveRoomUser, position: Int) {
+        listSpeakers[position] = user
+        notifyItemChanged(position)
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -25,12 +38,8 @@ class ConversationRoomItemAdapter(
         return ConversationRoomSpeakerViewHolder(binding)
     }
 
-    override fun onBindViewHolder(
-        holder: ConversationRoomSpeakerViewHolder,
-        position: Int,
-        model: LiveRoomUser
-    ) {
-        holder.bind(model)
+    override fun onBindViewHolder(holder: ConversationRoomSpeakerViewHolder, position: Int) {
+        holder.bind(listSpeakers.get(position))
     }
 
     class ConversationRoomSpeakerViewHolder(val binding: LiConversionRoomsSpeakersBinding) :
@@ -38,7 +47,7 @@ class ConversationRoomItemAdapter(
         fun bind(model: LiveRoomUser) {
             with(binding) {
                 speaker.text = model.name
-                when (model.isIs_speaker) {
+                when (model.isSpeaker) {
                     true -> chatIcon.visibility = View.GONE
                     false -> chatIcon.visibility = View.VISIBLE
                 }
@@ -46,4 +55,6 @@ class ConversationRoomItemAdapter(
         }
 
     }
+
+    override fun getItemCount() = listSpeakers.size
 }

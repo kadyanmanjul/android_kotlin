@@ -22,7 +22,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
@@ -50,7 +49,7 @@ import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
-import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingFragment
+import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingPubNubFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
@@ -101,6 +100,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var ruleIdLeftList = ArrayList<Int>()
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
+    private val adapter: LessonPagerAdapter by lazy {
+        LessonPagerAdapter(
+            supportFragmentManager,
+            this.lifecycle,
+            arrayFragment,
+            viewModel.lessonIsConvoRoomActive
+        )
+    }
 
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -214,11 +221,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     private fun setObservers() {
 
-//        viewModel.lessonLiveData.observe(this, {
-//            setUpTabLayout()
-//            setTabCompletionStatus()
-//        })
-
         viewModel.lessonQuestionsLiveData.observe(
             this,
             {
@@ -233,7 +235,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
                         && AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE))
-                //lessonIsConvoRoomActive = true
+                viewModel.lessonIsConvoRoomActive  = true
 
                 if (lessonIsNewGrammar) {
 
@@ -254,11 +256,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     setUpTabLayout(lessonNumber, lessonIsNewGrammar)
                     setTabCompletionStatus()
                 }
-//                if (PrefManager.getBoolValue(HAS_SEEN_LESSON_SPOTLIGHT)) {
-//                    hideSpotlight()
-//                } else {
-//                    showLessonSpotlight()
-//                }
             }
         )
 
@@ -294,20 +291,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         }
                     }
                 }
-                /*if (it.awardMentorList.isNullOrEmpty().not()) {
-                    //TODO add when awards functionality is over
-                    //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
-                }
-                if (it.outranked!!) {
-                    it.outrankedData?.let {
-                        showLeaderboardAchievement(
-                            it,
-                            lessonInterval,
-                            chatId,
-                            lessonModel?.lessonNo ?: 0
-                        )
-                    }
-                }*/
             }
         )
 
@@ -573,32 +556,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
     }
 
-//    fun onSpotlightClick() {
-//        when (viewModel.lessonSpotlightStateLiveData.value) {
-//            LessonSpotlightState.LESSON_SPOTLIGHT -> {
-//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.GRAMMAR_SPOTLIGHT)
-//            }
-//            LessonSpotlightState.GRAMMAR_SPOTLIGHT -> {
-//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT)
-//            }
-//            LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
-//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART1)
-//            }
-//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART1 -> {
-//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART2)
-//            }
-//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART2 -> {
-//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.VOCAB_SPOTLIGHT_PART3)
-//            }
-//            LessonSpotlightState.VOCAB_SPOTLIGHT_PART3 -> {
-//                viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.READING_SPOTLIGHT)
-//            }
-//            LessonSpotlightState.READING_SPOTLIGHT -> {
-//                viewModel.lessonSpotlightStateLiveData.postValue(null)
-//            }
-//        }
-//    }
-
     private fun setUpNewGrammarLayouts(
         rulesCompletedIds: ArrayList<Int>?,
         totalRulesIds: ArrayList<Int>?
@@ -748,15 +705,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         arrayFragment.add(VOCAB_POSITION, VocabularyFragment.getInstance())
         arrayFragment.add(READING_POSITION, ReadingFragmentWithoutFeedback.getInstance())
         if (viewModel.lessonIsConvoRoomActive) {
-            arrayFragment.add(ROOM_POSITION, ConversationRoomListingFragment.getInstance())
+            arrayFragment.add(ROOM_POSITION, ConversationRoomListingPubNubFragment.getInstance())
         }
-        val adapter: LessonPagerAdapter =
-            LessonPagerAdapter(
-                this,
-                FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
-                arrayFragment,
-                viewModel.lessonIsConvoRoomActive
-            )
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.lessonViewpager.offscreenPageLimit = 4

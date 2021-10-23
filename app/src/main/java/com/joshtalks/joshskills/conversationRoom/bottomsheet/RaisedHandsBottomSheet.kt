@@ -1,18 +1,17 @@
 package com.joshtalks.joshskills.conversationRoom.bottomsheet
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.conversationRoom.model.LiveRoomUser
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.databinding.LiBottomSheetRaisedHandsBinding
 
 class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
@@ -20,22 +19,50 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private var roomId: Int? = null
     private var moderatorUid: Int? = null
     private var moderatorName: String? = null
+    private var channelName: String? = null
+    private var raisedHandList: List<LiveRoomUser>? = arrayListOf()
     private var bottomSheetAdapter: RaisedHandsBottomSheetAdapter? = null
-    private var isRecyclerViewStateAlreadyVisible = false
-
+    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(ConversationRoomListingViewModel::class.java) }
+    private var listener: HandRaiseSheetListener? = null
 
     companion object {
-        fun newInstance(id: Int, moderatorId: Int?, name: String?): RaisedHandsBottomSheet {
-            return RaisedHandsBottomSheet().apply {
-                roomId = id
-                moderatorUid = moderatorId
-                moderatorName = name
+        @JvmStatic
+        fun newInstance(
+            id: Int,
+            moderatorId: Int?,
+            name: String?,
+            channelName: String?,
+            raisedHandList: ArrayList<LiveRoomUser>
+        ) =
+            RaisedHandsBottomSheet().apply {
+                arguments = Bundle().apply {
+                    putString(CHANNEL_NAME, channelName)
+                    putString(MODERATOR_NAME, name)
+                    putInt(MODERATOR_ID, moderatorId ?: 0)
+                    putInt(ROOM_ID, id)
+                    putParcelableArrayList(USER_LIST, raisedHandList)
+                }
             }
-        }
+
+        private const val CHANNEL_NAME = "channel_name"
+        private const val MODERATOR_NAME = "moderator_name"
+        private const val MODERATOR_ID = "moderator_id"
+        private const val ROOM_ID = "room_id"
+        private const val USER_LIST = "user_list"
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let {
+            channelName = it.getString(CHANNEL_NAME)
+            moderatorName = it.getString(MODERATOR_NAME)
+            moderatorUid = it.getInt(MODERATOR_ID, 0)
+            roomId = it.getInt(ROOM_ID, 0)
+            raisedHandList = it.getParcelableArrayList<LiveRoomUser>(USER_LIST)
+            Log.d("ABC", "onCreate() called ${raisedHandList}")
+        }
+        listener = requireActivity() as HandRaiseSheetListener
         setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialog)
 
     }
@@ -58,97 +85,61 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addObserver()
         configureRecyclerView()
     }
 
+    private fun addObserver() {
+        viewModel.audienceList.observe(requireActivity(),{
+            refreshAdapterWithNewList(it)
+        })
+    }
+
+    private fun refreshAdapterWithNewList(handRaisedList: ArrayList<LiveRoomUser>?) {
+        val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
+        this.raisedHandList = list
+        setVisibilities()
+        bottomSheetAdapter?.updateFullList(raisedHandList)
+
+    }
 
     private fun configureRecyclerView() {
-        val query = FirebaseFirestore.getInstance().collection("conversation_rooms")
-            .document(roomId.toString())
-            .collection("users").whereEqualTo("is_hand_raised", true)
-            .whereEqualTo("is_speaker", false)
+        bottomSheetAdapter = RaisedHandsBottomSheetAdapter()
+        binding.raisedHandsList.apply {
+            layoutManager = LinearLayoutManager(this.context)
+            setHasFixedSize(false)
+            adapter = bottomSheetAdapter
+            itemAnimator = null
+        }
+        bottomSheetAdapter?.setOnItemClickListener(object :
+            RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
+            override fun onItemClick(
+                liveRoomUser: LiveRoomUser,
+                position: Int
+            ) {
+                listener?.onUserInvitedToSpeak(liveRoomUser)
+            }
 
-        query?.addSnapshotListener { value, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            } else {
-                if (value == null || value.isEmpty) {
-                    with(binding) {
-                        noAuidenceText.visibility = View.VISIBLE
-                        raisedHandsList.visibility = View.GONE
-                    }
-                    isRecyclerViewStateAlreadyVisible = false
-                } else if (!isRecyclerViewStateAlreadyVisible) {
-                    with(binding) {
-                        noAuidenceText.visibility = View.GONE
-                        raisedHandsList.visibility = View.VISIBLE
-                    }
-                    isRecyclerViewStateAlreadyVisible = true
+        })
+        setVisibilities()
+    }
 
-                    val options: FirestoreRecyclerOptions<LiveRoomUser> =
-                        FirestoreRecyclerOptions.Builder<LiveRoomUser>()
-                            .setQuery(query, LiveRoomUser::class.java)
-                            .build()
-                    bottomSheetAdapter = RaisedHandsBottomSheetAdapter(options)
-                    binding.raisedHandsList.apply {
-                        layoutManager = LinearLayoutManager(this.context)
-                        setHasFixedSize(false)
-                        adapter = bottomSheetAdapter
-                        itemAnimator = null
-                    }
-                    bottomSheetAdapter?.startListening()
-                    bottomSheetAdapter?.notifyDataSetChanged()
-                    bottomSheetAdapter?.setOnItemClickListener(object :
-                        RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
-                        override fun onItemClick(
-                            documentSnapshot: DocumentSnapshot?,
-                            position: Int
-                        ) {
-                            val id = documentSnapshot?.id
-                            val liveRoomUser = documentSnapshot?.toObject(LiveRoomUser::class.java)
-                            sendNotification(
-                                "SPEAKER_INVITE",
-                                moderatorUid?.toString(),
-                                id ?: "0", liveRoomUser?.name ?: "User"
-                            )
-
-                        }
-
-                    })
-                }
+    private fun setVisibilities() {
+        if (raisedHandList == null || raisedHandList?.isEmpty() == true) {
+            with(binding) {
+                noAuidenceText.visibility = View.VISIBLE
+                raisedHandsList.visibility = View.GONE
+            }
+        } else {
+            with(binding) {
+                noAuidenceText.visibility = View.GONE
+                raisedHandsList.visibility = View.VISIBLE
             }
         }
-
-
     }
 
-    private fun sendNotification(type: String, fromUid: String?, toUiD: String, toName: String) {
-        FirebaseFirestore.getInstance().collection("conversation_rooms").document(roomId.toString())
-            .collection("notifications").document().set(
-                hashMapOf(
-                    "from" to hashMapOf(
-                        "uid" to fromUid,
-                        "name" to moderatorName
-                    ),
-                    "to" to hashMapOf(
-                        "uid" to toUiD,
-                        "name" to toName
-                    ),
-                    "type" to type
-                )
-            ).addOnSuccessListener {
-                FirebaseFirestore.getInstance().collection("conversation_rooms")
-                    .document(roomId.toString())
-                    .collection("users").document(toUiD).update("is_speaker_invite_sent", true)
-                    .addOnFailureListener {
-                        showToast("Something Went Wrong")
-                    }
-            }
+    interface HandRaiseSheetListener {
+        fun onUserInvitedToSpeak(user: LiveRoomUser)
     }
 
-    override fun onStop() {
-        super.onStop()
-        bottomSheetAdapter?.stopListening()
-
-    }
 }

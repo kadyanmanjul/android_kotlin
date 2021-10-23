@@ -1,8 +1,8 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
-import android.util.Log
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.gson.Gson
@@ -17,13 +17,46 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ConversationRoomListingViewModel : ViewModel() {
+class ConversationRoomListingViewModel (application: Application) : AndroidViewModel(application) {
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
     val roomDetailsLivedata = MutableLiveData<ConversationRoomDetailsResponse>()
+    val roomListLiveData = MutableLiveData<RoomListResponse>()
     val points = MutableLiveData<String>()
     val isRoomEnded = MutableLiveData<Boolean>(false)
+    var audienceList = MutableLiveData<ArrayList<LiveRoomUser>>()
 
-    fun joinRoom(item: ConversationRoomsListingItem) {
+    fun updateInviteSentToUser(userId:Int){
+        val oldAudienceList:ArrayList<LiveRoomUser> = ArrayList(getAudienceList())
+        val user = oldAudienceList?.filter { it.id == userId }
+        user?.get(0)?.let { it->
+            oldAudienceList.remove(it)
+            it.isInviteSent = true
+            oldAudienceList.add(it)
+            this.audienceList.postValue(oldAudienceList)
+        }
+    }
+
+    fun updateHandRaisedToUser(userId:Int,isHandRaised:Boolean){
+        val oldAudienceList:ArrayList<LiveRoomUser> = ArrayList(getAudienceList())
+        val user = oldAudienceList?.filter { it.id == userId }
+        user?.get(0)?.let { it->
+            oldAudienceList.remove(it)
+            it.isHandRaised = isHandRaised
+            if (isHandRaised.not()){
+                it.isInviteSent = false
+            }
+            oldAudienceList.add(it)
+            this.audienceList.postValue(oldAudienceList)
+        }
+    }
+
+    fun updateAudienceList(audienceList:ArrayList<LiveRoomUser>){
+        this.audienceList.postValue(audienceList)
+    }
+
+    fun getAudienceList() : ArrayList<LiveRoomUser>? = this.audienceList.value
+
+    fun joinRoom(item: RoomListResponseItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 var qId :Int? = null
@@ -31,7 +64,7 @@ class ConversationRoomListingViewModel : ViewModel() {
                     qId = item.conversationRoomQuestionId
                 }
                 val joinRoomRequest =
-                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.room_id ?: 0,qId)
+                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.roomId.toInt(),1)
 
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.joinConversationRoom(
@@ -44,8 +77,9 @@ class ConversationRoomListingViewModel : ViewModel() {
                             response?.channelName,
                             response?.uid,
                             response?.token,
-                            item.started_by == response?.uid,
-                            response?.roomId ?: item.room_id
+                            item.startedBy?:0 == response?.uid,
+                            response?.roomId?.toInt() ?: item.roomId.toInt(),
+                            startedBy = item.startedBy
                         )
                     )
 
@@ -71,7 +105,7 @@ class ConversationRoomListingViewModel : ViewModel() {
                     qId = conversationQuestionId
                 }
                 val createConversionRoomRequest =
-                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic,isFavouritePracticePartner,qId)
+                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic,isFavouritePracticePartner,1)
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.createConversationRoom(
                         createConversionRoomRequest
@@ -84,8 +118,9 @@ class ConversationRoomListingViewModel : ViewModel() {
                             response?.uid,
                             response?.token,
                             true,
-                            response?.roomId
-                        )
+                            response?.roomId,
+                            null
+                            )
                     )
                 } else {
                     val errorResponse = Gson().fromJson(
@@ -161,22 +196,32 @@ class ConversationRoomListingViewModel : ViewModel() {
     }
 
     fun endRoom(roomId: String?,conversationQuestionId:Int?=null) {
-        Log.d(
-            "ABC",
-            " View model endRoom() called with: roomId = $roomId, conversationQuestionId = $conversationQuestionId"
-        )
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             var qId :Int? = null
             if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
                 qId = conversationQuestionId
             }
             val request =
-                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,qId)
+                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,1)
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             if (response.isSuccessful) {
                 isRoomEnded.postValue(true)
-                //PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS,false)
+            }
+        }
+    }
+
+    fun getListRooms() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response =
+                    AppObjectController.conversationRoomsNetworkService.getRoomList()
+                if (response.isSuccessful && response.body()!=null){
+                    roomListLiveData.postValue(response.body())
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

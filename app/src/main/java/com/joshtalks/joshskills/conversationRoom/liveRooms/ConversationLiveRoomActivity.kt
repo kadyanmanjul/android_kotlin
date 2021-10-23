@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
-import android.app.Activity
+import android.animation.ObjectAnimator
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -13,26 +13,26 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheet
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetAction
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetInfo
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.RaisedHandsBottomSheet
+import com.joshtalks.joshskills.conversationRoom.model.LiveRoomUser
 import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
-import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
-import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListingItem
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
@@ -46,19 +46,42 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.pubnub.api.PNConfiguration
+import com.pubnub.api.PubNub
+import com.pubnub.api.callbacks.PNCallback
+import com.pubnub.api.callbacks.SubscribeCallback
+import com.pubnub.api.models.consumer.PNPublishResult
+import com.pubnub.api.models.consumer.PNStatus
+import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
+import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
+import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
+import com.pubnub.api.models.consumer.presence.PNGetStateResult
+import com.pubnub.api.models.consumer.presence.PNHereNowResult
+import com.pubnub.api.models.consumer.pubsub.PNMessageResult
+import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
+import com.pubnub.api.models.consumer.pubsub.PNSignalResult
+import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
+import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
-    NotificationView.NotificationViewAction {
+    NotificationView.NotificationViewAction, RaisedHandsBottomSheet.HandRaiseSheetListener {
+
+    private var pubnub: PubNub? = null
+    private var timer: CountDownTimer? = null
+    private var timeCreated: Int = 0
     private var mServiceBound: Boolean = false
     private lateinit var binding: ActivityConversationLiveRoomBinding
-    private val database = FirebaseFirestore.getInstance()
-    private var roomReference: DocumentReference? = null
-    private var usersReference: CollectionReference? = null
     private var mBoundService: WebRtcService? = null
     private var isActivityOpenFromNotification: Boolean = false
     private var roomId: Int? = null
@@ -66,32 +89,28 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var isRoomCreatedByUser: Boolean = false
     private var isRoomUserSpeaker: Boolean = false
     private var speakerAdapter: SpeakerAdapter? = null
-    private var listenerAdapter: AudienceAdapter? = null
+    private var audienceAdapter: AudienceAdapter? = null
     private var channelName: String? = null
     private var agoraUid: Int? = null
     private var token: String? = null
     private var moderatorUid: Int? = null
     private var moderatorName: String? = null
-    private var moderatorMentorId: String? = null
-    private var currentUserName: String? = null
     private var iSSoundOn = true
     private var isBottomSheetVisible = false
     private var isHandRaised = true
-    private var topicName: String? = null
     private var notificationTo: HashMap<String, String>? = null
     private var notificationFrom: HashMap<String, String>? = null
     private var notificationType: String? = null
-    private var speakingUsersNewList = arrayListOf<Int>()
-    private var speakingUsersOldList = arrayListOf<Int>()
     private var handler: Handler? = null
     private var runnable: Runnable? = null
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
     private var isBackPressed: Boolean = false
-    private var isRoomEnded: Boolean = false
-    private val notebookRef = FirebaseFirestore.getInstance().collection("conversation_rooms")
     private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
+    private var currentUser: LiveRoomUser? = null
+    val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
+    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,31 +124,441 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         isActivityOpenFromNotification =
             intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
+
         if (isActivityOpenFromNotification) {
             addObservers()
             getIntentExtras(intent)
         } else {
             getIntentExtras()
             initData()
+            if (isRoomCreatedByUser) {
+                initSearchingView()
+                startProgressBarCountDown()
+            }
+        }
+        initPubNub()
+    }
+
+    private fun initSearchingView() {
+        binding.searchingContainer.visibility = View.VISIBLE
+        binding.progressBar.max = 100
+        binding.progressBar.progress = 0
+
+        viewModel.isRoomEnded.observe(this, {
+            if (it == true) {
+                finish()
+            }
+        })
+
+    }
+
+    private fun startProgressBarCountDown() {
+        runOnUiThread {
+            binding.progressBar.max = 100
+            binding.progressBar.progress = 0
+            timer = object : CountDownTimer(5000, 500) {
+                override fun onTick(millisUntilFinished: Long) {
+                    timeCreated = timeCreated + 1
+                    if (timeCreated >= 60 * 2 * 2) {
+                        endRoom()
+                    }
+                    val diff = binding.progressBar.progress + 10
+                    fillProgressBar(diff)
+                }
+
+                override fun onFinish() {
+                    startProgressBarCountDown()
+                }
+            }
+            timer?.start()
+        }
+    }
+
+    private fun endRoom() {
+        Timber.tag("ABC").e("endRoom() called")
+        timer?.cancel()
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
+        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+        viewModel.endRoom(roomId.toString(), roomQuestionId)
+    }
+
+    private fun leaveRoom() {
+        mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
+        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+        finish()
+    }
+
+    private fun fillProgressBar(diff: Int) {
+        val animation: ObjectAnimator =
+            ObjectAnimator.ofInt(
+                binding.progressBar,
+                "progress",
+                binding.progressBar.progress,
+                diff
+            )
+        animation.startDelay = 0
+        animation.duration = 250
+        animation.interpolator = AccelerateDecelerateInterpolator()
+        animation.start()
+    }
+
+    private fun initPubNub() {
+        val pnConf = PNConfiguration()
+        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
+        pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
+        pnConf.uuid = Mentor.getInstance().getId()
+        pnConf.isSecure = false
+        pubnub = PubNub(pnConf)
+
+        pubnub?.addListener(object : SubscribeCallback() {
+            override fun status(pubnub: PubNub, pnStatus: PNStatus) {
+            }
+
+            override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
+                Log.d(
+                    "ABC",
+                    "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
+                )
+                val msg = pnMessageResult.message.asJsonObject
+                val act = msg["action"].asString
+
+                if (msg != null) {
+                    when (act) {
+                        "CREATE_ROOM" -> addNewUserToAudience(msg)
+                        "JOIN_ROOM" -> addNewUserToAudience(msg)
+                        "LEAVE_ROOM" -> removeUser(msg)
+                        "END_ROOM" -> leaveRoom()
+                        "IS_HAND_RAISED" -> handRaisedByUser(msg)
+                        "INVITE_SPEAKER" -> inviteUserToSpeaker()
+                        "MOVE_TO_SPEAKER" -> moveToSpeaker(msg)
+                        "MOVE_TO_AUDIENCE" -> moveToAudience(msg)
+                        "MIC_STATUS_CHANGES" -> changeMicStatus(msg)
+                        else -> {
+
+                        }
+                    }
+                }
+            }
+
+            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {}
+
+            override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
+
+            override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
+
+            override fun channel(
+                pubnub: PubNub,
+                pnChannelMetadataResult: PNChannelMetadataResult
+            ) {
+            }
+
+            override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
+
+            override fun messageAction(
+                pubnub: PubNub,
+                pnMessageActionResult: PNMessageActionResult
+            ) {
+            }
+
+            override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
+        })
+
+        getLatestUserList()
+    }
+
+    private fun handRaisedByUser(msg: JsonObject) {
+        if (msg.get("is_hand_raised").asBoolean) {
+            setNotificationBarFieldsWithActions(
+                "Dismiss", "Invite to speak", String.format(
+                    "\uD83D\uDC4B %s has something to say. Invite " +
+                            "them as speakers?",
+                    msg.get("name")
+                ), msg.get("id").asInt
+            )
+            setHandRaisedForUser(msg.get("id").asInt, true)
+        } else {
+            setHandRaisedForUser(msg.get("id").asInt, false)
+        }
+    }
+
+    private fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
+        viewModel.updateHandRaisedToUser(userId, isHandRaised)
+    }
+
+    private fun moveToSpeaker(msg: JsonObject) {
+        if (moderatorUid == agoraUid) {
+            CoroutineScope(Dispatchers.Main).launch {
+                setNotificationWithoutAction(
+                    String.format(
+                        "%s is now a speaker!",
+                        msg.get("name").asString
+                    ), true
+                )
+            }
+        }
+
+        msg.get("id").asInt?.let { agoraId ->
+            CoroutineScope(Dispatchers.Main).launch {
+                moveToSpeaker(agoraId)
+            }
+        }
+    }
+
+    private fun moveToAudience(msg: JsonObject) {
+        msg.get("id").asInt?.let { agoraId ->
+            CoroutineScope(Dispatchers.Main).launch {
+                moveToAudience(agoraId)
+            }
+        }
+    }
+
+    private fun changeMicStatus(eventObject: JsonObject) {
+        Log.d("ABC", "presence() called mic_status_changes")
+        if (agoraUid == eventObject.get("id").asInt) {
+            iSSoundOn = eventObject.get("is_mic_on").asBoolean
+            setPresenceStateForUuid( currentUser,iSSoundOn)
+            CoroutineScope(Dispatchers.Main).launch {
+                updateMuteButtonState()
+            }
+        }
+
+        CoroutineScope(Dispatchers.Main).launch {
+            speakerAdapter?.updateMicViaId(
+                eventObject.get("id").asInt,
+                eventObject.get("is_mic_on").asBoolean
+            )
+
+        }
+    }
+
+    private fun inviteUserToSpeaker() {
+        setNotificationBarFieldsWithActions(
+            "Maybe later?", "Join as speaker", String.format(
+                "\uD83D\uDC4B %s invited you to join as a speaker",
+                moderatorName
+            ), moderatorUid
+        )
+
+    }
+
+    private fun moveToSpeaker(agoraId: Int) {
+        val user = audienceList.filter { it.id == agoraId }
+        user.forEach {
+            if (this.agoraUid == it.id) {
+                updateUiWhenSwitchToSpeaker(it.isMicOn)
+            }
+            audienceList.remove(it)
+            it.isSpeaker = true
+            speakersList.add(it)
+            setPresenceStateForUuid( it)
+        }
+        audienceAdapter?.updateFullList(audienceList)
+        viewModel.updateAudienceList(audienceList)
+        speakerAdapter?.updateFullList(speakersList)
+    }
+
+    private fun moveToAudience(agoraId: Int) {
+        val user = speakersList.filter { it.id == agoraId }
+        user.forEach {
+            if (this.agoraUid == it.id) {
+                updateUiWhenSwitchToListener()
+            }
+            speakersList.remove(it)
+            it.isSpeaker = false
+            audienceList.add(it)
+            setPresenceStateForUuid( it)
+        }
+        audienceAdapter?.updateFullList(audienceList)
+        viewModel.updateAudienceList(audienceList)
+        speakerAdapter?.updateFullList(speakersList)
+    }
+
+    private fun getPresenceStateFromUuid(uuid: String) {
+        pubnub?.presenceState
+            ?.uuid(uuid)
+            ?.channels(Arrays.asList(channelName))
+            ?.async(object : PNCallback<PNGetStateResult> {
+                override fun onResponse(result: PNGetStateResult?, status: PNStatus) {
+                    if (status.isError.not()) {
+
+                    }
+                }
+            })
+    }
+
+    private fun setPresenceStateForUuid( user: LiveRoomUser?,isMicOn: Boolean? = null) {
+        if (user==null || pubnub==null){
+            return
+        }
+        val state = JsonObject()
+        state.addProperty("is_speaker", user.isSpeaker)
+        state.addProperty("name", user.name)
+        state.addProperty("photo_url", user.photoUrl)
+        state.addProperty("sort_order", user.sortOrder)
+        state.addProperty("is_moderator", user.isModerator)
+        state.addProperty("is_mic_on", isMicOn ?: user.isMicOn)
+        state.addProperty("is_speaking", user.isSpeaking)
+        state.addProperty("is_hand_raised", user.isHandRaised)
+        state.addProperty("mentor_id", user.mentorId)
+
+        pubnub!!.setPresenceState()
+            .channels(Arrays.asList(channelName))
+            .state(state)
+            .uuid(user.id.toString())
+            .async { result, status ->
+            }
+    }
+
+    private fun getLatestUserList() {
+        pubnub?.hereNow()
+            ?.channels(Arrays.asList(channelName))
+            ?.includeUUIDs(true)
+            ?.includeState(true)
+            ?.async(object : PNCallback<PNHereNowResult> {
+                override fun onResponse(result: PNHereNowResult?, status: PNStatus) {
+                    result?.channels?.get(channelName)?.occupants?.forEach {
+                        refreshUsersList(it.state)
+                    }
+                    /*result?.channels?.forEach { t, u ->
+                        Log.d("ABC", "here now   t = $t, u = $u")
+                        u.occupants.forEach {
+                            //getAllUsersData(it.state)
+                            Log.d("ABC", "occupants onResponse() called $it")
+                        }
+                    }*/
+                }
+
+            })
+    }
+
+    private fun refreshUsersList(state: JsonElement?) {
+        if (state == null) {
+            return
+        }
+        Log.d("ABC", "refreshUsersList() called with: state = $state")
+        val user = getAllUsersData(state)
+        if (user.isModerator) {
+            if (moderatorUid == null || moderatorUid == 0) {
+                moderatorUid = user.id
+            }
+            moderatorName = user.name
+        }
+        if (user.id == agoraUid) {
+            currentUser = user
+        }
+        if (user.isSpeaker == true) {
+            speakersList.add(user)
+        } else {
+            audienceList.add(user)
+        }
+        speakerAdapter?.updateFullList(speakersList)
+        audienceAdapter?.updateFullList(audienceList)
+        viewModel.updateAudienceList(audienceList)
+    }
+
+    private fun getAllUsersData(msgJson: JsonElement): LiveRoomUser {
+        val data = msgJson.asJsonObject
+        val matType = object : TypeToken<LiveRoomUser>() {}.type
+        return AppObjectController.gsonMapper.fromJson<LiveRoomUser>(data, matType)
+    }
+
+    private fun addNewUserToAudience(msg: JsonObject) {
+        val data = msg["data"].asJsonObject
+        val matType = object : TypeToken<LiveRoomUser>() {}.type
+        if (data == null) {
+            return
+        }
+        val user = AppObjectController.gsonMapper.fromJson<LiveRoomUser>(data, matType)
+        CoroutineScope(Dispatchers.Main).launch {
+            if (user.isModerator) {
+                moderatorUid = user.id
+                moderatorName = user.name
+            }
+            if (user.id == agoraUid) {
+                currentUser = user
+            }
+            if (user.isSpeaker == true) {
+                speakersList.add(user)
+                speakerAdapter?.updateFullList(speakersList)
+            } else {
+                if (binding.searchingContainer.visibility == View.VISIBLE) {
+                    timer?.cancel()
+                    binding.searchingContainer.visibility = View.GONE
+                }
+                audienceList.add(user)
+                audienceAdapter?.updateFullList(audienceList)
+                viewModel.updateAudienceList(audienceList)
+            }
+        }
+    }
+
+    /* private fun addNewUserToSpeaker(msg: JsonObject) {
+         val data = msg["data"].asJsonObject
+         val matType = object : TypeToken<LiveRoomUser>() {}.type
+         if (data == null) {
+             return
+         }
+         val user = AppObjectController.gsonMapper.fromJson<LiveRoomUser>(data, matType)
+         CoroutineScope(Dispatchers.Main).launch {
+             if (user.isSpeaker == true){
+                 speakerAdapter?.addSingleItem(user)
+             } else {
+                 audienceAdapter?.addSingleItem(user)
+             }
+         }
+     }*/
+
+    private fun removeUser(msg: JsonObject) {
+        val data: JsonObject? = msg["data"].asJsonObject
+        data?.let {
+            Log.d(TAG, "removeUser() called ${data.get("id")}")
+            val matType = object : TypeToken<LiveRoomUser>() {}.type
+            if (data == null) {
+                return
+            }
+            val user = AppObjectController.gsonMapper.fromJson<LiveRoomUser>(data, matType)
+            CoroutineScope(Dispatchers.Main).launch {
+                if (user?.isSpeaker == true) {
+                    val list = speakersList.filter { it.id == user.id }
+                    speakersList.removeAll(list)
+                    speakersList.sortBy { it.sortOrder }
+                    speakerAdapter?.updateFullList(speakersList)
+                } else {
+
+                    val list = audienceList.filter { it.id == user.id }
+                    audienceList.removeAll(list)
+                    audienceList.sortBy { it.sortOrder }
+                    audienceAdapter?.updateFullList(audienceList)
+                    viewModel.updateAudienceList(audienceList)
+//                    audienceAdapter?.removeSingleItem(user)
+                }
+            }
         }
     }
 
     private fun initData() {
         binding.notificationBar.setNotificationViewEnquiryAction(this)
-        val liveRoomReference = database.collection("conversation_rooms")
-        roomReference = liveRoomReference.document(roomId.toString())
-        usersReference = roomReference?.collection("users")
-        getUserName()
+        //TODO init data to adapters
+        if (isRoomCreatedByUser) {
+            updateMuteButtonState()
+        } else {
+            binding.apply {
+                muteBtn.visibility = View.GONE
+                unmuteBtn.visibility = View.GONE
+                handUnraiseBtn.visibility = View.VISIBLE
+                handRaiseBtn.visibility = View.GONE
+            }
+        }
         handler = Handler(Looper.getMainLooper())
         updateUI()
         setNotificationStates()
         leaveRoomIfModeratorEndRoom()
         clickListener()
         switchRoles()
-        speakerAdapter?.startListening()
-        listenerAdapter?.startListening()
         takePermissions()
     }
 
@@ -141,12 +570,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             getIntentExtras(intent)
         }
         val newChannelName = intent?.getStringExtra(CHANNEL_NAME)
-        Log.d("ABC", "onNewIntent old: $channelName new: $newChannelName")
         if (newChannelName != null && newChannelName != channelName) {
-            Log.d(
-                "ABC",
-                "onNewIntent: called channel name not same old : $channelName  new : $newChannelName"
-            )
             finish()
             startActivity(intent)
             overridePendingTransition(0, 0)
@@ -209,21 +633,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun getIntentExtras(intent: Intent?) {
         roomId = intent?.getIntExtra(ROOM_ID, 0)
-        if (isActivityOpenFromNotification && roomId != null) {
+        /*if (isActivityOpenFromNotification && roomId != null) {
             Handler(Looper.getMainLooper()).postDelayed({
                 notebookRef.document(roomId.toString()).get().addOnSuccessListener {
                     viewModel.joinRoom(
+                        RoomListResponseItem(roomId,
+                        )
                         ConversationRoomsListingItem(
                             it["channel_name"]?.toString() ?: "",
                             it["topic"]?.toString(),
                             it["started_by"]?.toString()?.toInt(),
-                            roomId!!,
                             null
                         )
                     )
                 }
             }, 200)
-        }
+        }*/
     }
 
 
@@ -244,6 +669,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         WebRtcService.isRoomCreatedByUser = if (moderatorUid != null) {
             moderatorUid == agoraUid
         } else isRoomCreatedByUser
+
+        if (isRoomCreatedByUser) {
+            WebRtcService.moderatorUid = agoraUid
+            WebRtcService.isRoomCreatedByUser = true
+
+        }
         removeIncomingNotification()
     }
 
@@ -266,23 +697,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     }
 
-    private fun getUserName() {
-        usersReference?.document(agoraUid.toString())?.get()?.addOnSuccessListener {
-            currentUserName = it.get("name").toString()
-            iSSoundOn = it.get("is_mic_on") == true
-            if (isRoomCreatedByUser) {
-                updateMuteButtonState()
-            } else {
-                binding.apply {
-                    muteBtn.visibility = View.GONE
-                    unmuteBtn.visibility = View.GONE
-                    handUnraiseBtn.visibility = View.VISIBLE
-                    handRaiseBtn.visibility = View.GONE
-                }
-            }
-        }
-    }
-
     private fun updateMuteButtonState() {
         when (iSSoundOn) {
             true -> {
@@ -301,6 +715,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun getIntentExtras() {
         channelName = intent?.getStringExtra(CHANNEL_NAME)
         agoraUid = intent?.getIntExtra(UID, 0)
+        moderatorUid = intent?.getIntExtra(MODERATOR_UID, 0)
         token = intent?.getStringExtra(TOKEN)
         roomId = intent?.getIntExtra(ROOM_ID, 0)
         roomQuestionId = intent?.getIntExtra(ROOM_QUESTION_ID, 0)
@@ -317,7 +732,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             textColor = R.color.black,
             bgColor = R.color.conversation_room_gray
         )
-        roomReference?.get()?.addOnSuccessListener {
+        /*roomReference?.get()?.addOnSuccessListener {
             moderatorUid = it.get("started_by")?.toString()?.toInt()
             WebRtcService.moderatorUid = moderatorUid
             WebRtcService.isRoomCreatedByUser = moderatorUid == agoraUid
@@ -330,7 +745,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     moderatorName = moderator.get("name")?.toString()
                     moderatorMentorId = moderator.get("mentor_id")?.toString()
                 }
-        }
+        }*/
 
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
@@ -389,80 +804,74 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun clickHandRaisedButton(isRaised: Boolean, type: String) {
         try {
-            usersReference?.document(agoraUid.toString())?.update("is_hand_raised", isRaised)
-                ?.addOnSuccessListener {
-                    isHandRaised = !isHandRaised
-                    when (isRaised) {
-                        true -> {
-                            binding.apply {
-                                handRaiseBtn.visibility = View.VISIBLE
-                                handUnraiseBtn.visibility = View.GONE
-                            }
-                            setNotificationWithoutAction(
-                                String.format(
-                                    "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
-                                            "know you want to talk..."
-                                ), true
-                            )
-                        }
-                        false -> {
-                            binding.apply {
-                                handRaiseBtn.visibility = View.GONE
-                                handUnraiseBtn.visibility = View.VISIBLE
-                            }
-                        }
+            isHandRaised = !isHandRaised
+            when (isRaised) {
+                true -> {
+                    binding.apply {
+                        handRaiseBtn.visibility = View.VISIBLE
+                        handUnraiseBtn.visibility = View.GONE
                     }
-                    sendNotification(
-                        type,
-                        agoraUid?.toString(),
-                        currentUserName ?: "User",
-                        moderatorUid?.toString(),
-                        moderatorName ?: "Moderator"
+                    setNotificationWithoutAction(
+                        String.format(
+                            "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
+                                    "know you want to talk..."
+                        ), true
                     )
-                }?.addOnFailureListener {
-                    setNotificationWithoutAction("Something Went Wrong", false)
                 }
-        } catch (ex:Exception){
+                false -> {
+                    binding.apply {
+                        handRaiseBtn.visibility = View.GONE
+                        handUnraiseBtn.visibility = View.VISIBLE
+                    }
+                }
+            }
+            val customMessage = JsonObject()
+            customMessage.addProperty("id", agoraUid)
+            customMessage.addProperty("is_hand_raised", isRaised)
+            customMessage.addProperty("name", currentUser?.name ?: DEFAULT_NAME)
+            customMessage.addProperty("action", "IS_HAND_RAISED")
+            sendCustomMessage(customMessage, moderatorUid.toString())
+
+        } catch (ex: Exception) {
             showToast(ex.toString())
         }
     }
 
-    private fun changeMuteButtonState(isMicOn: Boolean) {
-        usersReference?.document(agoraUid.toString())?.update("is_mic_on", isMicOn)
-            ?.addOnSuccessListener {
-                iSSoundOn = isMicOn
-                updateMuteButtonState()
-            }?.addOnFailureListener {
-                setNotificationWithoutAction("Something Went Wrong", false)
-            }
-    }
+    private fun sendCustomMessage(state: JsonElement, channelName: String? = null) {
+        channelName?.let {
+            /*pubnub!!.setPresenceState()
+                .channels(Arrays.asList(channelName))
+                .state(state)
+                .async { result, status ->
+                    Log.d("ABC", "setPresenceState() called with: result = $result, status = $status")
+                }*/
 
-    private fun sendNotification(
-        type: String,
-        fromUid: String?,
-        fromName: String,
-        toUiD: String?,
-        toName: String
-    ) {
-        roomReference?.collection("notifications")?.document()?.set(
-            hashMapOf(
-                "from" to hashMapOf(
-                    "uid" to fromUid,
-                    "name" to fromName
-                ),
-                "to" to hashMapOf(
-                    "uid" to toUiD,
-                    "name" to toName
-                ),
-                "type" to type
-            )
-        )?.addOnFailureListener {
-            setNotificationWithoutAction("Something Went Wrong", false)
+            pubnub?.publish()
+                ?.message(state)
+                ?.channel(channelName)
+                ?.async(object : PNCallback<PNPublishResult> {
+                    override fun onResponse(result: PNPublishResult?, status: PNStatus) {
+                        if (status.isError.not()) {
+                            Log.d(
+                                "ABC",
+                                "onResponse() called with: state = $state, channelName = $channelName result = $result"
+                            )
+                        }
+                    }
+                })
         }
     }
 
+    private fun changeMuteButtonState(isMicOn: Boolean) {
+        val customMessage = JsonObject()
+        customMessage.addProperty("id", agoraUid)
+        customMessage.addProperty("is_mic_on", isMicOn)
+        customMessage.addProperty("action", "MIC_STATUS_CHANGES")
+        sendCustomMessage(customMessage, channelName)
+    }
+
     private fun setNotificationStates() {
-        roomReference?.collection("notifications")?.addSnapshotListener { value, error ->
+        /*roomReference?.collection("notifications")?.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
@@ -514,26 +923,31 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     }
                 }
             }
-        }
+        }*/
     }
 
     private fun setNotificationBarFieldsWithActions(
         rejectedText: String,
         acceptedText: String,
         heading: String,
+        userUid: Int?
     ) {
-        binding.notificationBar.apply {
-            visibility = View.VISIBLE
-            showActionLayout()
-            setRejectButtonText(rejectedText)
-            setAcceptButtonText(acceptedText)
-            setHeading(heading)
-            startSound()
-            setBackgroundColor(true)
-            loadAnimationSlideDown()
-        }
-        if (runnable != null) {
-            handler?.removeCallbacks(runnable!!)
+        CoroutineScope(Dispatchers.Main).launch {
+
+            binding.notificationBar.apply {
+                visibility = View.VISIBLE
+                showActionLayout()
+                setRejectButtonText(rejectedText)
+                setAcceptButtonText(acceptedText)
+                setUserUuid(userUid)
+                setHeading(heading)
+                startSound()
+                setBackgroundColor(true)
+                loadAnimationSlideDown()
+            }
+            if (runnable != null) {
+                handler?.removeCallbacks(runnable!!)
+            }
         }
     }
 
@@ -570,6 +984,43 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         hideNotificationAfter4seconds()
     }
 
+    override fun onAcceptNotification() {
+        if (isRoomCreatedByUser) {
+            binding.notificationBar.getUserUuid()?.let {
+                val customMessage = JsonObject()
+                customMessage.addProperty("id", agoraUid)
+                customMessage.addProperty("uid", it)
+                customMessage.addProperty("action", "INVITE_SPEAKER")
+                sendCustomMessage(customMessage, it.toString())
+            }
+            binding.notificationBar.loadAnimationSlideUp()
+        } else {
+
+            val customMessage = JsonObject()
+            customMessage.addProperty("id", agoraUid)
+            customMessage.addProperty("is_speaker", true)
+            customMessage.addProperty("name", currentUser?.name)
+            customMessage.addProperty("action", "MOVE_TO_SPEAKER")
+            sendCustomMessage(customMessage, channelName)
+            isInviteRequestComeFromModerator = true
+            binding.notificationBar.loadAnimationSlideUp()
+        }
+
+    }
+
+    override fun onRejectNotification() {
+        if (isRoomCreatedByUser.not()) {
+            val customMessage = JsonObject()
+            customMessage.addProperty("id", agoraUid)
+            customMessage.addProperty("is_hand_raised", false)
+            customMessage.addProperty("name", currentUser?.name ?: DEFAULT_NAME)
+            customMessage.addProperty("action", "IS_HAND_RAISED")
+            sendCustomMessage(customMessage, moderatorUid.toString())
+            binding.notificationBar.loadAnimationSlideUp()
+        }
+        binding.notificationBar.loadAnimationSlideUp()
+    }
+
     private fun showRoomEndNotification(roomId: Int?) {
         Log.d("ABC", "showRoomEndNotification() called with: roomId = $roomId")
         if (this.roomId == roomId) {
@@ -588,7 +1039,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun switchRoles() {
-        usersReference?.document(agoraUid.toString())?.addSnapshotListener { value, error ->
+        /*usersReference?.document(agoraUid.toString())?.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
@@ -607,7 +1058,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     }
                 }
             }
-        }
+        }*/
     }
 
     private fun updateUiWhenSwitchToListener() {
@@ -639,43 +1090,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun setHandRaiseValueToFirestore(is_hand_raised: Boolean) {
-        val reference = usersReference?.document(agoraUid.toString())
+        /*val reference = usersReference?.document(agoraUid.toString())
         reference?.update("is_hand_raised", is_hand_raised)?.addOnFailureListener {
             setNotificationWithoutAction("Something Went Wrong", false)
-        }
+        }*/
     }
 
     private fun leaveRoomIfModeratorEndRoom() {
-        roomReference?.addSnapshotListener { value, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            } else {
-                if (value?.exists() == false && isRoomEnded.not()) {
-                    isRoomEnded= true
-                    mBoundService?.leaveChannel()
-                    Log.d(
-                        "ABC",
-                        "roomReference error = $error"
-                    )
-                    showRoomEndNotification(roomId)
-                }
-            }
-        }
-        usersReference?.addSnapshotListener { value, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            } else {
-                if (value?.isEmpty == true && isRoomEnded.not()) {
-                    isRoomEnded= true
-                    Log.d(
-                        "ABC",
-                        "usersReference error = $error"
-                    )
-                    mBoundService?.leaveChannel()
-                    showRoomEndNotification(roomId)
-                }
-            }
-        }
+
 
     }
 
@@ -764,10 +1186,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun setUpRecyclerView() {
         speakerAdapter =
-            SpeakerAdapter(getFirestoreRecyclerOptions(true), this, isRoomCreatedByUser)
-        listenerAdapter =
-            AudienceAdapter(getFirestoreRecyclerOptions(false), this, isRoomCreatedByUser)
-        binding.speakersList.apply {
+            SpeakerAdapter(this, isRoomCreatedByUser)
+        audienceAdapter =
+            AudienceAdapter(this, isRoomCreatedByUser)
+
+        binding.speakersRecyclerView.apply {
             layoutManager = GridLayoutManager(this@ConversationLiveRoomActivity, 3)
             setHasFixedSize(false)
             isNestedScrollingEnabled = false
@@ -775,28 +1198,28 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             adapter = speakerAdapter
         }
 
-        binding.listenerList.apply {
+        binding.listenerRecyclerView.apply {
             layoutManager = GridLayoutManager(this@ConversationLiveRoomActivity, 3)
             setHasFixedSize(false)
             isNestedScrollingEnabled = false
             itemAnimator = null
-            adapter = listenerAdapter
+            adapter = audienceAdapter
         }
 
-        listenerAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
+        audienceAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
 
-            override fun onItemClick(user: LiveRoomUser, userUid: Int) {
+            override fun onItemClick(user: LiveRoomUser) {
                 if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
-                    getDataOnSpeakerAdapterItemClick(user, userUid, false)
+                    getDataOnSpeakerAdapterItemClick(user, user.id, false)
                     isBottomSheetVisible = true
                 }
             }
         })
 
         speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
-            override fun onItemClick(user: LiveRoomUser, userUid: Int) {
+            override fun onItemClick(user: LiveRoomUser) {
                 if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
-                    getDataOnSpeakerAdapterItemClick(user, userUid, true)
+                    getDataOnSpeakerAdapterItemClick(user, user.id, true)
                     isBottomSheetVisible = true
                 }
             }
@@ -805,7 +1228,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun getDataOnSpeakerAdapterItemClick(
-        user: LiveRoomUser?, userUid: Int,
+        user: LiveRoomUser?, userUid: Int?,
         toSpeaker: Boolean
     ) {
         val roomInfo = ConversationRoomBottomSheetInfo(
@@ -813,24 +1236,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             isRoomUserSpeaker,
             toSpeaker,
             user?.name ?: "",
-            user?.photo_url ?: "",
+            user?.photoUrl ?: "",
             userUid == agoraUid
         )
-        usersReference?.document(userUid.toString())?.get()?.addOnSuccessListener {
-            showBottomSheet(
-                roomInfo,
-                user?.mentor_id ?: "",
-                userUid,
-                it.get("name").toString()
-            )
-        }
-    }
-
-    private fun getFirestoreRecyclerOptions(isSpeaker: Boolean): FirestoreRecyclerOptions<LiveRoomUser> {
-        val query = usersReference?.whereEqualTo("is_speaker", isSpeaker)?.orderBy("sort_order")
-        return FirestoreRecyclerOptions.Builder<LiveRoomUser>()
-            .setQuery(query!!, LiveRoomUser::class.java)
-            .build()
+        showBottomSheet(
+            roomInfo,
+            user?.mentorId ?: EMPTY,
+            userUid,
+            user?.name.toString()
+        )
     }
 
     private fun showBottomSheet(
@@ -843,37 +1257,37 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             ConversationRoomBottomSheet.newInstance(roomInfo,
                 object : ConversationRoomBottomSheetAction {
                     override fun openUserProfile() {
-                        openUserProfile(mentorId)
-                    }
-
-                    override fun moveToAudience() {
-                        val reference = usersReference?.document(userUid.toString())
-                        reference?.update("is_speaker", false)?.addOnFailureListener {
-                            setNotificationWithoutAction("Something Went Wrong", false)
+                        if (mentorId.isBlank().not()) {
+                            openUserProfile(mentorId)
+                        } else {
+                            showToast(getString(R.string.generic_message_for_error))
                         }
                     }
 
+                    override fun moveToAudience() {
+
+                        val customMessage = JsonObject()
+                        customMessage.addProperty("id", agoraUid)
+                        customMessage.addProperty("is_speaker", false)
+                        customMessage.addProperty("name", userName)
+                        customMessage.addProperty("action", "MOVE_TO_AUDIENCE")
+                        sendCustomMessage(customMessage, channelName)
+
+                    }
+
                     override fun moveToSpeaker() {
-                        usersReference?.whereEqualTo("is_speaker", true)
-                            ?.get()
-                            ?.addOnSuccessListener { documents ->
-                                if (documents.size() < 16) {
-                                    sendNotification(
-                                        "SPEAKER_INVITE",
-                                        moderatorUid?.toString(),
-                                        moderatorName ?: "Moderator",
-                                        userUid.toString(),
-                                        userName
-                                    )
-                                } else {
-                                    setNotificationWithoutAction(
-                                        "Room has reached maximum allowed number of speakers." +
-                                                " Please try again after sometime.", false
-                                    )
-                                }
-                            }?.addOnFailureListener {
-                                setNotificationWithoutAction("Something Went Wrong", false)
-                            }
+                        if (speakersList.size < 16) {
+                            val customMessage = JsonObject()
+                            customMessage.addProperty("id", agoraUid)
+                            customMessage.addProperty("uid", userUid)
+                            customMessage.addProperty("action", "INVITE_SPEAKER")
+                            sendCustomMessage(customMessage, userUid.toString())
+                        } else {
+                            setNotificationWithoutAction(
+                                "Room has reached maximum allowed number of speakers." +
+                                        " Please try again after sometime.", false
+                            )
+                        }
                     }
 
                     override fun onDismiss() {
@@ -894,10 +1308,25 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     fun openRaisedHandsBottomSheet() {
+        val raisedHandList = audienceList.filter { it.isSpeaker == false && it.isHandRaised }
         val bottomSheet =
-            RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid, moderatorName)
+            RaisedHandsBottomSheet.newInstance(
+                roomId ?: 0, moderatorUid, moderatorName, channelName,
+                ArrayList(raisedHandList)
+            )
         bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
         bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+    }
+
+    override fun onUserInvitedToSpeak(user: LiveRoomUser) {
+        viewModel.updateInviteSentToUser(user.id!!)
+        val customMessage = JsonObject()
+        customMessage.addProperty("id", agoraUid)
+        customMessage.addProperty("uid", user.id)
+        customMessage.addProperty("action", "INVITE_SPEAKER")
+        sendCustomMessage(customMessage, user.id.toString())
+        //TODO("Not yet implemented")
     }
 
     private fun showEndRoomPopup() {
@@ -930,10 +1359,16 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             myConnection,
             BIND_AUTO_CREATE
         )
+
+        pubnub?.subscribe()?.channels(
+            Arrays.asList(channelName, agoraUid.toString())
+        )?.withPresence()
+            ?.execute()
     }
 
     override fun onPause() {
         super.onPause()
+        pubnub?.unsubscribeAll()
         compositeDisposable.clear()
     }
 
@@ -946,11 +1381,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onResume() {
         super.onResume()
         observeNetwork()
-        ConversationRoomListingActivity.CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = true
     }
 
     override fun onBackPressed() {
         isBackPressed = true
+        if (timer != null) {
+            endRoom()
+            return
+        }
         if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
             showEndRoomPopup()
         } else {
@@ -960,8 +1398,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onDestroy() {
-        speakerAdapter?.stopListening()
-        listenerAdapter?.stopListening()
         Log.d("ABC", "activity onDestroy() called")
         if (!isBackPressed) {
             if (isRoomCreatedByUser) {
@@ -975,92 +1411,29 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     }
 
-    override fun onAcceptNotification() {
-        if (isRoomCreatedByUser) {
-            sendNotification(
-                "SPEAKER_INVITE",
-                moderatorUid?.toString(),
-                moderatorName ?: "Moderator",
-                notificationFrom?.get("uid").toString(),
-                notificationFrom?.get("name").toString()
-            )
-            binding.notificationBar.loadAnimationSlideUp()
-        } else {
-            if (notificationType == "SPEAKER_INVITE" && notificationTo?.get("uid").toString()
-                    .toInt() == agoraUid
-            ) {
-                val reference = usersReference?.document(agoraUid.toString())
-                reference?.update("is_speaker", true)?.addOnSuccessListener {
-                    sendNotification(
-                        "SPEAKER_INVITE_ACCEPTED",
-                        notificationTo?.get("uid"),
-                        notificationTo?.get("name").toString(),
-                        notificationFrom?.get("uid"),
-                        notificationFrom?.get("name").toString()
-                    )
-                    isInviteRequestComeFromModerator = true
-                    binding.notificationBar.loadAnimationSlideUp()
-                }?.addOnFailureListener {
-                    binding.notificationBar.loadAnimationSlideUp()
-                    isInviteRequestComeFromModerator = false
-                    usersReference?.document(agoraUid.toString())
-                        ?.update("is_speaker_invite_sent", false)?.addOnFailureListener {
-                            setNotificationWithoutAction("Something Went Wrong", false)
-                        }
-                }
-            }
-        }
-
+    fun getHandRaiseListRefreshListener(): HandRaiseListRefreshListener? {
+        return fragmentRefreshListener
     }
 
-    override fun onRejectNotification() {
-        if (notificationType == "SPEAKER_INVITE" && notificationTo?.get("uid").toString()
-                .toInt() == agoraUid
-        ) {
-            isInviteRequestComeFromModerator = false
-            usersReference?.document(agoraUid.toString())?.update("is_speaker_invite_sent", false)
-                ?.addOnFailureListener {
-                    setNotificationWithoutAction("Something Went Wrong", false)
-                }
-        }
-        binding.notificationBar.loadAnimationSlideUp()
+    fun setHandRaiseListRefreshListener(fragmentRefreshListener: HandRaiseListRefreshListener?) {
+        this.fragmentRefreshListener = fragmentRefreshListener
+    }
+
+    private var fragmentRefreshListener: HandRaiseListRefreshListener? = null
+
+    public interface HandRaiseListRefreshListener {
+        fun onHandRaiseListRefresh()
     }
 
     companion object {
         const val CHANNEL_NAME = "channel_name"
         const val UID = "uid"
+        const val MODERATOR_UID = "moderator_uid"
         const val TOKEN = "TOKEN"
         const val IS_ROOM_CREATED_BY_USER = "is_room_created_by_user"
         const val ROOM_ID = "room_id"
         const val OPEN_FROM_NOTIFICATION = "open_from_notification"
         const val ROOM_QUESTION_ID = "room_question_id"
-
-        fun startConversationLiveRoomActivity(
-            activity: Activity,
-            channelName: String?,
-            uid: Int?,
-            token: String?,
-            isRoomCreatedByUser: Boolean,
-            roomId: Int?,
-            roomQuestionId: Int? = null,
-            flags: Array<Int> = arrayOf(),
-
-            ) {
-            Intent(activity, ConversationLiveRoomActivity::class.java).apply {
-                putExtra(CHANNEL_NAME, channelName)
-                putExtra(UID, uid)
-                putExtra(TOKEN, token)
-                putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
-                putExtra(ROOM_ID, roomId)
-                putExtra(ROOM_QUESTION_ID, roomQuestionId)
-
-                flags.forEach { flag ->
-                    this.addFlags(flag)
-                }
-            }.run {
-                activity.startActivity(this)
-            }
-        }
 
         fun getIntent(
             context: Context,
@@ -1070,11 +1443,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             isRoomCreatedByUser: Boolean,
             roomId: Int?,
             roomQuestionId: Int? = null,
+            moderatorId: Int? = null,
             flags: Array<Int> = arrayOf()
         ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
 
             putExtra(CHANNEL_NAME, channelName)
             putExtra(UID, uid)
+            putExtra(MODERATOR_UID, moderatorId)
             putExtra(TOKEN, token)
             putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
             putExtra(ROOM_ID, roomId)

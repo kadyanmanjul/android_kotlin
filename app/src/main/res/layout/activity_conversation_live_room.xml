@@ -63,11 +63,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_6sdp"
+            android:fillViewport="true"
             android:nestedScrollingEnabled="false"
             app:layout_constraintBottom_toTopOf="@id/button_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:fillViewport="true"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintVertical_bias="0">
 
@@ -100,14 +100,14 @@
                     android:text="@string/speakers"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toTopOf="@id/speakers_list"
+                    app:layout_constraintBottom_toTopOf="@id/speakers_recycler_view"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/topic"
                     app:layout_constraintVertical_chainStyle="packed"
                     tools:visibility="visible" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/speakers_list"
+                    android:id="@+id/speakers_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_24sdp"
@@ -131,15 +131,15 @@
                     android:text="@string/audience"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
                     android:textColor="#E7E4D5"
-                    app:layout_constraintBottom_toTopOf="@id/listener_list"
+                    app:layout_constraintBottom_toTopOf="@id/listener__recycler_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/speakers_list"
+                    app:layout_constraintTop_toBottomOf="@id/speakers_recycler_view"
                     app:layout_constraintVertical_chainStyle="packed" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listener_list"
+                    android:id="@+id/listener__recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_12sdp"
@@ -188,11 +188,11 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
-                app:srcCompat="@drawable/ic_mic_off"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_mic_off"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/unmute_btn"
@@ -203,11 +203,11 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
-                tools:visibility="gone"
-                app:srcCompat="@drawable/ic_mic_black_on"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_mic_black_on"
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/raised_hands"
@@ -218,10 +218,10 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
-                app:srcCompat="@drawable/raised_hand_list_icon"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/raised_hand_list_icon"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -233,10 +233,10 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
-                app:srcCompat="@drawable/ic_hand_raised_icon"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
+                app:srcCompat="@drawable/ic_hand_raised_icon"
                 tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -248,10 +248,10 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
-                app:srcCompat="@drawable/ic_unraise_hand_icon"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
+                app:srcCompat="@drawable/ic_unraise_hand_icon"
                 tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -259,9 +259,69 @@
             android:id="@+id/notification_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone"
             tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/searching_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:elevation="@dimen/_2sdp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="@string/finding_conversation_partner"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.1" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_view_ph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.3"
+                app:srcCompat="@drawable/have_a_referral" />
+
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_6sdp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:progressDrawable="@drawable/progress_background"
+                android:progressTint="@color/button_color"
+                android:secondaryProgress="0"
+                app:layout_constraintEnd_toEndOf="@+id/image_view_ph"
+                app:layout_constraintStart_toStartOf="@+id/image_view_ph"
+                app:layout_constraintTop_toBottomOf="@+id/image_view_ph"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.6"
+                tools:max="100"
+                tools:progress="40" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

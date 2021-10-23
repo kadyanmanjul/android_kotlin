@@ -1,51 +1,109 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
-import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.model.LiveRoomUser
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationUserDiffCallback
+import com.joshtalks.joshskills.core.DEFAULT_NAME
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiAudienceItemBinding
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 
-
 class AudienceAdapter(
-    rooms: FirestoreRecyclerOptions<LiveRoomUser>,
     val action: ConversationLiveRoomSpeakerClickAction,
     val isModerator: Boolean
-) : FirestoreRecyclerAdapter<LiveRoomUser, AudienceAdapter.SpeakerViewHolder>(rooms) {
+) : RecyclerView.Adapter<AudienceAdapter.SpeakerViewHolder>() {
 
-    val firebaseFirestore = FirebaseFirestore.getInstance().collection("conversation_rooms")
+
+    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     private var listenerUserAction: OnUserItemClickListener? = null
+
+    fun updateFullList(newList: List<LiveRoomUser>) {
+        newList.sortedBy { it.sortOrder }
+        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        audienceList.clear()
+        audienceList.addAll(newList)
+        Log.d("ABC", "updateFullList() called with: audienceList = $audienceList")
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun addSingleItem(newItem: LiveRoomUser) {
+        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
+        newList.add(newItem)
+        newList.sortBy { it.sortOrder }
+        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        audienceList.clear()
+        audienceList.addAll(newList)
+        Log.d("ABC", "addSingleItem() called with: audienceList = $audienceList")
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun removeSingleItem(newItem: LiveRoomUser) {
+        val list = ArrayList(audienceList).filter { it.id == newItem.id }
+        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
+        newList.removeAll(list)
+        newList.sortBy { it.sortOrder }
+        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        audienceList.clear()
+        audienceList.addAll(newList)
+        Log.d("ABC", "removeSingleItem() called with: audienceList = $audienceList")
+        diffResult.dispatchUpdatesTo(this)
+    }
+    fun removeItemIfPresent(newItem: LiveRoomUser) {
+        Log.d("ABC", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
+        val list = ArrayList(audienceList).filter { it.id == newItem.id }
+        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
+        newList.removeAll(list)
+        newList.sortBy { it.sortOrder }
+        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        audienceList.clear()
+        audienceList.addAll(newList)
+        Log.d("ABC", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun updateItem(room: LiveRoomUser, position: Int) {
+        audienceList[position] = room
+        Log.d("ABC", "updateItem() called with: room = $room, audienceList = $audienceList")
+        notifyItemChanged(position)
+    }
 
     inner class SpeakerViewHolder(val binding: LiAudienceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(model: LiveRoomUser, uid: String) {
+        fun bind(model: LiveRoomUser) {
             with(binding) {
                 name.text = model.name
                 userImage.apply {
                     clipToOutline = true
                     setUserImageRectOrInitials(
-                        model.photo_url, model.name, 22, true, 16,
+                        model.photoUrl,
+                        model.name?: DEFAULT_NAME,
+                        22,
+                        true,
+                        16,
                         textColor = R.color.black,
                         bgColor = R.color.conversation_room_gray
                     )
                 }
 
-                if (isModerator && model.isIs_hand_raised) {
+                if (isModerator && model.isHandRaised) {
                     raisedHands.visibility = View.VISIBLE
                 } else {
                     raisedHands.visibility = View.GONE
                 }
 
-                if (model.isIs_speaker && !model.isIs_mic_on) {
+                if (model.isSpeaker== true && !model.isMicOn) {
                     volumeIcon.visibility = View.VISIBLE
                 } else {
                     volumeIcon.visibility = View.GONE
@@ -54,23 +112,13 @@ class AudienceAdapter(
                 root.setOnSingleClickListener {
                     if (listenerUserAction != null) {
                         listenerUserAction?.onItemClick(
-                            model, uid.toInt()
+                            model
                         )
                     }
                 }
 
             }
         }
-
-    }
-
-    @SuppressLint("LogNotTimber")
-    override fun onBindViewHolder(
-        holder: SpeakerViewHolder,
-        position: Int,
-        model: LiveRoomUser
-    ) {
-        holder.bind(model, snapshots.getSnapshot(position).id)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpeakerViewHolder {
@@ -81,10 +129,18 @@ class AudienceAdapter(
     }
 
     interface OnUserItemClickListener {
-        fun onItemClick(user: LiveRoomUser, userUid: Int)
+        fun onItemClick(user: LiveRoomUser)
     }
 
     fun setOnItemClickListener(listenerUser: OnUserItemClickListener) {
         listenerUserAction = listenerUser
+    }
+
+    override fun onBindViewHolder(holder: SpeakerViewHolder, position: Int) {
+        holder.bind(audienceList[position])
+    }
+
+    override fun getItemCount(): Int {
+        return  audienceList.size
     }
 }

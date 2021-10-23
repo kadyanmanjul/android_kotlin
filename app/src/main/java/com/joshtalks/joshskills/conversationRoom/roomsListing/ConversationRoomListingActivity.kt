@@ -1,3 +1,4 @@
+/*
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
 import android.app.AlertDialog
@@ -331,4 +332,4 @@ class ConversationRoomListingActivity : BaseActivity(),
         viewModel.joinRoom(item)
     }
 
-}
+}*/
