@@ -9,9 +9,6 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginBottom="@dimen/_8sdp"
-        android:layout_marginStart="@dimen/_11sdp"
-        android:layout_marginTop="@dimen/_13sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -20,13 +17,14 @@
             android:layout_width="@dimen/_36sdp"
             android:layout_height="@dimen/_36sdp"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_11sdp"
             android:background="@drawable/white_button_round_enabled"
             android:gravity="center_vertical|start"
             groupImage="@{itemData.imageUrl}"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/title_container"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title_container"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -37,14 +35,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/img_logo"
-            app:layout_constraintTop_toTopOf="@+id/img_logo">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_11sdp"
+                android:layout_marginTop="@dimen/_14sdp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="start"
                 android:singleLine="true"
@@ -58,9 +56,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginStart="@dimen/_11sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:layout_marginBottom="@dimen/_9sdp"
                 android:foreground="?android:attr/selectableItemBackground"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:gravity="start"
                 android:singleLine="true"
                 android:textSize="@dimen/_12sdp"

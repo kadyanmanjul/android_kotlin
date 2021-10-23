@@ -96,13 +96,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -266,6 +266,7 @@ class ConversationActivity :
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
         } else if (inboxEntity.isCourseBought.not() &&
             inboxEntity.expiryDate != null &&
@@ -274,6 +275,7 @@ class ConversationActivity :
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
             conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }

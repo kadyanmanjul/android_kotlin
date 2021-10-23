@@ -110,6 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
             android:text="@{vm.hasJoinedGroup ? `Chat function will be comming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"

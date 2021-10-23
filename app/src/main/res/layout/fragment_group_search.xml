@@ -99,7 +99,8 @@
             android:layout_height="wrap_content"
             android:text="Currently active groups:"
             android:textColor="@color/black"
-            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_margin="@dimen/_12sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:paddingVertical="@dimen/_4sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_layout_card" />
