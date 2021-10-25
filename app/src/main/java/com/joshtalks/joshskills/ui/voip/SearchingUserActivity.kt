@@ -67,7 +67,8 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             isNewUserCall: Boolean = false,
             isGroupCallCall: Boolean = false,
             groupId : String? = null,
-            conversationId: String? = null,
+            groupName : String? = null,
+            conversationId: String? = null
         ): Intent {
             return Intent(activity, SearchingUserActivity::class.java).apply {
                 putExtra(COURSE_ID, courseId)
@@ -77,6 +78,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
                 putExtra(IS_NEW_USER_CALL, isNewUserCall)
                 putExtra(RTC_IS_GROUP_CALL, isGroupCallCall)
                 putExtra(RTC_IS_GROUP_CALL_ID, groupId)
+                putExtra(RTC_GROUP_CALL_GROUP_NAME, groupName)
                 putExtra(CONVERSATION_ID, conversationId)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -94,6 +96,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
     private var isFavorite = false
     private var isNewUserCall = false
     private var isGroupCall = false
+    private var groupName = ""
     private var groupId : String? = null
 
     private val viewModel: VoipCallingViewModel by lazy {
@@ -126,6 +129,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             compositeDisposable.clear()
             Timber.tag("SearchingUserActivity").e("onConnect")
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
+            WebRtcService.currentCallingGroupName = groupName
             WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
             Log.d(TAG, "onConnect: 121")
@@ -206,6 +210,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
         isFavorite = intent.getBooleanExtra(FAVORITE_USER_CALL, false)
         isNewUserCall = intent.getBooleanExtra(IS_NEW_USER_CALL, false)
         isGroupCall = intent.getBooleanExtra(RTC_IS_GROUP_CALL, false)
+        groupName = intent.getStringExtra(RTC_GROUP_CALL_GROUP_NAME) ?: ""
         groupId = intent.getStringExtra(RTC_IS_GROUP_CALL_ID)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SEARCH_SCREEN_VOIP.NAME)
             .addBasicParam()
@@ -444,6 +449,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             }
             if (isGroupCall) {
                 outgoingCallData[RTC_IS_GROUP_CALL] = "true"
+                outgoingCallData[RTC_GROUP_CALL_GROUP_NAME] = groupName
             }
         }
         return outgoingCallData

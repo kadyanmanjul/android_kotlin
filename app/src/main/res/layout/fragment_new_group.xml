@@ -22,6 +22,7 @@
             android:layout_height="match_parent"
             android:clickable="false"
             android:elevation="@dimen/_8sdp"
+            tools:visibility="gone"
             android:background="@color/transparent_blue_alpha_75"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,13 +118,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab_add_group"
-            android:layout_width="@dimen/_48sdp"
-            android:layout_height="@dimen/_48sdp"
+            style="@style/Widget.MaterialComponents.FloatingActionButton"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:padding="@dimen/_10sdp"
             android:backgroundTint="@color/blue33"
             android:src="@drawable/add_groups"
-            android:scaleType="fitCenter"
+            android:scaleType="centerInside"
             android:onClick="@{vm::saveGroupInfo}"
             app:layout_constraintBottom_toBottomOf="@+id/background_view"
             app:layout_constraintEnd_toEndOf="parent"

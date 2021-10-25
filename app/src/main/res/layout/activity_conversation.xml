@@ -276,6 +276,27 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgGroupChatBtn"
+            android:elevation="@dimen/_8sdp"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_below="@+id/user_point_container"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginVertical="@dimen/_12sdp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/white_button_round_enabled"
+            android:backgroundTint="@color/colorPrimary"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            app:elevation="@dimen/_4sdp"
+            app:srcCompat="@drawable/ic_groupchat"
+            tools:visibility="visible" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -354,10 +375,11 @@
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
+                android:visibility="gone"
                 android:padding="@dimen/_4sdp"
                 app:elevation="@dimen/_4sdp"
                 app:srcCompat="@drawable/ic_groupchat"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/txtUnreadCount"
@@ -377,7 +399,7 @@
                 android:textStyle="bold"
                 android:visibility="gone"
                 tools:text="99+"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
         </FrameLayout>
 

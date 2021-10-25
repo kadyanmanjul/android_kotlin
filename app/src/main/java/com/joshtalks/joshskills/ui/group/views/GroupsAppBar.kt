@@ -83,12 +83,12 @@ class GroupsAppBar @JvmOverloads constructor(
         }
     }
 
-    fun setFirstIcon(drawableRes: Int) {
+    fun firstIcon(drawableRes: Int) {
         firstIconImageView.visibility = View.VISIBLE
         setDrawableImage(drawableRes, firstIconImageView)
     }
 
-    fun setSecondIcon(drawableRes: Int) {
+    fun secondIcon(drawableRes: Int) {
         secondIconImageView.visibility = View.VISIBLE
         setDrawableImage(drawableRes, secondIconImageView)
     }

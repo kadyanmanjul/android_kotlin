@@ -27,13 +27,19 @@ fun GroupsAppBar.onFirstIconPress(function : () -> Unit) = this.onFirstIconPress
 fun GroupsAppBar.onSecondIconPress(function : () -> Unit) = this.onSecondIconPressed(function)
 
 @BindingAdapter("firstIcon")
-fun GroupsAppBar.setFirstIcon(drawableRes : Int) = this.setFirstIcon(drawableRes)
+fun GroupsAppBar.setFirstIcon(drawableRes : Int) {
+    if(drawableRes != R.drawable.josh_skill_logo)
+        this.firstIcon(drawableRes)
+}
 
 @BindingAdapter("groupHeader", "groupSubHeader")
 fun GroupsAppBar.setGroupHeaders(header : String, subHeader : String) = this.setGroupSubTitle(subHeader, header)
 
 @BindingAdapter("secondIcon")
-fun GroupsAppBar.setSecondIcon(drawableRes : Int) = this.setSecondIcon(drawableRes)
+fun GroupsAppBar.setSecondIcon(drawableRes : Int) {
+    if(drawableRes != R.drawable.josh_skill_logo)
+        this.secondIcon(drawableRes)
+}
 
 @BindingAdapter("groupImage")
 fun GroupsAppBar.setGroupImage(imageUrl : String) = this.setImage(imageUrl)

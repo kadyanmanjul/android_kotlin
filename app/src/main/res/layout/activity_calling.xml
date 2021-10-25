@@ -18,8 +18,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:background="@drawable/voip_bg"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
 
@@ -38,18 +38,37 @@
             android:id="@+id/call_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:gravity="center"
             android:text="@string/pp_calling"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
             android:textColor="@color/white"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/caller_name"
-            app:layout_constraintEnd_toEndOf="@+id/caller_name"
-            app:layout_constraintStart_toStartOf="@+id/caller_name"
+            app:layout_constraintBottom_toTopOf="@+id/tv_group_name"
+            app:layout_constraintEnd_toEndOf="@+id/tv_group_name"
+            app:layout_constraintStart_toStartOf="@+id/tv_group_name"
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_group_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.5"
+            android:maxLines="1"
+            android:text="from group Home hfajgjfag jhfgahjgaf  fjaggafjhgfghag jjafg "
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/caller_name"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            tools:ignore="MissingPrefix"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/caller_name"
@@ -81,7 +100,7 @@
             app:layout_constraintEnd_toEndOf="@+id/caller_name"
             app:layout_constraintStart_toStartOf="@+id/caller_name"
             tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_incoming_call_sub_heading"
@@ -141,7 +160,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.37">
+            app:layout_constraintVertical_bias="0.43">
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/incoming_progress"
@@ -177,15 +196,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.37" />
+            app:layout_constraintVertical_bias="0.43" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_28sdp"
             android:gravity="center"
-            android:layout_marginHorizontal="@dimen/_16sdp"
             android:text="@string/topic"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             android:textColor="@color/white"
@@ -199,16 +218,16 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_name"
             android:layout_width="0dp"
-            android:layout_marginTop="@dimen/_2sdp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textColor="@color/white"
-            android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingPrefix"
             app:layout_constraintTop_toBottomOf="@+id/topic_header"
+            tools:ignore="MissingPrefix"
             tools:text="Talk about what is Futur" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -333,8 +352,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="gone"
-            app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect" />
+            app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect"
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_outgoing"
@@ -343,6 +362,7 @@
             android:visibility="gone"
             app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action,txt_speaker,txt_mute"
             tools:visibility="visible" />
+
         <FrameLayout
             android:id="@+id/placeholder_bg"
             android:layout_width="match_parent"
@@ -350,6 +370,20 @@
             android:background="#AA000000"
             android:visibility="gone"
             tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

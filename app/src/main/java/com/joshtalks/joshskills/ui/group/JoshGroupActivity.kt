@@ -3,34 +3,31 @@ package com.joshtalks.joshskills.ui.group
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_CALLING_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_GROUP
 import com.joshtalks.joshskills.constants.OPEN_IMAGE_CHOOSER
 import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
 import com.joshtalks.joshskills.constants.SEARCH_GROUP
+import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 private const val TAG = "JoshGroupActivity"
-class JoshGroupActivity : BaseActivity() {
+class JoshGroupActivity : BaseGroupActivity() {
     val vm by lazy {
         ViewModelProvider(this)[JoshGroupViewModel::class.java]
     }
@@ -56,19 +53,21 @@ class JoshGroupActivity : BaseActivity() {
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 SEARCH_GROUP -> openGroupSearchFragment()
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
-                OPEN_CALLING_ACTIVITY -> openCallingActivity(it.obj as String)
+                OPEN_CALLING_ACTIVITY -> openCallingActivity(it.data)
+                SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
             }
         }
     }
 
-    fun openCallingActivity(groupId : String) {
+    fun openCallingActivity(bundle: Bundle) {
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
             topicId = 5,
-            groupId = groupId,
+            groupId = bundle.getString(GROUPS_ID),
             isGroupCallCall = true,
             topicName = "Group Call",
+            groupName = bundle.getString(GROUPS_TITLE),
             favoriteUserCall = false
         )
         startActivity(intent)
@@ -77,7 +76,7 @@ class JoshGroupActivity : BaseActivity() {
     private fun openGroupListFragment() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            add(R.id.group_fragment_container, GroupListFragment(), LIST_FRAGMENT)
+            replace(R.id.group_fragment_container, GroupListFragment(), LIST_FRAGMENT)
         }
     }
 

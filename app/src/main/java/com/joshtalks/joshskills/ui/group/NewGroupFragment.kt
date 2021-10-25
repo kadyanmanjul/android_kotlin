@@ -54,14 +54,16 @@ class NewGroupFragment : BaseFragment() {
                 }
                 ADD_GROUP_TO_SERVER -> {
                     val groupName = binding.etGroupName.text.toString()
-                    if (groupName.isNotEmpty()) {
+                    if (groupName.isNotEmpty() && groupName.length <= 25) {
                         val request = AddGroupRequest(
                             mentorId = Mentor.getInstance().getId(),
                             groupName =groupName,
                             groupIcon = imagePath ?: ""
                         )
                         vm.addGroup(request)
-                    } else
+                    } else if(groupName.length > 25)
+                        showToast("Group Name should be 25 character or less")
+                    else
                         showToast("Please enter group name")
                 }
             }

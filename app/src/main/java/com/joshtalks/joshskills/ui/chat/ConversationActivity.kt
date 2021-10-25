@@ -525,16 +525,30 @@ class ConversationActivity :
             scrollToEnd()
         }
 
-        conversationBinding.imgGroupChat.setOnClickListener {
-            val intent = Intent(this, JoshGroupActivity::class.java)
-            startActivity(intent)
+//        conversationBinding.imgGroupChat.setOnClickListener {
+//            val intent = Intent(this, JoshGroupActivity::class.java)
+//            startActivity(intent)
+//        }
+
+        conversationBinding.imgGroupChatBtn.setOnClickListener {
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(" ")
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(getString(R.string.feature_locked, firstName))
+            } else {
+                val intent = Intent(this, JoshGroupActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
-//            conversationBinding.userPointContainer.slideOutAnimation(
-//                conversationBinding.imgGroupChat,
-//                conversationBinding.txtUnreadCount
-//            )
+            conversationBinding.userPointContainer.slideOutAnimation(
+                conversationBinding.imgGroupChat,
+                conversationBinding.txtUnreadCount
+            )
             // hideLeaderboardTooltip()
         }
 
@@ -553,7 +567,7 @@ class ConversationActivity :
             )
         }
 
-        //conversationBinding.imgGroupChat.visibility = if (inboxEntity.isGroupActive) GONE else GONE
+        conversationBinding.imgGroupChat.visibility = View.GONE//if (inboxEntity.isGroupActive) GONE else GONE
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            utilConversationViewModel.initCometChat()

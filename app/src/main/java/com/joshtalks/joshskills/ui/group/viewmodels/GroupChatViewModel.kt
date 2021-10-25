@@ -1,14 +1,20 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
+import android.os.Bundle
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_CALLING_ACTIVITY
+import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
+import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.group.GROUPS_ID
+import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,8 +36,13 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun callGroup() {
+        if(isCallOngoing(R.string.call_engage_initiate_call_message))
+            return
         message.what = OPEN_CALLING_ACTIVITY
-        message.obj = groupId
+        message.data = Bundle().apply {
+            putString(GROUPS_ID, groupId)
+            putString(GROUPS_TITLE, groupHeader.get())
+        }
         singleLiveEvent.value = message
     }
 
@@ -42,6 +53,8 @@ class GroupChatViewModel : BaseViewModel() {
                 withContext(Dispatchers.Main) {
                     showToast("Joined Group")
                     hasJoinedGroup.set(true)
+                    message.what = SHOULD_REFRESH_GROUP_LIST
+                    singleLiveEvent.value = message
                 }
             } catch (e : Exception) {
                 showToast("Error joining group")

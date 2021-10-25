@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.analytics
 import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VOIP_ANALYTICS_CALL_ID_API_KEY
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VOIP_ANALYTICS_DISCONNECT_API_KEY
@@ -102,7 +103,11 @@ object VoipAnalytics {
         val agoraMentorUid = obj.getString("uid")
         val channelName = obj.getString("channel_name")
         val callerUid = obj.getString("caller_uid")
-
+        WebRtcService.currentCallingGroupName = try {
+            obj.getString("group_name")
+        } catch (e: JSONException) {
+            ""
+        }
 
         CurrentCallDetails.set(
             callieUid = agoraMentorUid,

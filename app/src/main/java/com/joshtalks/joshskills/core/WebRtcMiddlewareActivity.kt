@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.widget.Chronometer
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,7 @@ import timber.log.Timber
 open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    private val TAG = "WebRtcMiddlewareActivit"
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
 
@@ -64,6 +66,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var callback: WebRtcCallback = object : WebRtcCallback {
         override fun onConnect(callId: String) {
             super.onConnect(callId)
+            Log.d(TAG, "${this.javaClass.simpleName}  onConnect: ")
             lifecycleScope.launch(Dispatchers.Main) {
                 callTimerUi()
             }
@@ -71,6 +74,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
             super.onDisconnect(callId, channelName, time)
+            Log.d(TAG, "${this.javaClass.simpleName} onDisconnect: ")
             lifecycleScope.launchWhenResumed {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
@@ -94,6 +98,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     }
 
     private fun callTimerUi() {
+        Log.d(TAG, "callTimerUi: ${this.javaClass.simpleName} -- ${(findViewById<Chronometer>(R.id.call_timer))}")
         with(findViewById<Chronometer>(R.id.call_timer)) {
             base = SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
             start()
@@ -103,10 +108,12 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
     override fun onStart() {
         super.onStart()
+        Log.d(TAG, "onStart: ${this.javaClass.simpleName}")
         bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
     }
 
     override fun onStop() {
+        Log.d(TAG, "onStop: ${this.javaClass.simpleName}")
         try {
             unbindService(myConnection)
         } catch (ex: Exception) {

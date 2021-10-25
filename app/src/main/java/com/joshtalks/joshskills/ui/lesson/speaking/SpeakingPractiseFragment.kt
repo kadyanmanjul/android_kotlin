@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.views.GroupBottomSheet
+import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -164,8 +165,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         binding.btnGroupCall.setOnClickListener {
-            //startPractise(favoriteUserCall = false)
-            val intent = Intent(requireActivity(), JoshGroupActivity::class.java)
+            val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java)
             startActivity(intent)
         }
 

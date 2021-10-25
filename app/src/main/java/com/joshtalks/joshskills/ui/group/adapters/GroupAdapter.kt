@@ -18,7 +18,7 @@ class GroupAdapter(diffCallback: DiffUtil.ItemCallback<GroupItemData>) : PagingD
     inner class GroupViewHolder(val item : GroupItemBinding) : RecyclerView.ViewHolder(item.root) {
         fun onBind(data : GroupItemData) {
            item.itemData = data
-            item.root.setOnClickListener{
+            item.groupItemContainer.setOnClickListener {
                 itemClick?.invoke(data)
             }
         }

@@ -109,6 +109,8 @@ const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_IS_NEW_USER_CALL = "is_new_user_call"
 const val RTC_IS_GROUP_CALL = "is_group_call"
 const val RTC_IS_GROUP_CALL_ID = "is_group_call_id"
+const val RTC_GROUP_CALL_GROUP_NAME = "group_call_group_name"
+const val RTC_WEB_GROUP_CALL_GROUP_NAME = "group_web_call_group_name"
 const val RTC_PARTNER_ID = "partner_id"
 const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 const val IS_CHANNEL_ACTIVE_KEY = "success"
@@ -155,6 +157,9 @@ class WebRtcService : BaseWebRtcService() {
 
         @Volatile
         private var callData: HashMap<String, String?>? = null
+
+        @Volatile
+        var currentCallingGroupName = ""
 
         @Volatile
         private var callId: String? = null

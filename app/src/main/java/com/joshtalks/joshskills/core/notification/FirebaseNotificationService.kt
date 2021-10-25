@@ -90,10 +90,12 @@ import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_CALL_ID
 import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
+import com.joshtalks.joshskills.ui.voip.RTC_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
 import com.joshtalks.joshskills.ui.voip.RTC_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
+import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
 import java.io.IOException
@@ -108,6 +110,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -649,6 +652,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
+                    obj.getString("group_name")
+                } catch (e: JSONException) {
+                    ""
+                }
                 WebRtcService.forceConnect(data)
             } catch (t: Throwable) {
                 t.printStackTrace()
@@ -697,6 +705,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     data[RTC_CALL_ID] = obj.getString("agoraCallId")
                 } catch (e: Exception) {
                     e.printStackTrace()
+                }
+                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
+                    obj.getString("group_name")
+                } catch (e: JSONException) {
+                    ""
                 }
 
                 if (obj.has("f")) {
@@ -1491,6 +1504,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
+                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
+                        obj.getString("group_name")
+                    } catch (e: JSONException) {
+                        ""
+                    }
                     WebRtcService.forceConnect(data)
                 } catch (t: Throwable) {
                     t.printStackTrace()
@@ -1515,6 +1533,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         data[RTC_CALL_ID] = obj.getString("agoraCallId")
                     } catch (e: Exception) {
                         e.printStackTrace()
+                    }
+                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
+                        obj.getString("group_name")
+                    } catch (e: JSONException) {
+                        ""
                     }
 
                     if (obj.has("f")) {

@@ -8,12 +8,14 @@ import androidx.paging.cachedIn
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.ADD_GROUP_TO_SERVER
 import com.joshtalks.joshskills.constants.GROUP_IMAGE_SELECTED
+import com.joshtalks.joshskills.constants.NO_GROUP_AVAILABLE
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_GROUP
 import com.joshtalks.joshskills.constants.OPEN_IMAGE_CHOOSER
 import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
 import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
 import com.joshtalks.joshskills.constants.SEARCH_GROUP
+import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
@@ -29,16 +31,25 @@ private const val TAG = "JoshGroupViewModel"
 class JoshGroupViewModel : BaseViewModel() {
     val onDataLoaded : (Boolean) -> Unit = {
         Log.d(TAG, ": $it")
-        hasGroupData.set(it)
-        hasGroupData.notifyChange()
+        if(it.not() && isFromVoip.get()) {
+            message.what = NO_GROUP_AVAILABLE
+            singleLiveEvent.value = message
+        }
+        if(isFromVoip.get().not()) {
+            hasGroupData.set(it)
+            hasGroupData.notifyChange()
+        }
     }
     val repository = GroupRepository(onDataLoaded)
     val adapter = GroupAdapter(GroupItemComparator)
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
+    var shouldRefreshGroupList = false
+    val isFromVoip = ObservableBoolean(false)
 
     val onItemClick : (GroupItemData) -> Unit = {
+        // TODO : Check if has data
         message.what = OPEN_GROUP
         message.obj = it
         singleLiveEvent.value = message
@@ -90,6 +101,8 @@ class JoshGroupViewModel : BaseViewModel() {
             try {
             repository.addGroupToServer(request)
                 withContext(Dispatchers.Main) {
+                    message.what = SHOULD_REFRESH_GROUP_LIST
+                    singleLiveEvent.value = message
                     showToast("Group Added")
                     addingNewGroup.set(false)
                     onBackPress()

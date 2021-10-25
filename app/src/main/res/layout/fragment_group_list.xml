@@ -27,13 +27,13 @@
 
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
-                firstIcon="@{R.drawable.ic_search}"
+                firstIcon="@{vm.isFromVoip() ? R.drawable.josh_skill_logo : R.drawable.ic_search}"
                 groupHeader="@{`Groups`}"
                 groupSubHeader="@{` `}"
                 onBackPressed="@{vm::onBackPress}"
                 onFirstIconPressed="@{vm::onSearch}"
                 onSecondIconPressed="@{vm::onMoreOption}"
-                secondIcon="@{R.drawable.ic_more_option}"
+                secondIcon="@{vm.isFromVoip() ? R.drawable.josh_skill_logo : R.drawable.ic_more_option}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
