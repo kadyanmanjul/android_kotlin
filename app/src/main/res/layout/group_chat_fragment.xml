@@ -28,7 +28,7 @@
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
                 onBackPressed="@{vm::onBackPress}"
-                secondIcon="@{R.drawable.group_call}"
+                secondIcon="@{vm.hasJoinedGroup ? R.drawable.josh_skill_logo : R.drawable.group_call}"
                 onSecondIconPressed="@{vm::callGroup}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

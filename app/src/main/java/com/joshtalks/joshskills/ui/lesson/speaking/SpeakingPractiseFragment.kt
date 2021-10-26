@@ -165,6 +165,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         binding.btnGroupCall.setOnClickListener {
+            if(isCallOngoing(R.string.call_engage_initiate_call_message))
+                return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java)
             startActivity(intent)
         }

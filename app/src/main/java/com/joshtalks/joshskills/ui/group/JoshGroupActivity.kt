@@ -8,6 +8,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
@@ -18,11 +19,16 @@ import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
 import com.joshtalks.joshskills.constants.SEARCH_GROUP
 import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
@@ -53,10 +59,49 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 SEARCH_GROUP -> openGroupSearchFragment()
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
-                OPEN_CALLING_ACTIVITY -> openCallingActivity(it.data)
+                OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
             }
         }
+    }
+
+    private fun startGroupCall(data : Bundle) {
+        if (PermissionUtils.isCallingPermissionEnabled(this)) {
+            openCallingActivity(data)
+            return
+        }
+        PermissionUtils.callingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                this@JoshGroupActivity,
+                                message = R.string.call_start_permission_message
+                            )
+                            return
+                        }
+                        if (flag) {
+                            openCallingActivity(data)
+                            return
+                        } else {
+                            MaterialDialog(this@JoshGroupActivity).show {
+                                message(R.string.call_start_permission_message)
+                                positiveButton(R.string.ok)
+                            }
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     fun openCallingActivity(bundle: Bundle) {

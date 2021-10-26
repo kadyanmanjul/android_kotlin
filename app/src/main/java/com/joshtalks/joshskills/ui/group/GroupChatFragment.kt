@@ -43,7 +43,7 @@ class GroupChatFragment : BaseFragment() {
         arguments?.let {
             vm.groupHeader.set(it.getString(GROUPS_TITLE,""))
             vm.hasJoinedGroup.set(it.getBoolean(HAS_JOINED_GROUP, false))
-            vm.groupSubHeader.set("tap for group info")
+            vm.groupSubHeader.set(it.getString(GROUPS_CHAT_SUB_TITLE, ""))
             vm.groupId = it.getString(GROUPS_ID, "")
             vm.imageUrl.set(it.getString(GROUPS_IMAGE, ""))
             vm.groupCreatedAt.set(it.getString(GROUPS_CREATED_TIME, ""))

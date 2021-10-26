@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
@@ -22,10 +23,12 @@ import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
 import com.joshtalks.joshskills.constants.SEARCH_GROUP
 import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.ui.group.ADD_GROUP_FRAGMENT
 import com.joshtalks.joshskills.ui.group.CHAT_FRAGMENT
+import com.joshtalks.joshskills.ui.group.GROUPS_CHAT_SUB_TITLE
 import com.joshtalks.joshskills.ui.group.GROUPS_CREATED_TIME
 import com.joshtalks.joshskills.ui.group.GROUPS_CREATOR
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
@@ -43,6 +46,10 @@ import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import timber.log.Timber
@@ -74,7 +81,7 @@ class JoshVoipGroupActivity : BaseActivity() {
                 ON_BACK_PRESSED -> popBackStack()
                 OPEN_GROUP -> {
                     if(supportFragmentManager.backStackEntryCount == 0)
-                        openCallingActivity(it.obj as? GroupItemData)
+                        startGroupCall(it.obj as? GroupItemData)
                     else
                         openGroupChat(it.obj as? GroupItemData)
                 }
@@ -91,7 +98,46 @@ class JoshVoipGroupActivity : BaseActivity() {
         }
     }
 
-    fun openCallingActivity(groupItemData: GroupItemData?) {
+    private fun startGroupCall(groupItemData : GroupItemData?) {
+        if (PermissionUtils.isCallingPermissionEnabled(this)) {
+            openCallingActivity(groupItemData)
+            return
+        }
+        PermissionUtils.callingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                this@JoshVoipGroupActivity,
+                                message = R.string.call_start_permission_message
+                            )
+                            return
+                        }
+                        if (flag) {
+                            openCallingActivity(groupItemData)
+                            return
+                        } else {
+                            MaterialDialog(this@JoshVoipGroupActivity).show {
+                                message(R.string.call_start_permission_message)
+                                positiveButton(R.string.ok)
+                            }
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
+    }
+
+    fun openCallingActivity(groupItemData : GroupItemData?) {
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -120,6 +166,7 @@ class JoshVoipGroupActivity : BaseActivity() {
                 putString(GROUPS_CREATED_TIME, data?.getCreatedTime())
                 putString(GROUPS_CREATOR, data?.getCreator())
                 putString(GROUPS_TITLE, data?.getTitle())
+                putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
                 putString(GROUPS_IMAGE, data?.getImageUrl())
                 putString(GROUPS_ID, data?.getUniqueId())
                 data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
