@@ -278,7 +278,7 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgGroupChatBtn"
-            android:elevation="@dimen/_8sdp"
+            android:elevation="@dimen/_4sdp"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
             android:layout_below="@+id/user_point_container"
@@ -293,7 +293,6 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
-            app:elevation="@dimen/_4sdp"
             app:srcCompat="@drawable/ic_groupchat"
             tools:visibility="visible" />
 
