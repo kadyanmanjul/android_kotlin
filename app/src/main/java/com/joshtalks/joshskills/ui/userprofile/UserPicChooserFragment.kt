@@ -60,7 +60,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
             container,
             false
         )
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.fragment = this
         return binding.root
     }

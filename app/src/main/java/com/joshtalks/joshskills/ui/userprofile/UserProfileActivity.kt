@@ -359,9 +359,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
 
         if (userData.previousProfilePictures != null) {
-            binding.previousProfilePicLayout.visibility = View.GONE
+            binding.labelViewMoreDp.visibility = View.VISIBLE
         } else {
-            binding.previousProfilePicLayout.visibility = View.VISIBLE
+            binding.labelViewMoreDp.visibility = View.VISIBLE
             binding.labelPreviousDp.text = userData.previousProfilePictures?.label
         }
 

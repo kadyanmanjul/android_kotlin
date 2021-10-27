@@ -299,7 +299,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_28sdp"
                     android:background="@drawable/bg_profile_header"
-                    android:elevation="@dimen/_2sdp"
                     android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -312,7 +311,7 @@
                         android:layout_marginVertical="@dimen/_4sdp"
                         android:layout_marginStart="@dimen/_16sdp"
                         android:gravity="center|start"
-                        android:text="Previous Profile Photos (4)"
+                        android:text="@string/previous_dp"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black" />
 
@@ -326,7 +325,7 @@
                         android:layout_marginEnd="@dimen/_8sdp"
                         android:drawablePadding="@dimen/_4sdp"
                         android:gravity="center"
-                        android:text="View More"
+                        android:text="See All"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/_8ssp"
@@ -341,7 +340,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:background="@drawable/bg_profile_header"
-                    android:elevation="@dimen/_2sdp"
                     android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -362,21 +360,33 @@
 
                 <LinearLayout
                     android:id="@+id/point_layout"
-                    android:layout_width="@dimen/_126sdp"
-                    android:layout_height="@dimen/_70sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginEnd="@dimen/_8ssp"
                     android:background="@drawable/ic_points_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_6sdp"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toStartOf="@id/minutes_layout"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/highlights_layout">
+                    app:layout_constraintTop_toBottomOf="@id/highlights_layout"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.33">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_18ssp"
+                        tools:text="22,234" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/point_text"
@@ -384,20 +394,11 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/points"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                         android:textColor="@color/white" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/points"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
-                        android:textColor="@color/white"
-                        tools:text="22,234" />
-
                 </LinearLayout>
+
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/arrow_animation"
@@ -421,20 +422,33 @@
 
                 <LinearLayout
                     android:id="@+id/minutes_layout"
-                    android:layout_width="@dimen/_126sdp"
-                    android:layout_height="@dimen/_70sdp"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginStart="@dimen/_8ssp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:background="@drawable/ic_minutes_spoken_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_4sdp"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/point_layout"
-                    app:layout_constraintTop_toBottomOf="@id/highlights_layout">
+                    app:layout_constraintTop_toBottomOf="@id/highlights_layout"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.36">
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/minutes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_18ssp"
+                        tools:text="8322" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/minutes_text"
@@ -442,18 +456,8 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/user_min_text"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                         android:textColor="@color/white" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/minutes"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
-                        android:textColor="@color/white"
-                        tools:text="8322" />
 
                 </LinearLayout>
 
@@ -464,6 +468,7 @@
                     android:layout_marginTop="@dimen/_4sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/colorPrimary"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/point_layout"
@@ -507,9 +512,8 @@
                     android:id="@+id/awards_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:background="@drawable/bg_profile_header"
-                    android:elevation="@dimen/_2sdp"
                     android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -536,7 +540,7 @@
                         android:layout_marginEnd="@dimen/_8sdp"
                         android:drawablePadding="@dimen/_4sdp"
                         android:gravity="center"
-                        android:text="View More"
+                        android:text="See All"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/_8ssp"
@@ -585,7 +589,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/bg_profile_header"
-                    android:elevation="@dimen/_2sdp"
                     android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

@@ -53,7 +53,7 @@ class EditProfileFragment : DialogFragment() {
             container,
             false
         )
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.handler = this
         return binding.root
     }
