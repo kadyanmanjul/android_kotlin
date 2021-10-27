@@ -67,17 +67,15 @@ class SeeAllAwardActivity : BaseActivity() {
     private fun initRecyclerView() {
 
         awardCategory.forEach { awardCategory ->
-            val view = addLinerLayout(awardCategory)
+            val view = addLinearLayout(awardCategory)
             if (view != null) {
                 binding.multiLineLl.addView(view)
-            } else {
-
             }
         }
     }
 
     @SuppressLint("WrongViewCast")
-    private fun addLinerLayout(awardCategory: AwardCategory): View? {
+    private fun addLinearLayout(awardCategory: AwardCategory): View? {
         val layoutInflater =
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)

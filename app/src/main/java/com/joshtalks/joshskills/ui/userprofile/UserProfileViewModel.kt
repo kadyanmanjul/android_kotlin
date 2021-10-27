@@ -15,11 +15,14 @@ import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.AwardCategory
+import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
@@ -43,7 +46,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userProfileUrl: MutableLiveData<String?> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val animatedLeaderBoardData: MutableLiveData<AnimatedLeaderBoardResponse> = MutableLiveData()
-    val isSaveClicked: MutableLiveData<Int> = MutableLiveData(0)
+    val previousProfilePics: MutableLiveData<PreviousProfilePictures> = MutableLiveData()
 
     var context: JoshApplication = getApplication()
 
@@ -148,8 +151,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     response.body()?.let {
                         userProfileUrl.postValue(profilePicUrl)
                         if (isSaveBtnClicked) {
-                            val temp = (isSaveClicked.value!!) + 1
-                            isSaveClicked.postValue(temp)
+                            RxBus2.publish(SaveProfileClickedEvent(true))
                         }
                         it.isVerified = User.getInstance().isVerified
                         User.getInstance().updateFromResponse(it)
@@ -280,4 +282,27 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
+
+    fun getPreviousProfilePics() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiCallStatus.postValue(ApiCallStatus.START)
+                val response =
+                    AppObjectController.signUpNetworkService.getPreviousProfilePics()
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        previousProfilePics.postValue(it)
+                    }
+                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                    return@launch
+                } else {
+                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiCallStatus.postValue(ApiCallStatus.FAILED)
+            }
+        }
+    }
+
 }

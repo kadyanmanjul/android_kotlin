@@ -11,15 +11,30 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.DATE_FORMATTER
+import com.joshtalks.joshskills.core.DD_MM_YYYY
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.MAX_YEAR
+import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
+import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentEditProfileBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.util.Calendar
 import java.util.Locale
 
 class EditProfileFragment : DialogFragment() {
 
+    private var datePicker: DatePickerDialog? = null
+    private var userDateOfBirth: String? = null
+    private var compositeDisposable = CompositeDisposable()
     lateinit var binding: FragmentEditProfileBinding
     private val viewModel by lazy {
         ViewModelProvider(activity as UserProfileActivity).get(
@@ -45,7 +60,7 @@ class EditProfileFragment : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         isCancelable = true
         binding = DataBindingUtil.inflate(
             inflater,
@@ -60,8 +75,42 @@ class EditProfileFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initDOBPicker()
         addObservers()
         addListeners()
+    }
+
+    private fun initDOBPicker() {
+        val now = Calendar.getInstance()
+        val minYear = now.get(Calendar.YEAR) - 99
+        val maxYear = now.get(Calendar.YEAR) - MAX_YEAR
+        datePicker = SpinnerDatePickerDialogBuilder()
+            .context(requireActivity())
+            .callback { _, year, monthOfYear, dayOfMonth ->
+                val calendar = Calendar.getInstance()
+                calendar.set(year, monthOfYear, dayOfMonth)
+                binding.editTxtDob.setText(DD_MM_YYYY.format(calendar.time))
+                userDateOfBirth = DATE_FORMATTER.format(calendar.time)
+            }
+            .spinnerTheme(R.style.DatePickerStyle)
+            .showTitle(true)
+            .showDaySpinner(true)
+            .defaultDate(
+                maxYear,
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+            )
+            .minDate(
+                minYear,
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+            )
+            .maxDate(
+                maxYear,
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+            )
+            .build()
     }
 
     private fun addObservers() {
@@ -111,10 +160,13 @@ class EditProfileFragment : DialogFragment() {
             }
         }
 
-        viewModel.isSaveClicked.observe(this) {
-            dismiss()
-        }
-
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    dismiss()
+                })
     }
 
     private fun addListeners() {
@@ -132,28 +184,27 @@ class EditProfileFragment : DialogFragment() {
     }
 
     private fun saveData() {
-        val newName = binding.editTxtName.text?.trim().toString()
-        if (newName.isBlank()) {
-            showToast("Please enter your full name")
+        val newName = binding.editTxtName.text?.trim()?.toString()
+        if (newName.isNullOrBlank()) {
+            showToast(getString(R.string.name_error_toast))
             return
         }
 
-        val dobStr = binding.editTxtDob.text?.trim().toString()
-        if (dobStr.isBlank() || dobStr.split("/").size != 3) {
-            showToast("Please enter your correct date of birth")
+        if (userDateOfBirth.isNullOrBlank()) {
+            showToast(getString(R.string.dob_error_toast))
             return
         }
 
         val homeTown = binding.editTxtHometown.text?.trim().toString()
         if (homeTown.isBlank()) {
-            showToast("Please enter your hometown")
+            showToast(getString(R.string.hometown_error_toast))
             return
         }
 
         viewModel.saveProfileInfo(
-            viewModel.userProfileUrl.value!!,
+            viewModel.userProfileUrl.value ?: EMPTY,
             newName,
-            dobStr,
+            userDateOfBirth!!,
             homeTown,
             true
         )
@@ -170,9 +221,14 @@ class EditProfileFragment : DialogFragment() {
             }
         }
         binding.editTxtName.setText(resp.trim())
-        userData.dateOfBirth?.let {
-            // val dateStr = DD_MM_YYYY.format(it).lowercase(Locale.getDefault())
-            binding.editTxtDob.setText(it)
+        userData.dateOfBirth?.let { dobStr ->
+            try {
+                val date = DD_MM_YYYY.parse(dobStr)
+                userDateOfBirth = DATE_FORMATTER.format(date)
+                binding.editTxtDob.setText(dobStr)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
         binding.editTxtHometown.setText(userData.hometown)
         binding.editTxtBatch.setText(userData.joinedOn)
@@ -192,6 +248,10 @@ class EditProfileFragment : DialogFragment() {
             viewModel.getUserProfileUrl().isNullOrBlank(),
             isFromRegistration = false
         )
+    }
+
+    fun selectDateOfBirth() {
+        datePicker?.show()
     }
 
     companion object {

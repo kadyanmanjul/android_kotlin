@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
@@ -324,6 +325,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 showProgressBar()
             }
         }
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    getProfileData(intervalType, previousPage)
+                })
+
     }
 
     private fun initView(userData: UserProfileResponse) {
@@ -354,7 +364,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
         }
         binding.joinedOn.text = userData.joinedOn
-        if (userData.isOnline!!) {
+        if (userData.isOnline == true) {
             binding.onlineStatusIv.visibility = View.VISIBLE
         }
 

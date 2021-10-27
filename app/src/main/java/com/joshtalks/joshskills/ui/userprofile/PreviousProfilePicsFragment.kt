@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.databinding.FragmentPreviousProfilePicsBinding
 import com.joshtalks.joshskills.repository.server.Picture
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 
 class PreviousProfilePicsFragment : DialogFragment() {
@@ -30,6 +30,7 @@ class PreviousProfilePicsFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialogBlank)
         changeDialogConfiguration()
+        // viewModel.getPreviousProfilePics()
     }
 
     private fun changeDialogConfiguration() {
@@ -67,7 +68,7 @@ class PreviousProfilePicsFragment : DialogFragment() {
         viewModel.userData.observe(
             this, {
                 hideProgressBar()
-                initView(it)
+                initView(it?.previousProfilePictures)
             })
 
         viewModel.apiCallStatusLiveData.observe(this) {
@@ -98,6 +99,11 @@ class PreviousProfilePicsFragment : DialogFragment() {
                 showProgressBar()
             }
         }
+
+        viewModel.previousProfilePics.observe(this) {
+            initView(it)
+        }
+
     }
 
     private fun addListeners() {
@@ -106,14 +112,15 @@ class PreviousProfilePicsFragment : DialogFragment() {
         }
     }
 
-    private fun initView(userData: UserProfileResponse) {
-        userData.previousProfilePictures?.pictures?.sortedBy { it.timestamp?.time }
+    private fun initView(previousProfilePics: PreviousProfilePictures?) {
+        previousProfilePics?.pictures?.sortedBy { it.timestamp?.time }
             ?.let { picsList ->
                 val recyclerView: RecyclerView = binding.rvPreviousPics
                 val layoutManager = GridLayoutManager(context, 3)
                 recyclerView.layoutManager = layoutManager
                 recyclerView.setHasFixedSize(true)
-                recyclerView.adapter = PreviousPicsAdapter(picsList,
+                recyclerView.adapter = PreviousPicsAdapter(
+                    picsList,
                     object : PreviousPicsAdapter.OnPreviousPicClickListener {
                         override fun onPreviousPicClick(picture: Picture) {
                             ImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null)
