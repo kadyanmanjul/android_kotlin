@@ -61,7 +61,7 @@ class SeeAllAwardActivity : BaseActivity() {
                 openHelpActivity()
             }
         }
-        text_message_title.text = getString(R.string.awards)
+        text_message_title.text = "Awards Cabinet"
     }
 
     private fun initRecyclerView() {

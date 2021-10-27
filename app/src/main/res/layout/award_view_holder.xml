@@ -21,13 +21,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Well done Akshat, you scored" />
+        tools:text="Student Performance Award" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/award1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
@@ -37,16 +37,35 @@
         app:layout_constraintWidth_percent="0.3"
         tools:visibility="visible">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_count_award1"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/ic_ticker"
+            android:elevation="@dimen/_1sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3"
+            tools:visibility="visible" />
+
         <ImageView
             android:id="@+id/image_award1"
-            android:layout_width="@dimen/_64sdp"
-            android:layout_height="@dimen/_64sdp"
+            android:layout_width="@dimen/_68sdp"
+            android:layout_height="@dimen/_72sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_6sdp"
             android:scaleType="fitXY"
             app:layout_constraintBottom_toTopOf="@id/title_award1"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.533"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             tools:src="@drawable/sample_award" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -55,9 +74,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_2sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/white"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_5ssp"
             app:layout_constraintBottom_toTopOf="@id/date_award1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,14 +84,15 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/date_award1"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_62sdp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_6sdp"
-            android:background="#F7F78D"
+            android:background="@drawable/bg_award_date"
+            android:gravity="center"
             android:padding="@dimen/_4sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="#884605"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_5ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -84,7 +104,7 @@
         layout="@layout/award_item_view_holder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -94,10 +114,27 @@
         app:layout_constraintWidth_percent="0.3"
         tools:visibility="visible">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_count_award2"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/ic_ticker"
+            android:elevation="@dimen/_1sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3"
+            tools:visibility="visible" />
+
         <ImageView
             android:id="@+id/image_award2"
-            android:layout_width="@dimen/_64sdp"
-            android:layout_height="@dimen/_64sdp"
+            android:layout_width="@dimen/_68sdp"
+            android:layout_height="@dimen/_72sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_6sdp"
             android:scaleType="fitXY"
             app:layout_constraintBottom_toTopOf="@id/title_award2"
@@ -112,9 +149,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_2sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/white"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_5ssp"
             app:layout_constraintBottom_toTopOf="@id/date_award2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -122,14 +159,15 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/date_award2"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_62sdp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_6sdp"
-            android:background="#F7F78D"
+            android:background="@drawable/bg_award_date"
+            android:gravity="center"
             android:padding="@dimen/_4sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="#884605"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_5ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -137,12 +175,11 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
         android:id="@+id/award3"
         layout="@layout/award_item_view_holder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -152,11 +189,27 @@
         app:layout_constraintWidth_percent="0.3"
         tools:visibility="visible">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_count_award3"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/ic_ticker"
+            android:elevation="@dimen/_1sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3"
+            tools:visibility="visible" />
 
+        <ImageView
             android:id="@+id/image_award3"
-            android:layout_width="@dimen/_64sdp"
-            android:layout_height="@dimen/_64sdp"
+            android:layout_width="@dimen/_68sdp"
+            android:layout_height="@dimen/_72sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_6sdp"
             android:scaleType="fitXY"
             app:layout_constraintBottom_toTopOf="@id/title_award3"
@@ -171,9 +224,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_2sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/white"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_5ssp"
             app:layout_constraintBottom_toTopOf="@id/date_award3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -181,20 +234,20 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/date_award3"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_62sdp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_6sdp"
-            android:background="#F7F78D"
+            android:background="@drawable/bg_award_date"
+            android:gravity="center"
             android:padding="@dimen/_4sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="#884605"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_5ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="24 Aug, 2021" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <com.mindorks.placeholderview.PlaceHolderView
         android:id="@+id/rv"

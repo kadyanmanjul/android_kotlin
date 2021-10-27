@@ -23,6 +23,9 @@ class AwardItemViewHolder(var award: Award, var context: Context) {
     @View(R.id.date)
     lateinit var date: AppCompatTextView
 
+    @View(R.id.txt_count_award)
+    lateinit var count: AppCompatTextView
+
     @View(R.id.image)
     lateinit var image: ImageView
 
@@ -39,6 +42,12 @@ class AwardItemViewHolder(var award: Award, var context: Context) {
         date.text = award.dateText
         award.imageUrl?.let {
             image.setImage(it, context)
+        }
+        if (award.count > 1) {
+            count.visibility = android.view.View.VISIBLE
+            count.text = award.count.toString()
+        } else {
+            count.visibility = android.view.View.GONE
         }
     }
 

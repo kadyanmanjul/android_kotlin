@@ -3,14 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/edit_profile"
-        android:actionLayout="@layout/base_toolbar"
-        android:orderInCategory="100"
-        android:visible="true"
-        android:title="@string/edit_profile"
-        app:showAsAction="collapseActionView" />
-
-    <item
         android:id="@+id/menu_points_history"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"

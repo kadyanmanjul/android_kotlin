@@ -13,7 +13,7 @@ data class UserProfileResponse(
     @SerializedName("createdAt")
     val createdAt: Int?,
     @SerializedName("date_of_birth")
-    val dateOfBirth: Int?,
+    val dateOfBirth: String?,
     @SerializedName("joined_on")
     val joinedOn: String?,
     @SerializedName("lastActiveAt")
@@ -63,7 +63,7 @@ data class UserProfileResponse(
     @SerializedName("is_conv_room_active")
     val isConvRoomActive: Boolean,
     @SerializedName("hometown")
-    val hometown: String = EMPTY,
+    val hometown: String? = EMPTY,
     @SerializedName("profile_pictures")
     val previousProfilePictures: PreviousProfilePictures? = null,
     @SerializedName("course_enrolled")

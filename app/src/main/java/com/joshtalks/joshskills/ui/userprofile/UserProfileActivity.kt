@@ -163,6 +163,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.labelViewMoreAwards.setOnClickListener {
             showAllAwards()
         }
+
+        binding.labelViewMoreDp.setOnClickListener {
+            openPreviousProfilePicsScreen()
+        }
     }
 
     private fun initToolbar() {
@@ -173,9 +177,23 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         with(iv_help) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openHelpActivity()
+            if (mentorId == Mentor.getInstance().getId()) {
+                visibility = View.GONE
+            } else {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    openHelpActivity()
+                }
+            }
+        }
+        with(iv_edit) {
+            if (mentorId == Mentor.getInstance().getId()) {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    openEditProfileScreen()
+                }
+            } else {
+                visibility = View.GONE
             }
         }
         text_message_title.text = getString(R.string.profile)
@@ -190,6 +208,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         if (mentorId == Mentor.getInstance().getId()) {
+            binding.editPic.visibility = View.VISIBLE
+        } else {
             binding.editPic.visibility = View.GONE
         }
     }
@@ -215,13 +235,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 R.id.change_dp -> {
                     openChooser()
                 }
-                R.id.edit_profile -> {
-                    // TODO - Open edit profile screen
-                }
             }
             return@setOnMenuItemClickListener false
         }
         popupMenu.show()
+    }
+
+    fun openEditProfileScreen() {
+        EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
+    }
+
+    fun openPreviousProfilePicsScreen() {
+        PreviousProfilePicsFragment.newInstance()
+            .show(supportFragmentManager, "PreviousProfilePics")
     }
 
     /* private fun initRecyclerView() {
@@ -310,9 +336,23 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     .append(" ")
             }
         }
+        text_message_title.text = resp
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
-        binding.txtUserHometown.text = userData.hometown
+        if (userData.age == null || userData.age <= 1) {
+            binding.userAge.text = "___________"
+            binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.black))
+        } else {
+            binding.userAge.text = userData.age.toString()
+            binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
+        }
+        if (userData.hometown.isNullOrBlank()) {
+            binding.txtUserHometown.text = "___________"
+            binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.black))
+        } else {
+            binding.txtUserHometown.text = userData.hometown
+            binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
+        }
         binding.joinedOn.text = userData.joinedOn
         if (userData.isOnline!!) {
             binding.onlineStatusIv.visibility = View.VISIBLE
@@ -387,6 +427,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.awardsLayout.visibility = View.VISIBLE
             binding.multiLineLl.visibility = View.VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {
+                binding.labelViewMoreAwards.visibility = View.VISIBLE
                 binding.multiLineLl.removeAllViews()
                 userData.awardCategory?.sortedBy { it.sortOrder }?.forEach { awardCategory ->
                     val view = getAwardLayoutItem(awardCategory)
@@ -395,8 +436,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     }
                 }
             } else {
-                binding.noAwardIcon.visibility = View.VISIBLE
                 binding.noAwardText.visibility = View.VISIBLE
+                binding.labelViewMoreAwards.visibility = View.GONE
+                if (mentorId == Mentor.getInstance().getId()) {
+                    binding.noAwardText.text =
+                        getString(R.string.no_awards_me, resp.trim().split(" ")[0])
+                } else {
+                    binding.noAwardText.text =
+                        getString(R.string.no_awards_others, resp.trim().split(" ")[0])
+                }
             }
         }
         if (userData.enrolledCoursesList == null) {
@@ -425,8 +473,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             return false
         } else {
             awardCategory.forEach {
-                it.awards?.forEach {
-                    if (it.is_achieved) {
+                it.awards?.forEach { award ->
+                    if (award.is_achieved) {
                         return true
                     }
                 }
@@ -533,7 +581,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     award,
                     view.findViewById(R.id.image_award1),
                     view.findViewById(R.id.title_award1),
-                    view.findViewById(R.id.date_award1)
+                    view.findViewById(R.id.date_award1),
+                    view.findViewById(R.id.txt_count_award1)
                 )
             }
             1 -> {
@@ -544,7 +593,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     award,
                     view.findViewById(R.id.image_award2),
                     view.findViewById(R.id.title_award2),
-                    view.findViewById(R.id.date_award2)
+                    view.findViewById(R.id.date_award2),
+                    view.findViewById(R.id.txt_count_award2)
                 )
             }
             2 -> {
@@ -554,7 +604,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     award,
                     view.findViewById(R.id.image_award3),
                     view.findViewById(R.id.title_award3),
-                    view.findViewById(R.id.date_award3)
+                    view.findViewById(R.id.date_award3),
+                    view.findViewById(R.id.txt_count_award3)
                 )
             }
             else -> {
@@ -571,7 +622,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         award: Award,
         image: ImageView,
         title: AppCompatTextView,
-        date: AppCompatTextView
+        date: AppCompatTextView,
+        count: AppCompatTextView
     ) {
         title.text = award.awardText
         if (award.dateText.isNullOrBlank()) {
@@ -582,6 +634,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         award.imageUrl?.let {
             image.setImage(it, this)
+        }
+        if (award.count > 1) {
+            count.visibility = View.VISIBLE
+            count.text = award.count.toString()
+        } else {
+            count.visibility = View.GONE
         }
     }
 
@@ -623,7 +681,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     {
                         viewModel.userData.value?.photoUrl = it.url
                         if (it.url.isBlank()) {
-                            viewModel.completingProfile("")
+                            viewModel.saveProfileInfo("")
                         }
                     },
                     {

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
@@ -42,6 +43,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userProfileUrl: MutableLiveData<String?> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val animatedLeaderBoardData: MutableLiveData<AnimatedLeaderBoardResponse> = MutableLiveData()
+    val isSaveClicked: MutableLiveData<Int> = MutableLiveData(0)
 
     var context: JoshApplication = getApplication()
 
@@ -105,7 +107,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    completingProfile(url)
+                    saveProfileInfo(url)
                 } else {
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
@@ -117,19 +119,38 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun completingProfile(map: String?) {
+    fun saveProfileInfo(
+        profilePicUrl: String?,
+        newName: String = EMPTY,
+        dobStr: String = EMPTY,
+        homeTown: String = EMPTY,
+        isSaveBtnClicked: Boolean = false
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                apiCallStatus.postValue(ApiCallStatus.START)
                 val requestMap = mutableMapOf<String, String?>()
-                requestMap["photo_url"] = map
-                userProfileUrl.postValue(map)
+                requestMap["photo_url"] = profilePicUrl
+                if (newName.isNotEmpty()) {
+                    requestMap["first_name"] = newName
+                }
+                if (dobStr.isNotEmpty()) {
+                    requestMap["date_of_birth"] = dobStr
+                }
+                if (homeTown.isNotEmpty()) {
+                    requestMap["hometown"] = homeTown
+                }
                 val response =
                     AppObjectController.signUpNetworkService.updateUserProfile(
                         Mentor.getInstance().getUserId(), requestMap
                     )
                 if (response.isSuccessful) {
                     response.body()?.let {
-
+                        userProfileUrl.postValue(profilePicUrl)
+                        if (isSaveBtnClicked) {
+                            val temp = (isSaveClicked.value!!) + 1
+                            isSaveClicked.postValue(temp)
+                        }
                         it.isVerified = User.getInstance().isVerified
                         User.getInstance().updateFromResponse(it)
                     }
@@ -137,7 +158,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     return@launch
                 } else {
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
-
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
