@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.ui.group.GroupChatFragment
 import com.joshtalks.joshskills.ui.group.GroupListFragment
 import com.joshtalks.joshskills.ui.group.GroupSearchFragment
 import com.joshtalks.joshskills.ui.group.HAS_JOINED_GROUP
+import com.joshtalks.joshskills.ui.group.IS_FROM_VOIP
 import com.joshtalks.joshskills.ui.group.LIST_FRAGMENT
 import com.joshtalks.joshskills.ui.group.SEARCH_FRAGMENT
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
@@ -148,7 +149,13 @@ class JoshVoipGroupActivity : BaseActivity() {
     private fun openGroupSearchFragment() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id.group_fragment_container, GroupSearchFragment(), SEARCH_FRAGMENT)
+            val bundle = Bundle().apply {
+                putBoolean(IS_FROM_VOIP, true)
+            }
+            val fragment = GroupSearchFragment().apply {
+                arguments = bundle
+            }
+            replace(R.id.group_fragment_container, fragment , SEARCH_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }

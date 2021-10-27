@@ -63,5 +63,10 @@ class GroupSearchFragment : BaseFragment() {
         vm.adapter.refresh()
     }
 
-    override fun setArguments() {}
+
+    override fun setArguments() {
+        arguments.let {
+            vm.isFromVoip.set(it?.getBoolean(IS_FROM_VOIP, false) ?: false)
+        }
+    }
 }

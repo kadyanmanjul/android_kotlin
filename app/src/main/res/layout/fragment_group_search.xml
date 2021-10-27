@@ -144,6 +144,7 @@
             android:gravity="center"
             android:insetTop="0dp"
             android:onClick="@{vm::createGroup}"
+            android:visibility="@{vm.isFromVoip ? View.GONE : View.VISIBLE}"
             android:insetBottom="0dp"
             android:text="Create Group"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"

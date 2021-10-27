@@ -44,6 +44,7 @@ class GroupSearchViewModel : BaseViewModel() {
     val queryLiveData = MutableLiveData("")
     val hasGroupData = ObservableBoolean(true)
     val isSearching = ObservableBoolean(false)
+    val isFromVoip = ObservableBoolean(false)
 
     init {
         groupLiveData = Transformations.switchMap(queryLiveData) {
