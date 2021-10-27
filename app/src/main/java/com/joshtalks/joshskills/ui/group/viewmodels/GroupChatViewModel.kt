@@ -68,7 +68,6 @@ class GroupChatViewModel : BaseViewModel() {
             try {
                 repository.joinGroup(groupId)
                 withContext(Dispatchers.Main) {
-                    showToast("Joined Group")
                     hasJoinedGroup.set(true)
                     message.what = SHOULD_REFRESH_GROUP_LIST
                     singleLiveEvent.value = message

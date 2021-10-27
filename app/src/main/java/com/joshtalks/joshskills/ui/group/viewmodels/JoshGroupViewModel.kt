@@ -93,7 +93,6 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun addGroup(request : AddGroupRequest) {
-        showToast("Uploading")
         addingNewGroup.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -101,7 +100,6 @@ class JoshGroupViewModel : BaseViewModel() {
                 withContext(Dispatchers.Main) {
                     message.what = SHOULD_REFRESH_GROUP_LIST
                     singleLiveEvent.value = message
-                    showToast("Group Added")
                     addingNewGroup.set(false)
                     onBackPress()
                 }
