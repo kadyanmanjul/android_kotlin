@@ -23,5 +23,5 @@ interface GroupApiService {
     suspend fun joinGroup(@Body request : JoinGroupRequest): Response<Unit>
 
     @POST("$DIR/group/create_group/")
-    suspend fun createGroup(@Body request : AddGroupRequest): Response<Unit>
+    suspend fun createGroup(@Body request : AddGroupRequest): Map<String, Any?>
 }

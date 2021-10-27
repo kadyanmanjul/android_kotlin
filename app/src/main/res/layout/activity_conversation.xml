@@ -279,8 +279,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgGroupChatBtn"
             android:elevation="@dimen/_8sdp"
-            android:layout_width="@dimen/_28sdp"
-            android:layout_height="@dimen/_28sdp"
+            android:layout_width="@dimen/_42sdp"
+            android:layout_height="@dimen/_42sdp"
             android:layout_below="@+id/user_point_container"
             android:layout_alignParentEnd="true"
             android:layout_marginHorizontal="@dimen/_12sdp"

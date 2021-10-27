@@ -31,7 +31,7 @@ class GroupRepository(val onDataLoaded : ((Boolean) -> Unit)? = null) {
     private val mentorId = Mentor.getInstance().getId()
 
     fun getGroupSearchResult(query : String) = Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
-        GroupPagingNetworkSource(query, isSearching = true, apiService = apiService)
+        GroupPagingNetworkSource(query, isSearching = true, apiService = apiService, onDataLoaded = onDataLoaded)
     }
 
     fun getGroupListResult() = Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {

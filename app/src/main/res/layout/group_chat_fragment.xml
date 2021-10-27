@@ -28,7 +28,7 @@
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
                 onBackPressed="@{vm::onBackPress}"
-                secondIcon="@{vm.hasJoinedGroup ? R.drawable.josh_skill_logo : R.drawable.group_call}"
+                secondIcon="@{vm.hasJoinedGroup ? R.drawable.group_call : R.drawable.josh_skill_logo }"
                 onSecondIconPressed="@{vm::callGroup}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_2sdp"
-                android:textColor="@color/black"
+                android:textColor="@color/group_coming_soon"
                 android:text="@{vm.groupCreatedAt}" />
         </com.google.android.material.card.MaterialCardView>
 
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_2sdp"
-                android:textColor="@color/md_grey_600"
+                android:textColor="@color/group_coming_soon"
                 android:text="@{vm.groupCreator}" />
         </com.google.android.material.card.MaterialCardView>
 
@@ -110,14 +110,14 @@
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+            android:foreground="?android:attr/selectableItemBackground"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
-            android:text="@{vm.hasJoinedGroup ? `Chat function will be comming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"
+            android:text="@{vm.hasJoinedGroup ? `Chat function will be coming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"
             android:background="@color/white"
             android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
             android:textSize="@{vm.hasJoinedGroup ? @dimen/_12ssp : @dimen/_14ssp, default=@dimen/_14ssp}"
-            android:textColor="@{vm.hasJoinedGroup ? @color/black : @color/green, default=@color/green}"
+            android:textColor="@{vm.hasJoinedGroup ? @color/group_coming_soon : @color/join_group, default=@color/join_group}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

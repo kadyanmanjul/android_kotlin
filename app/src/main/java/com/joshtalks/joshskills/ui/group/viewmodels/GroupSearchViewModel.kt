@@ -1,8 +1,7 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
-import android.util.Log
 import android.view.View
-import androidx.lifecycle.LiveData
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.asFlow
@@ -13,7 +12,7 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.CLEAR_SEARCH
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_GROUP
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
@@ -32,15 +31,19 @@ import kotlinx.coroutines.launch
 private const val TAG = "GroupSearchViewModel"
 @FlowPreview
 class GroupSearchViewModel : BaseViewModel() {
-    val repository = GroupRepository()
+    val onDataLoaded : (Boolean) -> Unit = {
+        //showToast("No Group Found")
+        hasGroupData.set(it)
+        hasGroupData.notifyChange()
+    }
+    val repository = GroupRepository(onDataLoaded)
     val adapter = GroupAdapter(GroupItemComparator)
     val stateAdapter = GroupStateAdapter()
     val query = MutableStateFlow("")
     var groupLiveData : Flow<PagingData<GroupItemData>>
     val queryLiveData = MutableLiveData("")
-    val onDataLoaded : (Boolean) -> Unit = {
-        showToast("No Group Found")
-    }
+    val hasGroupData = ObservableBoolean(true)
+    val isSearching = ObservableBoolean(false)
 
     init {
         groupLiveData = Transformations.switchMap(queryLiveData) {
@@ -55,6 +58,11 @@ class GroupSearchViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
+    fun createGroup(view : View) {
+        message.what = OPEN_NEW_GROUP
+        singleLiveEvent.value = message
+    }
+
 
     private fun setQueryListener() {
         viewModelScope.launch {
@@ -62,6 +70,10 @@ class GroupSearchViewModel : BaseViewModel() {
                 .distinctUntilChanged()
                 .flowOn(Dispatchers.Main)
                 .collect {
+                    if(it.isBlank())
+                        isSearching.set(false)
+                    else
+                        isSearching.set(true)
                     queryLiveData.value = it
                 }
         }

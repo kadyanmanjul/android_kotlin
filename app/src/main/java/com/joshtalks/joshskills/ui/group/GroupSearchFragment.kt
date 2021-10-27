@@ -1,16 +1,12 @@
 package com.joshtalks.joshskills.ui.group
 
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.Explode
-import com.flurry.sdk.it
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLEAR_SEARCH

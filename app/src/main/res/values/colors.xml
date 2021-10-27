@@ -173,4 +173,8 @@
     <color name="transparent_blue_alpha_33">#44173A50</color>
     <color name="leaderboard_overlay_status_bar">#14446A</color>
 
+    <!--Colors for Groups-->
+    <color name="group_coming_soon">#47555E</color>
+    <color name="join_group">#25D366</color>
+
 </resources>

@@ -2,13 +2,14 @@ package com.joshtalks.joshskills.ui.group.viewmodels
 
 import android.util.Log
 import android.view.View
+import androidx.databinding.Observable
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.ADD_GROUP_TO_SERVER
 import com.joshtalks.joshskills.constants.GROUP_IMAGE_SELECTED
-import com.joshtalks.joshskills.constants.NO_GROUP_AVAILABLE
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_GROUP
 import com.joshtalks.joshskills.constants.OPEN_IMAGE_CHOOSER
@@ -24,23 +25,20 @@ import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 
 private const val TAG = "JoshGroupViewModel"
 class JoshGroupViewModel : BaseViewModel() {
     val onDataLoaded : (Boolean) -> Unit = {
         Log.d(TAG, ": $it")
-        if(it.not() && isFromVoip.get()) {
-            message.what = NO_GROUP_AVAILABLE
-            singleLiveEvent.value = message
-        }
-        if(isFromVoip.get().not()) {
             hasGroupData.set(it)
             hasGroupData.notifyChange()
-        }
     }
     val repository = GroupRepository(onDataLoaded)
+    val groupTitle = ObservableField("Groups")
     val adapter = GroupAdapter(GroupItemComparator)
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
@@ -109,7 +107,14 @@ class JoshGroupViewModel : BaseViewModel() {
                 }
             } catch (e : Exception) {
                 withContext(Dispatchers.Main) {
-                    showToast("Error while adding groups")
+                    if(e is HttpException) {
+                        if(e.code() == 501)
+                            showToast("Error : Same Group exist")
+                        else
+                            showToast("Error while adding group")
+                    } else
+                        showToast("Unknown Error Occurred")
+                    addingNewGroup.set(false)
                 }
                 e.printStackTrace()
             }

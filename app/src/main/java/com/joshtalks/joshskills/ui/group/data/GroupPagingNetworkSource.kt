@@ -28,7 +28,7 @@ class GroupPagingNetworkSource(val query: String = "", val isSearching : Boolean
             val data = responseData.groups?.map {
                 it as GroupItemData
             }
-            if(isSearching.not() && currentPageNo == 1 && data.isNullOrEmpty())
+            if(currentPageNo == 1 && data.isNullOrEmpty())
                 onDataLoaded?.invoke(false)
             else
                 onDataLoaded?.invoke(true)

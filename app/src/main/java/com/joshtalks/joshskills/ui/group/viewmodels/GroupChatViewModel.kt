@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
+import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -44,6 +45,16 @@ class GroupChatViewModel : BaseViewModel() {
     fun callGroup() {
         if(isCallOngoing(R.string.call_engage_initiate_call_message))
             return
+        val memberText = groupSubHeader.get() ?: "0"
+        val memberCount = getMemberCount(memberText)
+        if( memberCount == 0) {
+            showToast("Unknown Error Occurred")
+            return
+        } else if(memberCount == 1) {
+            showToast("You are the only member, Can't Initiate a Call")
+            return
+        }
+
         message.what = OPEN_CALLING_ACTIVITY
         message.data = Bundle().apply {
             putString(GROUPS_ID, groupId)

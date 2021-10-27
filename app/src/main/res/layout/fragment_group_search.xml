@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <import type="android.view.View"/>
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.group.viewmodels.GroupSearchViewModel" />
@@ -37,10 +38,10 @@
                     android:layout_width="@dimen/_24sdp"
                     android:layout_height="@dimen/_24sdp"
                     android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:onClick="@{vm::onBackPress}"
                     android:paddingVertical="@dimen/_4sdp"
                     android:src="@drawable/ic_arrow_back"
                     android:tint="@color/black"
-                    android:onClick="@{vm::onBackPress}"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -58,13 +59,12 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/search_view"
-                    android:transitionName="group_search_appbar"
+                    onSearch="@{vm.query}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@color/transparent"
                     android:hint="Search Groups"
-                    onSearch="@{vm.query}"
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:maxLines="1"
@@ -72,6 +72,7 @@
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:paddingVertical="@dimen/_4sdp"
                     android:textColor="@color/black"
+                    android:transitionName="group_search_appbar"
                     app:layout_constraintEnd_toStartOf="@+id/img_clear"
                     app:layout_constraintStart_toEndOf="@id/back_iv"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -81,11 +82,12 @@
                     android:layout_width="@dimen/_24sdp"
                     android:layout_height="@dimen/_24sdp"
                     android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:visibility="@{vm.isSearching ? View.VISIBLE : View.GONE}"
+                    android:onClick="@{vm::onClearSearch}"
                     android:paddingVertical="@dimen/_4sdp"
                     android:paddingEnd="@dimen/_8sdp"
                     android:src="@drawable/ic_cross"
                     android:tint="@color/black"
-                    android:onClick="@{vm::onClearSearch}"
                     app:layout_constraintBottom_toBottomOf="@+id/search_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/search_view" />
@@ -97,11 +99,12 @@
             android:id="@+id/lable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Currently active groups:"
-            android:textColor="@color/black"
             android:layout_margin="@dimen/_12sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:paddingVertical="@dimen/_4sdp"
+            android:text="Currently active groups:"
+            android:visibility="@{vm.isSearching ? View.GONE : View.VISIBLE}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_layout_card" />
 
@@ -116,6 +119,51 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lable" />
+
+        <TextView
+            android:id="@+id/no_group_lable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_24sdp"
+            android:text="No Group Found:"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_layout_card" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_create_group"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:onClick="@{vm::createGroup}"
+            android:insetBottom="0dp"
+            android:text="Create Group"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/no_group_lable"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:rippleColor="@color/white"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{vm.hasGroupData || !vm.isSearching ? View.GONE : View.VISIBLE}"
+            app:constraint_referenced_ids="no_group_lable,btn_create_group" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

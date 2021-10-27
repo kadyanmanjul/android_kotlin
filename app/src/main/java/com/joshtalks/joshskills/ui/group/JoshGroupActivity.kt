@@ -141,6 +141,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_CREATOR, data?.getCreator())
                 putString(GROUPS_TITLE, data?.getTitle())
                 putString(GROUPS_IMAGE, data?.getImageUrl())
+                putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
                 putString(GROUPS_ID, data?.getUniqueId())
                 data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
             }
