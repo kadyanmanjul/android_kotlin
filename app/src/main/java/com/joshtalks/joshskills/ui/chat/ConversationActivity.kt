@@ -58,6 +58,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
@@ -67,6 +68,8 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
@@ -245,6 +248,10 @@ class ConversationActivity :
     }
 
     private fun init() {
+        if(inboxEntity.courseId == "151")
+            conversationBinding.imgGroupChatBtn.visibility = VISIBLE
+        else
+            conversationBinding.imgGroupChatBtn.visibility = GONE
         initToolbar()
         //  groupChatHintLogic()    //Group chat hint UI
         // initCourseProgressTooltip()    // course progress tooltip
@@ -539,7 +546,10 @@ class ConversationActivity :
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
-                val intent = Intent(this, JoshGroupActivity::class.java)
+                val intent = Intent(this, JoshGroupActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, getConversationId())
+                }
+                GroupAnalytics.push(MAIN_GROUP_ICON)
                 startActivity(intent)
             }
         }

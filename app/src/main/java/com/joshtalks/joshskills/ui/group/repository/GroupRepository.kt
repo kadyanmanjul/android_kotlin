@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
@@ -28,6 +29,7 @@ private const val TAG = "GroupRepository"
 class GroupRepository(val onDataLoaded : ((Boolean) -> Unit)? = null) {
     // TODO: Will use dagger2 for injecting apiService
     private val apiService: GroupApiService = AppObjectController.retrofit.create(GroupApiService::class.java)
+    private val analyticsService: GroupsAnalyticsService = AppObjectController.retrofit.create(GroupsAnalyticsService::class.java)
     private val mentorId = Mentor.getInstance().getId()
 
     fun getGroupSearchResult(query : String) = Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -51,6 +53,8 @@ class GroupRepository(val onDataLoaded : ((Boolean) -> Unit)? = null) {
                 request.groupIcon = url ?: ""
                 apiService.createGroup(request)
     }
+
+    suspend fun pushAnalyticsToServer(request : Map<String, Any?>) = analyticsService.groupImpressionDetails(request)
 
     private fun getCompressImage(path: String): String {
         return try {

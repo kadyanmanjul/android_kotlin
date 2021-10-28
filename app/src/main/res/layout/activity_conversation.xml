@@ -290,6 +290,7 @@
             android:backgroundTint="@color/colorPrimary"
             android:clickable="true"
             android:focusable="true"
+            android:visibility="gone"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:padding="@dimen/_4sdp"

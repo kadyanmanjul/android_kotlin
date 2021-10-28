@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.karumi.dexter.MultiplePermissionsReport
@@ -35,6 +36,7 @@ class GroupChatViewModel : BaseViewModel() {
     val imageUrl = ObservableField("")
     val groupCreator = ObservableField("")
     val groupCreatedAt = ObservableField("")
+    var conversationId : String = ""
     lateinit var groupId : String
 
     fun onBackPress() {

@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.constants.OPEN_GROUP
 import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -45,6 +46,7 @@ class GroupSearchViewModel : BaseViewModel() {
     val hasGroupData = ObservableBoolean(true)
     val isSearching = ObservableBoolean(false)
     val isFromVoip = ObservableBoolean(false)
+    var conversationId : String = ""
 
     init {
         groupLiveData = Transformations.switchMap(queryLiveData) {
@@ -57,6 +59,10 @@ class GroupSearchViewModel : BaseViewModel() {
         message.what = OPEN_GROUP
         message.obj = it
         singleLiveEvent.value = message
+        if(isSearching.get())
+            GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_SEARCH)
+        else
+            GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_RECOMMENDATION)
     }
 
     fun createGroup(view : View) {

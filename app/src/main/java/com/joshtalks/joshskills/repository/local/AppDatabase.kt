@@ -33,6 +33,8 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicDao
 import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
+import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
+import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -49,9 +51,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class
     ],
-    version = 39,
+    version = 40,
     exportSchema = true
 )
 @TypeConverters(
@@ -136,7 +138,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_35_36,
                                 MIGRATION_36_37,
                                 MIGRATION_37_38,
-                                MIGRATION_38_39
+                                MIGRATION_38_39,
+                                MIGRATION_39_40
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -465,9 +468,16 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE course ADD COLUMN is_course_bought INTEGER NOT NULL DEFAULT 0")
             }
         }
+
         private val MIGRATION_38_39: Migration = object : Migration(38,39) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN sharableVideoDownloadedLocalPath TEXT ")
+            }
+        }
+
+        private val MIGRATION_39_40: Migration = object : Migration(39,40) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `groups_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
             }
         }
 
@@ -509,6 +519,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun courseUsageDao(): CourseUsageDao
     abstract fun commonDao(): CommonDao
     abstract fun voipAnalyticsDao(): VoipAnalyticsDao
+    abstract fun groupsAnalyticsDao(): GroupsAnalyticsDao
 }
 
 class MessageTypeConverters {

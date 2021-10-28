@@ -8,8 +8,9 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.track.TrackFragment
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : TrackFragment() {
     protected var liveData = EventLiveData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

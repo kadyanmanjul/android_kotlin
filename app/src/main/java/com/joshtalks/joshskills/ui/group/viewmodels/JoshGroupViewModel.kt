@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
@@ -37,6 +38,7 @@ class JoshGroupViewModel : BaseViewModel() {
             hasGroupData.set(it)
             hasGroupData.notifyChange()
     }
+
     val repository = GroupRepository(onDataLoaded)
     val groupTitle = ObservableField("Groups")
     val adapter = GroupAdapter(GroupItemComparator)
@@ -45,6 +47,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val addingNewGroup = ObservableBoolean(false)
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
+    var conversationId : String = ""
 
     val onItemClick : (GroupItemData) -> Unit = {
         // TODO : Check if has data
@@ -67,6 +70,12 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun onSearch() {
+        message.what = SEARCH_GROUP
+        singleLiveEvent.value = message
+    }
+
+    fun onSearch(view : View) {
+        GroupAnalytics.push(GroupAnalytics.Event.FIND_GROUPS_TO_JOIN)
         message.what = SEARCH_GROUP
         singleLiveEvent.value = message
     }

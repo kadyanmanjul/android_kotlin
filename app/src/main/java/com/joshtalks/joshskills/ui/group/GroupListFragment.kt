@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.*
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -47,8 +49,10 @@ class GroupListFragment : BaseFragment() {
             binding.vm = vm
             binding.executePendingBindings()
         }
+    }
 
-
+    override fun getConversationId(): String? {
+        return if(vm.conversationId.isBlank()) null else vm.conversationId
     }
 
     override fun initViewState() {

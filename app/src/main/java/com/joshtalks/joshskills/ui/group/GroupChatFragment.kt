@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 
@@ -37,6 +38,10 @@ class GroupChatFragment : BaseFragment() {
         binding.executePendingBindings()
     }
 
+    override fun getConversationId(): String? {
+        return if(vm.conversationId.isBlank()) null else vm.conversationId
+    }
+
     override fun initViewState() {}
 
     override fun setArguments() {
@@ -48,6 +53,7 @@ class GroupChatFragment : BaseFragment() {
             vm.imageUrl.set(it.getString(GROUPS_IMAGE, ""))
             vm.groupCreatedAt.set(it.getString(GROUPS_CREATED_TIME, ""))
             vm.groupCreator.set(it.getString(GROUPS_CREATOR, ""))
+            vm.conversationId = it.getString(CONVERSATION_ID, "") ?: ""
         }
     }
 }

@@ -75,6 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="1dp"
+            android:maxLength="25"
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:background="@color/transparent"

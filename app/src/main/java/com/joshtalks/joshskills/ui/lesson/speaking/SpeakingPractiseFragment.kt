@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.views.GroupBottomSheet
@@ -167,7 +168,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnGroupCall.setOnClickListener {
             if(isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
-            val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java)
+            val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, getConversationId())
+            }
             startActivity(intent)
         }
 

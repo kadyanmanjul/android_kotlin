@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLEAR_SEARCH
 import com.joshtalks.joshskills.databinding.FragmentGroupSearchBinding
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupSearchViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -57,16 +58,21 @@ class GroupSearchFragment : BaseFragment() {
         }
     }
 
-    @FlowPreview
-    override fun onStart() {
-        super.onStart()
-        vm.adapter.refresh()
+    override fun getConversationId(): String? {
+        return if(vm.conversationId.isBlank()) null else vm.conversationId
     }
 
 
     override fun setArguments() {
         arguments.let {
             vm.isFromVoip.set(it?.getBoolean(IS_FROM_VOIP, false) ?: false)
+            vm.conversationId = it?.getString(CONVERSATION_ID, "") ?: ""
         }
+    }
+
+    @FlowPreview
+    override fun onStart() {
+        super.onStart()
+        vm.adapter.refresh()
     }
 }

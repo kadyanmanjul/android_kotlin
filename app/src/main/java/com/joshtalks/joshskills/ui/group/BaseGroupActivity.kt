@@ -10,11 +10,13 @@ abstract class BaseGroupActivity : WebRtcMiddlewareActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setIntentExtras()
         initViewBinding()
         onCreated()
         initViewState()
     }
 
+    protected abstract fun setIntentExtras()
     protected abstract fun initViewBinding()
     protected abstract fun onCreated()
     protected abstract fun initViewState()

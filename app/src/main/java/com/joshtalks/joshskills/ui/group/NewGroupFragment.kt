@@ -70,5 +70,9 @@ class NewGroupFragment : BaseFragment() {
         }
     }
 
+    override fun getConversationId(): String? {
+        return if(vm.conversationId.isBlank()) null else vm.conversationId
+    }
+
     override fun setArguments() {}
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.afollestad.materialdialogs.MaterialDialog
+import com.flurry.sdk.it
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
@@ -21,6 +22,8 @@ import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
@@ -65,6 +68,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
+    // TODO: Need to refactor
     private fun startGroupCall(data : Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             openCallingActivity(data)
@@ -105,6 +109,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP)
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -128,7 +133,13 @@ class JoshGroupActivity : BaseGroupActivity() {
     private fun openGroupSearchFragment() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id.group_fragment_container, GroupSearchFragment(), SEARCH_FRAGMENT)
+            val bundle = Bundle().apply {
+                putString(CONVERSATION_ID, vm.conversationId)
+            }
+            val fragment = GroupSearchFragment().apply {
+                arguments = bundle
+            }
+            replace(R.id.group_fragment_container, fragment, SEARCH_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }
@@ -143,6 +154,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_IMAGE, data?.getImageUrl())
                 putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
                 putString(GROUPS_ID, data?.getUniqueId())
+                putString(CONVERSATION_ID, vm.conversationId)
                 data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
             }
             val fragment = GroupChatFragment()
@@ -159,6 +171,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             replace(R.id.group_fragment_container, NewGroupFragment(), ADD_GROUP_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
+        GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
     }
 
     private fun popBackStack() {
@@ -177,6 +190,11 @@ class JoshGroupActivity : BaseGroupActivity() {
         )
     }
 
+    override fun getConversationId(): String? {
+        vm.conversationId = intent.getStringExtra(CONVERSATION_ID) ?: ""
+        return vm.conversationId
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -189,4 +207,6 @@ class JoshGroupActivity : BaseGroupActivity() {
             showToast(ImagePicker.getError(data))
         }
     }
+
+    override fun setIntentExtras() {}
 }

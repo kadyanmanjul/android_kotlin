@@ -657,6 +657,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 } catch (e: JSONException) {
                     ""
                 }
+                WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
                 WebRtcService.forceConnect(data)
             } catch (t: Throwable) {
                 t.printStackTrace()
@@ -1509,6 +1510,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     } catch (e: JSONException) {
                         ""
                     }
+                    WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
                     WebRtcService.forceConnect(data)
                 } catch (t: Throwable) {
                     t.printStackTrace()
