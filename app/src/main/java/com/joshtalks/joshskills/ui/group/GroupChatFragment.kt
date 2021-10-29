@@ -56,4 +56,9 @@ class GroupChatFragment : BaseFragment() {
             vm.conversationId = it.getString(CONVERSATION_ID, "") ?: ""
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getOnlineUserCount()
+    }
 }

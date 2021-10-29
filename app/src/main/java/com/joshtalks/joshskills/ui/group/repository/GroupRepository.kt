@@ -56,6 +56,8 @@ class GroupRepository(val onDataLoaded : ((Boolean) -> Unit)? = null) {
 
     suspend fun pushAnalyticsToServer(request : Map<String, Any?>) = analyticsService.groupImpressionDetails(request)
 
+    suspend fun getOnlineUserCount(groupId: String) = apiService.getOnlineUserCount(groupId)
+
     private fun getCompressImage(path: String): String {
         return try {
             AppDirectory.copy(

@@ -53,7 +53,7 @@ fun CircleImageView.setGroupImage(imageUrl : String) {
             .into(this)
     else
         Glide.with(this)
-            .load(R.drawable.josh_skill_logo)
+            .load(R.drawable.group_default_icon)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
 }

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -28,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val TAG = "GroupChatViewModel"
 class GroupChatViewModel : BaseViewModel() {
     val repository = GroupRepository()
     val hasJoinedGroup = ObservableBoolean(false)
@@ -37,6 +39,7 @@ class GroupChatViewModel : BaseViewModel() {
     val groupCreator = ObservableField("")
     val groupCreatedAt = ObservableField("")
     var conversationId : String = ""
+    val userOnlineCount = ObservableField("")
     lateinit var groupId : String
 
     fun onBackPress() {
@@ -71,11 +74,25 @@ class GroupChatViewModel : BaseViewModel() {
                 repository.joinGroup(groupId)
                 withContext(Dispatchers.Main) {
                     hasJoinedGroup.set(true)
+                    getOnlineUserCount()
                     message.what = SHOULD_REFRESH_GROUP_LIST
                     singleLiveEvent.value = message
                 }
             } catch (e : Exception) {
                 showToast("Error joining group")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getOnlineUserCount() {
+        viewModelScope.launch {
+            try {
+                val response = repository.getOnlineUserCount(groupId)
+                Log.d(TAG, "getOnlineUserCount: ${response["online_count"]}")
+                userOnlineCount.set("${(response["online_count"] as Double).toInt()}")
+            } catch (e : Exception) {
+                showToast("Unable to get online user count")
                 e.printStackTrace()
             }
         }

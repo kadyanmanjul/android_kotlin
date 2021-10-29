@@ -106,6 +106,23 @@
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_online_user_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:paddingHorizontal="@dimen/_4sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
+            android:text="@{vm.userOnlineCount == `` ? `Loading...` : `Practice Partners Online: ` + vm.userOnlineCount, default=`Loading...`}"
+            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
+            android:textSize="@dimen/_10ssp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@+id/btn_call_practice_partner"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"

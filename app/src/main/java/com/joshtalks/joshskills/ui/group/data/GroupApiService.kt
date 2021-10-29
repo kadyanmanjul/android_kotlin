@@ -10,6 +10,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GroupApiService {
@@ -24,4 +25,7 @@ interface GroupApiService {
 
     @POST("$DIR/group/create_group/")
     suspend fun createGroup(@Body request : AddGroupRequest): Map<String, Any?>
+
+    @GET("$DIR/group/group_online_members/{group_id}")
+    suspend fun getOnlineUserCount(@Path("group_id") groupId: String): Map<String, Any?>
 }
