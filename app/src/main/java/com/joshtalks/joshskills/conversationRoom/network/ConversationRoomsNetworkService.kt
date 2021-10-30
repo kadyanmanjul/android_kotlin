@@ -31,7 +31,7 @@ interface ConversationRoomsNetworkService {
     suspend fun exitConversationRoom(@Body enterExitConversionRoomRequest: EnterExitConversionRoomRequest)
             : Response<EnterExitConversationRoom>
 
-    @GET("$DIR/conversation_room/v2/conversation_question/{id}/")
+    @GET("$DIR/conversation_room/conversation_question/{id}/")
     suspend fun getConvoRoomQuestionDetails(@Path("id") id: Int) : Response<ConversationRoomDetailsResponse>
 
     @GET("$DIR/conversation_room/live_room_list/")
