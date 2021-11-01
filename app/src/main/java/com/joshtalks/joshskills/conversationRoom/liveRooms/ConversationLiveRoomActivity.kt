@@ -40,8 +40,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.voip.ConversationRoomJoin
-import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.*
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -62,6 +61,8 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
 import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
+import io.agora.rtc.IRtcEngineEventHandler
+import io.agora.rtc.IRtcEngineEventHandler.AudioVolumeInfo
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -72,6 +73,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
+import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
@@ -111,6 +113,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var currentUser: LiveRoomUser? = null
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
     val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
+    val speakingListForGoldenRing: ArrayList<Int?> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -684,11 +687,49 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         notificationManager.cancel(9999)
     }
 
+    private var callback: ConversationRoomCallback = object : ConversationRoomCallback {
+        override fun onUserOffline(uid: Int, reason: Int) {
+
+        }
+
+        override fun onAudioVolumeIndication(
+            speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
+            totalVolume: Int
+        ) {
+            val uids = Arrays.stream(speakers)
+                .map { s: AudioVolumeInfo -> if (s.uid == null || s.uid == 0) agoraUid else s.uid }
+                .collect(Collectors.toList())
+            refreshSpeakingUsers(uids)
+        }
+
+        override fun onSwitchToSpeaker() {
+            //TODO("Not yet implemented")
+        }
+
+        override fun onSwitchToAudience() {
+            //TODO("Not yet implemented")
+        }
+
+    }
+
+    private fun refreshSpeakingUsers(uids: List<Int?>) {
+        speakingListForGoldenRing.clear()
+        speakingListForGoldenRing.addAll(uids)
+        val i = 0
+        for (speaker in speakersList){
+            val viewHolder = binding.speakersRecyclerView.findViewHolderForAdapterPosition(i)
+            if (viewHolder is SpeakerAdapter.SpeakerViewHolder) {
+                    viewHolder.setGoldenRingVisibility(speakingListForGoldenRing.contains(speaker.id))
+            }
+        }
+    }
+
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
+            mBoundService?.addListener(callback)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

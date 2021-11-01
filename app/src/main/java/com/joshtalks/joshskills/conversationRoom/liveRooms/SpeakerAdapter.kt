@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.conversationRoom.liveRooms
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
@@ -88,7 +89,11 @@ class SpeakerAdapter(
     inner class SpeakerViewHolder(val binding: LiSpeakersItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+
+        private var userImage: FrameLayout? =null
+
         fun bind(model: LiveRoomUser) {
+            this.userImage = binding.userImage
             with(binding) {
                 name.text = model.name
                 userImageIv.apply {
@@ -132,7 +137,20 @@ class SpeakerAdapter(
 
             }
         }
+        fun setGoldenRingVisibility(isVisible:Boolean = false){
+            userImage?.let { ring ->
+                if (isVisible) {
+                    ring.setBackgroundResource(R.drawable.golden_ring_27dp_border)
+                } else {
+                    ring.setBackgroundResource(R.color.white)
+                }
+            }
+        }
 
+    }
+
+    override fun getItemId(position: Int): Long {
+        return speakersList[position].id?.toLong() ?: 0L
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpeakerViewHolder {
