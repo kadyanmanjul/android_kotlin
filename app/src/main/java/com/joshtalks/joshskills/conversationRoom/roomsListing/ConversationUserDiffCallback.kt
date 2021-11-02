@@ -40,6 +40,7 @@ data class ConversationUserDiffCallback(
                 oldUser.isSpeaker == newUser.isSpeaker &&
                 oldUser.name == newUser.name &&
                 oldUser.isMicOn.xor(newUser.isMicOn) &&
+                oldUser.isHandRaised.xor(newUser.isHandRaised) &&
                 oldUser.sortOrder == newUser.sortOrder &&
                 oldUser.photoUrl ==  newUser.photoUrl )
     }

@@ -290,6 +290,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
         viewModel.updateHandRaisedToUser(userId, isHandRaised)
+        CoroutineScope(Dispatchers.Main).launch {
+            audienceAdapter?.updateHandRaisedViaId(userId,isHandRaised)
+        }
     }
 
     private fun moveToSpeaker(msg: JsonObject) {
@@ -356,6 +359,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             audienceList.remove(it)
             it.isSpeaker = true
+            it.isHandRaised = false
             speakersList.add(it)
             setPresenceStateForUuid( it)
         }
@@ -372,6 +376,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             speakersList.remove(it)
             it.isSpeaker = false
+            it.isHandRaised = false
             audienceList.add(it)
             setPresenceStateForUuid( it)
         }
@@ -1308,9 +1313,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     }
 
                     override fun moveToAudience() {
-
                         val customMessage = JsonObject()
-                        customMessage.addProperty("id", agoraUid)
+                        customMessage.addProperty("id", userUid.toString())
                         customMessage.addProperty("is_speaker", false)
                         customMessage.addProperty("name", userName)
                         customMessage.addProperty("action", "MOVE_TO_AUDIENCE")

@@ -20,9 +20,22 @@ class AudienceAdapter(
     val isModerator: Boolean
 ) : RecyclerView.Adapter<AudienceAdapter.SpeakerViewHolder>() {
 
-
     val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     private var listenerUserAction: OnUserItemClickListener? = null
+
+    fun updateHandRaisedViaId(userId:Int,isHandRaised:Boolean) {
+        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
+        val oldUser = newList.filter { it.id == userId }
+        newList.removeAll(oldUser)
+        oldUser[0]?.isHandRaised = isHandRaised
+        newList.add(oldUser[0])
+        newList.sortBy { it.sortOrder }
+        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        audienceList.clear()
+        audienceList.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     fun updateFullList(newList: List<LiveRoomUser>) {
         newList.sortedBy { it.sortOrder }

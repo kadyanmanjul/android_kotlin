@@ -111,6 +111,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
             adapter = bottomSheetAdapter
             itemAnimator = null
         }
+        bottomSheetAdapter?.updateFullList(raisedHandList)
         bottomSheetAdapter?.setOnItemClickListener(object :
             RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
             override fun onItemClick(
