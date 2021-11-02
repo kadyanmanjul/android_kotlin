@@ -64,7 +64,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                     qId = item.conversationRoomQuestionId
                 }
                 val joinRoomRequest =
-                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.roomId.toInt(),1)
+                    JoinConversionRoomRequest(Mentor.getInstance().getId(), item.roomId.toInt(),qId)
 
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.joinConversationRoom(
@@ -105,7 +105,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                     qId = conversationQuestionId
                 }
                 val createConversionRoomRequest =
-                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic,isFavouritePracticePartner,1)
+                    CreateConversionRoomRequest(Mentor.getInstance().getId(), topic,isFavouritePracticePartner,qId)
                 val apiResponse =
                     AppObjectController.conversationRoomsNetworkService.createConversationRoom(
                         createConversionRoomRequest
@@ -202,7 +202,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                 qId = conversationQuestionId
             }
             val request =
-                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,1)
+                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,qId)
             val response =
                 AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
             if (response.isSuccessful) {

@@ -745,7 +745,7 @@ class WebRtcService : BaseWebRtcService() {
                     JoinConversionRoomRequest(
                         Mentor.getInstance().getId(),
                         roomId?.toInt() ?: 0,
-                        1
+                        qId
                     )
                 val response =
                     AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
@@ -777,7 +777,7 @@ class WebRtcService : BaseWebRtcService() {
                         JoinConversionRoomRequest(
                             Mentor.getInstance().getId(),
                             roomId?.toInt() ?: 0,
-                            1
+                            qId
                         )
                     val response =
                         AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(

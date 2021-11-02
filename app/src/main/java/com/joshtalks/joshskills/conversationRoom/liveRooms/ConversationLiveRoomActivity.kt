@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBot
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetInfo
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.RaisedHandsBottomSheet
 import com.joshtalks.joshskills.conversationRoom.model.LiveRoomUser
+import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
@@ -291,7 +292,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
         viewModel.updateHandRaisedToUser(userId, isHandRaised)
         CoroutineScope(Dispatchers.Main).launch {
-            audienceAdapter?.updateHandRaisedViaId(userId,isHandRaised)
+            audienceAdapter?.updateHandRaisedViaId(userId, isHandRaised)
         }
     }
 
@@ -326,7 +327,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         Log.d("ABC", "presence() called mic_status_changes")
         if (agoraUid == eventObject.get("id").asInt) {
             iSSoundOn = eventObject.get("is_mic_on").asBoolean
-            setPresenceStateForUuid( currentUser,iSSoundOn)
+            setPresenceStateForUuid(currentUser, iSSoundOn)
             CoroutineScope(Dispatchers.Main).launch {
                 updateMuteButtonState()
             }
@@ -360,8 +361,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             audienceList.remove(it)
             it.isSpeaker = true
             it.isHandRaised = false
+            it.isInviteSent = true
             speakersList.add(it)
-            setPresenceStateForUuid( it)
+            setPresenceStateForUuid(it)
         }
         audienceAdapter?.updateFullList(audienceList)
         viewModel.updateAudienceList(audienceList)
@@ -377,8 +379,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             speakersList.remove(it)
             it.isSpeaker = false
             it.isHandRaised = false
+            it.isInviteSent = false
             audienceList.add(it)
-            setPresenceStateForUuid( it)
+            setPresenceStateForUuid(it)
         }
         audienceAdapter?.updateFullList(audienceList)
         viewModel.updateAudienceList(audienceList)
@@ -398,8 +401,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             })
     }
 
-    private fun setPresenceStateForUuid( user: LiveRoomUser?,isMicOn: Boolean? = null) {
-        if (user==null || pubnub==null){
+    private fun setPresenceStateForUuid(user: LiveRoomUser?, isMicOn: Boolean? = null) {
+        if (user == null || pubnub == null) {
             return
         }
         val state = JsonObject()
@@ -642,22 +645,19 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun getIntentExtras(intent: Intent?) {
         roomId = intent?.getIntExtra(ROOM_ID, 0)
-        /*if (isActivityOpenFromNotification && roomId != null) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                notebookRef.document(roomId.toString()).get().addOnSuccessListener {
-                    viewModel.joinRoom(
-                        RoomListResponseItem(roomId,
-                        )
-                        ConversationRoomsListingItem(
-                            it["channel_name"]?.toString() ?: "",
-                            it["topic"]?.toString(),
-                            it["started_by"]?.toString()?.toInt(),
-                            null
-                        )
-                    )
-                }
-            }, 200)
-        }*/
+        if (isActivityOpenFromNotification && roomId != null) {
+            viewModel.joinRoom(
+                RoomListResponseItem(roomId.toString(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )
+            )
+        }
     }
 
 
@@ -723,10 +723,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         speakingListForGoldenRing.clear()
         speakingListForGoldenRing.addAll(uids)
         val i = 0
-        for (speaker in speakersList){
+        for (speaker in speakersList) {
             val viewHolder = binding.speakersRecyclerView.findViewHolderForAdapterPosition(i)
             if (viewHolder is SpeakerAdapter.SpeakerViewHolder) {
-                    viewHolder.setGoldenRingVisibility(speakingListForGoldenRing.contains(speaker.id))
+                viewHolder.setGoldenRingVisibility(speakingListForGoldenRing.contains(speaker.id))
             }
         }
     }
