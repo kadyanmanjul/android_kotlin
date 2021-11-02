@@ -22,6 +22,8 @@ class ConversationRoomsListAdapter(
 ) : RecyclerView.Adapter<ConversationRoomsListAdapter.ConversationRoomViewHolder>() {
     val listRooms: ArrayList<RoomListResponseItem> = arrayListOf()
 
+    fun isRoomEmpty() = if (listRooms.isNullOrEmpty()) true else false
+
     fun refreshList(newList: List<RoomListResponseItem>) {
         listRooms.clear()
         listRooms.addAll(newList)
@@ -56,9 +58,10 @@ class ConversationRoomsListAdapter(
 
     fun removeSingleItem(newItem: RoomListResponseItem) {
         Log.d("ABC", "removeSingleItem() called with: newItem = $newItem")
-        val list = ArrayList(listRooms).filter { it.channelId == newItem.channelId }
-        val newList: ArrayList<RoomListResponseItem> = listRooms
+        val list = ArrayList(listRooms).filter { it.roomId == newItem.roomId }
+        val newList: ArrayList<RoomListResponseItem> = ArrayList(listRooms)
         newList.removeAll(list)
+        Log.d("ABC", "removeSingleItem() called with: newList = $newList listRooms = $listRooms")
         val diffCallback = ConversationRoomDiffCallback(listRooms, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         listRooms.clear()
@@ -72,7 +75,7 @@ class ConversationRoomsListAdapter(
             "updateItemWithoutPosition() called with: room = $room, isUserLeaving = $isUserLeaving"
         )
         val newList: ArrayList<RoomListResponseItem> = ArrayList(listRooms)
-        val roomToBeUpdated = listRooms.filter { it.channelId == room.channelId }.get(0)
+        val roomToBeUpdated = newList.filter { it.channelId == room.channelId }.get(0)
         newList.remove(roomToBeUpdated)
         room.apply {
             roomToBeUpdated.audienceCount = this.audienceCount ?: roomToBeUpdated.audienceCount

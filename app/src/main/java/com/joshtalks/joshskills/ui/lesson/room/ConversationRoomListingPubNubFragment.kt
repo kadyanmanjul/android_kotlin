@@ -170,6 +170,13 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                         "JOIN_ROOM" -> updateRoom(msg, false)
                         "END_ROOM" -> removeRoomFromList(msg)
                     }
+                    CoroutineScope(Dispatchers.Main).launch {
+                     if (conversationRoomsListAdapter?.isRoomEmpty() == true){
+                        showNoRoomAvailableText()
+                    } else {
+                        showRecyclerView()
+                    }
+                    }
                 }
             }
 
@@ -210,6 +217,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     }
 
     private fun removeRoomFromList(msg: JsonObject) {
+        Log.d("ABC", "removeRoomFromList() called with: msg = $msg")
         val data = msg["data"].asJsonObject
         val matType = object : TypeToken<RoomListResponseItem>() {}.type
         if (data == null) {
@@ -217,6 +225,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
         val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
         CoroutineScope(Dispatchers.Main).launch {
+            Log.d("ABC", "removeRoomFromList() called room: ${room}")
             removeItemsFromAdapter(room)
         }
     }

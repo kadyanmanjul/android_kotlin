@@ -490,6 +490,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             } else {
                 if (binding.searchingContainer.visibility == View.VISIBLE) {
                     timer?.cancel()
+                    timer = null
                     binding.searchingContainer.visibility = View.GONE
                 }
                 audienceList.add(user)
@@ -713,6 +714,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun refreshSpeakingUsers(uids: List<Int?>) {
+        Log.d("ABC", "refreshSpeakingUsers() called with: uids = $uids")
         speakingListForGoldenRing.clear()
         speakingListForGoldenRing.addAll(uids)
         val i = 0

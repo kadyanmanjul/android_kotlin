@@ -686,6 +686,7 @@ class WebRtcService : BaseWebRtcService() {
                 totalVolume: Int
             ) {
                 super.onAudioVolumeIndication(speakers, totalVolume)
+                conversationRoomCallback?.get()?.onAudioVolumeIndication(speakers, totalVolume)
                 /*if (isRoomCreatedByUser) {
                     speakingUsersOldList.clear()
                     speakingUsersOldList.addAll(speakingUsersNewList)
