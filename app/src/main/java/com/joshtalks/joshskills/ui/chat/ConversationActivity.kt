@@ -248,10 +248,6 @@ class ConversationActivity :
     }
 
     private fun init() {
-        if(inboxEntity.courseId == "151")
-            conversationBinding.imgGroupChatBtn.visibility = VISIBLE
-        else
-            conversationBinding.imgGroupChatBtn.visibility = GONE
         initToolbar()
         //  groupChatHintLogic()    //Group chat hint UI
         // initCourseProgressTooltip()    // course progress tooltip
@@ -906,6 +902,10 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
+                if(userProfileData.hasGroupAccess)
+                    conversationBinding.imgGroupChatBtn.visibility = VISIBLE
+                else
+                    conversationBinding.imgGroupChatBtn.visibility = GONE
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)

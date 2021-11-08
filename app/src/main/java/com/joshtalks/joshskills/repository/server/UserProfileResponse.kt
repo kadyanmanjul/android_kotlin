@@ -56,6 +56,8 @@ data class UserProfileResponse(
     val isSeniorStudent: Boolean = false,
     @SerializedName("is_course_bought")
     val isCourseBought: Boolean = false,
+    @SerializedName("has_group_access")
+    val hasGroupAccess: Boolean = false,
     @SerializedName("expire_date")
     val expiryDate: Date? = null,
 )

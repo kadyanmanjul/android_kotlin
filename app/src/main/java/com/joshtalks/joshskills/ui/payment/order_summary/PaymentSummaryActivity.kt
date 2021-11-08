@@ -69,6 +69,7 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
@@ -831,6 +832,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
+        MarketingAnalytics.coursePurchased(BigDecimal(viewModel.mPaymentDetailsResponse.value?.amount ?: 0.0))
         //viewModel.updateSubscriptionStatus()
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS

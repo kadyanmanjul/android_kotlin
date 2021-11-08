@@ -452,6 +452,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="@dimen/_8sdp">
 
+
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/chat_edit"
                         android:layout_width="0dp"
@@ -471,7 +472,6 @@
                         android:textColorHint="@color/gray_9E"
                         android:textCursorDrawable="@color/button_color"
                         tools:targetApi="o" />
-
 
                     <FrameLayout
                         android:id="@+id/fl_attachment"

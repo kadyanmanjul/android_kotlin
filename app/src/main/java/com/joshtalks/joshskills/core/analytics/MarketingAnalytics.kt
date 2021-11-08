@@ -15,6 +15,8 @@ import io.branch.referral.util.BranchContentSchema
 import io.branch.referral.util.BranchEvent
 import io.branch.referral.util.ContentMetadata
 import io.branch.referral.util.CurrencyType
+import java.math.BigDecimal
+import java.util.Currency
 
 
 object MarketingAnalytics {
@@ -135,6 +137,65 @@ object MarketingAnalytics {
                 .addCustomDataProperty("test_id", testId)
                 .logEvent(context)
         }
+    }
+
+    fun startFreeTrail() {
+        val context = AppObjectController.joshApplication
+        val params = Bundle().apply {
+            putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
+            putFloat(AppEventsConstants.EVENT_PARAM_VALUE_TO_SUM, 0f)
+        }
+
+        // Facebook Event
+        AppEventsLogger.activateApp(context)
+        val facebookEventLogger = AppEventsLogger.newLogger(context)
+        facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_START_TRIAL, params)
+
+        // Branch Events
+        BranchEvent(BRANCH_STANDARD_EVENT.START_TRIAL)
+            .setCustomerEventAlias("start_free_trail")
+            .logEvent(context)
+
+        // Firebase Events
+        AppAnalytics.create(BRANCH_STANDARD_EVENT.START_TRIAL.name)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
+    }
+
+    fun coursePurchased(amount : BigDecimal) {
+        val context = AppObjectController.joshApplication
+        val params = Bundle().apply {
+            putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
+            putString(AppEventsConstants.EVENT_PARAM_CONTENT, "Course")
+            putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, "E-learning")
+            putInt(AppEventsConstants.EVENT_PARAM_NUM_ITEMS, 1)
+            putString(
+                AppEventsConstants.EVENT_PARAM_SUCCESS,
+                AppEventsConstants.EVENT_PARAM_VALUE_YES
+            )
+        }
+
+        // Facebook Event
+        AppEventsLogger.activateApp(context)
+        val facebookEventLogger = AppEventsLogger.newLogger(context)
+
+        facebookEventLogger.logPurchase(
+            amount,
+            Currency.getInstance(CurrencyType.INR.name),
+            params
+        )
+
+        // Branch Events
+        BranchEvent(BRANCH_STANDARD_EVENT.PURCHASE)
+            .setCustomerEventAlias("purchase")
+            .logEvent(context)
+
+        // Firebase Events
+        AppAnalytics.create(BRANCH_STANDARD_EVENT.PURCHASE.name)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     fun logAchievementLevelEvent(achievementLevel: Int) {

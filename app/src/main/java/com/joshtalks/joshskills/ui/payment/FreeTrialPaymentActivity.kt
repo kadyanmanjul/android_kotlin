@@ -14,6 +14,7 @@ import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
@@ -27,6 +28,7 @@ import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import java.math.BigDecimal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,7 +47,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
     private var razorpayOrderId = EMPTY
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
-    var index = 0
+    var index = 1
     var expiredTime: Long = -1
     var buttonText = mutableListOf<String>()
     var headingText = mutableListOf<String>()
@@ -142,6 +144,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        binding.subscriptionCard.performClick()
+    }
+
     private fun startTimer(startTimeInMilliSeconds: Long) {
         countdownTimerBack = object : CountdownTimerBack(startTimeInMilliSeconds) {
             override fun onTimerTick(millis: Long) {
@@ -228,12 +235,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     if (data1 != null) {
                         data1.buttonText?.let { it1 -> buttonText.add(it1) }
                         data1.heading.let { it1 -> headingText.add(it1) }
-                        try {
-                            binding.materialTextView.text = buttonText.get(index)
-                            binding.txtLabelHeading.text = headingText.get(index)
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
+
                         binding.title1.text = data1.courseHeading
                         binding.txtCurrency1.text = data1.discount?.get(0).toString()
                         binding.txtFinalPrice1.text = data1.discount?.substring(1)
@@ -271,6 +273,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                             "(" + String.format("%,d", data2.ratingsCount) + ")"
                     } else {
                         binding.subscriptionCard.visibility = View.GONE
+                    }
+                    try {
+                        binding.materialTextView.text = buttonText.get(index)
+                        binding.txtLabelHeading.text = headingText.get(index)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
                 }
                 if (it.expireTime != null) {
@@ -390,6 +398,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
+        MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0))
         //viewModel.updateSubscriptionStatus()
 
         uiHandler.post {

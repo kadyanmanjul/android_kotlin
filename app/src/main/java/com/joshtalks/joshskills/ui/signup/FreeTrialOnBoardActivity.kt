@@ -26,8 +26,10 @@ import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import java.math.BigDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -84,7 +86,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)
         dialogBuilder.setView(dialogView)
-
+        MarketingAnalytics.startFreeTrail()
         val alertDialog: AlertDialog = dialogBuilder.create()
         val width = AppObjectController.screenWidth * .9
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
