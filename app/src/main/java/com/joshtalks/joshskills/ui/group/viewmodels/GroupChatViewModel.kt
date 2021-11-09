@@ -3,34 +3,30 @@ package com.joshtalks.joshskills.ui.group.viewmodels
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.afollestad.materialdialogs.MaterialDialog
+
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_CALLING_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_GROUP_INFO
 import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
-import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
-import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val TAG = "GroupChatViewModel"
+
 class GroupChatViewModel : BaseViewModel() {
     val repository = GroupRepository()
     val hasJoinedGroup = ObservableBoolean(false)
@@ -39,9 +35,9 @@ class GroupChatViewModel : BaseViewModel() {
     val imageUrl = ObservableField("")
     val groupCreator = ObservableField("")
     val groupCreatedAt = ObservableField("")
-    var conversationId : String = ""
+    var conversationId: String = ""
     val userOnlineCount = ObservableField("")
-    lateinit var groupId : String
+    lateinit var groupId: String
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
@@ -49,14 +45,14 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun callGroup() {
-        if(isCallOngoing(R.string.call_engage_initiate_call_message))
+        if (isCallOngoing(R.string.call_engage_initiate_call_message))
             return
         val memberText = groupSubHeader.get() ?: "0"
         val memberCount = getMemberCount(memberText)
-        if( memberCount == 0) {
+        if (memberCount == 0) {
             showToast("Unknown Error Occurred")
             return
-        } else if(memberCount == 1) {
+        } else if (memberCount == 1) {
             showToast("You are the only member, Can't Initiate a Call")
             return
         }
@@ -69,7 +65,7 @@ class GroupChatViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun joinGroup(view : View) {
+    fun joinGroup(view: View) {
         viewModelScope.launch {
             try {
                 repository.joinGroup(groupId)
@@ -79,7 +75,7 @@ class GroupChatViewModel : BaseViewModel() {
                     message.what = SHOULD_REFRESH_GROUP_LIST
                     singleLiveEvent.value = message
                 }
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 showToast("Error joining group")
                 e.printStackTrace()
             }
@@ -92,7 +88,7 @@ class GroupChatViewModel : BaseViewModel() {
                 val response = repository.getOnlineUserCount(groupId)
                 Log.d(TAG, "getOnlineUserCount: ${response["online_count"]}")
                 userOnlineCount.set("${(response["online_count"] as Double).toInt()}")
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 showToast("Unable to get online user count")
                 e.printStackTrace()
             }

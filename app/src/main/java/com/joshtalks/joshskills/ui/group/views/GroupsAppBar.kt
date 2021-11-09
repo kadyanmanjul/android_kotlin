@@ -17,51 +17,51 @@ class GroupsAppBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
-    val titleTv : TextView by lazy {
+    val titleTv: TextView by lazy {
         this.findViewById(R.id.title)
     }
 
-    val subTitleTv : TextView by lazy {
+    val subTitleTv: TextView by lazy {
         this.findViewById(R.id.sub_title)
     }
 
-    val toolBarTitleTv : TextView by lazy {
+    val toolBarTitleTv: TextView by lazy {
         this.findViewById(R.id.toolbar_title)
     }
 
-    val toolBarContainer : LinearLayoutCompat by lazy {
+    val toolBarContainer: LinearLayoutCompat by lazy {
         this.findViewById(R.id.title_container)
     }
 
-    val toolbarImageView : CircleImageView by lazy {
+    val toolbarImageView: CircleImageView by lazy {
         this.findViewById(R.id.image_view_logo)
     }
 
-    val backImageView : ImageView by lazy {
+    val backImageView: ImageView by lazy {
         this.findViewById(R.id.iv_back)
     }
 
-    val firstIconImageView : ImageView by lazy {
+    val firstIconImageView: ImageView by lazy {
         this.findViewById(R.id.first_right_icon)
     }
 
-    val secondIconImageView : ImageView by lazy {
+    val secondIconImageView: ImageView by lazy {
         this.findViewById(R.id.second_right_icon)
     }
 
 
     init {
-            try {
-                View.inflate(getContext(), R.layout.groups_toolbar, this)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        try {
+            View.inflate(getContext(), R.layout.groups_toolbar, this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     //TODO: Explicitly Handle low end device issue
-    fun setImage(url : String) {
+    fun setImage(url: String) {
         toolbarImageView.visibility = View.VISIBLE
-        if(url.isEmpty())
+        if (url.isEmpty())
             toolbarImageView.setImageResource(R.drawable.josh_skill_logo)
         else
             Glide.with(toolbarImageView)
@@ -70,8 +70,8 @@ class GroupsAppBar @JvmOverloads constructor(
 
     }
 
-    fun setGroupSubTitle(subTitle : String, title : String) {
-        if(subTitle.isNotBlank()) {
+    fun setGroupSubTitle(subTitle: String, title: String) {
+        if (subTitle.isNotBlank()) {
             toolBarTitleTv.visibility = View.GONE
             toolBarContainer.visibility = View.VISIBLE
             titleTv.text = title
@@ -93,30 +93,30 @@ class GroupsAppBar @JvmOverloads constructor(
         setDrawableImage(drawableRes, secondIconImageView)
     }
 
-    private fun setDrawableImage(drawableRes : Int, imageView : ImageView) {
+    private fun setDrawableImage(drawableRes: Int, imageView: ImageView) {
         imageView.setImageResource(drawableRes)
     }
 
     // Listeners
-    fun onBackPressed(function : () -> Unit) {
+    fun onBackPressed(function: () -> Unit) {
         backImageView.setOnClickListener {
             function.invoke()
         }
     }
 
-    fun onToolbarPressed(function : () -> Unit) {
-        toolBarContainer.setOnClickListener{
+    fun onToolbarPressed(function: () -> Unit) {
+        toolBarContainer.setOnClickListener {
             function.invoke()
         }
     }
 
-    fun onFirstIconPressed(function : () -> Unit) {
+    fun onFirstIconPressed(function: () -> Unit) {
         firstIconImageView.setOnClickListener {
             function.invoke()
         }
     }
 
-    fun onSecondIconPressed(function : () -> Unit) {
+    fun onSecondIconPressed(function: () -> Unit) {
         secondIconImageView.setOnClickListener {
             function.invoke()
         }
