@@ -61,15 +61,38 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+            app:layout_constraintTop_toBottomOf="@+id/textView7"
+            tools:listitem="@layout/group_member_item"/>
 
-        <com.google.android.material.button.MaterialButton
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Join Group"
-            android:drawableLeft="@color/join_group"
+            android:layout_height="@dimen/_40sdp"
             android:layout_marginTop="@dimen/_12sdp"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_exit_group"
+                android:paddingStart="@dimen/_24sdp"
+                android:paddingEnd="@dimen/_18sdp"
+                android:contentDescription="@string/ignore_ui_msg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Exit Group"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                android:fontFamily="@font/open_sans"
+                android:textColor="@color/exit_group" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
