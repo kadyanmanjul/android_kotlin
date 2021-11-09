@@ -26,6 +26,9 @@ fun GroupsAppBar.onFirstIconPress(function : () -> Unit) = this.onFirstIconPress
 @BindingAdapter("onSecondIconPressed")
 fun GroupsAppBar.onSecondIconPress(function : () -> Unit) = this.onSecondIconPressed(function)
 
+@BindingAdapter("onToolbarPressed")
+fun GroupsAppBar.onToolbarPressed(function : () -> Unit) = this.onToolbarPressed(function)
+
 @BindingAdapter("firstIcon")
 fun GroupsAppBar.setFirstIcon(drawableRes : Int) {
     if(drawableRes != R.drawable.josh_skill_logo)

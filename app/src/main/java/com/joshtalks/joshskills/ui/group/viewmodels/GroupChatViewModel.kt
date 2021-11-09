@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_CALLING_ACTIVITY
+import com.joshtalks.joshskills.constants.OPEN_GROUP_INFO
 import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.isCallOngoing
@@ -96,5 +97,10 @@ class GroupChatViewModel : BaseViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun openGroupInfo() {
+        message.what = OPEN_GROUP_INFO
+        singleLiveEvent.value = message
     }
 }

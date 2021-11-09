@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <import type="android.view.View"/>
-        <import type="com.joshtalks.joshskills.R"/>
+
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.R" />
+
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
@@ -15,11 +19,12 @@
         android:layout_height="match_parent"
         android:background="@drawable/group_chat_blue_bg"
         tools:context=".ui.group.GroupChatFragment">
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
-            android:elevation="@dimen/_1sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="@dimen/_1sdp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,14 +32,15 @@
 
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
+                groupHeader="@{vm.groupHeader}"
+                groupImage="@{vm.imageUrl}"
+                groupSubHeader="@{vm.groupSubHeader}"
                 onBackPressed="@{vm::onBackPress}"
-                secondIcon="@{vm.hasJoinedGroup ? R.drawable.group_call : R.drawable.josh_skill_logo }"
                 onSecondIconPressed="@{vm::callGroup}"
+                secondIcon="@{vm.hasJoinedGroup ? R.drawable.group_call : R.drawable.josh_skill_logo }"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                groupSubHeader="@{vm.groupSubHeader}"
-                groupImage="@{vm.imageUrl}"
-                groupHeader="@{vm.groupHeader}" />
+                onToolbarPressed="@{vm::openGroupInfo}" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -54,18 +60,18 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_2sdp"
-                android:textColor="@color/group_coming_soon"
-                android:text="@{vm.groupCreatedAt}" />
+                android:text="@{vm.groupCreatedAt}"
+                android:textColor="@color/group_coming_soon" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/group_creater"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
             android:backgroundTint="#D5EAF5"
             android:elevation="@dimen/_8sdp"
             app:cardCornerRadius="@dimen/_4sdp"
-            android:layout_marginTop="@dimen/_8sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/date_card">
@@ -75,8 +81,8 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingVertical="@dimen/_2sdp"
-                android:textColor="@color/group_coming_soon"
-                android:text="@{vm.groupCreator}" />
+                android:text="@{vm.groupCreator}"
+                android:textColor="@color/group_coming_soon" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
@@ -85,23 +91,23 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_32sdp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
             android:insetTop="0dp"
             android:insetBottom="0dp"
+            android:onClick="@{view -> vm.callGroup()}"
             android:text="Call Practice Partner from Group"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
             android:textColor="@color/white"
             android:textSize="@dimen/_12ssp"
+            android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
             app:cornerRadius="@dimen/_36sdp"
-            android:onClick="@{view -> vm.callGroup()}"
-            android:layout_marginBottom="@dimen/_32sdp"
             app:layout_constraintBottom_toTopOf="@+id/appCompatTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.8"
-            android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
             app:rippleColor="@color/white"
             tools:visibility="visible" />
 
@@ -109,32 +115,32 @@
             android:id="@+id/tv_online_user_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginTop="@dimen/_2sdp"
+            android:gravity="center"
+            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
-            android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
             android:text="@{vm.userOnlineCount == `` ? `Loading...` : `Practice Partners Online: ` + vm.userOnlineCount, default=`Loading...`}"
-            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
-            android:textSize="@dimen/_10ssp"
             android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@+id/btn_call_practice_partner"
+            android:textSize="@dimen/_10ssp"
+            android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_call_practice_partner" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:gravity="center"
+            android:background="@color/white"
             android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
             android:text="@{vm.hasJoinedGroup ? `Chat function will be coming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"
-            android:background="@color/white"
-            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
-            android:textSize="@{vm.hasJoinedGroup ? @dimen/_12ssp : @dimen/_14ssp, default=@dimen/_14ssp}"
             android:textColor="@{vm.hasJoinedGroup ? @color/group_coming_soon : @color/join_group, default=@color/join_group}"
+            android:textSize="@{vm.hasJoinedGroup ? @dimen/_12ssp : @dimen/_14ssp, default=@dimen/_14ssp}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
