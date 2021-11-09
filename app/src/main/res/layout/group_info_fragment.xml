@@ -32,6 +32,10 @@
 
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_info_app_bar"
+                groupHeader="@{vm.groupHeader}"
+                groupImage="@{vm.imageUrl}"
+                groupSubHeader="@{vm.groupSubHeader}"
+                onBackPressed="@{vm::onBackPress}"
                 secondIcon="@{R.drawable.ic_pen_edit}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -62,15 +66,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7"
-            tools:listitem="@layout/group_member_item"/>
+            tools:listitem="@layout/group_member_item" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_marginTop="@dimen/_12sdp"
-            android:orientation="horizontal"
             android:background="@color/white"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recyclerView">
@@ -78,20 +82,20 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_exit_group"
+                android:contentDescription="@string/ignore_ui_msg"
                 android:paddingStart="@dimen/_24sdp"
                 android:paddingEnd="@dimen/_18sdp"
-                android:contentDescription="@string/ignore_ui_msg" />
+                android:src="@drawable/ic_exit_group" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
                 android:gravity="center"
                 android:text="Exit Group"
+                android:textColor="@color/exit_group"
                 android:textSize="@dimen/_14ssp"
-                android:textStyle="bold"
-                android:fontFamily="@font/open_sans"
-                android:textColor="@color/exit_group" />
+                android:textStyle="bold" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
