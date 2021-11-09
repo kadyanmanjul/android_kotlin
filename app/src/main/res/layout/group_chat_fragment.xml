@@ -37,10 +37,10 @@
                 groupSubHeader="@{vm.groupSubHeader}"
                 onBackPressed="@{vm::onBackPress}"
                 onSecondIconPressed="@{vm::callGroup}"
+                onToolbarPressed="@{vm::openGroupInfo}"
                 secondIcon="@{vm.hasJoinedGroup ? R.drawable.group_call : R.drawable.josh_skill_logo }"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                onToolbarPressed="@{vm::openGroupInfo}" />
+                android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.card.MaterialCardView

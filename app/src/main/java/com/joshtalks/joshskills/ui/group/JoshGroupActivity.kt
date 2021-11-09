@@ -3,14 +3,14 @@ package com.joshtalks.joshskills.ui.group
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
+
 import com.afollestad.materialdialogs.MaterialDialog
-import com.flurry.sdk.it
 import com.github.dhaval2404.imagepicker.ImagePicker
+
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
@@ -22,14 +22,16 @@ import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.flow.collectLatest
+
 import timber.log.Timber
 
 private const val TAG = "JoshGroupActivity"
+
 class JoshGroupActivity : BaseGroupActivity() {
     val vm by lazy {
         ViewModelProvider(this)[JoshGroupViewModel::class.java]
@@ -50,7 +52,7 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     override fun initViewState() {
         event.observe(this) {
-            when(it.what) {
+            when (it.what) {
                 ON_BACK_PRESSED -> popBackStack()
                 OPEN_GROUP -> openGroupChat(it.obj as? GroupItemData)
                 OPEN_NEW_GROUP -> openNewGroupFragment()
@@ -64,7 +66,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     // TODO: Need to refactor
-    private fun startGroupCall(data : Bundle) {
+    private fun startGroupCall(data: Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             openCallingActivity(data)
             return
@@ -139,7 +141,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openGroupChat(data : GroupItemData?) {
+    private fun openGroupChat(data: GroupItemData?) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
@@ -191,7 +193,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun popBackStack() {
-        if(supportFragmentManager.backStackEntryCount > 1) {
+        if (supportFragmentManager.backStackEntryCount > 1) {
             supportFragmentManager.popBackStack()
         } else
             onBackPressed()

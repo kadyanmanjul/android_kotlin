@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.ui.group.views
 
 import android.os.Bundle
+
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+
 import com.afollestad.materialdialogs.MaterialDialog
+
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
@@ -17,6 +19,7 @@ import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
