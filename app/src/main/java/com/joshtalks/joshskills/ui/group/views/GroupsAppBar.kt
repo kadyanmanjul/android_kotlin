@@ -104,6 +104,12 @@ class GroupsAppBar @JvmOverloads constructor(
         }
     }
 
+    fun onToolbarPressed(function : () -> Unit) {
+        toolBarContainer.setOnClickListener{
+            function.invoke()
+        }
+    }
+
     fun onFirstIconPressed(function : () -> Unit) {
         firstIconImageView.setOnClickListener {
             function.invoke()
