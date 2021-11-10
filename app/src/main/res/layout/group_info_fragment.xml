@@ -11,7 +11,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupInfoViewModel" />
+            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -66,9 +66,40 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7"
+            tools:itemCount="6"
             tools:listitem="@layout/group_member_item" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/expand_members_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_22sdp"
+                android:src="@drawable/arrow_down"
+                app:tint="#6F6F6F" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_22sdp"
+                android:fontFamily="@font/open_sans"
+                android:text="23 more"
+                android:textSize="@dimen/_10ssp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/exit_join_group"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:layout_marginTop="@dimen/_12sdp"
@@ -77,7 +108,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+            app:layout_constraintTop_toBottomOf="@+id/expand_members_list">
 
             <ImageView
                 android:layout_width="wrap_content"
