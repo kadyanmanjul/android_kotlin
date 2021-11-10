@@ -1,16 +1,20 @@
 package com.joshtalks.joshskills.ui.group.views
 
 import android.content.Context
+import android.os.Handler
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+
 import androidx.appcompat.widget.LinearLayoutCompat
+
 import com.bumptech.glide.Glide
-import com.joshtalks.joshskills.R
 import de.hdodenhof.circleimageview.CircleImageView
+
+import com.joshtalks.joshskills.R
+
 import java.lang.Exception
 
 class GroupsAppBar @JvmOverloads constructor(
@@ -75,7 +79,9 @@ class GroupsAppBar @JvmOverloads constructor(
             toolBarTitleTv.visibility = View.GONE
             toolBarContainer.visibility = View.VISIBLE
             titleTv.text = title
-            subTitleTv.text = subTitle
+            Handler().postDelayed({
+                subTitleTv.text = subTitle
+            }, 3000)
         } else {
             toolBarContainer.visibility = View.GONE
             toolBarTitleTv.visibility = View.VISIBLE
