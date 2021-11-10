@@ -33,9 +33,11 @@ class SpeakerAdapter(
     fun updateMicViaId(userId:Int,isMicOn:Boolean) {
         val newList: ArrayList<LiveRoomUser> = ArrayList(speakersList)
         val oldUser = newList.filter { it.id == userId }
-        newList.removeAll(oldUser)
-        oldUser[0]?.isMicOn = isMicOn
-        newList.add(oldUser[0])
+        if (oldUser.isNotEmpty()){
+            newList.removeAll(oldUser)
+            oldUser[0]?.isMicOn = isMicOn
+            newList.add(oldUser[0])
+        }
         newList.sortBy { it.sortOrder }
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
@@ -91,9 +93,11 @@ class SpeakerAdapter(
 
 
         private var userImage: FrameLayout? =null
+        var model: LiveRoomUser? =null
 
         fun bind(model: LiveRoomUser) {
             this.userImage = binding.userImage
+            this.model = model
             with(binding) {
                 name.text = model.name
                 userImageIv.apply {
@@ -138,11 +142,13 @@ class SpeakerAdapter(
             }
         }
         fun setGoldenRingVisibility(isVisible:Boolean = false){
-            userImage?.let { ring ->
-                if (isVisible) {
-                    ring.setBackgroundResource(R.drawable.golden_ring_27dp_border)
-                } else {
-                    ring.setBackgroundResource(R.color.white)
+            if (model?.isMicOn == true ) {
+                userImage?.let { ring ->
+                    if (isVisible) {
+                        ring.setBackgroundResource(R.drawable.golden_ring_27dp_border)
+                    } else {
+                        ring.setBackgroundResource(R.color.white)
+                    }
                 }
             }
         }

@@ -656,8 +656,11 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onUserOffline(uid: Int, reason: Int) {
                 super.onUserOffline(uid, reason)
-                val isUserLeave = reason == Constants.USER_OFFLINE_QUIT
-                val usersReference = roomReference.document(roomId.toString()).collection("users")
+                val isUserLeave = reason == USER_OFFLINE_QUIT
+                if (!isRoomCreatedByUser && isUserLeave) {
+                    conversationRoomCallback?.get()?.onUserOffline(uid)
+                }
+                /*val usersReference = roomReference.document(roomId.toString()).collection("users")
                 if (isRoomCreatedByUser) {
                     if (isUserLeave) {
                         usersReference.document(uid.toString()).delete()
@@ -677,7 +680,7 @@ class WebRtcService : BaseWebRtcService() {
 
                         }
                     }
-                }
+                }*/
 
             }
 
@@ -2486,7 +2489,7 @@ interface WebRtcCallback {
 }
 
 interface ConversationRoomCallback {
-    fun onUserOffline(uid: Int, reason: Int)
+    fun onUserOffline(uid: Int)
     fun onAudioVolumeIndication(
         speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
         totalVolume: Int

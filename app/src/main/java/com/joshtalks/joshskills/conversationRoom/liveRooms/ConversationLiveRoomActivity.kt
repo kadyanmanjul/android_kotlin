@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -63,7 +64,6 @@ import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.IRtcEngineEventHandler.AudioVolumeInfo
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -74,7 +74,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
-import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
@@ -186,7 +185,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         timer?.cancel()
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-        viewModel.endRoom(roomId.toString(), roomQuestionId)
+        //viewModel.endRoom(roomId.toString(), roomQuestionId)
+        mBoundService?.endRoom(roomId.toString(), roomQuestionId)
+        finish()
     }
 
     private fun leaveRoom() {
@@ -229,22 +230,25 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 )
                 val msg = pnMessageResult.message.asJsonObject
                 val act = msg["action"].asString
+                try {
+                    if (msg != null) {
+                        when (act) {
+                            "CREATE_ROOM" -> addNewUserToAudience(msg)
+                            "JOIN_ROOM" -> addNewUserToAudience(msg)
+                            "LEAVE_ROOM" -> removeUser(msg)
+                            "END_ROOM" -> leaveRoom()
+                            "IS_HAND_RAISED" -> handRaisedByUser(msg)
+                            "INVITE_SPEAKER" -> inviteUserToSpeaker()
+                            "MOVE_TO_SPEAKER" -> moveToSpeaker(msg)
+                            "MOVE_TO_AUDIENCE" -> moveToAudience(msg)
+                            "MIC_STATUS_CHANGES" -> changeMicStatus(msg)
+                            else -> {
 
-                if (msg != null) {
-                    when (act) {
-                        "CREATE_ROOM" -> addNewUserToAudience(msg)
-                        "JOIN_ROOM" -> addNewUserToAudience(msg)
-                        "LEAVE_ROOM" -> removeUser(msg)
-                        "END_ROOM" -> leaveRoom()
-                        "IS_HAND_RAISED" -> handRaisedByUser(msg)
-                        "INVITE_SPEAKER" -> inviteUserToSpeaker()
-                        "MOVE_TO_SPEAKER" -> moveToSpeaker(msg)
-                        "MOVE_TO_AUDIENCE" -> moveToAudience(msg)
-                        "MIC_STATUS_CHANGES" -> changeMicStatus(msg)
-                        else -> {
-
+                            }
                         }
                     }
+                } catch (ex: Exception) {
+                    LogException.catchException(ex)
                 }
             }
 
@@ -593,18 +597,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun addObservers() {
         showProgressBar()
         viewModel.navigation.observe(this, {
-            when (it) {
-                is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
-                is ConversationRoomListingNavigation.OpenConversationLiveRoom -> setValues(
-                    it.channelName,
-                    it.uid,
-                    it.token,
-                    it.isRoomCreatedByUser,
-                    it.roomId
-                )
-                else -> {
-                    hideProgressBar()
+            try {
+                when (it) {
+                    is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
+                    is ConversationRoomListingNavigation.OpenConversationLiveRoom -> setValues(
+                        it.channelName,
+                        it.uid,
+                        it.token,
+                        it.isRoomCreatedByUser,
+                        it.roomId
+                    )
+                    else -> {
+                        hideProgressBar()
+                    }
                 }
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
             }
         })
     }
@@ -647,7 +655,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         roomId = intent?.getIntExtra(ROOM_ID, 0)
         if (isActivityOpenFromNotification && roomId != null) {
             viewModel.joinRoom(
-                RoomListResponseItem(roomId.toString(),
+                RoomListResponseItem(
+                    roomId.toString(),
                     null,
                     null,
                     null,
@@ -694,17 +703,23 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private var callback: ConversationRoomCallback = object : ConversationRoomCallback {
-        override fun onUserOffline(uid: Int, reason: Int) {
-
+        override fun onUserOffline(uid: Int) {
+            removeUserWhenLeft(uid)
         }
 
         override fun onAudioVolumeIndication(
             speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
             totalVolume: Int
         ) {
-            val uids = Arrays.stream(speakers)
-                .map { s: AudioVolumeInfo -> if (s.uid == null || s.uid == 0) agoraUid else s.uid }
-                .collect(Collectors.toList())
+            val uids = ArrayList<Int>()
+            speakers?.forEach { user ->
+                if (user.volume > 2) {
+                    when (user.uid) {
+                        0 -> uids.add(agoraUid!!)
+                        else -> uids.add(user.uid)
+                    }
+                }
+            }
             refreshSpeakingUsers(uids)
         }
 
@@ -718,15 +733,38 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     }
 
+    private fun removeUserWhenLeft(uid: Int) {
+        if (speakersList.any { it.id == uid }) {
+            val user = speakersList.filter { it.id == uid }
+            speakersList.removeAll(user)
+            speakerAdapter?.updateFullList(speakersList)
+        } else if (audienceList.any { it.id == uid }) {
+            val user = audienceList.filter { it.id == uid }
+            audienceList.removeAll(user)
+            audienceAdapter?.updateFullList(audienceList)
+            viewModel.updateAudienceList(audienceList)
+        }
+    }
+
     private fun refreshSpeakingUsers(uids: List<Int?>) {
-        Log.d("ABC", "refreshSpeakingUsers() called with: uids = $uids")
         speakingListForGoldenRing.clear()
         speakingListForGoldenRing.addAll(uids)
+        Log.d("ABC", "refreshSpeakingUsers() called with: uids = $uids")
         val i = 0
         for (speaker in speakersList) {
+            Log.d(
+                "ABC",
+                "refreshSpeakingUsers() called with: uids = $uids  ${
+                    speakingListForGoldenRing.contains(speaker.id)
+                }"
+            )
             val viewHolder = binding.speakersRecyclerView.findViewHolderForAdapterPosition(i)
             if (viewHolder is SpeakerAdapter.SpeakerViewHolder) {
                 viewHolder.setGoldenRingVisibility(speakingListForGoldenRing.contains(speaker.id))
+                Log.d(
+                    "ABC",
+                    "refreshSpeakingUsers() called with: viewHolder = ${viewHolder.model?.name}"
+                )
             }
         }
     }
@@ -813,6 +851,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 showEndRoomPopup()
             } else {
                 mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+                finish()
             }
         }
 

@@ -24,6 +24,11 @@ class ConversationRoomsListAdapter(
 
     fun isRoomEmpty() = if (listRooms.isNullOrEmpty()) true else false
 
+    fun clearAllRooms() {
+        listRooms.clear()
+        notifyDataSetChanged()
+    }
+
     fun refreshList(newList: List<RoomListResponseItem>) {
         listRooms.clear()
         listRooms.addAll(newList)
@@ -75,22 +80,26 @@ class ConversationRoomsListAdapter(
             "updateItemWithoutPosition() called with: room = $room, isUserLeaving = $isUserLeaving"
         )
         val newList: ArrayList<RoomListResponseItem> = ArrayList(listRooms)
-        val roomToBeUpdated = newList.filter { it.channelId == room.channelId }.get(0)
-        newList.remove(roomToBeUpdated)
-        room.apply {
-            roomToBeUpdated.audienceCount = this.audienceCount ?: roomToBeUpdated.audienceCount
-            roomToBeUpdated.speakerCount = this.speakerCount ?: roomToBeUpdated.speakerCount
-            when (isUserLeaving && this.liveRoomUserList.isNullOrEmpty().not()) {
-                true -> roomToBeUpdated.liveRoomUserList?.removeAll(this.liveRoomUserList!!)
-                false -> roomToBeUpdated.liveRoomUserList?.addAll(this.liveRoomUserList!!)
+        //TODO
+        val roomFiltered = newList.filter { it.channelId == room.channelId }
+        if(roomFiltered.isNotEmpty()){
+            val roomToBeUpdated = roomFiltered.get(0)
+            newList.remove(roomToBeUpdated)
+            room.apply {
+                roomToBeUpdated.audienceCount = this.audienceCount ?: roomToBeUpdated.audienceCount
+                roomToBeUpdated.speakerCount = this.speakerCount ?: roomToBeUpdated.speakerCount
+                when (isUserLeaving && this.liveRoomUserList.isNullOrEmpty().not()) {
+                    true -> roomToBeUpdated.liveRoomUserList?.removeAll(this.liveRoomUserList!!)
+                    false -> roomToBeUpdated.liveRoomUserList?.addAll(this.liveRoomUserList!!)
+                }
             }
+            newList.add(roomToBeUpdated)
+            val diffCallback = ConversationRoomDiffCallback(listRooms, newList)
+            val diffResult = DiffUtil.calculateDiff(diffCallback)
+            listRooms.clear()
+            listRooms.addAll(newList)
+            diffResult.dispatchUpdatesTo(this)
         }
-        newList.add(roomToBeUpdated)
-        val diffCallback = ConversationRoomDiffCallback(listRooms, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        listRooms.clear()
-        listRooms.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
     }
 
     fun updateItem(room: RoomListResponseItem, position: Int) {

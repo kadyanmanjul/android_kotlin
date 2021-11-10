@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomA
 import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.conversationRoom.roomsListing.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
@@ -154,7 +155,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         pubnub = PubNub(pnConf)
 
         pubnub?.addListener(object : SubscribeCallback() {
-            override fun status(pubnub: PubNub, pnStatus: PNStatus) { }
+            override fun status(pubnub: PubNub, pnStatus: PNStatus) {}
 
             override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
                 Log.d(
@@ -163,20 +164,24 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                 )
                 val msg = pnMessageResult.message.asJsonObject
                 val act = msg["action"].asString
-                if (msg != null) {
-                    when (act) {
-                        "CREATE_ROOM" -> addNewRoomToList(msg)
-                        "LEAVE_ROOM" -> updateRoom(msg, true)
-                        "JOIN_ROOM" -> updateRoom(msg, false)
-                        "END_ROOM" -> removeRoomFromList(msg)
+                try {
+                    if (msg != null) {
+                        when (act) {
+                            "CREATE_ROOM" -> addNewRoomToList(msg)
+                            "LEAVE_ROOM" -> updateRoom(msg, true)
+                            "JOIN_ROOM" -> updateRoom(msg, false)
+                            "END_ROOM" -> removeRoomFromList(msg)
+                        }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            if (conversationRoomsListAdapter?.isRoomEmpty() == true) {
+                                showNoRoomAvailableText()
+                            } else {
+                                showRecyclerView()
+                            }
+                        }
                     }
-                    CoroutineScope(Dispatchers.Main).launch {
-                     if (conversationRoomsListAdapter?.isRoomEmpty() == true){
-                        showNoRoomAvailableText()
-                    } else {
-                        showRecyclerView()
-                    }
-                    }
+                } catch (ex: Exception) {
+                    LogException.catchException(ex)
                 }
             }
 
@@ -186,14 +191,19 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
 
             override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
 
-            override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {}
+            override fun channel(
+                pubnub: PubNub,
+                pnChannelMetadataResult: PNChannelMetadataResult
+            ) {
+            }
 
             override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
 
             override fun messageAction(
                 pubnub: PubNub,
                 pnMessageActionResult: PNMessageActionResult
-            ) {}
+            ) {
+            }
 
             override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
         })
@@ -246,21 +256,24 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     }
 
     private fun addObservers() {
-
         viewModel.navigation.observe(viewLifecycleOwner, {
             FullScreenProgressDialog.hideProgressBar(requireActivity())
-            when (it) {
-                is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
-                is ConversationRoomListingNavigation.OpenConversationLiveRoom -> openConversationLiveRoom(
-                    it.channelName,
-                    it.uid,
-                    it.token,
-                    it.isRoomCreatedByUser,
-                    it.roomId,
-                    it.startedBy
-                )
-                ConversationRoomListingNavigation.AtleastOneRoomAvailable -> showRecyclerView()
-                ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
+            try {
+                when (it) {
+                    is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
+                    is ConversationRoomListingNavigation.OpenConversationLiveRoom -> openConversationLiveRoom(
+                        it.channelName,
+                        it.uid,
+                        it.token,
+                        it.isRoomCreatedByUser,
+                        it.roomId,
+                        it.startedBy
+                    )
+                    ConversationRoomListingNavigation.AtleastOneRoomAvailable -> showRecyclerView()
+                    ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
+                }
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
             }
         })
 
@@ -388,6 +401,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
             recyclerView.apply {
                 visibility = View.GONE
             }
+            conversationRoomsListAdapter?.clearAllRooms()
         }
     }
 
@@ -533,22 +547,24 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         token: String?,
         isRoomCreatedByUser: Boolean,
         roomId: Int?,
-        moderatorId:Int?
+        moderatorId: Int?
     ) {
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
         lastRoomId = roomId.toString()
 
-        this.startActivity(ConversationLiveRoomActivity.getIntent(
-            context = requireActivity(),
-            channelName = channelName,
-            uid = uid,
-            token = token,
-            isRoomCreatedByUser = isRoomCreatedByUser,
-            roomId = roomId,
-            moderatorId = moderatorId,
-            roomQuestionId = conversationRoomQuestionId
-        ))
+        this.startActivity(
+            ConversationLiveRoomActivity.getIntent(
+                context = requireActivity(),
+                channelName = channelName,
+                uid = uid,
+                token = token,
+                isRoomCreatedByUser = isRoomCreatedByUser,
+                roomId = roomId,
+                moderatorId = moderatorId,
+                roomQuestionId = conversationRoomQuestionId
+            )
+        )
     }
 
     private fun showApiCallErrorToast(error: String) {
