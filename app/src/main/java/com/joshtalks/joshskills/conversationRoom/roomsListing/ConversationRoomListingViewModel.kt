@@ -38,14 +38,15 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
 
     fun updateHandRaisedToUser(userId:Int,isHandRaised:Boolean){
         val oldAudienceList:ArrayList<LiveRoomUser> = ArrayList(getAudienceList())
-        val user = oldAudienceList?.filter { it.id == userId }
-        user?.get(0)?.let { it->
-            oldAudienceList.remove(it)
-            it.isHandRaised = isHandRaised
+        val isUserPresent = oldAudienceList.any { it.id == userId }
+        if (isUserPresent) {
+            val roomUser = oldAudienceList.filter { it.id == userId }[0]
+            oldAudienceList.remove(roomUser)
+            roomUser.isHandRaised = isHandRaised
             if (isHandRaised.not()){
-                it.isInviteSent = false
+                roomUser.isInviteSent = false
             }
-            oldAudienceList.add(it)
+            oldAudienceList.add(roomUser)
             this.audienceList.postValue(oldAudienceList)
         }
     }

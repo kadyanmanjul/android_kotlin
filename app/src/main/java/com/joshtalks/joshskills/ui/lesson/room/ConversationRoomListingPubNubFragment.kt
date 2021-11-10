@@ -438,7 +438,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     private fun setFlagInWebRtcServie() {
         val intent = Intent(requireActivity(), WebRtcService::class.java)
         isConversionRoomActive = true
-        requireActivity().startService(intent)
+        intent.startServiceForWebrtc()
     }
 
     override fun onResume() {

@@ -114,8 +114,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
             binding.englishCard.background =
                 ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-            binding.materialTextView.text = buttonText.get(index)
-            binding.txtLabelHeading.text = headingText.get(index)
+            if (buttonText.size > 0 && buttonText.size.minus(1) >= index) {
+                binding.materialTextView.text = buttonText[index]
+                binding.txtLabelHeading.text = headingText[index]
+            }
             binding.seeCourseList.visibility = View.VISIBLE
             scrollToBottom()
         }

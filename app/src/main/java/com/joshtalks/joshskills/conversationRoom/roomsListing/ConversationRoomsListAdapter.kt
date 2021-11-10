@@ -80,10 +80,10 @@ class ConversationRoomsListAdapter(
             "updateItemWithoutPosition() called with: room = $room, isUserLeaving = $isUserLeaving"
         )
         val newList: ArrayList<RoomListResponseItem> = ArrayList(listRooms)
-        //TODO
-        val roomFiltered = newList.filter { it.channelId == room.channelId }
-        if(roomFiltered.isNotEmpty()){
-            val roomToBeUpdated = roomFiltered.get(0)
+        val isRoomPresent = newList.any { it.channelId == room.channelId }
+        if(isRoomPresent){
+            val roomFiltered = newList.filter { it.channelId == room.channelId }
+            val roomToBeUpdated = roomFiltered[0]
             newList.remove(roomToBeUpdated)
             room.apply {
                 roomToBeUpdated.audienceCount = this.audienceCount ?: roomToBeUpdated.audienceCount

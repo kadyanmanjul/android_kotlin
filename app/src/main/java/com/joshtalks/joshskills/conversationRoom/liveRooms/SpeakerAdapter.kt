@@ -32,10 +32,11 @@ class SpeakerAdapter(
 
     fun updateMicViaId(userId:Int,isMicOn:Boolean) {
         val newList: ArrayList<LiveRoomUser> = ArrayList(speakersList)
-        val oldUser = newList.filter { it.id == userId }
-        if (oldUser.isNotEmpty()){
+        val isOldUserPresent = newList.any { it.id == userId }
+        if (isOldUserPresent){
+            val oldUser = newList.filter { it.id == userId }
             newList.removeAll(oldUser)
-            oldUser[0]?.isMicOn = isMicOn
+            oldUser[0].isMicOn = isMicOn
             newList.add(oldUser[0])
         }
         newList.sortBy { it.sortOrder }
