@@ -98,7 +98,10 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun editGroupInfo() {
-        message.what = OPEN_NEW_GROUP
+        message.what = EDIT_GROUP_INFO
+        message.data = Bundle().apply {
+            putString(GROUPS_TITLE, groupHeader.get())
+        }
         singleLiveEvent.value = message
     }
 }

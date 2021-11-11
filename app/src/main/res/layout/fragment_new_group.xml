@@ -49,8 +49,8 @@
                 onBackPressed="@{vm::onBackPress}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                groupSubHeader="@{`Add group name`}"
-                groupHeader="@{`New group`}"/>
+                groupSubHeader="@{vm.isFromGroupInfo() ? `` : `Add group name`}"
+                groupHeader="@{vm.isFromGroupInfo ? `Edit Group` : `New group`}"/>
         </com.google.android.material.appbar.AppBarLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -81,6 +81,7 @@
             android:background="@color/transparent"
             android:singleLine="true"
             android:hint="Enter Group Name"
+            android:text="@{vm.isFromGroupInfo() ? vm.groupTitle : ``}"
             app:layout_constraintBottom_toBottomOf="@+id/img_group"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/img_group"
