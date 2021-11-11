@@ -12,3 +12,4 @@ const val ADD_GROUP_TO_SERVER = 9
 const val OPEN_CALLING_ACTIVITY = 10
 const val SHOULD_REFRESH_GROUP_LIST = 12
 const val OPEN_GROUP_INFO = 13
+const val EDIT_GROUP_INFO = 14
