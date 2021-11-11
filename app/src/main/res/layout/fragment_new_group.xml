@@ -134,7 +134,6 @@
             android:layout_height="@dimen/_32sdp"
             android:backgroundTint="@color/blue33"
             android:onClick="@{vm::saveGroupInfo}"
-            android:padding="@dimen/_10sdp"
             android:scaleType="centerInside"
             android:src="@drawable/add_groups"
             app:layout_constraintBottom_toBottomOf="@+id/background_view"
