@@ -10,10 +10,7 @@ import androidx.lifecycle.viewModelScope
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
-import com.joshtalks.joshskills.constants.OPEN_CALLING_ACTIVITY
-import com.joshtalks.joshskills.constants.OPEN_GROUP_INFO
-import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
+import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
@@ -97,6 +94,11 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun openGroupInfo() {
         message.what = OPEN_GROUP_INFO
+        singleLiveEvent.value = message
+    }
+
+    fun editGroupInfo() {
+        message.what = OPEN_NEW_GROUP
         singleLiveEvent.value = message
     }
 }

@@ -57,6 +57,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_GROUP -> openGroupChat(it.obj as? GroupItemData)
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 OPEN_GROUP_INFO -> openGroupInfoFragment()
+                EDIT_GROUP_INFO -> openEditGroupInfo()
                 SEARCH_GROUP -> openGroupSearchFragment()
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
@@ -164,19 +165,17 @@ class JoshGroupActivity : BaseGroupActivity() {
     private fun openGroupInfoFragment() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-//            val bundle = Bundle().apply {
-//                putString(GROUPS_CREATED_TIME, data?.getCreatedTime())
-//                putString(GROUPS_CREATOR, data?.getCreator())
-//                putString(GROUPS_TITLE, data?.getTitle())
-//                putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
-//                putString(GROUPS_IMAGE, data?.getImageUrl())
-//                putString(GROUPS_ID, data?.getUniqueId())
-//                putString(CONVERSATION_ID, vm.conversationId)
-//                data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
-//            }
 
             val fragment = GroupInfoFragment()
             replace(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openEditGroupInfo() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.group_fragment_container, NewGroupFragment(), EDIT_GROUP_INFO_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }
