@@ -82,8 +82,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/first_right_icon"
                 app:layout_constraintStart_toEndOf="@+id/image_view_logo"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone"
-                tools:text="Spoken English Course" />
+                tools:text="Spoken English Course"
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/title_container"
@@ -136,13 +136,13 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/first_right_icon"
-                android:transitionName="group_list_appbar"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="@dimen/_4sdp"
                 android:tint="@color/white"
+                android:transitionName="group_list_appbar"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/second_right_icon"
@@ -157,9 +157,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="@dimen/_4sdp"
+                android:scaleType="fitCenter"
                 android:tint="@color/white"
                 android:visibility="gone"
-                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

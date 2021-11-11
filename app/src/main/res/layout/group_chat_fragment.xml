@@ -38,8 +38,8 @@
                 onBackPressed="@{vm::onBackPress}"
                 onSecondIconPressed="@{vm::callGroup}"
                 onToolbarPressed="@{vm::openGroupInfo}"
-                subHeaderTimer="@{true}"
                 secondIcon="@{vm.hasJoinedGroup ? R.drawable.group_call : R.drawable.josh_skill_logo }"
+                subHeaderTimer="@{true}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -86,13 +86,52 @@
                 android:textColor="@color/group_coming_soon" />
         </com.google.android.material.card.MaterialCardView>
 
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/group_chat_send_msg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@drawable/rect_round"
+            android:cursorVisible="true"
+            android:drawableStart="@drawable/ic_chat_emoji"
+            android:drawablePadding="@dimen/_6sdp"
+            android:hint="@string/type_message_hint"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="4"
+            android:minHeight="@dimen/_34sdp"
+            android:paddingStart="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/pitch_black"
+            android:textColorHint="@color/gray_9E"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/floatingActionButton"
+            android:layout_width="@dimen/_34sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorAccent"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:src="@drawable/ic_send"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_call_practice_partner"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/_32sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
             android:insetTop="0dp"
@@ -104,7 +143,7 @@
             android:textSize="@dimen/_12ssp"
             android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
             app:cornerRadius="@dimen/_36sdp"
-            app:layout_constraintBottom_toTopOf="@+id/appCompatTextView"
+            app:layout_constraintBottom_toTopOf="@+id/tv_online_user_count"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_default="percent"
@@ -117,6 +156,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
             android:gravity="center"
             android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
             android:paddingHorizontal="@dimen/_4sdp"
@@ -125,26 +165,26 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_10ssp"
             android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_call_practice_partner" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="@color/white"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
-            android:paddingHorizontal="@dimen/_4sdp"
-            android:paddingVertical="@dimen/_2sdp"
-            android:text="@{vm.hasJoinedGroup ? `Chat function will be coming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"
-            android:textColor="@{vm.hasJoinedGroup ? @color/group_coming_soon : @color/join_group, default=@color/join_group}"
-            android:textSize="@{vm.hasJoinedGroup ? @dimen/_12ssp : @dimen/_14ssp, default=@dimen/_14ssp}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/group_chat_send_msg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <!--                <androidx.appcompat.widget.AppCompatTextView-->
+        <!--                    android:id="@+id/appCompatTextView"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="?actionBarSize"-->
+        <!--                    android:background="@color/white"-->
+        <!--                    android:foreground="?android:attr/selectableItemBackground"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"-->
+        <!--                    android:paddingHorizontal="@dimen/_4sdp"-->
+        <!--                    android:paddingVertical="@dimen/_2sdp"-->
+        <!--                    android:text="@{vm.hasJoinedGroup ? `Chat function will be coming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"-->
+        <!--                    android:textColor="@{vm.hasJoinedGroup ? @color/group_coming_soon : @color/join_group, default=@color/join_group}"-->
+        <!--                    android:textSize="@{vm.hasJoinedGroup ? @dimen/_12ssp : @dimen/_14ssp, default=@dimen/_14ssp}"-->
+        <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                    app:layout_constraintStart_toStartOf="parent" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

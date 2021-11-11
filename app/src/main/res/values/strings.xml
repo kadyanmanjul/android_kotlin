@@ -28,7 +28,7 @@
     <string name="record_permission_message">To record a Voice Message, allow Josh Skills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
     <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
 
-    <string name="type_message_hint">Type a Message</string>
+    <string name="type_message_hint">Type a message</string>
 
     <string name="splash_sub_string_english">Zindagi mein aage badho,\nJosh ke saath! </string>
 
