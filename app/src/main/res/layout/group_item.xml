@@ -2,7 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
+        <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
+
         <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.group.model.GroupItemData" />
@@ -10,23 +14,24 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/group_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:clickable="true"
         android:enabled="true"
         android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:foreground="?android:attr/selectableItemBackground">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_logo"
+            defaultImage="@{DefaultImage.DEFAULT_GROUP_IMAGE}"
+            groupImage="@{itemData.imageUrl}"
             android:layout_width="@dimen/_36sdp"
             android:layout_height="@dimen/_36sdp"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/_11sdp"
             android:background="@drawable/white_button_round_enabled"
             android:gravity="center_vertical|start"
-            groupImage="@{itemData.imageUrl}"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/title_container"
             app:layout_constraintStart_toStartOf="parent"
@@ -51,9 +56,9 @@
                 android:layout_marginTop="@dimen/_14sdp"
                 android:gravity="start"
                 android:singleLine="true"
+                android:text="@{itemData.title}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                 android:textColor="@color/black"
-                android:text="@{itemData.title}"
                 tools:text="Hello" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -62,15 +67,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/_11sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_1sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_9sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:gravity="start"
                 android:singleLine="true"
-                android:textSize="@dimen/_12sdp"
                 android:text="@{itemData.subTitle}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/grey_7A"
+                android:textSize="@dimen/_12sdp"
                 tools:text="tap here for group info" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

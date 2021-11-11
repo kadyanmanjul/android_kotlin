@@ -12,6 +12,7 @@ import com.flurry.sdk.it
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
+import com.joshtalks.joshskills.ui.group.model.DefaultImage
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.views.GroupsAppBar
 import de.hdodenhof.circleimageview.CircleImageView
@@ -48,8 +49,8 @@ fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
 @BindingAdapter("groupImage")
 fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
 
-@BindingAdapter("groupImage")
-fun CircleImageView.setGroupImage(imageUrl: String) {
+@BindingAdapter("groupImage", "defaultImage")
+fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: DefaultImage) {
     if (imageUrl.isNotBlank())
         Glide.with(this)
             .load(imageUrl)
@@ -57,7 +58,7 @@ fun CircleImageView.setGroupImage(imageUrl: String) {
             .into(this)
     else
         Glide.with(this)
-            .load(R.drawable.group_default_icon)
+            .load(defaultImage.drwRes)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
 }

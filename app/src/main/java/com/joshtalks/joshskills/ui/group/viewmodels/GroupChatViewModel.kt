@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
+import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
@@ -101,6 +102,7 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = EDIT_GROUP_INFO
         message.data = Bundle().apply {
             putString(GROUPS_TITLE, groupHeader.get())
+            putString(GROUPS_IMAGE, imageUrl.get())
         }
         singleLiveEvent.value = message
     }
