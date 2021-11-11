@@ -74,14 +74,16 @@ class GroupsAppBar @JvmOverloads constructor(
 
     }
 
-    fun setGroupSubTitle(subTitle: String, title: String) {
+    fun setGroupSubTitle(subTitle: String, title: String, timerPresent: Boolean) {
         if (subTitle.isNotBlank()) {
             toolBarTitleTv.visibility = View.GONE
             toolBarContainer.visibility = View.VISIBLE
             titleTv.text = title
-            Handler().postDelayed({
-                subTitleTv.text = subTitle
-            }, 3000)
+            if (timerPresent)
+                Handler().postDelayed({
+                    subTitleTv.text = subTitle
+                }, 3000)
+            else subTitleTv.text = subTitle
         } else {
             toolBarContainer.visibility = View.GONE
             toolBarTitleTv.visibility = View.VISIBLE

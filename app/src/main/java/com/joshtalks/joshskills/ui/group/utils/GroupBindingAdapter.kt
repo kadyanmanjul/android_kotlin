@@ -2,19 +2,22 @@ package com.joshtalks.joshskills.ui.group.bindingadapters
 
 import android.text.Editable
 import android.text.TextWatcher
+
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.flurry.sdk.it
+
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -36,9 +39,9 @@ fun GroupsAppBar.setFirstIcon(drawableRes: Int) {
         this.firstIcon(drawableRes)
 }
 
-@BindingAdapter("groupHeader", "groupSubHeader")
-fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String) =
-    this.setGroupSubTitle(subHeader, header)
+@BindingAdapter("groupHeader", "groupSubHeader", "subHeaderTimer", requireAll = false)
+fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, boolean: Boolean = false) =
+    this.setGroupSubTitle(subHeader, header, boolean)
 
 @BindingAdapter("secondIcon")
 fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
