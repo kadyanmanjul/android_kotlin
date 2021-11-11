@@ -36,6 +36,7 @@ class JoshGroupViewModel : BaseViewModel() {
 
     val repository = GroupRepository(onDataLoaded)
     val groupTitle = ObservableField("Groups")
+    val groupImageUrl = ObservableField("")
     val adapter = GroupAdapter(GroupItemComparator)
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
@@ -100,6 +101,15 @@ class JoshGroupViewModel : BaseViewModel() {
             message.what = ADD_GROUP_TO_SERVER
             singleLiveEvent.value = message
         }
+    }
+
+    fun setGroupImage() {
+        if (groupImageUrl.get().isNullOrEmpty()) {
+
+        } else {
+
+        }
+        TODO("Set imageUrl or default drawable")
     }
 
     fun addGroup(request: AddGroupRequest) {

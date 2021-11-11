@@ -178,6 +178,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             val bundle = Bundle().apply {
                 putBoolean(IS_FROM_GROUP_INFO, true)
                 putString(GROUPS_TITLE, data?.getString(GROUPS_TITLE))
+                putString(GROUPS_IMAGE, data?.getString(GROUPS_IMAGE))
             }
             val fragment = NewGroupFragment()
             fragment.arguments = bundle

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.group
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -84,7 +85,7 @@ class NewGroupFragment : BaseFragment() {
         arguments?.let {
             vm.isFromGroupInfo.set(it.getBoolean(IS_FROM_GROUP_INFO, false))
             vm.groupTitle.set(it.getString(GROUPS_TITLE))
-            TODO("Need to get group image url")
+            vm.groupImageUrl.set(it.getString(GROUPS_IMAGE))
         }
     }
 }
