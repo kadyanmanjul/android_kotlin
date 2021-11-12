@@ -185,5 +185,6 @@
     <color name="join_group">#25D366</color>
     <color name="exit_group">#D12D30</color>
     <color name="pitch_black">#000000</color>
+    <color name="unread_msg">#1FA856</color>
 
 </resources>
