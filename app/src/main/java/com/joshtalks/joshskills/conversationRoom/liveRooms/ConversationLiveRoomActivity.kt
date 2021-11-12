@@ -111,7 +111,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
     private var isBackPressed: Boolean = false
-    private var isPubNubObserverAdded: Boolean = false
     private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
     private var currentUser: LiveRoomUser? = null
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
@@ -266,8 +265,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
             override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
         })
-
-        getLatestUserList()
+        //getLatestUserList()
     }
 
     private fun handRaisedByUser(msg: JsonObject) {
@@ -432,6 +430,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             ?.includeState(true)
             ?.async(object : PNCallback<PNHereNowResult> {
                 override fun onResponse(result: PNHereNowResult?, status: PNStatus) {
+                    if (result?.channels?.get(channelName)?.occupants?.isEmpty() == true){
+                        when(isRoomCreatedByUser){
+                            false ->{
+                                leaveRoom()
+                            }
+                        }
+                    }
                     result?.channels?.get(channelName)?.occupants?.forEach {
                         refreshUsersList(it.state)
                     }
@@ -449,7 +454,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun addPubNubEventObserver() {
-        isPubNubObserverAdded = true
         compositeDisposable.add(
             replaySubject.ofType(ConversationRoomPubNubEventBus::class.java)
             .subscribeOn(Schedulers.io())
@@ -1143,6 +1147,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (this.roomId == roomId) {
             binding.notificationBar.apply {
                 visibility = View.VISIBLE
+                setNotificationState(NotificationView.ConversationRoomNotificationState.DEFAULT)
                 hideActionLayout()
                 setBackgroundColor(false)
                 setHeading("This room has ended")
@@ -1500,9 +1505,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onResume() {
         super.onResume()
         observeNetwork()
-        if (isPubNubObserverAdded){
-            addPubNubEventObserver()
-        }
+        getLatestUserList()
     }
 
     override fun onBackPressed() {
