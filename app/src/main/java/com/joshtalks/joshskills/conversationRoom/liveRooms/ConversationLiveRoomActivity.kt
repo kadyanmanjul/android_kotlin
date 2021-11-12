@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationRoomPubNubEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
@@ -69,6 +70,7 @@ import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.ReplaySubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,11 +111,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
     private var isBackPressed: Boolean = false
+    private var isPubNubObserverAdded: Boolean = false
     private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
     private var currentUser: LiveRoomUser? = null
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
     val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     val speakingListForGoldenRing: ArrayList<Int?> = arrayListOf()
+    private val replaySubject by lazy { ReplaySubject.create<Any>() }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,8 +146,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 initSearchingView()
                 startProgressBarCountDown()
             }
+            initPubNub()
         }
-        initPubNub()
     }
 
     private fun initSearchingView() {
@@ -181,7 +186,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun endRoom() {
-        Timber.tag("ABC").e("endRoom() called")
+        Timber.tag("ABC2").e("endRoom() called")
         timer?.cancel()
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
@@ -225,27 +230,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
             override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
                 Log.d(
-                    "ABC",
+                    "ABC2",
                     "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
                 )
                 val msg = pnMessageResult.message.asJsonObject
                 val act = msg["action"].asString
                 try {
                     if (msg != null) {
-                        when (act) {
-                            "CREATE_ROOM" -> addNewUserToAudience(msg)
-                            "JOIN_ROOM" -> addNewUserToAudience(msg)
-                            "LEAVE_ROOM" -> removeUser(msg)
-                            "END_ROOM" -> leaveRoom()
-                            "IS_HAND_RAISED" -> handRaisedByUser(msg)
-                            "INVITE_SPEAKER" -> inviteUserToSpeaker()
-                            "MOVE_TO_SPEAKER" -> moveToSpeaker(msg)
-                            "MOVE_TO_AUDIENCE" -> moveToAudience(msg)
-                            "MIC_STATUS_CHANGES" -> changeMicStatus(msg)
-                            else -> {
-
-                            }
-                        }
+                        replaySubject.toSerialized().onNext(ConversationRoomPubNubEventBus(act,msg))
                     }
                 } catch (ex: Exception) {
                     LogException.catchException(ex)
@@ -285,7 +277,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     "\uD83D\uDC4B %s has something to say. Invite " +
                             "them as speakers?",
                     msg.get("name")
-                ), msg.get("id").asInt
+                ), msg.get("id").asInt,
+                NotificationView.ConversationRoomNotificationState.HAND_RAISED
             )
             setHandRaisedForUser(msg.get("id").asInt, true)
         } else {
@@ -303,12 +296,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun moveToSpeaker(msg: JsonObject) {
         if (moderatorUid == agoraUid) {
             CoroutineScope(Dispatchers.Main).launch {
-                setNotificationWithoutAction(
-                    String.format(
-                        "%s is now a speaker!",
-                        msg.get("name").asString
-                    ), true
-                )
+                msg.get("name")?.asString?.let { name ->
+                    setNotificationWithoutAction(
+                        String.format(
+                            "%s is now a speaker!",
+                            name
+                        ), true,
+                        NotificationView.ConversationRoomNotificationState.MOVED_TO_SPEAKER
+                    )
+                }
             }
         }
 
@@ -328,7 +324,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun changeMicStatus(eventObject: JsonObject) {
-        Log.d("ABC", "presence() called mic_status_changes")
+        Log.d("ABC2", "presence() called mic_status_changes")
         if (agoraUid == eventObject.get("id").asInt) {
             iSSoundOn = eventObject.get("is_mic_on").asBoolean
             setPresenceStateForUuid(currentUser, iSSoundOn)
@@ -351,7 +347,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             "Maybe later?", "Join as speaker", String.format(
                 "\uD83D\uDC4B %s invited you to join as a speaker",
                 moderatorName
-            ), moderatorUid
+            ), moderatorUid,
+            NotificationView.ConversationRoomNotificationState.JOIN_AS_SPEAKER
         )
 
     }
@@ -438,11 +435,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     result?.channels?.get(channelName)?.occupants?.forEach {
                         refreshUsersList(it.state)
                     }
+                    addPubNubEventObserver()
                     /*result?.channels?.forEach { t, u ->
-                        Log.d("ABC", "here now   t = $t, u = $u")
+                        Log.d("ABC2", "here now   t = $t, u = $u")
                         u.occupants.forEach {
                             //getAllUsersData(it.state)
-                            Log.d("ABC", "occupants onResponse() called $it")
+                            Log.d("ABC2", "occupants onResponse() called $it")
                         }
                     }*/
                 }
@@ -450,11 +448,36 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             })
     }
 
+    private fun addPubNubEventObserver() {
+        isPubNubObserverAdded = true
+        compositeDisposable.add(
+            replaySubject.ofType(ConversationRoomPubNubEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.d("ABC2", "addPubNubEventObserver() called ${it.action} ${it.data}")
+                when (it.action) {
+                    "CREATE_ROOM" -> addNewUserToAudience(it.data)
+                    "JOIN_ROOM" -> addNewUserToAudience(it.data)
+                    "LEAVE_ROOM" -> removeUser(it.data)
+                    "END_ROOM" -> leaveRoom()
+                    "IS_HAND_RAISED" -> handRaisedByUser(it.data)
+                    "INVITE_SPEAKER" -> inviteUserToSpeaker()
+                    "MOVE_TO_SPEAKER" -> moveToSpeaker(it.data)
+                    "MOVE_TO_AUDIENCE" -> moveToAudience(it.data)
+                    "MIC_STATUS_CHANGES" -> changeMicStatus(it.data)
+                    else -> {
+
+                    }
+                }
+            })
+    }
+
     private fun refreshUsersList(state: JsonElement?) {
         if (state == null) {
             return
         }
-        Log.d("ABC", "refreshUsersList() called with: state = $state")
+        Log.d("ABC2", "refreshUsersList() called with: state = $state")
         val user = getAllUsersData(state)
         if (user.isModerator) {
             if (moderatorUid == null || moderatorUid == 0) {
@@ -538,13 +561,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             val user = AppObjectController.gsonMapper.fromJson<LiveRoomUser>(data, matType)
             CoroutineScope(Dispatchers.Main).launch {
-                if (user?.isSpeaker == true) {
+                // TODO Check if user is present locally
+                val isFromSpeakerList = speakersList.any { it.id == user.id }
+                if (isFromSpeakerList) {
                     val list = speakersList.filter { it.id == user.id }
                     speakersList.removeAll(list)
                     speakersList.sortBy { it.sortOrder }
                     speakerAdapter?.updateFullList(speakersList)
-                } else {
-
+                } else if (audienceList.any { it.id == user.id }) {
                     val list = audienceList.filter { it.id == user.id }
                     audienceList.removeAll(list)
                     audienceList.sortBy { it.sortOrder }
@@ -632,6 +656,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         this.isRoomCreatedByUser = roomCreatedByUser
         initData()
         hideProgressBar()
+        initPubNub()
     }
 
     private fun showApiCallErrorToast(error: String) {
@@ -639,6 +664,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (error.isNotEmpty()) {
             binding.notificationBar.apply {
                 visibility = View.VISIBLE
+                setNotificationState(NotificationView.ConversationRoomNotificationState.API_ERROR)
                 hideActionLayout()
                 setHeading(error)
                 setBackgroundColor(false)
@@ -711,6 +737,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
             totalVolume: Int
         ) {
+
             val uids = ArrayList<Int>()
             speakers?.forEach { user ->
                 if (user.volume > 2) {
@@ -749,22 +776,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun refreshSpeakingUsers(uids: List<Int?>) {
         speakingListForGoldenRing.clear()
         speakingListForGoldenRing.addAll(uids)
-        Log.d("ABC", "refreshSpeakingUsers() called with: uids = $uids")
+        // Log.d("ABC2", "refreshSpeakingUsers() called with: uids = $uids")
         val i = 0
         for (speaker in speakersList) {
-            Log.d(
-                "ABC",
-                "refreshSpeakingUsers() called with: uids = $uids  ${
-                    speakingListForGoldenRing.contains(speaker.id)
-                }"
-            )
+
             val viewHolder = binding.speakersRecyclerView.findViewHolderForAdapterPosition(i)
             if (viewHolder is SpeakerAdapter.SpeakerViewHolder) {
                 viewHolder.setGoldenRingVisibility(speakingListForGoldenRing.contains(speaker.id))
-                Log.d(
-                    "ABC",
-                    "refreshSpeakingUsers() called with: viewHolder = ${viewHolder.model?.name}"
-                )
+                //speakerAdapter.notifyItemChanged()
+                //Log.d("ABC2", "refreshSpeakingUsers() called with: viewHolder = ${viewHolder.model?.name}")
             }
         }
     }
@@ -822,7 +842,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             moderatorUid = it.get("started_by")?.toString()?.toInt()
             WebRtcService.moderatorUid = moderatorUid
             WebRtcService.isRoomCreatedByUser = moderatorUid == agoraUid
-            Log.d("ABC", "moderatorUid set")
+            Log.d("ABC2", "moderatorUid set")
             topicName = it.get("topic")?.toString()
             WebRtcService.conversationRoomTopicName = topicName
             binding.topic.text = topicName
@@ -902,7 +922,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         String.format(
                             "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
                                     "know you want to talk..."
-                        ), true
+                        ), true,
+                        NotificationView.ConversationRoomNotificationState.YOUR_HAND_RAISED
                     )
                 }
                 false -> {
@@ -930,7 +951,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 .channels(Arrays.asList(channelName))
                 .state(state)
                 .async { result, status ->
-                    Log.d("ABC", "setPresenceState() called with: result = $result, status = $status")
+                    Log.d("ABC2", "setPresenceState() called with: result = $result, status = $status")
                 }*/
 
             pubnub?.publish()
@@ -940,7 +961,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     override fun onResponse(result: PNPublishResult?, status: PNStatus) {
                         if (status.isError.not()) {
                             Log.d(
-                                "ABC",
+                                "ABC2",
                                 "onResponse() called with: state = $state, channelName = $channelName result = $result"
                             )
                         }
@@ -1017,20 +1038,24 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         rejectedText: String,
         acceptedText: String,
         heading: String,
-        userUid: Int?
+        userUid: Int?,
+        state: NotificationView.ConversationRoomNotificationState? = NotificationView.ConversationRoomNotificationState.DEFAULT
     ) {
         CoroutineScope(Dispatchers.Main).launch {
 
             binding.notificationBar.apply {
-                visibility = View.VISIBLE
-                showActionLayout()
-                setRejectButtonText(rejectedText)
-                setAcceptButtonText(acceptedText)
-                setUserUuid(userUid)
-                setHeading(heading)
-                startSound()
-                setBackgroundColor(true)
-                loadAnimationSlideDown()
+                if (getNotificationState() != NotificationView.ConversationRoomNotificationState.HAND_RAISED) {
+                    setUserUuid(userUid)
+                    setNotificationState(state!!)
+                    visibility = View.VISIBLE
+                    showActionLayout()
+                    setRejectButtonText(rejectedText)
+                    setAcceptButtonText(acceptedText)
+                    setHeading(heading)
+                    startSound()
+                    setBackgroundColor(true)
+                    loadAnimationSlideDown()
+                }
             }
             if (runnable != null) {
                 handler?.removeCallbacks(runnable!!)
@@ -1059,9 +1084,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
 
-    private fun setNotificationWithoutAction(heading: String, isGreenColorNotification: Boolean) {
+    private fun setNotificationWithoutAction(
+        heading: String,
+        isGreenColorNotification: Boolean,
+        state: NotificationView.ConversationRoomNotificationState
+    ) {
         binding.notificationBar.apply {
             visibility = View.VISIBLE
+            setNotificationState(state)
             hideActionLayout()
             setHeading(heading)
             setBackgroundColor(isGreenColorNotification)
@@ -1109,7 +1139,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun showRoomEndNotification(roomId: Int?) {
-        Log.d("ABC", "showRoomEndNotification() called with: roomId = $roomId")
+        Log.d("ABC2", "showRoomEndNotification() called with: roomId = $roomId")
         if (this.roomId == roomId) {
             binding.notificationBar.apply {
                 visibility = View.VISIBLE
@@ -1131,7 +1161,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 return@addSnapshotListener
             }
             if (value?.exists() == false) {
-                Log.d("ABC", "switchRoles() called with: value = $value, error = $error")
+                Log.d("ABC2", "switchRoles() called with: value = $value, error = $error")
                 finish()
             }
             if (value != null) {
@@ -1245,6 +1275,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.apply {
             visibility = View.VISIBLE
             setHeading("The Internet connection appears to be offline")
+            setNotificationState(NotificationView.ConversationRoomNotificationState.NO_INTERNET_AVAILABLE)
             loadAnimationSlideDown()
             startSound()
             hideActionLayout()
@@ -1255,6 +1286,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun internetAvailable() {
         binding.notificationBar.apply {
             visibility = View.GONE
+            setNotificationState(NotificationView.ConversationRoomNotificationState.DEFAULT)
             endSound()
         }
     }
@@ -1371,7 +1403,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         } else {
                             setNotificationWithoutAction(
                                 "Room has reached maximum allowed number of speakers." +
-                                        " Please try again after sometime.", false
+                                        " Please try again after sometime.", false,
+                                NotificationView.ConversationRoomNotificationState.MAX_LIMIT_REACHED
                             )
                         }
                     }
@@ -1430,7 +1463,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
-            Log.d("ABC", "activity showEndRoomPopup() called")
+            Log.d("ABC2", "activity showEndRoomPopup() called")
             mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
             alertDialog.dismiss()
             finish()
@@ -1467,6 +1500,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onResume() {
         super.onResume()
         observeNetwork()
+        if (isPubNubObserverAdded){
+            addPubNubEventObserver()
+        }
     }
 
     override fun onBackPressed() {
@@ -1484,7 +1520,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onDestroy() {
-        Log.d("ABC", "activity onDestroy() called")
+        Log.d("ABC2", "activity onDestroy() called")
         if (!isBackPressed) {
             if (isRoomCreatedByUser) {
                 mBoundService?.endRoom(roomId?.toString(), roomQuestionId)

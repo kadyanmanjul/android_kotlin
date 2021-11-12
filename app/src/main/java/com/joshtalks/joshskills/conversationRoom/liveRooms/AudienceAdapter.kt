@@ -25,10 +25,13 @@ class AudienceAdapter(
 
     fun updateHandRaisedViaId(userId:Int,isHandRaised:Boolean) {
         val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
-        val oldUser = newList.filter { it.id == userId }
-        newList.removeAll(oldUser)
-        oldUser[0]?.isHandRaised = isHandRaised
-        newList.add(oldUser[0])
+        val isOldUserPresent = newList.any { it.id == userId }
+        if (isOldUserPresent){
+            val oldUser = newList.filter { it.id == userId }
+            newList.removeAll(oldUser)
+            oldUser[0].isHandRaised = isHandRaised
+            newList.add(oldUser[0])
+        }
         newList.sortBy { it.sortOrder }
         val diffCallback = ConversationUserDiffCallback(audienceList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)

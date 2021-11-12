@@ -17,6 +17,7 @@ class NotificationView @JvmOverloads constructor(
     var mediaPlayer: MediaPlayer? = null
     var userRequestedUuid: Int? = null
     var isSpeakerInviteNotification: Int? = null
+    var state: ConversationRoomNotificationState = ConversationRoomNotificationState.DEFAULT
 
     interface NotificationViewAction {
         fun onAcceptNotification()
@@ -34,6 +35,14 @@ class NotificationView @JvmOverloads constructor(
         }
     }
 
+    fun setNotificationState(state: ConversationRoomNotificationState) {
+        this.state = state
+    }
+
+    fun getNotificationState() :ConversationRoomNotificationState{
+        return this.state
+    }
+
     fun setUserUuid(id: Int?) {
         this.userRequestedUuid = id
     }
@@ -49,6 +58,7 @@ class NotificationView @JvmOverloads constructor(
     fun loadAnimationSlideUp() {
         notification_bar.pivotY = notification_bar.layoutParams.height.div(2).toFloat()
         notification_bar.animate().scaleY(0.0F).duration = 500
+        this.state=ConversationRoomNotificationState.DEFAULT
 
     }
 
@@ -95,6 +105,17 @@ class NotificationView @JvmOverloads constructor(
 
     fun destroyMediaPlayer() {
         mediaPlayer = null
+    }
+
+    enum class ConversationRoomNotificationState(val type: Int) {
+        DEFAULT(0),
+        HAND_RAISED(1),
+        YOUR_HAND_RAISED(2),
+        JOIN_AS_SPEAKER(3),
+        MOVED_TO_SPEAKER(4),
+        MAX_LIMIT_REACHED(5),
+        NO_INTERNET_AVAILABLE(6),
+        API_ERROR(7)
     }
 
 }

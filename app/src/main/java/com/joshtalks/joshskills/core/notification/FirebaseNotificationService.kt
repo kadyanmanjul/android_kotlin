@@ -511,14 +511,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
                 if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
-                    return null
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
                             putExtra(ConfigKey.ROOM_ID,actionData.toString())
                         }
                         AppObjectController.joshApplication.startForegroundService(intent)
                     } else {
-                        ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
+                        return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
                             actionData!!
                         )
                     }
@@ -1462,7 +1461,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
                     if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
-                        null
                         if (actionData != null) {
                             ConversationLiveRoomActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,
