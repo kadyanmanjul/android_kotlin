@@ -28,6 +28,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.vanniktech.emoji.ios.IosEmojiProvider
+import com.vanniktech.emoji.EmojiManager
 
 const val TAG = "JoshSkill"
 
@@ -55,6 +57,7 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
+        EmojiManager.install(IosEmojiProvider())
     }
 
     override fun onTerminate() {

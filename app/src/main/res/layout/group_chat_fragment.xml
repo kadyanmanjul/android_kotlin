@@ -17,6 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/rootContainer"
         android:background="@drawable/group_chat_blue_bg"
         tools:context=".ui.group.GroupChatFragment">
 
@@ -86,28 +87,43 @@
                 android:textColor="@color/group_coming_soon" />
         </com.google.android.material.card.MaterialCardView>
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/group_chat_send_msg"
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             android:background="@drawable/rect_round"
-            android:cursorVisible="true"
-            android:drawableStart="@drawable/ic_chat_emoji"
-            android:drawablePadding="@dimen/_6sdp"
-            android:hint="@string/type_message_hint"
-            android:inputType="textCapSentences|textMultiLine"
-            android:maxLines="4"
-            android:minHeight="@dimen/_34sdp"
-            android:paddingStart="@dimen/_6sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textColor="@color/pitch_black"
-            android:textColorHint="@color/gray_9E"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/chat_emoji_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:onClick="@{() -> vm.openEmojiKeyboard(false)}"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:src="@drawable/ic_chat_emoji" />
+
+            <com.vanniktech.emoji.EmojiEditText
+                android:id="@+id/group_chat_send_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:cursorVisible="true"
+                android:onClick="@{() -> vm.openEmojiKeyboard(true)}"
+                android:hint="@string/type_message_hint"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="4"
+                android:minHeight="@dimen/_34sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/pitch_black"
+                android:textColorHint="@color/gray_9E" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/floatingActionButton"
@@ -165,7 +181,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_10ssp"
             android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toTopOf="@+id/group_chat_send_msg"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

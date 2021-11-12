@@ -7,6 +7,7 @@ import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.snackbar.Snackbar
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
+import com.joshtalks.joshskills.ui.group.IS_FROM_KEYBOARD
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 
@@ -91,6 +93,14 @@ class GroupChatViewModel : BaseViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun openEmojiKeyboard(isFromKeyboard: Boolean) {
+        message.what = OPEN_EMOJI_KEYBOARD
+        message.data = Bundle().apply {
+            putBoolean(IS_FROM_KEYBOARD, isFromKeyboard)
+        }
+        singleLiveEvent.value = message
     }
 
     fun openGroupInfo() {
