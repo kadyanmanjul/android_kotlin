@@ -420,4 +420,9 @@ dependencies {
     // Paging3
     implementation "androidx.paging:paging-runtime-ktx:3.0.1"
 
+    //keyboard
+//    implementation "com.github.hani-momanii:SuperNova-Emoji:1.1"
+    implementation "com.vanniktech:emoji-ios:0.8.0"
+    implementation "com.vanniktech:emoji-material:0.8.0"
+
 }
