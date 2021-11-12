@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/grp_recent_msg_time"
             app:layout_constraintStart_toEndOf="@+id/img_logo"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -79,6 +79,37 @@
                 tools:text="tap here for group info" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            style="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:id="@+id/grp_recent_msg_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="@dimen/_11ssp"
+            android:text="12:00" />
+
+        <TextView
+            android:id="@+id/grp_unread_count"
+            style="@style/TabLayoutTooptipStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_16sdp"
+            android:background="@drawable/rounded_grey_button_bg"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/grp_recent_msg_time"
+            app:layout_constraintStart_toStartOf="@id/grp_recent_msg_time"
+            app:layout_constraintTop_toBottomOf="@+id/grp_recent_msg_time"
+            android:text="22" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
