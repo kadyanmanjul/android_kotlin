@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.NetworkInfo
 import android.os.*
 import android.util.Log
 import android.view.View
@@ -111,12 +112,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
     private var isBackPressed: Boolean = false
+    private var isPubNubObserverAdded: Boolean = false
     private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
     private var currentUser: LiveRoomUser? = null
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
     val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     val speakingListForGoldenRing: ArrayList<Int?> = arrayListOf()
-    private val replaySubject by lazy { ReplaySubject.create<Any>() }
+    private var replaySubject = ReplaySubject.create<Any>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,6 +158,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         viewModel.isRoomEnded.observe(this, {
             if (it == true) {
+                pubnub?.unsubscribeAll()
                 finish()
             }
         })
@@ -187,10 +190,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun endRoom() {
         Timber.tag("ABC2").e("endRoom() called")
         timer?.cancel()
+        timer = null
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
         //viewModel.endRoom(roomId.toString(), roomQuestionId)
         mBoundService?.endRoom(roomId.toString(), roomQuestionId)
+        pubnub?.unsubscribeAll()
         finish()
     }
 
@@ -198,6 +203,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+        pubnub?.unsubscribeAll()
         finish()
     }
 
@@ -236,7 +242,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 val act = msg["action"].asString
                 try {
                     if (msg != null) {
-                        replaySubject.toSerialized().onNext(ConversationRoomPubNubEventBus(act,msg))
+                        replaySubject.toSerialized()
+                            .onNext(ConversationRoomPubNubEventBus(act, msg))
                     }
                 } catch (ex: Exception) {
                     LogException.catchException(ex)
@@ -265,7 +272,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
             override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
         })
-        //getLatestUserList()
+
+        pubnub?.subscribe()?.channels(
+            Arrays.asList(channelName, agoraUid.toString())
+        )?.withPresence()
+            ?.execute()
+
+        getLatestUserList()
     }
 
     private fun handRaisedByUser(msg: JsonObject) {
@@ -430,13 +443,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             ?.includeState(true)
             ?.async(object : PNCallback<PNHereNowResult> {
                 override fun onResponse(result: PNHereNowResult?, status: PNStatus) {
-                    if (result?.channels?.get(channelName)?.occupants?.isEmpty() == true){
-                        when(isRoomCreatedByUser){
-                            false ->{
-                                leaveRoom()
-                            }
-                        }
-                    }
                     result?.channels?.get(channelName)?.occupants?.forEach {
                         refreshUsersList(it.state)
                     }
@@ -454,27 +460,28 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun addPubNubEventObserver() {
+        isPubNubObserverAdded = true
         compositeDisposable.add(
             replaySubject.ofType(ConversationRoomPubNubEventBus::class.java)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Log.d("ABC2", "addPubNubEventObserver() called ${it.action} ${it.data}")
-                when (it.action) {
-                    "CREATE_ROOM" -> addNewUserToAudience(it.data)
-                    "JOIN_ROOM" -> addNewUserToAudience(it.data)
-                    "LEAVE_ROOM" -> removeUser(it.data)
-                    "END_ROOM" -> leaveRoom()
-                    "IS_HAND_RAISED" -> handRaisedByUser(it.data)
-                    "INVITE_SPEAKER" -> inviteUserToSpeaker()
-                    "MOVE_TO_SPEAKER" -> moveToSpeaker(it.data)
-                    "MOVE_TO_AUDIENCE" -> moveToAudience(it.data)
-                    "MIC_STATUS_CHANGES" -> changeMicStatus(it.data)
-                    else -> {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Log.d("ABC2", "addPubNubEventObserver() called ${it.action} ${it.data}")
+                    when (it.action) {
+                        "CREATE_ROOM" -> addNewUserToAudience(it.data)
+                        "JOIN_ROOM" -> addNewUserToAudience(it.data)
+                        "LEAVE_ROOM" -> removeUser(it.data)
+                        "END_ROOM" -> leaveRoom()
+                        "IS_HAND_RAISED" -> handRaisedByUser(it.data)
+                        "INVITE_SPEAKER" -> inviteUserToSpeaker()
+                        "MOVE_TO_SPEAKER" -> moveToSpeaker(it.data)
+                        "MOVE_TO_AUDIENCE" -> moveToAudience(it.data)
+                        "MIC_STATUS_CHANGES" -> changeMicStatus(it.data)
+                        else -> {
 
+                        }
                     }
-                }
-            })
+                })
     }
 
     private fun refreshUsersList(state: JsonElement?) {
@@ -615,6 +622,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
         val newChannelName = intent?.getStringExtra(CHANNEL_NAME)
         if (newChannelName != null && newChannelName != channelName) {
+            pubnub?.unsubscribeAll()
             finish()
             startActivity(intent)
             overridePendingTransition(0, 0)
@@ -875,6 +883,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 showEndRoomPopup()
             } else {
                 mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+                pubnub?.unsubscribeAll()
                 finish()
             }
         }
@@ -883,33 +892,53 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             openUserProfile(Mentor.getInstance().getId())
         }
         binding.muteBtn.setOnClickListener {
-            when (iSSoundOn) {
-                true -> changeMuteButtonState(false)
-                false -> changeMuteButtonState(true)
+            if (internetAvailableFlag) {
+                when (iSSoundOn) {
+                    true -> changeMuteButtonState(false)
+                    false -> changeMuteButtonState(true)
+                }
+            } else {
+                internetNotAvailable()
             }
         }
         binding.unmuteBtn.setOnClickListener {
-            when (iSSoundOn) {
-                true -> changeMuteButtonState(false)
-                false -> changeMuteButtonState(true)
+            if (internetAvailableFlag) {
+                when (iSSoundOn) {
+                    true -> changeMuteButtonState(false)
+                    false -> changeMuteButtonState(true)
+                }
+            } else {
+                internetNotAvailable()
             }
         }
 
         binding.handRaiseBtn.setOnClickListener {
-            when (isHandRaised) {
-                true -> clickHandRaisedButton(true, "HAND_RAISED")
-                false -> clickHandRaisedButton(false, "HAND_UNRAISED")
+            if (internetAvailableFlag) {
+                when (isHandRaised) {
+                    true -> clickHandRaisedButton(true, "HAND_RAISED")
+                    false -> clickHandRaisedButton(false, "HAND_UNRAISED")
+                }
+            } else {
+                internetNotAvailable()
             }
         }
         binding.handUnraiseBtn.setOnClickListener {
-            when (isHandRaised) {
-                true -> clickHandRaisedButton(true, "HAND_RAISED")
-                false -> clickHandRaisedButton(false, "HAND_UNRAISED")
+            if (internetAvailableFlag) {
+                when (isHandRaised) {
+                    true -> clickHandRaisedButton(true, "HAND_RAISED")
+                    false -> clickHandRaisedButton(false, "HAND_UNRAISED")
+                }
+            } else {
+                internetNotAvailable()
             }
         }
 
         binding.raisedHands.setOnSingleClickListener {
-            openRaisedHandsBottomSheet()
+            if (internetAvailableFlag) {
+                openRaisedHandsBottomSheet()
+            } else {
+                internetNotAvailable()
+            }
         }
     }
 
@@ -1138,6 +1167,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             customMessage.addProperty("action", "IS_HAND_RAISED")
             sendCustomMessage(customMessage, moderatorUid.toString())
             binding.notificationBar.loadAnimationSlideUp()
+            isHandRaised = !isHandRaised
+            binding.apply {
+                handRaiseBtn.visibility = View.GONE
+                handUnraiseBtn.visibility = View.VISIBLE
+            }
         }
         binding.notificationBar.loadAnimationSlideUp()
     }
@@ -1147,7 +1181,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (this.roomId == roomId) {
             binding.notificationBar.apply {
                 visibility = View.VISIBLE
-                setNotificationState(NotificationView.ConversationRoomNotificationState.DEFAULT)
                 hideActionLayout()
                 setBackgroundColor(false)
                 setHeading("This room has ended")
@@ -1155,6 +1188,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 loadAnimationSlideDown()
             }
             Handler(Looper.getMainLooper()).postDelayed({
+                pubnub?.unsubscribeAll()
                 finish()
             }, 4000)
         }
@@ -1266,9 +1300,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
-                    internetAvailableFlag = connectivity.available()
+                    Log.d("ABC2", "observeNetwork() called with: connectivity = $connectivity")
+                    internetAvailableFlag =
+                        connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
                     if (internetAvailableFlag) {
                         internetAvailable()
+                        //pubnub?.reconnect()
                     } else {
                         internetNotAvailable()
                     }
@@ -1469,8 +1506,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
             Log.d("ABC2", "activity showEndRoomPopup() called")
+            if (!internetAvailableFlag) {
+                finish()
+            }
             mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
             alertDialog.dismiss()
+            pubnub?.unsubscribeAll()
             finish()
         }
 
@@ -1483,17 +1524,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             myConnection,
             BIND_AUTO_CREATE
         )
-
-        pubnub?.subscribe()?.channels(
-            Arrays.asList(channelName, agoraUid.toString())
-        )?.withPresence()
-            ?.execute()
     }
 
     override fun onPause() {
         super.onPause()
-        pubnub?.unsubscribeAll()
         compositeDisposable.clear()
+        replaySubject = ReplaySubject.create<Any>()
     }
 
     override fun onStop() {
@@ -1505,11 +1541,18 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onResume() {
         super.onResume()
         observeNetwork()
-        getLatestUserList()
+        if (isPubNubObserverAdded) {
+            addPubNubEventObserver()
+        }
     }
 
     override fun onBackPressed() {
         isBackPressed = true
+        if (!internetAvailableFlag) {
+            mBoundService?.endService()
+            super.onBackPressed()
+            return
+        }
         if (timer != null) {
             endRoom()
             return
@@ -1518,6 +1561,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             showEndRoomPopup()
         } else {
             mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+            pubnub?.unsubscribeAll()
             super.onBackPressed()
         }
     }

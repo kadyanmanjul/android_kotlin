@@ -28,7 +28,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -510,7 +509,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
+                /*if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
                             putExtra(ConfigKey.ROOM_ID,actionData.toString())
@@ -522,7 +521,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         )
                     }
                     return null
-                }
+                }*/
                 return null
             }
             NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -1460,14 +1459,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                 }
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                    if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
+                    /*if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
                         if (actionData != null) {
                             ConversationLiveRoomActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,
                                 actionData
                             )
                         }
-                    }
+                    }*/
                     null
                 }
                 else -> {

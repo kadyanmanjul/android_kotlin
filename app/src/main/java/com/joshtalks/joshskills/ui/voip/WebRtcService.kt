@@ -800,6 +800,14 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
+    fun endService() {
+        CoroutineScope(Dispatchers.IO).launch {
+            removeNotifications()
+            conversationRoomChannelName = null
+            mRtcEngine?.leaveChannel()
+        }
+    }
+
     inner class CustomHandlerThread(name: String) : HandlerThread(name) {
         override fun onLooperPrepared() {
             super.onLooperPrepared()
@@ -2242,7 +2250,7 @@ class WebRtcService : BaseWebRtcService() {
             }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        val intent  = ConversationLiveRoomActivity.getIntent(
+        val intent = ConversationLiveRoomActivity.getIntent(
             context = this,
             channelName = conversationRoomChannelName,
             uid = agoraUid,

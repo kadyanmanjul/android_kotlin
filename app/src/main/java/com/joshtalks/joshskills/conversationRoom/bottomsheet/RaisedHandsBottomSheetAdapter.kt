@@ -26,7 +26,7 @@ class RaisedHandsBottomSheetAdapter() :
         }
         newList.sortedBy { it.sortOrder }
         val diffCallback = ConversationUserDiffCallback(handRaisedList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        val diffResult = DiffUtil.calculateDiff(diffCallback,true)
         handRaisedList.clear()
         handRaisedList.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
