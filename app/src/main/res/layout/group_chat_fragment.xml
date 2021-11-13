@@ -15,9 +15,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rootContainer"
         android:background="@drawable/group_chat_blue_bg"
         tools:context=".ui.group.GroupChatFragment">
 
@@ -104,6 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:foreground="?attr/actionBarItemBackground"
                 android:onClick="@{() -> vm.openEmojiKeyboard(false)}"
                 android:paddingStart="@dimen/_6sdp"
                 android:paddingEnd="@dimen/_6sdp"
@@ -115,11 +116,11 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:cursorVisible="true"
-                android:onClick="@{() -> vm.openEmojiKeyboard(true)}"
                 android:hint="@string/type_message_hint"
                 android:inputType="textCapSentences|textMultiLine"
                 android:maxLines="4"
                 android:minHeight="@dimen/_34sdp"
+                android:onClick="@{() -> vm.openEmojiKeyboard(true)}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/pitch_black"
                 android:textColorHint="@color/gray_9E" />
