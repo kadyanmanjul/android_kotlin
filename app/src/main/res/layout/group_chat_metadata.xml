@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/date_card"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="@dimen/_8sdp"
+    android:backgroundTint="#D5EAF5"
+    app:cardCornerRadius="@dimen/_6sdp"
+    app:cardElevation="@dimen/_1sdp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/_7sdp"
+        android:paddingVertical="@dimen/_4sdp"
+        android:textColor="@color/group_coming_soon"
+        android:maxWidth="@dimen/_200sdp"
+        android:gravity="center"
+        tools:text="Rahul changed the group name from \“MI fans\” to \“IPL MI\”" />
+</com.google.android.material.card.MaterialCardView>
