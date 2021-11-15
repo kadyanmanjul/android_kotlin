@@ -1505,6 +1505,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
             Log.d("ABC2", "activity showEndRoomPopup() called")
             if (!internetAvailableFlag) {
+                //pubnub?.unsubscribeAll()
                 finish()
             }
             mBoundService?.endRoom(roomId?.toString(), roomQuestionId)

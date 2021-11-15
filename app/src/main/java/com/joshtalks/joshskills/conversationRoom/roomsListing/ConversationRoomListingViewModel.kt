@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -221,6 +222,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                 val response =
                     AppObjectController.conversationRoomsNetworkService.getRoomList()
                 if (response.isSuccessful && response.body()!=null){
+                    Log.d("ABC", "getListRooms() called")
                     roomListLiveData.postValue(response.body())
                 }
 

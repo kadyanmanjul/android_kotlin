@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationRoomListPubNubEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
@@ -67,6 +68,7 @@ import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResu
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.ReplaySubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -100,6 +102,8 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     var handler: Handler? = null
     var runnable: Runnable? = null
     private var rooomList: ArrayList<RoomListResponseItem>? = arrayListOf()
+    private var replaySubject = ReplaySubject.create<Any>()
+    private var isPubNubObserverAdded: Boolean = false
 
     companion object {
         @JvmStatic
@@ -160,23 +164,13 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                     "ABC",
                     "message() called with: pubnub = [$pubnub], pnMessageResult = [$pnMessageResult]"
                 )
+
                 val msg = pnMessageResult.message.asJsonObject
                 val act = msg["action"].asString
                 try {
                     if (msg != null) {
-                        when (act) {
-                            "CREATE_ROOM" -> addNewRoomToList(msg)
-                            "LEAVE_ROOM" -> updateRoom(msg, true)
-                            "JOIN_ROOM" -> updateRoom(msg, false)
-                            "END_ROOM" -> removeRoomFromList(msg)
-                        }
-                        CoroutineScope(Dispatchers.Main).launch {
-                            if (conversationRoomsListAdapter?.isRoomEmpty() == true) {
-                                showNoRoomAvailableText()
-                            } else {
-                                showRecyclerView()
-                            }
-                        }
+                        replaySubject.toSerialized()
+                            .onNext(ConversationRoomListPubNubEventBus(act, msg))
                     }
                 } catch (ex: Exception) {
                     LogException.catchException(ex)
@@ -213,6 +207,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     }
 
     private fun updateRoom(msg: JsonObject, isUserLeaving: Boolean) {
+        Log.d("ABC", "updateRoom() called with: isUserLeaving = $isUserLeaving")
         val data = msg["data"].asJsonObject
         val matType = object : TypeToken<RoomListResponseItem>() {}.type
         if (data == null) {
@@ -220,6 +215,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
         val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
         CoroutineScope(Dispatchers.Main).launch {
+            Log.d("ABC", "updateRoom() called with: room = $room, isUserLeaving = $isUserLeaving")
             updateItemInAdapter(room, isUserLeaving)
         }
     }
@@ -298,6 +294,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         })
 
         viewModel.roomListLiveData.observe(this.viewLifecycleOwner, { rooms ->
+            Log.d("ABC", "addObservers() called with: rooms = $rooms")
             if (rooms.isNullOrEmpty().not()) {
                 showRecyclerView()
                 rooomList?.clear()
@@ -306,6 +303,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
             } else {
                 showNoRoomAvailableText()
             }
+            addPubNubEventObserver()
         })
         viewModel.points.observe(viewLifecycleOwner, { pointsString ->
             if (pointsString.isNotBlank()) {
@@ -325,6 +323,32 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                 }
             }
         )
+    }
+
+    private fun addPubNubEventObserver() {
+        isPubNubObserverAdded = true
+        compositeDisposable.add(
+            replaySubject.ofType(ConversationRoomListPubNubEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Log.d("ABC", "addPubNubEventObserver() called ${it.action} ${it.data}")
+                    if (it.data != null) {
+                        when (it.action) {
+                            "CREATE_ROOM" -> addNewRoomToList(it.data)
+                            "LEAVE_ROOM" -> updateRoom(it.data, true)
+                            "JOIN_ROOM" -> updateRoom(it.data, false)
+                            "END_ROOM" -> removeRoomFromList(it.data)
+                        }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            if (conversationRoomsListAdapter?.isRoomEmpty() == true) {
+                                showNoRoomAvailableText()
+                            } else {
+                                showRecyclerView()
+                            }
+                        }
+                    }
+                })
     }
 
     private fun initViews() {
@@ -772,6 +796,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
 
     override fun onPause() {
         super.onPause()
+        replaySubject = ReplaySubject.create<Any>()
         compositeDisposable.clear()
     }
 
