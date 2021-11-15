@@ -60,7 +60,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
             moderatorUid = it.getInt(MODERATOR_ID, 0)
             roomId = it.getInt(ROOM_ID, 0)
             raisedHandList = it.getParcelableArrayList<LiveRoomUser>(USER_LIST)
-            Log.d("ABC", "onCreate() called ${raisedHandList}")
+            Log.d("RaisedHandsBottomSheet", "onCreate() called ${raisedHandList}")
         }
         listener = requireActivity() as HandRaiseSheetListener
         setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialog)
@@ -97,7 +97,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
 
     private fun refreshAdapterWithNewList(handRaisedList: ArrayList<LiveRoomUser>?) {
         val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
-        this.raisedHandList = list
+        this.raisedHandList = list?.sortedBy { it.sortOrder }
         setVisibilities()
         bottomSheetAdapter?.updateFullList(raisedHandList)
 

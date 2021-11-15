@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.bottomsheet
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -25,6 +26,7 @@ class RaisedHandsBottomSheetAdapter() :
             return
         }
         newList.sortedBy { it.sortOrder }
+        Log.d("ABC", "updateFullList() called with: newList = $newList")
         val diffCallback = ConversationUserDiffCallback(handRaisedList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback,true)
         handRaisedList.clear()

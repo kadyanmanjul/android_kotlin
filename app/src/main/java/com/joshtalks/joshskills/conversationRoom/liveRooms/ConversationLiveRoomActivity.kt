@@ -1305,7 +1305,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
                     if (internetAvailableFlag) {
                         internetAvailable()
-                        //pubnub?.reconnect()
+                        pubnub?.reconnect()
                     } else {
                         internetNotAvailable()
                     }
