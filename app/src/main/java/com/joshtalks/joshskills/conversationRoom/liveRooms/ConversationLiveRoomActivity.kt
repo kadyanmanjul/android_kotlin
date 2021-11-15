@@ -192,7 +192,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         timer?.cancel()
         timer = null
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
-        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
         //viewModel.endRoom(roomId.toString(), roomQuestionId)
         mBoundService?.endRoom(roomId.toString(), roomQuestionId)
         pubnub?.unsubscribeAll()
@@ -202,7 +201,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun leaveRoom() {
         mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
-        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
         pubnub?.unsubscribeAll()
         finish()
     }

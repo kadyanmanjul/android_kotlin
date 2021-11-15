@@ -38,10 +38,8 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
@@ -68,7 +66,6 @@ import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -141,6 +138,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         initViews()
         addObservers()
         openConversationRoomByNotificationIntent()
+        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
         return binding.root
     }
 
@@ -312,11 +310,8 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         viewModel.points.observe(viewLifecycleOwner, { pointsString ->
             if (pointsString.isNotBlank()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-            } else {
-                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-                compositeDisposable.add(getPointsDisposable())
             }
+            PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
         })
 
         lessonViewModel.lessonQuestionsLiveData.observe(
@@ -465,22 +460,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
             viewModel.getConvoRoomDetails(it)
 
             if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false).not()) {
-                compositeDisposable.remove(getPointsDisposable())
-                viewModel.getPointsForConversationRoom(lastRoomId, it)
-                //PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
-            } else {
-                compositeDisposable.add(getPointsDisposable())
-            }
-        }
-        viewModel.getListRooms()
-    }
-
-    fun getPointsDisposable(): Disposable {
-        return RxBus2.listen(ConvoRoomPointsEventBus::class.java)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                //if (hasSeenpoints.not()) {
+                Log.d("ABC", "observeNetwork() called and has seen points")
                 conversationRoomQuestionId?.let {
                     viewModel.getPointsForConversationRoom(
                         lastRoomId,
@@ -488,6 +468,8 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                     )
                 }
             }
+        }
+        viewModel.getListRooms()
     }
 
     private fun internetNotAvailable() {

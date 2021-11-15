@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
@@ -189,6 +191,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                 } else{
                     points.postValue(EMPTY)
                 }
+                PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
 
             } catch (ex: Exception) {
                 ex.printStackTrace()
