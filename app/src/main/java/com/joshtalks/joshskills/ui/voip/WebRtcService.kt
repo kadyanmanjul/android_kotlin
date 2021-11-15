@@ -758,6 +758,7 @@ class WebRtcService : BaseWebRtcService() {
                 if (response.isSuccessful) {
                     isRoomEnded = false
                     PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
+                    PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
                     RxBus2.publish(ConvoRoomPointsEventBus(null))
                     conversationRoomChannelName = null
                     mRtcEngine?.leaveChannel()
@@ -790,6 +791,7 @@ class WebRtcService : BaseWebRtcService() {
                     if (response.isSuccessful) {
                         isRoomEnded = false
                         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
+                        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
                         RxBus2.publish(ConvoRoomPointsEventBus(null))
                         conversationRoomChannelName = null
                         mRtcEngine?.leaveChannel()

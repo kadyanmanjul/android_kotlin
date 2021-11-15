@@ -19,11 +19,11 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.voip.NotificationId
+import org.json.JSONObject
 import java.util.*
 
 
@@ -46,10 +46,6 @@ class HeadsUpNotificationService : Service() {
 
     @SuppressLint("InvalidWakeLockTag")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        var data: String? = null
-        if (intent != null && intent.extras != null) {
-            data = intent.getStringExtra(ConfigKey.ROOM_ID)
-        }
 
         if (intent != null && intent.extras != null
             && intent.getStringExtra(ConfigKey.CALL_RESPONSE_ACTION_KEY) != null &&
@@ -80,8 +76,27 @@ class HeadsUpNotificationService : Service() {
 
         } else {
             try {
+                var data: String? = null
+                if (intent != null && intent.extras != null) {
+                    data = intent.getStringExtra(ConfigKey.ROOM_DATA)
+                }
                 data?.let {
-                    addObserver(data, intent)
+                    val obj = JSONObject(it)
+                    val moderatorName = obj.getString("moderator_name")
+                    val topic = obj.getString("topic")
+                    val roomId = obj.getString("room_id")
+
+                    if ( topic.isNullOrBlank() || moderatorName.isNullOrBlank()) {
+                        stopForeground(true)
+                        stopSelf()
+                    } else {
+                        addNotification(
+                            moderatorName,
+                            topic,
+                            roomId,
+                            intent
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -90,8 +105,8 @@ class HeadsUpNotificationService : Service() {
         return START_STICKY
     }
 
-    private fun addNotification(name: String, topic: String, data: String, intent: Intent?) {
-        val notificationBuilder = incomingCallNotification(data.toString(), intent, name, topic)
+    private fun addNotification(name: String, topic: String, roomId: String, intent: Intent?) {
+        val notificationBuilder = incomingCallNotification(roomId, intent, name, topic)
 
         var incomingCallNotification: Notification? = null
         if (notificationBuilder != null) {
@@ -111,37 +126,6 @@ class HeadsUpNotificationService : Service() {
         timer.schedule(task, 120000)
     }
 
-    private fun addObserver(roomId: String?, intent: Intent?) {
-        FirebaseFirestore.getInstance().collection("conversation_rooms")
-            .document(roomId.toString()).get().addOnSuccessListener {
-                val topic = it["topic"]?.toString()
-                val moderatorUid = it.get("started_by")?.toString()?.toInt()
-
-                FirebaseFirestore.getInstance().collection("conversation_rooms")
-                    .document(roomId.toString())?.collection("users")
-                    .document(moderatorUid.toString())?.get()
-                    ?.addOnSuccessListener { moderator ->
-                        val moderatorName = moderator.get("name")?.toString()
-                        if (topic.isNullOrBlank() || moderatorName.isNullOrBlank()) {
-                            stopForeground(true)
-                            stopSelf()
-                        } else {
-                            addNotification(
-                                moderatorName.toString(),
-                                topic.toString(),
-                                roomId!!,
-                                intent
-                            )
-                        }
-                    }
-
-
-            }.addOnFailureListener {
-                stopForeground(true)
-                stopSelf()
-            }
-    }
-
     private fun canHeadsUpNotification(): Boolean {
         if (Build.VERSION.SDK_INT >= 29) { //  if (Build.VERSION.SDK_INT >= 29 && JoshApplication.isAppVisible.not()) {
             return true
@@ -151,7 +135,7 @@ class HeadsUpNotificationService : Service() {
 
 
     private fun incomingCallNotification(
-        data: String,
+        roomId: String,
         intent: Intent?,
         name: String,
         topic: String
@@ -162,7 +146,7 @@ class HeadsUpNotificationService : Service() {
 
         val builder = NotificationCompat.Builder(this, NotificationId.ROOM_NOTIFICATION_CHANNEL)
             .setContentTitle(getString(R.string.room_title))
-            .setContentText("Join Conversation Room")
+            .setContentText(getString(R.string.room_title))
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setChannelId(NotificationId.ROOM_NOTIFICATION_CHANNEL)
             .setAutoCancel(false)
@@ -205,7 +189,7 @@ class HeadsUpNotificationService : Service() {
             )
             putExtra(
                 ConfigKey.INTENT_ROOM_ID,
-                data
+                roomId
             )
             action = "RECEIVE_CALL"
         }
@@ -227,7 +211,7 @@ class HeadsUpNotificationService : Service() {
             )
             putExtra(
                 ConfigKey.INTENT_ROOM_ID,
-                data
+                roomId
             )
 
             action = "CANCEL_CALL"

@@ -28,6 +28,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -93,12 +94,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
         try {
-            if(PrefManager.hasKey(FCM_TOKEN)) {
+            if (PrefManager.hasKey(FCM_TOKEN)) {
                 val fcmResponse = FCMResponse.getInstance()
                 fcmResponse?.apiStatus = ApiRespStatus.POST
                 fcmResponse?.update()
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
@@ -213,6 +214,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         || notificationObject.action == NotificationAction.ACTION_OPEN_SPEAKING_SECTION
                         || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
                         || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
+                        || notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM
                     ) {
                         val inboxIntent =
                             InboxActivity.getInboxIntent(this@FirebaseNotificationService)
@@ -240,6 +242,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     arrayOf( this)
                     //  }
                 }*/
+
+                if (notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM){
+                    val obj = JSONObject(notificationObject.actionData)
+                    val name = obj.getString("moderator_name")
+                    val topic = obj.getString("topic")
+                    notificationObject.contentTitle = getString(R.string.room_title)
+                    notificationObject.contentText = getString(R.string.convo_notification_title, name, topic)
+                }
 
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -500,7 +510,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if ( !PrefManager.getBoolValue(
+                if (!PrefManager.getBoolValue(
                         PREF_IS_CONVERSATION_ROOM_ACTIVE
                     )
                 ) {
@@ -509,19 +519,22 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                /*if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
+                if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
-                            putExtra(ConfigKey.ROOM_ID,actionData.toString())
+                            putExtra(ConfigKey.ROOM_DATA,actionData)
                         }
-                        AppObjectController.joshApplication.startForegroundService(intent)
+                        intent.startServiceForWebrtc()
                     } else {
-                        return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
-                            actionData!!
-                        )
+                        val roomId = JSONObject(actionData).getString("room_id")
+                        if (roomId.isNotBlank())
+                        {
+                            return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
+                                roomId
+                            )
+                        }  else return null
                     }
-                    return null
-                }*/
+                }
                 return null
             }
             NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -1395,7 +1408,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ): Intent? {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                    if ( !PrefManager.getBoolValue(
+                    if (!PrefManager.getBoolValue(
                             PREF_IS_CONVERSATION_ROOM_ACTIVE
                         )
                     ) {
@@ -1459,15 +1472,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                 }
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                    /*if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
-                        if (actionData != null) {
+
+                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null) {
+                        val roomId = JSONObject(actionData).getString("room_id")
+                        if (roomId.isNotBlank())
+                        {
                             ConversationLiveRoomActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,
-                                actionData
+                                roomId
                             )
-                        }
-                    }*/
-                    null
+                        } else null
+                    } else null
                 }
                 else -> {
                     null

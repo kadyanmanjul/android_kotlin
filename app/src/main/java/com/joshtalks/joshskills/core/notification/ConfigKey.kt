@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.core.notification
 
 object ConfigKey {
 
-    const val ROOM_ID = "ROOM_ID"
+    const val ROOM_DATA = "ROOM_DATA"
     const val INTENT_ROOM_ID = "INTENT_ROOM_ID"
 
     const val CALL_RESPONSE_ACTION_KEY = "CALL_RESPONSE_ACTION_KEY"
