@@ -105,8 +105,10 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openGroupInfo() {
-        message.what = OPEN_GROUP_INFO
-        singleLiveEvent.value = message
+        if (hasJoinedGroup.get()) {
+            message.what = OPEN_GROUP_INFO
+            singleLiveEvent.value = message
+        }
     }
 
     fun editGroupInfo() {
