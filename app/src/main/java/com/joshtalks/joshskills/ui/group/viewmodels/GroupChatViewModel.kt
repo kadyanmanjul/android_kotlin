@@ -7,7 +7,6 @@ import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.snackbar.Snackbar
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -37,6 +36,8 @@ class GroupChatViewModel : BaseViewModel() {
     val groupCreatedAt = ObservableField("")
     var conversationId: String = ""
     val userOnlineCount = ObservableField("")
+    var showAllMembers = ObservableBoolean(false)
+
     lateinit var groupId: String
 
     fun onBackPress() {
@@ -115,5 +116,10 @@ class GroupChatViewModel : BaseViewModel() {
             putString(GROUPS_IMAGE, imageUrl.get())
         }
         singleLiveEvent.value = message
+    }
+
+    fun expandGroupList(view: View) {
+        view.visibility = View.GONE
+        showAllMembers.set(true)
     }
 }

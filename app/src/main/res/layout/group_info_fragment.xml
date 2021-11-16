@@ -76,6 +76,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:gravity="center_vertical"
+            android:onClick="@{vm::expandGroupList}"
             android:paddingTop="@dimen/_5sdp"
             android:paddingBottom="@dimen/_5sdp"
             app:layout_constraintEnd_toEndOf="parent"
