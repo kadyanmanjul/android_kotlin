@@ -186,22 +186,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!--                <androidx.appcompat.widget.AppCompatTextView-->
-        <!--                    android:id="@+id/appCompatTextView"-->
-        <!--                    android:layout_width="match_parent"-->
-        <!--                    android:layout_height="?actionBarSize"-->
-        <!--                    android:background="@color/white"-->
-        <!--                    android:foreground="?android:attr/selectableItemBackground"-->
-        <!--                    android:gravity="center"-->
-        <!--                    android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"-->
-        <!--                    android:paddingHorizontal="@dimen/_4sdp"-->
-        <!--                    android:paddingVertical="@dimen/_2sdp"-->
-        <!--                    android:text="@{vm.hasJoinedGroup ? `Chat function will be coming soon` : `JOIN GROUP`, default=`JOIN GROUP`}"-->
-        <!--                    android:textColor="@{vm.hasJoinedGroup ? @color/group_coming_soon : @color/join_group, default=@color/join_group}"-->
-        <!--                    android:textSize="@{vm.hasJoinedGroup ? @dimen/_12ssp : @dimen/_14ssp, default=@dimen/_14ssp}"-->
-        <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                    app:layout_constraintStart_toStartOf="parent" />-->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@color/white"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:onClick="@{vm::joinGroup}"
+            android:paddingHorizontal="@dimen/_4sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:text="JOIN GROUP"
+            android:textColor="@color/join_group"
+            android:textSize="@dimen/_14ssp"
+            android:visibility="@{vm.hasJoinedGroup ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
