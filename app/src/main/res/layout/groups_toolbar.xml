@@ -89,11 +89,11 @@
                 android:id="@+id/title_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:foreground="?attr/selectableItemBackground"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/first_right_icon"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/image_view_logo"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -102,7 +102,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_4sdp"
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:gravity="start"
                     android:singleLine="true"
@@ -119,7 +118,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_4sdp"
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:gravity="start"
                     android:singleLine="true"

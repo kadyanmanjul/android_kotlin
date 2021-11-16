@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.ui.group.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.IS_FROM_KEYBOARD
+import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
+import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 
@@ -37,6 +39,7 @@ class GroupChatViewModel : BaseViewModel() {
     var conversationId: String = ""
     val userOnlineCount = ObservableField("")
     var showAllMembers = ObservableBoolean(false)
+    lateinit var memberAdapter: GroupMemberAdapter
 
     lateinit var groupId: String
 
@@ -105,6 +108,18 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openGroupInfo() {
+        //TODO("This below data is just for testing, need to be removed while implementation")
+        val members = listOf(
+            GroupMember("3","Sukesh","",false, false),
+            GroupMember("4","Aaditya","",false, true),
+            GroupMember("5","Sagar","",false, true),
+            GroupMember("6","Param","",false, false),
+            GroupMember("7","Mehta","",false, true),
+            GroupMember("2","Hi","https://www.joshtalks.com/wp-content/uploads/2020/09/joshlogo.png",false, false),
+            GroupMember("1","Hello","",true, true),
+            GroupMember("8","Bye","",false, false)
+        )
+        memberAdapter = GroupMemberAdapter(this, members)
         if (hasJoinedGroup.get()) {
             message.what = OPEN_GROUP_INFO
             singleLiveEvent.value = message
@@ -123,5 +138,6 @@ class GroupChatViewModel : BaseViewModel() {
     fun expandGroupList(view: View) {
         view.visibility = View.GONE
         showAllMembers.set(true)
+        memberAdapter.notifyDataSetChanged()
     }
 }

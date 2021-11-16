@@ -34,10 +34,10 @@
                 android:id="@+id/group_info_app_bar"
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
-                groupSubHeader="@{vm.groupSubHeader}"
+                groupSubHeader="@{`Group created on ` + vm.groupCreatedAt}"
                 onBackPressed="@{vm::onBackPress}"
-                secondIcon="@{R.drawable.ic_pen_edit}"
                 onSecondIconPressed="@{vm::editGroupInfo}"
+                secondIcon="@{R.drawable.ic_pen_edit}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -60,77 +60,95 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView7"
-            tools:itemCount="6"
-            tools:listitem="@layout/group_member_item" />
+            app:layout_constraintTop_toBottomOf="@+id/textView7">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/expand_members_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center_vertical"
-            android:onClick="@{vm::expandGroupList}"
-            android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_5sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/_32sdp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_22sdp"
-                android:src="@drawable/arrow_down"
-                app:tint="#6F6F6F" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="6"
+                    groupAdapter="@{vm.memberAdapter}"
+                    tools:listitem="@layout/group_member_item" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_22sdp"
-                android:fontFamily="@font/open_sans"
-                android:text="23 more"
-                android:textSize="@dimen/_10ssp" />
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/expand_members_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:onClick="@{vm::expandGroupList}"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerView">
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_22sdp"
+                        android:src="@drawable/arrow_down"
+                        app:tint="#6F6F6F" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/exit_join_group"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_44sdp"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:background="@color/white"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/expand_members_list">
+                    <TextView
+                        android:id="@+id/member_count_expand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_22sdp"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@{vm.groupSubHeader}"
+                        android:textSize="@dimen/_10ssp"
+                        tools:text="23 more" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/ignore_ui_msg"
-                android:paddingStart="@dimen/_24sdp"
-                android:paddingEnd="@dimen/_18sdp"
-                android:src="@drawable/ic_exit_group" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/open_sans"
-                android:gravity="center"
-                android:text="Exit Group"
-                android:textColor="@color/exit_group"
-                android:textSize="@dimen/_14ssp"
-                android:textStyle="bold" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/exit_join_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/expand_members_list">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/ignore_ui_msg"
+                        android:paddingStart="@dimen/_24sdp"
+                        android:paddingEnd="@dimen/_18sdp"
+                        android:src="@drawable/ic_exit_group" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Exit Group"
+                        android:textColor="@color/exit_group"
+                        android:textSize="@dimen/_14ssp"
+                        android:textStyle="bold" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>
