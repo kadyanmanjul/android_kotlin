@@ -519,7 +519,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)) {
+                if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
                             putExtra(ConfigKey.ROOM_DATA,actionData)
@@ -1473,7 +1473,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
 
-                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null) {
+                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null && User.getInstance().isVerified ) {
                         val roomId = JSONObject(actionData).getString("room_id")
                         if (roomId.isNotBlank())
                         {
