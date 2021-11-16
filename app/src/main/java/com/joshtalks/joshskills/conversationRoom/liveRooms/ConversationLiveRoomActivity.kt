@@ -56,10 +56,10 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNPublishResult
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
+import com.pubnub.api.models.consumer.objects_api.member.PNUUID
 import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
 import com.pubnub.api.models.consumer.presence.PNGetStateResult
-import com.pubnub.api.models.consumer.presence.PNHereNowResult
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
 import com.pubnub.api.models.consumer.pubsub.PNSignalResult
@@ -248,7 +248,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 }
             }
 
-            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {}
+            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
+                Log.d(
+                    "ABC2",
+                    "presence() called with: pubnub = $pubnub, pnPresenceEventResult = $pnPresenceEventResult"
+                )
+
+            }
 
             override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
 
@@ -336,7 +342,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         Log.d("ABC2", "presence() called mic_status_changes")
         if (agoraUid == eventObject.get("id").asInt) {
             iSSoundOn = eventObject.get("is_mic_on").asBoolean
-            setPresenceStateForUuid(currentUser, iSSoundOn)
+            setChannelMemberStateForUuid(currentUser, iSSoundOn)
             CoroutineScope(Dispatchers.Main).launch {
                 updateMuteButtonState()
             }
@@ -363,17 +369,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun moveToSpeaker(agoraId: Int) {
-        val user = audienceList.filter { it.id == agoraId }
-        user.forEach {
-            if (this.agoraUid == it.id) {
-                updateUiWhenSwitchToSpeaker(it.isMicOn)
-            }
-            audienceList.remove(it)
-            it.isSpeaker = true
-            it.isHandRaised = false
-            it.isInviteSent = true
-            speakersList.add(it)
-            setPresenceStateForUuid(it)
+        if (audienceList.any{it.id == agoraId}){
+            val user = audienceList.filter { it.id == agoraId }.get(0)
+            updateUiWhenSwitchToSpeaker(user.isMicOn)
+            audienceList.remove(user)
+            user.isSpeaker = true
+            user.isHandRaised = false
+            user.isInviteSent = true
+            speakersList.add(user)
+            setChannelMemberStateForUuid(user)
         }
         audienceAdapter?.updateFullList(audienceList)
         viewModel.updateAudienceList(audienceList)
@@ -391,7 +395,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             it.isHandRaised = false
             it.isInviteSent = false
             audienceList.add(it)
-            setPresenceStateForUuid(it)
+            setChannelMemberStateForUuid(it)
         }
         audienceAdapter?.updateFullList(audienceList)
         viewModel.updateAudienceList(audienceList)
@@ -411,50 +415,71 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             })
     }
 
-    private fun setPresenceStateForUuid(user: LiveRoomUser?, isMicOn: Boolean? = null) {
+    private fun setChannelMemberStateForUuid(user: LiveRoomUser?, isMicOn: Boolean? = null) {
         if (user == null || pubnub == null) {
             return
         }
-        val state = JsonObject()
-        state.addProperty("is_speaker", user.isSpeaker)
-        state.addProperty("name", user.name)
-        state.addProperty("photo_url", user.photoUrl)
-        state.addProperty("sort_order", user.sortOrder)
-        state.addProperty("is_moderator", user.isModerator)
-        state.addProperty("is_mic_on", isMicOn ?: user.isMicOn)
-        state.addProperty("is_speaking", user.isSpeaking)
-        state.addProperty("is_hand_raised", user.isHandRaised)
-        state.addProperty("mentor_id", user.mentorId)
+        val state = mutableMapOf<String, Any>()
+        state.put("is_speaker", user.isSpeaker.toString())
+        state.put("name", user.name?: DEFAULT_NAME)
+        state.put("photo_url", user.photoUrl?: EMPTY)
+        state.put("sort_order", user.sortOrder?:0)
+        state.put("is_moderator", user.isModerator)
+        state.put("is_mic_on", (isMicOn ?: user.isMicOn))
+        state.put("is_speaking", user.isSpeaking)
+        state.put("is_hand_raised", user.isHandRaised)
+        state.put("mentor_id", user.mentorId)
 
-        pubnub!!.setPresenceState()
-            .channels(Arrays.asList(channelName))
-            .state(state)
-            .uuid(user.id.toString())
-            .async { result, status ->
+        /*pubnub?.setUUIDMetadata()
+        ?.uuid(user.id.toString())?.name(user.name)?.profileUrl(user.photoUrl)?.custom(state as Map<String, Any>?)?.includeCustom(true)?.async { result, status ->
+                Log.d(
+                    "ABC2",
+                    "setPresenceStateForUuid() called with: result = $result, status = $status"
+                )
+            }*/
+        pubnub?.setChannelMembers()?.channel(channelName)
+            ?.uuids(Arrays.asList(PNUUID.uuidWithCustom(user.id.toString(), state as Map<String, Any>?)))
+            ?.includeCustom(true)
+            ?.async { result, status ->
+                Log.d(
+                    "ABC2",
+                    "setPresenceStateForUuid() called with: result = ${result?.data}, status = $status"
+                )
             }
     }
 
     private fun getLatestUserList() {
-        pubnub?.hereNow()
+       /* pubnub?.hereNow()
             ?.channels(Arrays.asList(channelName))
             ?.includeUUIDs(true)
             ?.includeState(true)
             ?.async(object : PNCallback<PNHereNowResult> {
                 override fun onResponse(result: PNHereNowResult?, status: PNStatus) {
+                    Log.d("ABC2", "onResponse() called with: result = ${result?.channels?.get(channelName)?.occupants}")
                     result?.channels?.get(channelName)?.occupants?.forEach {
                         refreshUsersList(it.state)
                     }
                     addPubNubEventObserver()
-                    /*result?.channels?.forEach { t, u ->
+                    *//*result?.channels?.forEach { t, u ->
                         Log.d("ABC2", "here now   t = $t, u = $u")
                         u.occupants.forEach {
                             //getAllUsersData(it.state)
                             Log.d("ABC2", "occupants onResponse() called $it")
                         }
-                    }*/
+                    }*//*
                 }
 
-            })
+            })*/
+
+        pubnub?.channelMembers
+            ?.channel(channelName)
+            ?.includeCustom(true)
+            ?.async { result, status ->
+                result?.data?.forEach {
+                    refreshUsersList(it.uuid.id,it.custom)
+                }
+                addPubNubEventObserver()
+            }
     }
 
     private fun addPubNubEventObserver() {
@@ -482,35 +507,81 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 })
     }
 
-    private fun refreshUsersList(state: JsonElement?) {
-        if (state == null) {
+    private fun refreshUsersList(uid: String, state: Any) {
+        if (uid.isBlank()) {
             return
         }
+        //val user = getAllUsersData(state)
         Log.d("ABC2", "refreshUsersList() called with: state = $state")
-        val user = getAllUsersData(state)
-        if (user.isModerator) {
-            if (moderatorUid == null || moderatorUid == 0) {
-                moderatorUid = user.id
+
+        if (state is JsonElement) {
+            val user = getAllUsersData(state)
+            Log.d("ABC2", "refreshUsersList() called with: user = $user")
+
+
+            if (user.isModerator) {
+                if (moderatorUid == null || moderatorUid == 0) {
+                    moderatorUid = user.id
+                }
+                moderatorName = user.name
             }
-            moderatorName = user.name
+            if (user.id == agoraUid) {
+                currentUser = user
+            }
+            if (user.isSpeaker == true) {
+                speakersList.add(user)
+            } else {
+                audienceList.add(user)
+            }
+            speakerAdapter?.updateFullList(speakersList)
+            audienceAdapter?.updateFullList(audienceList)
+            viewModel.updateAudienceList(audienceList)
         }
-        if (user.id == agoraUid) {
-            currentUser = user
-        }
-        if (user.isSpeaker == true) {
-            speakersList.add(user)
-        } else {
-            audienceList.add(user)
-        }
-        speakerAdapter?.updateFullList(speakersList)
-        audienceAdapter?.updateFullList(audienceList)
-        viewModel.updateAudienceList(audienceList)
     }
 
     private fun getAllUsersData(msgJson: JsonElement): LiveRoomUser {
         val data = msgJson.asJsonObject
         val matType = object : TypeToken<LiveRoomUser>() {}.type
         return AppObjectController.gsonMapper.fromJson<LiveRoomUser>(data, matType)
+    }
+
+
+    private fun getUserDataFromCustom(uuid: String, state: Map<*, *>) : LiveRoomUser{
+
+        val user = LiveRoomUser(uuid.toInt(),null, null,null,null,false,false,false,false,
+            EMPTY,false)
+
+        if (state.containsKey("is_speaker")){
+            user.isSpeaker = state.get("is_speaker") as Boolean?
+        }
+        if (state.containsKey("name")){
+            user.name = state.get("name") as String?
+        }
+        if (state.containsKey("photo_url")){
+            user.photoUrl = state.get("photo_url") as String?
+        }
+        if (state.containsKey("sort_order")){
+            user.sortOrder = state.get("sort_order") as Int?
+        }
+        if (state.containsKey("is_moderator")){
+            user.isModerator = state.get("is_moderator") as Boolean
+        }
+        if (state.containsKey("is_mic_on")){
+            user.isMicOn = state.get("is_mic_on") as Boolean
+        }
+
+        if (state.containsKey("is_speaking")){
+            user.isSpeaking = state.get("is_speaking") as Boolean
+        }
+
+        if (state.containsKey("is_hand_raised")){
+            user.isHandRaised = state.get("is_hand_raised") as Boolean
+        }
+
+        if (state.containsKey("mentor_id")){
+            user.mentorId = state.get("mentor_id") as String
+        }
+        return user
     }
 
     private fun addNewUserToAudience(msg: JsonObject) {

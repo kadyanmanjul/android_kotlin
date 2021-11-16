@@ -309,7 +309,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
             if (pointsString.isNotBlank()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsString)
             }
-            PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
+            PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
         })
 
         lessonViewModel.lessonQuestionsLiveData.observe(

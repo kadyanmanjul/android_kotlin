@@ -30,11 +30,11 @@ data class LiveRoomUser(
     @SerializedName("is_speaker")
     var isSpeaker: Boolean?,
     @SerializedName("name")
-    val name: String?,
+    var name: String?,
     @SerializedName("photo_url")
-    val photoUrl: String?,
+    var photoUrl: String?,
     @SerializedName("sort_order")
-    val sortOrder: Int?,
+    var sortOrder: Int?,
     @SerializedName("is_moderator")
     var isModerator: Boolean = false,
     @SerializedName("is_mic_on")
