@@ -333,20 +333,24 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     Log.d("ABC", "addPubNubEventObserver() called ${it.action} ${it.data}")
-                    if (it.data != null) {
-                        when (it.action) {
-                            "CREATE_ROOM" -> addNewRoomToList(it.data)
-                            "LEAVE_ROOM" -> updateRoom(it.data, true)
-                            "JOIN_ROOM" -> updateRoom(it.data, false)
-                            "END_ROOM" -> removeRoomFromList(it.data)
-                        }
-                        CoroutineScope(Dispatchers.Main).launch {
-                            if (conversationRoomsListAdapter?.isRoomEmpty() == true) {
-                                showNoRoomAvailableText()
-                            } else {
-                                showRecyclerView()
+                    try {
+                        if (it.data != null) {
+                            when (it.action) {
+                                "CREATE_ROOM" -> addNewRoomToList(it.data)
+                                "LEAVE_ROOM" -> updateRoom(it.data, true)
+                                "JOIN_ROOM" -> updateRoom(it.data, false)
+                                "END_ROOM" -> removeRoomFromList(it.data)
+                            }
+                            CoroutineScope(Dispatchers.Main).launch {
+                                if (conversationRoomsListAdapter?.isRoomEmpty() == true) {
+                                    showNoRoomAvailableText()
+                                } else {
+                                    showRecyclerView()
+                                }
                             }
                         }
+                    } catch (ex:Exception){
+                        LogException.catchException(ex)
                     }
                 })
     }

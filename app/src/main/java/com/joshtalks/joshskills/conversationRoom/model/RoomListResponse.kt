@@ -26,7 +26,7 @@ data class RoomListResponseItem(
 @Parcelize
 data class LiveRoomUser(
     @SerializedName("id")
-    val id: Int?,
+    var id: Int?,
     @SerializedName("is_speaker")
     var isSpeaker: Boolean?,
     @SerializedName("name")

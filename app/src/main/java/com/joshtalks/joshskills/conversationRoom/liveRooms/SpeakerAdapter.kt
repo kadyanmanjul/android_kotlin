@@ -24,7 +24,7 @@ class SpeakerAdapter(
     fun updateFullList(newList: List<LiveRoomUser>) {
         newList.sortedBy { it.sortOrder }
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        val diffResult = DiffUtil.calculateDiff(diffCallback,true)
         speakersList.clear()
         speakersList.addAll(newList)
         diffResult.dispatchUpdatesTo(this)

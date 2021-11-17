@@ -59,7 +59,6 @@ class HeadsUpNotificationService : Service() {
                 stopSelf()
             } else {
 
-
                 mNotificationManager?.cancelAll()
                 intent.getStringExtra(ConfigKey.INTENT_ROOM_ID)?.let {
                     startActivity(

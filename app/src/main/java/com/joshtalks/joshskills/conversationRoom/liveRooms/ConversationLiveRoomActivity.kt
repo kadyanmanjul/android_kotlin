@@ -70,6 +70,7 @@ import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE
 import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.ReplaySubject
 import kotlinx.coroutines.CoroutineScope
@@ -112,7 +113,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
     private var isBackPressed: Boolean = false
-    private var isPubNubObserverAdded: Boolean = false
+    private var isExitApiFired: Boolean = false
+    private var isPubNubUsersFetched: Boolean = false
     private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
     private var currentUser: LiveRoomUser? = null
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
@@ -128,6 +130,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             this.window.statusBarColor =
                 this.resources.getColor(R.color.conversation_room_color, theme)
         }
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(9999)
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         isBackPressed = false
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
@@ -194,12 +197,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         //viewModel.endRoom(roomId.toString(), roomQuestionId)
         mBoundService?.endRoom(roomId.toString(), roomQuestionId)
+        isExitApiFired = true
         pubnub?.unsubscribeAll()
         finish()
     }
 
     private fun leaveRoom() {
         mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+        isExitApiFired = true
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         pubnub?.unsubscribeAll()
         finish()
@@ -232,10 +237,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
 
             override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-                Log.d(
-                    "ABC2",
-                    "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
-                )
                 val msg = pnMessageResult.message.asJsonObject
                 val act = msg["action"].asString
                 try {
@@ -249,11 +250,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
 
             override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
-                Log.d(
-                    "ABC2",
-                    "presence() called with: pubnub = $pubnub, pnPresenceEventResult = $pnPresenceEventResult"
-                )
-
             }
 
             override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
@@ -369,15 +365,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun moveToSpeaker(agoraId: Int) {
-        if (audienceList.any{it.id == agoraId}){
-            val user = audienceList.filter { it.id == agoraId }.get(0)
-            updateUiWhenSwitchToSpeaker(user.isMicOn)
-            audienceList.remove(user)
-            user.isSpeaker = true
-            user.isHandRaised = false
-            user.isInviteSent = true
-            speakersList.add(user)
-            setChannelMemberStateForUuid(user)
+        val user = audienceList.filter { it.id == agoraId }
+        user.forEach {
+            if (this.agoraUid == it.id) {
+                updateUiWhenSwitchToSpeaker(it.isMicOn)
+            }
+            audienceList.remove(it)
+            it.isSpeaker = true
+            it.isHandRaised = false
+            it.isInviteSent = true
+            speakersList.add(it)
+            setChannelMemberStateForUuid(it)
         }
         audienceAdapter?.updateFullList(audienceList)
         viewModel.updateAudienceList(audienceList)
@@ -420,6 +418,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             return
         }
         val state = mutableMapOf<String, Any>()
+        state.put("id", user.id!!)
         state.put("is_speaker", user.isSpeaker.toString())
         state.put("name", user.name?: DEFAULT_NAME)
         state.put("photo_url", user.photoUrl?: EMPTY)
@@ -475,36 +474,42 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             ?.channel(channelName)
             ?.includeCustom(true)
             ?.async { result, status ->
+                Log.d("ABC2", "getLatestUserList() called with: result = $result, status = $status")
                 result?.data?.forEach {
                     refreshUsersList(it.uuid.id,it.custom)
                 }
                 addPubNubEventObserver()
+                isPubNubUsersFetched = true
             }
     }
 
     private fun addPubNubEventObserver() {
-        isPubNubObserverAdded = true
-        compositeDisposable.add(
-            replaySubject.ofType(ConversationRoomPubNubEventBus::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    Log.d("ABC2", "addPubNubEventObserver() called ${it.action} ${it.data}")
-                    when (it.action) {
-                        "CREATE_ROOM" -> addNewUserToAudience(it.data)
-                        "JOIN_ROOM" -> addNewUserToAudience(it.data)
-                        "LEAVE_ROOM" -> removeUser(it.data)
-                        "END_ROOM" -> leaveRoom()
-                        "IS_HAND_RAISED" -> handRaisedByUser(it.data)
-                        "INVITE_SPEAKER" -> inviteUserToSpeaker()
-                        "MOVE_TO_SPEAKER" -> moveToSpeaker(it.data)
-                        "MOVE_TO_AUDIENCE" -> moveToAudience(it.data)
-                        "MIC_STATUS_CHANGES" -> changeMicStatus(it.data)
-                        else -> {
+        Log.d("ABC2", "addPubNubEventObserver() called  isPubNubObserverAdded: ${isPubNubUsersFetched} ")
+        //compositeDisposable.remove(getReplayDisposable())
+        compositeDisposable.add(getReplayDisposable())
+    }
 
-                        }
+    private fun getReplayDisposable(): Disposable {
+        return replaySubject.ofType(ConversationRoomPubNubEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.d("ABC2", "inside disposable called ${it.action} ${it.data}  isPubNubObserverAdded: ${isPubNubUsersFetched}")
+                when (it.action) {
+                    "CREATE_ROOM" -> addNewUserToAudience(it.data)
+                    "JOIN_ROOM" -> addNewUserToAudience(it.data)
+                    "LEAVE_ROOM" -> removeUser(it.data)
+                    "END_ROOM" -> leaveRoom()
+                    "IS_HAND_RAISED" -> handRaisedByUser(it.data)
+                    "INVITE_SPEAKER" -> inviteUserToSpeaker()
+                    "MOVE_TO_SPEAKER" -> moveToSpeaker(it.data)
+                    "MOVE_TO_AUDIENCE" -> moveToAudience(it.data)
+                    "MIC_STATUS_CHANGES" -> changeMicStatus(it.data)
+                    else -> {
+
                     }
-                })
+                }
+            }
     }
 
     private fun refreshUsersList(uid: String, state: Any) {
@@ -516,6 +521,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         if (state is JsonElement) {
             val user = getAllUsersData(state)
+            user.id = uid.toInt()
             Log.d("ABC2", "refreshUsersList() called with: user = $user")
 
 
@@ -826,6 +832,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         0 -> uids.add(agoraUid!!)
                         else -> uids.add(user.uid)
                     }
+                } else if (user.volume <= 2){
+                    when (user.uid) {
+                        0 -> speakingListForGoldenRing.remove(agoraUid!!)
+                        else -> speakingListForGoldenRing.remove(user.uid)
+                    }
                 }
             }
             refreshSpeakingUsers(uids)
@@ -845,17 +856,20 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (speakersList.any { it.id == uid }) {
             val user = speakersList.filter { it.id == uid }
             speakersList.removeAll(user)
-            speakerAdapter?.updateFullList(speakersList)
+            CoroutineScope(Dispatchers.Main).launch {
+                speakerAdapter?.updateFullList(speakersList)
+            }
         } else if (audienceList.any { it.id == uid }) {
             val user = audienceList.filter { it.id == uid }
             audienceList.removeAll(user)
-            audienceAdapter?.updateFullList(audienceList)
+            CoroutineScope(Dispatchers.Main).launch {
+                audienceAdapter?.updateFullList(audienceList)
+            }
             viewModel.updateAudienceList(audienceList)
         }
     }
 
     private fun refreshSpeakingUsers(uids: List<Int?>) {
-        speakingListForGoldenRing.clear()
         speakingListForGoldenRing.addAll(uids)
         // Log.d("ABC2", "refreshSpeakingUsers() called with: uids = $uids")
         val i = 0
@@ -952,6 +966,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 showEndRoomPopup()
             } else {
                 mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+                isExitApiFired = true
                 pubnub?.unsubscribeAll()
                 finish()
             }
@@ -1551,6 +1566,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onUserInvitedToSpeak(user: LiveRoomUser) {
         viewModel.updateInviteSentToUser(user.id!!)
+        //todo check speaker list size
         val customMessage = JsonObject()
         customMessage.addProperty("id", agoraUid)
         customMessage.addProperty("uid", user.id)
@@ -1570,6 +1586,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         alertDialog.show()
 
         dialogView.findViewById<AppCompatTextView>(R.id.cancel).setOnClickListener {
+            isBackPressed = false
             alertDialog.dismiss()
         }
 
@@ -1580,6 +1597,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 finish()
             }
             mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
+            isExitApiFired = true
             alertDialog.dismiss()
             pubnub?.unsubscribeAll()
             finish()
@@ -1610,8 +1628,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onResume() {
         super.onResume()
+        compositeDisposable.clear()
         observeNetwork()
-        if (isPubNubObserverAdded) {
+        if (isPubNubUsersFetched) {
             addPubNubEventObserver()
         }
     }
@@ -1631,14 +1650,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             showEndRoomPopup()
         } else {
             mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+            isExitApiFired = true
             pubnub?.unsubscribeAll()
             super.onBackPressed()
         }
     }
 
     override fun onDestroy() {
-        Log.d("ABC2", "activity onDestroy() called")
-        if (!isBackPressed) {
+        if (!isBackPressed || !isExitApiFired) {
             if (isRoomCreatedByUser) {
                 mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
             } else {
