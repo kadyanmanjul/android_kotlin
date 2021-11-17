@@ -29,7 +29,11 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
     var audienceList = MutableLiveData<ArrayList<LiveRoomUser>>()
 
     fun updateInviteSentToUser(userId:Int){
-        val oldAudienceList:ArrayList<LiveRoomUser> = ArrayList(getAudienceList())
+        val audienceList = getAudienceList()
+        if (audienceList.isNullOrEmpty()){
+            return
+        }
+        val oldAudienceList:ArrayList<LiveRoomUser> = audienceList
         val user = oldAudienceList?.filter { it.id == userId }
         user?.get(0)?.let { it->
             oldAudienceList.remove(it)
@@ -40,7 +44,11 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
     }
 
     fun updateHandRaisedToUser(userId:Int,isHandRaised:Boolean){
-        val oldAudienceList:ArrayList<LiveRoomUser> = ArrayList(getAudienceList())
+        val audienceList = getAudienceList()
+        if (audienceList.isNullOrEmpty()){
+            return
+        }
+        val oldAudienceList:ArrayList<LiveRoomUser> = audienceList
         val isUserPresent = oldAudienceList.any { it.id == userId }
         if (isUserPresent) {
             val roomUser = oldAudienceList.filter { it.id == userId }[0]
@@ -58,7 +66,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
         this.audienceList.postValue(audienceList)
     }
 
-    fun getAudienceList() : ArrayList<LiveRoomUser>? = this.audienceList.value
+    fun getAudienceList() : ArrayList<LiveRoomUser>? = this.audienceList.value?: ArrayList<LiveRoomUser>()
 
     fun joinRoom(item: RoomListResponseItem) {
         viewModelScope.launch(Dispatchers.IO) {
