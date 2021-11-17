@@ -3,24 +3,32 @@ package com.joshtalks.joshskills.ui.group
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.OPEN_EMOJI_KEYBOARD
+import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 import com.vanniktech.emoji.EmojiPopup
+
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "GroupChatFragment"
 
 class GroupChatFragment : BaseFragment() {
     lateinit var binding: GroupChatFragmentBinding
     lateinit var emojiPopup: EmojiPopup
+    lateinit var linearLayoutManager: LinearLayoutManager
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[GroupChatViewModel::class.java]
@@ -34,6 +42,7 @@ class GroupChatFragment : BaseFragment() {
         val rootView = binding.rootContainer
         val emojiIconEditText = binding.groupChatSendMsg
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(emojiIconEditText)
+        initRv()
         return binding.root
     }
 
@@ -66,6 +75,27 @@ class GroupChatFragment : BaseFragment() {
             vm.groupCreatedAt.set(it.getString(GROUPS_CREATED_TIME, ""))
             vm.groupCreator.set(it.getString(GROUPS_CREATOR, ""))
             vm.conversationId = it.getString(CONVERSATION_ID, "") ?: ""
+        }
+    }
+
+    private fun initRv() {
+        linearLayoutManager = SmoothScrollingLinearLayoutManager(context, false)
+        linearLayoutManager.stackFromEnd = true
+
+        binding.groupChatRv.setHasFixedSize(false)
+        binding.groupChatRv.layoutManager = linearLayoutManager
+
+        binding.scrollToEndButton.setOnClickListener {
+            scrollToEnd()
+        }
+        //TODO("Not yet implemented") : Need to initialize and set the chatAdapter
+    }
+
+    private fun scrollToEnd() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            //TODO : Implement the chatAdapter and uncomment the below line
+            //linearLayoutManager.scrollToPosition(adapter.itemCount - 1)
+            binding.scrollToEndButton.visibility = GONE
         }
     }
 
