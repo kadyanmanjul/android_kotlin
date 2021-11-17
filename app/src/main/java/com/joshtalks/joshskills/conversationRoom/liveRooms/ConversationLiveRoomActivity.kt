@@ -18,6 +18,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.collection.arraySetOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
@@ -119,7 +120,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var currentUser: LiveRoomUser? = null
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
     val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
-    val speakingListForGoldenRing: ArrayList<Int?> = arrayListOf()
+    val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
     private var replaySubject = ReplaySubject.create<Any>()
 
 
@@ -827,15 +828,20 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
             val uids = ArrayList<Int>()
             speakers?.forEach { user ->
-                if (user.volume > 2) {
-                    when (user.uid) {
-                        0 -> uids.add(agoraUid!!)
-                        else -> uids.add(user.uid)
-                    }
-                } else if (user.volume <= 2){
+                Log.d(
+                    "ABC2",
+                    "refreshSpeakingUsers() called with: user = id : ${user.uid} v : ${user.volume} speakingListForGoldenRing : ${speakingListForGoldenRing}"
+                )
+                if (user.volume <= 2){
                     when (user.uid) {
                         0 -> speakingListForGoldenRing.remove(agoraUid!!)
                         else -> speakingListForGoldenRing.remove(user.uid)
+                    }
+                }
+                else if (user.volume > 2) {
+                    when (user.uid) {
+                        0 -> uids.add(agoraUid!!)
+                        else -> uids.add(user.uid)
                     }
                 }
             }
@@ -872,16 +878,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun refreshSpeakingUsers(uids: List<Int?>) {
         speakingListForGoldenRing.addAll(uids)
         // Log.d("ABC2", "refreshSpeakingUsers() called with: uids = $uids")
-        val i = 0
+        var i = 0
         for (speaker in speakersList) {
-
             val viewHolder = binding.speakersRecyclerView.findViewHolderForAdapterPosition(i)
             if (viewHolder is SpeakerAdapter.SpeakerViewHolder) {
                 viewHolder.setGoldenRingVisibility(speakingListForGoldenRing.contains(speaker.id))
-                //speakerAdapter.notifyItemChanged()
-                //Log.d("ABC2", "refreshSpeakingUsers() called with: viewHolder = ${viewHolder.model?.name}")
             }
+            i++
         }
+        Log.d("ABC2", "refreshSpeakingUsers() called with: speakingListForGoldenRing = $speakingListForGoldenRing")
     }
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
