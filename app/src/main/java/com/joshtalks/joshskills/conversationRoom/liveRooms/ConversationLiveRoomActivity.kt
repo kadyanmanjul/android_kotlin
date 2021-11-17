@@ -540,10 +540,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             } else {
                 audienceList.add(user)
             }
-            speakerAdapter?.updateFullList(speakersList)
-            audienceAdapter?.updateFullList(audienceList)
-            viewModel.updateAudienceList(audienceList)
         }
+        speakerAdapter?.updateFullList(speakersList)
+        audienceAdapter?.updateFullList(audienceList)
+        viewModel.updateAudienceList(audienceList)
     }
 
     private fun getAllUsersData(msgJson: JsonElement): LiveRoomUser {
@@ -1662,7 +1662,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onDestroy() {
-        if (!isBackPressed || !isExitApiFired) {
+        if ((isBackPressed.or(isExitApiFired)).not()) {
             if (isRoomCreatedByUser) {
                 mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
             } else {

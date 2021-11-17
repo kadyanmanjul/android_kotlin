@@ -739,40 +739,8 @@ class WebRtcService : BaseWebRtcService() {
         CoroutineScope(Dispatchers.IO).launch {
             removeNotifications()
             //removeConversationNotifications()
-            if (isRoomEnded.not()) {
-                var qId: Int? = null
-                if (conversationQuestionId != null && (conversationQuestionId != 0 || conversationQuestionId != -1)) {
-                    qId = conversationQuestionId
-                }
-                val request =
-                    JoinConversionRoomRequest(
-                        Mentor.getInstance().getId(),
-                        roomId?.toInt() ?: 0,
-                        qId
-                    )
-                val response =
-                    AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
-                        request
-                    )
-                Log.d("ABC", "end room api call ${response.code()}")
-                if (response.isSuccessful) {
-                    isRoomEnded = false
-                    PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
-                    PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
-                    RxBus2.publish(ConvoRoomPointsEventBus(null))
-                    conversationRoomChannelName = null
-                    mRtcEngine?.leaveChannel()
-                    //joshAudioManager?.endCommunication()
-                }
-            }
-        }
-    }
-
-    fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
-        if (roomId.isNullOrBlank().not()) {
-            CoroutineScope(Dispatchers.IO).launch {
+            try {
                 if (isRoomEnded.not()) {
-                    removeNotifications()
                     var qId: Int? = null
                     if (conversationQuestionId != null && (conversationQuestionId != 0 || conversationQuestionId != -1)) {
                         qId = conversationQuestionId
@@ -784,10 +752,10 @@ class WebRtcService : BaseWebRtcService() {
                             qId
                         )
                     val response =
-                        AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
+                        AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
                             request
                         )
-                    Log.d("ABC", "leave room api call")
+                    Log.d("ABC", "end room api call ${response.code()}")
                     if (response.isSuccessful) {
                         isRoomEnded = false
                         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
@@ -796,6 +764,46 @@ class WebRtcService : BaseWebRtcService() {
                         conversationRoomChannelName = null
                         mRtcEngine?.leaveChannel()
                         //joshAudioManager?.endCommunication()
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
+        if (roomId.isNullOrBlank().not()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (isRoomEnded.not()) {
+                    removeNotifications()
+                    try {
+                        var qId: Int? = null
+                        if (conversationQuestionId != null && (conversationQuestionId != 0 || conversationQuestionId != -1)) {
+                            qId = conversationQuestionId
+                        }
+                        val request =
+                            JoinConversionRoomRequest(
+                                Mentor.getInstance().getId(),
+                                roomId?.toInt() ?: 0,
+                                qId
+                            )
+                        val response =
+                            AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
+                                request
+                            )
+                        Log.d("ABC", "leave room api call")
+                        if (response.isSuccessful) {
+                            isRoomEnded = false
+                            PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
+                            PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
+                            RxBus2.publish(ConvoRoomPointsEventBus(null))
+                            conversationRoomChannelName = null
+                            mRtcEngine?.leaveChannel()
+                            //joshAudioManager?.endCommunication()
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
                 }
             }

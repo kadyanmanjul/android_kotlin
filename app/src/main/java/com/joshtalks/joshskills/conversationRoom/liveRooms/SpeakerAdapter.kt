@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,8 @@ class SpeakerAdapter(
 
     fun updateFullList(newList: List<LiveRoomUser>) {
         newList.sortedBy { it.sortOrder }
+        newList.sortedBy { it.isModerator }
+        Log.d("ABC3", "updateFullList() called with: newList = $newList")
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback,true)
         speakersList.clear()
@@ -40,6 +43,7 @@ class SpeakerAdapter(
             newList.add(oldUser[0])
         }
         newList.sortBy { it.sortOrder }
+        newList.sortedBy { it.isModerator }
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         speakersList.clear()
@@ -51,6 +55,7 @@ class SpeakerAdapter(
         val newList: ArrayList<LiveRoomUser> = ArrayList(speakersList)
         newList.add(newItem)
         newList.sortBy { it.sortOrder }
+        newList.sortedBy { it.isModerator }
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         speakersList.clear()
@@ -63,6 +68,7 @@ class SpeakerAdapter(
         val newList: ArrayList<LiveRoomUser> = speakersList
         newList.removeAll(list)
         newList.sortBy { it.sortOrder }
+        newList.sortedBy { it.isModerator }
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         speakersList.clear()
@@ -75,6 +81,7 @@ class SpeakerAdapter(
         val newList: ArrayList<LiveRoomUser> = speakersList
         newList.removeAll(list)
         newList.sortBy { it.sortOrder }
+        newList.sortedBy { it.isModerator }
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         speakersList.clear()
