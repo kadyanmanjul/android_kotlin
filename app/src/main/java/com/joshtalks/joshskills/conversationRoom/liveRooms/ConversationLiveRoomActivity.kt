@@ -367,16 +367,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun moveToSpeaker(agoraId: Int) {
         val user = audienceList.filter { it.id == agoraId }
-        user.forEach {
-            if (this.agoraUid == it.id) {
-                updateUiWhenSwitchToSpeaker(it.isMicOn)
+        if ( user.size > 0 ){
+            val userToMove = user.get(0)
+           if (this.agoraUid == userToMove.id) {
+                updateUiWhenSwitchToSpeaker(userToMove.isMicOn)
             }
-            audienceList.remove(it)
-            it.isSpeaker = true
-            it.isHandRaised = false
-            it.isInviteSent = true
-            speakersList.add(it)
-            setChannelMemberStateForUuid(it)
+            audienceList.remove(userToMove)
+            userToMove.isSpeaker = true
+            userToMove.isHandRaised = false
+            userToMove.isInviteSent = true
+            speakersList.add(userToMove)
+            setChannelMemberStateForUuid(userToMove)
         }
         audienceAdapter?.updateFullList(audienceList)
         viewModel.updateAudienceList(audienceList)
@@ -385,16 +386,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun moveToAudience(agoraId: Int) {
         val user = speakersList.filter { it.id == agoraId }
-        user.forEach {
-            if (this.agoraUid == it.id) {
+        if ( user.size > 0 ){
+            val userToMove = user.get(0)
+            if (this.agoraUid == userToMove.id) {
                 updateUiWhenSwitchToListener()
             }
-            speakersList.remove(it)
-            it.isSpeaker = false
-            it.isHandRaised = false
-            it.isInviteSent = false
-            audienceList.add(it)
-            setChannelMemberStateForUuid(it)
+            speakersList.remove(userToMove)
+            userToMove.isSpeaker = false
+            userToMove.isHandRaised = false
+            userToMove.isInviteSent = false
+            audienceList.add(userToMove)
+            setChannelMemberStateForUuid(userToMove)
         }
         audienceAdapter?.updateFullList(audienceList)
         viewModel.updateAudienceList(audienceList)

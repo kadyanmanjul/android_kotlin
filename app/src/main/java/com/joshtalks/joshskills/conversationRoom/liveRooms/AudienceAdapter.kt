@@ -46,7 +46,7 @@ class AudienceAdapter(
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()
         audienceList.addAll(newList)
-        Log.d("ABC", "updateFullList() called with: audienceList = $audienceList")
+        Log.d("ABC2", "updateFullList() called with: audienceList = $audienceList")
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -58,7 +58,7 @@ class AudienceAdapter(
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()
         audienceList.addAll(newList)
-        Log.d("ABC", "addSingleItem() called with: audienceList = $audienceList")
+        Log.d("ABC2", "addSingleItem() called with: audienceList = $audienceList")
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -71,11 +71,11 @@ class AudienceAdapter(
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()
         audienceList.addAll(newList)
-        Log.d("ABC", "removeSingleItem() called with: audienceList = $audienceList")
+        Log.d("ABC2", "removeSingleItem() called with: audienceList = $audienceList")
         diffResult.dispatchUpdatesTo(this)
     }
     fun removeItemIfPresent(newItem: LiveRoomUser) {
-        Log.d("ABC", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
+        Log.d("ABC2", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
         val list = ArrayList(audienceList).filter { it.id == newItem.id }
         val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
         newList.removeAll(list)
@@ -84,13 +84,13 @@ class AudienceAdapter(
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()
         audienceList.addAll(newList)
-        Log.d("ABC", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
+        Log.d("ABC2", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
         diffResult.dispatchUpdatesTo(this)
     }
 
     fun updateItem(room: LiveRoomUser, position: Int) {
         audienceList[position] = room
-        Log.d("ABC", "updateItem() called with: room = $room, audienceList = $audienceList")
+        Log.d("ABC2", "updateItem() called with: room = $room, audienceList = $audienceList")
         notifyItemChanged(position)
     }
 
