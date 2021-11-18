@@ -17,6 +17,9 @@ data class GroupChat(
     //TODO: Complete the serialized names as per API
 
     @field:SerializedName("")
+    val message_id: String? = null,
+
+    @field:SerializedName("")
     val sender_id: String? = null,
 
     @field:SerializedName("")
@@ -25,6 +28,10 @@ data class GroupChat(
     @field:SerializedName("")
     val message_time: String
 ) : Parcelable, GroupChatData {
+    override fun getUniqueId(): String {
+        return message_id ?: ""
+    }
+
     override fun getTitle(): String {
         return sender_id ?: ""
     }

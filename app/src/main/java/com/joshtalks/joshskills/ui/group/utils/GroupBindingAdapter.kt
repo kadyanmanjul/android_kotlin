@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
+import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
@@ -83,10 +84,20 @@ fun setGroupAdapter(
     adapter.setListener(function)
 }
 
-@BindingAdapter("groupAdapter")
+@BindingAdapter("groupMemberAdapter")
 fun setGroupMemberAdapter(
     view: RecyclerView,
     adapter: GroupMemberAdapter,
+) {
+    view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+    view.setHasFixedSize(false)
+    view.adapter = adapter
+}
+
+@BindingAdapter("groupChatAdapter")
+fun setGroupChatAdapter(
+    view: RecyclerView,
+    adapter: GroupChatAdapter,
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)

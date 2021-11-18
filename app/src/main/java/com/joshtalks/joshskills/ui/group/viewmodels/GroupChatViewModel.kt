@@ -17,11 +17,13 @@ import com.joshtalks.joshskills.ui.group.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.IS_FROM_KEYBOARD
+import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
+import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +44,7 @@ class GroupChatViewModel : BaseViewModel() {
     val userOnlineCount = ObservableField("")
     var showAllMembers = ObservableBoolean(false)
     lateinit var memberAdapter: GroupMemberAdapter
+    var chatAdapter = GroupChatAdapter(GroupChatComparator)
     var chatSendText: String = ""
     lateinit var chatService : ChatService
 
