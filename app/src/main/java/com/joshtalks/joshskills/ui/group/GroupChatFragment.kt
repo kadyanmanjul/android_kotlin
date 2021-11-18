@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLEAR_CHAT_TEXT
 import com.joshtalks.joshskills.constants.OPEN_EMOJI_KEYBOARD
+import com.joshtalks.joshskills.constants.SEND_MSG
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
@@ -58,6 +59,7 @@ class GroupChatFragment : BaseFragment() {
                     openEmojiKeyboard(it.data)
                 }
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
+                SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.toString())
             }
         }
     }
