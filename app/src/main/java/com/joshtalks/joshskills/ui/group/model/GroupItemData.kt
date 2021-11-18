@@ -7,5 +7,6 @@ interface GroupItemData {
     fun getImageUrl() : String
     fun getCreatedTime() : String
     fun getCreator() : String
+    //TODO: Need to remove
     fun hasJoined() : Boolean
 }

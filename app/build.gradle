@@ -169,7 +169,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9005\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -420,8 +420,13 @@ dependencies {
     // Paging3
     implementation "androidx.paging:paging-runtime-ktx:3.0.1"
 
+    // some existing dependencies
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // add PubNub Android-Java SDK here at that bottom
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '4.+'
+
     //keyboard
-//    implementation "com.github.hani-momanii:SuperNova-Emoji:1.1"
     implementation "com.vanniktech:emoji-ios:0.8.0"
     implementation "com.vanniktech:emoji-material:0.8.0"
 
