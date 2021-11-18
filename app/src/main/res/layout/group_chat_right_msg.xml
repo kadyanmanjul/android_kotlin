@@ -1,49 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="@dimen/cell_left_end_padding"
-    android:layout_marginEnd="@dimen/_4sdp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/parent_layout"
-        android:layout_width="wrap_content"
+    <data>
+
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.group.model.GroupChatData" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/outgoing_message_normal_bg_groupchat"
-        android:layout_gravity="end"
-        android:paddingEnd="@dimen/_14sdp"
-        android:paddingStart="@dimen/_9sdp">
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:paddingStart="@dimen/cell_left_end_padding">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-            android:id="@+id/text_message_body"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/parent_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:gravity="center_vertical|start"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/black"
-            android:layout_marginTop="@dimen/_4sdp"
-            app:layout_constraintBottom_toTopOf="@+id/text_message_time"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Hello! hai." />
+            android:layout_gravity="end"
+            android:background="@drawable/outgoing_message_normal_bg_groupchat"
+            android:paddingStart="@dimen/_9sdp"
+            android:paddingEnd="@dimen/_14sdp">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_message_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingEnd="@dimen/_2sdp"
-            android:paddingBottom="@dimen/_4sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-            android:textColor="@color/gray_9E"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="00:00 AM" />
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/text_message_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center_vertical|start"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/text_message_time"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Hello! hai." />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_message_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingEnd="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textColor="@color/gray_9E"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="00:00 AM" />
 
-</FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>
