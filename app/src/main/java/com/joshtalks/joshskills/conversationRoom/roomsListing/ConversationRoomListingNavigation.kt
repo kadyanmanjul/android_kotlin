@@ -7,8 +7,9 @@ sealed class ConversationRoomListingNavigation {
         val token: String?,
         val isRoomCreatedByUser: Boolean,
         val roomId: Int?,
-        val startedBy: Int?
-    ) : ConversationRoomListingNavigation()
+        val startedBy: Int?,
+        val topic: String?,
+        ) : ConversationRoomListingNavigation()
 
     class ApiCallError(val error: String): ConversationRoomListingNavigation()
 

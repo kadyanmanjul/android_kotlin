@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.ui.voip.NotificationId
 import org.json.JSONObject
 import java.util.*
@@ -65,6 +66,7 @@ class HeadsUpNotificationService : Service() {
                         ConversationLiveRoomActivity.getIntentForNotification(
                             this,
                             it,
+                            intent.getStringExtra(ConfigKey.INTENT_ROOM_TOPIC)?: EMPTY,
                             arrayOf(Intent.FLAG_ACTIVITY_NEW_TASK)
                         )
                     )
@@ -190,6 +192,10 @@ class HeadsUpNotificationService : Service() {
                 ConfigKey.INTENT_ROOM_ID,
                 roomId
             )
+            putExtra(
+                ConfigKey.INTENT_ROOM_TOPIC,
+                topic
+            )
             action = "RECEIVE_CALL"
         }
 
@@ -211,6 +217,10 @@ class HeadsUpNotificationService : Service() {
             putExtra(
                 ConfigKey.INTENT_ROOM_ID,
                 roomId
+            )
+            putExtra(
+                ConfigKey.INTENT_ROOM_TOPIC,
+                topic
             )
 
             action = "CANCEL_CALL"

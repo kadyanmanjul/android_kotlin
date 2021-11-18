@@ -527,10 +527,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         intent.startServiceForWebrtc()
                     } else {
                         val roomId = JSONObject(actionData).getString("room_id")
+                        val topic = JSONObject(actionData).getString("topic")?: EMPTY
+
                         if (roomId.isNotBlank())
                         {
                             return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
-                                roomId
+                                roomId,topicName = topic
                             )
                         }  else return null
                     }
@@ -1475,11 +1477,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                     if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null && User.getInstance().isVerified ) {
                         val roomId = JSONObject(actionData).getString("room_id")
+                        val topic = JSONObject(actionData).getString("topic")?: EMPTY
                         if (roomId.isNotBlank())
                         {
                             ConversationLiveRoomActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,
-                                roomId
+                                roomId,
+                                topicName = topic
                             )
                         } else null
                     } else null

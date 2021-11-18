@@ -98,6 +98,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var speakerAdapter: SpeakerAdapter? = null
     private var audienceAdapter: AudienceAdapter? = null
     private var channelName: String? = null
+    private var channelTopic: String? = null
     private var agoraUid: Int? = null
     private var token: String? = null
     private var moderatorUid: Int? = null
@@ -105,9 +106,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var iSSoundOn = true
     private var isBottomSheetVisible = false
     private var isHandRaised = true
-    private var notificationTo: HashMap<String, String>? = null
-    private var notificationFrom: HashMap<String, String>? = null
-    private var notificationType: String? = null
     private var handler: Handler? = null
     private var runnable: Runnable? = null
     private val compositeDisposable = CompositeDisposable()
@@ -527,7 +525,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             user.id = uid.toInt()
             Log.d("ABC2", "refreshUsersList() called with: user = $user")
 
-
             if (user.isModerator) {
                 if (moderatorUid == null || moderatorUid == 0) {
                     moderatorUid = user.id
@@ -536,6 +533,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             if (user.id == agoraUid) {
                 currentUser = user
+                hideProgressBar()
             }
             if (user.isSpeaker == true) {
                 speakersList.add(user)
@@ -607,6 +605,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             if (user.id == agoraUid) {
                 currentUser = user
+                hideProgressBar()
             }
             if (user.isSpeaker == true) {
                 speakersList.add(user)
@@ -745,7 +744,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         this.roomQuestionId = null
         this.isRoomCreatedByUser = roomCreatedByUser
         initData()
-        hideProgressBar()
         initPubNub()
     }
 
@@ -769,6 +767,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun getIntentExtras(intent: Intent?) {
         roomId = intent?.getIntExtra(ROOM_ID, 0)
+        channelTopic = intent?.getStringExtra(TOPIC_NAME)
         if (isActivityOpenFromNotification && roomId != null) {
             viewModel.joinRoom(
                 RoomListResponseItem(
@@ -926,6 +925,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         moderatorUid = intent?.getIntExtra(MODERATOR_UID, 0)
         token = intent?.getStringExtra(TOKEN)
         roomId = intent?.getIntExtra(ROOM_ID, 0)
+        channelTopic = intent?.getStringExtra(TOPIC_NAME)
         roomQuestionId = intent?.getIntExtra(ROOM_QUESTION_ID, 0)
         isRoomCreatedByUser = intent.getBooleanExtra(IS_ROOM_CREATED_BY_USER, false)
     }
@@ -940,6 +940,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             textColor = R.color.black,
             bgColor = R.color.conversation_room_gray
         )
+        binding.topic.text = channelTopic
         /*roomReference?.get()?.addOnSuccessListener {
             moderatorUid = it.get("started_by")?.toString()?.toInt()
             WebRtcService.moderatorUid = moderatorUid
@@ -1699,6 +1700,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         const val ROOM_ID = "room_id"
         const val OPEN_FROM_NOTIFICATION = "open_from_notification"
         const val ROOM_QUESTION_ID = "room_question_id"
+        const val TOPIC_NAME = "topic_name"
 
         fun getIntent(
             context: Context,
@@ -1709,6 +1711,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             roomId: Int?,
             roomQuestionId: Int? = null,
             moderatorId: Int? = null,
+            topicName: String? = null,
             flags: Array<Int> = arrayOf()
         ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
 
@@ -1719,6 +1722,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
             putExtra(ROOM_ID, roomId)
             putExtra(ROOM_QUESTION_ID, roomQuestionId)
+            putExtra(TOPIC_NAME, topicName)
             flags.forEach { flag ->
                 this.addFlags(flag)
             }
@@ -1727,11 +1731,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         fun getIntentForNotification(
             context: Context,
             roomId: String,
+            topicName: String? = null,
             flags: Array<Int> = arrayOf()
         ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
 
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
+            putExtra(TOPIC_NAME, topicName)
             flags.forEach { flag ->
                 this.addFlags(flag)
             }

@@ -91,7 +91,8 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                             response?.token,
                             item.startedBy?:0 == response?.uid,
                             response?.roomId?.toInt() ?: item.roomId.toInt(),
-                            startedBy = item.startedBy
+                            startedBy = item.startedBy,
+                            topic = item.topic?: EMPTY
                         )
                     )
 
@@ -131,7 +132,8 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                             response?.token,
                             true,
                             response?.roomId,
-                            null
+                            null,
+                            topic = topic
                             )
                     )
                 } else {

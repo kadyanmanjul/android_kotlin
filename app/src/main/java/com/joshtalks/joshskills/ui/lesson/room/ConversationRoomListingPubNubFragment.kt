@@ -261,7 +261,8 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                         it.token,
                         it.isRoomCreatedByUser,
                         it.roomId,
-                        it.startedBy
+                        it.startedBy,
+                        it.topic?: EMPTY
                     )
                     ConversationRoomListingNavigation.AtleastOneRoomAvailable -> showRecyclerView()
                     ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
@@ -557,8 +558,9 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         token: String?,
         isRoomCreatedByUser: Boolean,
         roomId: Int?,
-        moderatorId: Int?
-    ) {
+        moderatorId: Int?,
+        topic: String,
+        ) {
         WebRtcService.isRoomCreatedByUser = true
         isConversionRoomActive = true
         lastRoomId = roomId.toString()
@@ -572,7 +574,8 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                 isRoomCreatedByUser = isRoomCreatedByUser,
                 roomId = roomId,
                 moderatorId = moderatorId,
-                roomQuestionId = conversationRoomQuestionId
+                roomQuestionId = conversationRoomQuestionId,
+                topicName = topic
             )
         )
     }
