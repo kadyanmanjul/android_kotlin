@@ -6,34 +6,59 @@ import androidx.paging.PagingState
 import com.flurry.sdk.it
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.lib.ChatService
+import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.pubnub.api.models.consumer.PNPage
 import java.lang.Exception
 
-private const val TAG = "GroupPagingNetworkSourc"
-class GroupPagingNetworkSource(val query: String = "", val isSearching : Boolean = false, val apiService: GroupApiService, val mentorId : String = "", val onDataLoaded : ((Boolean) -> Unit)? = null) : PagingSource<Int, GroupItemData>() {
-    override fun getRefreshKey(state: PagingState<Int, GroupItemData>): Int? {
-        Log.d(TAG, "getRefreshKey: ")
-        return state.anchorPosition?.let { anchorPosition ->
-            val anchorPage = state.closestPageToPosition(anchorPosition)
-            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
-        }
+private const val TAG = "PubNub_GroupPaging"
+class GroupPagingNetworkSource(val query: String = "", val isSearching : Boolean = false, val apiService: GroupApiService, val mentorId : String = "", val onDataLoaded : ((Boolean) -> Unit)? = null) : PagingSource<PageInfo, GroupItemData>() {
+    val chatService = PubNubService.getChatService()
+    override fun getRefreshKey(state: PagingState<PageInfo, GroupItemData>): PageInfo? {
+        return null
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GroupItemData> {
+    override suspend fun load(params: LoadParams<PageInfo>): LoadResult<PageInfo, GroupItemData> {
         return try {
             Log.d(TAG, "load: ${params.key}")
-            val currentPageNo = params.key ?: 1
-            val responseData = if(isSearching) apiService.searchGroup(currentPageNo, query) else apiService.getGroupList(currentPageNo, mentorId)
+            val isFirstPage = params.key == null
+            var pageInfo = PageInfo()
+            val responseData = if(isSearching)
+                apiService.searchGroup(if(isFirstPage) 1 else params.key?.currentPage ?: 1, query)
+            else {
+                val pubNubResponse = chatService.fetchGroupList(
+                    if(isFirstPage) null else PageInfo(pubNubNext = params.key?.pubNubNext, pubNubPrevious = params.key?.pubNubPrevious)
+                )
+                pageInfo = pubNubResponse?.getPageInfo() ?: PageInfo()
+                pubNubResponse?.getData()
+            }
 
-            val data = responseData.groups?.map {
+            Log.d(TAG, "load: $pageInfo")
+
+            val data = responseData?.groups?.map {
                 it as GroupItemData
             }
-            if(currentPageNo == 1 && data.isNullOrEmpty())
+
+            if(isFirstPage && data.isNullOrEmpty())
                 onDataLoaded?.invoke(false)
             else
                 onDataLoaded?.invoke(true)
 
-            LoadResult.Page(data!!, if(currentPageNo == 1) null else currentPageNo-1, if(data.isEmpty()) null else currentPageNo+1)
+            val result = if(isSearching)
+                LoadResult.Page(
+                    data!!,
+                    if(isFirstPage) null else PageInfo(currentPage = (params.key?.currentPage ?: 1)-1),
+                    if(data.isEmpty()) null else PageInfo(currentPage = (params.key?.currentPage ?: 1)+1)
+                )
+            else
+                LoadResult.Page(
+                    data!!,
+                    if(isFirstPage) null else PageInfo(pubNubPrevious = pageInfo.pubNubPrevious),
+                    if(data.isEmpty()) null else PageInfo(pubNubNext = pageInfo.pubNubNext)
+                )
+            result
         } catch (e : Exception) {
             e.printStackTrace()
             LoadResult.Error(e)
