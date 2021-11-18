@@ -161,8 +161,8 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
 
             override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
                 Log.d(
-                    "ABC",
-                    "message() called with: pubnub = [$pubnub], pnMessageResult = [$pnMessageResult]"
+                    "PubNubFragment",
+                    "SubscribeCallback  pubnub = [$pubnub], pnMessageResult = [$pnMessageResult]"
                 )
 
                 val msg = pnMessageResult.message.asJsonObject
@@ -207,7 +207,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     }
 
     private fun updateRoom(msg: JsonObject, isUserLeaving: Boolean) {
-        Log.d("ABC", "updateRoom() called with: isUserLeaving = $isUserLeaving")
+        Log.d("PubNubFragment", "updateRoom on join or leave isUserLeaving = $isUserLeaving")
         val data = msg["data"].asJsonObject
         val matType = object : TypeToken<RoomListResponseItem>() {}.type
         if (data == null) {
@@ -215,13 +215,13 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
         val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
         CoroutineScope(Dispatchers.Main).launch {
-            Log.d("ABC", "updateRoom() called with: room = $room, isUserLeaving = $isUserLeaving")
+            Log.d("PubNubFragment", "updateRoom on join or leave with data room = $room, isUserLeaving = $isUserLeaving")
             updateItemInAdapter(room, isUserLeaving)
         }
     }
 
     private fun removeRoomFromList(msg: JsonObject) {
-        Log.d("ABC", "removeRoomFromList() called with: msg = $msg")
+        Log.d("PubNubFragment", "removeRoomFromList called with: msg = $msg")
         val data = msg["data"].asJsonObject
         val matType = object : TypeToken<RoomListResponseItem>() {}.type
         if (data == null) {
@@ -229,14 +229,14 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
         val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
         CoroutineScope(Dispatchers.Main).launch {
-            Log.d("ABC", "removeRoomFromList() called room: ${room}")
+            Log.d("PubNubFragment", "removeRoomFromList() called room: ${room}")
             removeItemsFromAdapter(room)
         }
     }
 
     private fun addNewRoomToList(msg: JsonObject) {
         val data = msg["data"].asJsonObject
-        Log.d("ABC", "addNewRoomToList() called with: msg = $data")
+        Log.d("PubNubFragment", "addNewRoomToList() called with: msg = $data")
         val matType = object : TypeToken<RoomListResponseItem>() {}.type
         if (data == null) {
             return
@@ -244,7 +244,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
         CoroutineScope(Dispatchers.Main).launch {
             showRecyclerView()
-            Log.d("ABC", "addNewRoomToList() called $room")
+            Log.d("PubNubFragment", "addNewRoomToList() with data called $room")
             addNewItemsToAdapter(room)
         }
     }
@@ -294,7 +294,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         })
 
         viewModel.roomListLiveData.observe(this.viewLifecycleOwner, { rooms ->
-            Log.d("ABC", "addObservers() called with: rooms = $rooms")
+            Log.d("PubNubFragment", "API data : rooms = $rooms")
             if (rooms.isNullOrEmpty().not()) {
                 showRecyclerView()
                 rooomList?.clear()
@@ -332,7 +332,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    Log.d("ABC", "addPubNubEventObserver() called ${it.action} ${it.data}")
+                    Log.d("PubNubFragment", "replaySubject disposable  called with event ${it.action} ${it.data}")
                     try {
                         if (it.data != null) {
                             when (it.action) {
@@ -488,7 +488,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
             viewModel.getConvoRoomDetails(it)
 
             if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_POINTS, defValue = false).not()) {
-                Log.d("ABC", "observeNetwork() called and has seen points")
+                Log.d("PubNubFragment", "observeNetwork() called and has seen points")
                 conversationRoomQuestionId?.let {
                     viewModel.getPointsForConversationRoom(
                         lastRoomId,
