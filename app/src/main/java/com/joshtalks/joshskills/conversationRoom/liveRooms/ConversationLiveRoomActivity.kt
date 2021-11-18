@@ -833,13 +833,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     "ABC2",
                     "refreshSpeakingUsers() called with: user = id : ${user.uid} v : ${user.volume} speakingListForGoldenRing : ${speakingListForGoldenRing}"
                 )
-                if (user.volume <= 2){
+                if (user.volume <= 15){
                     when (user.uid) {
                         0 -> speakingListForGoldenRing.remove(agoraUid!!)
                         else -> speakingListForGoldenRing.remove(user.uid)
                     }
                 }
-                else if (user.volume > 2) {
+                else if (user.volume > 15) {
                     when (user.uid) {
                         0 -> uids.add(agoraUid!!)
                         else -> uids.add(user.uid)
