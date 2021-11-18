@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.constants.CLEAR_CHAT_TEXT
 import com.joshtalks.joshskills.constants.OPEN_EMOJI_KEYBOARD
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
@@ -61,6 +62,7 @@ class GroupChatFragment : BaseFragment() {
                 OPEN_EMOJI_KEYBOARD -> {
                     openEmojiKeyboard(it.data)
                 }
+                CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
             }
         }
     }
@@ -78,6 +80,7 @@ class GroupChatFragment : BaseFragment() {
         }
     }
 
+    // TODO: Remove it
     private fun initRv() {
         linearLayoutManager = SmoothScrollingLinearLayoutManager(context, false)
         linearLayoutManager.stackFromEnd = true
