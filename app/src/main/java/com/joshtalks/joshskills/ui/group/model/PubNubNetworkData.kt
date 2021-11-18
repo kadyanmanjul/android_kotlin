@@ -2,26 +2,31 @@ package com.joshtalks.joshskills.ui.group.model
 
 import android.util.Log
 import com.google.gson.JsonObject
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.NetworkData
-import com.pubnub.api.models.consumer.PNPage
-import com.pubnub.api.models.consumer.objects_api.channel.PNGetAllChannelsMetadataResult
+import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
-import org.json.JSONObject
+import java.util.Date
 
 private const val TAG = "PubNub_NetworkData"
 data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
     val groupList = mutableListOf<GroupsItem>()
+    val chatService : ChatService = PubNubService.getChatService()
     override fun getData(): GroupListResponse {
         Log.d(TAG, "getData: $data")
         groupList.clear()
         for (group in data.data) {
             val custom = group.channel.custom as JsonObject
             val customMap = getCustomMap(custom)
+            val (lastMsg, lastMessageTime) = chatService.getLastDetailsMessage(group.channel.id)
             Log.d(TAG, "getData: Custum -- $custom")
             val response = GroupsItem(
                 groupId = group.channel.id,
                 name = group.channel.name,
-                members = "",
+                lastMessage = lastMsg,
+                lastMsgTime = Utils.getMessageTimeInHours(Date(lastMessageTime)),
+                unreadCount = chatService.getUnreadMessageCount(group.channel.id).toString(),
                 groupIcon = customMap["image_url"],
                 createdAt = customMap["created_at"]?.toLongOrNull(),
                 createdBy = customMap["created_by"]

@@ -5,6 +5,7 @@ import android.text.TextWatcher
 
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
