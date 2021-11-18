@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationRoomViewModel
 import com.joshtalks.joshskills.conversationRoom.model.LiveRoomUser
-import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.databinding.LiBottomSheetRaisedHandsBinding
 
 class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
@@ -22,7 +22,8 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private var channelName: String? = null
     private var raisedHandList: List<LiveRoomUser>? = arrayListOf()
     private var bottomSheetAdapter: RaisedHandsBottomSheetAdapter? = null
-    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(ConversationRoomListingViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(
+        ConversationRoomViewModel::class.java) }
     private var listener: HandRaiseSheetListener? = null
 
     companion object {

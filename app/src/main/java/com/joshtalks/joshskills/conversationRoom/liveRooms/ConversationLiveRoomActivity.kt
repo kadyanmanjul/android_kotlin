@@ -35,7 +35,6 @@ import com.joshtalks.joshskills.conversationRoom.model.LiveRoomUser
 import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
-import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
@@ -114,7 +113,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var isBackPressed: Boolean = false
     private var isExitApiFired: Boolean = false
     private var isPubNubUsersFetched: Boolean = false
-    private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomListingViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomViewModel::class.java) }
     private var currentUser: LiveRoomUser? = null
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
     val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
@@ -138,9 +137,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         isActivityOpenFromNotification =
             intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
-
+        addViewModelObserver()
         if (isActivityOpenFromNotification) {
-            addObservers()
+            addJoinAPIObservers()
             getIntentExtras(intent)
         } else {
             getIntentExtras()
@@ -151,6 +150,16 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             initPubNub()
         }
+    }
+
+    private fun addViewModelObserver() {
+        /*viewModel.audienceList.observe(this, androidx.lifecycle.Observer {
+            audienceAdapter?.updateFullList(it)
+        })
+
+        viewModel.speakerList.observe(this, androidx.lifecycle.Observer {
+            audienceAdapter?.updateFullList(it)
+        })*/
     }
 
     private fun initSearchingView() {
@@ -707,7 +716,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
     }
 
-    private fun addObservers() {
+    private fun addJoinAPIObservers() {
         showProgressBar()
         viewModel.navigation.observe(this, {
             try {

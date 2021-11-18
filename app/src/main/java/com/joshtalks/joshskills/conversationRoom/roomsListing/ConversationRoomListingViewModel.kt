@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.gson.Gson
 import com.joshtalks.joshskills.conversationRoom.model.*
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
@@ -16,8 +15,8 @@ import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class ConversationRoomListingViewModel (application: Application) : AndroidViewModel(application) {
@@ -27,49 +26,10 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
     val points = MutableLiveData<String>()
     val isRoomEnded = MutableLiveData<Boolean>(false)
     var audienceList = MutableLiveData<ArrayList<LiveRoomUser>>()
-
-    fun updateInviteSentToUser(userId:Int){
-        val audienceList = getAudienceList()
-        if (audienceList.isNullOrEmpty()){
-            return
-        }
-        val oldAudienceList:ArrayList<LiveRoomUser> = audienceList
-        val user = oldAudienceList?.filter { it.id == userId }
-        user?.get(0)?.let { it->
-            oldAudienceList.remove(it)
-            it.isInviteSent = true
-            oldAudienceList.add(it)
-            this.audienceList.postValue(oldAudienceList)
-        }
-    }
-
-    fun updateHandRaisedToUser(userId:Int,isHandRaised:Boolean){
-        val audienceList = getAudienceList()
-        if (audienceList.isNullOrEmpty()){
-            return
-        }
-        val oldAudienceList:ArrayList<LiveRoomUser> = audienceList
-        val isUserPresent = oldAudienceList.any { it.id == userId }
-        if (isUserPresent) {
-            val roomUser = oldAudienceList.filter { it.id == userId }[0]
-            oldAudienceList.remove(roomUser)
-            roomUser.isHandRaised = isHandRaised
-            if (isHandRaised.not()){
-                roomUser.isInviteSent = false
-            }
-            oldAudienceList.add(roomUser)
-            this.audienceList.postValue(oldAudienceList)
-        }
-    }
-
-    fun updateAudienceList(audienceList:ArrayList<LiveRoomUser>){
-        this.audienceList.postValue(audienceList)
-    }
-
-    fun getAudienceList() : ArrayList<LiveRoomUser>? = this.audienceList.value?: ArrayList<LiveRoomUser>()
+    private val jobs = arrayListOf<Job>()
 
     fun joinRoom(item: RoomListResponseItem) {
-        viewModelScope.launch(Dispatchers.IO) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 var qId :Int? = null
                 if (item.conversationRoomQuestionId!=null && ( item.conversationRoomQuestionId!=0 || item.conversationRoomQuestionId != -1) ){
@@ -111,7 +71,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
     }
 
     fun createRoom(topic: String,isFavouritePracticePartner:Boolean?=false,conversationQuestionId:Int?=null) {
-        viewModelScope.launch(Dispatchers.IO) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 var qId :Int? = null
                 if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
@@ -151,7 +111,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
     }
 
     fun makeEnterExitConversationRoom(isEnter: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = EnterExitConversionRoomRequest(Mentor.getInstance().getId())
                 when (isEnter) {
@@ -169,16 +129,8 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
         }
     }
 
-    fun checkRoomsAvailableOrNot(value: QuerySnapshot?) {
-        if (value == null || value.isEmpty) {
-            navigation.postValue(ConversationRoomListingNavigation.NoRoomAvailable)
-        } else {
-            navigation.postValue(ConversationRoomListingNavigation.AtleastOneRoomAvailable)
-        }
-    }
-
     fun getConvoRoomDetails(questionId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response =
                     AppObjectController.conversationRoomsNetworkService.getConvoRoomQuestionDetails(questionId)
@@ -193,7 +145,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
     }
 
     fun getPointsForConversationRoom(roomId: String?, conversationQuestionId: Int?) {
-        viewModelScope.launch(Dispatchers.IO) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response =
                     AppObjectController.chatNetworkService.getSnackBarText(roomId = roomId,conversationQuestionId = conversationQuestionId.toString())
@@ -210,24 +162,8 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
         }
     }
 
-    fun endRoom(roomId: String?,conversationQuestionId:Int?=null) {
-        viewModelScope.launch(Dispatchers.IO) {
-            var qId :Int? = null
-            if (conversationQuestionId!=null && ( conversationQuestionId!=0 || conversationQuestionId != -1) ){
-                qId = conversationQuestionId
-            }
-            val request =
-                JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId?.toInt() ?: 0,qId)
-            val response =
-                AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(request)
-            if (response.isSuccessful) {
-                isRoomEnded.postValue(true)
-            }
-        }
-    }
-
     fun getListRooms() {
-        CoroutineScope(Dispatchers.IO).launch {
+        jobs += viewModelScope.launch((Dispatchers.IO)) {
             try {
                 val response =
                     AppObjectController.conversationRoomsNetworkService.getRoomList()
@@ -241,6 +177,5 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
             }
         }
     }
-
 
 }
