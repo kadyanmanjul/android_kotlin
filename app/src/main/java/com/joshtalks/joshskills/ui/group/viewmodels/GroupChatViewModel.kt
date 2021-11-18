@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.IS_FROM_KEYBOARD
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
+import com.joshtalks.joshskills.ui.group.lib.ChatService
+import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
@@ -40,8 +42,15 @@ class GroupChatViewModel : BaseViewModel() {
     val userOnlineCount = ObservableField("")
     var showAllMembers = ObservableBoolean(false)
     lateinit var memberAdapter: GroupMemberAdapter
+    var chatSendText: String = ""
+    lateinit var chatService : ChatService
 
-    lateinit var groupId: String
+    var groupId: String = ""
+        set(value) {
+            field = value
+            if(field != "")
+                chatService = PubNubService.getChatService(field)
+        }
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
@@ -139,5 +148,10 @@ class GroupChatViewModel : BaseViewModel() {
         view.visibility = View.GONE
         showAllMembers.set(true)
         memberAdapter.notifyDataSetChanged()
+    }
+
+    fun sendMessage(view: View){
+        message.what = CLEAR_CHAT_TEXT
+        singleLiveEvent.value = message
     }
 }

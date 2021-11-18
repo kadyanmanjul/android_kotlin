@@ -15,3 +15,4 @@ const val OPEN_GROUP_INFO = 13
 const val EDIT_GROUP_INFO = 14
 const val SAVE_GROUP_INFO = 15
 const val OPEN_EMOJI_KEYBOARD = 16
+const val CLEAR_CHAT_TEXT = 17
