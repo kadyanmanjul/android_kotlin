@@ -154,7 +154,18 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun sendMessage(view: View){
+        message.what = SEND_MSG
+        singleLiveEvent.value = message
+    }
+
+    fun pushMessage(msg : String) {
+        chatService.sendMessage(msg)
+        clearText()
+    }
+
+    private fun clearText() {
         message.what = CLEAR_CHAT_TEXT
         singleLiveEvent.value = message
     }
+
 }

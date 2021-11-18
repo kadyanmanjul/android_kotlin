@@ -13,6 +13,7 @@ import com.pubnub.api.PubNub
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
+import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
 import com.pubnub.api.models.consumer.objects_api.channel.PNGetAllChannelsMetadataResult
@@ -39,7 +40,9 @@ class PubNubService private constructor(val groupName: String?): ChatService {
         PubNub(config)
     }
     private val config by lazy {
-        PNConfiguration()
+        PNConfiguration().apply {
+            logVerbosity = PNLogVerbosity.BODY
+        }
     }
 
     private val subscribeCallback = object : SubscribeCallback() {
@@ -107,8 +110,9 @@ class PubNubService private constructor(val groupName: String?): ChatService {
     override fun getUnreadMessageCount(groupName: String): Long {
         val count = pubnub.messageCounts()
             .channels(listOf(groupName))
-            .channelsTimetoken(listOf(System.currentTimeMillis()))
+            .channelsTimetoken(listOf(pubnub.timestamp.toLong() * 1000))
             .sync()
+        Log.d(TAG, "getUnreadMessageCount: ${pubnub.timestamp.toLong()}")
         return count?.channels?.get(groupName) ?: 0L
     }
 
@@ -117,9 +121,10 @@ class PubNubService private constructor(val groupName: String?): ChatService {
             .channels(listOf(groupName))
             .includeMeta(true)
             .includeUUID(true)
-            .end(System.currentTimeMillis())
+            .end(pubnub.timestamp.toLong() * 1000)
             .maximumPerChannel(1)
             .sync()
+        Log.d(TAG, "getLastDetailsMessage: ${pubnub.timestamp.toLong()}")
         return "${msg?.channels?.get(groupName)?.get(0)?.meta?.asString}: ${msg?.channels?.get(groupName)?.get(0)?.message?.asString}" to (msg?.channels?.get(groupName)?.get(0)?.timetoken ?: 0L)
     }
 
