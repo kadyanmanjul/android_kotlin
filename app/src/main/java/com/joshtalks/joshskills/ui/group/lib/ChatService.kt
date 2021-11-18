@@ -14,7 +14,7 @@ interface ChatService {
     fun getMembersCount(groupName: String) : LiveData<Event<Int>>
     fun fetchGroupList(pageInfo: PageInfo? = null) : NetworkData?
     fun getUnreadMessageCount(groupName: String) : Long
-    fun getLastMessage(groupName: String) : String
+    fun getLastDetailsMessage(groupName: String) : Pair<String, Long>
 }
 
 interface NetworkData {

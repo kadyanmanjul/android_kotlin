@@ -25,8 +25,11 @@ data class GroupsItem(
 	@field:SerializedName("created_at")
 	val createdAt: Long? = null,
 
-	@field:SerializedName("members")
-	val members: String? = null,
+	val lastMessage : String? = null,
+
+	val lastMsgTime: String? = null,
+
+	val unreadCount: String? = null,
 
 	@field:SerializedName("name")
 	val name: String? = null,
@@ -40,7 +43,7 @@ data class GroupsItem(
 ) : Parcelable, GroupItemData {
 	override fun getTitle() = name ?: ""
 
-	override fun getSubTitle() = members ?: "$totalCalls"//"$totalCalls practise partner calls in last 24 hours"
+	override fun getSubTitle() = lastMessage ?: "$totalCalls"//"$totalCalls practise partner calls in last 24 hours"
 
 	override fun getUniqueId() = groupId ?: ""
 
@@ -50,5 +53,9 @@ data class GroupsItem(
 
 	override fun getCreator() = createdBy ?: ""
 
-	override fun hasJoined() = members != null
+	override fun hasJoined() = lastMessage != null
+
+	override fun getLastMessageTime() = lastMsgTime ?: ""
+
+	override fun getUnreadMsgCount() = unreadCount ?: ""
 }

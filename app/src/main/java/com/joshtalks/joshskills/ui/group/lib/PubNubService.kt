@@ -33,8 +33,8 @@ private const val TAG = "PubNub_Service"
 class PubNubService private constructor(val groupName: String?): ChatService {
     private val onlineCountLiveData = MutableLiveData(Event(-1))
     private val pubnub by lazy {
-        config.publishKey = "pub-c-b8485bb5-70b0-4a50-9e4c-46352847fbea"
-        config.subscribeKey = "sub-c-5807b5bc-30d3-11ec-ab4c-7aa074450caf"
+        config.publishKey = "pub-c-0fc02733-c04f-4d2d-b48c-a41e3e6543b6"
+        config.subscribeKey = "sub-c-bfe79a10-487c-11ec-8edf-3eb83c281352"
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }
@@ -105,11 +105,14 @@ class PubNubService private constructor(val groupName: String?): ChatService {
     }
 
     override fun getUnreadMessageCount(groupName: String): Long {
-        val count = pubnub.messageCounts().channels(listOf(groupName)).sync()
+        val count = pubnub.messageCounts()
+            .channels(listOf(groupName))
+            .channelsTimetoken(listOf(System.currentTimeMillis()))
+            .sync()
         return count?.channels?.get(groupName) ?: 0L
     }
 
-    override fun getLastMessage(groupName: String): String {
+    override fun getLastDetailsMessage(groupName: String): Pair<String, Long> {
         val msg = pubnub.fetchMessages()
             .channels(listOf(groupName))
             .includeMeta(true)
@@ -117,7 +120,7 @@ class PubNubService private constructor(val groupName: String?): ChatService {
             .end(System.currentTimeMillis())
             .maximumPerChannel(1)
             .sync()
-        return "${msg?.channels?.get(groupName)?.get(0)?.meta?.asString}: ${msg?.channels?.get(groupName)?.get(0)?.message?.asString}"
+        return "${msg?.channels?.get(groupName)?.get(0)?.meta?.asString}: ${msg?.channels?.get(groupName)?.get(0)?.message?.asString}" to (msg?.channels?.get(groupName)?.get(0)?.timetoken ?: 0L)
     }
 
     override fun sendMessage(msg: String) {
