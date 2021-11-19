@@ -11,7 +11,6 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/date_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -30,6 +29,7 @@
             android:maxWidth="@dimen/_200sdp"
             android:paddingHorizontal="@dimen/_7sdp"
             android:paddingVertical="@dimen/_4sdp"
+            android:text="@{itemData.message}"
             android:textColor="@color/group_coming_soon"
             tools:text="Rahul changed the group name from \“MI fans\” to \“IPL MI\”" />
     </com.google.android.material.card.MaterialCardView>

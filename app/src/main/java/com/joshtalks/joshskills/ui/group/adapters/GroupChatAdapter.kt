@@ -71,24 +71,24 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<GroupChatData>) :
         )
     }
 
-    inner class LeftChatViewHolder(val itemView: GroupChatLeftMsgBinding) :
-        ChatViewHolder(itemView) {
+    inner class LeftChatViewHolder(val item: GroupChatLeftMsgBinding) :
+        ChatViewHolder(item) {
         override fun bindData(groupChatData: GroupChatData) {
-
+            item.itemData = groupChatData
         }
     }
 
-    inner class RightChatViewHolder(val itemView: GroupChatRightMsgBinding) :
-        ChatViewHolder(itemView) {
+    inner class RightChatViewHolder(val item: GroupChatRightMsgBinding) :
+        ChatViewHolder(item) {
         override fun bindData(groupChatData: GroupChatData) {
-
+            item.itemData = groupChatData
         }
     }
 
-    inner class MetaChatViewHolder(val itemView: GroupChatMetadataBinding) :
-        ChatViewHolder(itemView) {
+    inner class MetaChatViewHolder(val item: GroupChatMetadataBinding) :
+        ChatViewHolder(item) {
         override fun bindData(groupChatData: GroupChatData) {
-
+            item.itemData = groupChatData
         }
     }
 }

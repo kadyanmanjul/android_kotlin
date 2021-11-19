@@ -40,7 +40,7 @@ data class GroupChat(
         return message_text
     }
 
-    override fun messageTime(): String {
+    override fun getMessageTime(): String {
         return message_time
     }
 
