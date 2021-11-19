@@ -91,6 +91,7 @@ const val HAS_SEEN_VOCAB_SPEAKING_ANIMATION = "joshskills_has_seen_vocab_speakin
 const val HAS_SEEN_VOCAB_HAND_TOOLTIP = "joshskills_has_seen_vocab_hand_tooltip"
 const val HAS_SEEN_READING_HAND_TOOLTIP = "joshskills_has_seen_reading_hand_tooltip"
 const val HAS_SEEN_READING_TOOLTIP = "joshskills_has_seen_reading_tooltip"
+const val HAS_SEEN_GROUP_TOOLTIP = "joshskills_has_seen_group_tooltip"
 const val HAS_SEEN_READING_PLAY_ANIMATION = "joshskills_has_seen_reading_play_animation"
 const val HAS_SEEN_SPEAKING_TOOLTIP = "joshskills_has_seen_speaking_tooltip"
 const val LESSON_COMPLETE_SNACKBAR_TEXT_STRING = "lesson_complete_snackbar_text_string"
@@ -240,7 +241,7 @@ object PrefManager {
         WorkManagerAdmin.appStartWorker()
     }
 
-    fun clearDatabase(){
+    fun clearDatabase() {
         LastSyncPrefManager.clear()
         AppDatabase.clearDatabase()
     }

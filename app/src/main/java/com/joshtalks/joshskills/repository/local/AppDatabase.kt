@@ -35,6 +35,8 @@ import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
+import com.joshtalks.joshskills.ui.group.db.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.db.local.GroupListEntity
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -51,9 +53,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class,GroupListEntity::class
     ],
-    version = 42,
+    version = 43,
     exportSchema = true
 )
 @TypeConverters(
@@ -141,7 +143,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_38_39,
                                 MIGRATION_39_40,
                                 MIGRATION_40_41,
-                                MIGRATION_41_42
+                                MIGRATION_41_42,
+                                MIGRATION_42_43
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -464,20 +467,20 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_37_38: Migration = object : Migration(37,38) {
+        private val MIGRATION_37_38: Migration = object : Migration(37, 38) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN expire_date INTEGER")
                 database.execSQL("ALTER TABLE course ADD COLUMN is_course_bought INTEGER NOT NULL DEFAULT 0")
             }
         }
 
-        private val MIGRATION_38_39: Migration = object : Migration(38,39) {
+        private val MIGRATION_38_39: Migration = object : Migration(38, 39) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN sharableVideoDownloadedLocalPath TEXT ")
             }
         }
 
-        private val MIGRATION_39_40: Migration = object : Migration(39,40) {
+        private val MIGRATION_39_40: Migration = object : Migration(39, 40) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `groups_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
 
@@ -494,6 +497,12 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN video_id INTEGER ")
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN is_sharable_video INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
+
+        private val MIGRATION_42_43: Migration = object : Migration(42,43) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT)")
             }
         }
 
@@ -536,6 +545,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun commonDao(): CommonDao
     abstract fun voipAnalyticsDao(): VoipAnalyticsDao
     abstract fun groupsAnalyticsDao(): GroupsAnalyticsDao
+    abstract fun groupListDao(): GroupListDao
 }
 
 class MessageTypeConverters {
