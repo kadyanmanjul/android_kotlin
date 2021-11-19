@@ -18,6 +18,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.collection.ArraySet
 import androidx.collection.arraySetOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -115,8 +116,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var isPubNubUsersFetched: Boolean = false
     private val viewModel by lazy { ViewModelProvider(this).get(ConversationRoomViewModel::class.java) }
     private var currentUser: LiveRoomUser? = null
-    val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
-    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
+    val speakersList: ArraySet<LiveRoomUser> = arraySetOf()
+    val audienceList: ArraySet<LiveRoomUser> = arraySetOf()
     val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
     private var replaySubject = ReplaySubject.create<Any>()
 
@@ -386,9 +387,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             speakersList.add(userToMove)
             setChannelMemberStateForUuid(userToMove)
         }
-        audienceAdapter?.updateFullList(audienceList)
-        viewModel.updateAudienceList(audienceList)
-        speakerAdapter?.updateFullList(speakersList)
+        audienceAdapter?.updateFullList(ArrayList(audienceList))
+        viewModel.updateAudienceList(ArrayList(audienceList))
+        speakerAdapter?.updateFullList(ArrayList(speakersList))
     }
 
     private fun moveToAudience(agoraId: Int) {
@@ -405,9 +406,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             audienceList.add(userToMove)
             setChannelMemberStateForUuid(userToMove)
         }
-        audienceAdapter?.updateFullList(audienceList)
-        viewModel.updateAudienceList(audienceList)
-        speakerAdapter?.updateFullList(speakersList)
+        audienceAdapter?.updateFullList(ArrayList(audienceList))
+        viewModel.updateAudienceList(ArrayList(audienceList))
+        speakerAdapter?.updateFullList(ArrayList(speakersList))
     }
 
     private fun getPresenceStateFromUuid(uuid: String) {
@@ -550,9 +551,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 audienceList.add(user)
             }
         }
-        speakerAdapter?.updateFullList(speakersList)
-        audienceAdapter?.updateFullList(audienceList)
-        viewModel.updateAudienceList(audienceList)
+        speakerAdapter?.updateFullList(ArrayList(speakersList))
+        audienceAdapter?.updateFullList(ArrayList(audienceList))
+        viewModel.updateAudienceList(ArrayList(audienceList))
     }
 
     private fun getAllUsersData(msgJson: JsonElement): LiveRoomUser {
@@ -618,7 +619,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             if (user.isSpeaker == true) {
                 speakersList.add(user)
-                speakerAdapter?.updateFullList(speakersList)
+                speakerAdapter?.updateFullList(ArrayList(speakersList))
             } else {
                 if (binding.searchingContainer.visibility == View.VISIBLE) {
                     timer?.cancel()
@@ -626,8 +627,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     binding.searchingContainer.visibility = View.GONE
                 }
                 audienceList.add(user)
-                audienceAdapter?.updateFullList(audienceList)
-                viewModel.updateAudienceList(audienceList)
+                audienceAdapter?.updateFullList(ArrayList(audienceList))
+                viewModel.updateAudienceList(ArrayList(audienceList))
             }
         }
     }
@@ -663,14 +664,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 if (isFromSpeakerList) {
                     val list = speakersList.filter { it.id == user.id }
                     speakersList.removeAll(list)
-                    speakersList.sortBy { it.sortOrder }
-                    speakerAdapter?.updateFullList(speakersList)
+                    //speakersList.sortBy { it.sortOrder }
+                    speakerAdapter?.updateFullList(ArrayList(speakersList))
                 } else if (audienceList.any { it.id == user.id }) {
                     val list = audienceList.filter { it.id == user.id }
                     audienceList.removeAll(list)
-                    audienceList.sortBy { it.sortOrder }
-                    audienceAdapter?.updateFullList(audienceList)
-                    viewModel.updateAudienceList(audienceList)
+                    //audienceList.sortBy { it.sortOrder }
+                    audienceAdapter?.updateFullList(ArrayList(audienceList))
+                    viewModel.updateAudienceList(ArrayList(audienceList))
 //                    audienceAdapter?.removeSingleItem(user)
                 }
             }
@@ -873,15 +874,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             val user = speakersList.filter { it.id == uid }
             speakersList.removeAll(user)
             CoroutineScope(Dispatchers.Main).launch {
-                speakerAdapter?.updateFullList(speakersList)
+                speakerAdapter?.updateFullList(ArrayList(speakersList))
             }
         } else if (audienceList.any { it.id == uid }) {
             val user = audienceList.filter { it.id == uid }
             audienceList.removeAll(user)
             CoroutineScope(Dispatchers.Main).launch {
-                audienceAdapter?.updateFullList(audienceList)
+                audienceAdapter?.updateFullList(ArrayList(audienceList))
             }
-            viewModel.updateAudienceList(audienceList)
+            viewModel.updateAudienceList(ArrayList(audienceList))
         }
     }
 
