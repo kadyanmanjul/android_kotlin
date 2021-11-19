@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
@@ -30,13 +31,13 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -293,6 +294,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             when (tabPosition) {
                 GRAMMAR_POSITION -> {
+                    if (lessonLiveData.value?.grammarStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                        MarketingAnalytics.logGrammarSectionCompleted()
+                    }
                     appDatabase.lessonDao().updateGrammarSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -317,6 +321,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 }
                 SPEAKING_POSITION -> {
+                    if (lessonLiveData.value?.speakingStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                        MarketingAnalytics.logSpeakingSectionCompleted()
+                    }
                     appDatabase.lessonDao().updateSpeakingSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {

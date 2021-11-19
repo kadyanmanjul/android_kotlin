@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
@@ -28,12 +29,12 @@ import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
-import java.math.BigDecimal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
@@ -80,6 +81,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
+        logNewPaymentPageOpened()
     }
 
     private fun forceDisconnectCall() {

@@ -31,6 +31,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
@@ -59,12 +60,12 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -605,6 +606,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
                     if (lessonCompleted) {
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
+                        if (lesson.status != LESSON_STATUS.CO ){
+                            MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo)
+                        }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
                         AppObjectController.uiHandler.post {
@@ -632,6 +636,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (lessonCompleted) {
+                        if (lesson.status != LESSON_STATUS.CO ){
+                            MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo)
+                        }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
                         AppObjectController.uiHandler.post {
@@ -679,10 +686,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             viewModel.lessonLiveData.value?.let { lesson ->
                 val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
                 when (tabPosition) {
-                    GRAMMAR_POSITION -> lesson.grammarStatus = status
+                    GRAMMAR_POSITION -> {
+                        if (lesson.grammarStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                            MarketingAnalytics.logGrammarSectionCompleted()
+                        }
+                        lesson.grammarStatus = status
+                    }
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
-                    SPEAKING_POSITION -> lesson.speakingStatus = status
+                    SPEAKING_POSITION -> {
+                        if (lesson.speakingStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                            MarketingAnalytics.logSpeakingSectionCompleted()
+                        }
+                        lesson.speakingStatus = status
+                    }
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }

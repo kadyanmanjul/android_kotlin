@@ -515,6 +515,12 @@ enum class AnalyticsEvent(val NAME: String) {
     IS_FROM_REGISTRATION_SCREEN("is_from_registration_screen"),
     SKIP_PROFILE_PIC("skip_profile_pic"),
     START_COURSE_CLICKED("start_course_clicked"),
-    FCM_TOKEN_CRASH_EVENT("fcm_token_crash_event")
+    FCM_TOKEN_CRASH_EVENT("fcm_token_crash_event"),
+    LESSON_COMPLETED("Lesson Completed"),
+    GRAMMAR_COMPLETED("Grammar Completed"),
+    SPEAKING_COMPLETED("Speaking Completed"),
+    CALL_INITIATED("Call Initiated"),
+    NEW_PAYMENT_PAGE_OPENED("New Payment Page Opened")
+
 
 }

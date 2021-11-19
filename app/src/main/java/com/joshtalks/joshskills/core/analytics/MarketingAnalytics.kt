@@ -10,13 +10,9 @@ import com.joshtalks.joshskills.core.RegistrationMethods
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.util.BRANCH_STANDARD_EVENT
-import io.branch.referral.util.BranchContentSchema
-import io.branch.referral.util.BranchEvent
-import io.branch.referral.util.ContentMetadata
-import io.branch.referral.util.CurrencyType
+import io.branch.referral.util.*
 import java.math.BigDecimal
-import java.util.Currency
+import java.util.*
 
 
 object MarketingAnalytics {
@@ -219,4 +215,92 @@ object MarketingAnalytics {
                 .push()
         }
     }
+
+    fun logLessonCompletedEvent(lessonNumber: Int) {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+            val facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_SUBMIT_APPLICATION)
+
+            BranchEvent("lesson_complete_event")
+                .setDescription("User has completed his lesson")
+                .addCustomDataProperty("lesson_number",lessonNumber.toString() )
+                .logEvent(context)
+
+            AppAnalytics.create(AnalyticsEvent.LESSON_COMPLETED.name)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam("lesson_number", lessonNumber)
+                .push()
+        }
+    }
+
+    fun logGrammarSectionCompleted() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+            val facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_SCHEDULE)
+
+            BranchEvent(AppEventsConstants.EVENT_NAME_SCHEDULE)
+                .setDescription("User has completed his grammar section")
+                .logEvent(context)
+
+            AppAnalytics.create(AppEventsConstants.EVENT_NAME_SCHEDULE)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+        }
+    }
+
+    fun logCallInitiated() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+            val facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CONTACT)
+
+            BranchEvent(AppEventsConstants.EVENT_NAME_CONTACT)
+                .setDescription("User has initiated his call")
+                .logEvent(context)
+
+            AppAnalytics.create(AppEventsConstants.EVENT_NAME_CONTACT)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+        }
+    }
+
+    fun logNewPaymentPageOpened() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+            val facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_DONATE)
+
+            BranchEvent(AppEventsConstants.EVENT_NAME_DONATE)
+                .setDescription("User has opened te new payment page")
+                .logEvent(context)
+
+            AppAnalytics.create(AppEventsConstants.EVENT_NAME_DONATE)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+        }
+    }
+
+    fun logSpeakingSectionCompleted() {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+            val facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+
+            BranchEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+                .setDescription("User has completed his speaking section")
+                .logEvent(context)
+
+            AppAnalytics.create(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+        }
+    }
+
 }

@@ -9,18 +9,17 @@ import android.content.pm.ActivityInfo
 import android.location.Location
 import android.os.*
 import android.util.Log
-import android.view.KeyEvent
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logCallInitiated
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
@@ -33,18 +32,17 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.collections.LinkedHashMap
-import kotlin.collections.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.set
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
@@ -219,6 +217,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "Conversation list")
         initView()
         addObserver()
+        logCallInitiated()
     }
 
     override fun getConversationId(): String? {
