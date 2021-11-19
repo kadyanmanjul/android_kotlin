@@ -1,11 +1,12 @@
 package com.joshtalks.joshskills.repository.local
 
-// import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import android.content.Context
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+
 import com.google.gson.reflect.TypeToken
+
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
@@ -35,8 +36,11 @@ import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
+import com.joshtalks.joshskills.ui.group.db.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.db.local.GroupListEntity
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
+
 import java.math.BigDecimal
 import java.util.*
 
@@ -51,9 +55,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupListEntity::class
     ],
-    version = 40,
+    version = 41,
     exportSchema = true
 )
 @TypeConverters(
@@ -139,7 +143,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_36_37,
                                 MIGRATION_37_38,
                                 MIGRATION_38_39,
-                                MIGRATION_39_40
+                                MIGRATION_39_40,
+                                MIGRATION_41_42
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -462,22 +467,28 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_37_38: Migration = object : Migration(37,38) {
+        private val MIGRATION_37_38: Migration = object : Migration(37, 38) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN expire_date INTEGER")
                 database.execSQL("ALTER TABLE course ADD COLUMN is_course_bought INTEGER NOT NULL DEFAULT 0")
             }
         }
 
-        private val MIGRATION_38_39: Migration = object : Migration(38,39) {
+        private val MIGRATION_38_39: Migration = object : Migration(38, 39) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN sharableVideoDownloadedLocalPath TEXT ")
             }
         }
 
-        private val MIGRATION_39_40: Migration = object : Migration(39,40) {
+        private val MIGRATION_39_40: Migration = object : Migration(39, 40) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `groups_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+            }
+        }
+
+        private val MIGRATION_41_42: Migration = object : Migration(41, 42) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT)")
             }
         }
 
@@ -520,6 +531,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun commonDao(): CommonDao
     abstract fun voipAnalyticsDao(): VoipAnalyticsDao
     abstract fun groupsAnalyticsDao(): GroupsAnalyticsDao
+    abstract fun groupListDao(): GroupListDao
 }
 
 class MessageTypeConverters {
