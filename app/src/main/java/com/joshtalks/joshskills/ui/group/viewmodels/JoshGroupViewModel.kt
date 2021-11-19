@@ -103,15 +103,6 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
-    fun setGroupImage() {
-        if (groupImageUrl.get().isNullOrEmpty()) {
-
-        } else {
-
-        }
-        TODO("Set imageUrl or default drawable")
-    }
-
     fun addGroup(request: AddGroupRequest) {
         addingNewGroup.set(true)
         viewModelScope.launch(Dispatchers.IO) {

@@ -25,7 +25,7 @@ data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
                 groupId = group.channel.id,
                 name = group.channel.name,
                 lastMessage = lastMsg,
-                lastMsgTime = Utils.getMessageTimeInHours(Date(lastMessageTime)),
+                lastMsgTime = Utils.getMessageTimeInHours(Date(lastMessageTime/10000)),
                 unreadCount = chatService.getUnreadMessageCount(group.channel.id).toString(),
                 groupIcon = customMap["image_url"],
                 createdAt = customMap["created_at"]?.toLongOrNull(),
