@@ -69,6 +69,7 @@
     <color name="light_grey">#9098B1</color>
     <color name="lighter_grey">#E2E4E9</color>
     <color name="green">#20BA70</color>
+    <color name="green_quiz">#13B673</color>
     <color name="green_snackbar">#48A429</color>
     <color name="transparent">#00000000</color>
     <color name="artboard_color">#F1F2F4</color>
@@ -190,4 +191,16 @@
     <color name="group_notif_bg">#FFF62A</color>
     <color name="group_notif_black_bg">#2F2F2F</color>
 
+    <color name="game_name_color">#FF8F06</color>
+    <color name="test_color">#FDFC01</color>
+
+
+    <color name="transparent_color_notification">#66E00022</color>
+    <color name="gray_light">#dfe6f3</color>
+
+    <color name="light_blue_quiz">#C5E5FE</color>
+
+    <color name="blue">#6600b5d9</color>
+    <color name="blue2">#BF00b5d9</color>
+    <color name="black_quiz">#000000</color>
 </resources>

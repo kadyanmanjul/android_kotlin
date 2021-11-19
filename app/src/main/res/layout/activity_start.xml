@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.StartActivity" />
+    </data>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/start_quiz_back"
+        tools:context=".quizgame.StartActivity">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/quizgrad"
+            android:layout_width="wrap_content"
+            android:layout_height="68dp"
+            android:layout_marginTop="88dp"
+            android:gravity="top"
+            android:text="@string/game_name"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
+            android:textColor="@color/game_name_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/rectangle_9"
+            android:layout_width="159dp"
+            android:layout_height="71dp"
+            app:cardCornerRadius="35dp"
+            app:cardElevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeWidth="1dp"
+            app:strokeColor="#FE6FB9">
+
+            <RelativeLayout
+                android:onClick="@{()->clickHandler.startQuiz()}"
+                android:layout_width="match_parent"
+                android:background="@drawable/start_game_btn_gradient"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Play!"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

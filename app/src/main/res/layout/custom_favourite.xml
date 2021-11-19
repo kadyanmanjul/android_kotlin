@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="model"
+            type="com.joshtalks.joshskills.quizgame.ui.data.FavouriteDemoData" />
+
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteAdapter" />
+
+    </data>
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        app:cardCornerRadius="0dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_game_back">
+            </de.hdodenhof.circleimageview.CircleImageView>
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="11dp"
+                android:layout_toRightOf="@+id/user_image"
+                android:text="Shobhit"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_name"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/user_image"
+                android:text="idle"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                android:textColor="#16CBCE"></TextView>
+
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:background="#38383A"
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@+id/user_image"
+                android:layout_alignParentBottom="true"></View>
+
+
+                <RelativeLayout
+                    android:layout_width="@dimen/_22sdp"
+                    android:layout_height="@dimen/_22sdp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="25dp">
+
+                    <ImageView
+                        android:id="@+id/click_token"
+                        android:layout_width="@dimen/_22sdp"
+                        android:layout_height="@dimen/_22sdp"
+                        android:src="@drawable/plus"></ImageView>
+                </RelativeLayout>
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

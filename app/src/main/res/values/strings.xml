@@ -12,6 +12,8 @@
     <string name="downloading_complete">Downloading complete</string>
     <string name="not_now">Not Now</string>
     <string name="settings">Settings</string>
+    <string name="quiz_game">Quiz Game</string>
+    <string name="build_your_team">Build your team</string>
     <string name="header_congratulation">Congratulations</string>
 
     <string name="name">Name</string>
@@ -973,5 +975,38 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="ignore_ui_msg">Element only for UI purpose</string>
+
+    <string name="game_name">QuizGrad</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="play_with_favourite">Play with\nFavourite\nPractice \nPartner</string>
+    <string name="play_with_random">Play with\nRandom\nPlayer</string>
+    <string name="favourite_practice_partner">Favourite Practice Partners</string>
+
+    <string name="your_team_mate">Harsh is your team mate</string>
+    <string name="make_new_te">Make New Team</string>
+    <string name="play_again_">Play Again\nwith Mehta</string>
+    <string name="has_invited">has invited you to his team</string>
+    <string name="can_t_play_">Can not Play Right Now</string>
+    <string name="alreadt_start">Already started the game</string>
+    <string name="accept">Accept</string>
+
+
+    <string name="match_score">Winning \Bonus </string>
+
+    <string name="opponent_wo">Opponent Won!</string>
+
+    <string name="round_1">ROUND</string>
+    <string name="get_ready_">Get Ready!</string>
+    <string name="who_said_if">Who said: "``"If there is an attack, I give you permission to use any counter or curse that might occur to you "``"? </string>
+
+    <string name="cornelius_f">Cornelius uygurytg fuygvuirycv fhjvbuo</string>
+    <string name="arthur_weas">Arthur Weasely</string>
+    <string name="professor_m">Professor\nMcGonagall</string>
+    <string name="albus_dumbl">Albus Dumbledore</string>
+    <string name="user_name">Harsh</string>
+    <string name="zero">0</string>
+
 
 </resources>

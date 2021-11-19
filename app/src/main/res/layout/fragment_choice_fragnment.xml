@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragnment" />
+    </data>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@drawable/ic_game_back"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/build_your_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="151dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/build_your_team"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+            android:textColor="@color/white"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10ssp"
+            android:layout_marginBottom="50dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rectangle_9"
+                android:layout_width="150dp"
+                android:layout_height="160dp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:onClick="@{()->clickHandler.openFavouritePartnerScreen()}"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#FE6FB9"
+                app:strokeWidth="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/favourite_gradient">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/play_with_favourite"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rectangle_10"
+                android:layout_width="150dp"
+                android:layout_height="160dp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:onClick="@{()->clickHandler.openRandomScreen()}"
+                app:cardCornerRadius="10dp"
+                app:strokeColor="#0066DA"
+                app:strokeWidth="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/random_gradient">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/play_with_random"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </RelativeLayout>
+    </FrameLayout>
+</layout>

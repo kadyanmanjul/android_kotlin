@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.FavouritePartnerFragment" />
+    </data>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_game_back"
+            tools:context=".FavroitePartnerList">
+
+            <RelativeLayout
+                android:id="@+id/notification_card_not_play"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    >
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="83dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="5dp"
+                        app:cardCornerRadius="15dp"
+                        app:strokeWidth="2dp"
+                        app:strokeColor="#fff"
+                        android:layout_marginRight="10dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/notification_gradient">
+
+                            <ImageView
+                                android:id="@+id/user_image_for_not_paly"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="16dp"
+                                android:scaleType="fitXY"
+                                android:src="@drawable/img_demo" />
+
+                            <TextView
+                                android:id="@+id/user_name_for_not_play"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_toRightOf="@+id/user_image_for_not_paly"
+                                android:gravity="center_vertical"
+                                android:text="@string/user_name"
+                                android:textColor="@color/test_color"
+                                android:textSize="@dimen/_10ssp"
+                                android:textStyle="bold" />
+
+
+                            <View
+                                android:id="@+id/divider1"
+                                android:layout_width="142dp"
+                                android:layout_height="2dp"
+                                android:background="#86AA99"
+                                android:layout_toRightOf="@+id/user_image_for_not_paly"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_below="@+id/user_name_for_not_play" />
+
+                            <TextView
+                                android:id="@+id/txt_msg_not_play"
+                                android:layout_width="278dp"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/divider1"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_toRightOf="@+id/user_image_for_not_paly"
+                                android:gravity="center_vertical"
+                                android:text="@string/can_t_play_"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_9sdp"
+                                android:textStyle="bold" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </RelativeLayout>
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cancel_notification"
+                    android:layout_width="23dp"
+                    android:layout_height="27dp"
+                    app:cardCornerRadius="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="3dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#fff"
+
+                    >
+
+                    <RelativeLayout
+                        android:layout_width="23dp"
+                        android:layout_height="27dp"
+                        android:background="@drawable/cancel_gradient">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/img_2">
+
+                        </ImageView>
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/notification_card"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="83dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp"
+                    app:cardCornerRadius="15dp"
+                    app:strokeColor="#fff"
+                    app:strokeWidth="2dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/notification_gradient">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:id="@+id/notificaton_rel"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="16dp"
+                            app:cardCornerRadius="@dimen/_30sdp"
+                            android:layout_height="wrap_content">
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/user_image"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:scaleType="fitXY"
+                                    android:src="@drawable/img_demo" />
+
+
+                                <com.joshtalks.joshskills.quizgame.utils.CircularProgressView
+                                    android:id="@+id/progress"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    >
+                                </com.joshtalks.joshskills.quizgame.utils.CircularProgressView>
+
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:gravity="center_vertical"
+                            android:text="@string/user_name"
+                            android:textColor="#FDFC01"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold" />
+
+
+                        <View
+                            android:id="@+id/divider2"
+                            android:layout_width="142dp"
+                            android:layout_height="2dp"
+                            android:layout_below="@+id/user_name"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:background="#86AA99" />
+
+                        <TextView
+                            android:id="@+id/txt_msg2"
+                            android:layout_width="278dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/divider2"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:gravity="center_vertical"
+                            android:text="@string/has_invited"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold" />
+
+
+                        <LinearLayout
+                            android:id="@+id/button_linear_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/buton_decline"
+                                android:layout_width="70dp"
+                                android:layout_height="22dp"
+                                android:layout_marginRight="15dp"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="5dp"
+                                app:strokeColor="#920203"
+                                app:strokeWidth="3dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/red_gradient">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="@string/decline"
+                                        android:textColor="#fff"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/button_accept"
+                                android:layout_width="70dp"
+                                android:layout_height="22dp"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginRight="15dp"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="5dp"
+                                app:strokeColor="#3AAC21"
+                                app:strokeWidth="3dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/accept_button_gradient">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="@string/accept"
+                                        android:textColor="#fff"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/notification_card_already"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    >
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="83dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="5dp"
+                        app:cardCornerRadius="15dp"
+                        app:strokeWidth="2dp"
+                        app:strokeColor="#fff"
+                        android:layout_marginRight="10dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/notification_gradient">
+
+                            <ImageView
+                                android:id="@+id/user_image_for_already"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="16dp"
+                                android:scaleType="fitXY"
+                                android:src="@drawable/img_demo" />
+
+                            <TextView
+                                android:id="@+id/user_name_for_already"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_toRightOf="@+id/user_image_for_already"
+                                android:gravity="center_vertical"
+                                android:text="@string/user_name"
+                                android:textColor="@color/test_color"
+                                android:textSize="@dimen/_10ssp"
+                                android:textStyle="bold" />
+
+
+                            <View
+                                android:id="@+id/divider4"
+                                android:layout_width="142dp"
+                                android:layout_height="2dp"
+                                android:background="#86AA99"
+                                android:layout_toRightOf="@+id/user_image_for_already"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_below="@+id/user_name_for_already" />
+
+                            <TextView
+                                android:id="@+id/txt_msg_already"
+                                android:layout_width="278dp"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/divider4"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_toRightOf="@+id/user_image_for_already"
+                                android:gravity="center_vertical"
+                                android:text="@string/alreadt_start"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_9sdp"
+                                android:textStyle="bold" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </RelativeLayout>
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/already_notification"
+                    android:layout_width="23dp"
+                    android:layout_height="27dp"
+                    app:cardCornerRadius="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="3dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#fff"
+
+                    >
+
+                    <RelativeLayout
+                        android:layout_width="23dp"
+                        android:layout_height="27dp"
+                        android:background="@drawable/cancel_gradient">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/img_2">
+                        </ImageView>
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitXY"
+                android:onClick="@{()->clickHandler.onBack()}"
+                android:src="@drawable/ic_arrow_back"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="20dp" />
+
+            <TextView
+                android:id="@+id/txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="@string/favourite_practice_partner"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/txt"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="18dp"
+                android:elevation="10dp">
+
+                    <RelativeLayout
+                        android:id="@+id/relative_layout"
+                        android:layout_width="match_parent"
+                        app:cardBackgroundColor="@android:color/transparent"
+                        android:background="@drawable/rectangle"
+                        android:layout_height="50dp">
+
+                        <ImageView
+                            android:id="@+id/searchImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="8dp"
+                            android:src="@drawable/ic_search_quiz" />
+
+                        <EditText
+                            android:id="@+id/inputSearch"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="5dp"
+                            android:layout_toEndOf="@id/searchImage"
+                            android:autofillHints="Search"
+                            android:background="@null"
+                            android:hint="@string/search"
+                            android:inputType="text"
+                            android:textColor="#B5B5B5"
+                            android:textColorHint="#B5B5B5"
+                            android:textSize="@dimen/_15sdp" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycle_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/search"
+                android:layout_marginTop="25dp"
+                tools:listitem="@layout/custom_favourite" />
+
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

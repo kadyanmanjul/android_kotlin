@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.TeamMateFoundFragnment" />
+    </data>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".quizgame.ui.main.view.fragment.TeamMateFoundFragnment">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rel"
+            android:background="@drawable/ic_game_back">
+
+
+            <TextView
+                android:id="@+id/txt_quiz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:text="@string/quiz_game"
+                android:textColor="@color/game_name_color"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_quiz1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_quiz"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="55dp"
+                android:text="@string/your_team_mate"
+                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textStyle="bold" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/txt_quiz1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginRight="30dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/image"
+                        android:layout_width="@dimen/_65sdp"
+                        android:layout_height="@dimen/_65sdp"
+                        android:layout_alignParentLeft="true"
+                        android:src="@drawable/josh_skill"
+                        app:civ_border_color="@color/light_blue"
+                        app:civ_border_width="@dimen/_2sdp" />
+
+
+                    <TextView
+                        android:id="@+id/user_name1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/image"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:text="Harsh"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/image2"
+                        android:layout_width="@dimen/_65sdp"
+                        android:layout_height="@dimen/_65sdp"
+                        android:layout_alignParentLeft="true"
+                        android:src="@drawable/josh_skill"
+                        app:civ_border_color="@color/light_blue"
+                        app:civ_border_width="@dimen/_2sdp" />
+
+
+                    <TextView
+                        android:id="@+id/user_name2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/image2"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:text="Shobhit"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+
+                </RelativeLayout>
+
+                <Chronometer
+                    android:id="@+id/call_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/white"
+                    android:visibility="invisible" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/image_sound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/blue33"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_14sdp"
+                    android:layout_alignParentBottom="true"
+                    app:srcCompat="@drawable/ic_baseline_speaker_on"
+                    android:layout_marginBottom="@dimen/_30sdp" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/image_mute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/blue33"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_14sdp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    app:srcCompat="@drawable/ic_baseline_mic_off"
+                    android:layout_marginBottom="@dimen/_30sdp"
+                    />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </FrameLayout>
+</layout>
