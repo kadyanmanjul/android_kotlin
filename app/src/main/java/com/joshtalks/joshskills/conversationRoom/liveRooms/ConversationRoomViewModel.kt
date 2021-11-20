@@ -501,17 +501,13 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                 getSpeakerList().add(userToMove)
                 setSpeakerList(getSpeakerList())
                 message.what = MOVE_TO_SPEAKER
-                message.data = Bundle().apply {
+                var bundle = Bundle().apply {
                     putParcelable(NOTIFICATION_USER, userToMove)
-                    /*if (isModerator()) {
-                        putString(NOTIFICATION_NAME, msg.get("name")?.asString)
-                        putBoolean(NOTIFICATION_BOOLEAN, true)
-                        putParcelable(
-                            NOTIFICATION_TYPE,
-                            NotificationView.ConversationRoomNotificationState.HAND_RAISED
-                        )
-                    }*/
                 }
+                if (isModerator()) {
+                    bundle.putString(NOTIFICATION_NAME, msg.get("name")?.asString)
+                }
+                message.data = bundle
                 singleLiveEvent.postValue(message)
             }
         }

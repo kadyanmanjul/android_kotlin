@@ -215,19 +215,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             updateUiWhenSwitchToSpeaker(user?.isMicOn ?: false)
                         }
                         if (vm.isModerator()){
-                            /*val name = it.getString(NOTIFICATION_NAME)
-                            val boolean = it.getBoolean(NOTIFICATION_BOOLEAN, true)
-                            val type =
-                                it.getParcelable<NotificationView.ConversationRoomNotificationState>(
-                                    NOTIFICATION_TYPE
-                                )
+                            val name = it.getString(NOTIFICATION_NAME)
                             setNotificationWithoutAction(
                                 String.format(
                                     "%s is now a speaker!",
                                     name
-                                ), boolean,
-                                type!!
-                            )*/
+                                ), true,
+                                NotificationView.ConversationRoomNotificationState.HAND_RAISED
+                            )
                         }
                         vm.setChannelMemberStateForUuid(user, channelName = channelName)
                     }
