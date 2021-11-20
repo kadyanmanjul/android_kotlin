@@ -1,11 +1,10 @@
 package com.joshtalks.joshskills.ui.group.data
 
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.service.DIR
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupListResponse
 import com.joshtalks.joshskills.ui.group.model.JoinGroupRequest
-import com.squareup.okhttp.ResponseBody
+
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -20,7 +19,7 @@ interface GroupApiService {
     @GET("$DIR/group/search_groups_v2/")
     suspend fun searchGroup(@Query("page") pageNo : Int, @Query("key") searchQuery : String): GroupListResponse
 
-    @POST("$DIR/group/add_member_group/")
+    @POST("$DIR/group/add_member_group_v2/")
     suspend fun joinGroup(@Body request : JoinGroupRequest): Response<Unit>
 
     @POST("$DIR/group/create_group_v2/")
