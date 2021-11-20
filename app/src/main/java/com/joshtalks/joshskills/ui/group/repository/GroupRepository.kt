@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.model.JoinGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.pubnub.api.models.consumer.PNPage
-
+import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import id.zelory.compressor.Compressor
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
@@ -109,6 +109,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 ""
         request.groupIcon = url ?: ""
         apiService.editGroup(request)
+    }
+
+    suspend fun leaveGroupFromServer(request: LeaveGroupRequest) {
+        apiService.leaveGroup(request)
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =

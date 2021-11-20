@@ -1,10 +1,7 @@
 package com.joshtalks.joshskills.ui.group.data
 
 import com.joshtalks.joshskills.repository.service.DIR
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupListResponse
-import com.joshtalks.joshskills.ui.group.model.JoinGroupRequest
+import com.joshtalks.joshskills.ui.group.model.*
 
 import retrofit2.Response
 import retrofit2.http.Body
@@ -28,6 +25,9 @@ interface GroupApiService {
 
     @POST("$DIR/group/edit_group_info/")
     suspend fun editGroup(@Body request : EditGroupRequest): Map<String, Any?>
+
+    @POST("$DIR/group/remove_member_group_v2/")
+    suspend fun leaveGroup(@Body request : LeaveGroupRequest): Map<String, Any?>
 
     @GET("$DIR/group/group_online_members/{group_id}")
     suspend fun getOnlineUserCount(@Path("group_id") groupId: String): Map<String, Any?>

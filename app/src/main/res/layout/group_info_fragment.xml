@@ -122,6 +122,7 @@
                     android:layout_height="@dimen/_44sdp"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:background="@color/white"
+                    android:onClick="@{vm::leaveGroup}"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
