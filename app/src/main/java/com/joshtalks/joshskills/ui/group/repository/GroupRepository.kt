@@ -1,14 +1,12 @@
 package com.joshtalks.joshskills.ui.group.repository
 
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.flurry.sdk.it
+
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
@@ -16,18 +14,19 @@ import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.model.JoinGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.pubnub.api.models.consumer.PNPage
+
 import id.zelory.compressor.Compressor
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -66,8 +65,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     private suspend fun fetchGroupList() {
-       val count = database.groupListDao().getGroupsCount()
-        if(count == 0)
+        val count = database.groupListDao().getGroupsCount()
+        if (count == 0)
             fetchGroupListFromNetwork()
         delay(5000)
     }
@@ -76,7 +75,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         Log.d(TAG, "fetchGroupList: $pageInfo")
         val pubNubResponse = chatService.fetchGroupList(pageInfo)
         val groupList = pubNubResponse?.getData()?.groups ?: listOf()
-        if(groupList.isEmpty())
+        if (groupList.isEmpty())
             return
         groupList.forEach { group ->
             group?.let { database.groupListDao().insertGroupItem(it) }
@@ -99,6 +98,17 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             ""
         request.groupIcon = url ?: ""
         apiService.createGroup(request)
+    }
+
+    suspend fun editGroupInServer(request: EditGroupRequest) {
+        val url =
+            if (request.groupIcon.isNotBlank()) {
+                val compressedImagePath = getCompressImage(request.groupIcon)
+                uploadCompressedMedia(compressedImagePath)
+            } else
+                ""
+        request.groupIcon = url ?: ""
+        apiService.editGroup(request)
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =

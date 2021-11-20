@@ -143,6 +143,7 @@ class GroupChatViewModel : BaseViewModel() {
         message.data = Bundle().apply {
             putString(GROUPS_TITLE, groupHeader.get())
             putString(GROUPS_IMAGE, imageUrl.get())
+            putString(GROUPS_ID, groupId)
         }
         singleLiveEvent.value = message
     }

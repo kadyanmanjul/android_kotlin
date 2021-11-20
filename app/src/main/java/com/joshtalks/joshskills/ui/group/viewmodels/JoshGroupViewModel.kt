@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
+import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -44,6 +45,7 @@ class JoshGroupViewModel : BaseViewModel() {
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
     val isFromGroupInfo = ObservableBoolean(false)
+    var isImageChanged = false
     var conversationId: String = ""
 
     val onItemClick: (GroupItemData) -> Unit = {
@@ -123,6 +125,33 @@ class JoshGroupViewModel : BaseViewModel() {
                     if (e is HttpException) {
                         if (e.code() == 501)
                             showToast("Error : Same Group exist")
+                        else
+                            showToast("Error while adding group")
+                    } else
+                        showToast("Unknown Error Occurred")
+                    addingNewGroup.set(false)
+                }
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun editGroup(request: EditGroupRequest) {
+        addingNewGroup.set(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.editGroupInServer(request)
+                withContext(Dispatchers.Main) {
+                    message.what = SHOULD_REFRESH_GROUP_LIST
+                    singleLiveEvent.value = message
+                    addingNewGroup.set(false)
+                    onBackPress()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    if (e is HttpException) {
+                        if (e.code() == 501)
+                            showToast("Error : Same group name exist")
                         else
                             showToast("Error while adding group")
                     } else
