@@ -23,75 +23,16 @@ class SpeakerAdapter(
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
 
     fun updateFullList(newList: List<LiveRoomUser>) {
-        newList.sortedBy { it.sortOrder }
-        newList.sortedBy { it.isModerator }
-        Log.d("ABC3", "updateFullList() called with: newList = $newList")
-        val diffCallback = ConversationUserDiffCallback(speakersList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback,true)
-        speakersList.clear()
-        speakersList.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun updateMicViaId(userId:Int,isMicOn:Boolean) {
-        val newList: ArrayList<LiveRoomUser> = ArrayList(speakersList)
-        val isOldUserPresent = newList.any { it.id == userId }
-        if (isOldUserPresent){
-            val oldUser = newList.filter { it.id == userId }
-            newList.removeAll(oldUser)
-            oldUser[0].isMicOn = isMicOn
-            newList.add(oldUser[0])
+        newList.sortedByDescending { it.sortOrder }
+        newList.forEach {
+            Log.d("ABC3", "order called ${it.name}  ${it.sortOrder} ")
         }
-        newList.sortBy { it.sortOrder }
-        newList.sortedBy { it.isModerator }
+        Log.d("ABC3", "updateFullList() called with:")
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         speakersList.clear()
         speakersList.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun addSingleItem(newItem: LiveRoomUser) {
-        val newList: ArrayList<LiveRoomUser> = ArrayList(speakersList)
-        newList.add(newItem)
-        newList.sortBy { it.sortOrder }
-        newList.sortedBy { it.isModerator }
-        val diffCallback = ConversationUserDiffCallback(speakersList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        speakersList.clear()
-        speakersList.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun removeSingleItem(newItem: LiveRoomUser) {
-        val list = ArrayList(speakersList).filter { it.id == newItem.id }
-        val newList: ArrayList<LiveRoomUser> = speakersList
-        newList.removeAll(list)
-        newList.sortBy { it.sortOrder }
-        newList.sortedBy { it.isModerator }
-        val diffCallback = ConversationUserDiffCallback(speakersList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        speakersList.clear()
-        speakersList.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun removeItemIfPresent(newItem: LiveRoomUser) {
-        val list = ArrayList(speakersList).filter { it.id == newItem.id }
-        val newList: ArrayList<LiveRoomUser> = speakersList
-        newList.removeAll(list)
-        newList.sortBy { it.sortOrder }
-        newList.sortedBy { it.isModerator }
-        val diffCallback = ConversationUserDiffCallback(speakersList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        speakersList.clear()
-        speakersList.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun updateItem(room: LiveRoomUser, position: Int) {
-        speakersList[position] = room
-        notifyItemChanged(position)
     }
 
     private var listenerUserAction: OnUserItemClickListener? = null

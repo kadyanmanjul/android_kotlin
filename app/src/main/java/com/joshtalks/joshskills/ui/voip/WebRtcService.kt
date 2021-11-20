@@ -130,6 +130,7 @@ class WebRtcService : BaseWebRtcService() {
         var agoraUid: Int? = null
         var moderatorUid: Int? = null
         var roomId: String? = null
+        var channelTopic: String? = null
         var roomQuestionId: Int? = null
         var conversationRoomChannelName: String? = null
         var conversationRoomToken: String? = null
@@ -2268,7 +2269,8 @@ class WebRtcService : BaseWebRtcService() {
             isRoomCreatedByUser = isRoomCreatedByUser,
             roomId = roomId?.toInt(),
             moderatorId = moderatorUid,
-            roomQuestionId = roomQuestionId
+            roomQuestionId = roomQuestionId,
+            topicName = channelTopic
         )
         Log.d("ABC", "channelName: $conversationRoomChannelName")
 

@@ -2,10 +2,12 @@ package com.joshtalks.joshskills.conversationRoom.notification
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.*
 
 
@@ -106,8 +108,8 @@ class NotificationView @JvmOverloads constructor(
     fun destroyMediaPlayer() {
         mediaPlayer = null
     }
-
-    enum class ConversationRoomNotificationState(val type: Int) {
+    @Parcelize
+    enum class ConversationRoomNotificationState(val type: Int):Parcelable {
         DEFAULT(0),
         HAND_RAISED(1),
         YOUR_HAND_RAISED(2),
@@ -117,5 +119,4 @@ class NotificationView @JvmOverloads constructor(
         NO_INTERNET_AVAILABLE(6),
         API_ERROR(7)
     }
-
 }

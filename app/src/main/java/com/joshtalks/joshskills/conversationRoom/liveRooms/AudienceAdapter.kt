@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,76 +22,15 @@ class AudienceAdapter(
     val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     private var listenerUserAction: OnUserItemClickListener? = null
 
-    fun updateHandRaisedViaId(userId:Int,isHandRaised:Boolean) {
-        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
-        val isOldUserPresent = newList.any { it.id == userId }
-        if (isOldUserPresent){
-            val oldUser = newList.filter { it.id == userId }
-            newList.removeAll(oldUser)
-            oldUser[0].isHandRaised = isHandRaised
-            newList.add(oldUser[0])
-        }
-        newList.sortBy { it.sortOrder }
-        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        audienceList.clear()
-        audienceList.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
     fun updateFullList(newList: List<LiveRoomUser>) {
-        newList.sortedBy { it.sortOrder }
+        newList.sortedByDescending { it.sortOrder }
         val diffCallback = ConversationUserDiffCallback(audienceList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()
         audienceList.addAll(newList)
-        Log.d("ABC2", "updateFullList() called with: audienceList = $audienceList")
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun addSingleItem(newItem: LiveRoomUser) {
-        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
-        newList.add(newItem)
-        newList.sortBy { it.sortOrder }
-        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        audienceList.clear()
-        audienceList.addAll(newList)
-        Log.d("ABC2", "addSingleItem() called with: audienceList = $audienceList")
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun removeSingleItem(newItem: LiveRoomUser) {
-        val list = ArrayList(audienceList).filter { it.id == newItem.id }
-        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
-        newList.removeAll(list)
-        newList.sortBy { it.sortOrder }
-        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        audienceList.clear()
-        audienceList.addAll(newList)
-        Log.d("ABC2", "removeSingleItem() called with: audienceList = $audienceList")
-        diffResult.dispatchUpdatesTo(this)
-    }
-    fun removeItemIfPresent(newItem: LiveRoomUser) {
-        Log.d("ABC2", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
-        val list = ArrayList(audienceList).filter { it.id == newItem.id }
-        val newList: ArrayList<LiveRoomUser> = ArrayList(audienceList)
-        newList.removeAll(list)
-        newList.sortBy { it.sortOrder }
-        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        audienceList.clear()
-        audienceList.addAll(newList)
-        Log.d("ABC2", "AremoveItemIfPresent() called with: newItem = $newItem audienceList = $audienceList")
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun updateItem(room: LiveRoomUser, position: Int) {
-        audienceList[position] = room
-        Log.d("ABC2", "updateItem() called with: room = $room, audienceList = $audienceList")
-        notifyItemChanged(position)
-    }
 
     inner class SpeakerViewHolder(val binding: LiAudienceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {

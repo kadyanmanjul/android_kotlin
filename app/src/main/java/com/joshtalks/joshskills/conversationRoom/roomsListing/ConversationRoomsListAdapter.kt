@@ -149,6 +149,7 @@ class ConversationRoomsListAdapter(
                             model.liveRoomUserList!![0].photoUrl,
                             model.liveRoomUserList!![0].name
                         )
+                        photo2.visibility = View.GONE
                     } else if (model.liveRoomUserList?.size!! > 1) {
                         setProfilePhoto(
                             photo1,
@@ -161,6 +162,9 @@ class ConversationRoomsListAdapter(
                             model.liveRoomUserList!![1].name
                         )
                     }
+                } else {
+                    photo1.visibility = View.GONE
+                    photo2.visibility = View.GONE
                 }
                 container.setOnSingleClickListener {
                     action.onRoomClick(model)
