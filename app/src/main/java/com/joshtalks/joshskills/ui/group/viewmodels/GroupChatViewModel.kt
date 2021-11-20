@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
@@ -22,6 +23,7 @@ import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.GroupMember
+import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
@@ -46,12 +48,12 @@ class GroupChatViewModel : BaseViewModel() {
     lateinit var memberAdapter: GroupMemberAdapter
     var chatAdapter = GroupChatAdapter(GroupChatComparator)
     var chatSendText: String = ""
-    lateinit var chatService : ChatService
+    lateinit var chatService: ChatService
 
     var groupId: String = ""
         set(value) {
             field = value
-            if(field != "")
+            if (field != "")
                 chatService = PubNubService.getChatService(field)
         }
 
@@ -122,14 +124,20 @@ class GroupChatViewModel : BaseViewModel() {
     fun openGroupInfo() {
         //TODO("This below data is just for testing, need to be removed while implementation")
         val members = listOf(
-            GroupMember("3","Sukesh","",false, false),
-            GroupMember("4","Aaditya","",false, true),
-            GroupMember("5","Sagar","",false, true),
-            GroupMember("6","Param","",false, false),
-            GroupMember("7","Mehta","",false, true),
-            GroupMember("2","Hi","https://www.joshtalks.com/wp-content/uploads/2020/09/joshlogo.png",false, false),
-            GroupMember("1","Hello","",true, true),
-            GroupMember("8","Bye","",false, false)
+            GroupMember("3", "Sukesh", "", false, false),
+            GroupMember("4", "Aaditya", "", false, true),
+            GroupMember("5", "Sagar", "", false, true),
+            GroupMember("6", "Param", "", false, false),
+            GroupMember("7", "Mehta", "", false, true),
+            GroupMember(
+                "2",
+                "Hi",
+                "https://www.joshtalks.com/wp-content/uploads/2020/09/joshlogo.png",
+                false,
+                false
+            ),
+            GroupMember("1", "Hello", "", true, true),
+            GroupMember("8", "Bye", "", false, false)
         )
         memberAdapter = GroupMemberAdapter(this, members)
         if (hasJoinedGroup.get()) {
@@ -148,18 +156,41 @@ class GroupChatViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
+    fun leaveGroup(view: View) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = LeaveGroupRequest(
+                    groupId = groupId,
+                    mentorId = Mentor.getInstance().getId()
+                )
+                repository.leaveGroupFromServer(request)
+                withContext(Dispatchers.Main) {
+                    message.what = SHOULD_REFRESH_GROUP_LIST
+                    singleLiveEvent.value = message
+                    onBackPress()
+                    onBackPress()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showToast("An error has occurred")
+                }
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun expandGroupList(view: View) {
         view.visibility = View.GONE
         showAllMembers.set(true)
         memberAdapter.notifyDataSetChanged()
     }
 
-    fun sendMessage(view: View){
+    fun sendMessage(view: View) {
         message.what = SEND_MSG
         singleLiveEvent.value = message
     }
 
-    fun pushMessage(msg : String) {
+    fun pushMessage(msg: String) {
         chatService.sendMessage(msg)
         clearText()
     }
