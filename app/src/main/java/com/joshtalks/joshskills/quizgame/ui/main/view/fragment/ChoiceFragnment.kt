@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentChoiceFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails
+import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 
 class ChoiceFragnment : Fragment() {
     private lateinit var binding: FragmentChoiceFragnmentBinding
@@ -34,6 +35,15 @@ class ChoiceFragnment : Fragment() {
         return binding.root
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        playSound(R.raw.background_until_quiz_start)
+    }
+
+    fun playSound(sound:Int){
+        activity?.application?.let { AudioManagerQuiz.audioRecording.startPlaying(it,sound) }
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() =
@@ -48,7 +58,8 @@ class ChoiceFragnment : Fragment() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
             ?.replace(R.id.container,
-                FavouritePartnerFragment.newInstance(),"SearchingOpponentTeam")
+                FavouritePartnerFragment.newInstance(),"Favourite")
+            ?.remove(this)
             ?.commit()
     }
 
@@ -56,7 +67,13 @@ class ChoiceFragnment : Fragment() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
             ?.replace(R.id.container,
-                RandomPartnerFragment.newInstance(),"SearchingOpponentTeam")
+                RandomPartnerFragment.newInstance(),"Random")
+            ?.remove(this)
             ?.commit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+     //   AudioManagerQuiz.audioRecording.stopPlaying()
     }
 }

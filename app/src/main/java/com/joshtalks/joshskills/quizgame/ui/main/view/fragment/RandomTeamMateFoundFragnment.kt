@@ -160,7 +160,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
             val fm = activity?.supportFragmentManager
             fm?.beginTransaction()
                 ?.replace(R.id.container,
-                    QuestionFragment.newInstance(roomId,startTime),"SearchingOpponentTeam")
+                    QuestionFragment.newInstance(roomId,startTime,"Random"),"SearchingOpponentTeam")
                 ?.commit()
         }, 4000)
     }

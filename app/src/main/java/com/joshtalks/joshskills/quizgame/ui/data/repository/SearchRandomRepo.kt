@@ -13,7 +13,8 @@ class SearchRandomRepo {
 
     suspend fun createRandomUserRoom(roomRandom: RoomRandom) = RetrofitInstanse.api.createRandomRoom(roomRandom)
 
-    suspend fun getRandomUserData(randomRoomData: RandomRoomData) = RetrofitInstanse.api.getRoomUserDataTemp(randomRoomData)
+    suspend fun getRandomUserData(randomRoomData: RandomRoomData) = RetrofitInstanse.api.getRandomRoomUserData(randomRoomData)
 
     suspend fun deleteUserData(deleteUserData: DeleteUserData) = RetrofitInstanse.api.deleteUserDataFromRadius(deleteUserData)
+    suspend fun clearRoomRadius(randomRoomData: RandomRoomData) = RetrofitInstanse.api.clearRadius(randomRoomData)
 }

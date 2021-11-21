@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.github.mikephil.charting.utils.EntryXComparator
 import com.google.android.gms.common.util.CollectionUtils
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -31,7 +32,10 @@ import com.joshtalks.joshskills.quizgame.ui.main.adapter.ImageAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
 import kotlinx.android.synthetic.main.fragment_question.*
 import kotlinx.android.synthetic.main.fragment_question.call_time
@@ -40,7 +44,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,FirebaseDatabase.OnAnimationTrigger {
+class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,FirebaseDatabase.OnAnimationTrigger,
+P2pRtc.WebRtcEngineCallback{
     private lateinit var binding: FragmentQuestionBinding
     private var position: Int = 0
     private var questionSize :Int =0
@@ -89,6 +94,8 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
     private var opponentTeamId: String? = null
 
     private var callTimeCount:String?=null
+    private var fromType:String?=null
+    private var engine: RtcEngine? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +105,7 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
         arguments?.let {
             roomId = it.getString("roomId")
             callTimeCount = it.getString("callTime")
+            fromType = it.getString("fromType")
         }
         setupViewModel()
     }
@@ -142,6 +150,12 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
             } catch (ex: Exception) {
                 Timber.d(ex)
             }
+        }
+        try {
+            engine = P2pRtc().initEngine(requireActivity())
+            P2pRtc().addListener(this)
+        }catch (ex:Exception){
+            Timber.d(ex)
         }
         binding.card1.setOnClickListener {
             drawTriangleOnCard(binding.card1)
@@ -292,7 +306,7 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
         }
     }
     private fun startTimer() {
-        timer = object : CountDownTimer(10000, 1000) {
+        timer = object : CountDownTimer(11000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 var seconds = (millisUntilFinished / 1000).toInt()
                 seconds %= 60
@@ -478,88 +492,6 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
 
         }
     }
-    /* private fun showRoomUserData(){
-        try {
-            activity?.let {
-                questionViewModel?.roomUserData?.observe(it, { roomData ->
-
-                    teamId1 = roomData?.data?.get(0)?.teamId
-                    teamId2 = roomData.data?.get(1)?.teamId
-
-                    team1UserId1 = roomData.data?.get(0)?.userData?.get(0)?.userId
-                    team1UserId2 = roomData.data?.get(0)?.userData?.get(1)?.userId
-                    team2UserId1 = roomData.data?.get(1)?.userData?.get(0)?.userId
-                    team2UserId2 = roomData.data?.get(1)?.userData?.get(1)?.userId
-
-
-                    val team1UserName1 = roomData.data?.get(0)?.userData?.get(0)?.userName
-                    val team1UserImageUrl1 = roomData?.data?.get(0)?.userData?.get(0)?.imageUrl
-
-                    val team1UserName2 = roomData.data?.get(0)?.userData?.get(1)?.userName
-                    val team1UserImageUrl2 = roomData?.data?.get(0)?.userData?.get(1)?.imageUrl
-
-                    val team2UserName1 = roomData.data?.get(1)?.userData?.get(0)?.userName
-                    val team2UserImageUrl1 = roomData.data?.get(1)?.userData?.get(0)?.imageUrl
-
-                    val team2UserName2 = roomData.data?.get(1)?.userData?.get(1)?.userName
-                    val team2UserImageUrl2 = roomData.data?.get(1)?.userData?.get(1)?.imageUrl
-
-                    binding.team2User2Name.text = team2UserName2
-
-                        //current user id yaha pass karna hai
-                         if (team1UserId1 == currentUserId || team1UserId2 == currentUserId){
-                             binding.team1User1Name.text = team1UserName1
-                             ImageAdapter.imageUrl(
-                                 binding.team1UserImage1,
-                                 Mentor.getInstance().getUser()?.photo
-                             )
-
-                             binding.team1User2Name.text = team1UserName2
-                             ImageAdapter.imageUrl(
-                                 binding.team1UserImage2,
-                                 team1UserImageUrl2
-                             )
-
-                             binding.team2User1Name.text = team2UserName1
-                             ImageAdapter.imageUrl(
-                                 binding.team2UserImage1,
-                                 team2UserImageUrl1
-                             )
-
-                             binding.team2User2Name.text = team2UserName2
-                             ImageAdapter.imageUrl(
-                                 binding.team2UserImage2,
-                                 team2UserImageUrl2
-                             )
-                         }
-                          else if (team2UserId1 ==currentUserId || team2UserId2 == currentUserId) {
-                             binding.team1User1Name.text = team2UserName1
-                             ImageAdapter.imageUrl(
-                                 binding.team1UserImage1,
-                                 Mentor.getInstance().getUser()?.photo
-                             )
-
-                             binding.team1User2Name.text = team2UserName2
-                             ImageAdapter.imageUrl(
-                                 binding.team1UserImage2,
-                                 team1UserImageUrl2
-                             )
-
-                             binding.team2User1Name.text = team1UserName1
-                             ImageAdapter.imageUrl(
-                                 binding.team2UserImage1,
-                                 team1UserImageUrl1
-                             )
-
-                             binding.team2User2Name.text = team1UserName2
-                             ImageAdapter.imageUrl(binding.team2UserImage2, team1UserImageUrl2)
-                         }
-                })
-            }
-        }catch (ex:Exception){
-
-        }
-    }*/
     private fun myDelay() {
         lifecycleScope.launch {
             binding.progress.animateProgress()
@@ -571,11 +503,12 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
         var opponentTeamMarks :Int =0
 
         @JvmStatic
-        fun newInstance(roomId: String?,startTime:String?) =
+        fun newInstance(roomId: String?,startTime:String?,fromType :String?) =
             QuestionFragment().apply {
                 arguments = Bundle().apply {
                     putString("roomId", roomId)
                     putString("callTime",startTime)
+                    putString("fromType",fromType)
                 }
             }
     }
@@ -626,15 +559,19 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
     private fun answerAnim() {
         val handler = Handler(Looper.getMainLooper())
 
-        handler.postDelayed({
-            binding.card1.visibility = View.VISIBLE
-            binding.card2.visibility = View.VISIBLE
-            binding.card3.visibility = View.VISIBLE
-            binding.card4.visibility = View.VISIBLE
+        try {
+            handler.postDelayed({
+                binding.card1.visibility = View.VISIBLE
+                binding.card2.visibility = View.VISIBLE
+                binding.card3.visibility = View.VISIBLE
+                binding.card4.visibility = View.VISIBLE
 
-            val animation3 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
-            binding.layoutCard.startAnimation(animation3)
-        }, 2000)
+                val animation3 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
+                binding.layoutCard.startAnimation(animation3)
+            }, 2000)
+        }catch (ex:Exception){
+
+        }
         lifecycleScope.launch {
             delay(2000)
             myDelay()
@@ -705,7 +642,6 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
 
         }
     }
-
     private fun getDisplayAnswerAfterQuesComplete(): String {
         questionViewModel?.getDisplayAnswerData(roomId ?: "", question.que[position].id ?: "")
         enableCardClick()
@@ -765,7 +701,6 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
     override fun onGetRoomId(currentUserRoomID: String?, mentorId: String) {
 
     }
-
     fun choiceAnswer(choiceAnswer: String, isCorrect: String) {
         disableCardClick()
         when (choiceAnswer) {
@@ -776,22 +711,30 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
                 binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
 
                 if (isCorrect == "true") {
-                    binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer1.setTextColor(resources.getColor(R.color.green_quiz))
+                    try {
+                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer1.setTextColor(resources.getColor(R.color.green_quiz))
+
+                    }catch (ex:Exception){
+                        showToast(ex.message?:"")
+                    }
                 } else {
-                    binding.marks1.setTextColor(resources.getColor(R.color.red))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer1.setTextColor(resources.getColor(R.color.red))
+                    try {
+                        binding.marks1.setTextColor(resources.getColor(R.color.red))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer1.setTextColor(resources.getColor(R.color.red))
+                    }catch (ex:Exception){
+
+                    }
                 }
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(500)
-                    binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
                     binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
                 }
             }
@@ -801,23 +744,26 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
                 binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
                 binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
 
-                if (isCorrect == "true") {
-                    binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer2.setTextColor(resources.getColor(R.color.green_quiz))
-                } else {
-                    binding.marks1.setTextColor(resources.getColor(R.color.red))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer2.setTextColor(resources.getColor(R.color.red))
+                try {
+                    if (isCorrect == "true") {
+                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer2.setTextColor(resources.getColor(R.color.green_quiz))
+                    } else {
+                        binding.marks1.setTextColor(resources.getColor(R.color.red))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer2.setTextColor(resources.getColor(R.color.red))
+                    }
+                }catch (ex:Exception){
+
                 }
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(500)
-                    binding.answer2.setTextColor(resources.getColor(R.color.black_quiz))
                     binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
                 }
             }
@@ -827,23 +773,26 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
                 binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
                 binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
 
-                if (isCorrect == "true") {
-                    binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer3.setTextColor(resources.getColor(R.color.green_quiz))
-                } else {
-                    binding.marks1.setTextColor(resources.getColor(R.color.red))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer3.setTextColor(resources.getColor(R.color.red))
+                try {
+                    if (isCorrect == "true") {
+                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer3.setTextColor(resources.getColor(R.color.green_quiz))
+                    } else {
+                        binding.marks1.setTextColor(resources.getColor(R.color.red))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer3.setTextColor(resources.getColor(R.color.red))
+                    }
+                }catch (ex : Exception){
+
                 }
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(500)
-                    binding.answer3.setTextColor(resources.getColor(R.color.black_quiz))
                     binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
                 }
             }
@@ -853,29 +802,31 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
                 binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
                 binding.answer2.setTextColor(resources.getColor(R.color.black_quiz))
 
-                if (isCorrect == "true") {
-                    binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer4.setTextColor(resources.getColor(R.color.green_quiz))
-                } else {
-                    binding.marks1.setTextColor(resources.getColor(R.color.red))
-                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                    binding.relativeAnim.startAnimation(animation)
-                    binding.answer4.setTextColor(resources.getColor(R.color.red))
+                try {
+                    if (isCorrect == "true") {
+                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer4.setTextColor(resources.getColor(R.color.green_quiz))
+                    } else {
+                        binding.marks1.setTextColor(resources.getColor(R.color.red))
+                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
+                        binding.relativeAnim.startAnimation(animation)
+                        binding.answer4.setTextColor(resources.getColor(R.color.red))
+                    }
+                }catch (ex:Exception){
+
                 }
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(500)
-                    binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
                     binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
                 }
             }
         }
     }
-
     fun disableCardClick() {
         binding.card1.isClickable = false
         binding.card2.isClickable = false
@@ -910,32 +861,36 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
         binding.marks2.text = marksOpponentTeam
         binding.progress.pauseProgress()
         if (isCorrect == "true") {
-            binding.marks2.setTextColor(resources.getColor(R.color.green_quiz))
-            val animation = AnimationUtils.loadAnimation(context, R.anim.abc_popup_exit)
-            binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-            binding.relativeAnim1.startAnimation(animation)
+            try {
+                binding.marks2.setTextColor(resources.getColor(R.color.green_quiz))
+                val animation = AnimationUtils.loadAnimation(context, R.anim.abc_popup_exit)
+                binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
+                binding.relativeAnim1.startAnimation(animation)
+            }catch (ex:Exception){
+                showToast(ex.message?:"")
+            }
         } else {
-            binding.marks2.setTextColor(resources.getColor(R.color.red))
-            val animation = AnimationUtils.loadAnimation(context, R.anim.abc_popup_exit)
-            binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-            binding.relativeAnim1.startAnimation(animation)
+            try {
+                binding.marks2.setTextColor(resources.getColor(R.color.red))
+                val animation = AnimationUtils.loadAnimation(context, R.anim.abc_popup_exit)
+                binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
+                binding.relativeAnim1.startAnimation(animation)
+            }catch (ex:Exception){
+                showToast(ex.message?:"")
+            }
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
             delay(500)
             binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
         }
-
-        // binding.marks1.text = marks.toString()
         firebaseDatabase.deleteOpponentAnimTeam(opponentTeamId ?: "")
     }
-
     fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    //CustomDialogQuiz(activity!!).show()
                     showDialog()
                 }
             })
@@ -951,22 +906,8 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
         val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
         val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
 
-//        yesBtn.setOnClickListener {
-//            dialog.dismiss()
-//            AudioManagerQuiz.audioRecording.stopPlaying()
-//            openFavouritePartnerScreen()
-//        }
-
         yesBtn.setOnClickListener {
-            questionViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
-            activity?.let {
-                questionViewModel?.clearRadius?.observe(it, {
-                    Log.d("message", "showDialog: "+it.message)
-                    dialog.dismiss()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openFavouritePartnerScreen()
-                })
-            }
+            deleteUserRoomData(dialog)
         }
         noBtn.setOnClickListener {
             dialog.dismiss()
@@ -978,7 +919,7 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
 
         dialog.show()
     }
-    fun openFavouritePartnerScreen() {
+    private fun openFavouritePartnerScreen() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
             ?.replace(
@@ -987,7 +928,6 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
             )
             ?.remove(this)
             ?.commit()
-        fm?.popBackStack()
     }
     override fun onDestroy() {
         super.onDestroy()
@@ -1004,9 +944,11 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
                     opponentTeamMarks.toString(),
                     roomId,
                     currentUserTeamId,
-                    startTime
+                    startTime,
+                    fromType?:""
                 ), "Win"
             )
+            ?.remove(this)
             ?.commit()
     }
     override fun onStart() {
@@ -1015,7 +957,6 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
         binding.callTime.start()
         Log.d("call_time_out", "onStart: "+callTimeCount)
     }
-
     override fun onOpponentPartnerCut(teamId: String, isCorrect: String, choiceAnswer: String) {
         when (choiceAnswer) {
             binding.answer1.text -> {
@@ -1044,7 +985,6 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
             }
         }
     }
-
     override fun onOpponentTeamCutCard(
         opponentTeamId: String,
         isCorrect: String,
@@ -1078,4 +1018,49 @@ class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,Fireb
         }
     }
 
+    private fun deleteUserRoomData(dialog: Dialog){
+        if (fromType == "Random"){
+            questionViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
+            activity?.let {
+                questionViewModel?.clearRadius?.observe(it, {
+                    Log.d("message", "showDialog: "+it.message)
+                    dialog.dismiss()
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    openFavouritePartnerScreen()
+                    engine?.leaveChannel()
+                })
+            }
+        }else{
+            questionViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
+            activity?.let {
+                questionViewModel?.deleteData?.observe(it, Observer {
+                    showToast(it.message)
+                    dialog.dismiss()
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    openFavouritePartnerScreen()
+                    engine?.leaveChannel()
+                    //callback.onPartnerLeave()
+                })
+            }
+        }
+    }
+
+    override fun onPartnerLeave() {
+        super.onPartnerLeave()
+        when {
+            team1UserId1 == currentUserId -> {
+                binding.team1UserImage2.setAlpha(127)
+            }
+            team1UserId2 == currentUserId -> {
+                binding.team1UserImage1.setAlpha(127)
+            }
+            team2UserId1 == currentUserId -> {
+                binding.team2UserImage2.setAlpha(127)
+            }
+            team2UserId2 == currentUserId -> {
+                binding.team2UserImage1.setAlpha(127)
+            }
+        }
+        showToast("Partner Leave The Channel")
+    }
 }

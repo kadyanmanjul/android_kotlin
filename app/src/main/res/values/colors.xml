@@ -196,6 +196,7 @@
 
 
     <color name="transparent_color_notification">#66E00022</color>
+    <color name="notification_timer">#35E00022</color>
     <color name="gray_light">#dfe6f3</color>
 
     <color name="light_blue_quiz">#C5E5FE</color>
@@ -203,4 +204,5 @@
     <color name="blue">#6600b5d9</color>
     <color name="blue2">#BF00b5d9</color>
     <color name="black_quiz">#000000</color>
+    <color name="red_quiz">#FE5552</color>
 </resources>

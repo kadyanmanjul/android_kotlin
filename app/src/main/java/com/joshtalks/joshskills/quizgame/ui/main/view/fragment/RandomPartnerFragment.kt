@@ -51,14 +51,14 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     var userRoomId :String?= null
 
     var team1Id :String?=null
-    var usersInTeam1 :UsersInTeam1?=null
+    var usersInTeam1 :UsersInTeam1Random?=null
     var team2Id :String?=null
-    var usersInTeam2 :UsersInTeam2?=null
+    var usersInTeam2 :UsersInTeam2Random?=null
 
-    var user1 :User1?=null
-    var user2 :User2?=null
-    var user3 :User3?=null
-    var user4 :User4?=null
+    var user1 :User1Random?=null
+    var user2 :User2Random?=null
+    var user3 :User3Random?=null
+    var user4 :User4Random?=null
 
     var token :String?=null
     var channelName :String?=null
@@ -131,20 +131,18 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         super.onViewCreated(view, savedInstanceState)
 
         currentUserId = Mentor.getInstance().getUserId()
-
+        try {
+            engine = RtcEngine.create(activity, agora_app_id, iRtcEngineEventHandler)
+            //engine = P2pRtc().initEngine(requireActivity())
+        }catch (ex:Exception){
+            Timber.d(ex)
+            showToast(ex.message?:"")
+        }
         setCurrentUserData()
         setUserActive()
         onBackPress()
         searchRandomUser(currentUserId?:"")
         firebaseDatabase.getRandomUserId(currentUserId?:"",this)
-
-        try {
-           // engine = RtcEngine.create(activity, agora_app_id, iRtcEngineEventHandler)
-            var p  = P2pRtc()
-            engine = p.initEngine(requireActivity())
-        }catch (ex:Exception){
-            Timber.d(ex)
-        }
     }
 
     companion object {
@@ -205,7 +203,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
         }
     }
-    fun initializeUsersTeamsData(teamsData: TeamsData){
+    fun initializeUsersTeamsData(teamsData: TeamsDataRandom){
         team1Id = teamsData.team1Id
         team2Id = teamsData.team2Id
 
@@ -270,7 +268,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             ImageAdapter.imageUrl(binding.team1UserImage2,imageUrl2)
             binding.team1User2Name.text = team1User2Name
 
-
             callConnectUser1AndUser2(team1User1ChannelName)
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n","")
@@ -334,15 +331,15 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 })
             }
         }catch (ex:Exception){
-
+            showToast(ex.message?:"")
+            Log.d("error_resp", "getRandomUserDataByRoom: "+ex.message)
         }
     }
     fun callConnectUser1AndUser2(channelName:String?){
         if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
             CoroutineScope(Dispatchers.IO).launch {
-                joinChannel(channelName!!)
+                joinChannel(channelName?:"")
             }
-            //WebRtcEngine.initLibrary()
         }
     }
     private fun joinChannel(channelId: String) {
@@ -405,24 +402,27 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
         val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
 
-//        yesBtn.setOnClickListener {
-//                    dialog.dismiss()
-//                    AudioManagerQuiz.audioRecording.stopPlaying()
-//                    openChoiceScreen()
-//                    engine?.leaveChannel()
-//        }
-        //yaha hame phele check karna hai room id bani ya nahi agar ban chuki hai tu hame clear radius karna hai jsi
-        // jis se room data or firebase vo user delete ho jaye
-        //agar room nahi bana hai tu sirf user ko dlete karna hai
         yesBtn.setOnClickListener {
-            searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId?:""))
-            activity?.let {
-                searchRandomViewModel?.deleteData?.observe(it, Observer {
-                    dialog.dismiss()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openChoiceScreen()
-                    engine?.leaveChannel()
-                })
+            if (userRoomId !=null){
+                searchRandomViewModel?.getClearRadius(RandomRoomData(userRoomId?:"",currentUserId?:""))
+                activity?.let {
+                    searchRandomViewModel?.clearRadius?.observe(it, Observer {
+                        dialog.dismiss()
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        openChoiceScreen()
+                        engine?.leaveChannel()
+                    })
+                }
+            }else{
+                searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId?:""))
+                activity?.let {
+                    searchRandomViewModel?.deleteData?.observe(it, Observer {
+                        dialog.dismiss()
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        openChoiceScreen()
+                        engine?.leaveChannel()
+                    })
+                }
             }
         }
         noBtn.setOnClickListener {
@@ -469,4 +469,42 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             super.onPartnerLeave()
         }
     }
+
+    private val iRtcEngineEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
+         override fun onError(err: Int) {
+           // showToast("Error")
+        }
+
+        override fun onLeaveChannel(stats: RtcStats) {
+            super.onLeaveChannel(stats)
+          // showToast("Leave Channel")
+        }
+        override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
+            myUid = uid
+            joined = true
+          // showToast("Success fully Join"+uid)
+        }
+
+       override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
+            super.onRemoteAudioStateChanged(uid, state, reason, elapsed)
+           // showToast("Remote Audio State Change")
+        }
+
+        override fun onUserJoined(uid: Int, elapsed: Int) {
+            super.onUserJoined(uid, elapsed)
+           // showToast("User Joined")
+            //Here pass data of the current user
+           // moveFragment(favouriteUserId)
+        }
+
+        override fun onUserOffline(uid: Int, reason: Int) {
+            showToast("User Offline")
+        }
+
+        override fun onActiveSpeaker(uid: Int) {
+            super.onActiveSpeaker(uid)
+           // showToast("Active Speaker")
+        }
+    }
+
 }

@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.quizgame.ui.data.model.DeleteUserData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Success
 import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
 import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails

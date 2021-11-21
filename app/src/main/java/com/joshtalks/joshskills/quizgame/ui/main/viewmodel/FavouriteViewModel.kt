@@ -18,31 +18,35 @@ class FavouriteViewModel(application: Application, private val favouriteRepo: Fa
     val statusResponse : MutableLiveData<Success> = MutableLiveData()
 
     fun fetchFav(mentorId:String) {
-         viewModelScope.launch {
-             coroutineScope {
+        try {
+            viewModelScope.launch {
+                coroutineScope {
 
-                 val fav = async {
-                     val response = favouriteRepo.getFavourite(mentorId)
-                     if (response.isSuccessful && response.body() != null) {
-                         favData.postValue(response.body())
-                     }
-                 }
+                    val fav = async {
+                        val response = favouriteRepo.getFavourite(mentorId)
+                        if (response.isSuccessful && response.body() != null) {
+                            favData.postValue(response.body())
+                        }
+                    }
 
-                 val fromToken =  async {
-                     val response = favouriteRepo.getAgoraFromToken(mentorId)
-                     if (response.isSuccessful && response.body() != null) {
-                         fromTokenData.postValue(response.body())
-                     }
-                 }
+                    val fromToken =  async {
+                        val response = favouriteRepo.getAgoraFromToken(mentorId)
+                        if (response.isSuccessful && response.body() != null) {
+                            fromTokenData.postValue(response.body())
+                        }
+                    }
 
-                 try {
-                     fav.await()
-                     fromToken.await()
-                 } catch (ex: Exception) {
-                     ex.printStackTrace()
-                 }
-             }
-         }
+                    try {
+                        fav.await()
+                        fromToken.await()
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+            }
+        }catch (ex:Exception){
+
+        }
     }
 
     fun getChannelData(agoraToId: String?,channelName:String?){

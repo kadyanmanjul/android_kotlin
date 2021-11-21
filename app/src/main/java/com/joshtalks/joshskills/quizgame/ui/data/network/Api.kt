@@ -45,6 +45,10 @@ interface Api {
      //yaha hame phele check karna hai room id bani ya nahi agar ban chuki hai tu hame clear radius karna hai jsi
      // jis se room data or firebase vo user delete ho jaye
      //agar room nahi bana hai tu sirf user ko dlete karna hai
+
+     @POST("random/get_random_users_from_roomid/")
+     suspend fun getRandomRoomUserData(@Body prams: RandomRoomData) : Response<RandomRoomDataResponse>
+
      @POST("random/delete_user_data/")
      suspend fun clearRadius(@Body params : RandomRoomData) : Response<Success>
 

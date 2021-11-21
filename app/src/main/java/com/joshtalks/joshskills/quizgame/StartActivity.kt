@@ -19,7 +19,7 @@ class StartActivity : AppCompatActivity() {
         startBinding.clickHandler=this
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        playSound(R.raw.background_until_quiz_start)
+     //   playSound(R.raw.background_until_quiz_start)
     }
 
     fun startQuiz(){

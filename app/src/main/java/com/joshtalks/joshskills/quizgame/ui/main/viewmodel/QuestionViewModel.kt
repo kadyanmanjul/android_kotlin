@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.QuestionRepo
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -19,6 +20,7 @@ class QuestionViewModel(application: Application,private val questionRepo: Quest
    var roomUserData:MutableLiveData<RoomUserData> = MutableLiveData()
    var roomUserDataTemp:MutableLiveData<RandomRoomResponse> = MutableLiveData()
    var clearRadius : MutableLiveData<Success> = MutableLiveData()
+   var deleteData : MutableLiveData<Success> = MutableLiveData()
 
 
     fun getQuizQuestion(){
@@ -26,12 +28,11 @@ class QuestionViewModel(application: Application,private val questionRepo: Quest
             viewModelScope.launch (Dispatchers.IO){
                 val response = questionRepo.getQuestion()
                 if (response.isSuccessful && response.body()!=null){
-                  //  words = arrayListOf(response.body())
                     questionData.postValue(response.body())
                 }
             }
         }catch (ex:Throwable){
-
+            ex.showAppropriateMsg()
         }
     }
 
@@ -44,34 +45,59 @@ class QuestionViewModel(application: Application,private val questionRepo: Quest
                 }
             }
         }catch (ex:Throwable){
-
+            ex.showAppropriateMsg()
         }
     }
 
     fun getDisplayAnswerData(roomId:String, questionId:String){
-        viewModelScope.launch (Dispatchers.IO){
-            val response = questionRepo.getDisplayCorrectAnswer(roomId,questionId)
-            if (response.isSuccessful && response.body()!=null){
-                displayAnswerData.postValue(response.body())
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                val response = questionRepo.getDisplayCorrectAnswer(roomId,questionId)
+                if (response.isSuccessful && response.body()!=null){
+                    displayAnswerData.postValue(response.body())
+                }
             }
+        }catch (ex:Exception){
+            ex.showAppropriateMsg()
         }
     }
 
     fun getRoomUserDataTemp(randomRoomData: RandomRoomData){
-        viewModelScope.launch (Dispatchers.IO){
-            val response = questionRepo.getRoomDataTemp(randomRoomData)
-            if (response.isSuccessful && response.body()!=null){
-                roomUserDataTemp.postValue(response.body())
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                val response = questionRepo.getRoomDataTemp(randomRoomData)
+                if (response.isSuccessful && response.body()!=null){
+                    roomUserDataTemp.postValue(response.body())
+                }
             }
+        }catch (ex:Exception){
+            ex.showAppropriateMsg()
         }
     }
 
     fun getClearRadius(randomRoomData: RandomRoomData){
-        viewModelScope.launch (Dispatchers.IO){
-            val response = questionRepo.clearRoomRadius(randomRoomData)
-            if (response.isSuccessful && response.body()!=null){
-                clearRadius.postValue(response.body())
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                val response = questionRepo.clearRoomRadius(randomRoomData)
+                if (response.isSuccessful && response.body()!=null){
+                    clearRadius.postValue(response.body())
+                }
             }
+        }catch (ex:Exception){
+            ex.showAppropriateMsg()
+        }
+    }
+
+    fun deleteUserRoomData(randomRoomData: RandomRoomData){
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                val response = questionRepo.deleteUsersDataFromRoom(randomRoomData)
+                if (response.isSuccessful && response.body()!=null){
+                    deleteData.postValue(response.body())
+                }
+            }
+        }catch (ex:Exception){
+            ex.showAppropriateMsg()
         }
     }
 }

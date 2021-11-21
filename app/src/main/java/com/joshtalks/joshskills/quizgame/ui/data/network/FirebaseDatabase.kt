@@ -28,8 +28,6 @@ class FirebaseDatabase {
     private var partnerShowCutCard:CollectionReference = database.collection("PartnerShowCut")
     private var opponentShowCutCard:CollectionReference = database.collection("OpponentShowCut")
 
-
-
     //var mentorId : String = Mentor.getInstance().getUserId()
     var userName :String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl :String?= Mentor.getInstance().getUser()?.photo
@@ -49,6 +47,66 @@ class FirebaseDatabase {
          channel["isAccept"] = "false"
          collectionReference.document(favUserId?:"").set(channel)
      }
+    fun getUserDataFromFirestore(mentorId: String,onNotificationTrigger: OnNotificationTrigger){
+        this.onNotificationTrigger=onNotificationTrigger
+        collectionReference
+            .addSnapshotListener { value, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                for (doc in value!!) {
+                    if (doc.exists()) {
+                        if (mentorId == doc.id){
+                            var channelName:String = doc.data["channelName"].toString()
+                            var fromUserId = doc.data["fromUserId"].toString()
+                            var fromUserName = doc.data["fromUserName"].toString()
+                            var fromImageUrl = doc.data["fromImageUrl"]?.toString()
+                            onNotificationTrigger.onNotificationForInvitePartner(channelName,fromUserId,fromUserName,fromImageUrl?: "")
+                        }
+                    }
+                }
+            }
+    }
+
+    fun deleteUserData(mentorId:String,fromUserMentorId:String){
+        collectionReference
+            .addSnapshotListener { value, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                for (doc in value!!) {
+                    if (doc.exists()) {
+                        if (mentorId == doc.id){
+                            var fromUserId = doc.data["fromUserId"].toString()
+                            if (fromUserId == fromUserMentorId){
+                                Log.d("sagar", "deleteUserData: "+fromUserId)
+                                collectionReference.document(mentorId).delete().addOnCompleteListener(
+                                    OnCompleteListener {
+                           //             createRequestDecline(fromUserId,userName,imageUrl)
+                                    })
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
+    fun deleteRequested(mentorId:String){
+        // collectionReference.document(documentId).delete()
+        collectionReference
+            .addSnapshotListener { value, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                for (doc in value!!) {
+                    if (doc.exists()) {
+                        if (mentorId == doc.id){
+                            collectionReference.document(mentorId).delete()
+                        }
+                    }
+                }
+            }
+    }
 
 
     fun acceptRequest(opponentMemberId:String, isAccept:String, opponentMemberName: String , channelName: String,mentorId: String){
@@ -61,7 +119,6 @@ class FirebaseDatabase {
         channel["isAccept"] = isAccept
         acceptRequestCollection.document(opponentMemberId).set(channel)
     }
-
     fun getAcceptCall(mentorId:String){
         acceptRequestCollection
             .addSnapshotListener { value, e ->
@@ -88,52 +145,6 @@ class FirebaseDatabase {
 //    fun delteData10Sec(){
 //        acceptRequestCollection.endAt()
 //    }
-
-     fun getUserDataFromFirestore(mentorId: String,onNotificationTrigger: OnNotificationTrigger){
-       this.onNotificationTrigger=onNotificationTrigger
-       collectionReference
-        .addSnapshotListener { value, e ->
-            if (e != null) {
-                return@addSnapshotListener
-            }
-            for (doc in value!!) {
-                if (doc.exists()) {
-                    if (mentorId == doc.id){
-                        var channelName:String = doc.data["channelName"].toString()
-                        var fromUserId = doc.data["fromUserId"].toString()
-                        var fromUserName = doc.data["fromUserName"].toString()
-                        var fromImageUrl = doc.data["fromImageUrl"]?.toString()
-                        onNotificationTrigger.onNotificationForInvitePartner(channelName,fromUserId,fromUserName,fromImageUrl?: "")
-                    }
-                }
-            }
-        }
-     }
-
-     fun deleteUserData(mentorId:String,fromUserMentorId:String){
-       // collectionReference.document(documentId).delete()
-        collectionReference
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mentorId == doc.id){
-                            var fromUserId = doc.data["fromUserId"].toString()
-                            if (fromUserId == fromUserMentorId){
-                                Log.d("sagar", "deleteUserData: "+fromUserId)
-                                collectionReference.document(mentorId).delete().addOnCompleteListener(
-                                    OnCompleteListener {
-                                        createRequestDecline(fromUserId,userName,imageUrl)
-                                    })
-                            }
-                        }
-                    }
-                }
-            }
-    }
-
     fun createRequestDecline(fromUserId:String, declineUserName:String?,declineUserImage:String?){
         val channel: HashMap<String,Any> = HashMap()
         channel["declineUserName"] = declineUserName?:""
@@ -177,7 +188,7 @@ class FirebaseDatabase {
     }
 
     fun deleteDataAcceptRequest(mentorId:String){
-        acceptRequestCollection.document(mentorId).delete()
+       // acceptRequestCollection.document(mentorId).delete()
         acceptRequestCollection
             .addSnapshotListener { value, e ->
                 if (e != null) {
@@ -186,7 +197,7 @@ class FirebaseDatabase {
                 for (doc in value!!) {
                     if (doc.exists()) {
                         if (mentorId == doc.id){
-                            requestDecline.document(mentorId).delete()
+                            acceptRequestCollection.document(mentorId).delete()
                         }
                     }
                 }
@@ -410,7 +421,6 @@ class FirebaseDatabase {
         fun onGetRoomId(currentUserRoomID:String?,mentorId: String)
         fun onShowAnim(mentorId: String,isCorrect:String,choiceAnswer:String,marks: String)
     }
-
     interface OnRandomUserTrigger{
         fun onSearchUserIdFetch(roomId:String)
     }

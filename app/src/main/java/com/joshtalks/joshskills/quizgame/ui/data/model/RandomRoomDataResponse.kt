@@ -1,32 +1,30 @@
 package com.joshtalks.joshskills.quizgame.ui.data.model
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
 
-data class RandomRoomResponse(
+data class RandomRoomDataResponse(
     @SerializedName("room_id") var roomId :String,
-    @SerializedName("teams") var teamData :TeamsData
+    @SerializedName("teams") var teamData :TeamsDataRandom
 )
 
 
-data class TeamsData(
+data class TeamsDataRandom(
     @SerializedName("team1_id") var team1Id:String,
-    @SerializedName("users_in_team1") var usersInTeam1 :UsersInTeam1,
+    @SerializedName("users_in_team1") var usersInTeam1 :UsersInTeam1Random,
     @SerializedName("team2_id") var team2Id :String,
-    @SerializedName("users_in_team2") var usersInTeam2: UsersInTeam2
+    @SerializedName("users_in_team2") var usersInTeam2: UsersInTeam2Random
 )
-data class UsersInTeam1(
-    @SerializedName("user1") var user1: User1,
-    @SerializedName("user2") var user2: User2
-)
-
-data class UsersInTeam2(
-    @SerializedName("user3") var user3: User3,
-    @SerializedName("user4") var user4: User4
+data class UsersInTeam1Random(
+    @SerializedName("user1") var user1: User1Random,
+    @SerializedName("user2") var user2: User2Random
 )
 
-data class User1(
+data class UsersInTeam2Random(
+    @SerializedName("user3") var user3: User3Random,
+    @SerializedName("user4") var user4: User4Random
+)
+
+data class User1Random(
     @SerializedName("token") var token : String,
     @SerializedName("channel_name") var channelName : String,
     @SerializedName("user_id") var userId : String,
@@ -34,7 +32,7 @@ data class User1(
     @SerializedName("username") var userName : String
 )
 
-data class User2(
+data class User2Random(
     @SerializedName("token") var token : String,
     @SerializedName("channel_name") var channelName : String,
     @SerializedName("user_id") var userId : String,
@@ -42,7 +40,7 @@ data class User2(
     @SerializedName("username") var userName : String
 )
 
-data class User3(
+data class User3Random(
     @SerializedName("token") var token : String,
     @SerializedName("channel_name") var channelName : String,
     @SerializedName("user_id") var userId : String,
@@ -50,7 +48,7 @@ data class User3(
     @SerializedName("username") var userName : String
 )
 
-data class User4(
+data class User4Random(
     @SerializedName("token") var token : String,
     @SerializedName("channel_name") var channelName : String,
     @SerializedName("user_id") var userId : String,

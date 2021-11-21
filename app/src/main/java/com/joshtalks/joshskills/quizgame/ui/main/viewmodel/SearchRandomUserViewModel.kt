@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.quizgame.ui.main.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.BothTeamRepo
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchOpponentRepo
@@ -20,10 +22,9 @@ class SearchRandomUserViewModel(
     var searchRandomData:MutableLiveData<SearchRandomResponse> = MutableLiveData()
     var statusResponse : MutableLiveData<Success> = MutableLiveData()
     var roomRandomData : MutableLiveData<RoomData> = MutableLiveData()
-    var randomRoomUser : MutableLiveData<RandomRoomResponse> = MutableLiveData()
+    var randomRoomUser : MutableLiveData<RandomRoomDataResponse> = MutableLiveData()
     var deleteData : MutableLiveData<Success> = MutableLiveData()
-
-
+    var clearRadius  :MutableLiveData<Success> = MutableLiveData()
     fun getSearchRandomUserData(userId:String){
         try {
             viewModelScope.launch (Dispatchers.IO){
@@ -72,7 +73,8 @@ class SearchRandomUserViewModel(
                 }
             }
         }catch (ex:Exception){
-
+            showToast(ex.message?:"")
+            Log.d("error_resp", "getRandomUserDataByRoom: "+ex.message)
         }
     }
 
@@ -88,4 +90,18 @@ class SearchRandomUserViewModel(
 
         }
     }
+
+    fun getClearRadius(randomRoomData: RandomRoomData){
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                val response = searchRandomRepo.clearRoomRadius(randomRoomData)
+                if (response.isSuccessful && response.body()!=null){
+                    clearRadius.postValue(response.body())
+                }
+            }
+        }catch (ex:Exception){
+
+        }
+    }
+
 }

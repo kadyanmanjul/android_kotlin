@@ -35,11 +35,15 @@ class SearchOpponentTeamViewModel(
     }
 
     fun getRoomUserData(randomRoomData: RandomRoomData){
-        viewModelScope.launch (Dispatchers.IO){
-            val response = searchOpponentRepo.getRoomUserData(randomRoomData)
-            if (response.isSuccessful && response.body()!=null){
-                roomUserData.postValue(response.body())
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                val response = searchOpponentRepo.getRoomUserData(randomRoomData)
+                if (response.isSuccessful && response.body()!=null){
+                    roomUserData.postValue(response.body())
+                }
             }
+        }catch (ex:Exception){
+
         }
     }
 

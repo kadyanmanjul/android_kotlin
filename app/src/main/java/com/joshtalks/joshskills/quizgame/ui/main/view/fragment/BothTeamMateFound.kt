@@ -1,17 +1,25 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
+import android.app.Dialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.BothTeamRepo
@@ -21,13 +29,17 @@ import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentViewProviderFactory
+import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class BothTeamMateFound : Fragment() {
+class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     var startTime:String?=null
     private var roomId:String?=null
     private var userDetails : UserDetails? = null
@@ -64,6 +76,7 @@ class BothTeamMateFound : Fragment() {
     private var team2User2ImageUrl: String? = null
 
     private var currentUserId : String?=null
+    private var engine: RtcEngine? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,6 +113,14 @@ class BothTeamMateFound : Fragment() {
 
         currentUserId = Mentor.getInstance().getUserId()
         getRoomData()
+        moveFragment()
+
+        try {
+            engine = P2pRtc().initEngine(requireActivity())
+        }catch (ex:Exception){
+            Timber.d(ex)
+        }
+        onBackPress()
     }
 
     companion object {
@@ -128,7 +149,7 @@ class BothTeamMateFound : Fragment() {
         }
     }
     private fun getRoomData() {
-        bothTeamViewModel?.getRoomUserData(RandomRoomData("a00465fe-5306-4c8a-b9c7-62c6e5609a1c",currentUserId?:""))
+        bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId?:"",currentUserId?:""))
         activity?.let {
                bothTeamViewModel?.roomUserData?.observe(it, Observer {
                    initializeUsersTeamsData(it.teamData)
@@ -206,5 +227,75 @@ class BothTeamMateFound : Fragment() {
             ImageAdapter.imageUrl(binding.userImage2,imageUrl4)
             binding.userName2.text = team1User2Name
         }
+    }
+    private fun moveFragment(){
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            val startTime :String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+            val fm = activity?.supportFragmentManager
+            fm?.beginTransaction()
+                ?.replace(R.id.container,
+                    QuestionFragment.newInstance(roomId,startTime,"Favourite"),"SearchingOpponentTeam")
+                ?.commit()
+            fm?.popBackStack()
+        }, 3000)
+    }
+    private fun onBackPress() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showDialog()
+            }
+        })
+    }
+    private fun showDialog() {
+        val dialog = Dialog(requireActivity())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_dialog)
+
+        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
+        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
+        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
+
+        //yaha hame phele check karna hai room id bani ya nahi agar ban chuki hai tu hame clear radius karna hai jsi
+        // jis se room data or firebase vo user delete ho jaye
+        //agar room nahi bana hai tu sirf user ko dlete karna hai
+        yesBtn.setOnClickListener {
+                bothTeamViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
+                activity?.let {
+                    bothTeamViewModel?.deleteData?.observe(it, Observer {
+                        showToast(it.message)
+                        dialog.dismiss()
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        openChoiceScreen()
+                        engine?.leaveChannel()
+                        //callback.onPartnerLeave()
+                    })
+                }
+        }
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+    private fun openChoiceScreen(){
+        val fm = activity?.supportFragmentManager
+        fm?.beginTransaction()
+            ?.replace(R.id.container,
+                ChoiceFragnment.newInstance(),"BothTeamMate")
+            ?.remove(this)
+            ?.commit()
+        fm?.popBackStack()
+    }
+
+    override fun onPartnerLeave() {
+        super.onPartnerLeave()
+        showToast("Partner Leave The Channel")
     }
 }

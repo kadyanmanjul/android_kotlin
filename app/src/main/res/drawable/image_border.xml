@@ -9,7 +9,7 @@
     </stroke>
 
     <corners
-        android:radius="35dp"   >
+        android:radius="35dp">
     </corners>
 
 </shape>

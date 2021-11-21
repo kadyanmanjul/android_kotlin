@@ -43,7 +43,6 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     var searchOpponentTeamViewModel:SearchOpponentTeamViewModel?=null
     var userDetails : UserDetails?=null
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
-    private var timer: CountDownTimer? = null
     var roomId:String?=null
     private var teamId1:String?=null
     private var teamId2:String?=null
@@ -79,6 +78,8 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     private var opponentTeamId: String? = null
 
     private var engine: RtcEngine? = null
+    private var timer: CountDownTimer? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,6 +120,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
 
         setCurrentUserData()
         setTeamMateData(userDetails)
+        startTimer()
         activity?.let {
             searchOpponentTeamViewModel?.roomData?.observe(it, Observer {
                showToast(it.message)
@@ -168,6 +170,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         searchOpponentTeamViewModel = factory?.let {
             ViewModelProvider(this, it).get(SearchOpponentTeamViewModel::class.java)
         }
+        showToast("Add To Room")
         searchOpponentTeamViewModel?.addToRoomData(ChannelName(channelName))
     }
     override fun onStart() {
@@ -191,10 +194,12 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         roomId = currentUserRoomID
         Log.d("response_room", "onGetRoomId: "+currentUserRoomID)
             if (currentUserRoomID!=null){
+                //timer?.cancel()
                 searchOpponentTeamViewModel?.getRoomUserData(RandomRoomData(currentUserRoomID,mentorId))
                 activity?.let {
                     searchOpponentTeamViewModel?.roomUserData?.observe(it, Observer {
                         initializeUsersTeamsData(it.teamData)
+                        timer?.onFinish()
                     })
                 }
         }
@@ -281,14 +286,17 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     override fun onShowAnim(mentorId: String,isCorrect: String,c:String,m:String) {
     }
     private fun moveFragment(){
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
             val startTime :String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
             val fm = activity?.supportFragmentManager
-                fm?.beginTransaction()
+            fm?.beginTransaction()
                 ?.replace(R.id.container,
-                BothTeamMateFound.newInstance(startTime,roomId!!,userDetails,channelName!!),"BothTeamMateFound")
-                ?.addToBackStack(null)
+                    BothTeamMateFound.newInstance(startTime,roomId?:"",userDetails,channelName?:""),"BothTeamMateFound")
                 ?.commit()
-        }
+            fm?.popBackStack()
+        },3000)
+    }
     private fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -310,7 +318,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
 
         //yaha hame phele check karna hai room id bani ya nahi agar ban chuki hai tu hame clear radius karna hai jsi
         // jis se room data or firebase vo user delete ho jaye
-        //agar room nahi bana hai tu sirf user ko dlete karna hai
+        //agar room nahi bana hai tu sirf user ko delete karna hai
         yesBtn.setOnClickListener {
             if (roomId!=null){
                 Log.d("room_id_data", "showDialog: "+roomId +" "+currentUserId)
@@ -320,9 +328,11 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                         showToast(it.message)
                         dialog.dismiss()
                         AudioManagerQuiz.audioRecording.stopPlaying()
+                        engine?.leaveChannel()
+                        timer?.cancel()
+                        timer?.onFinish()
                         openChoiceScreen()
-                        //engine?.leaveChannel()
-                        callback.onPartnerLeave()
+                        //callback.onPartnerLeave()
                     })
                 }
             }else{
@@ -332,9 +342,11 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                         showToast(it.message)
                         dialog.dismiss()
                         AudioManagerQuiz.audioRecording.stopPlaying()
+                        engine?.leaveChannel()
+                        timer?.cancel()
+                        timer?.onFinish()
                         openChoiceScreen()
-                        //engine?.leaveChannel()
-                        callback.onPartnerLeave()
+                        //callback.onPartnerLeave()
                     })
                 }
             }
@@ -351,12 +363,12 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     }
     private fun openChoiceScreen(){
         val fm = activity?.supportFragmentManager
-        fm?.popBackStackImmediate()
         fm?.beginTransaction()
             ?.replace(R.id.container,
                 ChoiceFragnment.newInstance(),"TeamMate")
             ?.remove(this)
             ?.commit()
+        fm?.popBackStack()
     }
     private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
         override fun onChannelJoin() {
@@ -387,6 +399,34 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             showToast("Your Partner Left")
         }
     }
+    private fun startTimer() {
+        timer = object : CountDownTimer(45000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                //var seconds = (millisUntilFinished / 1000).toInt()
+                //seconds %= 60
+                //binding.count.text = String.format("%2d", seconds)
+            }
 
-
+            override fun onFinish() {
+                if (roomId!=null){
+                    moveFragment()
+                }else {
+                    showToast("No Opponent Team Found Please Retry")
+                    deleteTeamData()
+                }
+            }
+        }.start()
+    }
+    private fun deleteTeamData(){
+        searchOpponentTeamViewModel?.deleteUserAndTeamData(TeamDataDelete(currentUserTeamId?:"",currentUserId?:""))
+        activity?.let {
+            searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
+                showToast(it.message)
+                AudioManagerQuiz.audioRecording.stopPlaying()
+                engine?.leaveChannel()
+                openChoiceScreen()
+                //callback.onPartnerLeave()
+            })
+        }
+    }
 }

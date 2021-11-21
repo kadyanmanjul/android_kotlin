@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.QuestionRepo
@@ -26,7 +27,9 @@ import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import io.agora.rtc.RtcEngine
 
 
 class WinScreenFragment : Fragment() {
@@ -69,6 +72,8 @@ class WinScreenFragment : Fragment() {
     private var currentUserTeamId: String? = null
     private var opponentTeamId: String? = null
     private var callTimeCount:String?=null
+    private var fromType:String?=null
+    private var engine: RtcEngine? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +83,7 @@ class WinScreenFragment : Fragment() {
            roomId = it.getString("room_id")
            teamId = it.getString("team_id")
            callTimeCount =it.getString("callTime")
+           fromType=it.getString("fromType")
         }
 
         setRoomUsersData()
@@ -105,6 +111,7 @@ class WinScreenFragment : Fragment() {
         currentUserId = Mentor.getInstance().getUserId()
 
         showRoomUserData()
+        engine = P2pRtc().initEngine(requireActivity())
 
         binding.currentUserMarks.text = marks
         binding.opponentTeamMarks.text = opponentTeamMarks
@@ -113,32 +120,46 @@ class WinScreenFragment : Fragment() {
 
         //ek condition else if ayega jab match tie hoga mtlb dono ke marks same hoge
 
-        if (marks?.toInt()?:0 > opponentTeamMarks?.toInt()?:0){
-            winnerTeamStatus = true
-            binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(5)).toString()
-            binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
-            binding.winningPointCurrent.text = "5"
-            binding.winningPointOpponent.text = "0"
-            binding.txtOpponentWin.text = "You Won!"
-            //yaha congulation wala or won ka icon lagana hai
-        }else if(marks?.toInt()?:0 == opponentTeamMarks?.toInt()?:0){
-            binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
-            binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
-            binding.winningPointCurrent.text = "0"
-            binding.winningPointOpponent.text = "0"
-        }
-        else{
-            winnerTeamStatus = false
-            binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
-            binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(5)).toString()
-            binding.winningPointCurrent.text = "0"
-            binding.winningPointOpponent.text = "5"
-            binding.txtWinner.text = "Winner"
-            binding.txtOpponentWin.text = "Opponent Won!"
-            //yaha opponent won wala or won ka icon lagana hai
+        when {
+            marks?.toInt()?:0 > opponentTeamMarks?.toInt()?:0 -> {
+                winnerTeamStatus = true
+                binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(5)).toString()
+                binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
+                binding.winningPointCurrent.text = "5"
+                binding.winningPointOpponent.text = "0"
+                binding.txtOpponentWin.visibility = View.VISIBLE
+                binding.txtOpponentWin.text = "You Won!"
+                binding.conglutions.visibility = View.VISIBLE
+                binding.winImg11.visibility = View.VISIBLE
+                binding.conglutions.setImageResource(R.drawable.ic_congratulations)
+                //yaha congulation wala or won ka icon lagana hai
+            }
+            marks?.toInt()?:0 == opponentTeamMarks?.toInt()?:0 -> {
+                binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
+                binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
+                binding.winningPointCurrent.text = "0"
+                binding.winningPointOpponent.text = "0"
+                binding.conglutions.visibility = View.VISIBLE
+                binding.conglutions.setImageResource(R.drawable.ic_matcg_draw)
+            }
+            else -> {
+                winnerTeamStatus = false
+                binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
+                binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(5)).toString()
+                binding.winningPointCurrent.text = "0"
+                binding.winningPointOpponent.text = "5"
+                binding.txtWinner.text = "Winner"
+                binding.txtOpponentWin.visibility = View.VISIBLE
+                binding.txtOpponentWin.text = "Opponent Won!"
+                binding.conglutions.visibility = View.VISIBLE
+                binding.conglutions.setImageResource(R.drawable.ic_opponentwon)
+                binding.winImg.visibility = View.VISIBLE
+                binding.txtWinner.visibility = View.VISIBLE
+                binding.conglutions.visibility = View.VISIBLE
+                //yaha opponent won wala or won ka icon lagana hai
+            }
         }
 
-        //winnerTeamStatus = marks?.toInt()?:0 > opponentTeamMarks?.toInt()?:0
         val time:Int? = callTimeCount?.toInt()?.div(1000)
         setUpViewModel(SaveRoomDetails(roomId,teamId,marks,winnerTeamStatus, time?.toString()))
 
@@ -149,15 +170,7 @@ class WinScreenFragment : Fragment() {
         }
 
         binding.btnMakeNewTeam.setOnClickListener {
-            //or yaha usko purane channel se bhi leave karana hai
-            //or raduis se sara data delete karna hai
-            saveRoomDataViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
-            activity?.let {
-                saveRoomDataViewModel?.clearRadius?.observe(it, {
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openFavouritePartnerScreen()
-                })
-            }
+            makeNewTeam()
         }
 
         binding.btnPlayAgain.setOnClickListener {
@@ -167,7 +180,7 @@ class WinScreenFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(marks: String,opponentTeamMarks:String, roomId: String?,teamId:String?,callTime:String?) =
+        fun newInstance(marks: String,opponentTeamMarks:String, roomId: String?,teamId:String?,callTime:String?,fromType:String) =
             WinScreenFragment().apply {
                 arguments = Bundle().apply {
                     putString("team_score", marks)
@@ -175,14 +188,13 @@ class WinScreenFragment : Fragment() {
                     putString("room_id", roomId)
                     putString("team_id", teamId)
                     putString("callTime",callTime)
+                    putString("fromType",fromType)
                 }
             }
     }
-
     fun setUpViewModel(saveRoomDetails: SaveRoomDetails){
         saveRoomDataViewModel?.saveRoomDetails(saveRoomDetails)
     }
-
     fun setRoomUsersData(){
         saveRoomRepo = SaveRoomRepo()
         factory = SaveRoomDataViewProviderFactory(requireActivity().application, saveRoomRepo!!)
@@ -192,7 +204,6 @@ class WinScreenFragment : Fragment() {
             currentUserId ?: ""
         ))
     }
-
     fun showRoomUserData() {
         activity?.let {
             saveRoomDataViewModel?.roomUserDataTemp?.observe(it, Observer {
@@ -200,7 +211,6 @@ class WinScreenFragment : Fragment() {
             })
         }
     }
-
     fun initializeUsersTeamsData(teamsData: TeamsData) {
         team1Id = teamsData.team1Id
         team2Id = teamsData.team2Id
@@ -276,18 +286,15 @@ class WinScreenFragment : Fragment() {
             binding.team2User2Name.text = team1User2Name
         }
     }
-
     fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    //CustomDialogQuiz(activity!!).show()
                     showDialog()
                 }
             })
     }
-
     private fun showDialog() {
         val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -299,21 +306,8 @@ class WinScreenFragment : Fragment() {
         val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
         val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
 
-//        yesBtn.setOnClickListener {
-//            dialog.dismiss()
-//            AudioManagerQuiz.audioRecording.stopPlaying()
-//            openFavouritePartnerScreen()
-//        }
-
         yesBtn.setOnClickListener {
-            saveRoomDataViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
-            activity?.let {
-                saveRoomDataViewModel?.clearRadius?.observe(it, {
-                    dialog.dismiss()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openFavouritePartnerScreen()
-                })
-            }
+           deleteData(dialog)
         }
         noBtn.setOnClickListener {
             dialog.dismiss()
@@ -325,7 +319,6 @@ class WinScreenFragment : Fragment() {
 
         dialog.show()
     }
-
     fun openFavouritePartnerScreen() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
@@ -336,5 +329,75 @@ class WinScreenFragment : Fragment() {
             ?.remove(this)
             ?.commit()
         fm?.popBackStack()
+    }
+    fun deleteData(dialog: Dialog){
+        if (fromType == "Random"){
+            saveRoomDataViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
+            activity?.let {
+                saveRoomDataViewModel?.clearRadius?.observe(it, {
+                    dialog.dismiss()
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    engine?.leaveChannel()
+                    openFavouritePartnerScreen()
+                })
+            }
+        }else{
+            saveRoomDataViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
+            activity?.let {
+                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
+                    dialog.dismiss()
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    engine?.leaveChannel()
+                    openFavouritePartnerScreen()
+                })
+            }
+        }
+    }
+    fun makeNewTeam(){
+        if (fromType == "Random"){
+            saveRoomDataViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
+            activity?.let {
+                saveRoomDataViewModel?.clearRadius?.observe(it, {
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    engine?.leaveChannel()
+                    openFavouritePartnerScreen()
+                })
+            }
+        }else{
+            saveRoomDataViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
+            activity?.let {
+                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    engine?.leaveChannel()
+                    openFavouritePartnerScreen()
+                })
+            }
+        }
+    }
+
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+        override fun onChannelJoin() {
+            super.onChannelJoin()
+        }
+
+        override fun onConnect(callId: String) {
+            super.onConnect(callId)
+        }
+
+        override fun onDisconnect(callId: String?, channelName: String?) {
+            super.onDisconnect(callId, channelName)
+        }
+
+        override fun onSpeakerOff() {
+            super.onSpeakerOff()
+        }
+
+        override fun onNetworkLost() {
+            super.onNetworkLost()
+        }
+
+        override fun onPartnerLeave() {
+            super.onPartnerLeave()
+        }
     }
 }

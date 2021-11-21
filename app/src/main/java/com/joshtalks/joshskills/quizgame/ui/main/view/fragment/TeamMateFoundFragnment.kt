@@ -34,7 +34,7 @@ import io.agora.rtc.RtcEngine
 import timber.log.Timber
 
 //Channel Name = team_id
-class TeamMateFoundFragnment : Fragment() {
+class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
     private lateinit var binding:FragmentTeamMateFoundFragnmentBinding
     private var userId:String?=null
     private var channelName:String?=null
@@ -79,7 +79,6 @@ class TeamMateFoundFragnment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         currentUserId = Mentor.getInstance().getUserId()
-        p2pRtc?.addListener(callback)
 
         setCurrentUserData()
         setUpData()
@@ -87,6 +86,7 @@ class TeamMateFoundFragnment : Fragment() {
 
         try {
             engine = P2pRtc().initEngine(requireActivity())
+            P2pRtc().addListener(callback)
         }catch (ex:Exception){
             Timber.d(ex)
         }
@@ -165,7 +165,9 @@ class TeamMateFoundFragnment : Fragment() {
             fm?.beginTransaction()
                 ?.replace(R.id.container,
                     SearchingOpponentTeamFragment.newInstance(startTime,userDetails,channelName),"SearchingOpponentTeam")
+                ?.remove(this)
                 ?.commit()
+            fm?.popBackStack()
         }, 4000)
     }
     private fun onBackPress() {
@@ -270,7 +272,9 @@ class TeamMateFoundFragnment : Fragment() {
         override fun onDisconnect(callId: String?, channelName: String?) {
             super.onDisconnect(callId, channelName)
             //engine?.leaveChannel()
-            showToast("Game Left")
+        //    showToast("Game Left")
+          //  binding.image2.setAlpha(127)
+
         }
 
         override fun onSpeakerOff() {
@@ -283,7 +287,9 @@ class TeamMateFoundFragnment : Fragment() {
 
         override fun onPartnerLeave() {
             super.onPartnerLeave()
-            showToast("Your Partner Left")
+          //  showToast("Your Partner Left........")
+//            binding.image2.setAlpha(127)
+//            binding.image2.setImageResource(R.drawable.josh_skill_logo)
         }
     }
 }

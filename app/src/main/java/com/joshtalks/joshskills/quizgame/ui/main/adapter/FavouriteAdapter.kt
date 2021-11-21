@@ -16,7 +16,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
@@ -28,8 +27,6 @@ class FavouriteAdapter(
     private val openCourseListener: QuizBaseInterface
 ):
     RecyclerView.Adapter<FavouriteAdapter.FavViewHolder>(){
-
-    var quizBaseInterface:QuizBaseInterface?=null
 
     fun addItems(newList: ArrayList<Favourite>?) {
         if (newList!!.isEmpty()) {
@@ -69,6 +66,8 @@ class FavouriteAdapter(
                 "active" -> {
                     binding.clickToken.setImageResource(R.drawable.plus)
                     binding.clickToken.setOnClickListener(View.OnClickListener {
+//                        binding.clickToken.setImageResource(R.drawable.ic_grass_timer)
+//                        binding.clickToken.isEnabled = false
                         openCourseListener.onClickForGetToken(arrayList?.get(position))
                     })
                 }
@@ -116,6 +115,10 @@ class FavouriteAdapter(
                 )
                 .into(imageView)
         }
+    }
+    fun setGrassImage(){
+       // binding?.clickToken?.isEnabled = true
+     //   binding?.clickToken?.setImageResource(R.drawable.plus)
     }
     interface QuizBaseInterface {
         fun onClickForGetToken(favourite: Favourite?)

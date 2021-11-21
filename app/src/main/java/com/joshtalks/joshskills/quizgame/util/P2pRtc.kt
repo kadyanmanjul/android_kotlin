@@ -20,31 +20,25 @@ class P2pRtc {
     }
     private var eventListener: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
             override fun onError(err: Int) {
-                //showToast("Error")
             }
 
             override fun onLeaveChannel(stats: RtcStats) {
                 super.onLeaveChannel(stats)
-                showToast("Leave Channel")
                 callCallback?.get()?.onDisconnect("","")
             }
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
-               // showToast("Success fully Join"+uid)
             }
 
             override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
                 super.onRemoteAudioStateChanged(uid, state, reason, elapsed)
-                //showToast("Remote Audio State Change")
             }
 
             override fun onUserJoined(uid: Int, elapsed: Int) {
                 super.onUserJoined(uid, elapsed)
-                //showToast("User Joined")
             }
 
             override fun onUserOffline(uid: Int, reason: Int) {
                 super.onUserOffline(uid, reason)
-                showToast("User Offline"+uid +" "+reason)
                 callCallback?.get()?.onPartnerLeave()
             }
 

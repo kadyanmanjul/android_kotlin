@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.Manifest
+import android.app.Dialog
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -20,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.card.MaterialCardView
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
@@ -28,11 +33,13 @@ import com.joshtalks.joshskills.databinding.FragmentFavouritePracticeBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.AgoraToTokenResponse
 import com.joshtalks.joshskills.quizgame.ui.data.model.ChannelData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
+import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.FavouriteRepo
 import com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FavouriteViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ViewModelProviderFactory
+import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
@@ -46,7 +53,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,FirebaseDatabase.OnNotificationTrigger {
+class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,FirebaseDatabase.OnNotificationTrigger,
+    P2pRtc.WebRtcEngineCallback {
 
     private lateinit var binding:FragmentFavouritePracticeBinding
     private var favouriteAdapter: FavouriteAdapter? = null
@@ -102,17 +110,11 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
 
         activityInstance = activity
 
-        Log.d("user_id", "onViewCreated: "+Mentor.getInstance().getUserId())
-
         // It's is use for initialize rtc engine
-//        try {
-//            engine = RtcEngine.create(activity, agora_app_id, iRtcEngineEventHandler)
-//        }catch (ex:Exception){
-//          Timber.d(ex)
-//        }
 
         try {
             engine = P2pRtc().initEngine(requireActivity())
+            P2pRtc().addListener(this)
         }catch (ex:Exception){
             Timber.d(ex)
         }
@@ -150,8 +152,10 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
         else{
             Log.d("crash_error", "onViewCreated: ")
         }
-    }
+        binding.progress.animateProgress()
 
+        onBackPress()
+    }
     companion object {
         @JvmStatic
         fun newInstance() =
@@ -182,15 +186,13 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
         fromTokenId = channelData?.token
         fromUserId = channelData?.userUid
     }
-     fun onBack(){
+    fun onBack(){
 
     }
-
     override fun onClickForGetToken(favourite: Favourite?) {
         favouriteUserId = favourite?.uuid
         favouriteUserId.let { firebaseDatabase.createRequest(favouriteUserId,channelName,mentorId!!) }
     }
-
     fun initializeAgoraCall(channelName:String){
         // Check permission
         if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
@@ -215,7 +217,6 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
         }
         return true
     }
-
     private fun joinChannel(channelId: String) {
         engine?.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
@@ -235,49 +236,12 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
         if (res != 0) { return }
     }
 
-//    private val iRtcEngineEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
-//         override fun onError(err: Int) {
-//            //showToast("Error")
-//        }
-//
-//        override fun onLeaveChannel(stats: RtcStats) {
-//            super.onLeaveChannel(stats)
-//           // showToast("Leave Channel")
-//        }
-//        override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
-//            myUid = uid
-//            joined = true
-//           // showToast("Success fully Join"+uid)
-//        }
-//
-//       override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
-//            super.onRemoteAudioStateChanged(uid, state, reason, elapsed)
-//            //showToast("Remote Audio State Change")
-//        }
-//
-//        override fun onUserJoined(uid: Int, elapsed: Int) {
-//            super.onUserJoined(uid, elapsed)
-//           // showToast("User Joined")
-//            //Here pass data of the current user
-//           // moveFragment(favouriteUserId)
-//        }
-//
-//        override fun onUserOffline(uid: Int, reason: Int) {
-//           // showToast("User Offline")
-//        }
-//
-//        override fun onActiveSpeaker(uid: Int) {
-//            super.onActiveSpeaker(uid)
-//           // showToast("Active Speaker")
-//        }
-//    }
-
     override fun onNotificationForInvitePartner(channelName: String, fromUserId: String, fromUserName: String, fromUserImageUrl:String) {
          var i=0
         try {
             binding.notificationCard.visibility = View.VISIBLE
             binding.progress.animateProgress()
-            binding.userName.text =fromUserName
+            binding.userName.text = fromUserName
             val imageUrl=fromUserImageUrl.replace("\n","")
 
             activity?.let {
@@ -293,21 +257,11 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
          binding.buttonAccept.setOnClickListener(View.OnClickListener {
              i=1
              binding.notificationCard.visibility = View.INVISIBLE
-
-             // initializeAgoraCall(channelName)
-             // accept request me ham jis se hame request send ki hai uski id ke base par ham ek entry create
-             //karege firestore me or is_accept = true/false rakhage
-             //fromUserId = jis se hame request send ki hai
-
-             //jab move karege tu team id bhi sath leke jana hai
-             //channel name = team id yaha  response?.channelName = team id ye sath leke
-             //jana hai kyoki room ka data lane ke liye use ayegi
-
-             // user id me opponent ka id ayegi mtlb favourite partner ki id ayegi
              favouriteViewModel?.getChannelData(mentorId,channelName)
              activity?.let {
                  favouriteViewModel?.agoraToToken?.observe(it, Observer {
                      if (it?.message.equals("Team created successfully")){
+                         firebaseDatabase.deleteRequested(mentorId?:"")
                          firebaseDatabase.acceptRequest(fromUserId,"true",fromUserName,channelName,mentorId!!)
                          initializeAgoraCall(channelName)
                          moveFragment(fromUserId,channelName)
@@ -316,15 +270,11 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
                      }
                  })
              }
-
-             binding.alreadyNotification.setOnClickListener(View.OnClickListener {
-                 binding.notificationCardAlready.visibility = View.INVISIBLE
-             })
          })
 
-
-        //yaha abhi testin ke liye hamea yahi 5186d216-3a30-46e4-8fcb-126021fb14d5 id rahegi kyoki
-        //create reqest me 86 wali hai
+        binding.alreadyNotification.setOnClickListener(View.OnClickListener {
+            binding.notificationCardAlready.visibility = View.INVISIBLE
+        })
         binding.butonDecline.setOnClickListener(View.OnClickListener {
             binding.notificationCard.visibility = View.INVISIBLE
             mentorId?.let { it1 -> firebaseDatabase.deleteUserData(it1,fromUserId) }
@@ -335,58 +285,24 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
         // request will no delete
         if (i!=1){
             lifecycleScope.launch {
-                delay(15000L)
+                delay(10000L)
                 binding.notificationCard.visibility = View.INVISIBLE
-                mentorId?.let { it1 -> firebaseDatabase.deleteUserData(it1,fromUserId) }
+               mentorId?.let { it1 -> firebaseDatabase.deleteUserData(it1,fromUserId) }
             }
         }
 
     }
-
-    fun moveFragment(userId:String?,channelName: String?){
-            val fm = activity?.supportFragmentManager
-            fm?.beginTransaction()
-                ?.replace(R.id.container,
-                    TeamMateFoundFragnment.newInstance(userId?:"",channelName?:""),"TeamMateFoundFragnment")
-                ?.addToBackStack(null)
-                ?.commit()
-    }
-
-    // jab redmi y1 se login karege tu hame  5186d216-3a30-46e4-8fcb-126021fb14d5
-    // ye wala mentor id pas karna hai
-    //ye is current user ki mentor id hogi
     fun deleteData(){
        firebaseDatabase.getDeclineCall(mentorId?:"")
     }
-
     fun getAcceptCall(){
         firebaseDatabase.getAcceptCall(mentorId?:"")
     }
 
-//    fun getDeclineCall(mentorId:String){
-//        requestDecline
-//            .addSnapshotListener { value, e ->
-//                if (e != null) {
-//                    // return@addSnapshotListener
-//                }
-//                for (doc in value!!) {
-//                    if (doc.exists()) {
-//                        if (mentorId == doc.id){
-//                            var declinedUserName = doc.data["declineUserName"].toString()
-//                            var declinedUserImage = doc.data["declineUserImage"].toString()
-//                            onNotificationForPartnerNotAccept(declinedUserName,declinedUserImage,mentorId)
-//                        }
-//                    }
-//                }
-//            }
-//    }
-
-
     override fun onNotificationForPartnerNotAccept(userName: String?, userImageUrl:String, fromUserId:String) {
-        // jab redmi y1 se login karege tu hame  5186d216-3a30-46e4-8fcb-126021fb14d5
-        // ye wala mentor id pas karna hai
         if (fromUserId == mentorId){
             try {
+               // favouriteAdapter?.setGrassImage()
                 val image=userImageUrl.replace("\n","")
                 binding.notificationCardNotPlay.visibility = View.VISIBLE
                 binding.userNameForNotPlay.text = userName
@@ -405,6 +321,12 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
             firebaseDatabase.deleteDeclineData(mentorId?:"")
             binding.notificationCardNotPlay.visibility = View.INVISIBLE
         })
+
+        lifecycleScope.launch {
+            delay(10000)
+            firebaseDatabase.deleteDeclineData(mentorId?:"")
+            binding.notificationCardNotPlay.visibility = View.INVISIBLE
+        }
     }
 
     override fun onNotificationForPartnerAccept(
@@ -415,20 +337,19 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
         mentorIdIdAcceptedUser:String
     ) {
         if(isAccept=="true"){
+            firebaseDatabase.deleteDataAcceptRequest(opponentMemberId)
+            firebaseDatabase.deleteRequested(mentorIdIdAcceptedUser)
             channelName?.let { initializeAgoraCall(it) }
             moveFragment(mentorIdIdAcceptedUser,channelName)
-            firebaseDatabase.deleteDataAcceptRequest(opponentMemberId)
         }
     }
 
     override fun onGetRoomId(currentUserRoomID: String?,mentorIdIdAcceptedUser: String) {
 
     }
-
     override fun onShowAnim(mentorId:String,isCorrect: String,c:String,m:String) {
 
     }
-
     private fun getFavouritePracticePartner() {
         activity?.let {
             try {
@@ -461,14 +382,69 @@ class FavouritePartnerFragment : Fragment(),FavouriteAdapter.QuizBaseInterface,F
             }
         }
     }
-    private fun addToTeam(){
-        var response : AgoraToTokenResponse?=null
-        //favouriteViewModel?.getChannelData("717de699-1cf4-4e48-893a-05b5f0310ec7","d9928420-00e0-4cb2-ae70-ea93f1e411a9")
-        activity?.let {
-            favouriteViewModel?.agoraToToken?.observe(it, Observer {
-                Log.d("addtoteam", "addToTeam: "+it)
-                response = it
-            })
+    fun moveFragment(userId:String?,channelName: String?){
+        val fm = activity?.supportFragmentManager
+        fm?.beginTransaction()
+            ?.replace(R.id.container,
+                TeamMateFoundFragnment.newInstance(userId?:"",channelName?:""),"TeamMateFoundFragnment")
+            ?.remove(this)
+            ?.commit()
+    }
+    override fun onPartnerLeave() {
+        super.onPartnerLeave()
+       // showToast("Partner Leave The Channel")
+    }
+    private fun onBackPress() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showDialog()
+            }
+        })
+    }
+    private fun showDialog() {
+        val dialog = Dialog(requireActivity())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_dialog)
+
+        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
+        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
+        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
+
+        yesBtn.setOnClickListener {
+            favouriteViewModel?.statusChange(mentorId,"In active")
+
+            activity?.let {
+                try {
+                    favouriteViewModel?.statusResponse?.observe(it, Observer {
+                        dialog.dismiss()
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        openChoiceScreen()
+                        engine?.leaveChannel()
+                    })
+                }catch (ex:Exception){
+                    Timber.d(ex)
+                }
+            }
         }
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+    private fun openChoiceScreen(){
+        val fm = activity?.supportFragmentManager
+        fm?.popBackStackImmediate()
+        fm?.beginTransaction()
+            ?.replace(R.id.container,
+                ChoiceFragnment.newInstance(),"Favourite")
+            ?.remove(this)
+            ?.commit()
     }
 }

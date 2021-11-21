@@ -50,7 +50,12 @@ class CircularProgressView(
     private fun setSpace() {
         val horizontalCenter = (width.div(2)).toFloat()
         val verticalCenter = (height.div(2)).toFloat()
-        val ovalSize = 200
+        var ovalSize =0
+        ovalSize = if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.Q){
+            70
+        }else{
+            50
+        }
         ovalSpace.set(
             horizontalCenter - ovalSize,
             verticalCenter - ovalSize,
