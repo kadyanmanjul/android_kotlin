@@ -379,7 +379,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen(
         favoriteUserCall: Boolean = false,
-        isNewUserCall: Boolean = false,
+        isNewUserCall: Boolean = false
     ) {
         viewModel.speakingTopicLiveData.value?.run {
             if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {

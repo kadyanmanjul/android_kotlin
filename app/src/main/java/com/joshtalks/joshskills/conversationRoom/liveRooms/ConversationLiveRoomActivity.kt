@@ -90,7 +90,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var isExitApiFired: Boolean = false
     private var isPubNubUsersFetched: Boolean = false
     private val vm by lazy { ViewModelProvider(this).get(ConversationRoomViewModel::class.java) }
-    private var currentUser: LiveRoomUser? = null
     val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,7 +141,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         })
 
         vm.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
-            Log.d("ABC", "Data class called with data message: ${it.what} bundle : ${it.data}")
+            Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 HIDE_PROGRESSBAR -> {
                     hideProgressBar()

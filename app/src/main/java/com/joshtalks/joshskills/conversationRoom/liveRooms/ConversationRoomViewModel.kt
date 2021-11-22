@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.DEFAULT_NAME
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationRoomPubNubEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -430,7 +429,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     fun removeUser(msg: JsonObject) {
         val data: JsonObject? = msg["data"].asJsonObject
         data?.let {
-            Log.d(TAG, "removeUser() called ${data.get("id")}")
+            Log.d("ABC2", "removeUser() called ${data.get("id")}")
             val matType = object : TypeToken<LiveRoomUser>() {}.type
             if (data == null) {
                 return

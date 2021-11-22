@@ -168,7 +168,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                 val response =
                     AppObjectController.conversationRoomsNetworkService.getRoomList()
                 if (response.isSuccessful && response.body()!=null){
-                    Log.d("ABC", "getListRooms() called")
+                    Log.d("ABCF", "getListRooms() called")
                     roomListLiveData.postValue(response.body())
                 }
 

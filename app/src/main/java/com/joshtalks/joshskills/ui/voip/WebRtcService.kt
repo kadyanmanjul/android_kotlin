@@ -1,10 +1,7 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.bluetooth.BluetoothAdapter
@@ -15,13 +12,7 @@ import android.graphics.Bitmap
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.os.Binder
-import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.IBinder
-import android.os.Message
-import android.os.SystemClock
+import android.os.*
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.text.Spannable
@@ -43,13 +34,8 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
-import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
-import com.joshtalks.joshskills.core.printAll
-import com.joshtalks.joshskills.core.startServiceForWebrtc
-import com.joshtalks.joshskills.core.textDrawableBitmap
-import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
@@ -70,29 +56,13 @@ import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.util.DateUtils
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
-import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
-import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
-import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
-import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
-import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
-import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
-import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
+import io.agora.rtc.Constants.*
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
-import java.util.LinkedList
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
@@ -677,8 +647,8 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
                 super.onJoinChannelSuccess(channel, uid, elapsed)
-                Log.d("ABC", "joinChannelSuccess $uid")
-                Log.d("ABC", "moderatorUid in onJoinChannelSuccess: $moderatorUid")
+                Log.d("ABC2", "joinChannelSuccess $uid")
+                Log.d("ABC2", "moderatorUid in onJoinChannelSuccess: $moderatorUid")
 
             }
 
@@ -688,7 +658,7 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
                 super.onRejoinChannelSuccess(channel, uid, elapsed)
-                Log.d("ABC", "RejoinChannelSuccess $uid")
+                Log.d("ABC2", "RejoinChannelSuccess $uid")
 
             }
 
@@ -702,12 +672,12 @@ class WebRtcService : BaseWebRtcService() {
                 if (isRoomCreatedByUser) {
                     if (isUserLeave) {
                         usersReference.document(uid.toString()).delete()
-                        Log.d("ABC", "isRoomCreatedByUser ${isRoomCreatedByUser} service OnUserOffline remove user by moderator $moderatorUid")
+                        Log.d("ABC2", "isRoomCreatedByUser ${isRoomCreatedByUser} service OnUserOffline remove user by moderator $moderatorUid")
                     }
                 } else {
                     if (uid == moderatorUid && isUserLeave) {
                         usersReference.get().addOnSuccessListener { documents ->
-                            Log.d("ABC", "isRoomCreatedByUser ${isRoomCreatedByUser}  service OnUserOffline for moderator call $moderatorUid $reason")
+                            Log.d("ABC2", "isRoomCreatedByUser ${isRoomCreatedByUser}  service OnUserOffline for moderator call $moderatorUid $reason")
                             if (documents.size() > 1) {
                                 if (documents.documents[0].id.toInt() == agoraUid) {
                                     endRoom(roomId, roomQuestionId)
@@ -771,7 +741,7 @@ class WebRtcService : BaseWebRtcService() {
 
     fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
         Log.d(
-            "ABC",
+            "ABC2",
             "endRoom() service called with: roomId = $roomId, conversationQuestionId = $conversationQuestionId"
         )
         CoroutineScope(Dispatchers.IO).launch {
@@ -793,7 +763,7 @@ class WebRtcService : BaseWebRtcService() {
                         AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
                             request
                         )
-                    Log.d("ABC", "end room api call ${response.code()}")
+                    Log.d("ABC2", "end room api call ${response.code()}")
                     if (response.isSuccessful) {
                         isRoomEnded = false
                         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
@@ -830,7 +800,7 @@ class WebRtcService : BaseWebRtcService() {
                             AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                                 request
                             )
-                        Log.d("ABC", "leave room api call")
+                        Log.d("ABC2", "leave room api call")
                         if (response.isSuccessful) {
                             isRoomEnded = false
                             PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
@@ -950,7 +920,7 @@ class WebRtcService : BaseWebRtcService() {
                     if (isConversionRoomActive) {
                         if (isRoomCreatedByUser) {
                             Log.d(
-                                "ABC",
+                                "ABC2",
                                 "CALL_STATE_OFFHOOK  called with: state = $state, phoneNumber = $phoneNumber"
                             )
                             endRoom(roomId, roomQuestionId)
@@ -1046,7 +1016,7 @@ class WebRtcService : BaseWebRtcService() {
                 e.printStackTrace()
             }
             Log.d(
-                "ABC",
+                "ABC2",
                 "initEngine called room id : $roomId isRoomCreatedByUser $isRoomCreatedByUser agoraUid:" +
                         " $agoraUid moderatorUid: $moderatorUid"
             )
@@ -1094,11 +1064,11 @@ class WebRtcService : BaseWebRtcService() {
                         setDefaultAudioRoutetoSpeakerphone(true)
                         if (isRoomCreatedByUser) {
                             setClientRole(CLIENT_ROLE_BROADCASTER)
-                            Log.d("ABC", "Broadcaster role set")
+                            Log.d("ABC2", "Broadcaster role set")
 
                         } else {
                             setClientRole(CLIENT_ROLE_AUDIENCE)
-                            Log.d("ABC", "Audience role set")
+                            Log.d("ABC2", "Audience role set")
                         }
                         val option = ChannelMediaOptions()
                         option.autoSubscribeAudio = true
@@ -1349,11 +1319,11 @@ class WebRtcService : BaseWebRtcService() {
                                         intent.getBooleanExtra("isModerator", false)
                                     if (isRoomCreatedByUser) {
                                         setClientRole(CLIENT_ROLE_BROADCASTER)
-                                        Log.d("ABC", "Broadcaster role set status code $statusCode")
+                                        Log.d("ABC2", "Broadcaster role set status code $statusCode")
 
                                     } else {
                                         setClientRole(CLIENT_ROLE_AUDIENCE)
-                                        Log.d("ABC", "Audience role set status code $statusCode")
+                                        Log.d("ABC2", "Audience role set status code $statusCode")
                                     }
 
                                 }
@@ -1885,13 +1855,13 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onDestroy() {
-        Log.d("ABC", "service onDestroy() called")
+        Log.d("ABC2", "service onDestroy() called")
         if (isRoomCreatedByUser) {
             endRoom(roomId, roomQuestionId)
         } else {
             leaveRoom(roomId, roomQuestionId)
         }
-        Log.d("ABC", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
+        Log.d("ABC2", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         RtcEngine.destroy()
         stopRing()
         userDetailMap = null
@@ -2309,7 +2279,7 @@ class WebRtcService : BaseWebRtcService() {
             roomQuestionId = roomQuestionId,
             topicName = channelTopic
         )
-        Log.d("ABC", "channelName: $conversationRoomChannelName")
+        Log.d("ABC2", "channelName: $conversationRoomChannelName")
 
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
 
@@ -2323,7 +2293,7 @@ class WebRtcService : BaseWebRtcService() {
                 )
             }
         Log.d(
-            "ABC",
+            "ABC2",
             "conversationRoomNotification: pending intent channel $conversationRoomChannelName"
         )
 
