@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 import com.bumptech.glide.util.Util
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.Utils
+import java.util.Date
 import kotlinx.android.parcel.Parcelize
 
 data class GroupListResponse(
@@ -31,7 +32,7 @@ data class GroupsItem(
 
 	val lastMessage : String? = null,
 
-	val lastMsgTime: String? = null,
+	val lastMsgTime: Long = 0,
 
 	val unreadCount: String? = null,
 
@@ -60,7 +61,7 @@ data class GroupsItem(
 
 	override fun hasJoined() = lastMessage != null
 
-	override fun getLastMessageTime() = lastMsgTime ?: ""
+	override fun getLastMessageTime() = Utils.getMessageTimeInHours(Date(lastMsgTime/10000))
 
 	override fun getUnreadMsgCount() = unreadCount ?: ""
 }

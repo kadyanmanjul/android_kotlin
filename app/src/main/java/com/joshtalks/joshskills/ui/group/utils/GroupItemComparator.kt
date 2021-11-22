@@ -9,7 +9,10 @@ object GroupItemComparator : DiffUtil.ItemCallback<GroupItemData>() {
     }
 
     override fun areContentsTheSame(oldItem: GroupItemData, newItem: GroupItemData): Boolean {
-        return oldItem.getTitle() == newItem.getTitle() //&& oldItem.getSubTitle() == newItem.getSubTitle()
+        return oldItem.getTitle() == newItem.getTitle() &&
+                oldItem.getSubTitle() == newItem.getSubTitle() &&
+                oldItem.getLastMessageTime() == newItem.getLastMessageTime() &&
+                oldItem.getImageUrl() == newItem.getImageUrl()
     }
 
 }

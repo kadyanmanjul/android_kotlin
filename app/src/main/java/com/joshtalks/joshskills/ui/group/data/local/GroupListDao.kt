@@ -13,8 +13,7 @@ interface GroupListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGroupItem(items: GroupsItem)
 
-    // TODO: Last Msg should be Long and use it for sorting
-    @Query("SELECT * FROM group_list_table")
+    @Query("SELECT * FROM group_list_table ORDER BY lastMsgTime DESC")
     fun getPagedGroupList() : PagingSource<Int, GroupsItem>
 
     @Query("SELECT groupId FROM group_list_table")

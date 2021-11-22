@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 41,
-    "identityHash": "b3a020fb82535e2ac12b06a26571b86d",
+    "identityHash": "241be69049a3809d070a51749926e8ef",
     "entities": [
       {
         "tableName": "course",
@@ -2698,7 +2698,7 @@
       },
       {
         "tableName": "group_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, PRIMARY KEY(`groupId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, PRIMARY KEY(`groupId`))",
         "fields": [
           {
             "fieldPath": "groupIcon",
@@ -2727,8 +2727,8 @@
           {
             "fieldPath": "lastMsgTime",
             "columnName": "lastMsgTime",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "unreadCount",
@@ -2768,7 +2768,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b3a020fb82535e2ac12b06a26571b86d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '241be69049a3809d070a51749926e8ef')"
     ]
   }
 }
