@@ -2,11 +2,9 @@ package com.joshtalks.joshskills.ui.group.lib
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.Event
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
 import com.pubnub.api.PubNub
@@ -16,7 +14,6 @@ import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
-import com.pubnub.api.models.consumer.objects_api.channel.PNGetAllChannelsMetadataResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult
@@ -24,8 +21,7 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
 import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
-import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
+import java.sql.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -105,25 +101,25 @@ class PubNubService private constructor(val groupName: String?): ChatService {
 
 
 
-    override fun getUnreadMessageCount(groupName: String): Long {
+    override fun getUnreadMessageCount(groupId: String, lastSeenTimestamp: Long): Long {
         val count = pubnub.messageCounts()
-            .channels(listOf(groupName))
-            .channelsTimetoken(listOf(pubnub.timestamp.toLong() * 1000))
+            .channels(listOf(groupId))
+            .channelsTimetoken(listOf(lastSeenTimestamp))
             .sync()
         Log.d(TAG, "getUnreadMessageCount: ${pubnub.timestamp.toLong()}")
-        return count?.channels?.get(groupName) ?: 0L
+        return count?.channels?.get(groupId) ?: 0L
     }
 
-    override fun getLastDetailsMessage(groupName: String): Pair<String, Long> {
+    override fun getLastMessageDetail(groupId: String): Pair<String, Long> {
         val msg = pubnub.fetchMessages()
-            .channels(listOf(groupName))
+            .channels(listOf(groupId))
             .includeMeta(true)
             .includeUUID(true)
             .end(pubnub.timestamp.toLong() * 1000)
             .maximumPerChannel(1)
             .sync()
         Log.d(TAG, "getLastDetailsMessage: ${pubnub.timestamp.toLong()}")
-        return "${msg?.channels?.get(groupName)?.get(0)?.meta?.asString}: ${msg?.channels?.get(groupName)?.get(0)?.message?.asString}" to (msg?.channels?.get(groupName)?.get(0)?.timetoken ?: 0L)
+        return "${msg?.channels?.get(groupId)?.get(0)?.meta?.asString}: ${msg?.channels?.get(groupId)?.get(0)?.message?.asString}" to (msg?.channels?.get(groupId)?.get(0)?.timetoken ?: 0L)
     }
 
     override fun sendMessage(msg: String) {

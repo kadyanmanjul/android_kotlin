@@ -2,12 +2,10 @@ package com.joshtalks.joshskills.ui.group.model
 
 import android.util.Log
 import com.google.gson.JsonObject
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.NetworkData
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
-import java.util.Date
 
 private const val TAG = "PubNub_NetworkData"
 data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
@@ -17,16 +15,17 @@ data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
         Log.d(TAG, "getData: $data")
         groupList.clear()
         for (group in data.data) {
-            val custom = group.channel.custom as JsonObject
-            val customMap = getCustomMap(custom)
-            val (lastMsg, lastMessageTime) = chatService.getLastDetailsMessage(group.channel.id)
-            Log.d(TAG, "getData: Custum -- $custom")
+            val channelCustom = group.channel.custom as JsonObject
+            val channelMembershipCustom = group.custom as JsonObject
+            val customMap = getCustomMap(channelCustom)
+            val (lastMsg, lastMessageTime) = chatService.getLastMessageDetail(group.channel.id)
+            Log.d(TAG, "getData: Custom -- $channelCustom")
             val response = GroupsItem(
                 groupId = group.channel.id,
                 name = group.channel.name,
                 lastMessage = lastMsg,
-                lastMsgTime = Utils.getMessageTimeInHours(Date(lastMessageTime/10000)),
-                unreadCount = chatService.getUnreadMessageCount(group.channel.id).toString(),
+                lastMsgTime = lastMessageTime,
+                unreadCount = chatService.getUnreadMessageCount(group.channel.id, channelMembershipCustom["time_token"].asLong).toString(),
                 groupIcon = customMap["image_url"],
                 createdAt = customMap["created_at"]?.toLongOrNull(),
                 createdBy = customMap["created_by"]

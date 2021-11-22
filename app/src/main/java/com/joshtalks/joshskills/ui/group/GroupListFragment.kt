@@ -44,7 +44,11 @@ class GroupListFragment : BaseFragment() {
             vm.getGroupData().distinctUntilChanged().collectLatest {
                 Log.d(TAG, "onCreate: $it")
                 withContext(Dispatchers.IO) {
-                    val groupList = it.map { data -> data as GroupItemData }
+                    val groupList = it.map { data ->
+                            Log.d(TAG, "onCreate: $data")
+                            data as GroupItemData
+                    }
+                    Log.d(TAG, "onCreate: $groupList")
                     withContext(Dispatchers.Main) {
                         vm.adapter.submitData(groupList)
                     }
