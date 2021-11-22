@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 41,
-    "identityHash": "800d6921f507c75119326580c23aaea8",
+    "identityHash": "b3a020fb82535e2ac12b06a26571b86d",
     "entities": [
       {
         "tableName": "course",
@@ -2698,13 +2698,25 @@
       },
       {
         "tableName": "group_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupId` TEXT NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT, PRIMARY KEY(`groupId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, PRIMARY KEY(`groupId`))",
         "fields": [
+          {
+            "fieldPath": "groupIcon",
+            "columnName": "groupIcon",
+            "affinity": "TEXT",
+            "notNull": false
+          },
           {
             "fieldPath": "groupId",
             "columnName": "groupId",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "lastMessage",
@@ -2723,6 +2735,24 @@
             "columnName": "unreadCount",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdBy",
+            "columnName": "createdBy",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "totalCalls",
+            "columnName": "totalCalls",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -2738,7 +2768,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '800d6921f507c75119326580c23aaea8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b3a020fb82535e2ac12b06a26571b86d')"
     ]
   }
 }

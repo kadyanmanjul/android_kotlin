@@ -1,26 +1,30 @@
 package com.joshtalks.joshskills.ui.group.model
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
 import com.bumptech.glide.util.Util
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.Utils
 import kotlinx.android.parcel.Parcelize
 
-@Parcelize
 data class GroupListResponse(
 
 	@field:SerializedName("groups")
 	val groups: List<GroupsItem?>? = null
-) : Parcelable
+)
 
-@Parcelize
+@Entity(tableName = "group_list_table")
 data class GroupsItem(
 
 	@field:SerializedName("group_icon")
 	val groupIcon: String? = null,
 
+	@PrimaryKey
 	@field:SerializedName("group_id")
-	val groupId: String? = null,
+	val groupId: String,
 
 	@field:SerializedName("created_at")
 	val createdAt: Long? = null,
@@ -40,7 +44,8 @@ data class GroupsItem(
 	@field:SerializedName("total_calls")
 	val totalCalls: String? = null
 
-) : Parcelable, GroupItemData {
+) : GroupItemData {
+
 	override fun getTitle() = name ?: ""
 
 	override fun getSubTitle() = lastMessage ?: "$totalCalls"//"$totalCalls practise partner calls in last 24 hours"

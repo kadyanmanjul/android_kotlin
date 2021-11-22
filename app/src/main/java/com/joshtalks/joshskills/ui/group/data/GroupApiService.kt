@@ -17,7 +17,7 @@ interface GroupApiService {
     @GET("$DIR/group/list_groups/")
     suspend fun getGroupList(@Query("page") pageNo : Int, @Query("mentor_id") mentorId : String): GroupListResponse
 
-    @GET("$DIR/group/search_groups/")
+    @GET("$DIR/group/search_groups_v2/")
     suspend fun searchGroup(@Query("page") pageNo : Int, @Query("key") searchQuery : String): GroupListResponse
 
     @POST("$DIR/group/add_member_group/")
