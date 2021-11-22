@@ -1,10 +1,7 @@
 package com.joshtalks.joshskills.ui.group.data
 
 import com.joshtalks.joshskills.repository.service.DIR
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupListResponse
-import com.joshtalks.joshskills.ui.group.model.GroupRequest
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.group.model.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

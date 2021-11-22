@@ -37,7 +37,9 @@ import com.joshtalks.joshskills.track.CourseUsageModel
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.data.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 
@@ -55,9 +57,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupsItem::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupsItem::class, TimeTokenRequest::class
     ],
-    version = 41,
+    version = 43,
     exportSchema = true
 )
 @TypeConverters(
@@ -144,7 +146,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_37_38,
                                 MIGRATION_38_39,
                                 MIGRATION_39_40,
-                                MIGRATION_41_42
+                                MIGRATION_41_42,
+                                MIGRATION_43_44
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -492,6 +495,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_43_44: Migration = object : Migration(43, 44) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT, `timeToken` INTEGER)")
+            }
+        }
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -532,6 +541,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun voipAnalyticsDao(): VoipAnalyticsDao
     abstract fun groupsAnalyticsDao(): GroupsAnalyticsDao
     abstract fun groupListDao(): GroupListDao
+    abstract fun timeTokenDao(): TimeTokenDao
 }
 
 class MessageTypeConverters {
