@@ -53,11 +53,15 @@ class JoshGroupViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun getGroupData() = repository.getGroupListResult().flow.cachedIn(viewModelScope)
+    fun getGroupData() = repository.getGroupListResult(::groupDateLoaded).flow.cachedIn(viewModelScope)
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
         singleLiveEvent.value = message
+    }
+
+    fun groupDateLoaded() {
+        showToast("Group Date Loaded")
     }
 
     fun showImageThumb(imagePath: String) {

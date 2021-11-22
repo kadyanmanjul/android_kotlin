@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.local
 
-// import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import android.content.Context
 import androidx.room.*
 import androidx.room.migration.Migration
@@ -35,8 +34,8 @@ import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
-import com.joshtalks.joshskills.ui.group.db.local.GroupListDao
-import com.joshtalks.joshskills.ui.group.db.local.GroupListEntity
+import com.joshtalks.joshskills.ui.group.data.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -53,7 +52,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class,GroupListEntity::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class,GroupListEntity::class ,  GroupsItem::class
     ],
     version = 43,
     exportSchema = true

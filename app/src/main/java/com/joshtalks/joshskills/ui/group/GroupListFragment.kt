@@ -12,6 +12,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withCreated
+import androidx.paging.map
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
@@ -20,10 +22,13 @@ import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.*
+import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
+import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.withContext
 
 private const val TAG = "GroupListFragment"
 
@@ -38,7 +43,12 @@ class GroupListFragment : BaseFragment() {
         lifecycleScope.launchWhenStarted {
             vm.getGroupData().distinctUntilChanged().collectLatest {
                 Log.d(TAG, "onCreate: $it")
-                vm.adapter.submitData(it)
+                withContext(Dispatchers.IO) {
+                    val groupList = it.map { data -> data as GroupItemData }
+                    withContext(Dispatchers.Main) {
+                        vm.adapter.submitData(groupList)
+                    }
+                }
             }
         }
     }

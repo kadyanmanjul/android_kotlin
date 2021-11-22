@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.map
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
@@ -21,8 +22,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 import com.google.android.material.bottomsheet.BottomSheetDialog
-
-
+import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class GroupBottomSheet : BottomSheetDialogFragment() {
@@ -36,7 +38,12 @@ class GroupBottomSheet : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenStarted {
             vm.getGroupData().distinctUntilChanged().collectLatest {
-                vm.adapter.submitData(it)
+                withContext(Dispatchers.IO) {
+                    val groupList = it.map { data -> data as GroupItemData }
+                    withContext(Dispatchers.Main) {
+                        vm.adapter.submitData(groupList)
+                    }
+                }
             }
         }
     }

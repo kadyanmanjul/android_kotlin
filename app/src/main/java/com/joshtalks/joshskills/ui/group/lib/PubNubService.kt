@@ -46,13 +46,9 @@ class PubNubService private constructor(val groupName: String?): ChatService {
     }
 
     private val subscribeCallback = object : SubscribeCallback() {
-        override fun status(pubnub: PubNub, pnStatus: PNStatus) {
+        override fun status(pubnub: PubNub, pnStatus: PNStatus) {}
 
-        }
-
-        override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-
-        }
+        override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {}
 
         override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {}
 
@@ -106,6 +102,8 @@ class PubNubService private constructor(val groupName: String?): ChatService {
                 .sync()
         return if(data  == null) null else PubNubNetworkData(data)
     }
+
+
 
     override fun getUnreadMessageCount(groupName: String): Long {
         val count = pubnub.messageCounts()
