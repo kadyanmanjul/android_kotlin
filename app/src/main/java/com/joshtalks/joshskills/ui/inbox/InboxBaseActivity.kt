@@ -26,7 +26,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.lang.ref.WeakReference
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 
 abstract class InboxBaseActivity :
     WebRtcMiddlewareActivity(),
@@ -64,6 +64,7 @@ abstract class InboxBaseActivity :
         CoroutineScope(Dispatchers.IO).launch {
             isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
             isSubscriptionEnd = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED).not()
+            PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         }
     }
 

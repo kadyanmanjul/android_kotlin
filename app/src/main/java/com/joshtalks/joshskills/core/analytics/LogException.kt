@@ -10,7 +10,7 @@ object LogException {
         if (BuildConfig.DEBUG) {
             Timber.e(throwable)
             throwable.printStackTrace()
-            return
+            //return
         }
       //  NewRelic.recordHandledException(throwable as Exception)
         FirebaseCrashlytics.getInstance().recordException(throwable)
@@ -18,7 +18,7 @@ object LogException {
 
     fun catchError(tag: ErrorTag, error: String) {
         if (BuildConfig.DEBUG) {
-            return
+           //return
         }
         // NewRelic.recordCustomEvent(tag.name, mutableMapOf())
         FirebaseCrashlytics.getInstance().log("(" + tag.NAME + ") - " + error)

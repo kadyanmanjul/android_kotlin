@@ -66,6 +66,12 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                             return@launch
                         }
                         location?.let { location ->
+                            CurrentCallDetails.set(
+                                it["channel_name"] ?: "",
+                                callId = it["agora_call_id"] ?: "",
+                                callieUid = it["uid"] ?: "",
+                                callerUid = ""
+                            )
                             uploadUserCurrentLocation(it["channel_name"]!!, location)
                         }
                         aFunction.invoke(

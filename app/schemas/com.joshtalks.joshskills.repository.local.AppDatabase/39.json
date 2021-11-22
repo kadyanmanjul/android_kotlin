@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 39,
-    "identityHash": "d872b964119c0f4915907d26b6bd273d",
+    "identityHash": "d905a0f11d564d4473c6f1fb586a6df4",
     "entities": [
       {
         "tableName": "course",
@@ -1764,7 +1764,7 @@
       },
       {
         "tableName": "LessonModel",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER NOT NULL, `chat_id` TEXT NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `status` TEXT, `grammarStatus` TEXT, `vocabularyStatus` TEXT, `readingStatus` TEXT, `speakingStatus` TEXT, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `show_new_grammar_screen` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER NOT NULL, `chat_id` TEXT NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `status` TEXT, `grammarStatus` TEXT, `vocabularyStatus` TEXT, `readingStatus` TEXT, `speakingStatus` TEXT, `roomStatus` TEXT, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `show_new_grammar_screen` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -1835,6 +1835,12 @@
           {
             "fieldPath": "speakingStatus",
             "columnName": "speakingStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "roomStatus",
+            "columnName": "roomStatus",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -2173,7 +2179,7 @@
       },
       {
         "tableName": "lesson_question",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `lessonId` INTEGER NOT NULL, `qText` TEXT, `type` TEXT NOT NULL, `materialType` TEXT NOT NULL, `isDeleted` INTEGER NOT NULL, `title` TEXT, `practice_word` TEXT, `practice_engagements` TEXT, `expectedEngageType` TEXT, `interval` INTEGER NOT NULL, `assessment_id` INTEGER, `topic_id` TEXT, `chat_type` TEXT, `status` TEXT NOT NULL, `vp_sort_order` INTEGER NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `lessonId` INTEGER NOT NULL, `qText` TEXT, `type` TEXT NOT NULL, `materialType` TEXT NOT NULL, `isDeleted` INTEGER NOT NULL, `title` TEXT, `practice_word` TEXT, `practice_engagements` TEXT, `expectedEngageType` TEXT, `conversation_question_id` INTEGER, `interval` INTEGER NOT NULL, `assessment_id` INTEGER, `topic_id` TEXT, `chat_type` TEXT, `status` TEXT NOT NULL, `vp_sort_order` INTEGER NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -2233,6 +2239,12 @@
             "fieldPath": "expectedEngageType",
             "columnName": "expectedEngageType",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversation_question_id",
+            "columnName": "conversation_question_id",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -2668,7 +2680,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd872b964119c0f4915907d26b6bd273d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd905a0f11d564d4473c6f1fb586a6df4')"
     ]
   }
 }

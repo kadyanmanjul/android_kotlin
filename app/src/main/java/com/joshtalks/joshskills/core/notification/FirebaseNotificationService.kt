@@ -39,6 +39,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.ApiRespStatus
@@ -60,12 +61,7 @@ import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.FCMResponse
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -98,6 +94,9 @@ import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import kotlinx.coroutines.*
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -247,6 +246,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         || notificationObject.action == NotificationAction.ACTION_OPEN_SPEAKING_SECTION
                         || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
                         || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
+                        || notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM
                     ) {
                         val inboxIntent =
                             InboxActivity.getInboxIntent(this@FirebaseNotificationService)
@@ -274,6 +274,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     arrayOf( this)
                     //  }
                 }*/
+
+                if (notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM){
+                    val obj = JSONObject(notificationObject.actionData)
+                    val name = obj.getString("moderator_name")
+                    val topic = obj.getString("topic")
+                    notificationObject.contentTitle = getString(R.string.room_title)
+                    notificationObject.contentText = getString(R.string.convo_notification_title, name, topic)
+                }
 
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -534,9 +542,33 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                //if (User.getInstance().isVerified) {
-                incomingCallNotificationAction(notificationObject.actionData)
-                //}
+                if (!PrefManager.getBoolValue(
+                        PREF_IS_CONVERSATION_ROOM_ACTIVE
+                    )
+                ) {
+                    incomingCallNotificationAction(notificationObject.actionData)
+                }
+                return null
+            }
+            NotificationAction.JOIN_CONVERSATION_ROOM -> {
+                if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
+                            putExtra(ConfigKey.ROOM_DATA,actionData)
+                        }
+                        intent.startServiceForWebrtc()
+                    } else {
+                        val roomId = JSONObject(actionData).getString("room_id")
+                        val topic = JSONObject(actionData).getString("topic")?: EMPTY
+
+                        if (roomId.isNotBlank())
+                        {
+                            return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
+                                roomId,topicName = topic
+                            )
+                        }  else return null
+                    }
+                }
                 return null
             }
             NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -742,7 +774,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             AppObjectController.appDatabase.run {
                 val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
-                conversationId.let {
+                conversationId?.let {
                     PrefManager.removeKey(it)
                     LastSyncPrefManager.removeKey(it)
                 }
@@ -1421,9 +1453,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ): Intent? {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                    //if (User.getInstance().isVerified) {
-                    incomingCallNotificationAction(notificationObject.actionData)
-                    //}
+                    if (!PrefManager.getBoolValue(
+                            PREF_IS_CONVERSATION_ROOM_ACTIVE
+                        )
+                    ) {
+                        incomingCallNotificationAction(notificationObject.actionData)
+                    }
                     null
                 }
                 NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -1480,6 +1515,21 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     } else {
                         null
                     }
+                }
+                NotificationAction.JOIN_CONVERSATION_ROOM -> {
+
+                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null && User.getInstance().isVerified ) {
+                        val roomId = JSONObject(actionData).getString("room_id")
+                        val topic = JSONObject(actionData).getString("topic")?: EMPTY
+                        if (roomId.isNotBlank())
+                        {
+                            ConversationLiveRoomActivity.getIntentForNotification(
+                                AppObjectController.joshApplication,
+                                roomId,
+                                topicName = topic
+                            )
+                        } else null
+                    } else null
                 }
                 else -> {
                     null

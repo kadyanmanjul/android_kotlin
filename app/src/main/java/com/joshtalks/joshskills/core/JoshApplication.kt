@@ -41,7 +41,7 @@ class JoshApplication :
 
     companion object {
         @Volatile
-        var isAppVisible = false
+        public var isAppVisible = false
     }
 
     override fun attachBaseContext(base: Context) {

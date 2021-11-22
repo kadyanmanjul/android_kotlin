@@ -6,6 +6,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -80,7 +81,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initView() {
         text_message_title.text = getString(R.string.inbox_header)
-        iv_reminder.visibility = View.GONE
+        iv_reminder.visibility = GONE
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.apply {

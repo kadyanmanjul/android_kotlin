@@ -68,6 +68,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val grammarSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
     val speakingSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
     val eventLiveData: MutableLiveData<Event<Unit>> = MutableLiveData()
+    var lessonIsConvoRoomActive: Boolean = false
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -328,6 +329,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
                             this.speakingStatus = status
+                        }
+                    )
+                }
+                ROOM_POSITION -> {
+                    appDatabase.lessonDao().updateRoomSectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.conversationStatus = status
                         }
                     )
                 }
@@ -624,12 +633,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             lessonLiveData.postValue(
                 lessonLiveData.value?.apply {
-                    val lessonStatus = if (
-                        this.grammarStatus == LESSON_STATUS.CO &&
-                        this.vocabStatus == LESSON_STATUS.CO &&
-                        this.readingStatus == LESSON_STATUS.CO &&
-                        this.speakingStatus == LESSON_STATUS.CO
-                    ) {
+                    var lessonCompleted = this.grammarStatus == LESSON_STATUS.CO &&
+                            this.vocabStatus == LESSON_STATUS.CO &&
+                            this.readingStatus == LESSON_STATUS.CO &&
+                            this.speakingStatus == LESSON_STATUS.CO
+
+                    if (lessonIsConvoRoomActive) {
+                        lessonCompleted = lessonCompleted &&
+                                this.conversationStatus == LESSON_STATUS.CO
+                    }
+                    val lessonStatus = if (lessonCompleted) {
                         LESSON_STATUS.CO
                     } else {
                         LESSON_STATUS.AT

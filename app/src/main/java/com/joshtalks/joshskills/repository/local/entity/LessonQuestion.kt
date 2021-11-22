@@ -1,7 +1,17 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.TypeConverters
+import androidx.room.Update
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
@@ -9,9 +19,9 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ConverterForLessonMaterialType
 import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
+import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Entity(tableName = "lesson_question")
 @Parcelize
@@ -89,6 +99,10 @@ data class LessonQuestion(
     @SerializedName("expected_ans_type")
     var expectedEngageType: EXPECTED_ENGAGE_TYPE? = null,
 
+    @ColumnInfo
+    @SerializedName("conversation_question_id")
+    var conversation_question_id: Int? = null,
+
     @ColumnInfo(name = "interval")
     @SerializedName("interval")
     var interval: Int = -1,
@@ -145,6 +159,7 @@ enum class LessonQuestionType(val type: String) {
     PR("PR"), // PRACTICE
     QUIZ("QUIZ"), // QUIZ
     P2P("P2P"), // P2P
+    CR("CR"), // P2P
     OTHER("OTHER") // Default Value
 }
 

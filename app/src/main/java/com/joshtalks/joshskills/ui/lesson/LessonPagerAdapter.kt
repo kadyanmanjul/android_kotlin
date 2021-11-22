@@ -8,30 +8,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class LessonPagerAdapter(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle,
-    val fragmentList:List<Fragment>
+    val fragmentList:List<Fragment>,
+    val lessonIsConvoRoomActive: Boolean
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    override fun getItemCount(): Int {
-        return 4
-    }
-
-    override fun createFragment(position: Int): Fragment {
-        return fragmentList.get(position)
-        /*return when (position) {
-            //0 -> GrammarFragment.getInstance()
-            0 -> {
-                if (isNewGrammar) {
-                    GrammarOnlineTestFragment.getInstance(lessonNumber)
-                } else {
-                    GrammarFragment.getInstance()
-                }
-            }
-
-            1 -> VocabularyFragment.getInstance()
-
-            2 -> ReadingFragmentWithoutFeedback.getInstance()
-
-            else -> SpeakingPractiseFragment.newInstance()
-        }*/
-    }
+    override fun getItemCount() = if (lessonIsConvoRoomActive) 5 else 4
+    override fun createFragment(position: Int) = fragmentList.get(position)
 }

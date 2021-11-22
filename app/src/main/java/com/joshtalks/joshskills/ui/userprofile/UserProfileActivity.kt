@@ -573,8 +573,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             intervalType: String? = null,
             previousPage: String? = null,
             conversationId: String? = null,
+            isFromConversationRoom: Boolean = false
 
             ) {
+            isScreenOpenByConversationRoom = isFromConversationRoom
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
                 intervalType?.let {

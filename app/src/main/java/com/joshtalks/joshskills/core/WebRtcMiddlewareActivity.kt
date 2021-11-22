@@ -109,17 +109,28 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ${this.javaClass.simpleName}")
-        bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
+        if (!isScreenOpenByConversationRoom) {
+            bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
+        }else{
+            PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
+        }
     }
 
     override fun onStop() {
         Log.d(TAG, "onStop: ${this.javaClass.simpleName}")
         try {
-            unbindService(myConnection)
+            if (!isScreenOpenByConversationRoom) {
+                unbindService(myConnection)
+            }
         } catch (ex: Exception) {
             Timber.e(ex)
         }
         super.onStop()
+    }
+
+    companion object{
+        var isScreenOpenByConversationRoom = false
+
     }
 
     override fun getConversationId(): String? {

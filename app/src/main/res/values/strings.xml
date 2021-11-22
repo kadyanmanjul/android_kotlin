@@ -514,6 +514,7 @@
     <string name="answer">Answer</string>
     <string name="call_back">CALL BACK</string>
     <string name="finding_practise_partner">Finding a Practice Partner</string>
+    <string name="finding_conversation_partner">Finding Conversation Partners</string>
     <string name="found_practise_partner">Practice Partner found Connecting Call</string>
     <string name="rating">Rating</string>
     <string name="rate_your_practise_partner">Rate Your  Practice Partner</string>
@@ -689,6 +690,7 @@
     <string name="preview">Preview</string>
     <string name="password">Password</string>
     <string name="join">Join</string>
+    <string name="join_conversation">Join Conversation</string>
     <string name="joining">Joining</string>
     <string name="incorrect">Incorrect</string>
     <string name="scale_type_not_supported">ScaleType %1$s not supported.</string>
@@ -847,12 +849,15 @@
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
+    <string name="convo_notification_title">%1s has started a conversation about %1s</string>
+    <string name="room_title">Join Conversation Room</string>
     <string name="p2p_subtitle">Speaking Practice</string>
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
     <string name="hold_call">Call On Hold</string>
     <string name="call_start_permission_message_rational">To start speaking practice, please allow permissions for location, making calls, storage and microphone.</string>
     <string name="call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
+    <string name="convo_room_start_permission_message">To enter/start room practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
     <string name="demo_call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Phone on.</string>
     <string name="spoke_for_minute">Spoke for %1$s </string>
     <string name="block">Block</string>
@@ -886,8 +891,31 @@
     <string name="fname_error_toast">Father name cannot be empty!</string>
     <string name="certificate_download_success">Congratulations, your certificate has been downloaded</string>
     <string name="my_batch">My Batch</string>
+    <string name="end_room">End Room</string>
+    <string name="leave_room">Leave quietly</string>
+    <string name="conversation_room">Conversation room</string>
+    <string name="unmute">UnMute</string>
+    <string name="raised">Raised</string>
+    <string name="unraised">UnRaised</string>
+    <string name="hallway">Hallway</string>
+    <string name="e_g_motivation_career_advice">आप किसी भी टॉपिक पर कन्वर्सेशन शुरू कर सकते है जैसे की,\n UPSC Aspirants Discussion  </string>
+    <string name="add_a_topic">Add a topic</string>
+    <string name="select_conversation_partners">Select Conversation Partners</string>
+    <string name="let_s_go">Let’s Go</string>
+    <string name="set_topic">Set Topic</string>
+    <string name="start_a_room">Start a room</string>
+    <string name="start_a_conversation">Start a conversation</string>
+    <string name="view_full_profile">View full profile</string>
+    <string name="move_to_audience">Move to audience</string>
+    <string name="move_to_speaker">Move to speaker</string>
+    <string name="alert_end_room_title">Are you sure, you want to end this room for everyone</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_label">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
+    <string name="raised_hand">Raised hands</string>
+    <string name="open_to_everyone">Open to Everyone</string>
+    <string name="no_raised_hand_text">No one has their hand raised yet</string>
+    <string name="audience">Audience</string>
+    <string name="speakers">Speakers</string>
 
     <string name="grammar_btn_text_check">चेक करें</string>
     <string name="grammar_btn_text_continue">जारी रखें</string>
@@ -908,6 +936,7 @@
 
     <!--    Lesson Spotlight-->
     <string name="label_lesson_spotlight">हर Lesson में चार भाग होते है</string>
+    <string name="label_convo_room_spotlight">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है </string>
     <string name="label_grammar_spotlight">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
     <string name="label_speaking_spotlight">एस भाग में आपको एक प्रैक्टिस पार्टनर के साथ 2 मिनट के लिए अंग्रेजी में बात करनी है</string>
     <string name="label_speaking_spotlight_2"> To complete this section you have to speak to a practice partner for 2 minutes</string>
@@ -924,6 +953,13 @@
     <string name="free_trial_end_in">Free Trial ends in %s</string>
     <string name="feature_locked">%s आपका free trial खतम हो गया है. Please course में admission लें.</string>
     <string name="my_day_review_title">"My day in review"</string>
+    <!-- Convo room strings -->
+    <string name="no_room_text">👋 Hi there! \n \n Start a new room to get a conversation going!</string>
+    <string name="no_room_text_tooltip">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है</string>
+    <string name="convo_room_minutes_spoken">%1$d/%2$d minutes</string>
+    <string name="convo_room_dialog_desc_favt">Start a conversation with my favorite practice partners</string>
+    <string name="convo_room_dialog_desc">Start a conversation with practice partners</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_voip_group">VoipGroupActivity</string>

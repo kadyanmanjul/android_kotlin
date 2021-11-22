@@ -18,6 +18,7 @@ enum class ApiRespStatus {
 const val TIMEOUT_TIME = 60_000L
 const val MESSAGE_CHAT_SIZE_LIMIT = 2048
 const val EMPTY = ""
+const val DEFAULT_NAME = "User"
 const val SINGLE_SPACE = " "
 const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|Jpeg)$)"
 // const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
@@ -196,6 +197,7 @@ class FirebaseRemoteConfigKey {
         const val VOCABULARY_TITLE = "VOCABULARY_TITLE"
         const val READING_TITLE = "READING_TITLE"
         const val SPEAKING_TITLE = "SPEAKING_TITLE"
+        const val ROOM_TITLE = "ROOM_TITLE"
         const val TODAYS_QUIZ_TITLE = "TODAYS_QUIZ_TITLE"
         const val VOCABULARY_COMPLETED = "VOCABULARY_COMPLETED"
 
@@ -234,6 +236,9 @@ class FirebaseRemoteConfigKey {
         const val FREE_TRIAL_DIALOG_BTN_TXT = "FREE_TRIAL_DIALOG_BTN_TXT"
         const val FREE_TRIAL_DIALOG_TXT = "FREE_TRIAL_DIALOG_TXT"
         const val SHOW_LOCAL_NOTIFICATIONS = "SHOW_LOCAL_NOTIFICATIONS"
+
+        //
+        const val IS_CONVERSATION_ROOM_ACTIVE = "IS_CONVERSATION_ROOM_ACTIVE"
 
     }
 }
