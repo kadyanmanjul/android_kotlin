@@ -16,5 +16,8 @@ interface TimeTokenDao {
     suspend fun updateTimeToken(id: String, time: Long)
 
     @Query("SELECT * FROM time_token_db")
-    suspend fun getAllTimeTokens()
+    suspend fun getAllTimeTokens(): List<TimeTokenRequest>
+
+    @Query("DELETE FROM time_token_db WHERE groupId = :groupId AND timeToken = :time")
+    suspend fun deleteTimeEntry(groupId: String, time: Long)
 }

@@ -1,33 +1,28 @@
 package com.joshtalks.joshskills.ui.group.repository
 
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.flurry.sdk.it
+
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
-import com.joshtalks.joshskills.ui.group.model.JoinGroupRequest
-import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.joshtalks.joshskills.ui.group.model.*
+
 import com.pubnub.api.models.consumer.PNPage
 import id.zelory.compressor.Compressor
 import java.io.File
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -55,7 +50,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             )
         }
 
-    fun getGroupListResult(onGroupsLoaded : (() -> Unit)? = null) : Pager<Int, GroupsItem> {
+    fun getGroupListResult(onGroupsLoaded: (() -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
             fetchGroupList()
             onGroupsLoaded?.invoke()
@@ -173,5 +168,21 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             body
         ).execute()
         return responseUpload.code()
+    }
+
+    suspend fun fireTimeTokenAPI() {
+        val timeTokenList = database.timeTokenDao().getAllTimeTokens()
+        for (token in timeTokenList) {
+            val response = apiService.updateTimeToken(
+                TimeTokenRequest(token.mentorId, token.groupId, token.timeToken * 1000L)
+            )
+            try {
+                if (response.isSuccessful)
+                    database.timeTokenDao().deleteTimeEntry(token.groupId, token.timeToken)
+            } catch (e: Exception) {
+                Log.e(TAG, "An error has occurred")
+                e.printStackTrace()
+            }
+        }
     }
 }
