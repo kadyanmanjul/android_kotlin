@@ -12,12 +12,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.GestureDetector
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
@@ -30,21 +25,14 @@ import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_REFERRAL_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_REFERRAL_CODE_COPIED
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_OTHER_CLICKED
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_WHATSAPP_CLICKED
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.muddzdev.styleabletoast.StyleableToast
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -107,7 +95,6 @@ class ReferralActivity : BaseActivity() {
 
         if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
             userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-
         }
         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
             link = Uri.parse("https://joshskill.app.link")
@@ -256,8 +243,13 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
 
         referralText = if (userReferralURL.isEmpty()) {
+            viewModel.getDeepLink(
+                getAppShareUrl(),
+                "$userReferralCode${System.currentTimeMillis()}"
+            )
             referralText.plus("\n").plus(getAppShareUrl())
         } else {
+            viewModel.getDeepLink(userReferralURL, "$userReferralCode${System.currentTimeMillis()}")
             referralText.plus("\n").plus(userReferralURL)
         }
 

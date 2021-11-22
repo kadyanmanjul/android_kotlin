@@ -56,7 +56,12 @@ class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder
         message?.run {
             val urlList = this.url?.split('$')
             if (urlList.isNullOrEmpty().not()) {
-                RxBus2.publish(OpenBestPerformerRaceEventBus(this, urlList?.get(0) ?: EMPTY, true))
+                RxBus2.publish(OpenBestPerformerRaceEventBus(
+                    chatObj = this,
+                    videoUrl = urlList?.get(0) ?: EMPTY,
+                    isSharable = true,
+                    sharedItem = "DAY_IN_REVIEW"
+                ))
             }
         }
     }

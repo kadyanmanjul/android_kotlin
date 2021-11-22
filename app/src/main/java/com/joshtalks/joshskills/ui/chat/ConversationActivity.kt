@@ -1573,7 +1573,8 @@ class ConversationActivity :
                                 null,
                                 it.videoUrl,
                                 conversationId = inboxEntity.conversation_id,
-                                isSharableVideo = true
+                                isSharableVideo = true,
+                                sharedItem = it.sharedItem
                             )
                         }
                     },
