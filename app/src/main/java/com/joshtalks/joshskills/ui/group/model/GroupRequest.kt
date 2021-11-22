@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.ui.group.model
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 open class GroupRequest(
     @field:SerializedName("mentor_id")
     val mentorId: String,
 
+    @PrimaryKey
     @field:SerializedName("group_id")
     val groupId: String,
 )
