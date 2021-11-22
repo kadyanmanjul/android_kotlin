@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import android.os.Message
 import android.util.Log
+import androidx.collection.ArraySet
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -48,7 +49,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 const val NOTIFICATION_ID = "notification_id"
 const val NOTIFICATION_BOOLEAN = "notification_boolean"
@@ -62,8 +62,8 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     val roomDetailsLivedata = MutableLiveData<ConversationRoomDetailsResponse>()
     val roomListLiveData = MutableLiveData<RoomListResponse>()
     val points = MutableLiveData<String>()
-    var audienceList = MutableLiveData<ArrayList<LiveRoomUser>>()
-    var speakersList = MutableLiveData<ArrayList<LiveRoomUser>>()
+    var audienceList = MutableLiveData<ArraySet<LiveRoomUser>>()
+    var speakersList = MutableLiveData<ArraySet<LiveRoomUser>>()
     private val jobs = arrayListOf<Job>()
     private var moderatorUid: Int? = null
     private var moderatorName: String? = null
@@ -92,11 +92,11 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         this.moderatorName = moderatorName
     }
 
-    fun getSpeakerList() = this.speakersList.value ?: ArrayList<LiveRoomUser>()
-    fun setSpeakerList(list: ArrayList<LiveRoomUser>) = this.speakersList.postValue(list)
+    fun getSpeakerList() = this.speakersList.value ?: ArraySet<LiveRoomUser>()
+    fun setSpeakerList(list: ArraySet<LiveRoomUser>) = this.speakersList.postValue(list)
 
-    fun getAudienceList() = this.audienceList.value ?: ArrayList<LiveRoomUser>()
-    fun setAudienceList(list: ArrayList<LiveRoomUser>) = this.audienceList.postValue(list)
+    fun getAudienceList() = this.audienceList.value ?: ArraySet<LiveRoomUser>()
+    fun setAudienceList(list: ArraySet<LiveRoomUser>) = this.audienceList.postValue(list)
 
     fun getCurrentUser() = currentUser
     fun setCurrentUser(currentUser: LiveRoomUser?) {
@@ -108,7 +108,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         if (audienceList.isNullOrEmpty()) {
             return
         }
-        val oldAudienceList: ArrayList<LiveRoomUser> = audienceList
+        val oldAudienceList: ArraySet<LiveRoomUser> = audienceList
         val user = oldAudienceList?.filter { it.id == userId }
         user?.get(0)?.let { it ->
             oldAudienceList.remove(it)
@@ -123,7 +123,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         if (audienceList.isNullOrEmpty()) {
             return
         }
-        val oldAudienceList: ArrayList<LiveRoomUser> = audienceList
+        val oldAudienceList: ArraySet<LiveRoomUser> = audienceList
         val isUserPresent = oldAudienceList.any { it.id == userId }
         if (isUserPresent) {
             val roomUser = oldAudienceList.filter { it.id == userId }[0]
@@ -137,7 +137,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun updateAudienceList(audienceList: ArrayList<LiveRoomUser>) {
+    fun updateAudienceList(audienceList: ArraySet<LiveRoomUser>) {
         this.audienceList.postValue(audienceList)
     }
 
@@ -251,8 +251,8 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             ?.includeCustom(true)
             ?.async { result, status ->
                 Log.d("ABC2", "getLatestUserList() called with: result = $result, status = $status")
-                val tempSpeakerList = arrayListOf<LiveRoomUser>()
-                val tempAudienceList = arrayListOf<LiveRoomUser>()
+                val tempSpeakerList = ArraySet<LiveRoomUser>()
+                val tempAudienceList = ArraySet<LiveRoomUser>()
                 result?.data?.forEach {
                     refreshUsersList(it.uuid.id, it.custom)?.let { user ->
                         if (user.isSpeaker == true) {
@@ -477,7 +477,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
 
     private fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
         updateHandRaisedToUser(userId, isHandRaised)
-        val newList: ArrayList<LiveRoomUser> = ArrayList(getAudienceList())
+        val newList: ArraySet<LiveRoomUser> = ArraySet(getAudienceList())
         val isOldUserPresent = newList.any { it.id == userId }
         if (isOldUserPresent) {
             val oldUser = newList.filter { it.id == userId }
@@ -549,7 +549,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
 
         val userId = eventObject.get("id").asInt
 
-        val newList: ArrayList<LiveRoomUser> = ArrayList(speakersList.value)
+        val newList: ArraySet<LiveRoomUser> = ArraySet(speakersList.value)
         val isOldUserPresent = newList.any { it.id == userId }
         if (isOldUserPresent) {
             val oldUser = newList.filter { it.id == userId }

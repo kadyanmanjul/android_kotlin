@@ -18,6 +18,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.collection.ArraySet
 import androidx.collection.arraySetOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -505,7 +506,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             CoroutineScope(Dispatchers.Main).launch {
                 audienceAdapter?.updateFullList(ArrayList(vm.getAudienceList()))
             }
-            vm.updateAudienceList(ArrayList(vm.getAudienceList()))
+            vm.updateAudienceList(ArraySet(vm.getAudienceList()))
         }
     }
 

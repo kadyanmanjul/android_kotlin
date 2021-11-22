@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.collection.ArraySet
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -96,7 +97,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
         })
     }
 
-    private fun refreshAdapterWithNewList(handRaisedList: ArrayList<LiveRoomUser>?) {
+    private fun refreshAdapterWithNewList(handRaisedList: ArraySet<LiveRoomUser>?) {
         val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
         this.raisedHandList = list?.sortedBy { it.sortOrder }
         setVisibilities()
