@@ -35,7 +35,9 @@ import com.joshtalks.joshskills.track.CourseUsageModel
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.data.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -52,7 +54,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class,GroupListEntity::class ,  GroupsItem::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class ,GroupListEntity::class ,  GroupsItem::class, TimeTokenRequest::class
     ],
     version = 43,
     exportSchema = true
@@ -502,6 +504,8 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_42_43: Migration = object : Migration(42,43) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT, `timeToken` INTEGER)")
+
             }
         }
 
@@ -545,6 +549,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun voipAnalyticsDao(): VoipAnalyticsDao
     abstract fun groupsAnalyticsDao(): GroupsAnalyticsDao
     abstract fun groupListDao(): GroupListDao
+    abstract fun timeTokenDao(): TimeTokenDao
 }
 
 class MessageTypeConverters {
