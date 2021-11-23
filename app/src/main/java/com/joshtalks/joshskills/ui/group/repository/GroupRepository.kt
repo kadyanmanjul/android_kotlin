@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.ui.group.model.*
 
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.model.GroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
@@ -40,7 +39,6 @@ import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -70,6 +68,14 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     lastMessage = "${pnMessageResult.userMetadata.asString}: ${pnMessageResult.message.asString}",
                     lastMsgTime = pnMessageResult.timetoken,
                     id = pnMessageResult.channel
+                )
+                database.groupChatDao().insertMessage(
+                    ChatItem(
+                        sender = pnMessageResult.userMetadata.asString,
+                        message = pnMessageResult.message.asString,
+                        message_time = pnMessageResult.timetoken,
+                        groupId = pnMessageResult.channel
+                    )
                 )
             }
         }
@@ -128,11 +134,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             val groups = database.groupListDao().getGroupIds()
             Log.d(TAG, "startChatEventListener: ************#######*************")
-            chatService.subscribeToChatEvents(groups, object : ChatEventObserver<SubscribeCallback> {
-                override fun getObserver(): SubscribeCallback {
-                    return subscribeCallback
-                }
-            })
+            chatService.subscribeToChatEvents(
+                groups,
+                object : ChatEventObserver<SubscribeCallback> {
+                    override fun getObserver(): SubscribeCallback {
+                        return subscribeCallback
+                    }
+                })
         }
     }
 
@@ -182,8 +190,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         totalCalls = null
                     )
                 )
-            }
-            catch (exp: Exception){
+            } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
                 exp.printStackTrace()
             }
