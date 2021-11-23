@@ -12,17 +12,33 @@ import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
+import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.model.*
-
-import com.pubnub.api.models.consumer.PNPage
+import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
+import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
+import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.ui.group.model.GroupRequest
+import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
+import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.pubnub.api.PubNub
+import com.pubnub.api.callbacks.SubscribeCallback
+import com.pubnub.api.models.consumer.PNStatus
+import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
+import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
+import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
+import com.pubnub.api.models.consumer.pubsub.PNMessageResult
+import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
+import com.pubnub.api.models.consumer.pubsub.PNSignalResult
+import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
+import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import id.zelory.compressor.Compressor
 import java.io.File
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -39,6 +55,52 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     private val mentorId = Mentor.getInstance().getId()
     private val database = AppObjectController.appDatabase
     val chatService = PubNubService.getChatService()
+
+    private val subscribeCallback = object : SubscribeCallback() {
+        override fun status(pubnub: PubNub, pnStatus: PNStatus) {
+            Log.d(TAG, "status: ${pnStatus}")
+        }
+
+        override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
+            Log.d(TAG, "message: $pnMessageResult")
+            CoroutineScope(Dispatchers.IO).launch {
+                database.groupListDao().updateGroupItem(
+                    lastMessage = "${pnMessageResult.userMetadata.asString}: ${pnMessageResult.message.asString}",
+                    lastMsgTime = pnMessageResult.timetoken,
+                    id = pnMessageResult.channel
+                )
+            }
+        }
+
+        override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
+            Log.d(TAG, "presence: $pnPresenceEventResult")
+        }
+
+        override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
+            Log.d(TAG, "signal: $pnSignalResult")
+        }
+
+        override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
+            Log.d(TAG, "uuid: $pnUUIDMetadataResult")
+        }
+
+        override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
+            Log.d(TAG, "channel: $pnChannelMetadataResult")
+        }
+
+        override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
+            Log.d(TAG, "membership: $pnMembershipResult")
+        }
+
+        override fun messageAction(
+            pubnub: PubNub,
+            pnMessageActionResult: PNMessageActionResult
+        ) {
+            Log.d(TAG, "messageAction: $pnMessageActionResult")
+        }
+
+        override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
+    }
 
     fun getGroupSearchResult(query: String) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -57,6 +119,18 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
         return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
             database.groupListDao().getPagedGroupList()
+        }
+    }
+
+    fun startChatEventListener() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val groups = database.groupListDao().getGroupIds()
+            Log.d(TAG, "startChatEventListener: ************#######*************")
+            chatService.subscribeToChatEvents(groups, object : ChatEventObserver<SubscribeCallback> {
+                override fun getObserver(): SubscribeCallback {
+                    return subscribeCallback
+                }
+            })
         }
     }
 

@@ -47,6 +47,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val isFromGroupInfo = ObservableBoolean(false)
     var isImageChanged = false
     var conversationId: String = ""
+    var currentlyOpenedGroup = ""
 
     val onItemClick: (GroupItemData) -> Unit = {
         // TODO : Check if has data
@@ -63,7 +64,7 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun groupDateLoaded() {
-        showToast("Group Date Loaded")
+        repository.startChatEventListener()
     }
 
     fun showImageThumb(imagePath: String) {

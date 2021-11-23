@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.Event
+import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
@@ -25,6 +26,7 @@ import java.sql.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.NotNull
 
 private const val TAG = "PubNub_Service"
 class PubNubService private constructor(val groupName: String?): ChatService {
@@ -41,29 +43,6 @@ class PubNubService private constructor(val groupName: String?): ChatService {
         }
     }
 
-    private val subscribeCallback = object : SubscribeCallback() {
-        override fun status(pubnub: PubNub, pnStatus: PNStatus) {}
-
-        override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {}
-
-        override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {}
-
-        override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
-
-        override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
-
-        override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {}
-
-        override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
-
-        override fun messageAction(
-            pubnub: PubNub,
-            pnMessageActionResult: PNMessageActionResult
-        ) {}
-
-        override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
-    }
-
     companion object {
         fun getChatService(groupName: String? = null) : ChatService {
             return PubNubService(groupName)
@@ -73,6 +52,18 @@ class PubNubService private constructor(val groupName: String?): ChatService {
     override fun initializeChatService() {
         reset()
         setInitialState()
+    }
+
+    override fun <T> subscribeToChatEvents(groups: List<String>, observer: ChatEventObserver<T>) {
+        reset()
+        pubnub.addListener(observer.getObserver() as @NotNull SubscribeCallback)
+        Log.d(TAG, "subscribeToChatEvents: ${pubnub.timestamp}")
+        Log.d(TAG, "subscribeToChatEvents: ${pubnub.timestamp.minus(24 * 60 * 60L)}")
+        pubnub.subscribe()
+            //.withPresence()
+            //.withTimetoken(pubnub.timestamp.minus(12 * 60 * 60L) * 1000L)
+            .channels(groups)
+            .execute()
     }
 
     override fun createGroup(groupName: String, imageUrl: String) {}
@@ -143,16 +134,20 @@ class PubNubService private constructor(val groupName: String?): ChatService {
     }
 
     private fun reset() {
-        pubnub.removeListener(subscribeCallback)
+        //pubnub.removeListener(subscribeCallback)
         pubnub.unsubscribeAll()
     }
 
     // TODO: Need to refactor the name
     private fun setInitialState() {
-        pubnub.addListener(subscribeCallback)
+        //pubnub.addListener(subscribeCallback)
+        // TODO: Refactor
+        CoroutineScope(Dispatchers.IO).launch {
+
+        }
         pubnub.subscribe()
             .withPresence()
-            .channels(listOf(groupName))
+            //.withTimetoken()
             .execute()
     }
 }
