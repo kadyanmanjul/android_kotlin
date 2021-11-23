@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLEAR_CHAT_TEXT
 import com.joshtalks.joshskills.constants.OPEN_EMOJI_KEYBOARD
 import com.joshtalks.joshskills.constants.SEND_MSG
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_CALL_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
@@ -31,6 +32,7 @@ private const val TAG = "GroupChatFragment"
 class GroupChatFragment : BaseFragment() {
     lateinit var binding: GroupChatFragmentBinding
     lateinit var emojiPopup: EmojiPopup
+    private val database = AppObjectController.appDatabase
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[GroupChatViewModel::class.java]
@@ -130,5 +132,12 @@ class GroupChatFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         vm.getOnlineUserCount()
+        lifecycleScope.launch(Dispatchers.Main) {
+            val item = database.groupListDao().getGroupItem(vm.groupId)
+            if (item.name != null) {
+                vm.groupHeader.set(item.name)
+                vm.imageUrl.set(item.groupIcon)
+            }
+        }
     }
 }

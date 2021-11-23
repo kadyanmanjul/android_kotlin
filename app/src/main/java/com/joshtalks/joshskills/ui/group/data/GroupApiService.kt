@@ -31,10 +31,10 @@ interface GroupApiService {
     suspend fun createGroup(@Body request : AddGroupRequest): Map<String, Any?>
 
     @POST("$DIR/group/edit_group_info/")
-    suspend fun editGroup(@Body request : EditGroupRequest): Map<String, Any?>
+    suspend fun editGroup(@Body request : EditGroupRequest): Response<Unit>
 
     @POST("$DIR/group/remove_member_group_v2/")
-    suspend fun leaveGroup(@Body request : LeaveGroupRequest): Map<String, Any?>
+    suspend fun leaveGroup(@Body request : LeaveGroupRequest): Response<Unit>
 
     @GET("$DIR/group/group_online_members/{group_id}")
     suspend fun getOnlineUserCount(@Path("group_id") groupId: String): Map<String, Any?>
