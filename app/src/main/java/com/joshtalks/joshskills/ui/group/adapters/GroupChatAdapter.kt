@@ -11,12 +11,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
-import com.joshtalks.joshskills.ui.group.model.GroupChatData
+import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.MessageType
 import com.joshtalks.joshskills.ui.group.viewholder.ChatViewHolder
 
-class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<GroupChatData>) :
-    PagingDataAdapter<GroupChatData, ChatViewHolder>(
+class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
+    PagingDataAdapter<ChatItem, ChatViewHolder>(
         diffCallback
     ) {
 
@@ -73,21 +73,21 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<GroupChatData>) :
 
     inner class LeftChatViewHolder(val item: GroupChatLeftMsgBinding) :
         ChatViewHolder(item) {
-        override fun bindData(groupChatData: GroupChatData) {
+        override fun bindData(groupChatData: ChatItem) {
             item.itemData = groupChatData
         }
     }
 
     inner class RightChatViewHolder(val item: GroupChatRightMsgBinding) :
         ChatViewHolder(item) {
-        override fun bindData(groupChatData: GroupChatData) {
+        override fun bindData(groupChatData: ChatItem) {
             item.itemData = groupChatData
         }
     }
 
     inner class MetaChatViewHolder(val item: GroupChatMetadataBinding) :
         ChatViewHolder(item) {
-        override fun bindData(groupChatData: GroupChatData) {
+        override fun bindData(groupChatData: ChatItem) {
             item.itemData = groupChatData
         }
     }

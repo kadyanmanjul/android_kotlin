@@ -7,7 +7,7 @@
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.GroupChatData" />
+            type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
     </data>
 
     <FrameLayout
@@ -33,7 +33,7 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:gravity="center_vertical|start"
                 android:paddingEnd="@dimen/_16sdp"
-                android:text="@{itemData.title}"
+                android:text="@{itemData.sender}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                 android:textColor="@color/black"
                 app:layout_constraintLeft_toLeftOf="parent"

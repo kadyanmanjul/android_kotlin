@@ -36,8 +36,10 @@ import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
+import com.joshtalks.joshskills.ui.group.data.local.GroupChatDao
 import com.joshtalks.joshskills.ui.group.data.local.GroupListDao
 import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
+import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
@@ -57,9 +59,10 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupsItem::class, TimeTokenRequest::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupsItem::class, TimeTokenRequest::class,
+        ChatItem::class
     ],
-    version = 43,
+    version = 44,
     exportSchema = true
 )
 @TypeConverters(
@@ -498,6 +501,7 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_43_44: Migration = object : Migration(43, 44) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT, `timeToken` INTEGER)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`message_id` INTEGER PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `message_time` INTEGER NOT NULL, `groupId` TEXT NOT NULL)")
             }
         }
 
@@ -542,6 +546,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun groupsAnalyticsDao(): GroupsAnalyticsDao
     abstract fun groupListDao(): GroupListDao
     abstract fun timeTokenDao(): TimeTokenDao
+    abstract fun groupChatDao(): GroupChatDao
 }
 
 class MessageTypeConverters {
