@@ -235,5 +235,85 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="gone" />
 
+        <FrameLayout
+            android:id="@+id/anim_layout"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="0dp"
+            android:elevation="@dimen/_20sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/appBarLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/_2sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="reverse" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@color/colorPrimary"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_8sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginEnd="@dimen/_7sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/group_call" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+            android:id="@+id/overlay_group_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_28sdp"
+            android:layout_marginTop="@dimen/_60sdp"
+            android:elevation="@dimen/_8sdp"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            app:tooltipText="You can call members of this group from here" />
+
+        <FrameLayout
+            android:id="@+id/overlay_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="1"
+            android:background="@color/transparent_blue_alpha_75"
+            android:clickable="true"
+            android:elevation="@dimen/_4sdp"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginVertical="@dimen/_60sdp"
+                android:elevation="@dimen/_8sdp"
+                android:shadowColor="#BD6674"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="10"
+                android:text="Tap anywhere to continue"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                android:textColor="@color/white" />
+
+        </FrameLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
