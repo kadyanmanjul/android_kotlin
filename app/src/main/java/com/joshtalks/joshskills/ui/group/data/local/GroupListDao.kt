@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.data.local
 
+import android.os.Message
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
@@ -21,6 +22,10 @@ interface GroupListDao {
 
     @Query("SELECT count(groupId) FROM group_list_table")
     suspend fun getGroupsCount() : Int
+
+    @Query("UPDATE group_list_table SET unreadCount = unreadCount+1, lastMessage = :lastMessage, lastMsgTime = :lastMsgTime WHERE groupId = :id")
+    suspend fun updateGroupItem(id: String, lastMessage: String, lastMsgTime : Long) : Int
+
 
 //    @Query("UPDATE group_list_table SET lastMessage = :lastMsg, lastMsgTime = :lastMsgTime, unreadCount = :unreadCount WHERE groupId = :id")
 //    suspend fun updateGroupItem(id: String, lastMsg: String, lastMsgTime: String, unreadCount: String)

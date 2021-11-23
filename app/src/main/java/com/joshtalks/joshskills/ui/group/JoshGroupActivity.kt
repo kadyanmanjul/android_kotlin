@@ -69,6 +69,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
+                //LISTEN_CHAT_EVENTS ->
             }
         }
     }

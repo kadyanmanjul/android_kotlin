@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.ui.group.model.PageInfo
 
 interface ChatService {
     fun initializeChatService()
+    fun <T> subscribeToChatEvents(groups : List<String>, observer: ChatEventObserver<T>)
     fun createGroup(groupName: String, imageUrl : String)
     fun sendMessage(msg : String)
     fun getOnlineCount(groupName : String) : LiveData<Event<Int>>
@@ -20,5 +21,9 @@ interface ChatService {
 interface NetworkData {
     fun getData() : GroupListResponse
     fun getPageInfo() : PageInfo
+}
+
+interface ChatEventObserver<T> {
+    fun getObserver() : T
 }
 

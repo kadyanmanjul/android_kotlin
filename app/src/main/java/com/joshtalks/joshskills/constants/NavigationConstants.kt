@@ -17,3 +17,4 @@ const val SAVE_GROUP_INFO = 15
 const val OPEN_EMOJI_KEYBOARD = 16
 const val CLEAR_CHAT_TEXT = 17
 const val SEND_MSG = 18
+const val LISTEN_CHAT_EVENTS = 19
