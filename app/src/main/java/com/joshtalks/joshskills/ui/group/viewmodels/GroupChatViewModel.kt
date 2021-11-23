@@ -37,9 +37,9 @@ private const val TAG = "GroupChatViewModel"
 class GroupChatViewModel : BaseViewModel() {
     val repository = GroupRepository()
     val hasJoinedGroup = ObservableBoolean(false)
-    val groupHeader = ObservableField("")
+    var groupHeader = ObservableField("")
     val groupSubHeader = ObservableField("")
-    val imageUrl = ObservableField("")
+    var imageUrl = ObservableField("")
     val groupCreator = ObservableField("")
     val groupCreatedAt = ObservableField("")
     var conversationId: String = ""

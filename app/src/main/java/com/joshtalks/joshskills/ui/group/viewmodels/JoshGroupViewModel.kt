@@ -56,7 +56,8 @@ class JoshGroupViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun getGroupData() = repository.getGroupListResult(::groupDateLoaded).flow.cachedIn(viewModelScope)
+    fun getGroupData() =
+        repository.getGroupListResult(::groupDateLoaded).flow.cachedIn(viewModelScope)
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
@@ -141,12 +142,15 @@ class JoshGroupViewModel : BaseViewModel() {
         addingNewGroup.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repository.editGroupInServer(request)
+                val isSuccess = repository.editGroupInServer(request)
                 withContext(Dispatchers.Main) {
-                    message.what = SHOULD_REFRESH_GROUP_LIST
-                    singleLiveEvent.value = message
+                    if (isSuccess) {
+                        message.what = SHOULD_REFRESH_GROUP_LIST
+                        singleLiveEvent.value = message
+                        onBackPress()
+                        onBackPress()
+                    }
                     addingNewGroup.set(false)
-                    onBackPress()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {

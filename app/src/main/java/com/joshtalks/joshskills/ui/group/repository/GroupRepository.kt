@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.model.*
+
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
@@ -164,10 +166,30 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         } else
             ""
         request.groupIcon = url ?: ""
-        apiService.createGroup(request)
+        val response = apiService.createGroup(request)
+        if (response["success"] == true)
+            try {
+                database.groupListDao().insertGroupItem(
+                    GroupsItem(
+                        groupIcon = response["group_icon"] as String?,
+                        groupId = response["group_id"] as String,
+                        createdAt = (response["created_at"] as String?)?.toLongOrNull(),
+                        lastMessage = null,
+                        lastMsgTime = 0,
+                        unreadCount = null,
+                        name = request.groupName,
+                        createdBy = response["created_by"] as String?,
+                        totalCalls = null
+                    )
+                )
+            }
+            catch (exp: Exception){
+                Log.e(TAG, "Error: ${exp.message}")
+                exp.printStackTrace()
+            }
     }
 
-    suspend fun editGroupInServer(request: EditGroupRequest) {
+    suspend fun editGroupInServer(request: EditGroupRequest): Boolean {
         val url =
             if (request.groupIcon.isNotBlank()) {
                 val compressedImagePath = getCompressImage(request.groupIcon)
@@ -175,11 +197,18 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             } else
                 ""
         request.groupIcon = url ?: ""
-        apiService.editGroup(request)
+        val response = apiService.editGroup(request)
+        if (response.isSuccessful) {
+            database.groupListDao()
+                .updateEditedGroup(request.groupId, request.groupName, request.groupIcon)
+        }
+        return response.isSuccessful
     }
 
     suspend fun leaveGroupFromServer(request: LeaveGroupRequest) {
-        apiService.leaveGroup(request)
+        val response = apiService.leaveGroup(request)
+        if (response.isSuccessful)
+            database.groupListDao().deleteGroupItem(request.groupId)
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
