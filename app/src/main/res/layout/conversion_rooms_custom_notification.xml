@@ -16,6 +16,7 @@
         android:layout_marginHorizontal="18dp"
         android:layout_marginTop="24dp"
         android:ellipsize="end"
+        android:maxLines="2"
         android:fontFamily="sans-serif-medium"
         android:gravity="center|start"
         android:text="Harsh Gupta has started a conversation about UPSC aspirants"

@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
+import com.joshtalks.joshskills.core.notification.HeadsUpNotificationService
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -99,8 +100,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             this.window.statusBarColor =
                 this.resources.getColor(R.color.conversation_room_color, theme)
         }
-        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(9999)
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        removeIncomingNotification()
         isBackPressed = false
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
@@ -446,13 +447,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             WebRtcService.isRoomCreatedByUser = true
 
         }
-        removeIncomingNotification()
     }
 
     private fun removeIncomingNotification() {
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(9999)
+        try {
+            stopService(Intent(this, HeadsUpNotificationService::class.java))
+        } catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     private var callback: ConversationRoomCallback = object : ConversationRoomCallback {

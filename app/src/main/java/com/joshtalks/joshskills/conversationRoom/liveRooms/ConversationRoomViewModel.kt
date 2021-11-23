@@ -306,7 +306,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         isMicOn: Boolean? = null,
         channelName: String?
     ) {
-        if (user == null || pubnub == null) {
+        if (user == null || pubnub == null || user.id == null) {
             return
         }
         val state = mutableMapOf<String, Any>()
