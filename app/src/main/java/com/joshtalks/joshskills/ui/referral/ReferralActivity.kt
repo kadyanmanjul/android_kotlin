@@ -32,7 +32,6 @@ import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.muddzdev.styleabletoast.StyleableToast
-import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -68,7 +67,8 @@ class ReferralActivity : BaseActivity() {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
     private var userReferralCode: String = EMPTY
-    private var userReferralURL: String = EMPTY
+
+    //    private var userReferralURL: String = EMPTY
     var flowFrom: String? = null
 
     @ExperimentalUnsignedTypes
@@ -91,40 +91,7 @@ class ReferralActivity : BaseActivity() {
         userReferralCode = Mentor.getInstance().referralCode
         activityReferralBinding.tvReferralCode.text = userReferralCode
         initView()
-        val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
 
-        if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
-            userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-        }
-        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-            link = Uri.parse("https://joshskill.app.link")
-            domainUriPrefix = domain
-            androidParameters(BuildConfig.APPLICATION_ID) {
-                minimumVersion = 69
-            }
-            googleAnalyticsParameters {
-                source = userReferralCode
-                medium = "Mobile"
-                campaign = "user_referer"
-            }
-
-        }.addOnSuccessListener { result ->
-            result.shortLink?.let {
-                try {
-                    if (it.toString().isNotEmpty()) {
-                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                        userReferralURL = it.toString()
-
-                    }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-            .addOnFailureListener {
-                it.printStackTrace()
-
-            }
         if (intent.hasExtra(FROM_CLASS)) {
             flowFrom = intent.getStringExtra(FROM_CLASS)
         }
@@ -145,7 +112,6 @@ class ReferralActivity : BaseActivity() {
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()
-
 
         val referralScreenVersion =
             AppObjectController.getFirebaseRemoteConfig().getString("referral_screen_page")
@@ -229,10 +195,55 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteOnlyWhatsapp() {
-        inviteFriends(WHATSAPP_PACKAGE_STRING)
+        getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
     }
 
-    fun inviteFriends(packageString: String? = null) {
+    fun getDeepLinkAndInviteFriends(packageString: String? = null) {
+        val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+            link = Uri.parse("https://joshskill.app.link")
+            domainUriPrefix = domain
+            androidParameters(BuildConfig.APPLICATION_ID) {
+                minimumVersion = 69
+            }
+            googleAnalyticsParameters {
+                source = userReferralCode.plus(System.currentTimeMillis())
+                medium = "Mobile"
+                campaign = "user_referer"
+            }
+
+        }.addOnSuccessListener { result ->
+            result.shortLink?.let {
+                try {
+                    if (it.toString().isNotEmpty()) {
+                        if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
+                            PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                        inviteFriends(packageString = packageString, dynamicLink = it.toString())
+                    } else
+                        inviteFriends(
+                            packageString = packageString,
+                            dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                                PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                            else
+                                getAppShareUrl()
+                        )
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }.addOnFailureListener {
+            it.printStackTrace()
+            inviteFriends(
+                packageString = packageString,
+                dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                    PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                else
+                    getAppShareUrl()
+            )
+        }
+    }
+
+    fun inviteFriends(packageString: String? = null, dynamicLink: String) {
         var referralText = VIDEO_URL.plus("\n").plus(
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         )
@@ -242,17 +253,11 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.replace(REPLACE_HOLDER, userReferralCode)
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
 
-        referralText = if (userReferralURL.isEmpty()) {
-            viewModel.getDeepLink(
-                getAppShareUrl(),
-                "$userReferralCode${System.currentTimeMillis()}"
-            )
-            referralText.plus("\n").plus(getAppShareUrl())
-        } else {
-            viewModel.getDeepLink(userReferralURL, "$userReferralCode${System.currentTimeMillis()}")
-            referralText.plus("\n").plus(userReferralURL)
-        }
-
+        referralText = referralText.plus("\n").plus(dynamicLink)
+        viewModel.getDeepLink(
+            dynamicLink,
+            userReferralCode.plus(System.currentTimeMillis())
+        )
         try {
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"

@@ -561,24 +561,36 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 minimumVersion = 69
             }
             googleAnalyticsParameters {
-                source = userReferralCode ?: ""
+                source = userReferralCode.plus(System.currentTimeMillis())
                 medium = "Mobile"
                 campaign = "user_referer"
             }
         }.addOnSuccessListener { result ->
             result.shortLink?.let {
-                inviteFriends(it.toString())
+                if (it.toString().isNotEmpty()) {
+                    if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
+                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                    inviteFriends(it.toString())
+                } else
+                    inviteFriends(getDefaultLink())
             }
         }.addOnFailureListener {
+            inviteFriends(getDefaultLink())
             it.printStackTrace()
-
         }
     }
 
+    fun getDefaultLink(): String = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+        PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+    else
+        getAppShareUrl()
+
     fun inviteFriends(dynamicLink: String) {
-        var referralText = AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
+        var referralText =
+            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         val refAmount =
-            AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY).toString()
+            AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
+                .toString()
         referralText = referralText.replace(REPLACE_HOLDER, userReferralCode)
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
         referralText = referralText.plus("\n").plus(dynamicLink)
