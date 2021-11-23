@@ -23,6 +23,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
+import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.dynamiclinks.ktx.androidParameters
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.dynamiclinks.ktx.googleAnalyticsParameters
+import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
+import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -222,6 +228,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var courseId: Int = -1
     private var isVideoDownloaded: MutableLiveData<Boolean> = MutableLiveData(false)
     private var sharedItem: String = ""
+    private lateinit var userReferralCode: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -362,7 +369,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private fun addObserver() {
         isVideoDownloaded.observe(this, Observer {
             if (it) {
-                inviteFriends()
+                getDeepLinkAndInviteFriends()
             }
         })
     }
@@ -441,7 +448,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 isVideoDownloadingStarted = true
                 downloadVideo(videoUrl!!, true)
             } else {
-                inviteFriends()
+                getDeepLinkAndInviteFriends()
             }
         }
 
@@ -544,17 +551,47 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
-    fun inviteFriends(packageString: String? = null) {
+    fun getDeepLinkAndInviteFriends() {
+        val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+        userReferralCode = Mentor.getInstance().referralCode
+        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+            link = Uri.parse("https://joshskill.app.link")
+            domainUriPrefix = domain
+            androidParameters(BuildConfig.APPLICATION_ID) {
+                minimumVersion = 69
+            }
+            googleAnalyticsParameters {
+                source = userReferralCode ?: ""
+                medium = "Mobile"
+                campaign = "user_referer"
+            }
+        }.addOnSuccessListener { result ->
+            result.shortLink?.let {
+                inviteFriends(it.toString())
+            }
+        }.addOnFailureListener {
+            it.printStackTrace()
+
+        }
+    }
+
+    fun inviteFriends(dynamicLink: String) {
+        var referralText = AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
+        val refAmount =
+            AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY).toString()
+        referralText = referralText.replace(REPLACE_HOLDER, userReferralCode)
+        referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
+        referralText = referralText.plus("\n").plus(dynamicLink)
         chatObject?.run {
             try {
                 lifecycleScope.launch {
                     try {
                         val requestData = LinkAttribution(
                             mentorId = Mentor.getInstance().getId(),
-                            contentId = "$videoId${System.currentTimeMillis()}",
+                            contentId = "$userReferralCode${System.currentTimeMillis()}",
                             sharedItem = sharedItem,
                             sharedItemType = "VI",
-                            deepLink = videoUrl!!
+                            deepLink = dynamicLink
                         )
                         val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
                         Timber.i(res.body().toString())
@@ -563,10 +600,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     }
                 }
                 val waIntent = Intent(Intent.ACTION_SEND)
-                waIntent.type = "video/*"
-                if (packageString.isNullOrEmpty().not()) {
-                    waIntent.setPackage(packageString)
-                }
+                waIntent.type = "*/*"
+                waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
                 waIntent.putExtra(
                     Intent.EXTRA_STREAM,
                     Uri.parse(this.sharableVideoDownloadedLocalPath!!)
