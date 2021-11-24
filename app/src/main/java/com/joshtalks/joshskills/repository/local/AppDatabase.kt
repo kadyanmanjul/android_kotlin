@@ -508,7 +508,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT, `timeToken` INTEGER)")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`message_id` INTEGER PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `message_time` INTEGER NOT NULL, `groupId` TEXT NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`message_id` INTEGER PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `msgTime` INTEGER NOT NULL, `groupId` TEXT NOT NULL, `msgType` INTEGER NOT NULL)")
             }
         }
 

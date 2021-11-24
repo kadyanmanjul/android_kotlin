@@ -15,20 +15,23 @@ data class ChatItem(
 
     val message: String,
 
-    val message_time: Long,
+    val msgTime: Long,
 
-    val groupId: String
+    val groupId: String,
+
+    val msgType: Int
 ) {
 
-    constructor(sender: String?, message: String, message_time: Long, groupId: String) : this(
+    constructor(sender: String?, message: String, msgTime: Long, groupId: String, msgType: Int) : this(
         0,
         sender,
         message,
-        message_time,
-        groupId
+        msgTime,
+        groupId,
+        msgType
     )
 
-    fun getMessageTime() = Utils.getMessageTimeInHours(Date(message_time / 10000))
+    fun getMessageTime() = Utils.getMessageTimeInHours(Date(msgTime / 10000))
 
     fun getType(): MessageType {
         return MessageType.RECEIVED_MESSAGE
