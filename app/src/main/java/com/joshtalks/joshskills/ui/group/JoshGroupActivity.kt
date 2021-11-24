@@ -164,11 +164,17 @@ class JoshGroupActivity : BaseGroupActivity() {
                 data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
             }
 
-            CoroutineScope(Dispatchers.IO).launch {
-                val database = AppObjectController.appDatabase
-                database.timeTokenDao().insertNewTimeToken(
-                    TimeTokenRequest(Mentor.getInstance().getId(), data?.getUniqueId()!!, System.currentTimeMillis())
-                )
+            if (data?.hasJoined() == true) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val database = AppObjectController.appDatabase
+                    database.timeTokenDao().insertNewTimeToken(
+                        TimeTokenRequest(
+                            mentorId = Mentor.getInstance().getId(),
+                            groupId = data.getUniqueId(),
+                            timeToken = System.currentTimeMillis()
+                        )
+                    )
+                }
             }
 
             val fragment = GroupChatFragment()

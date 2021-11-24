@@ -22,7 +22,7 @@ interface GroupApiService {
     suspend fun searchGroup(@Query("page") pageNo : Int, @Query("key") searchQuery : String): GroupListResponse
 
     @POST("$DIR/group/add_member_group_v2/")
-    suspend fun joinGroup(@Body request : GroupRequest): Response<Unit>
+    suspend fun joinGroup(@Body request : GroupRequest): Map<String, Any?>
 
     @POST("$DIR/group/update_lasttimetoken/")
     suspend fun updateTimeToken(@Body request : TimeTokenRequest): Response<Unit>

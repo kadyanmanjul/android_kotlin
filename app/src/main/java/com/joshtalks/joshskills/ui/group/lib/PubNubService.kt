@@ -29,11 +29,13 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 private const val TAG = "PubNub_Service"
-class PubNubService private constructor(val groupName: String?): ChatService {
+
+class PubNubService private constructor(val groupName: String?) : ChatService {
+
     private val onlineCountLiveData = MutableLiveData(Event(-1))
     private val pubnub by lazy {
-        config.publishKey = "pub-c-0fc02733-c04f-4d2d-b48c-a41e3e6543b6"
-        config.subscribeKey = "sub-c-bfe79a10-487c-11ec-8edf-3eb83c281352"
+        config.publishKey = "pub-c-07a21ffa-a9e8-45af-93d3-256bb6b4bdd0"
+        config.subscribeKey = "sub-c-308b8df2-4cfc-11ec-a76f-16acaa066210"
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }
@@ -44,7 +46,7 @@ class PubNubService private constructor(val groupName: String?): ChatService {
     }
 
     companion object {
-        fun getChatService(groupName: String? = null) : ChatService {
+        fun getChatService(groupName: String? = null): ChatService {
             return PubNubService(groupName)
         }
     }
@@ -74,7 +76,7 @@ class PubNubService private constructor(val groupName: String?): ChatService {
 
     override fun fetchGroupList(pageInfo: PageInfo?): NetworkData? {
         Log.d(TAG, "fetchGroupList: $pageInfo")
-        val data = if(pageInfo == null)
+        val data = if (pageInfo == null)
             pubnub.memberships
                 .includeChannel(Include.PNChannelDetailsLevel.CHANNEL_WITH_CUSTOM)
                 .includeCustom(true)
@@ -87,10 +89,8 @@ class PubNubService private constructor(val groupName: String?): ChatService {
                 .limit(10)
                 .page(pageInfo.pubNubNext ?: pageInfo.pubNubPrevious)
                 .sync()
-        return if(data  == null) null else PubNubNetworkData(data)
+        return if (data == null) null else PubNubNetworkData(data)
     }
-
-
 
     override fun getUnreadMessageCount(groupId: String, lastSeenTimestamp: Long): Long {
         val count = pubnub.messageCounts()
@@ -125,8 +125,7 @@ class PubNubService private constructor(val groupName: String?): ChatService {
         }
     }
 
-
-    private fun getOnlineMember(groupName: String) : Int {
+    private fun getOnlineMember(groupName: String): Int {
         val count = pubnub.hereNow()
             .channels(listOf(groupName))
             .sync()
