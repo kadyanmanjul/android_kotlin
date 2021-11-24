@@ -1319,7 +1319,10 @@ class WebRtcService : BaseWebRtcService() {
                                         intent.getBooleanExtra("isModerator", false)
                                     if (isRoomCreatedByUser) {
                                         setClientRole(CLIENT_ROLE_BROADCASTER)
-                                        Log.d("ABC2", "Broadcaster role set status code $statusCode")
+                                        Log.d(
+                                            "ABC2",
+                                            "Broadcaster role set status code $statusCode"
+                                        )
 
                                     } else {
                                         setClientRole(CLIENT_ROLE_AUDIENCE)
@@ -1855,13 +1858,15 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onDestroy() {
-        Log.d("ABC2", "service onDestroy() called")
-        if (isRoomCreatedByUser) {
-            endRoom(roomId, roomQuestionId)
-        } else {
-            leaveRoom(roomId, roomQuestionId)
+        if (isConversionRoomActive) {
+            Log.d("ABC2", "service onDestroy() called")
+            if (isRoomCreatedByUser) {
+                endRoom(roomId, roomQuestionId)
+            } else {
+                leaveRoom(roomId, roomQuestionId)
+            }
+            Log.d("ABC2", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         }
-        Log.d("ABC2", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         RtcEngine.destroy()
         stopRing()
         userDetailMap = null
