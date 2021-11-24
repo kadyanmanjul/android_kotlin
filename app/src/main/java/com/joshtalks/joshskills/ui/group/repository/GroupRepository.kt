@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.ui.group.model.GroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
@@ -120,10 +121,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             )
         }
 
-    fun getGroupListResult(onGroupsLoaded: (() -> Unit)? = null): Pager<Int, GroupsItem> {
+    fun getGroupListResult(onGroupsLoaded: ((Int) -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
             fetchGroupList()
-            onGroupsLoaded?.invoke()
+            onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
         }
         return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
             database.groupListDao().getPagedGroupList()
