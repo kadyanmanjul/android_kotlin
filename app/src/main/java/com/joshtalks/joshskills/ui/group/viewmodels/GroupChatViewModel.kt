@@ -21,10 +21,12 @@ import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.IS_FROM_KEYBOARD
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
+import com.joshtalks.joshskills.ui.group.constants.MESSAGE
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
+import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
@@ -195,10 +197,16 @@ class GroupChatViewModel : BaseViewModel() {
     fun sendMessage(view: View) {
         message.what = SEND_MSG
         singleLiveEvent.value = message
+        chatService.getMessageHistory(groupId)
     }
 
     fun pushMessage(msg: String) {
-        chatService.sendMessage(msg)
+        val message = MessageItem(
+            msg = msg,
+            msgType = MESSAGE,
+            mentorId = Mentor.getInstance().getId()
+        )
+        chatService.sendMessage(message)
         clearText()
     }
 
