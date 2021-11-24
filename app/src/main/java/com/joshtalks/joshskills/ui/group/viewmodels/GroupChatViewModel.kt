@@ -7,6 +7,7 @@ import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -182,6 +183,8 @@ class GroupChatViewModel : BaseViewModel() {
             }
         }
     }
+
+    fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
 
     fun expandGroupList(view: View) {
         view.visibility = View.GONE

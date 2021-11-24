@@ -74,8 +74,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     ChatItem(
                         sender = pnMessageResult.userMetadata.asString,
                         message = pnMessageResult.message.asString,
-                        message_time = pnMessageResult.timetoken,
-                        groupId = pnMessageResult.channel
+                        msgTime = pnMessageResult.timetoken,
+                        groupId = pnMessageResult.channel,
+                        msgType = 0
                     )
                 )
             }
@@ -123,11 +124,17 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     fun getGroupListResult(onGroupsLoaded: ((Int) -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
-            fetchGroupList()
+            fetchGroupListFromNetwork()
             onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
         }
         return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
             database.groupListDao().getPagedGroupList()
+        }
+    }
+
+    fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {
+        return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
+            database.groupChatDao().getPagedGroupChat(id)
         }
     }
 
@@ -143,10 +150,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     }
                 })
         }
-    }
-
-    private suspend fun fetchGroupList() {
-        fetchGroupListFromNetwork()
     }
 
     private suspend fun fetchGroupListFromNetwork(pageInfo: PageInfo? = null) {
