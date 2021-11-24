@@ -134,7 +134,7 @@ class GroupChatFragment : BaseFragment() {
         vm.getOnlineUserCount()
         lifecycleScope.launch(Dispatchers.Main) {
             val item = database.groupListDao().getGroupItem(vm.groupId)
-            if (item.name != null) {
+            if (item != null) {
                 vm.groupHeader.set(item.name)
                 vm.imageUrl.set(item.groupIcon)
             }
