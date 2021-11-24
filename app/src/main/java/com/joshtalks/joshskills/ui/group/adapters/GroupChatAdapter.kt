@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
 import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.MessageType
+import com.joshtalks.joshskills.ui.group.constants.MessageType
 import com.joshtalks.joshskills.ui.group.viewholder.ChatViewHolder
 
 class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :

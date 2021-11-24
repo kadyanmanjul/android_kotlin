@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.group.repository
 import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -10,6 +12,13 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
+import com.joshtalks.joshskills.ui.group.constants.MESSAGE
+import com.joshtalks.joshskills.ui.group.constants.MESSAGE_ERROR
+import com.joshtalks.joshskills.ui.group.constants.META_MESSAGE
+import com.joshtalks.joshskills.ui.group.constants.RECEIVE_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.SENT_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
@@ -65,18 +74,30 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
             Log.d(TAG, "message: $pnMessageResult")
             CoroutineScope(Dispatchers.IO).launch {
+                val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
                 database.groupListDao().updateGroupItem(
-                    lastMessage = "${pnMessageResult.userMetadata.asString}: ${pnMessageResult.message.asString}",
+                    lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
                     lastMsgTime = pnMessageResult.timetoken,
                     id = pnMessageResult.channel
                 )
+                // Meta + Sender
                 database.groupChatDao().insertMessage(
                     ChatItem(
                         sender = pnMessageResult.userMetadata.asString,
                         message = pnMessageResult.message.asString,
                         msgTime = pnMessageResult.timetoken,
                         groupId = pnMessageResult.channel,
-                        msgType = 0
+                        msgType = when(messageItem.msgType) {
+                            MESSAGE -> if(messageItem.mentorId == Mentor.getInstance().getId())
+                                            SENT_MESSAGE_LOCAL
+                                        else
+                                            RECEIVE_MESSAGE_LOCAL
+                            META_MESSAGE -> if(messageItem.mentorId == Mentor.getInstance().getId())
+                                                SENT_META_MESSAGE_LOCAL
+                                            else
+                                                RECEIVE_META_MESSAGE_LOCAL
+                            else -> MESSAGE_ERROR
+                        }
                     )
                 )
             }
@@ -124,17 +145,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     fun getGroupListResult(onGroupsLoaded: ((Int) -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
-            fetchGroupListFromNetwork()
+            fetchGroupList()
             onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
         }
         return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
             database.groupListDao().getPagedGroupList()
-        }
-    }
-
-    fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {
-        return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
-            database.groupChatDao().getPagedGroupChat(id)
         }
     }
 
@@ -150,6 +165,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     }
                 })
         }
+    }
+
+    private suspend fun fetchGroupList() {
+        fetchGroupListFromNetwork()
     }
 
     private suspend fun fetchGroupListFromNetwork(pageInfo: PageInfo? = null) {

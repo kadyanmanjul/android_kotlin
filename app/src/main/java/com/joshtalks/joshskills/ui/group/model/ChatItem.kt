@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.group.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.ui.group.constants.MessageType
 import java.util.Date
 
 @Entity(tableName = "group_chat_db")
