@@ -3,9 +3,11 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import com.joshtalks.joshskills.core.Event
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
 import com.pubnub.api.PubNub
@@ -22,6 +24,7 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
 import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
+import java.lang.Exception
 import java.sql.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,15 +112,33 @@ class PubNubService private constructor(val groupName: String?) : ChatService {
             .end(pubnub.timestamp.toLong() * 1000)
             .maximumPerChannel(1)
             .sync()
+
+        val message = try {
+            val messageItem = Gson().fromJson(msg?.channels?.get(groupId)?.get(0)?.message, MessageItem::class.java)
+            messageItem.msg
+        } catch (e: Exception) {
+            msg?.channels?.get(groupId)?.get(0)?.message?.asString ?: ""
+        }
         Log.d(TAG, "getLastDetailsMessage: ${pubnub.timestamp.toLong()}")
-        return "${msg?.channels?.get(groupId)?.get(0)?.meta?.asString}: ${msg?.channels?.get(groupId)?.get(0)?.message?.asString}" to (msg?.channels?.get(groupId)?.get(0)?.timetoken ?: 0L)
+        return "${msg?.channels?.get(groupId)?.get(0)?.meta?.asString}: ${message}" to (msg?.channels?.get(groupId)?.get(0)?.timetoken ?: 0L)
     }
 
-    override fun sendMessage(msg: String) {
+    override fun getMessageHistory(groupId: String) {
+
+        val history = pubnub.history()
+            .channel(groupName)
+            .includeMeta(true)
+            .includeTimetoken(true)
+            .end(System.currentTimeMillis() * 1000L)
+            .count(20)
+            .sync()
+    }
+
+    override fun sendMessage(messageItem: MessageItem) {
         CoroutineScope(Dispatchers.IO).launch {
             pubnub.publish()
                 .channel(groupName)
-                .message(msg)
+                .message(messageItem)
                 .meta("${Mentor.getInstance().getUser()?.firstName}")
                 .shouldStore(true)
                 .usePOST(true)

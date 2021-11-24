@@ -1,21 +1,20 @@
 package com.joshtalks.joshskills.ui.group.data
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadType
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.paging.RemoteMediator
+import com.flurry.sdk.it
+import com.joshtalks.joshskills.ui.group.model.ChatItem
+
+//@ExperimentalPagingApi
 //class GroupChatPagingSource(val apiService: GroupApiService, val channelId: String) :
-//    PagingSource<Int, ChatItem>() {
-//    override fun getRefreshKey(state: PagingState<Int, ChatItem>): Int? {
-//        TODO("Not yet implemented")
+//    RemoteMediator<Long, ChatItem>() {
+//    override suspend fun load(
+//        loadType: LoadType,
+//        state: PagingState<Long, ChatItem>
+//    ): MediatorResult {
+//        state.closestItemToPosition(state.anchorPosition ?: 0)
 //    }
-//
-//    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ChatItem> {
-//
-//        val currentPageNo = params.key ?: 1
-//        val responseData = apiService.getGroupChat(currentPageNo, channelId)
-//
-//        val data = responseData.chats?.map {
-//            it as ChatItem
-//        }
-//
-//        return LoadResult.Page(data!!, if(currentPageNo == 1) null else currentPageNo-1, if(data.isEmpty()) null else currentPageNo+1)
-//    }
-//
 //}
