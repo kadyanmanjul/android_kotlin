@@ -7,6 +7,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.flurry.sdk.it
 
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
@@ -64,7 +65,9 @@ class JoshGroupViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun groupDateLoaded() {
+    fun groupDateLoaded(size : Int) {
+        hasGroupData.set(size > 0)
+        hasGroupData.notifyChange()
         repository.startChatEventListener()
     }
 
