@@ -4,11 +4,16 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -64,6 +69,7 @@ class LauncherActivity : CoreJoshActivity() {
                 PrefManager.put(IS_FREE_TRIAL, true, false)
             }
         }
+
     }
 
     private fun animatedProgressBar() {
@@ -139,6 +145,26 @@ class LauncherActivity : CoreJoshActivity() {
                         LogException.catchException(ex)
                     }
                 }.withData(this@LauncherActivity.intent.data).init()
+            Firebase.dynamicLinks
+                .getDynamicLink(intent)
+                .addOnSuccessListener { pendingDynamicLinkData ->
+                    var deepLink: Uri? = null
+                    if (pendingDynamicLinkData != null) {
+                        deepLink = pendingDynamicLinkData.link
+                    }
+                    if (deepLink != null) {
+                        Snackbar.make(findViewById(android.R.id.content),
+                            "Found deep link!$deepLink", Snackbar.LENGTH_LONG).show()
+                        Log.e(TAG, "initApp: ${pendingDynamicLinkData.toString()}")
+                        Log.e(TAG, "initApp: deepLink=> ${pendingDynamicLinkData.link}")
+                        Log.e(TAG, "initApp: utmParameters=> ${pendingDynamicLinkData.utmParameters}")
+                        Log.e(TAG, "initApp: clickTimestamp=> ${pendingDynamicLinkData.clickTimestamp}")
+                        Log.e(TAG, "initApp: extensions=> ${pendingDynamicLinkData.extensions}")
+                    } else {
+                        Log.d(TAG, "getDynamicLink: no link found")
+                    }
+                }
+                .addOnFailureListener { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
         }
     }
 

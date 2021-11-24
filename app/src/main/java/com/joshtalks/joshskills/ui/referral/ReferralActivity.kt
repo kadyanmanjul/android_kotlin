@@ -12,11 +12,13 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.dynamiclinks.ktx.androidParameters
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
@@ -200,9 +202,22 @@ class ReferralActivity : BaseActivity() {
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
         val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+
         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-            link = Uri.parse("https://joshskill.app.link")
             domainUriPrefix = domain
+            link = Uri.parse("https://joshskill.app.link")
+//            link =
+//                Uri.parse(
+//                    "https://joshskill.app.link/" +
+//                            "?apn=${application.packageName}" +
+//                            "&link=https://joshskill.app.link/" +
+//                            "&source=$userReferralCode" +
+//                            "&medium=${
+//                                userReferralCode.plus(
+//                                    System.currentTimeMillis()
+//                                )
+//                            }&campaign=referral"
+//                )
             androidParameters(BuildConfig.APPLICATION_ID) {
                 minimumVersion = 69
             }
@@ -213,6 +228,11 @@ class ReferralActivity : BaseActivity() {
             }
 
         }.addOnSuccessListener { result ->
+            Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.shortLink}")
+            Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.previewLink}")
+            result.warnings.forEach {
+                Log.w(TAG, "getDeepLinkAndInviteFriends: Warning${it.message}")
+            }
             result.shortLink?.let {
                 try {
                     if (it.toString().isNotEmpty()) {
