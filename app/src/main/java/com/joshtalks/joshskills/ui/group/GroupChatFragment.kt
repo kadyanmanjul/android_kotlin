@@ -25,7 +25,10 @@ import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 import com.vanniktech.emoji.EmojiPopup
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "GroupChatFragment"
 
@@ -46,6 +49,17 @@ class GroupChatFragment : BaseFragment() {
         init()
         initTooltip()
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launchWhenStarted {
+            vm.getChatData().distinctUntilChanged().collectLatest {
+                withContext(Dispatchers.Main) {
+                    vm.chatAdapter.submitData(it)
+                }
+            }
+        }
     }
 
     private fun initTooltip() {

@@ -17,4 +17,7 @@ interface GroupChatDao {
 
     @Query("DELETE FROM group_chat_db WHERE groupId = :id")
     suspend fun deleteGroupMessages(id: String)
+
+    @Query("SELECT * FROM group_chat_db WHERE groupId = :id ORDER BY msgTime")
+    fun getPagedGroupChat(id: String) : PagingSource<Int, ChatItem>
 }
