@@ -165,7 +165,28 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     suspend fun joinGroup(groupId: String) {
-        apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
+        Log.e(TAG, "Joining group : ${groupId}")
+        val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
+        if (response["success"] == true) {
+            try {
+                database.groupListDao().insertGroupItem(
+                    GroupsItem(
+                        groupIcon = response["group_icon"] as String?,
+                        groupId = response["group_id"] as String,
+                        createdAt = (response["created_at"] as String?)?.toLongOrNull(),
+                        lastMessage = "You have joined this group",
+                        lastMsgTime = System.currentTimeMillis().times(10000),
+                        unreadCount = null,
+                        name = response["group_name"] as String?,
+                        createdBy = response["created_by"] as String?,
+                        totalCalls = null
+                    )
+                )
+            } catch (exp: Exception) {
+                Log.e(TAG, "Error: ${exp.message}")
+                exp.printStackTrace()
+            }
+        }
     }
 
     suspend fun addGroupToServer(request: AddGroupRequest) {
@@ -183,7 +204,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         groupIcon = response["group_icon"] as String?,
                         groupId = response["group_id"] as String,
                         createdAt = (response["created_at"] as String?)?.toLongOrNull(),
-                        lastMessage = null,
+                        lastMessage = "${response["created_by"] as String?} created this group",
                         lastMsgTime = 0,
                         unreadCount = null,
                         name = request.groupName,

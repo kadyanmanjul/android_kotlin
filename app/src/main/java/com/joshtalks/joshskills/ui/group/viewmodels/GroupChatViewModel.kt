@@ -47,6 +47,7 @@ class GroupChatViewModel : BaseViewModel() {
     var showAllMembers = ObservableBoolean(false)
     lateinit var memberAdapter: GroupMemberAdapter
     var chatAdapter = GroupChatAdapter(GroupChatComparator)
+    val joiningNewGroup = ObservableBoolean(false)
     var chatSendText: String = ""
     lateinit var chatService: ChatService
 
@@ -84,16 +85,19 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
+        joiningNewGroup.set(true)
         viewModelScope.launch {
             try {
                 repository.joinGroup(groupId)
                 withContext(Dispatchers.Main) {
                     hasJoinedGroup.set(true)
+                    joiningNewGroup.set(false)
                     getOnlineUserCount()
                     message.what = SHOULD_REFRESH_GROUP_LIST
                     singleLiveEvent.value = message
                 }
             } catch (e: Exception) {
+                joiningNewGroup.set(false)
                 showToast("Error joining group")
                 e.printStackTrace()
             }
