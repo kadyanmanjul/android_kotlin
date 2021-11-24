@@ -205,7 +205,6 @@
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginBottom="@dimen/_16sdp"
             android:gravity="center"
-            android:onClick="@{vm.hasJoinedGroup ? null :vm::joinGroup}"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
             android:text="@{vm.userOnlineCount == `` ? `Loading...` : `Practice Partners Online: ` + vm.userOnlineCount, default=`Loading...`}"
