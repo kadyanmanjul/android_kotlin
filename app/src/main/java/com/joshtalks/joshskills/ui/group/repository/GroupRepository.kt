@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
@@ -86,17 +87,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         message = messageItem.msg,
                         msgTime = pnMessageResult.timetoken,
                         groupId = pnMessageResult.channel,
-                        msgType = when(messageItem.msgType) {
-                            MESSAGE -> if(messageItem.mentorId == Mentor.getInstance().getId())
-                                            SENT_MESSAGE_LOCAL
-                                        else
-                                            RECEIVE_MESSAGE_LOCAL
-                            META_MESSAGE -> if(messageItem.mentorId == Mentor.getInstance().getId())
-                                                SENT_META_MESSAGE_LOCAL
-                                            else
-                                                RECEIVE_META_MESSAGE_LOCAL
-                            else -> MESSAGE_ERROR
-                        }
+                        msgType = messageItem.getMessageType()
                     )
                 )
             }

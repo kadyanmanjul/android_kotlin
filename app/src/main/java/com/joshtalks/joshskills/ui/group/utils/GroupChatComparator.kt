@@ -5,10 +5,10 @@ import com.joshtalks.joshskills.ui.group.model.ChatItem
 
 object GroupChatComparator : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return oldItem.message_id == newItem.message_id
+        return oldItem.groupId == newItem.groupId && oldItem.msgTime == newItem.msgTime
     }
 
     override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-        return oldItem.message == newItem.message
+        return oldItem.message == newItem.message && oldItem.sender == newItem.sender
     }
 }

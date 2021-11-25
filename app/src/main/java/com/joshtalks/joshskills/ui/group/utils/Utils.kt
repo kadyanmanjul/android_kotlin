@@ -1,5 +1,16 @@
 package com.joshtalks.joshskills.ui.group.utils
 
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.constants.MESSAGE
+import com.joshtalks.joshskills.ui.group.constants.MESSAGE_ERROR
+import com.joshtalks.joshskills.ui.group.constants.META_MESSAGE
+import com.joshtalks.joshskills.ui.group.constants.RECEIVE_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.SENT_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.pubnub.api.models.consumer.history.PNHistoryItemResult
+
 fun getMemberCount(memberText : String) : Int {
     var memberCount = 1
     if(memberText.isNotBlank()) {
@@ -10,4 +21,16 @@ fun getMemberCount(memberText : String) : Int {
             memberCount = num[0].toIntOrNull() ?: 1
     }
     return memberCount
+}
+
+fun MessageItem.getMessageType() = when(msgType) {
+    MESSAGE -> if(mentorId == Mentor.getInstance().getId())
+        SENT_MESSAGE_LOCAL
+    else
+        RECEIVE_MESSAGE_LOCAL
+    META_MESSAGE -> if(mentorId == Mentor.getInstance().getId())
+        SENT_META_MESSAGE_LOCAL
+    else
+        RECEIVE_META_MESSAGE_LOCAL
+    else -> MESSAGE_ERROR
 }
