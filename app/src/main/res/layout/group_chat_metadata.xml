@@ -10,27 +10,32 @@
             type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:backgroundTint="#D5EAF5"
-        app:cardCornerRadius="@dimen/_6sdp"
-        app:cardElevation="@dimen/_1sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:maxWidth="@dimen/_200sdp"
-            android:paddingHorizontal="@dimen/_7sdp"
-            android:paddingVertical="@dimen/_4sdp"
-            android:text="@{itemData.message}"
-            android:textColor="@color/group_coming_soon"
-            tools:text="Rahul changed the group name from \“MI fans\” to \“IPL MI\”" />
-    </com.google.android.material.card.MaterialCardView>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:backgroundTint="#D5EAF5"
+            app:cardCornerRadius="@dimen/_6sdp"
+            app:cardElevation="@dimen/_1sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxWidth="@dimen/_200sdp"
+                android:paddingHorizontal="@dimen/_7sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="@{itemData.message}"
+                android:textColor="@color/group_coming_soon"
+                tools:text="Rahul changed the group name from \“MI fans\” to \“IPL MI\”" />
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
 </layout>

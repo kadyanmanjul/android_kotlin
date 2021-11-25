@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -84,7 +83,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 database.groupChatDao().insertMessage(
                     ChatItem(
                         sender = pnMessageResult.userMetadata.asString,
-                        message = pnMessageResult.message.asString,
+                        message = messageItem.msg,
                         msgTime = pnMessageResult.timetoken,
                         groupId = pnMessageResult.channel,
                         msgType = when(messageItem.msgType) {
