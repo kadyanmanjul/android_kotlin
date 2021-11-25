@@ -9,7 +9,7 @@ import java.util.Date
 data class ChatItem(
 
     @PrimaryKey(autoGenerate = true)
-    val message_id: Long,
+    val messageId: Long = 0,
 
     val sender: String?,
 
@@ -21,15 +21,6 @@ data class ChatItem(
 
     val msgType: Int
 ) {
-
-    constructor(sender: String?, message: String, msgTime: Long, groupId: String, msgType: Int) : this(
-        0,
-        sender,
-        message,
-        msgTime,
-        groupId,
-        msgType
-    )
 
     fun getMessageTime() = Utils.getMessageTimeInHours(Date(msgTime / 10000))
 }

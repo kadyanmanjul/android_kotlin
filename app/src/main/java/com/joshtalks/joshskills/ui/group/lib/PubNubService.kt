@@ -7,9 +7,11 @@ import com.google.gson.Gson
 import com.joshtalks.joshskills.core.Event
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
+import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.pubnub.api.PubNub
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -123,15 +125,27 @@ class PubNubService private constructor(val groupName: String?) : ChatService {
         return "${msg?.channels?.get(groupId)?.get(0)?.meta?.asString}: ${message}" to (msg?.channels?.get(groupId)?.get(0)?.timetoken ?: 0L)
     }
 
-    override fun getMessageHistory(groupId: String) {
-
+    override fun getMessageHistory(groupId: String, timeToken : Long?) : List<ChatItem> {
         val history = pubnub.history()
             .channel(groupName)
             .includeMeta(true)
             .includeTimetoken(true)
-            .end(System.currentTimeMillis() * 1000L)
+            .end(timeToken ?: System.currentTimeMillis() * 1000L)
             .count(20)
             .sync()
+        val messages = mutableListOf<ChatItem>()
+        history?.messages?.map {
+            val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+            val message = ChatItem(
+                sender = it.meta.asString,
+                msgType = messageItem.getMessageType(),
+                message = messageItem.msg,
+                msgTime = it.timetoken,
+                groupId = groupId
+            )
+            messages.add(message)
+        }
+        return messages
     }
 
     override fun sendMessage(messageItem: MessageItem) {
