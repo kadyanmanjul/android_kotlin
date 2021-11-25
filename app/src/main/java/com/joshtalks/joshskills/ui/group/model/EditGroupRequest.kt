@@ -11,5 +11,8 @@ data class EditGroupRequest(
     val groupName: String,
 
     @field:SerializedName("group_icon")
-    var groupIcon: String
+    var groupIcon: String,
+
+    @Transient
+    var isImageChanged: Boolean
 )
