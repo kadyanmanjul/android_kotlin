@@ -13,13 +13,6 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
-import com.joshtalks.joshskills.ui.group.constants.MESSAGE
-import com.joshtalks.joshskills.ui.group.constants.MESSAGE_ERROR
-import com.joshtalks.joshskills.ui.group.constants.META_MESSAGE
-import com.joshtalks.joshskills.ui.group.constants.RECEIVE_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.SENT_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
@@ -27,7 +20,6 @@ import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.*
-
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupRequest
@@ -36,6 +28,7 @@ import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
+
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
@@ -244,13 +237,15 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
     }
 
     suspend fun editGroupInServer(request: EditGroupRequest): Boolean {
-        val url =
-            if (request.groupIcon.isNotBlank()) {
-                val compressedImagePath = getCompressImage(request.groupIcon)
-                uploadCompressedMedia(compressedImagePath)
-            } else
-                ""
-        request.groupIcon = url ?: ""
+        if (request.isImageChanged) {
+            val url =
+                if (request.groupIcon.isNotBlank()) {
+                    val compressedImagePath = getCompressImage(request.groupIcon)
+                    uploadCompressedMedia(compressedImagePath)
+                } else ""
+            request.groupIcon = url ?: ""
+        }
+
         val response = apiService.editGroup(request)
         if (response.isSuccessful) {
             database.groupListDao()
@@ -326,6 +321,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         ).execute()
         return responseUpload.code()
     }
+
+    suspend fun getGroupItem(groupId: String) = database.groupListDao().getGroupItem(groupId)
 
     suspend fun fireTimeTokenAPI() {
         val timeTokenList = database.timeTokenDao().getAllTimeTokens()

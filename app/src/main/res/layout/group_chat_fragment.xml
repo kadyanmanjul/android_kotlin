@@ -151,6 +151,7 @@
                 android:hint="@string/type_message_hint"
                 android:inputType="textCapSentences|textMultiLine"
                 android:maxLines="4"
+                android:maxLength="1800"
                 android:minHeight="@dimen/_34sdp"
                 android:onClick="@{() -> vm.openEmojiKeyboard(true)}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"

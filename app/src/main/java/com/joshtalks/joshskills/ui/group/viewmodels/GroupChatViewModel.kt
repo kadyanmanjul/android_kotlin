@@ -117,6 +117,16 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    fun refreshGroupInfo() {
+        viewModelScope.launch(Dispatchers.Main) {
+            val item = repository.getGroupItem(groupId)
+            if (item != null) {
+                groupHeader.set(item.name)
+                imageUrl.set(item.groupIcon)
+            }
+        }
+    }
+
     fun openEmojiKeyboard(isFromKeyboard: Boolean) {
         message.what = OPEN_EMOJI_KEYBOARD
         message.data = Bundle().apply {
