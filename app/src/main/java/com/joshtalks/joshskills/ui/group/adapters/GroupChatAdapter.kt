@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.constants.MessageType
 import com.joshtalks.joshskills.ui.group.viewholder.ChatViewHolder
 
 class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
@@ -25,17 +25,17 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         viewType: Int
     ): ChatViewHolder {
         return when (viewType) {
-            LEFT_TEXT_MESSAGE -> {
+            RECEIVE_MESSAGE_LOCAL -> {
                 val view =
                     setViewHolder<GroupChatLeftMsgBinding>(parent, R.layout.group_chat_left_msg)
                 LeftChatViewHolder(view)
             }
-            RIGHT_TEXT_MESSAGE -> {
+            SENT_MESSAGE_LOCAL -> {
                 val view =
                     setViewHolder<GroupChatRightMsgBinding>(parent, R.layout.group_chat_right_msg)
                 RightChatViewHolder(view)
             }
-            META_DATA_MESSAGE, ERROR_TEXT_MESSAGE -> {
+            SENT_META_MESSAGE_LOCAL, RECEIVE_META_MESSAGE_LOCAL, MESSAGE_ERROR -> {
                 val view =
                     setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
                 MetaChatViewHolder(view)
@@ -53,13 +53,7 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)?.getType()) {
-            MessageType.META_DATA -> META_DATA_MESSAGE
-            MessageType.SENT_MESSAGE -> RIGHT_TEXT_MESSAGE
-            MessageType.RECEIVED_MESSAGE -> LEFT_TEXT_MESSAGE
-            MessageType.DATA_ERROR -> ERROR_TEXT_MESSAGE
-            else -> ERROR_TEXT_MESSAGE
-        }
+        return getItem(position)?.msgType!!
     }
 
     private fun <V : ViewDataBinding> setViewHolder(parent: ViewGroup, layoutId: Int): V {
@@ -93,7 +87,7 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
     }
 }
 
-private const val LEFT_TEXT_MESSAGE = 1  //Message is received
-private const val RIGHT_TEXT_MESSAGE = 2 //Message is sent
-private const val META_DATA_MESSAGE = 3  //Message is of type metadata
-private const val ERROR_TEXT_MESSAGE = 0  //Message type is not known
+//private const val LEFT_TEXT_MESSAGE = 1  //Message is received
+//private const val RIGHT_TEXT_MESSAGE = 2 //Message is sent
+//private const val META_DATA_MESSAGE = 3  //Message is of type metadata
+//private const val ERROR_TEXT_MESSAGE = 0  //Message type is not known
