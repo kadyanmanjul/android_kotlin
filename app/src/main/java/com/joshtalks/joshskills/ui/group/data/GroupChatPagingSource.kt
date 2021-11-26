@@ -7,6 +7,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.flurry.sdk.it
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import java.io.IOException
@@ -14,12 +15,17 @@ import retrofit2.HttpException
 
 @ExperimentalPagingApi
 class GroupChatPagingSource(val apiService: GroupApiService, val channelId: String, val database: AppDatabase) :
-    RemoteMediator<Long, ChatItem>() {
-    private val chatService = PubNubService.getChatService(channelId)
+    RemoteMediator<Int, ChatItem>() {
+    private val chatService : ChatService = PubNubService
+
+    override suspend fun initialize(): InitializeAction {
+        val count = database.groupChatDao().getChatCount(channelId)
+        return if(count == 0) InitializeAction.LAUNCH_INITIAL_REFRESH else InitializeAction.SKIP_INITIAL_REFRESH
+    }
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Long, ChatItem>
+        state: PagingState<Int, ChatItem>
     ): MediatorResult {
         return try {
             // The network load method takes an optional after=<user.id>

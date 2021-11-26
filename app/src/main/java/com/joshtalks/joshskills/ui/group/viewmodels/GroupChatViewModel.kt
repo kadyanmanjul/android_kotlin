@@ -7,7 +7,9 @@ import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
+import com.flurry.sdk.gr
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -52,14 +54,9 @@ class GroupChatViewModel : BaseViewModel() {
     var chatAdapter = GroupChatAdapter(GroupChatComparator)
     val joiningNewGroup = ObservableBoolean(false)
     var chatSendText: String = ""
-    lateinit var chatService: ChatService
+    private val chatService : ChatService = PubNubService
 
     var groupId: String = ""
-        set(value) {
-            field = value
-            if (field != "")
-                chatService = PubNubService.getChatService(field)
-        }
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
@@ -186,6 +183,7 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    @ExperimentalPagingApi
     fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
 
     fun expandGroupList(view: View) {
@@ -206,7 +204,7 @@ class GroupChatViewModel : BaseViewModel() {
             msgType = MESSAGE,
             mentorId = Mentor.getInstance().getId()
         )
-        chatService.sendMessage(message)
+        chatService.sendMessage(groupId, message)
         clearText()
     }
 

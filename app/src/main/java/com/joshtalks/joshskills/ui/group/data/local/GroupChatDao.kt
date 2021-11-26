@@ -19,6 +19,9 @@ interface GroupChatDao {
     @Query("SELECT * FROM group_chat_db WHERE groupId = :id ORDER BY msgTime")
     suspend fun getGroupMessage(id: String): List<ChatItem>
 
+    @Query("SELECT count(messageId) FROM group_chat_db WHERE groupId = :groupId")
+    suspend fun getChatCount(groupId : String) : Int
+
     @Query("DELETE FROM group_chat_db WHERE groupId = :id")
     suspend fun deleteGroupMessages(id: String)
 

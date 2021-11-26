@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.flurry.sdk.it
 import com.google.gson.Gson
 import com.joshtalks.joshskills.core.Event
 import com.joshtalks.joshskills.repository.local.AppDatabase
@@ -18,6 +19,7 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.models.consumer.PNStatus
+import com.pubnub.api.models.consumer.history.PNHistoryItemResult
 import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
@@ -35,7 +37,7 @@ import org.jetbrains.annotations.NotNull
 
 private const val TAG = "PubNub_Service"
 
-class PubNubService private constructor(val groupName: String?) : ChatService {
+object PubNubService : ChatService {
 
     private val onlineCountLiveData = MutableLiveData(Event(-1))
     private val pubnub by lazy {
@@ -50,27 +52,18 @@ class PubNubService private constructor(val groupName: String?) : ChatService {
         }
     }
 
-    companion object {
-        fun getChatService(groupName: String? = null): ChatService {
-            return PubNubService(groupName)
-        }
-    }
-
-    override fun initializeChatService() {
-        reset()
-        setInitialState()
-    }
+    override fun initializeChatService() {}
 
     override fun <T> subscribeToChatEvents(groups: List<String>, observer: ChatEventObserver<T>) {
-        reset()
         pubnub.addListener(observer.getObserver() as @NotNull SubscribeCallback)
-        Log.d(TAG, "subscribeToChatEvents: ${pubnub.timestamp}")
-        Log.d(TAG, "subscribeToChatEvents: ${pubnub.timestamp.minus(24 * 60 * 60L)}")
         pubnub.subscribe()
-            //.withPresence()
-            //.withTimetoken(pubnub.timestamp.minus(12 * 60 * 60L) * 1000L)
             .channels(groups)
             .execute()
+    }
+
+    override fun <T> unsubscribeToChatEvents(observer: ChatEventObserver<T>) {
+        pubnub.removeListener(observer.getObserver() as @NotNull SubscribeCallback)
+        pubnub.unsubscribeAll()
     }
 
     override fun createGroup(groupName: String, imageUrl: String) {}
@@ -127,14 +120,17 @@ class PubNubService private constructor(val groupName: String?) : ChatService {
 
     override fun getMessageHistory(groupId: String, timeToken : Long?) : List<ChatItem> {
         val history = pubnub.history()
-            .channel(groupName)
+            .channel(groupId)
             .includeMeta(true)
             .includeTimetoken(true)
             .end(timeToken ?: System.currentTimeMillis() * 1000L)
             .count(20)
             .sync()
         val messages = mutableListOf<ChatItem>()
-        history?.messages?.map {
+
+        history?.messages?.
+        filterIndexed{index, _ ->  (timeToken == null || index != 0 )}?.
+        map {
             val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
             val message = ChatItem(
                 sender = it.meta.asString,
@@ -148,7 +144,7 @@ class PubNubService private constructor(val groupName: String?) : ChatService {
         return messages
     }
 
-    override fun sendMessage(messageItem: MessageItem) {
+    override fun sendMessage(groupName: String, messageItem: MessageItem) {
         CoroutineScope(Dispatchers.IO).launch {
             pubnub.publish()
                 .channel(groupName)
@@ -165,24 +161,6 @@ class PubNubService private constructor(val groupName: String?) : ChatService {
             .channels(listOf(groupName))
             .sync()
         return count?.channels?.get(groupName)?.occupancy ?: 0
-    }
-
-    private fun reset() {
-        //pubnub.removeListener(subscribeCallback)
-        pubnub.unsubscribeAll()
-    }
-
-    // TODO: Need to refactor the name
-    private fun setInitialState() {
-        //pubnub.addListener(subscribeCallback)
-        // TODO: Refactor
-        CoroutineScope(Dispatchers.IO).launch {
-
-        }
-        pubnub.subscribe()
-            .withPresence()
-            //.withTimetoken()
-            .execute()
     }
 }
 

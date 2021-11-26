@@ -18,7 +18,7 @@ import java.lang.Exception
 
 private const val TAG = "PubNub_GroupPaging"
 class GroupPagingNetworkSource(val query: String = "", val isSearching : Boolean = false, val apiService: GroupApiService, val mentorId : String = "", val onDataLoaded : ((Boolean) -> Unit)? = null) : PagingSource<PageInfo, GroupItemData>() {
-    val chatService = PubNubService.getChatService()
+    private val chatService : ChatService = PubNubService
     override fun getRefreshKey(state: PagingState<PageInfo, GroupItemData>): PageInfo? {
         return null
     }

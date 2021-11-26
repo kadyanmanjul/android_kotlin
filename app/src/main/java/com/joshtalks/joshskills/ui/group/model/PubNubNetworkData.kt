@@ -10,7 +10,7 @@ import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsRes
 private const val TAG = "PubNub_NetworkData"
 data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
     val groupList = mutableListOf<GroupsItem>()
-    val chatService : ChatService = PubNubService.getChatService()
+    private val chatService : ChatService = PubNubService
     override fun getData(): GroupListResponse {
         Log.d(TAG, "getData: $data")
         groupList.clear()
