@@ -23,4 +23,7 @@ interface TimeTokenDao {
 
     @Query("DELETE FROM time_token_db WHERE groupId = :groupId AND timeToken = :time")
     suspend fun deleteTimeEntry(groupId: String, time: Long)
+
+    @Query("DELETE FROM time_token_db WHERE groupId = :groupId")
+    suspend fun deleteTimeToken(groupId: String)
 }

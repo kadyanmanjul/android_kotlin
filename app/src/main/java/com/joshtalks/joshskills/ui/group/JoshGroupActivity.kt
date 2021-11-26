@@ -62,6 +62,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
+                REFRESH_GRP_LIST_HIDE_INFO -> setNewGroupVisibility(it.data)
                 //LISTEN_CHAT_EVENTS ->
             }
         }
@@ -205,6 +206,12 @@ class JoshGroupActivity : BaseGroupActivity() {
             addToBackStack(GROUPS_STACK)
         }
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
+    }
+
+    private fun setNewGroupVisibility(data: Bundle) {
+        vm.hasGroupData.set(data.getBoolean(SHOW_NEW_INFO))
+        vm.hasGroupData.notifyChange()
+        vm.shouldRefreshGroupList = true
     }
 
     private fun popBackStack() {

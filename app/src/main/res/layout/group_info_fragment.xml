@@ -122,7 +122,7 @@
                     android:layout_height="@dimen/_44sdp"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:background="@color/white"
-                    android:onClick="@{vm::leaveGroup}"
+                    android:onClick="@{vm::showExitDialog}"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -150,6 +150,26 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
+
+        <FrameLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_blue_alpha_75"
+            android:clickable="false"
+            android:elevation="@dimen/_8sdp"
+            android:visibility="@{vm.joiningNewGroup ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

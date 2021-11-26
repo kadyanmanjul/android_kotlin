@@ -60,7 +60,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
     private val analyticsService: GroupsAnalyticsService =
         AppObjectController.retrofit.create(GroupsAnalyticsService::class.java)
     private val mentorId = Mentor.getInstance().getId()
-    private val chatService : ChatService = PubNubService
+    private val chatService: ChatService = PubNubService
+
     companion object {
         private val database = AppObjectController.appDatabase
         private val subscribeCallback = object : SubscribeCallback() {
@@ -254,10 +255,14 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         return response.isSuccessful
     }
 
-    suspend fun leaveGroupFromServer(request: LeaveGroupRequest) {
+    suspend fun leaveGroupFromServer(request: LeaveGroupRequest): Int {
         val response = apiService.leaveGroup(request)
-        if (response.isSuccessful)
+        if (response.isSuccessful) {
             database.groupListDao().deleteGroupItem(request.groupId)
+            database.timeTokenDao().deleteTimeToken(request.groupId)
+            database.groupChatDao().deleteGroupMessages(request.groupId)
+        }
+        return database.groupListDao().getGroupsCount()
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =

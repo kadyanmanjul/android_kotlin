@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,7 +10,6 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
-import com.flurry.sdk.gr
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -17,10 +17,7 @@ import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.GROUPS_ID
-import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
-import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
-import com.joshtalks.joshskills.ui.group.IS_FROM_KEYBOARD
+import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.constants.MESSAGE
@@ -54,7 +51,7 @@ class GroupChatViewModel : BaseViewModel() {
     var chatAdapter = GroupChatAdapter(GroupChatComparator)
     val joiningNewGroup = ObservableBoolean(false)
     var chatSendText: String = ""
-    private val chatService : ChatService = PubNubService
+    private val chatService: ChatService = PubNubService
 
     var groupId: String = ""
 
@@ -93,7 +90,10 @@ class GroupChatViewModel : BaseViewModel() {
                     hasJoinedGroup.set(true)
                     joiningNewGroup.set(false)
                     getOnlineUserCount()
-                    message.what = SHOULD_REFRESH_GROUP_LIST
+                    message.what = REFRESH_GRP_LIST_HIDE_INFO
+                    message.data = Bundle().apply {
+                        putBoolean(SHOW_NEW_INFO, true)
+                    }
                     singleLiveEvent.value = message
                 }
             } catch (e: Exception) {
@@ -178,16 +178,20 @@ class GroupChatViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun leaveGroup(view: View) {
+    fun leaveGroup() {
+        joiningNewGroup.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = LeaveGroupRequest(
                     groupId = groupId,
                     mentorId = Mentor.getInstance().getId()
                 )
-                repository.leaveGroupFromServer(request)
+                val groupCount = repository.leaveGroupFromServer(request)
                 withContext(Dispatchers.Main) {
-                    message.what = SHOULD_REFRESH_GROUP_LIST
+                    message.what = REFRESH_GRP_LIST_HIDE_INFO
+                    message.data = Bundle().apply {
+                        putBoolean(SHOW_NEW_INFO, groupCount != 0)
+                    }
                     singleLiveEvent.value = message
                     onBackPress()
                     onBackPress()
@@ -199,6 +203,20 @@ class GroupChatViewModel : BaseViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun showExitDialog(view: View) {
+        Log.e("Sukesh 210 GCVM", "Reached")
+        val builder = AlertDialog.Builder(view.context)
+        builder.setMessage("Exit \"${groupHeader.get()}\" group?")
+            .setPositiveButton("Exit") { dialog, id ->
+                leaveGroup()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, id ->
+                dialog.cancel()
+            }
+
+        builder.show()
     }
 
     @ExperimentalPagingApi
