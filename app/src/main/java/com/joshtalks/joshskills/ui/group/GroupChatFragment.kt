@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLEAR_CHAT_TEXT
 import com.joshtalks.joshskills.constants.OPEN_EMOJI_KEYBOARD
+import com.joshtalks.joshskills.constants.SCROLL_TO_END
 import com.joshtalks.joshskills.constants.SEND_MSG
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_CALL_TOOLTIP
@@ -51,6 +53,7 @@ class GroupChatFragment : BaseFragment() {
         return binding.root
     }
 
+    @ExperimentalPagingApi
     override fun onStart() {
         super.onStart()
         lifecycleScope.launchWhenStarted {

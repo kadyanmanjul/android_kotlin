@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.group.repository
 
 import android.util.Log
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.flurry.sdk.it
 import com.google.gson.Gson
 
 import com.joshtalks.joshskills.core.AppObjectController
@@ -19,8 +21,10 @@ import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.SENT_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
+import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
+import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.*
 
@@ -56,71 +60,73 @@ import okhttp3.RequestBody.Companion.asRequestBody
 
 private const val TAG = "GroupRepository"
 
-class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
+class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMessageAdded : (() -> Unit)? = null) {
     // TODO: Will use dagger2 for injecting apiService
     private val apiService: GroupApiService =
         AppObjectController.retrofit.create(GroupApiService::class.java)
     private val analyticsService: GroupsAnalyticsService =
         AppObjectController.retrofit.create(GroupsAnalyticsService::class.java)
     private val mentorId = Mentor.getInstance().getId()
-    private val database = AppObjectController.appDatabase
-    val chatService = PubNubService.getChatService()
-
-    private val subscribeCallback = object : SubscribeCallback() {
-        override fun status(pubnub: PubNub, pnStatus: PNStatus) {
-            Log.d(TAG, "status: ${pnStatus}")
-        }
-
-        override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-            Log.d(TAG, "message: $pnMessageResult")
-            CoroutineScope(Dispatchers.IO).launch {
-                val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
-                database.groupListDao().updateGroupItem(
-                    lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
-                    lastMsgTime = pnMessageResult.timetoken,
-                    id = pnMessageResult.channel
-                )
-                // Meta + Sender
-                database.groupChatDao().insertMessage(
-                    ChatItem(
-                        sender = pnMessageResult.userMetadata.asString,
-                        message = messageItem.msg,
-                        msgTime = pnMessageResult.timetoken,
-                        groupId = pnMessageResult.channel,
-                        msgType = messageItem.getMessageType()
-                    )
-                )
+    private val chatService : ChatService = PubNubService
+    companion object {
+        private val database = AppObjectController.appDatabase
+        private val subscribeCallback = object : SubscribeCallback() {
+            override fun status(pubnub: PubNub, pnStatus: PNStatus) {
+                Log.d(TAG, "status: ${pnStatus}")
             }
-        }
 
-        override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
-            Log.d(TAG, "presence: $pnPresenceEventResult")
-        }
+            override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
+                Log.d(TAG, "message: $pnMessageResult")
+                CoroutineScope(Dispatchers.IO).launch {
+                    val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
+                    database.groupListDao().updateGroupItem(
+                        lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
+                        lastMsgTime = pnMessageResult.timetoken,
+                        id = pnMessageResult.channel
+                    )
+                    // Meta + Sender
+                    database.groupChatDao().insertMessage(
+                        ChatItem(
+                            sender = pnMessageResult.userMetadata.asString,
+                            message = messageItem.msg,
+                            msgTime = pnMessageResult.timetoken,
+                            groupId = pnMessageResult.channel,
+                            msgType = messageItem.getMessageType()
+                        )
+                    )
+                    //onNewMessageAdded?.invoke()
+                }
+            }
 
-        override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
-            Log.d(TAG, "signal: $pnSignalResult")
-        }
+            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
+                Log.d(TAG, "presence: $pnPresenceEventResult")
+            }
 
-        override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
-            Log.d(TAG, "uuid: $pnUUIDMetadataResult")
-        }
+            override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
+                Log.d(TAG, "signal: $pnSignalResult")
+            }
 
-        override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
-            Log.d(TAG, "channel: $pnChannelMetadataResult")
-        }
+            override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
+                Log.d(TAG, "uuid: $pnUUIDMetadataResult")
+            }
 
-        override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
-            Log.d(TAG, "membership: $pnMembershipResult")
-        }
+            override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
+                Log.d(TAG, "channel: $pnChannelMetadataResult")
+            }
 
-        override fun messageAction(
-            pubnub: PubNub,
-            pnMessageActionResult: PNMessageActionResult
-        ) {
-            Log.d(TAG, "messageAction: $pnMessageActionResult")
-        }
+            override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
+                Log.d(TAG, "membership: $pnMembershipResult")
+            }
 
-        override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
+            override fun messageAction(
+                pubnub: PubNub,
+                pnMessageActionResult: PNMessageActionResult
+            ) {
+                Log.d(TAG, "messageAction: $pnMessageActionResult")
+            }
+
+            override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
+        }
     }
 
     fun getGroupSearchResult(query: String) =
@@ -143,8 +149,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
+    @ExperimentalPagingApi
     fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {
-        return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
+        return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150,), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
             database.groupChatDao().getPagedGroupChat(id)
         }
     }
@@ -152,7 +159,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     fun startChatEventListener() {
         CoroutineScope(Dispatchers.IO).launch {
             val groups = database.groupListDao().getGroupIds()
-            Log.d(TAG, "startChatEventListener: ************#######*************")
+            chatService.unsubscribeToChatEvents(object : ChatEventObserver<SubscribeCallback> {
+                override fun getObserver(): SubscribeCallback {
+                    return subscribeCallback
+                }
+            })
             chatService.subscribeToChatEvents(
                 groups,
                 object : ChatEventObserver<SubscribeCallback> {
