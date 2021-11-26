@@ -149,4 +149,9 @@ class GroupChatFragment : BaseFragment() {
         vm.getOnlineUserCount()
         vm.refreshGroupInfo()
     }
+
+    override fun onPause() {
+        super.onPause()
+        vm.resetUnreadAndTimeToken()
+    }
 }

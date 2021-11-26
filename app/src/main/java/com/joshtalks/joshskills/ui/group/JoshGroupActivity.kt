@@ -7,22 +7,18 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -31,9 +27,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 import timber.log.Timber
 
@@ -162,19 +155,6 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_ID, data?.getUniqueId())
                 putString(CONVERSATION_ID, vm.conversationId)
                 data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
-            }
-
-            if (data?.hasJoined() == true) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val database = AppObjectController.appDatabase
-                    database.timeTokenDao().insertNewTimeToken(
-                        TimeTokenRequest(
-                            mentorId = Mentor.getInstance().getId(),
-                            groupId = data.getUniqueId(),
-                            timeToken = System.currentTimeMillis()
-                        )
-                    )
-                }
             }
 
             val fragment = GroupChatFragment()

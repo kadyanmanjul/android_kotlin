@@ -12,7 +12,8 @@ object GroupItemComparator : DiffUtil.ItemCallback<GroupItemData>() {
         return oldItem.getTitle() == newItem.getTitle() &&
                 oldItem.getSubTitle() == newItem.getSubTitle() &&
                 oldItem.getLastMessageTime() == newItem.getLastMessageTime() &&
-                oldItem.getImageUrl() == newItem.getImageUrl()
+                oldItem.getImageUrl() == newItem.getImageUrl() &&
+                oldItem.getUnreadMsgCount() == newItem.getUnreadMsgCount()
     }
 
 }
