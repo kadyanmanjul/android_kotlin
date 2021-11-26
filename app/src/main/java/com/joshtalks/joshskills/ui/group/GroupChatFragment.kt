@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.recyclerview.widget.RecyclerView
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
@@ -60,6 +61,7 @@ class GroupChatFragment : BaseFragment() {
             vm.getChatData().distinctUntilChanged().collectLatest {
                 withContext(Dispatchers.Main) {
                     vm.chatAdapter.submitData(it)
+                    binding.groupChatRv.layoutManager?.baseline
                 }
             }
         }
