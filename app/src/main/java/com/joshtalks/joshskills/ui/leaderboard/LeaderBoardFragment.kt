@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -206,7 +206,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
-        //binding.recyclerView.enforceSingleScrollDirection()
+        binding.recyclerView.enforceSingleScrollDirection()
         /*binding.recyclerView.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
@@ -293,12 +293,6 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                 }
             }
         )
-
-        viewModel.apiCallStatus.observe(viewLifecycleOwner) {
-            if (it == ApiCallStatus.SUCCESS) {
-                viewModel.getRefreshedLeaderboardData(Mentor.getInstance().getId(), courseId, type)
-            }
-        }
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {

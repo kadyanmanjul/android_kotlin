@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.DEFAULT_NAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.ListItemBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -72,7 +71,7 @@ class LeaderboardSearchItemAdapter(val context: Context, val itemList: List<Lead
             binding.points.text = response.points.toString()
             binding.userPic.setUserImageOrInitials(
                 response.photoUrl,
-                response.name ?: DEFAULT_NAME,
+                response.name ?: "User",
                 16,
                 true
             )

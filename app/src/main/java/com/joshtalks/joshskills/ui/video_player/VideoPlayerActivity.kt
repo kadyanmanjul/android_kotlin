@@ -151,6 +151,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     protected var onDownloadComplete = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            Log.d("Manjul", "onReceive() called with: context = $context, intent = $intent ${chatObject}")
             if (id > -1) {
                 try {
                     val downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -275,6 +276,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel?
             chatObject?.run {
+                Log.d("Manjul", "onCreate() called chat ${this}")
+                CoroutineScope(Dispatchers.IO).launch {
+                    Log.d("Manjul", "onCreate() called chat from db: chat ${AppObjectController.appDatabase.chatDao().getChatObject(chatObject!!.chatId)}")
+                }
                 if (chatObject?.url != null) {
                     if (chatObject?.downloadedLocalPath.isNullOrEmpty() && isVideoUrlAvailable.not()) {
                         videoUrl = this.url?.split("$")?.get(0)

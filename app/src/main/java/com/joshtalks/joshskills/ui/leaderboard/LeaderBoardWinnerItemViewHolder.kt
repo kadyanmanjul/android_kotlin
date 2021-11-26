@@ -6,7 +6,6 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.DEFAULT_NAME
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -62,7 +61,7 @@ class LeaderBoardWinnerItemViewHolder(
         name.text = resp
         points.text = (response.points.toString()).plus(" points")
         userPic.post {
-            userPic.setUserImageOrInitials(response.photoUrl, response.name?:DEFAULT_NAME)
+            userPic.setUserImageOrInitials(response.photoUrl, response.name?:"User")
         }
         response.award_url?.let {
             award.setImage(it)

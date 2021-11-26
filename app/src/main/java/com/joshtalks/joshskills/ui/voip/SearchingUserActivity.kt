@@ -9,11 +9,13 @@ import android.content.pm.ActivityInfo
 import android.location.Location
 import android.os.*
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -32,17 +34,18 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
-import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.collections.LinkedHashMap
-import kotlin.collections.set
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
@@ -130,6 +133,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             WebRtcService.currentCallingGroupName = groupName
             WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
+            Log.d(TAG, "onConnect: 121")
             this@SearchingUserActivity.finish()
         }
 
@@ -152,8 +156,10 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
                         putExtra(RTC_IS_GROUP_CALL, "true")
                     }
                 }
+            Log.d(TAG, "switchChannel: 138")
             startActivity(callActivityIntent)
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
+            Log.d(TAG, "switchChannel: 142")
             this@SearchingUserActivity.finish()
         }
 
@@ -214,6 +220,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "Conversation list")
         initView()
         addObserver()
+        //TODO in different thread
         logCallInitiated()
     }
 
@@ -232,8 +239,10 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             {
                 if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
                     showToast(getString(R.string.did_not_answer_message))
+                    Log.d(TAG, "addObserver: 217")
                     finishAndRemoveTask()
                 } else if (ApiCallStatus.INVALIDED == it) {
+                    Log.d(TAG, "addObserver: 220")
                     this@SearchingUserActivity.finishAndRemoveTask()
                 }
             }
@@ -314,6 +323,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
         MaterialDialog(this).show {
             message(R.string.call_start_permission_message_rational)
             positiveButton(R.string.exit) {
+                Log.d(TAG, "onDenyLocation: 301")
                 finish()
             }
         }
@@ -350,6 +360,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             .addUserDetails()
             .push()
         timer?.cancel()
+        Log.d(TAG, "stopCalling: 336")
         finishAndRemoveTask()
     }
 
@@ -361,6 +372,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
             .addUserDetails()
             .push()
         timer?.cancel()
+        Log.d(TAG, "stopSearching: 348")
         finishAndRemoveTask()
     }
 
@@ -415,6 +427,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
 
     override fun onStop() {
         super.onStop()
+        Log.d(TAG, "onStop: 396")
         compositeDisposable.clear()
         unbindService(myConnection)
     }

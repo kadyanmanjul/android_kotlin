@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -25,7 +24,6 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
@@ -107,11 +105,6 @@ class WebRtcService : BaseWebRtcService() {
     var isCallerJoined: Boolean = false
     private var isMicEnabled = true
     private var isSpeakerEnabled = false
-    private var isSpeakerTurningOn = false
-    var isBluetoothEnabled = false
-        private set
-    private var bluetoothAdapter: BluetoothAdapter? = null
-    private val AUDIO_SWITCH_OFFSET = 1000L
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
     var speakingUsersNewList = arrayListOf<Int>()
@@ -138,12 +131,7 @@ class WebRtcService : BaseWebRtcService() {
         var roomQuestionId: Int? = null
         var conversationRoomChannelName: String? = null
         var conversationRoomToken: String? = null
-        val roomReference = FirebaseFirestore.getInstance().collection("conversation_rooms")
         val incomingWaitJobsList = LinkedList<Job>()
-
-        var BLUETOOTH_RETRY_COUNT = 0
-        var HANDSET_RETRY_COUNT = 0
-        var currentButtonState = VoipButtonState.NONE
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -729,15 +717,6 @@ class WebRtcService : BaseWebRtcService() {
 
         }
 
-    private fun updateFirestoreData() {
-        val usersReference = roomReference.document(roomId.toString()).collection("users")
-        speakingUsersOldList.forEach { user ->
-            usersReference.document(user.toString()).update("is_speaking", false)
-        }
-        speakingUsersNewList.forEach { user ->
-            usersReference.document(user.toString()).update("is_speaking", true)
-        }
-    }
 
     fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
         Log.d(
@@ -889,7 +868,8 @@ class WebRtcService : BaseWebRtcService() {
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     if (isConversionRoomActive) {
-                        val usersReference =
+                        //TODO recheck this code
+                        /*val usersReference =
                             roomReference.document(roomId.toString()).collection("users")
                         usersReference.document(agoraUid.toString()).get().addOnSuccessListener {
                             val isMicOn = it["is_mic_on"]
@@ -897,7 +877,7 @@ class WebRtcService : BaseWebRtcService() {
                             if (isSpeaker == true && isMicOn == true) {
                                 unMuteCall()
                             }
-                        }
+                        }*/
                     } else {
                         isOnPstnCall = false
                         pstnCallState = CallState.CALL_STATE_IDLE
@@ -937,7 +917,7 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 TelephonyManager.CALL_STATE_RINGING -> {
                     if (isConversionRoomActive) {
-                        val usersReference =
+                        /*val usersReference =
                             roomReference.document(roomId.toString()).collection("users")
                         usersReference.document(agoraUid.toString()).get().addOnSuccessListener {
                             val isMicOn = it["is_mic_on"]
@@ -945,7 +925,7 @@ class WebRtcService : BaseWebRtcService() {
                             if (isSpeaker == true && isMicOn == true) {
                                 muteCall()
                             }
-                        }
+                        }*/
                     }
                 }
                 else -> {
@@ -1051,7 +1031,9 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
-                setParameters("{\"che.audio.enable.aec\":true}")
+                if (isConversionRoomActive) {
+                    setParameters("{\"che.audio.enable.aec\":true}")
+                }
 
                 when (isConversionRoomActive) {
                     true -> {
@@ -1573,6 +1555,7 @@ class WebRtcService : BaseWebRtcService() {
             RxBus2.publish(WebrtcEventBus(CallState.REJECT))
             ex.printStackTrace()
         }
+
         disconnectService()
     }
 
@@ -1594,6 +1577,7 @@ class WebRtcService : BaseWebRtcService() {
                     callStatusNetworkApi(it, action, hasDisconnected = hasDisconnected)
                 }
         }
+
         joshAudioManager?.endCommunication()
         val state = CurrentCallDetails.state()
         VoipAnalytics.push(
@@ -2484,10 +2468,6 @@ enum class CallAction(val action: String) {
     AUTO_DISCONNECT("AUTO_DISCONNECT")
 }
 
-enum class VoipButtonState {
-    SPEAKER, BLUETOOTH, DEFAULT, NONE
-}
-
 class NotificationId {
     companion object {
         const val ACTION_NOTIFICATION_ID = 200000
@@ -2514,7 +2494,6 @@ interface WebRtcCallback {
     fun onHoldCall() {}
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
-    fun onBluetoothStateChanged(isOn: Boolean) {}
     fun onIncomingCallConnected() {}
     fun onIncomingCallUserConnected() {}
     fun onNewIncomingCallChannel() {}

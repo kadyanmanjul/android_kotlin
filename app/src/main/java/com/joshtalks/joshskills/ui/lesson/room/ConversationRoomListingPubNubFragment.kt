@@ -139,7 +139,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                 this.resources.getColor(R.color.conversation_room_color, requireActivity().theme)
         }
         handler = Handler(Looper.getMainLooper())
-        viewModel.makeEnterExitConversationRoom(true)
+        //viewModel.makeEnterExitConversationRoom(true)
         initPubNub()
         initViews()
         addObservers()
@@ -361,7 +361,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     private fun initViews() {
 
         setUpRecyclerView()
-        setFlagInWebRtcServie()
+        //setFlagInWebRtcServie()
 
         with(binding) {
             createRoom.apply {
@@ -811,7 +811,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
 
     override fun onDestroy() {
         if (!isBackPressed) {
-            viewModel.makeEnterExitConversationRoom(false)
+            //viewModel.makeEnterExitConversationRoom(false)
         }
         super.onDestroy()
         pubnub?.destroy()

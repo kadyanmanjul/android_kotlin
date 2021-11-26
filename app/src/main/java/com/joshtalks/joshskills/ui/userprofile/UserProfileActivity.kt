@@ -39,14 +39,14 @@ import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
-import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.DecimalFormat
+import java.util.*
 
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 

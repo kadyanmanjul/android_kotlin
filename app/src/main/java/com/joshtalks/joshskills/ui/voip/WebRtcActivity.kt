@@ -498,7 +498,7 @@ class WebRtcActivity : AppCompatActivity() {
                 val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
                 binding.topicHeader.visibility = View.VISIBLE
                 binding.topicName.text = it["topic_name"]
-                Log.d(TAG, "updateStatusLabel: -#@- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
+                Log.d(TAG, "updateStatusLabel: addObserver -#@- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
                 if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
@@ -596,14 +596,13 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun updateStatusLabel() {
-        Log.d(TAG, "updateStatusLabel: ")
         lifecycleScope.launchWhenCreated {
             binding.tvGroupName.visibility = View.GONE
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-            Log.d(TAG, "updateStatusLabel: ${map}")
             val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+            Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -626,7 +625,7 @@ class WebRtcActivity : AppCompatActivity() {
                         return@run
                     } else if (callConnected && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Practice with Partner"
-                        Log.d(TAG, "updateStatusLabel: -#- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
+                        Log.d(TAG, "updateStatusLabel:  P2P -#- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
                         if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                             binding.tvGroupName.visibility = View.VISIBLE
                             binding.tvGroupName.text =
