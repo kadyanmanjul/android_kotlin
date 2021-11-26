@@ -43,6 +43,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.*
+import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isConversionRoomActive
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -106,7 +107,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        setFlagInWebRtcServie()
         isActivityOpenFromNotification =
             intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
         addViewModelObserver()
@@ -122,6 +123,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             vm.initPubNub(channelName)
         }
+    }
+
+    private fun setFlagInWebRtcServie() {
+        val intent = Intent(this, WebRtcService::class.java)
+        isConversionRoomActive = true
+        //WebRtcService.isRoomCreatedByUser = isRoomCreatedByUser
+        intent.startServiceForWebrtc()
     }
 
     private fun addViewModelObserver() {
@@ -600,6 +608,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             binding.handRaiseBtn.visibility = View.VISIBLE
             binding.raisedHands.visibility = View.GONE
             mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
+            mBoundService?.muteCall()
         }
     }
 
@@ -1227,6 +1236,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onStart() {
         super.onStart()
+        isConversionRoomActive = true
         bindService(
             Intent(this, WebRtcService::class.java),
             myConnection,

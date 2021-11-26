@@ -1282,6 +1282,7 @@ class WebRtcService : BaseWebRtcService() {
                         try {
                             when {
                                 this == ConversationRoomJoin().action -> {
+                                    isConversionRoomActive = true
                                     showConversationRoomNotification()
                                     val agoraUid = intent.getIntExtra(RTC_UID_KEY, 0)
                                     conversationRoomToken = intent.getStringExtra(RTC_TOKEN_KEY)
@@ -1297,9 +1298,9 @@ class WebRtcService : BaseWebRtcService() {
                                             it
                                         )
                                     } ?: -3
-                                    val isRoomCreatedByUser =
-                                        intent.getBooleanExtra("isModerator", false)
-                                    if (isRoomCreatedByUser) {
+                                    val isRoomCreatedByUserFromIntent =
+                                        intent.getBooleanExtra("isModerator", false) || isRoomCreatedByUser
+                                    if (isRoomCreatedByUserFromIntent) {
                                         setClientRole(CLIENT_ROLE_BROADCASTER)
                                         Log.d(
                                             "ABC2",
@@ -2246,6 +2247,7 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun conversationRoomNotification(): Notification {
         Timber.tag(TAG).e("actionNotification  ")
+        mNotificationManager?.cancelAll()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannelName: CharSequence = "Voip Call Status"
             val mChannel = NotificationChannel(
