@@ -151,7 +151,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
 
     @ExperimentalPagingApi
     fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {
-        return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150,), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
+        return Pager(PagingConfig(10, enablePlaceholders = false,), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
             database.groupChatDao().getPagedGroupChat(id)
         }
     }

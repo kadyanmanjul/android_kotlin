@@ -2,15 +2,19 @@ package com.joshtalks.joshskills.ui.group.bindingadapters
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.view.ViewCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.flurry.sdk.di
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
@@ -24,6 +28,7 @@ import com.joshtalks.joshskills.ui.group.views.GroupsAppBar
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.flow.MutableStateFlow
 
+private const val TAG = "GroupBindingAdapter"
 @BindingAdapter("onBackPressed")
 fun GroupsAppBar.onBackPress(function: () -> Unit) = this.onBackPressed(function)
 
@@ -100,8 +105,18 @@ fun setGroupChatAdapter(
     view: RecyclerView,
     adapter: GroupChatAdapter,
 ) {
-    view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+    view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false).apply {
+        isSmoothScrollbarEnabled = true
+    }
     view.setHasFixedSize(false)
+    adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            super.onItemRangeInserted(positionStart, itemCount)
+            Log.d(TAG, "onItemRangeInserted: ${view.layoutManager?.isSmoothScrolling}")
+            view.layoutManager?.smoothScrollToPosition(view, RecyclerView.State(), adapter.itemCount)
+        }
+    })
     view.adapter = adapter
 }
 
