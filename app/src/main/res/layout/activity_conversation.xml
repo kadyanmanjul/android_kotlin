@@ -38,7 +38,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:tintMode="multiply"
-            app:srcCompat="@drawable/chat_bg" />
+            app:srcCompat="@drawable/chat_bg_final" />
 
         <LinearLayout
             android:id="@+id/toolbar_container"
