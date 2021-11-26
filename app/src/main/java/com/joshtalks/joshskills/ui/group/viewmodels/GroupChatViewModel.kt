@@ -142,6 +142,14 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    fun resetUnreadAndTimeToken() {
+        if (hasJoinedGroup.get()) {
+            viewModelScope.launch(Dispatchers.Main) {
+                repository.resetUnreadAndTimeToken(groupId)
+            }
+        }
+    }
+
     fun openEmojiKeyboard(isFromKeyboard: Boolean) {
         message.what = OPEN_EMOJI_KEYBOARD
         message.data = Bundle().apply {

@@ -322,11 +322,22 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
 
     suspend fun getGroupItem(groupId: String) = database.groupListDao().getGroupItem(groupId)
 
+    suspend fun resetUnreadAndTimeToken(groupId: String) {
+        database.groupListDao().resetUnreadCount(groupId)
+        database.timeTokenDao().insertNewTimeToken(
+            TimeTokenRequest(
+                mentorId = Mentor.getInstance().getId(),
+                groupId = groupId,
+                timeToken = System.currentTimeMillis()
+            )
+        )
+    }
+
     suspend fun fireTimeTokenAPI() {
         val timeTokenList = database.timeTokenDao().getAllTimeTokens()
         for (token in timeTokenList) {
             val response = apiService.updateTimeToken(
-                TimeTokenRequest(token.mentorId, token.groupId, token.timeToken * 1000L)
+                TimeTokenRequest(token.mentorId, token.groupId, token.timeToken * 10000L)
             )
             try {
                 if (response.isSuccessful)
@@ -337,4 +348,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
             }
         }
     }
+
+    fun getRecentTimeToken(id: String) = database.timeTokenDao().getOpenedTime(id)?.times(10000)
 }
