@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
+import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -183,7 +184,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    suspend fun joinGroup(groupId: String) {
+    suspend fun joinGroup(groupId: String): Boolean {
         Log.e(TAG, "Joining group : ${groupId}")
         val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
         if (response["success"] == true) {
@@ -201,11 +202,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                         totalCalls = null
                     )
                 )
+                return true
             } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
                 exp.printStackTrace()
             }
         }
+        return false
     }
 
     suspend fun addGroupToServer(request: AddGroupRequest) {
@@ -231,13 +234,14 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                         totalCalls = null
                     )
                 )
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has created this group", response["group_id"] as String)
             } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
                 exp.printStackTrace()
             }
     }
 
-    suspend fun editGroupInServer(request: EditGroupRequest): Boolean {
+    suspend fun editGroupInServer(request: EditGroupRequest, isNameChanged: Boolean): Boolean {
         if (request.isImageChanged) {
             val url =
                 if (request.groupIcon.isNotBlank()) {
@@ -249,8 +253,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
 
         val response = apiService.editGroup(request)
         if (response.isSuccessful) {
-            database.groupListDao()
-                .updateEditedGroup(request.groupId, request.groupName, request.groupIcon)
+            database.groupListDao().updateEditedGroup(request.groupId, request.groupName, request.groupIcon)
+            if (request.isImageChanged)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} changed the group icon", request.groupId)
+            if (isNameChanged)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} changed the group name to ${request.groupName}", request.groupId)
         }
         return response.isSuccessful
     }
