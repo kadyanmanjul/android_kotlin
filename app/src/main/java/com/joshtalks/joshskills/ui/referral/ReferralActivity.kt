@@ -9,22 +9,13 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.dynamiclinks.ShortDynamicLink
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.dynamiclinks.ktx.googleAnalyticsParameters
-import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
-import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -34,6 +25,9 @@ import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.muddzdev.styleabletoast.StyleableToast
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Defines
+import io.branch.referral.util.LinkProperties
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -201,66 +195,96 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
-
-        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-            domainUriPrefix = domain
-            link = Uri.parse("https://joshskill.app.link")
-//            link =
-//                Uri.parse(
-//                    "https://joshskill.app.link/" +
-//                            "?apn=${application.packageName}" +
-//                            "&link=https://joshskill.app.link/" +
-//                            "&source=$userReferralCode" +
-//                            "&medium=${
-//                                userReferralCode.plus(
-//                                    System.currentTimeMillis()
-//                                )
-//                            }&campaign=referral"
-//                )
-            androidParameters(BuildConfig.APPLICATION_ID) {
-                minimumVersion = 69
-            }
-            googleAnalyticsParameters {
-                source = userReferralCode.plus(System.currentTimeMillis())
-                medium = "Mobile"
-                campaign = "user_referer"
-            }
-
-        }.addOnSuccessListener { result ->
-            Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.shortLink}")
-            Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.previewLink}")
-            result.warnings.forEach {
-                Log.w(TAG, "getDeepLinkAndInviteFriends: Warning${it.message}")
-            }
-            result.shortLink?.let {
-                try {
-                    if (it.toString().isNotEmpty()) {
-                        if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
-                            PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                        inviteFriends(packageString = packageString, dynamicLink = it.toString())
-                    } else
-                        inviteFriends(
-                            packageString = packageString,
-                            dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                                PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                            else
-                                getAppShareUrl()
-                        )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }.addOnFailureListener {
-            it.printStackTrace()
-            inviteFriends(
-                packageString = packageString,
-                dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                    PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                else
-                    getAppShareUrl()
+        val branchUniversalObject = BranchUniversalObject()
+            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setTitle("Invite Friend")
+            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+        val lp = LinkProperties()
+            .setChannel(userReferralCode)
+            .setFeature("sharing")
+            .setCampaign("referral")
+            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
+            .addControlParameter(
+                Defines.Jsonkey.UTMMedium.key,
+                userReferralCode.plus(System.currentTimeMillis())
             )
-        }
+
+        branchUniversalObject
+            .generateShortUrl(this, lp) { url, error ->
+                if (error == null)
+                    inviteFriends(
+                        packageString = packageString,
+                        dynamicLink = url
+                    )
+                else
+                    inviteFriends(
+                        packageString = packageString,
+                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                        else
+                            getAppShareUrl()
+                    )
+            }
+        /* val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+             domainUriPrefix = domain
+             link = Uri.parse("https://joshskill.app.link")
+ //            link =
+ //                Uri.parse(
+ //                    "https://joshskill.app.link/" +
+ //                            "?apn=${application.packageName}" +
+ //                            "&link=https://joshskill.app.link/" +
+ //                            "&source=$userReferralCode" +
+ //                            "&medium=${
+ //                                userReferralCode.plus(
+ //                                    System.currentTimeMillis()
+ //                                )
+ //                            }&campaign=referral"
+ //                )
+             androidParameters(BuildConfig.APPLICATION_ID) {
+                 minimumVersion = 69
+             }
+             googleAnalyticsParameters {
+                 source = userReferralCode.plus(System.currentTimeMillis())
+                 medium = "Mobile"
+                 campaign = "user_referer"
+             }
+
+         }.addOnSuccessListener { result ->
+             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.shortLink}")
+             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.previewLink}")
+             result.warnings.forEach {
+                 Log.w(TAG, "getDeepLinkAndInviteFriends: Warning${it.message}")
+             }
+             result.shortLink?.let {
+                 try {
+                     if (it.toString().isNotEmpty()) {
+                         if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
+                             PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                         inviteFriends(packageString = packageString, dynamicLink = it.toString())
+                     } else
+                         inviteFriends(
+                             packageString = packageString,
+                             dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                                 PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                             else
+                                 getAppShareUrl()
+                         )
+                 } catch (ex: Exception) {
+                     ex.printStackTrace()
+                 }
+             }
+         }.addOnFailureListener {
+             it.printStackTrace()
+             inviteFriends(
+                 packageString = packageString,
+                 dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                     PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                 else
+                     getAppShareUrl()
+             )
+         }*/
     }
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String) {

@@ -4,16 +4,12 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -22,24 +18,20 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.getGoogleAdId
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
-import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import java.lang.ref.WeakReference
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlinx.android.synthetic.main.activity_launcher.progress_bar
-import kotlinx.android.synthetic.main.activity_launcher.retry
+import kotlinx.android.synthetic.main.activity_launcher.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import java.lang.ref.WeakReference
+import java.util.concurrent.atomic.AtomicBoolean
+
+private const val TAG = "LauncherActivity"
 
 class LauncherActivity : CoreJoshActivity() {
     private var testId: String? = null
@@ -86,9 +78,11 @@ class LauncherActivity : CoreJoshActivity() {
 
     private fun analyzeAppRequirement() {
         lifecycleScope.launch(Dispatchers.IO) {
+            Log.i(TAG, "analyzeAppRequirement: ")
             when {
                 PrefManager.getStringValue(INSTANCE_ID).isEmpty() -> {
-                    initGaid(testId)
+                    if (intent.data == null)
+                        initGaid(testId)
                 }
                 Mentor.getInstance().hasId() -> {
                     startNextActivity()
@@ -120,10 +114,11 @@ class LauncherActivity : CoreJoshActivity() {
                             referringParams ?: (Branch.getInstance().firstReferringParams
                                 ?: Branch.getInstance().latestReferringParams)
                         Timber.tag("BranchDeepLinkParams : ")
-                            .d("referringParams = $referringParams, error = $error")
+                            .d("jsonParams = $jsonParams, error = $error")
                         var testId: String? = null
                         var exploreType: String? = null
-
+                        val installReferrerModel =
+                            InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
                         if (error == null) {
                             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                             if (jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
@@ -134,6 +129,16 @@ class LauncherActivity : CoreJoshActivity() {
                                     jsonParams.getString(Defines.Jsonkey.ContentType.key)
                                 } else null
                             }
+                            if (jsonParams?.has(Defines.Jsonkey.ReferralCode.key) == true)
+                                installReferrerModel.utmSource =
+                                    jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
+                            if (jsonParams?.has(Defines.Jsonkey.UTMMedium.key) == true)
+                                installReferrerModel.utmMedium =
+                                    jsonParams.getString(Defines.Jsonkey.UTMMedium.key)
+                            if (jsonParams?.has(Defines.Jsonkey.UTMCampaign.key) == true)
+                                installReferrerModel.utmTerm =
+                                    jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
+                            InstallReferrerModel.update(installReferrerModel)
                         }
                         if (isFinishing.not()) {
                             initReferral(testId = testId, exploreType = exploreType, jsonParams)
@@ -145,7 +150,7 @@ class LauncherActivity : CoreJoshActivity() {
                         LogException.catchException(ex)
                     }
                 }.withData(this@LauncherActivity.intent.data).init()
-            Firebase.dynamicLinks
+            /*Firebase.dynamicLinks
                 .getDynamicLink(intent)
                 .addOnSuccessListener { pendingDynamicLinkData ->
                     var deepLink: Uri? = null
@@ -164,7 +169,7 @@ class LauncherActivity : CoreJoshActivity() {
                         Log.d(TAG, "getDynamicLink: no link found")
                     }
                 }
-                .addOnFailureListener { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
+                .addOnFailureListener { e -> Log.w(TAG, *//*"getDynamicLink:onFailure", e) }*/
         }
     }
 
@@ -248,9 +253,9 @@ class LauncherActivity : CoreJoshActivity() {
             ?: ""
 
     private fun parseReferralCode(jsonParams: JSONObject) =
-        if (jsonParams.has(Defines.Jsonkey.ReferralCode.key)) jsonParams.getString(
-            Defines.Jsonkey.ReferralCode.key
-        ) else null
+        if (jsonParams.has(Defines.Jsonkey.ReferralCode.key))
+            jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
+        else null
 
     private fun initAppInFirstTime() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -261,6 +266,7 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun initAfterBranch(testId: String? = null, exploreType: String? = null) {
+        Log.i(TAG, "initAfterBranch: ")
         lifecycleScope.launch(Dispatchers.IO) {
             when {
                 testId != null -> {
@@ -302,7 +308,10 @@ class LauncherActivity : CoreJoshActivity() {
         startNextActivity()
     }
 
-    private fun initGaid(testId: String? = null, exploreType: String? = null) {
+    private fun initGaid(
+        testId: String? = null,
+        exploreType: String? = null
+    ) {
         if (apiRun.get()) {
             return
         }
@@ -330,14 +339,25 @@ class LauncherActivity : CoreJoshActivity() {
             obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             InstallReferrerModel.getPrefObject()?.let {
                 obj.installOn = it.installOn
-                obj.utmMedium = it.utmMedium
-                obj.utmSource = it.utmSource
+                obj.utmMedium =
+                    if (it.otherInfo != null && it.otherInfo!!.containsKey("utm_medium"))
+                        it.otherInfo!!["utm_medium"]
+                    else it.utmMedium
+                obj.utmSource =
+                    if (it.otherInfo != null && it.otherInfo!!.containsKey("utm_source"))
+                        it.otherInfo!!["utm_source"]
+                    else it.utmSource
+                obj.utmTerm =
+                    if (it.otherInfo != null && it.otherInfo!!.containsKey("utm_campaign"))
+                        it.otherInfo!!["utm_campaign"]
+                    else it.utmTerm
             }
 
             if (exploreType.isNullOrEmpty().not()) {
                 obj.exploreCardType = ExploreCardType.valueOf(exploreType!!)
             }
             try {
+                Log.i(TAG, "initGaid: registerGAIdDetailsV2Async => $obj")
                 val resp = AppObjectController.commonNetworkService.registerGAIdDetailsV2Async(obj)
                 GaIDMentorModel.update(resp)
                 PrefManager.put(SERVER_GID_ID, resp.gaidServerDbId)

@@ -646,6 +646,7 @@ class AppObjectController {
         }
 
         private fun initObjectInThread(context: Context) {
+            Log.i(TAG, "initObjectInThread: ")
             Thread {
                 val mediaOkhttpBuilder = OkHttpClient().newBuilder()
                 mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
@@ -684,6 +685,7 @@ class AppObjectController {
 
                 DateTimeUtils.setTimeZone("UTC")
                 videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
+                Log.e("AppObjectController", "initObjectInThread: referrer")
                 InstallReferralUtil.installReferrer(context)
             }.start()
         }

@@ -61,6 +61,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Defines
+import io.branch.referral.util.LinkProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -554,30 +557,56 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     fun getDeepLinkAndInviteFriends() {
         val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
         userReferralCode = Mentor.getInstance().referralCode
-        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-            link = Uri.parse("https://joshskill.app.link")
-            domainUriPrefix = domain
-            androidParameters(BuildConfig.APPLICATION_ID) {
-                minimumVersion = 69
-            }
-            googleAnalyticsParameters {
-                source = userReferralCode.plus(System.currentTimeMillis())
-                medium = "Mobile"
-                campaign = "user_referer"
-            }
-        }.addOnSuccessListener { result ->
-            result.shortLink?.let {
-                if (it.toString().isNotEmpty()) {
+        val branchUniversalObject = BranchUniversalObject()
+            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setTitle("Invite Friend")
+            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+        val lp = LinkProperties()
+            .setChannel("social")
+            .setFeature("sharing")
+            .setCampaign("referral")
+            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
+            .addControlParameter(Defines.Jsonkey.UTMMedium.key, userReferralCode.plus(System.currentTimeMillis()))
+        branchUniversalObject
+            .generateShortUrl(this, lp) { url, error ->
+                if (error == null) {
                     if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
-                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                    inviteFriends(it.toString())
-                } else
-                    inviteFriends(getDefaultLink())
+                        PrefManager.put(USER_SHARE_SHORT_URL, url)
+                    inviteFriends(url)
+                }
+                else
+                    inviteFriends(
+                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                        else
+                            getAppShareUrl()
+                    )
             }
-        }.addOnFailureListener {
-            inviteFriends(getDefaultLink())
-            it.printStackTrace()
-        }
+//        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+//            link = Uri.parse("https://joshskill.app.link")
+//            domainUriPrefix = domain
+//            androidParameters(BuildConfig.APPLICATION_ID) {
+//                minimumVersion = 69
+//            }
+//            googleAnalyticsParameters {
+//                source = userReferralCode.plus(System.currentTimeMillis())
+//                medium = "Mobile"
+//                campaign = "user_referer"
+//            }
+//        }.addOnSuccessListener { result ->
+//            result.shortLink?.let {
+//                if (it.toString().isNotEmpty()) {
+//                    if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
+//                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+//                    inviteFriends(it.toString())
+//                } else
+//                    inviteFriends(getDefaultLink())
+//            }
+//        }.addOnFailureListener {
+//            inviteFriends(getDefaultLink())
+//            it.printStackTrace()
+//        }
     }
 
     fun getDefaultLink(): String = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))

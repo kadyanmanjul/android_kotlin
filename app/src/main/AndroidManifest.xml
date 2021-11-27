@@ -184,9 +184,6 @@
                     android:host="joshskills.app.link"
                     android:scheme="https" />
                 <data
-                    android:host="joshskills.page.link"
-                    android:scheme="https" />
-                <data
                     android:host="joshskills-alternate.app.link"
                     android:scheme="https" />
                 <data

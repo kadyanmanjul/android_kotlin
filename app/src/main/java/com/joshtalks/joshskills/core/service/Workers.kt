@@ -9,6 +9,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.text.format.DateUtils
+import android.util.Log
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -128,6 +129,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         }
         PrefManager.put(P2P_LAST_CALL, false)
         AppObjectController.initialiseFreshChat()
+        Log.i("Workers", "doWork: referrer")
         InstallReferralUtil.installReferrer(context)
         return Result.success()
     }

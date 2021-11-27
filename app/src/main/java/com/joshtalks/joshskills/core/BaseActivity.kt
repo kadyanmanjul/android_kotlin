@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -88,6 +89,7 @@ import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
+import io.branch.referral.Defines
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.lang.reflect.Type
 import java.util.*
@@ -95,6 +97,7 @@ import kotlin.random.Random
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
+import java.lang.ref.WeakReference
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -150,6 +153,7 @@ abstract class BaseActivity :
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
+            processBranchDynamicLinks()
             processFirebaseDynamicLinks()
             //addScreenRecording()
         }
@@ -218,6 +222,36 @@ abstract class BaseActivity :
                 Timber.w("getDynamicLink:onFailure : $it")
             }
     }
+
+    private fun processBranchDynamicLinks() {
+        Branch.sessionBuilder(WeakReference(this@BaseActivity).get())
+            .withCallback { referringParams, error ->
+                try {
+                    val jsonParams =
+                        referringParams ?: (Branch.getInstance().firstReferringParams
+                            ?: Branch.getInstance().latestReferringParams)
+                    val installReferrerModel =
+                            InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
+                    if (error == null) {
+                        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                        if (jsonParams?.has(Defines.Jsonkey.ReferralCode.key) == true)
+                            installReferrerModel.utmSource = jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
+                        if (jsonParams?.has(Defines.Jsonkey.UTMMedium.key) == true)
+                            installReferrerModel.utmMedium = jsonParams.getString(Defines.Jsonkey.UTMMedium.key)
+                        if (jsonParams?.has(Defines.Jsonkey.UTMCampaign.key) == true)
+                            installReferrerModel.utmTerm = jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
+                    }
+                    if (isFinishing.not()) {
+                        InstallReferrerModel.update(installReferrerModel)
+                    }
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
+                    LogException.catchException(ex)
+                }
+            }.withData(this@BaseActivity.intent.data).init()
+    }
+
+
 
     private fun initIdentifierForTools() {
         lifecycleScope.launch(Dispatchers.IO) {
