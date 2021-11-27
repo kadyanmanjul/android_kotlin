@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
+import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -85,17 +86,20 @@ class GroupChatViewModel : BaseViewModel() {
         joiningNewGroup.set(true)
         viewModelScope.launch {
             try {
-                repository.joinGroup(groupId)
-                withContext(Dispatchers.Main) {
-                    hasJoinedGroup.set(true)
-                    joiningNewGroup.set(false)
-                    getOnlineUserCount()
-                    message.what = REFRESH_GRP_LIST_HIDE_INFO
-                    message.data = Bundle().apply {
-                        putBoolean(SHOW_NEW_INFO, true)
+                val response = repository.joinGroup(groupId)
+                if (response) {
+                    withContext(Dispatchers.Main) {
+                        hasJoinedGroup.set(true)
+                        joiningNewGroup.set(false)
+                        getOnlineUserCount()
+                        message.what = REFRESH_GRP_LIST_HIDE_INFO
+                        message.data = Bundle().apply {
+                            putBoolean(SHOW_NEW_INFO, true)
+                        }
+                        singleLiveEvent.value = message
                     }
-                    singleLiveEvent.value = message
-                }
+                    pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
+                } else joiningNewGroup.set(false)
             } catch (e: Exception) {
                 joiningNewGroup.set(false)
                 showToast("Error joining group")
@@ -196,6 +200,7 @@ class GroupChatViewModel : BaseViewModel() {
                     onBackPress()
                     onBackPress()
                 }
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has left the group", groupId)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     showToast("An error has occurred")
@@ -206,7 +211,6 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun showExitDialog(view: View) {
-        Log.e("Sukesh 210 GCVM", "Reached")
         val builder = AlertDialog.Builder(view.context)
         builder.setMessage("Exit \"${groupHeader.get()}\" group?")
             .setPositiveButton("Exit") { dialog, id ->
@@ -231,7 +235,6 @@ class GroupChatViewModel : BaseViewModel() {
     fun sendMessage(view: View) {
         message.what = SEND_MSG
         singleLiveEvent.value = message
-        chatService.getMessageHistory(groupId)
     }
 
     fun pushMessage(msg: String) {

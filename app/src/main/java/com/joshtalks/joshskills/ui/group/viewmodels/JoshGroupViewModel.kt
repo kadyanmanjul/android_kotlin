@@ -146,11 +146,11 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
-    fun editGroup(request: EditGroupRequest) {
+    fun editGroup(request: EditGroupRequest, isNameChanged: Boolean) {
         addingNewGroup.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val isSuccess = repository.editGroupInServer(request)
+                val isSuccess = repository.editGroupInServer(request, isNameChanged)
                 withContext(Dispatchers.Main) {
                     if (isSuccess) {
                         message.what = SHOULD_REFRESH_GROUP_LIST
