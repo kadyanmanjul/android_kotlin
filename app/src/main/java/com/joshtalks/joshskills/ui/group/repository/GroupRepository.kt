@@ -273,6 +273,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         analyticsService.groupImpressionDetails(request)
 
+    fun getGroupMemberList(id: String): MemberResult =
+        chatService.getChannelMembers(groupId = id)
+
     suspend fun getOnlineUserCount(groupId: String) = apiService.getOnlineUserCount(groupId)
 
     private fun getCompressImage(path: String): String {
@@ -290,9 +293,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         }
     }
 
-    private suspend fun uploadCompressedMedia(
-        mediaPath: String
-    ): String? {
+    private suspend fun uploadCompressedMedia(mediaPath: String): String? {
         try {
             val obj = mapOf("media_path" to File(mediaPath).name)
             val responseObj =

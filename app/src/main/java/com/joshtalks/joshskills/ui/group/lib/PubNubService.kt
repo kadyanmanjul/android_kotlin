@@ -3,34 +3,20 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.flurry.sdk.it
+
 import com.google.gson.Gson
 import com.joshtalks.joshskills.core.Event
-import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.MessageItem
-import com.joshtalks.joshskills.ui.group.model.PageInfo
-import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
+import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
+
 import com.pubnub.api.PubNub
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
-import com.pubnub.api.models.consumer.PNStatus
-import com.pubnub.api.models.consumer.history.PNHistoryItemResult
-import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
-import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
-import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
-import com.pubnub.api.models.consumer.pubsub.PNMessageResult
-import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
-import com.pubnub.api.models.consumer.pubsub.PNSignalResult
-import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
-import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
+
 import java.lang.Exception
-import java.sql.Timestamp
-import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -105,8 +91,7 @@ object PubNubService : ChatService {
             .channels(listOf(groupId))
             .includeMeta(true)
             .includeUUID(true)
-            //.start(16380110705420499)
-            .start(System.currentTimeMillis() * 10_000L)
+            .end(pubnub.timestamp.toLong() * 1000)
             .maximumPerChannel(1)
             .sync()
 
@@ -125,12 +110,14 @@ object PubNubService : ChatService {
             .channel(groupId)
             .includeMeta(true)
             .includeTimetoken(true)
-            .start(timeToken ?: System.currentTimeMillis() * 10_000L)
+            .end(timeToken ?: System.currentTimeMillis() * 1000L)
             .count(20)
             .sync()
         val messages = mutableListOf<ChatItem>()
 
-        history?.messages?.map {
+        history?.messages?.
+        filterIndexed{index, _ ->  (timeToken == null || index != 0 )}?.
+        map {
             val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
             val message = ChatItem(
                 sender = it.meta.asString,
@@ -156,6 +143,29 @@ object PubNubService : ChatService {
         }
     }
 
+    override fun getChannelMembers(groupId: String): MemberResult {
+        val memberResult = pubnub.channelMembers
+            .channel(groupId)
+            .limit(100)
+            .includeTotalCount(true)
+            .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+            .sync()
+
+        val memberCount = memberResult?.totalCount
+
+        val memberList = mutableListOf<GroupMember>()
+        memberResult?.data?.map {
+            memberList.add(GroupMember(
+                mentorID = it.uuid.id,
+                memberName = it.uuid.name,
+                memberIcon = it.uuid.profileUrl,
+                isAdmin = false,
+                isOnline = true
+            ))
+        }
+        return MemberResult(memberList, memberCount)
+    }
+
     private fun getOnlineMember(groupName: String): Int {
         val count = pubnub.hereNow()
             .channels(listOf(groupName))
@@ -164,7 +174,3 @@ object PubNubService : ChatService {
     }
 }
 
-fun main() {
-    println(System.currentTimeMillis())
-    println(System.nanoTime())
-}
