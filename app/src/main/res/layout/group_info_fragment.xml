@@ -93,6 +93,7 @@
                     android:onClick="@{vm::expandGroupList}"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="@{vm.memberCount > 6 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recyclerView">
@@ -110,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_22sdp"
                         android:fontFamily="@font/open_sans"
-                        android:text="@{vm.groupSubHeader}"
+                        android:text="@{vm.memberCount - 6 + ` more`}"
                         android:textSize="@dimen/_10ssp"
                         tools:text="23 more" />
 
@@ -122,8 +123,8 @@
                     android:layout_height="@dimen/_44sdp"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:background="@color/white"
-                    android:onClick="@{vm::showExitDialog}"
                     android:gravity="center_vertical"
+                    android:onClick="@{vm::showExitDialog}"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

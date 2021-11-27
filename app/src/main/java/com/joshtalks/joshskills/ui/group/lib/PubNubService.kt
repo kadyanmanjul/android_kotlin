@@ -3,33 +3,20 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.flurry.sdk.it
+
 import com.google.gson.Gson
 import com.joshtalks.joshskills.core.Event
-import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.MessageItem
-import com.joshtalks.joshskills.ui.group.model.PageInfo
-import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
+import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
+
 import com.pubnub.api.PubNub
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
-import com.pubnub.api.models.consumer.PNStatus
-import com.pubnub.api.models.consumer.history.PNHistoryItemResult
-import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
-import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
-import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
-import com.pubnub.api.models.consumer.pubsub.PNMessageResult
-import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
-import com.pubnub.api.models.consumer.pubsub.PNSignalResult
-import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
-import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
+
 import java.lang.Exception
-import java.sql.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -154,6 +141,29 @@ object PubNubService : ChatService {
                 .usePOST(true)
                 .sync()
         }
+    }
+
+    override fun getChannelMembers(groupId: String): MemberResult {
+        val memberResult = pubnub.channelMembers
+            .channel(groupId)
+            .limit(100)
+            .includeTotalCount(true)
+            .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+            .sync()
+
+        val memberCount = memberResult?.totalCount
+
+        val memberList = mutableListOf<GroupMember>()
+        memberResult?.data?.map {
+            memberList.add(GroupMember(
+                mentorID = it.uuid.id,
+                memberName = it.uuid.name,
+                memberIcon = it.uuid.profileUrl,
+                isAdmin = false,
+                isOnline = true
+            ))
+        }
+        return MemberResult(memberList, memberCount)
     }
 
     private fun getOnlineMember(groupName: String): Int {

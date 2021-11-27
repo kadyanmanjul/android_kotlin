@@ -47,6 +47,7 @@ class GroupChatViewModel : BaseViewModel() {
     val groupCreatedAt = ObservableField("")
     var conversationId: String = ""
     val userOnlineCount = ObservableField("")
+    var memberCount = ObservableField(0)
     var showAllMembers = ObservableBoolean(false)
     lateinit var memberAdapter: GroupMemberAdapter
     var chatAdapter = GroupChatAdapter(GroupChatComparator)
@@ -148,27 +149,11 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openGroupInfo() {
-        //TODO("This below data is just for testing, need to be removed while implementation")
-        val members = listOf(
-            GroupMember("3", "Sukesh", "", false, false),
-            GroupMember("4", "Aaditya", "", false, true),
-            GroupMember("5", "Sagar", "", false, true),
-            GroupMember("6", "Param", "", false, false),
-            GroupMember("7", "Mehta", "", false, true),
-            GroupMember(
-                "2",
-                "Hi",
-                "https://www.joshtalks.com/wp-content/uploads/2020/09/joshlogo.png",
-                false,
-                false
-            ),
-            GroupMember("1", "Hello", "", true, true),
-            GroupMember("8", "Bye", "", false, false)
-        )
-        memberAdapter = GroupMemberAdapter(this, members)
         if (hasJoinedGroup.get()) {
             message.what = OPEN_GROUP_INFO
             singleLiveEvent.value = message
+            joiningNewGroup.set(true)
+            memberAdapter = GroupMemberAdapter(this, getGroupInfo())
         }
     }
 
@@ -225,6 +210,13 @@ class GroupChatViewModel : BaseViewModel() {
 
     @ExperimentalPagingApi
     fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
+
+    fun getGroupInfo(): List<GroupMember> {
+        val memberResult = repository.getGroupMemberList(groupId)
+        memberCount.set(memberResult.count)
+        joiningNewGroup.set(false)
+        return memberResult.list
+    }
 
     fun expandGroupList(view: View) {
         view.visibility = View.GONE
