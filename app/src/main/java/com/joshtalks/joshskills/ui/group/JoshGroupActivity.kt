@@ -50,6 +50,11 @@ class JoshGroupActivity : BaseGroupActivity() {
         openGroupListFragment()
     }
 
+    override fun onResume() {
+        super.onResume()
+        vm.updatePresence(true)
+    }
+
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
@@ -249,4 +254,9 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun setIntentExtras() {}
+
+    override fun onPause() {
+        super.onPause()
+        vm.updatePresence(false)
+    }
 }

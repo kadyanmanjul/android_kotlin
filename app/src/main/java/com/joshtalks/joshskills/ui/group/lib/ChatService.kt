@@ -17,6 +17,7 @@ interface ChatService {
     fun getLastMessageDetail(groupId: String) : Pair<String, Long>
     fun getMessageHistory(groupId: String, timeToken : Long? = null) : List<ChatItem>
     fun getChannelMembers(groupId: String): MemberResult
+    fun setMemberPresence(groups: List<String>, isOnline: Boolean)
 }
 
 interface NetworkData {

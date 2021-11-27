@@ -160,10 +160,29 @@ object PubNubService : ChatService {
                 memberName = it.uuid.name,
                 memberIcon = it.uuid.profileUrl,
                 isAdmin = false,
-                isOnline = true
+                isOnline = getCurrentPresence(it.uuid.id, groupId)
             ))
         }
         return MemberResult(memberList, memberCount)
+    }
+
+    override fun setMemberPresence(groups: List<String>, isOnline: Boolean) {
+        pubnub.setPresenceState()
+            .channels(groups)
+            .state(mapOf("is_online" to isOnline))
+            .sync()
+    }
+
+    fun getCurrentPresence(mentorId: String, groupId: String): Boolean {
+        val presence = pubnub.presenceState
+            .channels(listOf(groupId))
+            .uuid(mentorId)
+            .sync()
+
+        presence?.stateByUUID?.map {
+            return it.value.asJsonObject.get("is_online") != null
+        }
+        return false
     }
 
     private fun getOnlineMember(groupName: String): Int {
