@@ -276,6 +276,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
     fun getGroupMemberList(id: String): MemberResult =
         chatService.getChannelMembers(groupId = id)
 
+    fun setUserPresence(isOnline: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val groups = database.groupListDao().getGroupIds()
+            chatService.setMemberPresence(groups, isOnline)
+        }
+    }
+
     suspend fun getOnlineUserCount(groupId: String) = apiService.getOnlineUserCount(groupId)
 
     private fun getCompressImage(path: String): String {
