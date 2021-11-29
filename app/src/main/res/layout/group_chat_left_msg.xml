@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_4sdp"
-        android:paddingEnd="@dimen/cell_left_end_padding">
+        android:paddingEnd="@dimen/cell_left_end_padding"
+        android:rotation="180">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/parent_layout"

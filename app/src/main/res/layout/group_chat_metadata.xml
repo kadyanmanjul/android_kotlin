@@ -20,6 +20,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/_8sdp"
             android:backgroundTint="#D5EAF5"
+            android:rotation="180"
             app:cardCornerRadius="@dimen/_6sdp"
             app:cardElevation="@dimen/_1sdp"
             app:layout_constraintEnd_toEndOf="parent"

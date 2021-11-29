@@ -101,6 +101,10 @@ class GroupChatFragment : BaseFragment() {
                 }
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
                 SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString())
+                SCROLL_TO_END -> {
+                    vm.scrollToEnd = false
+                    binding.groupChatRv.layoutManager?.smoothScrollToPosition(binding.groupChatRv, RecyclerView.State(), 0)
+                }
             }
         }
     }

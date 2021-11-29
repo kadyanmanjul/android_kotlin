@@ -9,6 +9,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
+import androidx.recyclerview.widget.RecyclerView
 import com.flurry.sdk.gr
 
 import com.joshtalks.joshskills.R
@@ -32,6 +33,7 @@ import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
+import kotlinx.coroutines.CoroutineScope
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,9 +53,22 @@ class GroupChatViewModel : BaseViewModel() {
     val userOnlineCount = ObservableField("")
     var showAllMembers = ObservableBoolean(false)
     lateinit var memberAdapter: GroupMemberAdapter
-    var chatAdapter = GroupChatAdapter(GroupChatComparator)
+    val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
+        registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                Log.d(TAG, "onItemRangeInserted: ")
+                super.onItemRangeInserted(positionStart, itemCount)
+                if(scrollToEnd) {
+                    Log.d(TAG, "onItemRangeInserted: SCROLL TO END")
+                    message.what = SCROLL_TO_END
+                    singleLiveEvent.value = message
+                }
+            }
+        })
+    }
     val joiningNewGroup = ObservableBoolean(false)
     var chatSendText: String = ""
+    var scrollToEnd = false
     private val chatService : ChatService = PubNubService
 
     var groupId: String = ""
@@ -204,6 +219,7 @@ class GroupChatViewModel : BaseViewModel() {
             msgType = MESSAGE,
             mentorId = Mentor.getInstance().getId()
         )
+        scrollToEnd = true
         chatService.sendMessage(groupId, message)
         clearText()
     }

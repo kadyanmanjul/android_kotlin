@@ -94,7 +94,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                             msgType = messageItem.getMessageType()
                         )
                     )
-                    //onNewMessageAdded?.invoke()
                 }
             }
 
@@ -151,7 +150,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
 
     @ExperimentalPagingApi
     fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {
-        return Pager(PagingConfig(10, enablePlaceholders = false,), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
+        return Pager(PagingConfig(20, enablePlaceholders = false,), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
             database.groupChatDao().getPagedGroupChat(id)
         }
     }

@@ -30,6 +30,7 @@ import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import java.lang.Exception
 import java.sql.Timestamp
+import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -104,7 +105,8 @@ object PubNubService : ChatService {
             .channels(listOf(groupId))
             .includeMeta(true)
             .includeUUID(true)
-            .end(pubnub.timestamp.toLong() * 1000)
+            //.start(16380110705420499)
+            .start(System.currentTimeMillis() * 10_000L)
             .maximumPerChannel(1)
             .sync()
 
@@ -123,14 +125,12 @@ object PubNubService : ChatService {
             .channel(groupId)
             .includeMeta(true)
             .includeTimetoken(true)
-            .end(timeToken ?: System.currentTimeMillis() * 1000L)
+            .start(timeToken ?: System.currentTimeMillis() * 10_000L)
             .count(20)
             .sync()
         val messages = mutableListOf<ChatItem>()
 
-        history?.messages?.
-        filterIndexed{index, _ ->  (timeToken == null || index != 0 )}?.
-        map {
+        history?.messages?.map {
             val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
             val message = ChatItem(
                 sender = it.meta.asString,
@@ -164,3 +164,7 @@ object PubNubService : ChatService {
     }
 }
 
+fun main() {
+    println(System.currentTimeMillis())
+    println(System.nanoTime())
+}
