@@ -30,6 +30,11 @@ class GroupInfoFragment : BaseFragment() {
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        vm.getGroupInfo()
+    }
+
     override fun initViewBinding() {
         binding.vm = vm
         binding.executePendingBindings()
@@ -37,11 +42,9 @@ class GroupInfoFragment : BaseFragment() {
 
     override fun initViewState() {}
 
-    override fun setArguments() {
-        vm.showAllMembers.set(false)
-    }
+    override fun setArguments() {}
 
     override fun getConversationId(): String? {
-        return if(vm.conversationId.isBlank()) null else vm.conversationId
+        return if (vm.conversationId.isBlank()) null else vm.conversationId
     }
 }

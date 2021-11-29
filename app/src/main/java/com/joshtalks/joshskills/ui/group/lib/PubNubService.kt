@@ -143,10 +143,10 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun getChannelMembers(groupId: String): MemberResult {
+    override fun getChannelMembers(groupId: String, adminId: String): MemberResult {
         val memberResult = pubnub.channelMembers
             .channel(groupId)
-            .limit(100)
+            .limit(512)
             .includeTotalCount(true)
             .includeUUID(Include.PNUUIDDetailsLevel.UUID)
             .sync()
@@ -159,10 +159,11 @@ object PubNubService : ChatService {
                 mentorID = it.uuid.id,
                 memberName = it.uuid.name,
                 memberIcon = it.uuid.profileUrl,
-                isAdmin = false,
+                isAdmin = adminId == it.uuid.id,
                 isOnline = getCurrentPresence(it.uuid.id, groupId)
             ))
         }
+        memberList.sortByDescending { it.isOnline }
         return MemberResult(memberList, memberCount)
     }
 
