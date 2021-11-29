@@ -9,6 +9,8 @@
 
         <import type="com.joshtalks.joshskills.R" />
 
+        <import type="com.joshtalks.joshskills.repository.local.model.Mentor" />
+
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
@@ -34,10 +36,10 @@
                 android:id="@+id/group_info_app_bar"
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
-                groupSubHeader="@{`Group created on ` + vm.groupCreatedAt}"
+                groupSubHeader="@{`Group created on ` + vm.adminId.equals(Mentor.getInstance().getId())}"
                 onBackPressed="@{vm::onBackPress}"
                 onSecondIconPressed="@{vm::editGroupInfo}"
-                secondIcon="@{R.drawable.ic_pen_edit}"
+                secondIcon="@{vm.adminId.equals(Mentor.getInstance().getId()) ? R.drawable.ic_pen_edit : 0, default = 0}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -126,6 +128,7 @@
                     android:gravity="center_vertical"
                     android:onClick="@{vm::showExitDialog}"
                     android:orientation="horizontal"
+                    android:visibility="@{vm.adminId.equals(Mentor.getInstance().getId()) ? View.GONE : View.VISIBLE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/expand_members_list">

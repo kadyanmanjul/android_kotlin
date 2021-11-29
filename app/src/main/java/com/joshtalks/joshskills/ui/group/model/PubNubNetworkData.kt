@@ -36,7 +36,8 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
                 ).toString(),
                 groupIcon = customMap["image_url"],
                 createdAt = customMap["created_at"]?.toLongOrNull(),
-                createdBy = customMap["created_by"]
+                createdBy = customMap["created_by"],
+                adminId = customMap["admin_id"]
             )
             groupList.add(response)
         }
@@ -55,6 +56,7 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
         map["created_at"] = json["created_at"].asString
         map["created_by"] = json["created_by"].asString
         map["image_url"] = json["image_url"].asString
+        map["admin_id"] = json["mentor_id"].asString
         return map
     }
 

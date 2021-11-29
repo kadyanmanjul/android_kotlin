@@ -160,6 +160,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
                 putString(GROUPS_ID, data?.getUniqueId())
                 putString(CONVERSATION_ID, vm.conversationId)
+                putString(ADMIN_ID, data?.getCreatorId())
                 data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
             }
 

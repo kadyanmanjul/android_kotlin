@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.constants.MESSAGE
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -48,14 +47,14 @@ class GroupChatViewModel : BaseViewModel() {
     var conversationId: String = ""
     val userOnlineCount = ObservableField("")
     var memberCount = ObservableField(0)
-    var showAllMembers = ObservableBoolean(false)
-    lateinit var memberAdapter: GroupMemberAdapter
+    val memberAdapter = GroupMemberAdapter()
     var chatAdapter = GroupChatAdapter(GroupChatComparator)
     val joiningNewGroup = ObservableBoolean(false)
     var chatSendText: String = ""
     private val chatService: ChatService = PubNubService
 
     var groupId: String = ""
+    var adminId: String = ""
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
@@ -152,8 +151,6 @@ class GroupChatViewModel : BaseViewModel() {
         if (hasJoinedGroup.get()) {
             message.what = OPEN_GROUP_INFO
             singleLiveEvent.value = message
-            joiningNewGroup.set(true)
-            memberAdapter = GroupMemberAdapter(this, getGroupInfo())
         }
     }
 
@@ -211,17 +208,20 @@ class GroupChatViewModel : BaseViewModel() {
     @ExperimentalPagingApi
     fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
 
-    fun getGroupInfo(): List<GroupMember> {
-        val memberResult = repository.getGroupMemberList(groupId)
-        memberCount.set(memberResult.count)
-        joiningNewGroup.set(false)
-        return memberResult.list
+    fun getGroupInfo() {
+        joiningNewGroup.set(true)
+        viewModelScope.launch(Dispatchers.Main) {
+            val memberResult = repository.getGroupMemberList(groupId, adminId)
+            memberCount.set(memberResult.count)
+            memberAdapter.addMembersToList(memberResult.list)
+
+            joiningNewGroup.set(false)
+        }
     }
 
     fun expandGroupList(view: View) {
         view.visibility = View.GONE
-        showAllMembers.set(true)
-        memberAdapter.notifyDataSetChanged()
+        memberAdapter.shouldShowAll()
     }
 
     fun sendMessage(view: View) {
@@ -243,5 +243,4 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = CLEAR_CHAT_TEXT
         singleLiveEvent.value = message
     }
-
 }

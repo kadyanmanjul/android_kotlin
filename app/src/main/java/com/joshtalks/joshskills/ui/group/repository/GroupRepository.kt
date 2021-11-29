@@ -275,13 +275,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         analyticsService.groupImpressionDetails(request)
 
-    fun getGroupMemberList(id: String): MemberResult =
-        chatService.getChannelMembers(groupId = id)
+    fun getGroupMemberList(groupId: String, admin: String): MemberResult =
+        chatService.getChannelMembers(groupId = groupId, adminId = admin)
 
     fun setUserPresence(isOnline: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             val groups = database.groupListDao().getGroupIds()
-            chatService.setMemberPresence(groups, isOnline)
+            if (groups.isNotEmpty()) chatService.setMemberPresence(groups, isOnline)
         }
     }
 

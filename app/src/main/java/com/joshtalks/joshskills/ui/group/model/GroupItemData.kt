@@ -7,8 +7,10 @@ interface GroupItemData {
     fun getImageUrl() : String
     fun getCreatedTime() : String
     fun getCreator() : String
-    //TODO: Need to remove
-    fun hasJoined() : Boolean
+    fun getCreatorId() : String
     fun getLastMessageTime() : String
     fun getUnreadMsgCount() : String
+
+    //TODO: Need to remove
+    fun hasJoined() : Boolean
 }

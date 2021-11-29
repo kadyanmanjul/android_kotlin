@@ -5,7 +5,6 @@ import android.text.TextWatcher
 
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -48,7 +47,7 @@ fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, boolean: Boo
 
 @BindingAdapter("secondIcon")
 fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
-    if (drawableRes != R.drawable.josh_skill_logo)
+    if (drawableRes != R.drawable.josh_skill_logo && drawableRes != 0)
         this.secondIcon(drawableRes)
 }
 

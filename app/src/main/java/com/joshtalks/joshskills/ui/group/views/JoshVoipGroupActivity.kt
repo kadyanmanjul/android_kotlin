@@ -60,7 +60,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
                     else
                         openGroupChat(it.obj as? GroupItemData)
                 }
-                OPEN_GROUP_INFO -> openGroupInfoFragment(it.obj as? GroupItemData)
+                OPEN_GROUP_INFO -> openGroupInfoFragment()
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 SEARCH_GROUP -> openGroupSearchFragment()
             }
@@ -179,22 +179,11 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openGroupInfoFragment(data: GroupItemData?) {
+    private fun openGroupInfoFragment() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            val bundle = Bundle().apply {
-                putString(GROUPS_CREATED_TIME, data?.getCreatedTime())
-                putString(GROUPS_CREATOR, data?.getCreator())
-                putString(GROUPS_TITLE, data?.getTitle())
-                putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
-                putString(GROUPS_IMAGE, data?.getImageUrl())
-                putString(GROUPS_ID, data?.getUniqueId())
-                putString(CONVERSATION_ID, vm.conversationId)
-                data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
-            }
 
             val fragment = GroupInfoFragment()
-            fragment.arguments = bundle
             replace(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
