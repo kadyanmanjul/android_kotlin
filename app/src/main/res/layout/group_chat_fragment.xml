@@ -52,8 +52,8 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:backgroundTint="#D5EAF5"
             android:elevation="@dimen/_8sdp"
-            app:cardCornerRadius="@dimen/_4sdp"
             android:visibility="gone"
+            app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout"
@@ -93,10 +93,11 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_chat_rv"
+            groupChatAdapter="@{vm.chatAdapter}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            groupChatAdapter="@{vm.chatAdapter}"
             android:layout_marginBottom="4dp"
+            android:rotation="180"
             app:layout_constraintBottom_toTopOf="@+id/tv_online_user_count"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
