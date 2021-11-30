@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 
@@ -12,6 +13,7 @@ import com.flurry.sdk.it
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.group.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -71,6 +73,8 @@ class JoshGroupViewModel : BaseViewModel() {
         repository.startChatEventListener()
     }
 
+    fun updatePresence(isOnline: Boolean) = repository.setUserPresence(isOnline)
+
     fun showImageThumb(imagePath: String) {
         message.what = GROUP_IMAGE_SELECTED
         message.obj = imagePath
@@ -120,7 +124,10 @@ class JoshGroupViewModel : BaseViewModel() {
             try {
                 repository.addGroupToServer(request)
                 withContext(Dispatchers.Main) {
-                    message.what = SHOULD_REFRESH_GROUP_LIST
+                    message.what = REFRESH_GRP_LIST_HIDE_INFO
+                    message.data = Bundle().apply {
+                        putBoolean(SHOW_NEW_INFO, true)
+                    }
                     singleLiveEvent.value = message
                     addingNewGroup.set(false)
                     onBackPress()
@@ -141,11 +148,11 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
-    fun editGroup(request: EditGroupRequest) {
+    fun editGroup(request: EditGroupRequest, isNameChanged: Boolean) {
         addingNewGroup.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val isSuccess = repository.editGroupInServer(request)
+                val isSuccess = repository.editGroupInServer(request, isNameChanged)
                 withContext(Dispatchers.Main) {
                     if (isSuccess) {
                         message.what = SHOULD_REFRESH_GROUP_LIST

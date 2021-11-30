@@ -49,7 +49,7 @@ fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, boolean: Boo
 
 @BindingAdapter("secondIcon")
 fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
-    if (drawableRes != R.drawable.josh_skill_logo)
+    if (drawableRes != R.drawable.josh_skill_logo && drawableRes != 0)
         this.secondIcon(drawableRes)
 }
 

@@ -18,6 +18,12 @@ interface TimeTokenDao {
     @Query("SELECT * FROM time_token_db")
     suspend fun getAllTimeTokens(): List<TimeTokenRequest>
 
+    @Query("SELECT timeToken FROM time_token_db WHERE groupId = :id")
+    fun getOpenedTime(id: String): Long?
+
     @Query("DELETE FROM time_token_db WHERE groupId = :groupId AND timeToken = :time")
     suspend fun deleteTimeEntry(groupId: String, time: Long)
+
+    @Query("DELETE FROM time_token_db WHERE groupId = :groupId")
+    suspend fun deleteTimeToken(groupId: String)
 }

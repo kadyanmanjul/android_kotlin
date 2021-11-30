@@ -2,11 +2,7 @@ package com.joshtalks.joshskills.ui.group.lib
 
 import androidx.lifecycle.LiveData
 import com.joshtalks.joshskills.core.Event
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
-import com.joshtalks.joshskills.ui.group.model.GroupListResponse
-import com.joshtalks.joshskills.ui.group.model.MessageItem
-import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.joshtalks.joshskills.ui.group.model.*
 
 interface ChatService {
     fun initializeChatService()
@@ -20,6 +16,8 @@ interface ChatService {
     fun getUnreadMessageCount(groupId: String, lastSeenTimestamp : Long) : Long
     fun getLastMessageDetail(groupId: String) : Pair<String, Long>
     fun getMessageHistory(groupId: String, timeToken : Long? = null) : List<ChatItem>
+    fun getChannelMembers(groupId: String, adminId: String): MemberResult
+    fun setMemberPresence(groups: List<String>, isOnline: Boolean)
 }
 
 interface NetworkData {

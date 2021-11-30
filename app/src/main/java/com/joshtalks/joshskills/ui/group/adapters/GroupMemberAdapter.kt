@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.databinding.GroupMemberItemBinding
-import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 
-class GroupMemberAdapter(val vm: GroupChatViewModel, val memberList: List<GroupMember>) :
+class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
     RecyclerView.Adapter<GroupMemberAdapter.MemberViewHolder>() {
 
     val memberLimit: Int = 6
+    var showAllMembers = false
 
     inner class MemberViewHolder(private val item: GroupMemberItemBinding) :
         RecyclerView.ViewHolder(item.root) {
@@ -37,9 +37,19 @@ class GroupMemberAdapter(val vm: GroupChatViewModel, val memberList: List<GroupM
 
     override fun getItemCount(): Int {
         return when {
-            vm.showAllMembers.get() -> memberList.size
+            showAllMembers -> memberList.size
             memberList.size >= memberLimit -> memberLimit
             else -> memberList.size
         }
+    }
+
+    fun shouldShowAll(){
+        showAllMembers = true
+        notifyDataSetChanged()
+    }
+
+    fun addMembersToList(members: List<GroupMember>) {
+        memberList = members
+        notifyDataSetChanged()
     }
 }

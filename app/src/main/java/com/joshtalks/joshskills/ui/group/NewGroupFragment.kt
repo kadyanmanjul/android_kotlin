@@ -78,9 +78,10 @@ class NewGroupFragment : BaseFragment() {
                         val request = EditGroupRequest(
                             groupId = groupId ?: "",
                             groupName = groupName,
-                            groupIcon = imagePath ?: vm.groupImageUrl.get() ?: ""
+                            groupIcon = imagePath ?: vm.groupImageUrl.get() ?: "",
+                            isImageChanged = vm.isImageChanged
                         )
-                        vm.editGroup(request)
+                        vm.editGroup(request, groupName != vm.groupTitle.get())
                     } else if (groupName.length > 25)
                         showToast("Group Name should be 25 character or less")
                     else if (groupName == vm.groupTitle.get() && !vm.isImageChanged)

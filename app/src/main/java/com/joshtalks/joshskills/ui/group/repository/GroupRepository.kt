@@ -13,13 +13,6 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
-import com.joshtalks.joshskills.ui.group.constants.MESSAGE
-import com.joshtalks.joshskills.ui.group.constants.MESSAGE_ERROR
-import com.joshtalks.joshskills.ui.group.constants.META_MESSAGE
-import com.joshtalks.joshskills.ui.group.constants.RECEIVE_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.SENT_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
@@ -27,7 +20,6 @@ import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.*
-
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupRequest
@@ -36,6 +28,8 @@ import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
+import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
+
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
@@ -67,7 +61,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
     private val analyticsService: GroupsAnalyticsService =
         AppObjectController.retrofit.create(GroupsAnalyticsService::class.java)
     private val mentorId = Mentor.getInstance().getId()
-    private val chatService : ChatService = PubNubService
+    private val chatService: ChatService = PubNubService
+
     companion object {
         private val database = AppObjectController.appDatabase
         private val subscribeCallback = object : SubscribeCallback() {
@@ -187,7 +182,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    suspend fun joinGroup(groupId: String) {
+    suspend fun joinGroup(groupId: String): Boolean {
         Log.e(TAG, "Joining group : ${groupId}")
         val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
         if (response["success"] == true) {
@@ -205,11 +200,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                         totalCalls = null
                     )
                 )
+                return true
             } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
                 exp.printStackTrace()
             }
         }
+        return false
     }
 
     suspend fun addGroupToServer(request: AddGroupRequest) {
@@ -235,36 +232,56 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                         totalCalls = null
                     )
                 )
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has created this group", response["group_id"] as String)
             } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
                 exp.printStackTrace()
             }
     }
 
-    suspend fun editGroupInServer(request: EditGroupRequest): Boolean {
-        val url =
-            if (request.groupIcon.isNotBlank()) {
-                val compressedImagePath = getCompressImage(request.groupIcon)
-                uploadCompressedMedia(compressedImagePath)
-            } else
-                ""
-        request.groupIcon = url ?: ""
+    suspend fun editGroupInServer(request: EditGroupRequest, isNameChanged: Boolean): Boolean {
+        if (request.isImageChanged) {
+            val url =
+                if (request.groupIcon.isNotBlank()) {
+                    val compressedImagePath = getCompressImage(request.groupIcon)
+                    uploadCompressedMedia(compressedImagePath)
+                } else ""
+            request.groupIcon = url ?: ""
+        }
+
         val response = apiService.editGroup(request)
         if (response.isSuccessful) {
-            database.groupListDao()
-                .updateEditedGroup(request.groupId, request.groupName, request.groupIcon)
+            database.groupListDao().updateEditedGroup(request.groupId, request.groupName, request.groupIcon)
+            if (request.isImageChanged)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} changed the group icon", request.groupId)
+            if (isNameChanged)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} changed the group name to ${request.groupName}", request.groupId)
         }
         return response.isSuccessful
     }
 
-    suspend fun leaveGroupFromServer(request: LeaveGroupRequest) {
+    suspend fun leaveGroupFromServer(request: LeaveGroupRequest): Int {
         val response = apiService.leaveGroup(request)
-        if (response.isSuccessful)
+        if (response.isSuccessful) {
             database.groupListDao().deleteGroupItem(request.groupId)
+            database.timeTokenDao().deleteTimeToken(request.groupId)
+            database.groupChatDao().deleteGroupMessages(request.groupId)
+        }
+        return database.groupListDao().getGroupsCount()
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         analyticsService.groupImpressionDetails(request)
+
+    fun getGroupMemberList(groupId: String, admin: String): MemberResult =
+        chatService.getChannelMembers(groupId = groupId, adminId = admin)
+
+    fun setUserPresence(isOnline: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val groups = database.groupListDao().getGroupIds()
+            if (groups.isNotEmpty()) chatService.setMemberPresence(groups, isOnline)
+        }
+    }
 
     suspend fun getOnlineUserCount(groupId: String) = apiService.getOnlineUserCount(groupId)
 
@@ -283,9 +300,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         }
     }
 
-    private suspend fun uploadCompressedMedia(
-        mediaPath: String
-    ): String? {
+    private suspend fun uploadCompressedMedia(mediaPath: String): String? {
         try {
             val obj = mapOf("media_path" to File(mediaPath).name)
             val responseObj =
@@ -325,11 +340,24 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         return responseUpload.code()
     }
 
+    suspend fun getGroupItem(groupId: String) = database.groupListDao().getGroupItem(groupId)
+
+    suspend fun resetUnreadAndTimeToken(groupId: String) {
+        database.groupListDao().resetUnreadCount(groupId)
+        database.timeTokenDao().insertNewTimeToken(
+            TimeTokenRequest(
+                mentorId = Mentor.getInstance().getId(),
+                groupId = groupId,
+                timeToken = System.currentTimeMillis()
+            )
+        )
+    }
+
     suspend fun fireTimeTokenAPI() {
         val timeTokenList = database.timeTokenDao().getAllTimeTokens()
         for (token in timeTokenList) {
             val response = apiService.updateTimeToken(
-                TimeTokenRequest(token.mentorId, token.groupId, token.timeToken * 1000L)
+                TimeTokenRequest(token.mentorId, token.groupId, token.timeToken * 10000L)
             )
             try {
                 if (response.isSuccessful)
@@ -340,4 +368,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
             }
         }
     }
+
+    fun getRecentTimeToken(id: String) = database.timeTokenDao().getOpenedTime(id)?.times(10000)
 }

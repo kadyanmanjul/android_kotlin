@@ -424,7 +424,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // add PubNub Android-Java SDK here at that bottom
-    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '4.+'
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '4.36.0'
 
     //keyboard
     implementation "com.vanniktech:emoji-ios:0.8.0"

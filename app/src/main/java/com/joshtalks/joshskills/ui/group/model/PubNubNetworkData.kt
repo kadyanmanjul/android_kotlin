@@ -5,12 +5,17 @@ import com.google.gson.JsonObject
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.NetworkData
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 
 private const val TAG = "PubNub_NetworkData"
-data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
+
+data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
+
     val groupList = mutableListOf<GroupsItem>()
     private val chatService : ChatService = PubNubService
+    val repository = GroupRepository()
+
     override fun getData(): GroupListResponse {
         Log.d(TAG, "getData: $data")
         groupList.clear()
@@ -25,10 +30,14 @@ data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
                 name = group.channel.name,
                 lastMessage = lastMsg,
                 lastMsgTime = lastMessageTime,
-                unreadCount = chatService.getUnreadMessageCount(group.channel.id, channelMembershipCustom["time_token"].asLong).toString(),
+                unreadCount = chatService.getUnreadMessageCount(
+                    group.channel.id,
+                    getTimeToken(channelMembershipCustom["time_token"].asLong, group.channel.id)
+                ).toString(),
                 groupIcon = customMap["image_url"],
                 createdAt = customMap["created_at"]?.toLongOrNull(),
-                createdBy = customMap["created_by"]
+                createdBy = customMap["created_by"],
+                adminId = customMap["admin_id"]
             )
             groupList.add(response)
         }
@@ -41,12 +50,15 @@ data class PubNubNetworkData(val data : PNGetMembershipsResult) : NetworkData {
         pubNubNext = data.nextPage(),
     )
 
-    private fun getCustomMap(json : JsonObject) : Map<String, String>{
+    private fun getCustomMap(json: JsonObject): Map<String, String> {
         val map = mutableMapOf<String, String>()
         json.get("")
         map["created_at"] = json["created_at"].asString
         map["created_by"] = json["created_by"].asString
         map["image_url"] = json["image_url"].asString
+        map["admin_id"] = json["mentor_id"].asString
         return map
     }
+
+    fun getTimeToken(pubnubTime: Long, id: String) = repository.getRecentTimeToken(id) ?: pubnubTime
 }

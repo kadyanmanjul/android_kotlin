@@ -39,7 +39,9 @@ data class GroupsItem(
     val createdBy: String? = null,
 
     @field:SerializedName("total_calls")
-    val totalCalls: String? = null
+    val totalCalls: String? = null,
+
+    val adminId: String? = null
 
 ) : GroupItemData {
 
@@ -56,6 +58,8 @@ data class GroupsItem(
         if (createdAt == null) "" else Utils.getMessageTime(createdAt * 1000L, timeNeeded = false)
 
     override fun getCreator() = createdBy ?: ""
+
+    override fun getCreatorId() = adminId ?: ""
 
     override fun hasJoined() = lastMessage != null
 

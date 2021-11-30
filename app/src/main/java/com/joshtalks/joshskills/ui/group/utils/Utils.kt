@@ -8,6 +8,8 @@ import com.joshtalks.joshskills.ui.group.constants.RECEIVE_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.SENT_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.lib.ChatService
+import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.pubnub.api.models.consumer.history.PNHistoryItemResult
 
@@ -33,4 +35,15 @@ fun MessageItem.getMessageType() = when(msgType) {
     else
         RECEIVE_META_MESSAGE_LOCAL
     else -> MESSAGE_ERROR
+}
+
+
+fun pushMetaMessage(msg: String, groupId: String) {
+    val chatService: ChatService = PubNubService
+    val message = MessageItem(
+        msg = msg,
+        msgType = META_MESSAGE,
+        mentorId = Mentor.getInstance().getId()
+    )
+    chatService.sendMessage(groupId, message)
 }
