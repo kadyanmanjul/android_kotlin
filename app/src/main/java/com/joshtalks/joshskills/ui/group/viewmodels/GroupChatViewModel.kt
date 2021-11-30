@@ -97,6 +97,7 @@ class GroupChatViewModel : BaseViewModel() {
                             putBoolean(SHOW_NEW_INFO, true)
                         }
                         singleLiveEvent.value = message
+                        repository.startChatEventListener()
                     }
                     pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
                 } else joiningNewGroup.set(false)
@@ -179,6 +180,7 @@ class GroupChatViewModel : BaseViewModel() {
                         putBoolean(SHOW_NEW_INFO, groupCount != 0)
                     }
                     singleLiveEvent.value = message
+                    repository.startChatEventListener()
                     onBackPress()
                     onBackPress()
                 }
