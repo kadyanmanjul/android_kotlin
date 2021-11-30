@@ -200,6 +200,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                         totalCalls = null
                     )
                 )
+                startChatEventListener()
                 return true
             } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
@@ -225,13 +226,14 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                         groupId = response["group_id"] as String,
                         createdAt = (response["created_at"] as String?)?.toLongOrNull(),
                         lastMessage = "${response["created_by"] as String?} created this group",
-                        lastMsgTime = 0,
+                        lastMsgTime = System.currentTimeMillis().times(10000),
                         unreadCount = null,
                         name = request.groupName,
                         createdBy = response["created_by"] as String?,
                         totalCalls = null
                     )
                 )
+                startChatEventListener()
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has created this group", response["group_id"] as String)
             } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
@@ -253,9 +255,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         if (response.isSuccessful) {
             database.groupListDao().updateEditedGroup(request.groupId, request.groupName, request.groupIcon)
             if (request.isImageChanged)
-                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} changed the group icon", request.groupId)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has changed the group icon", request.groupId)
             if (isNameChanged)
-                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} changed the group name to ${request.groupName}", request.groupId)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has changed the group name to ${request.groupName}", request.groupId)
         }
         return response.isSuccessful
     }

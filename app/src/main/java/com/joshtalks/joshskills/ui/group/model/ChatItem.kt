@@ -13,7 +13,7 @@ data class ChatItem(
 
     val sender: String?,
 
-    val message: String,
+    var message: String,
 
     val msgTime: Long,
 

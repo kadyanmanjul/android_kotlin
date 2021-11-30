@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
-import kotlinx.coroutines.CoroutineScope
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 
 import kotlinx.coroutines.Dispatchers
@@ -114,9 +113,8 @@ class GroupChatViewModel : BaseViewModel() {
                             putBoolean(SHOW_NEW_INFO, true)
                         }
                         singleLiveEvent.value = message
-                        repository.startChatEventListener()
+                        pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
                     }
-                    pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
                 } else joiningNewGroup.set(false)
             } catch (e: Exception) {
                 joiningNewGroup.set(false)
@@ -191,6 +189,7 @@ class GroupChatViewModel : BaseViewModel() {
                     mentorId = Mentor.getInstance().getId()
                 )
                 val groupCount = repository.leaveGroupFromServer(request)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has left the group", groupId)
                 withContext(Dispatchers.Main) {
                     message.what = REFRESH_GRP_LIST_HIDE_INFO
                     message.data = Bundle().apply {
@@ -198,12 +197,13 @@ class GroupChatViewModel : BaseViewModel() {
                     }
                     singleLiveEvent.value = message
                     repository.startChatEventListener()
+                    joiningNewGroup.set(false)
                     onBackPress()
                     onBackPress()
                 }
-                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has left the group", groupId)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    joiningNewGroup.set(false)
                     showToast("An error has occurred")
                 }
                 e.printStackTrace()
