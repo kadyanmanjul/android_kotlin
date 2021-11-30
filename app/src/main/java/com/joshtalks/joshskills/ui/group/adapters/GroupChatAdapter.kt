@@ -94,8 +94,7 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
     inner class SentMetaViewHolder(val item: GroupChatMetadataBinding) :
         ChatViewHolder(item) {
         override fun bindData(groupChatData: ChatItem) {
-            groupChatData.message =
-                "You have ${groupChatData.message.substring(groupChatData.message.indexOf(" ") + 5)}"
+            groupChatData.message = groupChatData.message.replace("${groupChatData.sender} has", "You have")
             item.itemData = groupChatData
         }
     }

@@ -18,7 +18,7 @@
         android:id="@+id/rootContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/group_chat_blue_bg"
+        android:background="@drawable/chat_bg_final"
         tools:context=".ui.group.GroupChatFragment">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -98,7 +98,7 @@
             android:layout_height="0dp"
             android:layout_marginBottom="4dp"
             android:rotation="180"
-            app:layout_constraintBottom_toTopOf="@+id/tv_online_user_count"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
@@ -128,6 +128,7 @@
             android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             android:background="@drawable/rect_round"
+            android:paddingEnd="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
             app:layout_constraintStart_toStartOf="parent">
@@ -151,10 +152,11 @@
                 android:cursorVisible="true"
                 android:hint="@string/type_message_hint"
                 android:inputType="textCapSentences|textMultiLine"
-                android:maxLines="4"
                 android:maxLength="1800"
+                android:maxLines="4"
                 android:minHeight="@dimen/_34sdp"
                 android:onClick="@{() -> vm.openEmojiKeyboard(true)}"
+                android:paddingVertical="@dimen/_2sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/pitch_black"
                 android:textColorHint="@color/gray_9E" />
@@ -178,25 +180,9 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_online_user_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_6sdp"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/_4sdp"
-            android:paddingVertical="@dimen/_2sdp"
-            android:text="@{vm.userOnlineCount == `` ? `Loading...` : `Practice Partners Online: ` + vm.userOnlineCount, default=`Loading...`}"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_10ssp"
-            android:visibility="@{vm.hasJoinedGroup ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
+            android:layout_height="@dimen/_45sdp"
             android:background="@color/white"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"

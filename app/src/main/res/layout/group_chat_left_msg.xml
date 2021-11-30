@@ -13,7 +13,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:paddingStart="@dimen/_4sdp"
         android:paddingEnd="@dimen/cell_left_end_padding"
         android:rotation="180">
 
@@ -21,10 +22,10 @@
             android:id="@+id/parent_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/incoming_message_normal_bg_groupchat"
+            android:background="@drawable/balloon_incoming_normal"
             android:gravity="start"
-            android:paddingStart="@dimen/_14sdp"
-            android:paddingEnd="@dimen/_9sdp">
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingEnd="@dimen/_8sdp">
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/text_title"
@@ -35,7 +36,7 @@
                 android:gravity="center_vertical|start"
                 android:paddingEnd="@dimen/_16sdp"
                 android:text="@{itemData.sender}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
                 android:textColor="@color/black"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +51,7 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="center_vertical|start"
                 android:text="@{itemData.message}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toTopOf="@+id/text_message_time"
                 app:layout_constraintLeft_toLeftOf="parent"

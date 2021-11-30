@@ -10,6 +10,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
+import androidx.recyclerview.widget.RecyclerView
+import com.flurry.sdk.gr
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -49,10 +51,24 @@ class GroupChatViewModel : BaseViewModel() {
     val userOnlineCount = ObservableField("")
     var memberCount = ObservableField(0)
     val memberAdapter = GroupMemberAdapter()
-    var chatAdapter = GroupChatAdapter(GroupChatComparator)
+    var showAllMembers = ObservableBoolean(false)
+    val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
+        registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                Log.d(TAG, "onItemRangeInserted: ")
+                super.onItemRangeInserted(positionStart, itemCount)
+                if(scrollToEnd) {
+                    Log.d(TAG, "onItemRangeInserted: SCROLL TO END")
+                    message.what = SCROLL_TO_END
+                    singleLiveEvent.value = message
+                }
+            }
+        })
+    }
     val joiningNewGroup = ObservableBoolean(false)
     var chatSendText: String = ""
-    private val chatService: ChatService = PubNubService
+    var scrollToEnd = false
+    private val chatService : ChatService = PubNubService
 
     var groupId: String = ""
     var adminId: String = ""
@@ -234,14 +250,17 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun pushMessage(msg: String) {
-        val message = MessageItem(
-            msg = msg,
-            msgType = MESSAGE,
-            mentorId = Mentor.getInstance().getId()
-        )
-        chatService.sendMessage(groupId, message)
-        chatService.sendGroupNotification(groupId, getNotification(msg))
-        clearText()
+        if (msg.isNotEmpty()) {
+            val message = MessageItem(
+                msg = msg,
+                msgType = MESSAGE,
+                mentorId = Mentor.getInstance().getId()
+            )
+            scrollToEnd = true
+            chatService.sendMessage(groupId, message)
+            chatService.sendGroupNotification(groupId, getNotification(msg))
+            clearText()
+        }
     }
 
     private fun clearText() {
