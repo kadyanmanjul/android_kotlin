@@ -132,7 +132,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
             GroupPagingNetworkSource(
                 query,
-                isSearching = true,
                 apiService = apiService,
                 onDataLoaded = onDataLoaded
             )
