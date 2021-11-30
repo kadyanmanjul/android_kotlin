@@ -35,7 +35,12 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
                     setViewHolder<GroupChatRightMsgBinding>(parent, R.layout.group_chat_right_msg)
                 RightChatViewHolder(view)
             }
-            SENT_META_MESSAGE_LOCAL, RECEIVE_META_MESSAGE_LOCAL, MESSAGE_ERROR -> {
+            SENT_META_MESSAGE_LOCAL -> {
+                val view =
+                    setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
+                SentMetaViewHolder(view)
+            }
+            RECEIVE_META_MESSAGE_LOCAL, MESSAGE_ERROR -> {
                 val view =
                     setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
                 MetaChatViewHolder(view)
@@ -85,9 +90,14 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
             item.itemData = groupChatData
         }
     }
-}
 
-//private const val LEFT_TEXT_MESSAGE = 1  //Message is received
-//private const val RIGHT_TEXT_MESSAGE = 2 //Message is sent
-//private const val META_DATA_MESSAGE = 3  //Message is of type metadata
-//private const val ERROR_TEXT_MESSAGE = 0  //Message type is not known
+    inner class SentMetaViewHolder(val item: GroupChatMetadataBinding) :
+        ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            groupChatData.message =
+                "You have ${groupChatData.message.substring(groupChatData.message.indexOf(" ") + 5)}"
+            item.itemData = groupChatData
+        }
+    }
+
+}

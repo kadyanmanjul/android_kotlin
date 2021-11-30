@@ -36,7 +36,7 @@
                 android:id="@+id/group_info_app_bar"
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
-                groupSubHeader="@{`Group created on ` + vm.adminId.equals(Mentor.getInstance().getId())}"
+                groupSubHeader="@{`Group created on ` + vm.groupCreatedAt}"
                 onBackPressed="@{vm::onBackPress}"
                 onSecondIconPressed="@{vm::editGroupInfo}"
                 secondIcon="@{vm.adminId.equals(Mentor.getInstance().getId()) ? R.drawable.ic_pen_edit : 0, default = 0}"
