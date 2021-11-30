@@ -98,7 +98,7 @@ class GroupChatFragment : BaseFragment() {
                     openEmojiKeyboard(it.data)
                 }
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
-                SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString())
+                SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString().trim())
                 SCROLL_TO_END -> {
                     vm.scrollToEnd = false
                     binding.groupChatRv.layoutManager?.smoothScrollToPosition(binding.groupChatRv, RecyclerView.State(), 0)

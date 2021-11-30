@@ -250,15 +250,17 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun pushMessage(msg: String) {
-        val message = MessageItem(
-            msg = msg,
-            msgType = MESSAGE,
-            mentorId = Mentor.getInstance().getId()
-        )
-        scrollToEnd = true
-        chatService.sendMessage(groupId, message)
-        chatService.sendGroupNotification(groupId, getNotification(msg))
-        clearText()
+        if (msg.isNotEmpty()) {
+            val message = MessageItem(
+                msg = msg,
+                msgType = MESSAGE,
+                mentorId = Mentor.getInstance().getId()
+            )
+            scrollToEnd = true
+            chatService.sendMessage(groupId, message)
+            chatService.sendGroupNotification(groupId, getNotification(msg))
+            clearText()
+        }
     }
 
     private fun clearText() {

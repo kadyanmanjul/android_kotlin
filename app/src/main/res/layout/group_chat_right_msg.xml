@@ -13,8 +13,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_3sdp"
         android:paddingStart="@dimen/cell_left_end_padding"
+        android:paddingEnd="@dimen/_4sdp"
         android:rotation="180">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:background="@drawable/outgoing_message_normal_bg_groupchat"
+            android:background="@drawable/balloon_outgoing_normal"
             android:paddingStart="@dimen/_9sdp"
             android:paddingEnd="@dimen/_14sdp">
 
@@ -34,7 +35,7 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:gravity="center_vertical|start"
                 android:text="@{itemData.message}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toTopOf="@+id/text_message_time"
                 app:layout_constraintLeft_toLeftOf="parent"
