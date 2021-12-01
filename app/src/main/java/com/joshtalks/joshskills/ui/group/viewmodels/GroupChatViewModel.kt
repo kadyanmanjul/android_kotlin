@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
 import androidx.recyclerview.widget.RecyclerView
-import com.flurry.sdk.gr
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -66,6 +65,7 @@ class GroupChatViewModel : BaseViewModel() {
         })
     }
     val joiningNewGroup = ObservableBoolean(false)
+    val fetchingGrpInfo = ObservableBoolean(false)
     var chatSendText: String = ""
     var scrollToEnd = false
     private val chatService : ChatService = PubNubService
@@ -229,13 +229,15 @@ class GroupChatViewModel : BaseViewModel() {
     fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
 
     fun getGroupInfo() {
-        joiningNewGroup.set(true)
-        viewModelScope.launch(Dispatchers.Main) {
+        fetchingGrpInfo.set(true)
+        viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
-            memberCount.set(memberResult.count)
-            memberAdapter.addMembersToList(memberResult.list)
-
-            joiningNewGroup.set(false)
+            memberCount.set(memberResult.memberCount)
+            groupSubHeader.set("${memberResult.memberCount} members, ${memberResult.onlineCount} online")
+            withContext(Dispatchers.Main){
+                memberAdapter.addMembersToList(memberResult.list)
+                fetchingGrpInfo.set(false)
+            }
         }
     }
 

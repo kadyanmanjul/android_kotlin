@@ -63,6 +63,8 @@ class GroupChatFragment : BaseFragment() {
                 }
             }
         }
+        if (vm.hasJoinedGroup.get())
+            vm.getGroupInfo()
     }
 
     private fun initTooltip() {

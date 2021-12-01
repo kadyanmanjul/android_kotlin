@@ -183,9 +183,11 @@ object PubNubService : ChatService {
             .sync()
 
         val memberCount = memberResult?.totalCount
+        var onlineCount = 0
 
         val memberList = mutableListOf<GroupMember>()
         memberResult?.data?.map {
+            val status = getCurrentPresence(it.uuid.id, groupId)
             memberList.add(GroupMember(
                 mentorID = it.uuid.id,
                 memberName = it.uuid.name,
@@ -193,9 +195,10 @@ object PubNubService : ChatService {
                 isAdmin = adminId == it.uuid.id,
                 isOnline = getCurrentPresence(it.uuid.id, groupId)
             ))
+            if(status) onlineCount++
         }
         memberList.sortByDescending { it.isOnline }
-        return MemberResult(memberList, memberCount)
+        return MemberResult(memberList, memberCount, onlineCount)
     }
 
     override fun setMemberPresence(groups: List<String>, isOnline: Boolean) {
