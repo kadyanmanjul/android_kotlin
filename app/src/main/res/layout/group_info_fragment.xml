@@ -128,7 +128,7 @@
                     android:gravity="center_vertical"
                     android:onClick="@{vm::showExitDialog}"
                     android:orientation="horizontal"
-                    android:visibility="@{vm.adminId.equals(Mentor.getInstance().getId()) ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{vm.adminId.equals(Mentor.getInstance().getId()) ? View.GONE : View.VISIBLE, default=gone}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/expand_members_list">
@@ -162,7 +162,7 @@
             android:background="@color/transparent_blue_alpha_75"
             android:clickable="false"
             android:elevation="@dimen/_8sdp"
-            android:visibility="@{vm.joiningNewGroup ? View.VISIBLE : View.GONE}"
+            android:visibility="@{vm.fetchingGrpInfo ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

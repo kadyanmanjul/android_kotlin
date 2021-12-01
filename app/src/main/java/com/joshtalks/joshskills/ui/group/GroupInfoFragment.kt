@@ -30,11 +30,6 @@ class GroupInfoFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        vm.getGroupInfo()
-    }
-
     override fun initViewBinding() {
         binding.vm = vm
         binding.executePendingBindings()
