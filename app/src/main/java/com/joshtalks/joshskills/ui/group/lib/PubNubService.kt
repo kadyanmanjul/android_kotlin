@@ -23,15 +23,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
-import com.pubnub.api.models.consumer.PNStatus
-
-import com.pubnub.api.models.consumer.push.PNPushAddChannelResult
-
-import com.pubnub.api.callbacks.PNCallback
 
 import com.pubnub.api.enums.PNPushType
-import java.util.Arrays
-
 
 private const val TAG = "PubNub_Service"
 
@@ -98,7 +91,7 @@ object PubNubService : ChatService {
         return count?.channels?.get(groupId) ?: 0L
     }
 
-    override fun notificationTest(groups: List<String>) {
+    override fun dispatchNotifications(groups: List<String>) {
         pubnub.addPushNotificationsOnChannels()
             .pushType(PNPushType.FCM)
             .deviceId(PrefManager.getStringValue(FCM_TOKEN))
@@ -164,10 +157,11 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun sendGroupNotification(groupName: String, messageItem: Map<String, Any?>) {
+    override fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>) {
         CoroutineScope(Dispatchers.IO).launch {
             pubnub.publish()
-                .channel(groupName)
+                .channel(groupId)
+                .shouldStore(false)
                 .message(messageItem)
                 .usePOST(true)
                 .sync()
