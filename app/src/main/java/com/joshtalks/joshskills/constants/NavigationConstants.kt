@@ -18,5 +18,5 @@ const val OPEN_EMOJI_KEYBOARD = 16
 const val CLEAR_CHAT_TEXT = 17
 const val SEND_MSG = 18
 const val LISTEN_CHAT_EVENTS = 19
-const val SCROLL_TO_END = 20
+const val NEW_CHAT_ADDED = 20
 const val REFRESH_GRP_LIST_HIDE_INFO = 21

@@ -119,12 +119,42 @@ object PubNubService : ChatService {
         return "${msg?.channels?.get(groupId)?.get(0)?.meta?.asString}: ${message}" to (msg?.channels?.get(groupId)?.get(0)?.timetoken ?: 0L)
     }
 
-    override fun getMessageHistory(groupId: String, timeToken : Long?) : List<ChatItem> {
+    override fun getMessageHistory(groupId: String, startTime : Long?) : List<ChatItem> {
         val history = pubnub.history()
             .channel(groupId)
             .includeMeta(true)
             .includeTimetoken(true)
-            .start(timeToken ?: System.currentTimeMillis() * 10_000L)
+            .start(startTime ?: System.currentTimeMillis() * 10_000L)
+            .count(20)
+            .sync()
+        val messages = mutableListOf<ChatItem>()
+
+        history?.messages?.map {
+            try {
+                val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+                val message = ChatItem(
+                    sender = it.meta.asString,
+                    msgType = messageItem.getMessageType(),
+                    message = messageItem.msg,
+                    msgTime = it.timetoken,
+                    groupId = groupId,
+                    messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
+                )
+                messages.add(message)
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
+        }
+        return messages
+    }
+
+    override fun getUnreadMessages(groupId: String, startTime: Long): List<ChatItem> {
+        val history = pubnub.history()
+            .channel(groupId)
+            .includeMeta(true)
+            .includeTimetoken(true)
+            .start(startTime)
+            .end(System.currentTimeMillis() * 10_000L)
             .count(20)
             .sync()
         val messages = mutableListOf<ChatItem>()
