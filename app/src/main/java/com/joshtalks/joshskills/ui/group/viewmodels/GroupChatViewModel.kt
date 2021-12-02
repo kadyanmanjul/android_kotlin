@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
+import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -256,11 +257,27 @@ class GroupChatViewModel : BaseViewModel() {
         )
         scrollToEnd = true
         chatService.sendMessage(groupId, message)
+        chatService.sendGroupNotification(groupId, getNotification(msg))
         clearText()
     }
 
     private fun clearText() {
         message.what = CLEAR_CHAT_TEXT
         singleLiveEvent.value = message
+    }
+
+    private fun getNotification(msg: String) : Map<String, Any?> {
+        val pushPayloadHelper = PushPayloadHelper()
+
+        val fcmPayload = PushPayloadHelper.FCMPayload().apply {
+            setNotification(PushPayloadHelper.FCMPayload.Notification().apply {
+                this.setTitle("${groupHeader.get()}")
+                this.setBody(msg)
+            })
+
+        }
+        pushPayloadHelper.setFcmPayload(fcmPayload)
+
+        return pushPayloadHelper.build()
     }
 }
