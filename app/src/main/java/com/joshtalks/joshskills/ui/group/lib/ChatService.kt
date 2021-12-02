@@ -10,6 +10,8 @@ interface ChatService {
     fun <T> unsubscribeToChatEvents(observer: ChatEventObserver<T>)
     fun createGroup(groupName: String, imageUrl : String)
     fun sendMessage(groupName: String, messageItem: MessageItem)
+    fun sendGroupNotification(groupName: String, messageItem: Map<String, Any?>)
+    fun notificationTest(groups : List<String>)
     fun getOnlineCount(groupName : String) : LiveData<Event<Int>>
     fun getMembersCount(groupName: String) : LiveData<Event<Int>>
     fun fetchGroupList(pageInfo: PageInfo? = null) : NetworkData?

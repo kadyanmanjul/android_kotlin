@@ -8,7 +8,6 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.flurry.sdk.it
 
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
@@ -26,6 +25,7 @@ import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.notifyAll
 
 import retrofit2.HttpException
 
@@ -60,16 +60,17 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun getGroupData() =
-        repository.getGroupListResult(::groupDateLoaded).flow.cachedIn(viewModelScope)
+        repository.getGroupListResult(::groupDataLoaded).flow.cachedIn(viewModelScope)
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
         singleLiveEvent.value = message
     }
 
-    fun groupDateLoaded(size : Int) {
+    fun groupDataLoaded(size : Int) {
         hasGroupData.set(size > 0)
         hasGroupData.notifyChange()
+        repository.testingNotification()
         repository.startChatEventListener()
     }
 

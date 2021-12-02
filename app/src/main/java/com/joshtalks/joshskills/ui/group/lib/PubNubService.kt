@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 
 import com.google.gson.Gson
 import com.joshtalks.joshskills.core.Event
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
@@ -21,6 +23,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
+import com.pubnub.api.models.consumer.PNStatus
+
+import com.pubnub.api.models.consumer.push.PNPushAddChannelResult
+
+import com.pubnub.api.callbacks.PNCallback
+
+import com.pubnub.api.enums.PNPushType
+import java.util.Arrays
+
 
 private const val TAG = "PubNub_Service"
 
@@ -44,6 +55,7 @@ object PubNubService : ChatService {
     override fun <T> subscribeToChatEvents(groups: List<String>, observer: ChatEventObserver<T>) {
         pubnub.addListener(observer.getObserver() as @NotNull SubscribeCallback)
         pubnub.subscribe()
+            .withPresence()
             .channels(groups)
             .execute()
     }
@@ -86,6 +98,14 @@ object PubNubService : ChatService {
         return count?.channels?.get(groupId) ?: 0L
     }
 
+    override fun notificationTest(groups: List<String>) {
+        pubnub.addPushNotificationsOnChannels()
+            .pushType(PNPushType.FCM)
+            .deviceId(PrefManager.getStringValue(FCM_TOKEN))
+            .channels(groups)
+            .sync()
+    }
+
     override fun getLastMessageDetail(groupId: String): Pair<String, Long> {
         val msg = pubnub.fetchMessages()
             .channels(listOf(groupId))
@@ -124,7 +144,8 @@ object PubNubService : ChatService {
                 msgType = messageItem.getMessageType(),
                 message = messageItem.msg,
                 msgTime = it.timetoken,
-                groupId = groupId
+                groupId = groupId,
+                messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
             )
             messages.add(message)
         }
@@ -138,6 +159,16 @@ object PubNubService : ChatService {
                 .message(messageItem)
                 .meta("${Mentor.getInstance().getUser()?.firstName}")
                 .shouldStore(true)
+                .usePOST(true)
+                .sync()
+        }
+    }
+
+    override fun sendGroupNotification(groupName: String, messageItem: Map<String, Any?>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            pubnub.publish()
+                .channel(groupName)
+                .message(messageItem)
                 .usePOST(true)
                 .sync()
         }

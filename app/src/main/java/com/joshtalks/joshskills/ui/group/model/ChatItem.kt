@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.model
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.joshtalks.joshskills.core.Utils
@@ -8,8 +9,9 @@ import java.util.Date
 @Entity(tableName = "group_chat_db")
 data class ChatItem(
 
-    @PrimaryKey(autoGenerate = true)
-    val messageId: Long = 0,
+    @PrimaryKey
+    @NonNull
+    val messageId: String,
 
     val sender: String?,
 

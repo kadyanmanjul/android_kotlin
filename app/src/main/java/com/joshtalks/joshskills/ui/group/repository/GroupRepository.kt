@@ -73,22 +73,27 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
             override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
                 Log.d(TAG, "message: $pnMessageResult")
                 CoroutineScope(Dispatchers.IO).launch {
-                    val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
-                    database.groupListDao().updateGroupItem(
-                        lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
-                        lastMsgTime = pnMessageResult.timetoken,
-                        id = pnMessageResult.channel
-                    )
-                    // Meta + Sender
-                    database.groupChatDao().insertMessage(
-                        ChatItem(
-                            sender = pnMessageResult.userMetadata.asString,
-                            message = messageItem.msg,
-                            msgTime = pnMessageResult.timetoken,
-                            groupId = pnMessageResult.channel,
-                            msgType = messageItem.getMessageType()
+                    try {
+                        val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
+                        database.groupListDao().updateGroupItem(
+                            lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
+                            lastMsgTime = pnMessageResult.timetoken,
+                            id = pnMessageResult.channel
                         )
-                    )
+                        // Meta + Sender
+                        database.groupChatDao().insertMessage(
+                            ChatItem(
+                                sender = pnMessageResult.userMetadata.asString,
+                                message = messageItem.msg,
+                                msgTime = pnMessageResult.timetoken,
+                                groupId = pnMessageResult.channel,
+                                msgType = messageItem.getMessageType(),
+                                messageId = "${pnMessageResult.timetoken}_${pnMessageResult.channel}_${messageItem.mentorId}"
+                            )
+                        )
+                    } catch (e : Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
 
@@ -146,6 +151,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
     fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {
         return Pager(PagingConfig(20, enablePlaceholders = false,), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
             database.groupChatDao().getPagedGroupChat(id)
+        }
+    }
+
+    fun testingNotification() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val groups = database.groupListDao().getGroupIds()
+            chatService.notificationTest(groups)
         }
     }
 
