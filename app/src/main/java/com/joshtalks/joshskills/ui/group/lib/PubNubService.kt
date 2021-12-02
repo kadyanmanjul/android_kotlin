@@ -18,13 +18,14 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
 
-import java.lang.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 import com.pubnub.api.enums.PNPushType
+import kotlin.Exception
+
 
 private const val TAG = "PubNub_Service"
 
@@ -129,16 +130,20 @@ object PubNubService : ChatService {
         val messages = mutableListOf<ChatItem>()
 
         history?.messages?.map {
-            val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
-            val message = ChatItem(
-                sender = it.meta.asString,
-                msgType = messageItem.getMessageType(),
-                message = messageItem.msg,
-                msgTime = it.timetoken,
-                groupId = groupId,
-                messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
-            )
-            messages.add(message)
+            try {
+                val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+                val message = ChatItem(
+                    sender = it.meta.asString,
+                    msgType = messageItem.getMessageType(),
+                    message = messageItem.msg,
+                    msgTime = it.timetoken,
+                    groupId = groupId,
+                    messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
+                )
+                messages.add(message)
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
         }
         return messages
     }
