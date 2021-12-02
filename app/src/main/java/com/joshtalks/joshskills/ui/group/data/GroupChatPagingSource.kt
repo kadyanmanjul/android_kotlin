@@ -3,10 +3,8 @@ package com.joshtalks.joshskills.ui.group.data
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
-import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.flurry.sdk.it
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
@@ -27,14 +25,28 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
         return try {
                 var messages = listOf<ChatItem>()
             Log.d(TAG, "load: $loadType  ... ${state}")
-                if(loadType == LoadType.APPEND) {
-                    Log.d(TAG, "load: PREPEND $loadType")
-                    var lastMessageTime = database.groupChatDao().getLastMessageTime(groupId = channelId)
+                when(loadType) {
+                    // Getting Older Messages
+                    LoadType.APPEND -> {
+                        Log.d(TAG, "load: APPEND $loadType")
+                        var lastMessageTime = database.groupChatDao().getLastMessageTime(groupId = channelId)
 
-                    messages = chatService.getMessageHistory(channelId, timeToken = lastMessageTime)
+                        messages = chatService.getMessageHistory(channelId, startTime = lastMessageTime)
 
-                    database.groupChatDao().insertMessages(messages)
-                    Log.d(TAG, "load: $loadType")
+                        database.groupChatDao().insertMessages(messages)
+                        Log.d(TAG, "load: APPEND : $loadType")
+                    }
+
+                    // Getting Recent Messages
+                    LoadType.PREPEND -> {
+                        Log.d(TAG, "load: PREPEND $loadType")
+                        var recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = channelId)
+                        recentMessageTime?.let {
+                            messages = chatService.getUnreadMessages(channelId, startTime = recentMessageTime)
+                            database.groupChatDao().insertMessages(messages)
+                            Log.d(TAG, "load: PREPEND : $loadType")
+                        }
+                    }
                 }
             MediatorResult.Success(
                 endOfPaginationReached = if(loadType == LoadType.REFRESH) false else messages.isEmpty()

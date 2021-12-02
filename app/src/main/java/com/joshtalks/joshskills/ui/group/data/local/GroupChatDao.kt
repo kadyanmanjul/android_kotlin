@@ -25,6 +25,9 @@ interface GroupChatDao {
     @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :groupId ORDER BY msgTime ASC limit 1")
     suspend fun getLastMessageTime(groupId : String) : Long?
 
+    @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :groupId ORDER BY msgTime DESC limit 1")
+    suspend fun getRecentMessageTime(groupId : String) : Long?
+
     @Query("DELETE FROM group_chat_db WHERE groupId = :id")
     suspend fun deleteGroupMessages(id: String)
 

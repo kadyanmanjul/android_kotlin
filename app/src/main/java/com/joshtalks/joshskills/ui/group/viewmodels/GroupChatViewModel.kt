@@ -58,12 +58,16 @@ class GroupChatViewModel : BaseViewModel() {
                 super.onItemRangeInserted(positionStart, itemCount)
                 if(scrollToEnd) {
                     Log.d(TAG, "onItemRangeInserted: SCROLL TO END")
-                    message.what = SCROLL_TO_END
+                    message.what = NEW_CHAT_ADDED
                     singleLiveEvent.value = message
                 }
             }
         })
     }
+
+    fun newMessageAdded() {
+    }
+
     val joiningNewGroup = ObservableBoolean(false)
     val fetchingGrpInfo = ObservableBoolean(false)
     var chatSendText: String = ""

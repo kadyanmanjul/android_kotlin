@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.futuremind.recyclerviewfastscroll.RecyclerViewScrollListener
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
@@ -108,6 +109,14 @@ fun setGroupChatAdapter(
         .apply {
         isSmoothScrollbarEnabled = true
     }
+
+    view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            val lastItemPosition = (recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+            Log.d(TAG, "onScrolled: $lastItemPosition")
+        }
+    })
     view.setHasFixedSize(false)
     view.adapter = adapter
 }

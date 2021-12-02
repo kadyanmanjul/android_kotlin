@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
@@ -54,7 +55,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 
 private const val TAG = "GroupRepository"
 
-class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMessageAdded : (() -> Unit)? = null) {
+class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     // TODO: Will use dagger2 for injecting apiService
     private val apiService: GroupApiService =
         AppObjectController.retrofit.create(GroupApiService::class.java)
@@ -62,70 +63,76 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         AppObjectController.retrofit.create(GroupsAnalyticsService::class.java)
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
+    private val database = AppObjectController.appDatabase
 
-    companion object {
+    object ChatSubscriber : SubscribeCallback() {
         private val database = AppObjectController.appDatabase
-        private val subscribeCallback = object : SubscribeCallback() {
-            override fun status(pubnub: PubNub, pnStatus: PNStatus) {
-                Log.d(TAG, "status: ${pnStatus}")
-            }
+        private var onNewMessageAdded : (() -> Unit)? = null
 
-            override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-                Log.d(TAG, "message: $pnMessageResult")
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
-                        database.groupListDao().updateGroupItem(
-                            lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
-                            lastMsgTime = pnMessageResult.timetoken,
-                            id = pnMessageResult.channel
+        fun setNewMessageListener(onNewMessageAdded : (() -> Unit)) {
+            this.onNewMessageAdded = onNewMessageAdded
+        }
+
+        override fun status(pubnub: PubNub, pnStatus: PNStatus) {
+            Log.d(TAG, "status: ${pnStatus}")
+        }
+
+        override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
+            Log.d(TAG, "message: $pnMessageResult")
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
+                    database.groupListDao().updateGroupItem(
+                        lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
+                        lastMsgTime = pnMessageResult.timetoken,
+                        id = pnMessageResult.channel
+                    )
+                    // Meta + Sender
+                    database.groupChatDao().insertMessage(
+                        ChatItem(
+                            sender = pnMessageResult.userMetadata.asString,
+                            message = messageItem.msg,
+                            msgTime = pnMessageResult.timetoken,
+                            groupId = pnMessageResult.channel,
+                            msgType = messageItem.getMessageType(),
+                            messageId = "${pnMessageResult.timetoken}_${pnMessageResult.channel}_${messageItem.mentorId}"
                         )
-                        // Meta + Sender
-                        database.groupChatDao().insertMessage(
-                            ChatItem(
-                                sender = pnMessageResult.userMetadata.asString,
-                                message = messageItem.msg,
-                                msgTime = pnMessageResult.timetoken,
-                                groupId = pnMessageResult.channel,
-                                msgType = messageItem.getMessageType(),
-                                messageId = "${pnMessageResult.timetoken}_${pnMessageResult.channel}_${messageItem.mentorId}"
-                            )
-                        )
-                    } catch (e : Exception) {
-                        e.printStackTrace()
-                    }
+                    )
+                    onNewMessageAdded?.invoke()
+                } catch (e : Exception) {
+                    e.printStackTrace()
                 }
             }
-
-            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
-                Log.d(TAG, "presence: $pnPresenceEventResult")
-            }
-
-            override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
-                Log.d(TAG, "signal: $pnSignalResult")
-            }
-
-            override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
-                Log.d(TAG, "uuid: $pnUUIDMetadataResult")
-            }
-
-            override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
-                Log.d(TAG, "channel: $pnChannelMetadataResult")
-            }
-
-            override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
-                Log.d(TAG, "membership: $pnMembershipResult")
-            }
-
-            override fun messageAction(
-                pubnub: PubNub,
-                pnMessageActionResult: PNMessageActionResult
-            ) {
-                Log.d(TAG, "messageAction: $pnMessageActionResult")
-            }
-
-            override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
         }
+
+        override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
+            Log.d(TAG, "presence: $pnPresenceEventResult")
+        }
+
+        override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
+            Log.d(TAG, "signal: $pnSignalResult")
+        }
+
+        override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
+            Log.d(TAG, "uuid: $pnUUIDMetadataResult")
+        }
+
+        override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
+            Log.d(TAG, "channel: $pnChannelMetadataResult")
+        }
+
+        override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
+            Log.d(TAG, "membership: $pnMembershipResult")
+        }
+
+        override fun messageAction(
+            pubnub: PubNub,
+            pnMessageActionResult: PNMessageActionResult
+        ) {
+            Log.d(TAG, "messageAction: $pnMessageActionResult")
+        }
+
+        override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
     }
 
     fun getGroupSearchResult(query: String) =
@@ -166,14 +173,14 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
             val groups = database.groupListDao().getGroupIds()
             chatService.unsubscribeToChatEvents(object : ChatEventObserver<SubscribeCallback> {
                 override fun getObserver(): SubscribeCallback {
-                    return subscribeCallback
+                    return ChatSubscriber
                 }
             })
             chatService.subscribeToChatEvents(
                 groups,
                 object : ChatEventObserver<SubscribeCallback> {
                     override fun getObserver(): SubscribeCallback {
-                        return subscribeCallback
+                        return ChatSubscriber
                     }
                 })
         }
@@ -213,6 +220,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
                     )
                 )
                 startChatEventListener()
+                val recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = response["group_id"] as String)
+                recentMessageTime?.let {
+                    fetchUnreadMessage(it, response["group_id"] as String)
+                }
                 return true
             } catch (exp: Exception) {
                 Log.e(TAG, "Error: ${exp.message}")
@@ -220,6 +231,20 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
             }
         }
         return false
+    }
+
+    suspend fun fetchUnreadMessage(startTime : Long, groupId: String) {
+        val messages = chatService.getUnreadMessages(
+            groupId,
+            startTime = startTime
+        )
+        database.groupChatDao().insertMessages(messages)
+        if(messages.isEmpty())
+            return
+        else {
+            val recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = groupId)
+            recentMessageTime?.let { fetchUnreadMessage(recentMessageTime, groupId) }
+        }
     }
 
     suspend fun addGroupToServer(request: AddGroupRequest) {

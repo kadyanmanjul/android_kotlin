@@ -17,7 +17,8 @@ interface ChatService {
     fun fetchGroupList(pageInfo: PageInfo? = null) : NetworkData?
     fun getUnreadMessageCount(groupId: String, lastSeenTimestamp : Long) : Long
     fun getLastMessageDetail(groupId: String) : Pair<String, Long>
-    fun getMessageHistory(groupId: String, timeToken : Long? = null) : List<ChatItem>
+    fun getMessageHistory(groupId: String, startTime : Long? = null) : List<ChatItem>
+    fun getUnreadMessages(groupId: String, startTime : Long) : List<ChatItem>
     fun getChannelMembers(groupId: String, adminId: String): MemberResult
     fun setMemberPresence(groups: List<String>, isOnline: Boolean)
 }
