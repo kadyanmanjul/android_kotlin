@@ -18,13 +18,14 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
 
-import java.lang.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 import com.pubnub.api.enums.PNPushType
+import kotlin.Exception
+
 
 private const val TAG = "PubNub_Service"
 
@@ -104,7 +105,7 @@ object PubNubService : ChatService {
             .channels(listOf(groupId))
             .includeMeta(true)
             .includeUUID(true)
-            .end(pubnub.timestamp.toLong() * 1000)
+            .start(System.currentTimeMillis() * 10_000L)
             .maximumPerChannel(1)
             .sync()
 
@@ -123,24 +124,26 @@ object PubNubService : ChatService {
             .channel(groupId)
             .includeMeta(true)
             .includeTimetoken(true)
-            .end(timeToken ?: System.currentTimeMillis() * 1000L)
+            .start(timeToken ?: System.currentTimeMillis() * 10_000L)
             .count(20)
             .sync()
         val messages = mutableListOf<ChatItem>()
 
-        history?.messages?.
-        filterIndexed{index, _ ->  (timeToken == null || index != 0 )}?.
-        map {
-            val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
-            val message = ChatItem(
-                sender = it.meta.asString,
-                msgType = messageItem.getMessageType(),
-                message = messageItem.msg,
-                msgTime = it.timetoken,
-                groupId = groupId,
-                messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
-            )
-            messages.add(message)
+        history?.messages?.map {
+            try {
+                val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+                val message = ChatItem(
+                    sender = it.meta.asString,
+                    msgType = messageItem.getMessageType(),
+                    message = messageItem.msg,
+                    msgTime = it.timetoken,
+                    groupId = groupId,
+                    messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
+                )
+                messages.add(message)
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
         }
         return messages
     }

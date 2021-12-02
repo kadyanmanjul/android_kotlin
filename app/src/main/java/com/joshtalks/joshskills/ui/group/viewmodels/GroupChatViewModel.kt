@@ -276,7 +276,7 @@ class GroupChatViewModel : BaseViewModel() {
         val fcmPayload = PushPayloadHelper.FCMPayload().apply {
             setNotification(PushPayloadHelper.FCMPayload.Notification().apply {
                 this.setTitle("${groupHeader.get()}")
-                this.setBody(msg)
+                this.setBody("${Mentor.getInstance().getUser()?.firstName} : $msg")
             })
 
         }
