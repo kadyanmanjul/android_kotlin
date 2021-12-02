@@ -849,6 +849,7 @@
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
+    <string name="group_p2p_title">Call From </string>
     <string name="convo_notification_title">%1s has started a conversation about %1s</string>
     <string name="room_title">Join Conversation Room</string>
     <string name="p2p_subtitle">Speaking Practice</string>

@@ -1904,9 +1904,9 @@ class WebRtcService : BaseWebRtcService() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         val importance = if (canHeadsUpNotification()) IMPORTANCE_HIGH else IMPORTANCE_LOW
-
+        val groupName = incomingData?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)
         val builder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
-            .setContentTitle(getString(R.string.p2p_title))
+            .setContentTitle(if(groupName == null)  getString(R.string.p2p_title) else "${getString(R.string.p2p_title)} $groupName")
             .setContentText("Incoming voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setContentIntent(pendingIntent)
