@@ -847,6 +847,7 @@
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
+    <string name="group_p2p_title">Call From </string>
     <string name="p2p_subtitle">Speaking Practice</string>
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
