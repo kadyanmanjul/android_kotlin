@@ -57,7 +57,7 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
-        EmojiManager.install(IosEmojiProvider())
+        initGroups()
     }
 
     override fun onTerminate() {
@@ -275,5 +275,10 @@ class JoshApplication :
                 return
             }
         }
+    }
+
+    fun initGroups() {
+        EmojiManager.install(IosEmojiProvider())
+        //GroupRepository().subscribeNotifications()
     }
 }

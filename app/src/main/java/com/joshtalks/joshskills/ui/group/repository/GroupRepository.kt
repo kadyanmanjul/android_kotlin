@@ -154,10 +154,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null, val onNewMe
         }
     }
 
-    fun testingNotification() {
+    fun subscribeNotifications() {
         CoroutineScope(Dispatchers.IO).launch {
             val groups = database.groupListDao().getGroupIds()
-            chatService.notificationTest(groups)
+            chatService.dispatchNotifications(groups)
         }
     }
 

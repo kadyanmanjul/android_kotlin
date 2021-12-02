@@ -259,8 +259,8 @@ class GroupChatViewModel : BaseViewModel() {
                 mentorId = Mentor.getInstance().getId()
             )
             scrollToEnd = true
-            chatService.sendMessage(groupId, message)
             chatService.sendGroupNotification(groupId, getNotification(msg))
+            chatService.sendMessage(groupId, message)
             clearText()
         }
     }

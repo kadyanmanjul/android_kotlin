@@ -70,7 +70,6 @@ class JoshGroupViewModel : BaseViewModel() {
     fun groupDataLoaded(size : Int) {
         hasGroupData.set(size > 0)
         hasGroupData.notifyChange()
-        repository.testingNotification()
         repository.startChatEventListener()
     }
 
