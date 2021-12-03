@@ -3,13 +3,14 @@ package com.joshtalks.joshskills.ui.group
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
+import android.view.View.*
 import android.view.ViewGroup
 
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.joshtalks.joshskills.R
@@ -102,8 +103,13 @@ class GroupChatFragment : BaseFragment() {
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
                 SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString().trim())
                 NEW_CHAT_ADDED -> {
+                    val lastItemPosition = (binding.groupChatRv.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+                    if (vm.scrollToEnd || lastItemPosition == 0) {
+                        binding.groupChatRv.layoutManager?.smoothScrollToPosition(binding.groupChatRv, RecyclerView.State(), 0)
+                        binding.scrollUnread.visibility = INVISIBLE
+                    }
+                    else binding.scrollUnread.visibility = VISIBLE
                     vm.scrollToEnd = false
-                    binding.groupChatRv.layoutManager?.smoothScrollToPosition(binding.groupChatRv, RecyclerView.State(), 0)
                 }
             }
         }

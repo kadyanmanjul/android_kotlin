@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
+import de.hdodenhof.circleimageview.CircleImageView
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,13 +55,10 @@ class GroupChatViewModel : BaseViewModel() {
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                Log.d(TAG, "onItemRangeInserted: ")
                 super.onItemRangeInserted(positionStart, itemCount)
-                if(scrollToEnd) {
-                    Log.d(TAG, "onItemRangeInserted: SCROLL TO END")
-                    message.what = NEW_CHAT_ADDED
-                    singleLiveEvent.value = message
-                }
+                Log.d(TAG, "onItemRangeInserted: ${positionStart} : ${itemCount}")
+                message.what = NEW_CHAT_ADDED
+                singleLiveEvent.value = message
             }
         })
     }
@@ -287,5 +285,13 @@ class GroupChatViewModel : BaseViewModel() {
         pushPayloadHelper.setFcmPayload(fcmPayload)
 
         return pushPayloadHelper.build()
+    }
+
+    fun scrollChatToEnd(view: View, unread: CircleImageView) {
+        scrollToEnd = true
+        view.visibility = View.GONE
+        unread.visibility = View.INVISIBLE
+        message.what = NEW_CHAT_ADDED
+        singleLiveEvent.value = message
     }
 }

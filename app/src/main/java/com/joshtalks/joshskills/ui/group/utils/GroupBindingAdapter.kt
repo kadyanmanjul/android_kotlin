@@ -3,15 +3,16 @@ package com.joshtalks.joshskills.ui.group.utils
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.futuremind.recyclerviewfastscroll.RecyclerViewScrollListener
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
@@ -97,10 +98,11 @@ fun setGroupMemberAdapter(
     view.adapter = adapter
 }
 
-@BindingAdapter("groupChatAdapter")
+@BindingAdapter("groupChatAdapter", "scrollToBottom")
 fun setGroupChatAdapter(
     view: RecyclerView,
     adapter: GroupChatAdapter,
+    scrollView: AppCompatImageView
 ) {
     view.layoutManager = LinearLayoutManager(
         view.context,
@@ -115,6 +117,8 @@ fun setGroupChatAdapter(
             super.onScrolled(recyclerView, dx, dy)
             val lastItemPosition = (recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
             Log.d(TAG, "onScrolled: $lastItemPosition")
+            if (lastItemPosition!! > 0) scrollView.visibility = View.VISIBLE
+            else scrollView.visibility = View.GONE
         }
     })
     view.setHasFixedSize(false)
