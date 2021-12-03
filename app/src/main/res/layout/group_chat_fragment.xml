@@ -40,7 +40,6 @@
                 onSecondIconPressed="@{vm::callGroup}"
                 onToolbarPressed="@{vm::openGroupInfo}"
                 secondIcon="@{vm.hasJoinedGroup ? R.drawable.group_call : R.drawable.josh_skill_logo }"
-                subHeaderTimer="@{vm.hasJoinedGroup ? true : false}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>

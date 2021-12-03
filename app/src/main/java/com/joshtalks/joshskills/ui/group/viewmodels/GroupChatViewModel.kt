@@ -186,7 +186,7 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun leaveGroup() {
-        joiningNewGroup.set(true)
+        fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = LeaveGroupRequest(
@@ -202,13 +202,13 @@ class GroupChatViewModel : BaseViewModel() {
                     }
                     singleLiveEvent.value = message
                     repository.startChatEventListener()
-                    joiningNewGroup.set(false)
+                    fetchingGrpInfo.set(false)
                     onBackPress()
                     onBackPress()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    joiningNewGroup.set(false)
+                    fetchingGrpInfo.set(false)
                     showToast("An error has occurred")
                 }
                 e.printStackTrace()
