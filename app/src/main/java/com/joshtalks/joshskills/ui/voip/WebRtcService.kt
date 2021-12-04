@@ -89,7 +89,7 @@ const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 const val IS_CHANNEL_ACTIVE_KEY = "success"
 
 class WebRtcService : BaseWebRtcService() {
-    private val TAG = "WebRtcService"
+    private val TAG = "ABCWebRtcService"
     private val log = Timber.tag("WebRtcService")
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
@@ -192,7 +192,7 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         @Volatile
-        private var conversationRoomCallback: WeakReference<ConversationRoomCallback>? = null
+        private var conversationRoomCallbackOld: WeakReference<ConversationRoomCallbackOld>? = null
 
         fun initLibrary() {
             val serviceIntent = Intent(
@@ -241,6 +241,16 @@ class WebRtcService : BaseWebRtcService() {
                 action = CallDisconnect().action
                 val reasonEnum = if (reason is VoipAnalytics.Event) reason else reason as DISCONNECT
                 putExtra(DISCONNECT_REASON, reasonEnum)
+            }
+            serviceIntent.startServiceForWebrtc()
+        }
+
+        fun disableP2P() {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = DisableP2PAction().action
             }
             serviceIntent.startServiceForWebrtc()
         }
@@ -348,7 +358,7 @@ class WebRtcService : BaseWebRtcService() {
             totalVolume: Int
         ) {
             super.onAudioVolumeIndication(speakers, totalVolume)
-            log.d("${speakers}")
+            //log.d("${speakers}")
             val isSpeaking = (speakers?.find { it.uid == 0 }) != null
             val isListening = (speakers?.find { it.uid > 0 }) != null
             if (isSpeaking)
@@ -362,11 +372,11 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         suspend fun saveMicState() {
-            log.d("saveMicState: ")
+            //log.d("saveMicState: ")
             micMutex.withLock {
-                log.d("saveMicState --> lock")
+                //log.d("saveMicState --> lock")
                 val currentCallDetails = CurrentCallDetails.state()
-                log.d("$currentCallDetails")
+                //log.d("$currentCallDetails")
                 val timestamp = DateUtils.getCurrentTimeStamp()
                 if (!currentCallDetails.isSpeakingPushed && currentCallDetails.isCallConnectedScreenVisible) {
                     val agoraMentorUid = currentCallDetails.callieUid
@@ -382,16 +392,16 @@ class WebRtcService : BaseWebRtcService() {
                     if (agoraCallId.isNotEmpty() || agoraMentorUid.isNotEmpty())
                         CurrentCallDetails.speakingPushed()
                 }
-                log.d("saveMicState --> unlock")
+                //log.d("saveMicState --> unlock")
             }
         }
 
         suspend fun saveSpeakerState() {
-            log.d("saveSpeakerState")
+            //log.d("saveSpeakerState")
             speakerMutex.withLock {
-                log.d("saveSpeakerState -- lock")
+                //log.d("saveSpeakerState -- lock")
                 val currentCallDetails = CurrentCallDetails.state()
-                log.d("$currentCallDetails")
+                //log.d("$currentCallDetails")
                 val timestamp = DateUtils.getCurrentTimeStamp()
                 if (!currentCallDetails.isListeningPushed && currentCallDetails.isCallConnectedScreenVisible) {
                     val agoraMentorUid = currentCallDetails.callieUid
@@ -407,7 +417,7 @@ class WebRtcService : BaseWebRtcService() {
                     if (agoraCallId.isNotEmpty() || agoraMentorUid.isNotEmpty())
                         CurrentCallDetails.listeningPushed()
                 }
-                log.d("saveSpeakerState -- unlock")
+                //log.d("saveSpeakerState -- unlock")
             }
         }
 
@@ -635,8 +645,8 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
                 super.onJoinChannelSuccess(channel, uid, elapsed)
-                Log.d("ABC2", "joinChannelSuccess $uid")
-                Log.d("ABC2", "moderatorUid in onJoinChannelSuccess: $moderatorUid")
+                Log.d(TAG, "joinChannelSuccess $uid")
+                Log.d(TAG, "moderatorUid in onJoinChannelSuccess: $moderatorUid")
 
             }
 
@@ -646,7 +656,7 @@ class WebRtcService : BaseWebRtcService() {
 
             override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
                 super.onRejoinChannelSuccess(channel, uid, elapsed)
-                Log.d("ABC2", "RejoinChannelSuccess $uid")
+                Log.d(TAG, "RejoinChannelSuccess $uid")
 
             }
 
@@ -654,18 +664,18 @@ class WebRtcService : BaseWebRtcService() {
                 super.onUserOffline(uid, reason)
                 val isUserLeave = reason == USER_OFFLINE_QUIT
                 if (!isRoomCreatedByUser && isUserLeave) {
-                    conversationRoomCallback?.get()?.onUserOffline(uid)
+                    conversationRoomCallbackOld?.get()?.onUserOffline(uid)
                 }
                 /*val usersReference = roomReference.document(roomId.toString()).collection("users")
                 if (isRoomCreatedByUser) {
                     if (isUserLeave) {
                         usersReference.document(uid.toString()).delete()
-                        Log.d("ABC2", "isRoomCreatedByUser ${isRoomCreatedByUser} service OnUserOffline remove user by moderator $moderatorUid")
+                        Log.d(TAG, "isRoomCreatedByUser ${isRoomCreatedByUser} service OnUserOffline remove user by moderator $moderatorUid")
                     }
                 } else {
                     if (uid == moderatorUid && isUserLeave) {
                         usersReference.get().addOnSuccessListener { documents ->
-                            Log.d("ABC2", "isRoomCreatedByUser ${isRoomCreatedByUser}  service OnUserOffline for moderator call $moderatorUid $reason")
+                            Log.d(TAG, "isRoomCreatedByUser ${isRoomCreatedByUser}  service OnUserOffline for moderator call $moderatorUid $reason")
                             if (documents.size() > 1) {
                                 if (documents.documents[0].id.toInt() == agoraUid) {
                                     endRoom(roomId, roomQuestionId)
@@ -685,7 +695,7 @@ class WebRtcService : BaseWebRtcService() {
                 totalVolume: Int
             ) {
                 super.onAudioVolumeIndication(speakers, totalVolume)
-                conversationRoomCallback?.get()?.onAudioVolumeIndication(speakers, totalVolume)
+                conversationRoomCallbackOld?.get()?.onAudioVolumeIndication(speakers, totalVolume)
                 /*if (isRoomCreatedByUser) {
                     speakingUsersOldList.clear()
                     speakingUsersOldList.addAll(speakingUsersNewList)
@@ -720,7 +730,7 @@ class WebRtcService : BaseWebRtcService() {
 
     fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
         Log.d(
-            "ABC2",
+            TAG,
             "endRoom() service called with: roomId = $roomId, conversationQuestionId = $conversationQuestionId"
         )
         CoroutineScope(Dispatchers.IO).launch {
@@ -742,7 +752,7 @@ class WebRtcService : BaseWebRtcService() {
                         AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
                             request
                         )
-                    Log.d("ABC2", "end room api call ${response.code()}")
+                    Log.d(TAG, "end room api call ${response.code()}")
                     if (response.isSuccessful) {
                         isRoomEnded = false
                         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
@@ -779,7 +789,7 @@ class WebRtcService : BaseWebRtcService() {
                             AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                                 request
                             )
-                        Log.d("ABC2", "leave room api call")
+                        Log.d(TAG, "leave room api call")
                         if (response.isSuccessful) {
                             isRoomEnded = false
                             PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
@@ -864,7 +874,7 @@ class WebRtcService : BaseWebRtcService() {
     inner class HangUpRtcOnPstnCallAnsweredListener : PhoneStateListener() {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
-            Timber.tag(TAG).e("RTC=    %s", state)
+            Timber.tag(TAG).e("RTC=    %s isConversionRoomActive = %s", state,isConversionRoomActive)
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     if (isConversionRoomActive) {
@@ -900,7 +910,7 @@ class WebRtcService : BaseWebRtcService() {
                     if (isConversionRoomActive) {
                         if (isRoomCreatedByUser) {
                             Log.d(
-                                "ABC2",
+                                TAG,
                                 "CALL_STATE_OFFHOOK  called with: state = $state, phoneNumber = $phoneNumber"
                             )
                             endRoom(roomId, roomQuestionId)
@@ -996,9 +1006,9 @@ class WebRtcService : BaseWebRtcService() {
                 e.printStackTrace()
             }
             Log.d(
-                "ABC2",
+                TAG,
                 "initEngine called room id : $roomId isRoomCreatedByUser $isRoomCreatedByUser agoraUid:" +
-                        " $agoraUid moderatorUid: $moderatorUid"
+                        " $agoraUid moderatorUid: $moderatorUid isConversionRoomActive: $isConversionRoomActive"
             )
 
             when (isConversionRoomActive) {
@@ -1046,11 +1056,11 @@ class WebRtcService : BaseWebRtcService() {
                         setDefaultAudioRoutetoSpeakerphone(true)
                         if (isRoomCreatedByUser) {
                             setClientRole(CLIENT_ROLE_BROADCASTER)
-                            Log.d("ABC2", "Broadcaster role set")
+                            Log.d(TAG, "Broadcaster role set")
 
                         } else {
                             setClientRole(CLIENT_ROLE_AUDIENCE)
-                            Log.d("ABC2", "Audience role set")
+                            Log.d(TAG, "Audience role set")
                         }
                         val option = ChannelMediaOptions()
                         option.autoSubscribeAudio = true
@@ -1093,6 +1103,7 @@ class WebRtcService : BaseWebRtcService() {
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
+        isConversionRoomActive = intent?.action == ConversationRoomJoin().action
         if (!isConversionRoomActive) {
             executor.execute {
                 intent?.action?.run {
@@ -1174,6 +1185,11 @@ class WebRtcService : BaseWebRtcService() {
                                         )
                                     }
                                     endCall(reason = reason)
+                                }
+
+                                this == DisableP2PAction().action -> {
+                                    removeNotifications()
+                                    stopSelf()
                                 }
                                 this == NoUserFound().action -> {
                                     callData?.let {
@@ -1303,13 +1319,13 @@ class WebRtcService : BaseWebRtcService() {
                                     if (isRoomCreatedByUserFromIntent) {
                                         setClientRole(CLIENT_ROLE_BROADCASTER)
                                         Log.d(
-                                            "ABC2",
+                                            TAG,
                                             "Broadcaster role set status code $statusCode"
                                         )
 
                                     } else {
                                         setClientRole(CLIENT_ROLE_AUDIENCE)
-                                        Log.d("ABC2", "Audience role set status code $statusCode")
+                                        Log.d(TAG, "Audience role set status code $statusCode")
                                     }
 
                                 }
@@ -1330,8 +1346,8 @@ class WebRtcService : BaseWebRtcService() {
         callCallback = WeakReference(callback)
     }
 
-    fun addListener(callback: ConversationRoomCallback) {
-        conversationRoomCallback = WeakReference(callback)
+    fun addListener(callbackOld: ConversationRoomCallbackOld) {
+        conversationRoomCallbackOld = WeakReference(callbackOld)
     }
 
     private fun callStopWithoutIssue() {
@@ -1843,14 +1859,14 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "service onDestroy() called isConversionRoomActive:${isConversionRoomActive}")
         if (isConversionRoomActive) {
-            Log.d("ABC2", "service onDestroy() called")
             if (isRoomCreatedByUser) {
                 endRoom(roomId, roomQuestionId)
             } else {
                 leaveRoom(roomId, roomQuestionId)
             }
-            Log.d("ABC2", "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
+            Log.d(TAG, "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         }
         RtcEngine.destroy()
         stopRing()
@@ -2270,7 +2286,7 @@ class WebRtcService : BaseWebRtcService() {
             roomQuestionId = roomQuestionId,
             topicName = channelTopic
         )
-        Log.d("ABC2", "channelName: $conversationRoomChannelName")
+        Log.d(TAG, "channelName: $conversationRoomChannelName")
 
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
 
@@ -2284,7 +2300,7 @@ class WebRtcService : BaseWebRtcService() {
                 )
             }
         Log.d(
-            "ABC2",
+            TAG,
             "conversationRoomNotification: pending intent channel $conversationRoomChannelName"
         )
 
@@ -2439,6 +2455,7 @@ data class IncomingCall(val action: String = "calling.action.incoming_call") : W
 data class CallConnect(val action: String = "calling.action.connect") : WebRtcCalling()
 data class CallDisconnect(val action: String = "calling.action.disconnect") : WebRtcCalling()
 data class CallReject(val action: String = "calling.action.callReject") : WebRtcCalling()
+data class DisableP2PAction(val action: String = "calling.action.disablep2p") : WebRtcCalling()
 
 data class OutgoingCall(val action: String = "calling.action.outgoing_call") : WebRtcCalling()
 data class CallStop(val action: String = "calling.action.stopcall") : WebRtcCalling()
@@ -2501,7 +2518,7 @@ interface WebRtcCallback {
     fun onNewIncomingCallChannel() {}
 }
 
-interface ConversationRoomCallback {
+interface ConversationRoomCallbackOld {
     fun onUserOffline(uid: Int)
     fun onAudioVolumeIndication(
         speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,

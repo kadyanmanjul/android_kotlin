@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.lesson.room
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -48,8 +47,6 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.ROOM_POSITION
-import com.joshtalks.joshskills.ui.voip.WebRtcService
-import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isConversionRoomActive
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isRoomCreatedByUser
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -145,6 +142,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         addObservers()
         openConversationRoomByNotificationIntent()
         PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, true)
+        //ConvoWebRtcService.initLibrary()
         return binding.root
     }
 
@@ -217,7 +215,10 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
         val room = AppObjectController.gsonMapper.fromJson<RoomListResponseItem>(data, matType)
         CoroutineScope(Dispatchers.Main).launch {
-            Log.d("ABCF", "updateRoom on join or leave with data room = $room, isUserLeaving = $isUserLeaving")
+            Log.d(
+                "ABCF",
+                "updateRoom on join or leave with data room = $room, isUserLeaving = $isUserLeaving"
+            )
             updateItemInAdapter(room, isUserLeaving)
         }
     }
@@ -264,7 +265,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                         it.isRoomCreatedByUser,
                         it.roomId,
                         it.startedBy,
-                        it.topic?: EMPTY
+                        it.topic ?: EMPTY
                     )
                     ConversationRoomListingNavigation.AtleastOneRoomAvailable -> showRecyclerView()
                     ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
@@ -335,7 +336,10 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    Log.d("ABCF", "replaySubject disposable  called with event ${it.action} ${it.data}")
+                    Log.d(
+                        "ABCF",
+                        "replaySubject disposable  called with event ${it.action} ${it.data}"
+                    )
                     try {
                         if (it.data != null) {
                             when (it.action) {
@@ -352,7 +356,7 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
                                 }
                             }
                         }
-                    } catch (ex:Exception){
+                    } catch (ex: Exception) {
                         LogException.catchException(ex)
                     }
                 })
@@ -461,11 +465,6 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
     }
 
-    private fun setFlagInWebRtcServie() {
-        val intent = Intent(requireActivity(), WebRtcService::class.java)
-        isConversionRoomActive = true
-        intent.startServiceForWebrtc()
-    }
 
     override fun onResume() {
         super.onResume()
@@ -562,9 +561,11 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         roomId: Int?,
         moderatorId: Int?,
         topic: String,
-        ) {
-        WebRtcService.isRoomCreatedByUser = true
-        isConversionRoomActive = true
+    ) {
+        Log.d(
+            "ABC2",
+            "openConversationLiveRoom() called with: channelName = $channelName, uid = $uid, token = $token, isRoomCreatedByUser = $isRoomCreatedByUser, roomId = $roomId, moderatorId = $moderatorId, topic = $topic"
+        )
         lastRoomId = roomId.toString()
 
         this.startActivity(
@@ -815,7 +816,6 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
         super.onDestroy()
         pubnub?.destroy()
-        isConversionRoomActive = false
         isRoomCreatedByUser = false
     }
 

@@ -1,5 +1,8 @@
 package com.joshtalks.joshskills.core
 
+//import com.bugsee.library.Bugsee
+//import com.bugsee.library.data.VideoMode
+//import com.uxcam.UXCam
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -9,8 +12,6 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.airbnb.lottie.L
-//import com.bugsee.library.Bugsee
-//import com.bugsee.library.data.VideoMode
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -25,12 +26,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
+import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -43,11 +39,7 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.service.ChatNetworkService
-import com.joshtalks.joshskills.repository.service.CommonNetworkService
-import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
-import com.joshtalks.joshskills.repository.service.P2PNetworkService
-import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.repository.service.*
 import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
@@ -58,16 +50,21 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
-//import com.uxcam.UXCam
 import com.yariksoffice.lingver.Lingver
-import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
-import io.agora.rtc.RtcEngineConfig
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -75,27 +72,8 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
 import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Collections
-import java.util.Date
+import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.Cache
-import okhttp3.CacheControl
-import okhttp3.CertificatePinner
-import okhttp3.CipherSuite
-import okhttp3.ConnectionSpec
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.TlsVersion
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -369,7 +347,9 @@ class AppObjectController {
 
         private fun initRtcEngine(context: Context): RtcEngine? {
             try {
-                mRtcEngine = RtcEngine.create(RtcEngineConfig().apply {
+
+                mRtcEngine = RtcEngine.create(context,BuildConfig.AGORA_API_KEY,object : IRtcEngineEventHandler(){} )
+                /*mRtcEngine = RtcEngine.create(RtcEngineConfig().apply {
                     mAppId = BuildConfig.AGORA_API_KEY
                     mContext = context
                     mAreaCode = RtcEngineConfig.AreaCode.AREA_CODE_IN
@@ -385,7 +365,7 @@ class AppObjectController {
                             fileSize = 2048     // Set the log file size to 2 MB
                         }
                     }
-                })
+                })*/
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -606,7 +586,10 @@ class AppObjectController {
         }*/
 
         private fun initUserExperionCam() {
-            UserExperior.startRecording(Companion.joshApplication, "942a0473-e1ca-40e5-af83-034cb7f57ee9")
+            UserExperior.startRecording(
+                Companion.joshApplication,
+                "942a0473-e1ca-40e5-af83-034cb7f57ee9"
+            )
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
         }
 

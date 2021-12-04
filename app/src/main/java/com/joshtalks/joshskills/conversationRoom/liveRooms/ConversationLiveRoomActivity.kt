@@ -41,9 +41,10 @@ import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
+import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomCallback
+import com.joshtalks.joshskills.ui.lesson.room.ConvoWebRtcService
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.*
-import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isConversionRoomActive
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -69,7 +70,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private var timeCreated: Int = 0
     private var mServiceBound: Boolean = false
     private lateinit var binding: ActivityConversationLiveRoomBinding
-    private var mBoundService: WebRtcService? = null
+    private var mBoundService: ConvoWebRtcService? = null
     private var isActivityOpenFromNotification: Boolean = false
     private var roomId: Int? = null
     private var roomQuestionId: Int? = null
@@ -96,6 +97,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //ConvoWebRtcService.initLibrary()
+        WebRtcService.disableP2P()
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             this.window.statusBarColor =
@@ -107,7 +110,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setFlagInWebRtcServie()
         isActivityOpenFromNotification =
             intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
         addViewModelObserver()
@@ -123,13 +125,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
             vm.initPubNub(channelName)
         }
-    }
-
-    private fun setFlagInWebRtcServie() {
-        val intent = Intent(this, WebRtcService::class.java)
-        isConversionRoomActive = true
-        //WebRtcService.isRoomCreatedByUser = isRoomCreatedByUser
-        intent.startServiceForWebrtc()
     }
 
     private fun addViewModelObserver() {
@@ -223,7 +218,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         if (vm.getAgoraUid() == user?.id) {
                             updateUiWhenSwitchToSpeaker(user?.isMicOn ?: false)
                         }
-                        if (vm.isModerator()){
+                        if (vm.isModerator()) {
                             val name = it.getString(NOTIFICATION_NAME)
                             setNotificationWithoutAction(
                                 String.format(
@@ -432,29 +427,19 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
 
     private fun callWebRtcService() {
-        val intent = Intent(AppObjectController.joshApplication, WebRtcService::class.java)
-        intent.action = ConversationRoomJoin().action
-        intent.putExtra("token", token)
-        intent.putExtra("channel_name", channelName)
-        intent.putExtra("uid", vm.getAgoraUid())
-        intent.putExtra("isModerator", isRoomCreatedByUser)
-        WebRtcService.isConversionRoomActive = true
-        AppObjectController.joshApplication.startService(intent)
-        WebRtcService.isConversionRoomActive = true
-        WebRtcService.moderatorUid = vm.getModeratorId()
-        WebRtcService.channelTopic = channelTopic
-        WebRtcService.agoraUid = vm.getAgoraUid()
-        WebRtcService.roomId = roomId?.toString()
-        WebRtcService.roomQuestionId = roomQuestionId
-        WebRtcService.isRoomCreatedByUser = if (vm.getModeratorId() != null) {
-            vm.isModerator()
-        } else isRoomCreatedByUser
-
-        if (isRoomCreatedByUser) {
-            WebRtcService.moderatorUid = vm.getAgoraUid()
-            WebRtcService.isRoomCreatedByUser = true
-
-        }
+        Log.d(
+            "ABC2",
+            "conversationRoomJoin() called with: token = $token, channelName = $channelName, uid = ${vm.getAgoraUid()}, moderatorId = ${vm.getModeratorId()}, channelTopic = $channelTopic, roomId = $roomId, roomQuestionId = $roomQuestionId"
+        )
+        ConvoWebRtcService.conversationRoomJoin(
+            token,
+            channelName,
+            vm.getAgoraUid(),
+            vm.getModeratorId(),
+            channelTopic,
+            roomId,
+            roomQuestionId
+        )
     }
 
     private fun removeIncomingNotification() {
@@ -463,12 +448,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         notificationManager.cancel(9999)
         try {
             stopService(Intent(this, HeadsUpNotificationService::class.java))
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    private var callback: ConversationRoomCallback = object : ConversationRoomCallback {
+    private var callbackOld: ConversationRoomCallback = object : ConversationRoomCallback {
         override fun onUserOffline(uid: Int) {
             removeUserWhenLeft(uid)
         }
@@ -536,13 +521,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val myBinder = service as WebRtcService.MyBinder
+            Log.d("ABC", "onServiceConnected() called with: name = $name, service = $service")
+            val myBinder = service as ConvoWebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
-            mBoundService?.addListener(callback)
+            mBoundService?.addListener(callbackOld)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            Log.d("ABC", "onServiceDisconnected() ")
             mServiceBound = false
         }
 
@@ -567,6 +554,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         channelName = intent?.getStringExtra(CHANNEL_NAME)
         vm.setAgoraUid(intent?.getIntExtra(UID, 0))
         vm.setModeratorId(intent?.getIntExtra(MODERATOR_UID, 0))
+        Log.d("ABC2", "getIntentExtras() MODERATOR_UID called ${intent?.getIntExtra(MODERATOR_UID, 0)}")
         token = intent?.getStringExtra(TOKEN)
         roomId = intent?.getIntExtra(ROOM_ID, 0)
         channelTopic = intent?.getStringExtra(TOPIC_NAME)
@@ -585,30 +573,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             bgColor = R.color.conversation_room_gray
         )
         binding.topic.text = channelTopic
-        /*roomReference?.get()?.addOnSuccessListener {
-            moderatorUid = it.get("started_by")?.toString()?.toInt()
-            WebRtcService.moderatorUid = moderatorUid
-            WebRtcService.isRoomCreatedByUser = moderatorUid == agoraUid
-            Log.d("ABC2", "moderatorUid set")
-            topicName = it.get("topic")?.toString()
-            WebRtcService.conversationRoomTopicName = topicName
-            binding.topic.text = topicName
-            usersReference?.document(moderatorUid.toString())?.get()
-                ?.addOnSuccessListener { moderator ->
-                    moderatorName = moderator.get("name")?.toString()
-                    moderatorMentorId = moderator.get("mentor_id")?.toString()
-                }
-        }*/
+
 
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
-            mBoundService?.setClientRole(CLIENT_ROLE_BROADCASTER)
         } else {
             binding.handRaiseBtn.visibility = View.VISIBLE
             binding.raisedHands.visibility = View.GONE
-            mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
-            mBoundService?.muteCall()
         }
     }
 
@@ -932,6 +904,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun updateUiWhenSwitchToListener() {
         isRoomUserSpeaker = false
         mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
+        //mBoundService?.muteCall()
         binding.apply {
             muteBtn.visibility = View.GONE
             unmuteBtn.visibility = View.GONE
@@ -945,6 +918,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         isRoomUserSpeaker = true
         isInviteRequestComeFromModerator = true
         mBoundService?.setClientRole(CLIENT_ROLE_BROADCASTER)
+        mBoundService?.enableAgoraAudio()
         binding.handRaiseBtn.visibility = View.GONE
         binding.handUnraiseBtn.visibility = View.GONE
         setHandRaiseValueToFirestore(false)
@@ -1236,9 +1210,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onStart() {
         super.onStart()
-        isConversionRoomActive = true
         bindService(
-            Intent(this, WebRtcService::class.java),
+            Intent(this, ConvoWebRtcService::class.java),
             myConnection,
             BIND_AUTO_CREATE
         )
@@ -1295,6 +1268,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
         }
         binding.notificationBar.destroyMediaPlayer()
+        stopService(Intent(this, ConvoWebRtcService::class.java))
         super.onDestroy()
 
     }

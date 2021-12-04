@@ -281,7 +281,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
 
             if (user.isModerator) {
                 if (moderatorUid == null || moderatorUid == 0) {
-                    moderatorUid = user.id
+                    setModeratorId(user.id)
                 }
                 moderatorName = user.name
             }

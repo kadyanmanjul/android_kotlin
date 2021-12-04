@@ -92,7 +92,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                             response?.token,
                             true,
                             response?.roomId,
-                            null,
+                            response?.uid,
                             topic = topic
                             )
                     )
