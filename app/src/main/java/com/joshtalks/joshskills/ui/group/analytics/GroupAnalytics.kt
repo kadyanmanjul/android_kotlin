@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_EVENTS_API_KEY
+import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_GROUP_ID_API_KEY
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_MENTOR_ID_API_KEY
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.CoroutineScope
@@ -33,14 +34,17 @@ object GroupAnalytics {
         OPEN_GROUP_FROM_SEARCH("OPEN_GROUP_SEARCH"),
         OPEN_GROUP_FROM_RECOMMENDATION("OPEN_GROUP_REC"),
         FIND_GROUPS_TO_JOIN("FIND_GROUPS_TO_JOIN"),
-        MAIN_GROUP_ICON("MAIN_GROUP_ICON")
+        MAIN_GROUP_ICON("MAIN_GROUP_ICON"),
+        OPEN_GROUP("OPEN_GROUP"),
+        MESSAGE_SENT("MESSAGE_SENT")
     }
 
-    fun push(event: GroupsEvent) {
+    fun push(event: GroupsEvent, groupId: String = "") {
         CoroutineScope(Dispatchers.IO).launch {
             val analyticsData = GroupsAnalyticsEntity(
                 event.value,
-                Mentor.getInstance().getId()
+                Mentor.getInstance().getId(),
+                groupId
             )
             database?.groupsAnalyticsDao()?.saveAnalytics(analyticsData)
             pushToServer()
@@ -70,9 +74,18 @@ object GroupAnalytics {
         val request = mutableMapOf<String, String>().apply {
             this[GROUPS_ANALYTICS_EVENTS_API_KEY] = analyticsData.event
             this[GROUPS_ANALYTICS_MENTOR_ID_API_KEY] = analyticsData.mentorId
+            this[GROUPS_ANALYTICS_GROUP_ID_API_KEY] = analyticsData.groupId ?: ""
         }
 
         return request
+    }
+
+    fun checkMsgTime(event: GroupsEvent, groupId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val msgSentInDay = repository.getLastSentMsgTime(groupId)
+            if (msgSentInDay)
+                push(event, groupId)
+        }
     }
 
     @JvmSuppressWildcards

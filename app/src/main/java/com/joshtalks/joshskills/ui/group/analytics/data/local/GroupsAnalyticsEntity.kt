@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "groups_analytics")
 data class GroupsAnalyticsEntity(
     val event: String,
-    val mentorId : String
+    val mentorId : String,
+    val groupId : String?
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0

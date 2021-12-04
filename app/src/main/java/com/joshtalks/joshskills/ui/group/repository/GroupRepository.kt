@@ -409,4 +409,12 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     fun getRecentTimeToken(id: String) = database.timeTokenDao().getOpenedTime(id)?.times(10000)
+
+    suspend fun getLastSentMsgTime(id: String): Boolean {
+        if (System.currentTimeMillis() - database.groupListDao().getLastSentMsgTime(id) > 86400000) {
+            database.groupListDao().setLastSentMsgTime(System.currentTimeMillis(), id)
+            return true
+        }
+        return false
+    }
 }

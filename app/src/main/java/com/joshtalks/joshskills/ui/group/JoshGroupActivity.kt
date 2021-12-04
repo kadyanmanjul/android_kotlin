@@ -162,8 +162,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(CONVERSATION_ID, vm.conversationId)
                 putString(ADMIN_ID, data?.getCreatorId())
                 data?.hasJoined()?.let {
-                    if (it)
+                    if (it) {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
+                        GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
+                    }
                     putBoolean(HAS_JOINED_GROUP, it)
                 }
             }

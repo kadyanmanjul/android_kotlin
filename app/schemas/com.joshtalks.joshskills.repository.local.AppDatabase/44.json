@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 44,
-    "identityHash": "e7b9691bf099d0e30f114241404654cf",
+    "identityHash": "01a8f2d82e65ee2086efaf7b250cdef6",
     "entities": [
       {
         "tableName": "course",
@@ -2666,7 +2666,7 @@
       },
       {
         "tableName": "groups_analytics",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `groupId` TEXT, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "event",
@@ -2679,6 +2679,12 @@
             "columnName": "mentorId",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "groupId",
+            "columnName": "groupId",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "id",
@@ -2698,7 +2704,7 @@
       },
       {
         "tableName": "group_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, PRIMARY KEY(`groupId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, `lastSentMsgTime` INTEGER NOT NULL, PRIMARY KEY(`groupId`))",
         "fields": [
           {
             "fieldPath": "groupIcon",
@@ -2759,6 +2765,12 @@
             "columnName": "adminId",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "lastSentMsgTime",
+            "columnName": "lastSentMsgTime",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -2856,7 +2868,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e7b9691bf099d0e30f114241404654cf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01a8f2d82e65ee2086efaf7b250cdef6')"
     ]
   }
 }

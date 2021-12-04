@@ -41,7 +41,9 @@ data class GroupsItem(
     @field:SerializedName("total_calls")
     val totalCalls: String? = null,
 
-    val adminId: String? = null
+    val adminId: String? = null,
+
+    val lastSentMsgTime: Long = 0
 
 ) : GroupItemData {
 

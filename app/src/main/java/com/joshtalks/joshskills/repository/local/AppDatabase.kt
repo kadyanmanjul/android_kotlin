@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+
 import com.google.gson.reflect.TypeToken
+
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
@@ -510,6 +512,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT, `adminId` TEXT)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT, `timeToken` INTEGER)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`message_id` INTEGER PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `msgTime` INTEGER NOT NULL, `groupId` TEXT NOT NULL, `msgType` INTEGER NOT NULL)")
+                database.execSQL("ALTER TABLE `groups_analytics` ADD COLUMN `groupId` TEXT")
             }
         }
 
