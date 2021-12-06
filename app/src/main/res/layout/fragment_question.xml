@@ -31,20 +31,36 @@
                     >
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/team1_user_image1"
+                        android:id="@+id/team1_user_image2"
                         android:layout_width="50dp"
                         android:layout_height="60dp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="35dp"
-                        android:layout_below="@id/team1_user_image1"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
-                        android:src="@drawable/ic_frame__2_" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/team1_user_image2_shadow"
+                        android:layout_width="50dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        android:visibility="invisible" />
+
+                     <RelativeLayout
+                        android:id="@+id/team2_mic1_click"
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="match_parent"
+                         android:layout_below="@id/team1_user_image2"
+                         android:layout_marginTop="3dp"
+                        android:layout_centerHorizontal="true">
+                         <ImageView
+                             android:id="@+id/team1_mic2"
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:layout_centerHorizontal="true"
+                             android:scaleType="fitXY"
+                             android:src="@drawable/ic_new_mic" />
+                     </RelativeLayout>
+
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -53,20 +69,36 @@
                     android:layout_height="85dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/team1_user_image2"
+                        android:id="@+id/team1_user_image1"
                         android:layout_width="50dp"
                         android:layout_height="60dp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="35dp"
-                        android:layout_below="@id/team1_user_image2"
-                        android:layout_centerHorizontal="true"
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/team1_user_image1_shadow"
+                        android:layout_width="50dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        android:visibility="invisible" />
+
+                    <RelativeLayout
+                        android:id="@+id/team1_mic1_click"
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/team1_user_image1"
                         android:layout_marginTop="3dp"
-                        android:src="@drawable/ic_frame__2_" />
+                        android:layout_centerHorizontal="true">
+                        <ImageView
+                            android:id="@+id/team1_mic1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_new_mic" />
+                    </RelativeLayout>
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -94,12 +126,13 @@
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_centerInParent="true">
+
                        <androidx.appcompat.widget.AppCompatTextView
                            android:id="@+id/count"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
-                           android:text="@string/zero"
                            android:layout_marginRight="1dp"
+                           android:text="@string/fiften"
                            android:textColor="#00b5d9"
                            android:textStyle="bold" />
                    </RelativeLayout>
@@ -171,13 +204,13 @@
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="35dp"
-                        android:layout_below="@id/team2_user_image1"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
-                        android:src="@drawable/ic_frame__2_" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="invisible"
+                        android:id="@+id/team2_user_image1_shadow"
+                        android:layout_width="50dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -194,13 +227,13 @@
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="35dp"
-                        android:layout_below="@id/team2_user_image2"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
-                        android:src="@drawable/ic_frame__2_" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="invisible"
+                        android:id="@+id/team2_user_image2_shadow"
+                        android:layout_width="50dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        />
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -327,25 +360,46 @@
                 android:orientation="vertical"
                 android:visibility="invisible">
 
-                <RelativeLayout
-                    android:id="@+id/card1"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/custom_layout">
+                    <RelativeLayout
+                        android:id="@+id/card1"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/custom_layout">
 
-                    <TextView
-                        android:id="@+id/answer1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:text="@string/cornelius_f"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                        android:textColor="#151415"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+                        <ImageView
+                            android:visibility="invisible"
+                            android:id="@+id/image_card_left1"
+                            android:layout_width="24dp"
+                            android:layout_height="@dimen/_24sdp"
+                            android:layout_marginLeft="-13dp"
+                            android:scaleType="fitXY"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_left_cut_card_icon" />
+
+                        <ImageView
+                            android:visibility="invisible"
+                            android:id="@+id/image_card_right1"
+                            android:layout_width="24dp"
+                            android:layout_height="@dimen/_24sdp"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="-13dp"
+                            android:scaleType="fitXY"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_right_cut_card" />
+
+                        <TextView
+                            android:id="@+id/answer1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:text="@string/cornelius_f"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                            android:textColor="#151415"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/card2"
@@ -353,6 +407,26 @@
                     android:layout_height="80dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/custom_layout">
+                    <ImageView
+                        android:visibility="invisible"
+                        android:id="@+id/image_card_left2"
+                        android:layout_width="24dp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_marginLeft="-13dp"
+                        android:scaleType="fitXY"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_left_cut_card_icon" />
+
+                    <ImageView
+                        android:visibility="invisible"
+                        android:id="@+id/image_card_right2"
+                        android:layout_width="24dp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="-13dp"
+                        android:scaleType="fitXY"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right_cut_card" />
 
                     <TextView
                         android:id="@+id/answer2"
@@ -373,6 +447,26 @@
                     android:layout_height="80dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/custom_layout">
+                    <ImageView
+                        android:visibility="invisible"
+                        android:id="@+id/image_card_left3"
+                        android:layout_width="24dp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_marginLeft="-13dp"
+                        android:scaleType="fitXY"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_left_cut_card_icon" />
+
+                    <ImageView
+                        android:visibility="invisible"
+                        android:id="@+id/image_card_right3"
+                        android:layout_width="24dp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="-13dp"
+                        android:scaleType="fitXY"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right_cut_card" />
 
                     <TextView
                         android:id="@+id/answer3"
@@ -393,7 +487,26 @@
                     android:layout_height="80dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/custom_layout">
+                    <ImageView
+                        android:visibility="invisible"
+                        android:id="@+id/image_card_left4"
+                        android:layout_width="24dp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_marginLeft="-13dp"
+                        android:scaleType="fitXY"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_left_cut_card_icon" />
 
+                    <ImageView
+                        android:visibility="invisible"
+                        android:id="@+id/image_card_right4"
+                        android:layout_width="24dp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="-13dp"
+                        android:scaleType="fitXY"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right_cut_card" />
                     <TextView
                         android:id="@+id/answer4"
                         android:layout_width="wrap_content"
@@ -408,24 +521,31 @@
                 </RelativeLayout>
             </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/relative_anim"
+            <ProgressBar
+                android:id="@+id/vertical_progressbar"
+                style="@style/Widget.ProgressBar.Vertical"
                 android:layout_width="12dp"
                 android:layout_height="354dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginLeft="7dp"
                 android:layout_marginBottom="@dimen/_15sdp"
-                android:background="@drawable/black_line" />
+                android:background="@drawable/vertical_black"
+                android:progress="0"
+                android:secondaryProgress="0"
+                />
 
-            <RelativeLayout
-                android:id="@+id/relative_anim1"
+            <ProgressBar
+                android:id="@+id/vertical_progressbar1"
                 android:layout_width="12dp"
+                style="@style/Widget.ProgressBar.Vertical"
                 android:layout_height="354dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
+                android:background="@drawable/vertical_black"
                 android:layout_marginRight="7dp"
+                android:layout_alignParentRight="true"
                 android:layout_marginBottom="@dimen/_15sdp"
-                android:background="@drawable/black_line" />
+                android:layout_alignParentBottom="true"
+                android:progress="0"
+                android:secondaryProgress="0" />
 
             <Chronometer
                 android:id="@+id/call_time"

@@ -9,6 +9,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -33,23 +35,23 @@ class CircularProgressView1(
 
     private val ovalSpace = RectF()
 
-    private val parentArcColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        context?.resources?.getColor(R.color.blue, null) ?: Color.GRAY
-    } else {
-        TODO("VERSION.SDK_INT < M")
-    }
+//    private val parentArcColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//        context?.resources?.getColor(R.color.blue, null) ?: Color.GRAY
+//    } else {
+//        TODO("VERSION.SDK_INT < M")
+//    }
     private val fillArcColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        context?.resources?.getColor(R.color.blue2, null) ?: Color.GREEN
+        context?.resources?.getColor(R.color.blue3, null) ?: Color.GREEN
     } else {
         TODO("VERSION.SDK_INT < M")
     }
 
-    private val parentArcPaint = Paint().apply {
-        style = Paint.Style.STROKE
-        isAntiAlias = true
-        color = parentArcColor
-        strokeWidth = 28f
-    }
+//    private val parentArcPaint = Paint().apply {
+//        style = Paint.Style.STROKE
+//        isAntiAlias = true
+//        color = parentArcColor
+//        strokeWidth = 28f
+//    }
 
     private val fillArcPaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -62,7 +64,7 @@ class CircularProgressView1(
     override fun onDraw(canvas: Canvas?) {
         setSpace()
         canvas?.let {
-            drawBackgroundArc(it)
+           // drawBackgroundArc(it)
             drawInnerArc(it)
         }
     }
@@ -79,11 +81,11 @@ class CircularProgressView1(
         )
     }
 
-    private fun drawBackgroundArc(it: Canvas) {
-//        val percentageToFill = getCurrentPercentageToFill()
-//        canvas.drawArc(ovalSpace, 90f, percentageToFill, false, parentArcPaint)
-        it.drawArc(ovalSpace, 0f, 360f, false, parentArcPaint)
-    }
+//    private fun drawBackgroundArc(it: Canvas) {
+////        val percentageToFill = getCurrentPercentageToFill()
+////        canvas.drawArc(ovalSpace, 90f, percentageToFill, false, parentArcPaint)
+//        it.drawArc(ovalSpace, 0f, 360f, false, parentArcPaint)
+   // }
 
     private fun drawInnerArc(canvas: Canvas) {
         val percentageToFill = getCurrentPercentageToFill()
@@ -98,7 +100,7 @@ class CircularProgressView1(
         valuesHolder = PropertyValuesHolder.ofFloat("percentage", 100f, 0f)
          animator = ValueAnimator().apply {
             setValues(valuesHolder)
-            duration = 10000
+            duration = 16000
 
             addUpdateListener {
                 val percentage = it.getAnimatedValue(PERCENTAGE_VALUE_HOLDER) as Float
@@ -106,14 +108,16 @@ class CircularProgressView1(
                 invalidate()
             }
         }
-        animator?.start()
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            animator?.start()
+        },2000)
 
     }
     fun pauseProgress() {
         animator?.pause()
-
-
-
     }
-
+    fun setAnimZero(){
+        animator?.end()
+    }
 }

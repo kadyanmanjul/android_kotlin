@@ -21,16 +21,18 @@
             android:background="@drawable/ic_game_back">
 
 
-            <TextView
+            <ImageView
                 android:id="@+id/txt_quiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/ic_game_logo_grad"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="40dp"
-                android:text="@string/quiz_game"
-                android:textColor="@color/game_name_color"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
-                android:textStyle="bold" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
 
             <TextView
                 android:id="@+id/txt_quiz1"
@@ -43,7 +45,6 @@
                 android:textColor="@color/white"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textStyle="bold" />
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -66,15 +67,22 @@
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
-
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="invisible"
+                        android:id="@+id/shadow_img1"
+                        android:layout_width="@dimen/_65sdp"
+                        android:layout_height="@dimen/_65sdp"
+                        android:layout_alignParentLeft="true"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        />
 
                     <TextView
                         android:id="@+id/user_name1"
-                        android:layout_width="wrap_content"
+                        android:layout_width="88dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/image"
-                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
+                        android:gravity="center"
                         android:text="Harsh"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/white"
@@ -98,13 +106,22 @@
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="invisible"
+                        android:id="@+id/shadow_img2"
+                        android:layout_width="@dimen/_65sdp"
+                        android:layout_height="@dimen/_65sdp"
+                        android:layout_alignParentLeft="true"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        />
+
 
                     <TextView
                         android:id="@+id/user_name2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="88dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/image2"
-                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
                         android:layout_marginTop="10dp"
                         android:text="Shobhit"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
@@ -131,14 +148,14 @@
                     android:id="@+id/image_sound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/_30sdp"
                     android:background="@drawable/circle2"
                     android:backgroundTint="@color/blue33"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/_14sdp"
-                    android:layout_alignParentBottom="true"
-                    app:srcCompat="@drawable/ic_baseline_speaker_on"
-                    android:layout_marginBottom="@dimen/_30sdp" />
+                    app:srcCompat="@drawable/ic_baseline_speaker_on" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/image_mute"

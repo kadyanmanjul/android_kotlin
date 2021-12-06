@@ -2,13 +2,9 @@ package com.joshtalks.joshskills.quizgame.ui.data.model
 
 import com.google.gson.annotations.SerializedName
 
-class SelectOptionResponse(
+data class SelectOptionResponse(
     @SerializedName("message") var message: String? = null,
-    //@SerializedName("choice") var choice: ChoiceData,
+    @SerializedName("choice") var choiceData: List<ChoiceData>?=null,
     @SerializedName("opponent_team") var opponentTeamId: String? = null
 )
 
-class ChoiceData(
-    @SerializedName("choice_id") var choiceId: Int? = null,
-    @SerializedName("is_correct") var isCorrect: String? = null
-)

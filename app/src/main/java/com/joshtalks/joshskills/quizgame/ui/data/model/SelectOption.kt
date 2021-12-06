@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.quizgame.ui.data.model
 
-import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
 import com.google.gson.annotations.SerializedName
 
 class SelectOption(

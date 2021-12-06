@@ -1,16 +1,17 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentChoiceFragnmentBinding
-import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails
+import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 
 class ChoiceFragnment : Fragment() {
@@ -35,13 +36,15 @@ class ChoiceFragnment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        playSound(R.raw.background_until_quiz_start)
+        playSound(R.raw.compress_background_util_quiz)
+        onBackPress()
     }
 
     fun playSound(sound:Int){
-        activity?.application?.let { AudioManagerQuiz.audioRecording.startPlaying(it,sound) }
+        if (activity?.application?.let { AudioManagerQuiz.audioRecording.isPlaying() } != true){
+            activity?.application?.let { AudioManagerQuiz.audioRecording.startPlaying(it,sound,true) }
+        }
     }
 
     companion object {
@@ -72,8 +75,18 @@ class ChoiceFragnment : Fragment() {
             ?.commit()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-     //   AudioManagerQuiz.audioRecording.stopPlaying()
+    private fun onBackPress() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                moveToNewActivity()
+            }
+        })
+    }
+
+    private fun moveToNewActivity() {
+        val i = Intent(activity, StartActivity::class.java)
+        startActivity(i)
+        (activity as Activity?)?.overridePendingTransition(0, 0)
+        requireActivity().finish()
     }
 }

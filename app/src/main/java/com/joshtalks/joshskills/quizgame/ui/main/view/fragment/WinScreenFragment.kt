@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.SystemClock
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,27 +14,29 @@ import android.view.Window
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
-import com.joshtalks.joshskills.quizgame.ui.data.repository.QuestionRepo
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SaveRoomRepo
-import com.joshtalks.joshskills.quizgame.ui.main.adapter.ImageAdapter
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionProviderFactory
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
+import timber.log.Timber
 
 
-class WinScreenFragment : Fragment() {
+class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRtc.WebRtcEngineCallback {
     private lateinit var binding : FragmentWinScreenBinding
     private var marks: String? = null
     private var roomId: String? = null
@@ -74,7 +78,14 @@ class WinScreenFragment : Fragment() {
     private var callTimeCount:String?=null
     private var fromType:String?=null
     private var engine: RtcEngine? = null
+    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
 
+    private var partnerId:String?=null
+    private var partnerName : String?=null
+    private var partnerImage : String?=null
+    private var currentUserName:String?=null
+    private var currentUserImage:String?=null
+    var time:Int? = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -109,16 +120,21 @@ class WinScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         currentUserId = Mentor.getInstance().getUserId()
+        currentUserName = Mentor.getInstance().getUser()?.firstName
+        currentUserImage = Mentor.getInstance().getUser()?.photo
 
         showRoomUserData()
-        engine = P2pRtc().initEngine(requireActivity())
+        try {
+            engine = activity?.let { P2pRtc().initEngine(it) }
+            P2pRtc().addListener(callback)
+        }catch (ex:Exception){
+            Timber.d(ex)
+        }
 
         binding.currentUserMarks.text = marks
         binding.opponentTeamMarks.text = opponentTeamMarks
 
         onBackPress()
-
-        //ek condition else if ayega jab match tie hoga mtlb dono ke marks same hoge
 
         when {
             marks?.toInt()?:0 > opponentTeamMarks?.toInt()?:0 -> {
@@ -135,6 +151,7 @@ class WinScreenFragment : Fragment() {
                 //yaha congulation wala or won ka icon lagana hai
             }
             marks?.toInt()?:0 == opponentTeamMarks?.toInt()?:0 -> {
+                winnerTeamStatus = false
                 binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
                 binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
                 binding.winningPointCurrent.text = "0"
@@ -160,12 +177,13 @@ class WinScreenFragment : Fragment() {
             }
         }
 
-        val time:Int? = callTimeCount?.toInt()?.div(1000)
-        setUpViewModel(SaveRoomDetails(roomId,teamId,marks,winnerTeamStatus, time?.toString()))
+        time = callTimeCount?.toInt()?.div(1000)
 
+        getFriendRequest()
         activity?.let {
             saveRoomDataViewModel?.saveRoomDetailsData?.observe(it, Observer {
                 Log.d("success_save", "onViewCreated: "+it.message)
+                getPlayAgainDataFromFirebase()
             })
         }
 
@@ -173,11 +191,25 @@ class WinScreenFragment : Fragment() {
             makeNewTeam()
         }
 
-        binding.btnPlayAgain.setOnClickListener {
-
+        if (fromType == "Random"){
+            binding.btnAddPeople.visibility = View.VISIBLE
         }
+
+        binding.btnAddPeople.setOnClickListener {
+            firebaseDatabase.createFriendRequest(currentUserId?:"",currentUserName?:"",currentUserImage?:"",partnerId?:"")
+        }
+
+        binding.btnPlayAgain.setOnClickListener {
+            firebaseDatabase.createPlayAgainNotification(partnerId?:"",currentUserName?:"",currentUserImage?:"")
+            playAgainApiCall(PlayAgain(currentUserTeamId?:"",currentUserId?:""))
+        }
+
+        firebaseDatabase.getPartnerPlayAgainNotification(currentUserId?:"",this)
     }
 
+    fun getFriendRequest(){
+        firebaseDatabase.getFriendRequests(currentUserId?:"",this)
+    }
     companion object {
         @JvmStatic
         fun newInstance(marks: String,opponentTeamMarks:String, roomId: String?,teamId:String?,callTime:String?,fromType:String) =
@@ -208,6 +240,8 @@ class WinScreenFragment : Fragment() {
         activity?.let {
             saveRoomDataViewModel?.roomUserDataTemp?.observe(it, Observer {
                 initializeUsersTeamsData(it.teamData)
+                setUpViewModel(SaveRoomDetails(roomId,teamId,marks,winnerTeamStatus, time?.toString(),currentUserId))
+                deleteAllFromFirestore(currentUserId?:"")
             })
         }
     }
@@ -248,41 +282,98 @@ class WinScreenFragment : Fragment() {
         if (team1UserId1 == currentUserId || team1UserId2 == currentUserId) {
             //yaha par ham jo current user hai usko niche set karte hai or uske partner ko bhi
 
+            if(team1UserId1  == currentUserId){
+                partnerId =  team1UserId2
+                partnerImage = team1User2ImageUrl
+                partnerName = team1User2Name
+            }else{
+                partnerId =  team1UserId1
+                partnerImage = team1User1ImageUrl
+                partnerName = team1User1Name
+            }
             currentUserTeamId = team1Id
             opponentTeamId = team2Id
 
-            val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-            binding.team1User1Name.text = team1User1Name
+            binding.txtOnButtonPlayagain.text = "Play Again\nwith $partnerName"
 
-            val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
-            binding.team1User2Name.text = team1User2Name
+            if (currentUserId==team1UserId1){
+                val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
+                //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team1User1Name?:"",30,true)
+                binding.team1User1Name.text = team1User1Name
 
+                val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
+                //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team1User2Name?:"",30,true)
+                binding.team1User2Name.text = team1User2Name
+            }else{
+                val imageUrl2 = team1User1ImageUrl?.replace("\n", "")
+               // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team1User2Name?:"",30,true)
+                binding.team1User2Name.text = team1User1Name
+
+                val imageUrl1 = team1User2ImageUrl?.replace("\n", "")
+                //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team1User2Name?:"",30,true)
+                binding.team1User1Name.text = team1User2Name
+            }
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+          //  ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team2User1Name?:"",30,true)
             binding.team2User1Name.text = team2User1Name
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team2User2Name?:"",30,true)
             binding.team2User2Name.text = team2User2Name
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
+           if(team2UserId1  == currentUserId){
+               partnerId = team2UserId2
+               partnerImage = team2User2ImageUrl
+               partnerName = team2User2Name
+            }else{
+               partnerId = team2UserId1
+               partnerImage = team2User1ImageUrl
+               partnerName = team2User1Name
+            }
 
-            val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-            binding.team1User1Name.text = team2User1Name
+            binding.txtOnButtonPlayagain.text = "Play Again\nwith $partnerName"
 
-            val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
-            binding.team1User2Name.text = team2User2Name
+            currentUserTeamId = team2Id
+            opponentTeamId = team1Id
+
+
+            if(team2UserId1 == currentUserId){
+                val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
+               // ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team2User1Name?:"",30,true)
+                binding.team1User1Name.text = team2User1Name
+
+                val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
+               // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team2User2Name?:"",30,true)
+                binding.team1User2Name.text = team2User2Name
+            }else{
+                val imageUrl1 = team2User2ImageUrl?.replace("\n", "")
+                //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team2User2Name?:"",30,true)
+                binding.team1User1Name.text = team2User2Name
+
+                val imageUrl2 = team2User1ImageUrl?.replace("\n", "")
+                //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team2User1Name?:"",30,true)
+                binding.team1User2Name.text = team2User1Name
+            }
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+           // ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team1User1Name?:"",30,true)
             binding.team2User1Name.text = team1User1Name
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+           // ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team1User2Name?:"",30,true)
             binding.team2User2Name.text = team1User2Name
         }
     }
@@ -301,6 +392,7 @@ class WinScreenFragment : Fragment() {
 
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.custom_dialog)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
         val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
@@ -332,7 +424,7 @@ class WinScreenFragment : Fragment() {
     }
     fun deleteData(dialog: Dialog){
         if (fromType == "Random"){
-            saveRoomDataViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
+            saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
             activity?.let {
                 saveRoomDataViewModel?.clearRadius?.observe(it, {
                     dialog.dismiss()
@@ -342,7 +434,7 @@ class WinScreenFragment : Fragment() {
                 })
             }
         }else{
-            saveRoomDataViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
+            saveRoomDataViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
             activity?.let {
                 saveRoomDataViewModel?.deleteData?.observe(it, Observer {
                     dialog.dismiss()
@@ -355,7 +447,7 @@ class WinScreenFragment : Fragment() {
     }
     fun makeNewTeam(){
         if (fromType == "Random"){
-            saveRoomDataViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
+            saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
             activity?.let {
                 saveRoomDataViewModel?.clearRadius?.observe(it, {
                     AudioManagerQuiz.audioRecording.stopPlaying()
@@ -364,7 +456,7 @@ class WinScreenFragment : Fragment() {
                 })
             }
         }else{
-            saveRoomDataViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
+            saveRoomDataViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
             activity?.let {
                 saveRoomDataViewModel?.deleteData?.observe(it, Observer {
                     AudioManagerQuiz.audioRecording.stopPlaying()
@@ -374,30 +466,144 @@ class WinScreenFragment : Fragment() {
             }
         }
     }
-
     private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
-        override fun onChannelJoin() {
-            super.onChannelJoin()
-        }
-
-        override fun onConnect(callId: String) {
-            super.onConnect(callId)
-        }
-
-        override fun onDisconnect(callId: String?, channelName: String?) {
-            super.onDisconnect(callId, channelName)
-        }
-
-        override fun onSpeakerOff() {
-            super.onSpeakerOff()
-        }
-
-        override fun onNetworkLost() {
-            super.onNetworkLost()
-        }
-
         override fun onPartnerLeave() {
             super.onPartnerLeave()
+            try {
+                binding.btnPlayAgain.isEnabled = false
+                requireActivity().runOnUiThread {
+                    binding.team1User2Name.alpha =0.5f
+                    binding.team1UserImage2Shadow.visibility = View.VISIBLE
+                }
+            }catch (ex:Exception){
+                Log.d("error_res", "onPartnerLeave: "+ex.message)
+            }
         }
+    }
+
+    override fun onSentFriendRequest(
+        fromMentorId: String,
+        fromUserName: String,
+        fromImageUrl: String,
+        isAccept: String
+    ) {
+
+        try {
+            binding.notificationCard.visibility = View.VISIBLE
+            binding.progress.animateProgress()
+            binding.userName.text = fromUserName
+            val imageUrl=fromImageUrl.replace("\n","")
+
+            activity?.let {
+                Glide.with(it)
+                    .load(imageUrl)
+                    .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
+                    .into(binding.userImage)
+            }
+        }catch (ex:Exception){
+            Timber.d(ex)
+        }
+
+        binding.buttonAccept.setOnClickListener {
+            binding.notificationCard.visibility = View.INVISIBLE
+            saveRoomDataViewModel?.addFavouritePracticePartner(AddFavouritePartner(fromMentorId,currentUserId))
+            activity?.let {
+                saveRoomDataViewModel?.fppData?.observe(it, Observer {
+                   // showToast(it.message)
+                    firebaseDatabase.deleteRequest(currentUserId?:"")
+                })
+            }
+        }
+
+        binding.butonDecline.setOnClickListener{
+            binding.notificationCard.visibility = View.INVISIBLE
+            firebaseDatabase.deleteRequest(currentUserId?:"")
+        }
+    }
+
+    private fun againPlayGame(){
+        firebaseDatabase.deleteUserPlayAgainCollection(currentUserId?:"")
+
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            val fm = activity?.supportFragmentManager
+            fm?.beginTransaction()
+                ?.replace(
+                    R.id.container,
+                    SearchingOpponentTeamFragment.newInstance(
+                        callTimeCount ?: "",
+                        UserDetails(partnerId, partnerName, partnerImage), currentUserTeamId
+                    ), "Win"
+                )
+                ?.remove(this)
+                ?.commit()
+            fm?.popBackStack()
+        },2000)
+    }
+
+    private fun getPlayAgainDataFromFirebase(){
+        firebaseDatabase.getPlayAgainAPiData(currentUserId?:"",this@WinScreenFragment)
+    }
+
+    private fun playAgainApiCall(playAgain: PlayAgain){
+        saveRoomDataViewModel?.playAgainWithSamePlayer(playAgain)
+        activity?.let {
+            saveRoomDataViewModel?.playAgainData?.observe(it, {
+                if (it.message == "Both Member Added"){
+                    getPlayAgainDataFromFirebase()
+                }
+            })
+        }
+    }
+
+    override fun onPlayAgainNotificationFromApi(userName: String, userImage: String) {
+        againPlayGame()
+    }
+
+    override fun onPartnerPlayAgainNotification(userName: String, userImage: String,mentorId:String) {
+        if (mentorId  == currentUserId) {
+            binding.notificationPlayAgain.visibility = View.VISIBLE
+            binding.userNameForNotPlay.text = userName
+            activity?.let {
+                Glide.with(it)
+                    .load(userImage)
+                    .apply(
+                        RequestOptions.placeholderOf(R.drawable.ic_josh_course)
+                            .error(R.drawable.ic_josh_course)
+                    )
+                    .into(binding.userImageForNotPaly)
+            }
+
+            binding.cancelNotification.setOnClickListener {
+                binding.notificationPlayAgain.visibility = View.INVISIBLE
+                firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+            }
+
+            try {
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    binding.notificationPlayAgain.visibility = View.INVISIBLE
+                    firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+                }, 10000)
+            } catch (ex: Exception) {}
+
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            firebaseDatabase.deleteUserPlayAgainCollection(currentUserId?:"")
+        }catch (ex:Exception){
+           showToast(ex.message?:"")
+        }
+    }
+
+    fun deleteAllFromFirestore(mentorId: String){
+        firebaseDatabase.deleteAllData(mentorId)
+        firebaseDatabase.deleteMuteUnmute(mentorId)
+        firebaseDatabase.deletePartnerCutCard(currentUserTeamId?:"")
+        firebaseDatabase.deleteAnimUser(partnerId?:"")
+        firebaseDatabase.deleteOpponentCutCard(currentUserTeamId?:"")
     }
 }

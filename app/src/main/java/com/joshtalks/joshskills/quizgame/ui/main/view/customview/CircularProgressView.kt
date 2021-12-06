@@ -10,9 +10,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.animation.addListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 
@@ -41,7 +44,8 @@ class CircularProgressView(
     }
 
     private val fillArcColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        context?.resources?.getColor(R.color.gray_light, null) ?: Color.GREEN
+     //   context?.resources?.getColor(R.color.gray_light_copy, null) ?: Color.GREEN
+        context?.resources?.getColor(R.color.blue2, null) ?: Color.GREEN
     } else {
         TODO("VERSION.SDK_INT < M")
     }
@@ -99,7 +103,7 @@ class CircularProgressView(
         valuesHolder = PropertyValuesHolder.ofFloat("percentage", 100f, 0f)
          animator = ValueAnimator().apply {
             setValues(valuesHolder)
-            duration = 10000
+            duration = 16000
 
             addUpdateListener {
                 val percentage = it.getAnimatedValue(PERCENTAGE_VALUE_HOLDER) as Float
@@ -107,10 +111,16 @@ class CircularProgressView(
                 invalidate()
             }
         }
-        animator?.start()
-
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            animator?.start()
+        },2000)
     }
     fun pauseProgress() {
         animator?.pause()
+    }
+
+    fun setAnimZero(){
+        animator?.end()
     }
 }

@@ -986,7 +986,7 @@
 
     <string name="your_team_mate">Harsh is your team mate</string>
     <string name="make_new_te">Make New Team</string>
-    <string name="play_again_">Play Again\nwith Mehta</string>
+    <string name="play_again_">Play Again\nwith Opponent</string>
     <string name="has_invited">has invited you to his team</string>
     <string name="can_t_play_">Can not Play Right Now</string>
     <string name="alreadt_start">Already started the game</string>
@@ -1005,8 +1005,10 @@
     <string name="arthur_weas">Arthur Weasely</string>
     <string name="professor_m">Professor\nMcGonagall</string>
     <string name="albus_dumbl">Albus Dumbledore</string>
-    <string name="user_name">Harsh</string>
+    <string name="user_name">Sagar</string>
+    <string name="fiften">15</string>
     <string name="zero">0</string>
+    <string name="play">Play!</string>
 
 
 </resources>

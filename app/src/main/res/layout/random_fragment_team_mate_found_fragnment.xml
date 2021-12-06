@@ -20,17 +20,16 @@
             android:id="@+id/rel"
             android:background="@drawable/ic_game_back">
 
-
-            <TextView
+            <ImageView
                 android:id="@+id/txt_quiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"
-                android:text="@string/quiz_game"
-                android:textColor="@color/game_name_color"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
-                android:textStyle="bold" />
+                android:layout_marginTop="35dp"
+                android:src="@drawable/ic_game_logo_grad"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/txt_quiz1"
@@ -127,43 +126,33 @@
                     android:textColor="@color/white"
                     android:visibility="invisible" />
 
-
-                <RelativeLayout
-                    android:id="@+id/btn_speaker"
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/image_sound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="40dp"
-                    android:background="@drawable/bluecircle">
+                    android:layout_marginBottom="@dimen/_30sdp"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/blue33"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_14sdp"
+                    app:srcCompat="@drawable/ic_baseline_speaker_on" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/soundicon"
-                        tools:ignore="ContentDescription">
-
-                    </ImageView>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/btn_mute"
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/image_mute"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/blue33"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_14sdp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="40dp"
-                    android:background="@drawable/bluecircle">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/mic_image"
-                        tools:ignore="ContentDescription">
-
-                    </ImageView>
-                </RelativeLayout>
+                    app:srcCompat="@drawable/ic_baseline_mic_off"
+                    android:layout_marginBottom="@dimen/_30sdp"
+                    />
 
             </RelativeLayout>
 

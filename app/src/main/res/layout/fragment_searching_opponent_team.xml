@@ -18,20 +18,16 @@
             android:background="@drawable/ic_game_back"
             android:layout_height="match_parent">
 
-
-            <TextView
+            <ImageView
                 android:id="@+id/txtquiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/ic_game_logo_grad"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:text="@string/quiz_game"
-                android:textColor="@color/game_name_color"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -167,7 +163,7 @@
                         android:layout_height="100dp"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/vs"
-                        android:src="@drawable/waveltor" />
+                        android:src="@drawable/gvygybgygby" />
 
 
                     <RelativeLayout
@@ -202,7 +198,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/vs"
-                        android:src="@drawable/wavertol" />
+                        android:src="@drawable/right_toleft_wave" />
                 </RelativeLayout>
 
 
@@ -227,6 +223,15 @@
                             android:layout_centerInParent="true"
                             app:lottie_fileName="lottie/faceanim.json"
                             app:lottie_loop="true" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:visibility="invisible"
+                            android:id="@+id/team1_user_image2_shadow"
+                            android:layout_width="@dimen/_55sdp"
+                            android:layout_height="@dimen/_55sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_offline_shadow_img"
+                            />
 
                     </RelativeLayout>
 

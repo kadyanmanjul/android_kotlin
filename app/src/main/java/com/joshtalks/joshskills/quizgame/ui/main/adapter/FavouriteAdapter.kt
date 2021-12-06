@@ -1,10 +1,14 @@
 package com.joshtalks.joshskills.quizgame.ui.main.adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.text.Spannable
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,18 +20,26 @@ import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
+
 class FavouriteAdapter(
     var context: Context, var arrayList: ArrayList<Favourite>?,
-    private val openCourseListener: QuizBaseInterface
+    private val openCourseListener: QuizBaseInterface,
+    var firebaseDatabase: FirebaseDatabase
 ):
     RecyclerView.Adapter<FavouriteAdapter.FavViewHolder>(){
 
+    var bindin:CustomFavouriteBinding?=null
+    var pos:Int=0
+    var search:String?=null
     fun addItems(newList: ArrayList<Favourite>?) {
         if (newList!!.isEmpty()) {
             return
@@ -36,6 +48,21 @@ class FavouriteAdapter(
         diffResult.dispatchUpdatesTo(this)
         arrayList?.clear()
         arrayList?.addAll(newList)
+    }
+
+    fun updateList(list: ArrayList<Favourite>,searchString:String) {
+        //check if length is  < 0 so print toast No data Found
+        if (list.size < 0) {
+            Toast.makeText(context, "No data Found", Toast.LENGTH_SHORT).show()
+        }else{
+            arrayList = list
+            search = searchString
+//            val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(FavouriteDiffCallback(list, arrayList))
+//            diffResult.dispatchUpdatesTo(this)
+//            arrayList?.clear()
+//            arrayList?.addAll(list)
+            notifyDataSetChanged()
+        }
     }
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -48,6 +75,7 @@ class FavouriteAdapter(
 
     override fun onBindViewHolder(holder: FavViewHolder, position: Int) {
         arrayList?.get(position)?.let { holder.bind(it, position) }
+        bindin = holder.binding
     }
 
 
@@ -58,17 +86,32 @@ class FavouriteAdapter(
     inner class FavViewHolder(val binding: CustomFavouriteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(favouriteDemoData: Favourite?,position: Int){
             //binding.status.text = favouriteDemoData.status
-            imageUrl(binding.userImage, favouriteDemoData?.image)
+            binding.userImage.setUserImageOrInitials(favouriteDemoData?.image,favouriteDemoData?.name?:"",30,isRound = true)
+            //imageUrl(binding.userImage, favouriteDemoData?.image)
             binding.userName.text=favouriteDemoData?.name
             binding.status.text = favouriteDemoData?.status
+            if (favouriteDemoData?.name?.toLowerCase()?.contains(search?:"") == true) {
+                val startPos: Int? = favouriteDemoData.name?.toLowerCase()?.indexOf(search?:"")
+                val endPos: Int? = startPos?.plus(search?.length?:0)
+                val spanString: Spannable =
+                    Spannable.Factory.getInstance().newSpannable(binding.userName.text)
+                spanString.setSpan(
+                    ForegroundColorSpan(Color.RED),
+                    startPos?:0,
+                    endPos?:0,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                binding.userName.text = spanString
+            }
 
             when (favouriteDemoData?.status) {
                 "active" -> {
-                    binding.clickToken.setImageResource(R.drawable.plus)
+                    binding.clickToken.setImageResource(R.drawable.ic_plus1)
                     binding.clickToken.setOnClickListener(View.OnClickListener {
-//                        binding.clickToken.setImageResource(R.drawable.ic_grass_timer)
-//                        binding.clickToken.isEnabled = false
-                        openCourseListener.onClickForGetToken(arrayList?.get(position))
+                        AudioManagerQuiz.audioRecording.startPlaying(context,R.raw.tick_animation,false)
+                        binding.clickToken.setImageResource(R.drawable.ic_grass_timer)
+                        binding.clickToken.isEnabled = false
+                        openCourseListener.onClickForGetToken(arrayList?.get(position),position.toString())
                     })
                 }
                 "inactive" -> {
@@ -116,12 +159,17 @@ class FavouriteAdapter(
                 .into(imageView)
         }
     }
-    fun setGrassImage(){
-       // binding?.clickToken?.isEnabled = true
-     //   binding?.clickToken?.setImageResource(R.drawable.plus)
+
+    fun getPositionById(mentorId:String) : Int{
+        for (v in 0 until arrayList?.size!!){
+            if (arrayList?.get(v)?.uuid == mentorId){
+                pos =v
+            }
+        }
+        return pos
     }
     interface QuizBaseInterface {
-        fun onClickForGetToken(favourite: Favourite?)
+        fun onClickForGetToken(favourite: Favourite?,position: String)
     }
 
 }

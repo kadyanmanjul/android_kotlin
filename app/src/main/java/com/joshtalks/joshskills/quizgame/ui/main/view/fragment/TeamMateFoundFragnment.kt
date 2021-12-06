@@ -1,10 +1,15 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.app.Dialog
+import android.graphics.BlurMaskFilter
+import android.graphics.Color
+import android.graphics.MaskFilter
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +25,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
 import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails
@@ -33,6 +38,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import timber.log.Timber
 
+
 //Channel Name = team_id
 class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
     private lateinit var binding:FragmentTeamMateFoundFragnmentBinding
@@ -44,7 +50,6 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
     private var currentUserId :String?=null
     private var flag=1
     private var flagSound =1
-    private var p2pRtc:P2pRtc?=null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,21 +89,19 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
         setUpData()
         moveFragment()
 
+
         try {
-            engine = P2pRtc().initEngine(requireActivity())
+            engine = P2pRtc().getEngineObj()
             P2pRtc().addListener(callback)
         }catch (ex:Exception){
             Timber.d(ex)
         }
-
         binding.imageMute.setOnClickListener {
             muteUnmute()
         }
-
         binding.imageSound.setOnClickListener {
             speakerOnOff()
         }
-
         onBackPress()
     }
 
@@ -111,13 +114,14 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
     private fun setCurrentUserData() {
         binding.userName1.text = Mentor.getInstance().getUser()?.firstName
         val imageUrl=Mentor.getInstance().getUser()?.photo?.replace("\n","")
+        binding.image.setUserImageOrInitials(imageUrl,Mentor.getInstance().getUser()?.firstName?:"",30,isRound = true)
 
-        activity?.let {
-            Glide.with(it)
-                .load(imageUrl)
-                .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
-                .into(binding.image)
-        }
+//        activity?.let {
+//            Glide.with(it)
+//                .load(imageUrl)
+//                .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
+//                .into(binding.image)
+//        }
     }
     private fun setUpData(){
         val repository = TeamMateFoundRepo()
@@ -138,13 +142,14 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
         this.userDetails = userDetails
         binding.txtQuiz1.text = userDetails?.name +" is your team mate"
         val imageUrl=userDetails?.imageUrl?.replace("\n","")
+        binding.image2.setUserImageOrInitials(imageUrl,userDetails?.name?:"",30,isRound = true)
 
-        activity?.let {
-            Glide.with(it)
-                .load(imageUrl)
-                .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
-                .into(binding.image2)
-        }
+//        activity?.let {
+//            Glide.with(it)
+//                .load(imageUrl)
+//                .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
+//                .into(binding.image2)
+//        }
         binding.userName2.text = userDetails?.name
     }
     companion object {
@@ -173,7 +178,6 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
     private fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                //CustomDialogQuiz(activity!!).show()
                 showDialog()
             }
         })
@@ -184,21 +188,24 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
 
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.custom_dialog)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
         val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
         val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
 
         yesBtn.setOnClickListener {
+//            dialog.setCanceledOnTouchOutside(true);
+//                   AudioManagerQuiz.audioRecording.stopPlaying()
+//
             teamMateFoundViewModel?.deleteUserRadiusData(TeamDataDelete(channelName?:"",currentUserId?:""))
             activity?.let {
                 teamMateFoundViewModel?.deleteData?.observe(it, Observer {
-                    showToast(it.message)
                     dialog.dismiss()
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     openChoiceScreen()
                     engine?.leaveChannel()
-                    //callback.onPartnerLeave()
+                    binding.callTime.stop()
                 })
             }
         }
@@ -261,35 +268,16 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
         }
     }
     private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
-        override fun onChannelJoin() {
-            super.onChannelJoin()
-        }
-
-        override fun onConnect(callId: String) {
-            super.onConnect(callId)
-        }
-
-        override fun onDisconnect(callId: String?, channelName: String?) {
-            super.onDisconnect(callId, channelName)
-            //engine?.leaveChannel()
-        //    showToast("Game Left")
-          //  binding.image2.setAlpha(127)
-
-        }
-
-        override fun onSpeakerOff() {
-            super.onSpeakerOff()
-        }
-
-        override fun onNetworkLost() {
-            super.onNetworkLost()
-        }
-
-        override fun onPartnerLeave() {
+    override fun onPartnerLeave() {
             super.onPartnerLeave()
-          //  showToast("Your Partner Left........")
-//            binding.image2.setAlpha(127)
-//            binding.image2.setImageResource(R.drawable.josh_skill_logo)
+            try {
+                requireActivity().runOnUiThread {
+                    binding.userName2.alpha=0.5f
+                    binding.shadowImg2.visibility = View.VISIBLE
+                }
+            }catch (ex:Exception){
+                Log.d("error_res", "onPartnerLeave: "+ex.message?:"")
+            }
         }
     }
 }

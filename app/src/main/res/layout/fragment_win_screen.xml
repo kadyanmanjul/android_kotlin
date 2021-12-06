@@ -17,8 +17,270 @@
             android:background="@drawable/ic_game_back"
             android:layout_height="match_parent">
 
+            <RelativeLayout
+                android:id="@+id/notification_play_again"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    >
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="83dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="5dp"
+                        app:cardCornerRadius="15dp"
+                        app:strokeWidth="2dp"
+                        app:strokeColor="#fff"
+                        android:layout_marginRight="10dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/notification_gradient">
+
+                            <RelativeLayout
+                                android:id="@+id/notificaton_rel111"
+                                android:layout_width="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="10dp"
+                                android:layout_height="wrap_content">
+
+                                <RelativeLayout
+                                    android:id="@+id/layout"
+                                    android:layout_width="50dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginLeft="20dp"
+                                    android:layout_height="50dp"
+                                    android:background="@drawable/border">
+
+                                    <de.hdodenhof.circleimageview.CircleImageView
+                                        android:id="@+id/user_image_for_not_paly"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:src="@drawable/josh_skill_bg" />
+                                </RelativeLayout>
+
+
+                                <TextView
+                                    android:id="@+id/user_name_for_not_play"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="6dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_toRightOf="@+id/layout"
+                                    android:gravity="center_vertical"
+                                    android:text="@string/user_name"
+                                    android:textColor="@color/test_color"
+                                    android:textSize="@dimen/_10ssp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:id="@+id/divider1"
+                                    android:layout_width="142dp"
+                                    android:layout_height="2dp"
+                                    android:background="#86AA99"
+                                    android:layout_toRightOf="@+id/layout"
+                                    android:layout_marginLeft="6dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_below="@+id/user_name_for_not_play" />
+
+                                <TextView
+                                    android:id="@+id/txt_msg_not_play"
+                                    android:layout_width="278dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/divider1"
+                                    android:layout_marginLeft="6dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_toRightOf="@+id/layout"
+                                    android:gravity="center_vertical"
+                                    android:text="Let's Play again"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_9sdp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+                </RelativeLayout>
+
+
+                <ImageView
+                    android:id="@+id/cancel_notification"
+                    android:layout_width="23dp"
+                    android:layout_height="27dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#fff"
+                    android:scaleType="fitXY"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="3dp"
+                    android:src="@drawable/ic_cross_quiz">
+                </ImageView>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/notification_card"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="83dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp"
+                    app:cardCornerRadius="15dp"
+                    app:strokeColor="#fff"
+                    app:strokeWidth="2dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/notification_gradient">
+
+                        <RelativeLayout
+                            android:id="@+id/notificaton_rel"
+                            android:layout_width="50dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="10dp"
+                            android:layout_height="50dp"
+                            android:background="@drawable/border">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/user_image"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:src="@drawable/josh_skill_bg" />
+
+
+                            <com.joshtalks.joshskills.quizgame.utils.CircularProgressView
+                                android:id="@+id/progress"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:gravity="center_vertical"
+                            android:text="@string/user_name"
+                            android:textColor="#FDFC01"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold" />
+
+
+                        <View
+                            android:id="@+id/divider2"
+                            android:layout_width="142dp"
+                            android:layout_height="2dp"
+                            android:layout_below="@+id/user_name"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:background="#86AA99" />
+
+                        <TextView
+                            android:id="@+id/txt_msg2"
+                            android:layout_width="278dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/divider2"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:gravity="center_vertical"
+                            android:text="Add Harsh to favourite partner ?"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold" />
+
+
+                        <LinearLayout
+                            android:id="@+id/button_linear_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/buton_decline"
+                                android:layout_width="70dp"
+                                android:layout_height="22dp"
+                                android:layout_marginRight="15dp"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="5dp"
+                                app:strokeColor="#920203"
+                                app:strokeWidth="3dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/red_gradient">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="No"
+                                        android:textColor="#fff"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/button_accept"
+                                android:layout_width="70dp"
+                                android:layout_height="22dp"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginRight="15dp"
+                                app:cardCornerRadius="6dp"
+                                app:cardElevation="5dp"
+                                app:strokeColor="#3AAC21"
+                                app:strokeWidth="3dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/accept_button_gradient">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="Yes"
+                                        android:textColor="#fff"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </RelativeLayout>
+
+           <TextView
                 android:id="@+id/txtquiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -28,6 +290,7 @@
                 android:textSize="@dimen/_35sdp"
                 android:textStyle="bold"
                 android:layout_marginTop="25dp"
+               android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -59,11 +322,22 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/conglutions">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/team2_user_image1"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:src="@drawable/img_demo" />
+                    android:src="@drawable/josh_skill_bg"
+                    app:civ_border_color="@color/blue"
+                    app:civ_border_width="@dimen/_2sdp"
+                    />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/team2_user_image1_shadow"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_offline_shadow_img"
+                    android:visibility="invisible" />
+
 
                 <TextView
                     android:id="@+id/team2_user1_name"
@@ -121,11 +395,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/conglutions">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/team2_user_image2"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:src="@drawable/img_demo" />
+                    android:src="@drawable/josh_skill_bg"
+                    app:civ_border_width="@dimen/_2sdp"
+                    app:civ_border_color="@color/blue"
+                    />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/team2_user_image2_shadow"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_offline_shadow_img"
+                    android:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/team2_user2_name"
@@ -323,7 +607,7 @@
                     android:layout_height="100dp"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/vs"
-                    android:src="@drawable/waveltor" />
+                    android:src="@drawable/gvygybgygby" />
 
                 <RelativeLayout
                     android:id="@+id/vs"
@@ -346,7 +630,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/vs"
-                    android:src="@drawable/wavertol" />
+                    android:src="@drawable/right_toleft_wave" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -359,17 +643,59 @@
                 android:layout_marginTop="35dp"
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout5">
 
-                <ImageView
-                    android:id="@+id/team1_user_image2"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/img_demo" />
+
+                <RelativeLayout
+                    android:id="@+id/rel_img"
+                    android:layout_width="@dimen/_62sdp"
+                    android:layout_height="wrap_content">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/team1_user_image2"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/josh_skill_bg"
+                        app:civ_border_color="@color/blue"
+                        app:civ_border_width="@dimen/_2sdp"
+                        />
+
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="invisible"
+                        android:id="@+id/team1_user_image2_shadow"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/ic_offline_shadow_img" />
+
+
+                    <androidx.cardview.widget.CardView
+                        android:visibility="invisible"
+                        android:id="@+id/btn_add_people"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_alignParentRight="true">
+                        <RelativeLayout
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:background="#49B819">
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/ic_add_people">
+                            </ImageView>
+                        </RelativeLayout>
+                    </androidx.cardview.widget.CardView>
+
+
+                </RelativeLayout>
+
 
                 <TextView
                     android:id="@+id/team1_user2_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/team1_user_image2"
+                    android:layout_below="@id/rel_img"
                     android:layout_centerHorizontal="true"
                     android:text="Harsh"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
@@ -594,11 +920,23 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout5">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/team1_user_image1"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:src="@drawable/img_demo" />
+                    android:src="@drawable/josh_skill_bg"
+                    app:civ_border_width="@dimen/_2sdp"
+                    app:civ_border_color="@color/blue"
+                    />
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/team1_user_image1_shadow"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_offline_shadow_img"
+                    android:visibility="invisible" />
+
 
                 <TextView
                     android:id="@+id/team1_user1_name"
@@ -621,8 +959,11 @@
                 app:strokeColor="#710322"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                android:focusable="true"
+                android:clickable="true"
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout7">
                 <RelativeLayout
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/red_gradient">
@@ -654,22 +995,26 @@
                 app:strokeColor="#710322"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:focusable="true"
+                android:clickable="true"
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout4">
                 <RelativeLayout
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/red_gradient">
 
                     <TextView
+                        android:id="@+id/txt_on_button_playagain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/play_again_"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:textAlignment="center"
+                        android:layout_centerInParent="true"
                         android:gravity="center"
+                        android:text="@string/play_again_"
+                        android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:layout_centerInParent="true">
+                        android:textSize="12sp"
+                        android:textStyle="bold">
 
                     </TextView>
 

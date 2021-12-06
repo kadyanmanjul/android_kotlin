@@ -12,19 +12,18 @@ class P2pRtc {
     companion object{
         @Volatile
         @JvmStatic
-        private var mRtcEngine: RtcEngine? = null
+         var mRtcEngine: RtcEngine? = null
 
-        @Volatile
-        private var callCallback: WeakReference<WebRtcEngineCallback>? = null
-
+        var callCallback:WebRtcEngineCallback?=null
     }
+
     private var eventListener: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
             override fun onError(err: Int) {
             }
 
             override fun onLeaveChannel(stats: RtcStats) {
                 super.onLeaveChannel(stats)
-                callCallback?.get()?.onDisconnect("","")
+                //callCallback?.get()?.onPartnerLeave()
             }
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
             }
@@ -39,17 +38,15 @@ class P2pRtc {
 
             override fun onUserOffline(uid: Int, reason: Int) {
                 super.onUserOffline(uid, reason)
-                callCallback?.get()?.onPartnerLeave()
+                callCallback?.onPartnerLeave()
             }
 
             override fun onActiveSpeaker(uid: Int) {
                 super.onActiveSpeaker(uid)
-                //showToast("Active Speaker")
             }
 
              override fun onConnectionLost() {
                 super.onConnectionLost()
-                 //showToast("Connection lost")
              }
         }
 
@@ -58,8 +55,12 @@ class P2pRtc {
         return mRtcEngine
      }
 
+    fun getEngineObj() : RtcEngine?{
+        return mRtcEngine
+    }
+
     fun addListener(callback: WebRtcEngineCallback?) {
-        callCallback = WeakReference(callback)
+        callCallback = callback
     }
     interface WebRtcEngineCallback {
         fun onChannelJoin() {}

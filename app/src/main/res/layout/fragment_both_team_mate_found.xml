@@ -20,22 +20,18 @@
             android:layout_height="match_parent">
 
 
-            <TextView
+            <ImageView
                 android:id="@+id/txtquiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/quiz_game"
-                android:layout_marginTop="30dp"
-                android:textColor="@color/game_name_color"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_game_logo_grad"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="35dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/card1"
@@ -127,6 +123,14 @@
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
 
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="gone"
+                        android:id="@+id/user_image_shadow2"
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/ic_offline_shadow_img"
+                         />
+
                     <TextView
                         android:id="@+id/user_name2"
                         android:layout_width="wrap_content"
@@ -151,7 +155,7 @@
                         android:layout_height="100dp"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/vs"
-                        android:src="@drawable/waveltor" />
+                        android:src="@drawable/gvygybgygby" />
 
 
                     <RelativeLayout
@@ -186,7 +190,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/vs"
-                        android:src="@drawable/wavertol" />
+                        android:src="@drawable/right_toleft_wave" />
                 </RelativeLayout>
 
 
@@ -203,6 +207,15 @@
                         android:layout_width="85dp"
                         android:layout_height="85dp"
                         android:src="@drawable/josh_skill"
+                        app:civ_border_color="@color/light_blue_quiz"
+                        app:civ_border_width="@dimen/_4sdp" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="invisible"
+                        android:id="@+id/user_image4_shadow"
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/ic_offline_shadow_img"
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
 

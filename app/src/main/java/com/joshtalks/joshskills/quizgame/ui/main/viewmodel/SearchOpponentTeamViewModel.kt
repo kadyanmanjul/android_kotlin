@@ -7,69 +7,79 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchOpponentRepo
 import com.joshtalks.joshskills.quizgame.ui.data.repository.TeamMateFoundRepo
+import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SearchOpponentTeamViewModel(
-    application: Application,
-    private val searchOpponentRepo: SearchOpponentRepo) :
-    AndroidViewModel(application) {
+    var application111: Application,
+    private val searchOpponentRepo: SearchOpponentRepo
+) :
+    AndroidViewModel(application111) {
 
     val roomData: MutableLiveData<AddToRoomResponse> = MutableLiveData()
-    var roomUserData:MutableLiveData<RandomRoomResponse> = MutableLiveData()
-    var deleteData : MutableLiveData<Success> = MutableLiveData()
+    var roomUserData: MutableLiveData<RandomRoomResponse> = MutableLiveData()
+    var deleteData: MutableLiveData<Success> = MutableLiveData()
+    var saveDuration: MutableLiveData<Success> = MutableLiveData()
 
-
-    fun addToRoomData(teamId: ChannelName){
+    fun addToRoomData(teamId: ChannelName) {
         try {
-            viewModelScope.launch (Dispatchers.IO){
-                val response = searchOpponentRepo.addToRoomRepo(teamId)
-                if (response.isSuccessful && response.body()!=null){
-                    roomData.postValue(response.body())
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = searchOpponentRepo.addToRoomRepo(teamId)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        roomData.postValue(response.body())
+                    }
                 }
             }
-        }catch (ex:Throwable){
+        } catch (ex: Throwable) {
             Timber.d(ex)
         }
     }
 
-    fun getRoomUserData(randomRoomData: RandomRoomData){
+    fun getRoomUserData(randomRoomData: RandomRoomData) {
         try {
-            viewModelScope.launch (Dispatchers.IO){
-                val response = searchOpponentRepo.getRoomUserData(randomRoomData)
-                if (response.isSuccessful && response.body()!=null){
-                    roomUserData.postValue(response.body())
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = searchOpponentRepo.getRoomUserData(randomRoomData)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        roomUserData.postValue(response.body())
+                    }
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }
 
-    fun deleteUserAndTeamData(teamDataDelete: TeamDataDelete){
+    fun deleteUserAndTeamData(teamDataDelete: TeamDataDelete) {
         try {
-            viewModelScope.launch (Dispatchers.IO){
-                val response = searchOpponentRepo.deleteUserTeamData(teamDataDelete)
-                if (response.isSuccessful && response.body()!=null){
-                    deleteData.postValue(response.body())
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = searchOpponentRepo.deleteUserTeamData(teamDataDelete)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        deleteData.postValue(response.body())
+                    }
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }
 
-
-    fun deleteUserRoomData(randomRoomData: RandomRoomData){
+    fun deleteUserRoomData(saveCallDurationRoomData: SaveCallDurationRoomData) {
         try {
-            viewModelScope.launch (Dispatchers.IO){
-                val response = searchOpponentRepo.deleteUsersDataFromRoom(randomRoomData)
-                if (response.isSuccessful && response.body()!=null){
-                    deleteData.postValue(response.body())
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response =
+                        searchOpponentRepo.deleteUsersDataFromRoom(saveCallDurationRoomData)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        deleteData.postValue(response.body())
+                    }
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }

@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.app.Dialog
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.util.Log
 import android.view.*
@@ -9,36 +11,37 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.TranslateAnimation
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.github.mikephil.charting.utils.EntryXComparator
 import com.google.android.gms.common.util.CollectionUtils
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.shape.TriangleEdgeTreatment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentQuestionBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.QuestionRepo
-import com.joshtalks.joshskills.quizgame.ui.main.adapter.ImageAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
-import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.tonyodev.fetch2core.calculateEstimatedTimeRemainingInMilliseconds
 import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
 import kotlinx.android.synthetic.main.fragment_question.*
-import kotlinx.android.synthetic.main.fragment_question.call_time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -92,10 +95,17 @@ P2pRtc.WebRtcEngineCallback{
 
     private var currentUserTeamId: String? = null
     private var opponentTeamId: String? = null
+    private var partnerId :String?=null
 
     private var callTimeCount:String?=null
     private var fromType:String?=null
     private var engine: RtcEngine? = null
+    var progressStatus = 0
+    var secondaryProgressStatus = 0
+    private var flag=1
+
+    lateinit var progressBar: ProgressBar
+    lateinit var progressBar1: ProgressBar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,6 +141,11 @@ P2pRtc.WebRtcEngineCallback{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("current_uid", "onViewCreated: " + currentUserId)
+        progressBar=view.findViewById(R.id.vertical_progressbar)
+        progressBar1=view.findViewById(R.id.vertical_progressbar1)
+
+        progressBar.max = 105
+        progressBar1.max = 105
         scaleAnimationForTeam1(binding.imagesTeam1)
         scaleAnimationForTeam2(binding.imagesTeam2)
         animationForText(binding.txtLayout1)
@@ -139,7 +154,16 @@ P2pRtc.WebRtcEngineCallback{
         slideAnimationRToL()
         showRoomUserData()
         onBackPress()
-        animationForText(binding.roundNumber)
+        AudioManagerQuiz.audioRecording.stopPlaying()
+        if (position == 0){
+            animationForText(binding.roundNumber)
+            lifecycleScope.launch {
+                myDelay()
+                startTimer()
+            }
+        }
+
+        //buttonEnableDisable()
         activity?.let {
             try {
                 questionViewModel?.questionData?.observe(it, Observer {
@@ -152,105 +176,191 @@ P2pRtc.WebRtcEngineCallback{
             }
         }
         try {
-            engine = P2pRtc().initEngine(requireActivity())
+            engine = activity?.let { P2pRtc().initEngine(it) }
             P2pRtc().addListener(this)
         }catch (ex:Exception){
             Timber.d(ex)
         }
+
         binding.card1.setOnClickListener {
-            drawTriangleOnCard(binding.card1)
-            binding.progress1.pauseProgress()
-            selectOptionCheck(
-                currentUserId ?: "",
-                team1Id,
-                team2Id,
-                roomId ?: "",
-                0
-            )
-            getSelectOptionWithAnim(binding.answer1.text.toString(), 0)
+            try {
+                AudioManagerQuiz.audioRecording.startPlaying(requireActivity(),R.raw.tick_animation,false)
+                drawTriangleOnCard(binding.imageCardLeft1)
+                binding.progress1.pauseProgress()
+                selectOptionCheck(
+                    currentUserId ?: "",
+                    team1Id,
+                    team2Id,
+                    roomId ?: "",
+                    0
+                )
+                getSelectOptionWithAnim(binding.answer1.text.toString(), 0)
+            }catch (ex:Exception){
+
+            }
         }
         binding.card2.setOnClickListener {
-            drawTriangleOnCard(binding.card2)
-            binding.progress1.pauseProgress()
-            selectOptionCheck(
-                currentUserId ?: "",
-                team1Id,
-                team2Id,
-                roomId ?: "",
-                1
-            )
+            try {
+                AudioManagerQuiz.audioRecording.startPlaying(requireActivity(),R.raw.tick_animation,false)
+                drawTriangleOnCard(binding.imageCardLeft2)
+                binding.progress1.pauseProgress()
+                selectOptionCheck(
+                    currentUserId ?: "",
+                    team1Id,
+                    team2Id,
+                    roomId ?: "",
+                    1
+                )
+                getSelectOptionWithAnim(binding.answer2.text.toString(), 1)
+            }catch (ex:Exception){
 
-            getSelectOptionWithAnim(binding.answer2.text.toString(), 1)
+            }
         }
         binding.card3.setOnClickListener {
-            drawTriangleOnCard(binding.card3)
-            binding.progress1.pauseProgress()
-            selectOptionCheck(
-                currentUserId ?: "",
-                team1Id,
-                team2Id,
-                roomId ?: "",
-                2
-            )
+            try {
+                AudioManagerQuiz.audioRecording.startPlaying(requireActivity(),R.raw.tick_animation,false)
+                drawTriangleOnCard(binding.imageCardLeft3)
+                binding.progress1.pauseProgress()
+                selectOptionCheck(
+                    currentUserId ?: "",
+                    team1Id,
+                    team2Id,
+                    roomId ?: "",
+                    2
+                )
 
-            getSelectOptionWithAnim(binding.answer3.text.toString(), 2)
+                getSelectOptionWithAnim(binding.answer3.text.toString(), 2)
+            }catch (ex:Exception){
+
+            }
         }
         binding.card4.setOnClickListener {
-            drawTriangleOnCard(binding.card4)
-            binding.progress1.pauseProgress()
-            selectOptionCheck(
-                currentUserId ?: "",
-                team1Id,
-                team2Id,
-                roomId ?: "",
-                3
-            )
+            try {
+                AudioManagerQuiz.audioRecording.startPlaying(requireActivity(),R.raw.tick_animation,false)
+                drawTriangleOnCard(binding.imageCardLeft4)
+                binding.progress1.pauseProgress()
+                selectOptionCheck(
+                    currentUserId ?: "",
+                    team1Id,
+                    team2Id,
+                    roomId ?: "",
+                    3
+                )
+                getSelectOptionWithAnim(binding.answer4.text.toString(), 3)
+            }catch (ex:Exception){
 
-            getSelectOptionWithAnim(binding.answer4.text.toString(), 3)
+            }
         }
+
+        try {
+            binding.team1Mic1Click.setOnClickListener {
+                muteUnMute(binding.team1Mic1)
+            }
+        }catch (ex:Exception){}
+
+        try {
+            firebaseDatabase.getMuteOrUnMute(currentUserId?:"",this)
+        }catch (ex:Exception){
+
+        }
+        buttonEnableDisable()
     }
     fun drawTriangleOnCard(view : View){
-        val triangleEdgeTreatment = TriangleEdgeTreatment(30f, true)
-        val shapeAppearanceModel = ShapeAppearanceModel()
-            .toBuilder()
-            .setLeftEdge(triangleEdgeTreatment)
-            .build()
-        val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
-        shapeDrawable.setCornerSize(3f)
-        shapeDrawable.fillColor = ColorStateList.valueOf(resources.getColor(R.color.white))
-        ViewCompat.setBackground(view, shapeDrawable)
+        try {
+            view.visibility = View.VISIBLE
+//            if (view.isInvisible){
+//                when (view) {
+//                    binding.imageCardLeft1 -> {
+//                        binding.imageCardRight1.visibility = View.VISIBLE
+//                    }
+//                    binding.imageCardLeft2 -> {
+//                        binding.imageCardRight2.visibility = View.VISIBLE
+//                    }
+//                    binding.imageCardLeft3 -> {
+//                        binding.imageCardRight3.visibility = View.VISIBLE
+//                    }
+//                    binding.imageCardLeft3 -> {
+//                        binding.imageCardRight4.visibility = View.VISIBLE
+//                    }
+//                }
+//            }else{
+//                view.visibility = View.VISIBLE
+//            }
+//            val triangleEdgeTreatment = TriangleEdgeTreatment(30f, true)
+//            val shapeAppearanceModel = ShapeAppearanceModel()
+//                .toBuilder()
+//                .setLeftEdge(triangleEdgeTreatment)
+//                .build()
+//
+//            val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
+//            shapeDrawable.setCornerSize(3f)
+//
+//            shapeDrawable.fillColor = activity?.resources?.getColor(R.color.white)?.let {
+//                ColorStateList.valueOf(
+//                    it
+//                )
+//            }
+//            ViewCompat.setBackground(view, shapeDrawable)
+        }catch (ex:Exception){
+            Log.d("exception", "drawTriangleOnCard: "+ex.message)
+        }
     }
     fun drawTriangleOnCardRight(view : View){
-        val triangleEdgeTreatment = TriangleEdgeTreatment(30f, true)
-        val shapeAppearanceModel = ShapeAppearanceModel()
-            .toBuilder()
-            .setLeftEdge(triangleEdgeTreatment)
-            .setRightEdge(triangleEdgeTreatment)
-            .build()
-        val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
-        shapeDrawable.setCornerSize(3f)
-        shapeDrawable.fillColor = ColorStateList.valueOf(resources.getColor(R.color.white))
-        ViewCompat.setBackground(view, shapeDrawable)
+        try {
+            view.visibility = View.VISIBLE
+//            val triangleEdgeTreatment = TriangleEdgeTreatment(30f, true)
+//            val shapeAppearanceModel = ShapeAppearanceModel()
+//                .toBuilder()
+//                .setLeftEdge(triangleEdgeTreatment)
+//                .setRightEdge(triangleEdgeTreatment)
+//                .build()
+//            val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
+//            shapeDrawable.setCornerSize(3f)
+//            shapeDrawable.fillColor = activity?.resources?.getColor(R.color.white)?.let {
+//                ColorStateList.valueOf(
+//                    it
+//                )
+//            }
+//            ViewCompat.setBackground(view, shapeDrawable)
+        }catch (ex:Exception){
+            Log.d("exception", "drawTriangleOnCardRight: "+ ex.message)
+        }
     }
-    fun makeAgainCardSquare(view : View){
-        val triangleEdgeTreatment = TriangleEdgeTreatment(0f, true)
-        val shapeAppearanceModel = ShapeAppearanceModel()
-            .toBuilder()
-            .setLeftEdge(triangleEdgeTreatment)
-            .setRightEdge(triangleEdgeTreatment)
-            .build()
-        val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
-        shapeDrawable.setCornerSize(3f)
-        shapeDrawable.fillColor = ColorStateList.valueOf(resources.getColor(R.color.white))
-        ViewCompat.setBackground(view, shapeDrawable)
+    fun makeAgainCardSquare(){
+        try {
+            binding.imageCardLeft1.visibility = View.INVISIBLE
+            binding.imageCardLeft2.visibility = View.INVISIBLE
+            binding.imageCardLeft3.visibility = View.INVISIBLE
+            binding.imageCardLeft4.visibility = View.INVISIBLE
+            binding.imageCardRight1.visibility = View.INVISIBLE
+            binding.imageCardRight2.visibility = View.INVISIBLE
+            binding.imageCardRight3.visibility = View.INVISIBLE
+            binding.imageCardRight4.visibility = View.INVISIBLE
+//            val triangleEdgeTreatment = TriangleEdgeTreatment(0f, true)
+//            val shapeAppearanceModel = ShapeAppearanceModel()
+//                .toBuilder()
+//                .setLeftEdge(triangleEdgeTreatment)
+//                .setRightEdge(triangleEdgeTreatment)
+//                .build()
+//            val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
+//            shapeDrawable.setCornerSize(3f)
+//            shapeDrawable.fillColor = activity?.resources?.getColor(R.color.white)?.let {
+//                ColorStateList.valueOf(
+//                    it
+//                )
+//            }
+//            ViewCompat.setBackground(view, shapeDrawable)
+        }catch (ex:Exception){
+            Log.d("exception", "makeAgainCardSquare: "+ex.message)
+        }
     }
     fun slideAnimationLToR(){
         val relativeAnimLToR = AnimationUtils.loadAnimation(context, R.anim.hs__slide_in_from_left)
-        binding.relativeAnim.startAnimation(relativeAnimLToR)
+        binding.verticalProgressbar.startAnimation(relativeAnimLToR)
     }
     fun slideAnimationRToL(){
         val relativeAnimRToL = AnimationUtils.loadAnimation(context, R.anim.hs__slide_in_from_right)
-        binding.relativeAnim1.startAnimation(relativeAnimRToL)
+        binding.verticalProgressbar1.startAnimation(relativeAnimRToL)
     }
 
     private fun onOptionSelect(
@@ -288,71 +398,98 @@ P2pRtc.WebRtcEngineCallback{
         }
     }
     private fun setupViewModel() {
-        questionRepo = QuestionRepo()
-        factory = QuestionProviderFactory(requireActivity().application, questionRepo!!)
-        questionViewModel = ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
-        questionViewModel = factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
-        questionViewModel?.getQuizQuestion()
         try {
-            // questionViewModel?.getRoomUserData(RoomData(roomId?:""))
-            questionViewModel?.getRoomUserDataTemp(
-                RandomRoomData(
-                    roomId ?: "",
-                    currentUserId ?: ""
+            questionRepo = QuestionRepo()
+            factory = QuestionProviderFactory(requireActivity().application, questionRepo!!)
+            questionViewModel = ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
+            questionViewModel = factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
+            questionViewModel?.getQuizQuestion(QuestionRequest("7",roomId?:""))
+            try {
+                // questionViewModel?.getRoomUserData(RoomData(roomId?:""))
+                questionViewModel?.getRoomUserDataTemp(
+                    RandomRoomData(
+                        roomId ?: "",
+                        currentUserId ?: ""
+                    )
                 )
-            )
-        } catch (e: Exception) {
+            } catch (e: Exception) {
+            }
+        }catch (ex:Exception){
 
         }
     }
     private fun startTimer() {
-        timer = object : CountDownTimer(11000, 1000) {
+        if (!AudioManagerQuiz.audioRecording.isPlaying()){
+            AudioManagerQuiz.audioRecording.startPlaying(requireContext(),R.raw.running_quiz_sound,false)
+        }
+        val handler = Handler(Looper.getMainLooper())
+        try {
+            timer = object : CountDownTimer(16000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                var seconds = (millisUntilFinished / 1000).toInt()
+                seconds = (millisUntilFinished / 1000).toInt()
                 seconds %= 60
                 binding.count.text = String.format("%2d", seconds)
                 if (seconds == 5) {
-                    AudioManagerQuiz.audioRecording.stopPlaying()
                     activity?.application?.let {
                         AudioManagerQuiz.audioRecording.startPlaying(
                             it,
-                            R.raw.voice_5_second
+                            R.raw.voice_5_second,
+                            false
                         )
                     }
                 }
             }
-
             override fun onFinish() {
-                // getDisplay() walla api call yaha karna hai 10 sec bad walla
+                AudioManagerQuiz.audioRecording.stopPlaying()
                 displayAnswerAndShowNextQuestion()
-            }
-        }.start()
-    }
+              }
+           }
+            handler.postDelayed({
+                timer?.start()
+            },2000)
+        }catch (ex:Exception){ }
+      }
     fun displayAnswerAndShowNextQuestion(){
         when (choiceValue) {
             binding.answer1.text -> {
                 binding.card2.visibility = View.INVISIBLE
                 binding.card3.visibility = View.INVISIBLE
                 binding.card4.visibility = View.INVISIBLE
-                binding.answer1.setTextColor(resources.getColor(R.color.green_quiz))
+                activity?.resources?.getColor(R.color.green_quiz)?.let {
+                    binding.answer1.setTextColor(
+                        it
+                    )
+                }
             }
             binding.answer2.text -> {
                 binding.card1.visibility = View.INVISIBLE
                 binding.card3.visibility = View.INVISIBLE
                 binding.card4.visibility = View.INVISIBLE
-                binding.answer2.setTextColor(resources.getColor(R.color.green_quiz))
+                activity?.resources?.getColor(R.color.green_quiz)?.let {
+                    binding.answer2.setTextColor(
+                        it
+                    )
+                }
             }
             binding.answer3.text -> {
                 binding.card1.visibility = View.INVISIBLE
                 binding.card2.visibility = View.INVISIBLE
                 binding.card4.visibility = View.INVISIBLE
-                binding.answer3.setTextColor(resources.getColor(R.color.green_quiz))
+                activity?.resources?.getColor(R.color.green_quiz)?.let {
+                    binding.answer3.setTextColor(
+                        it
+                    )
+                }
             }
             binding.answer4.text -> {
                 binding.card1.visibility = View.INVISIBLE
                 binding.card2.visibility = View.INVISIBLE
                 binding.card3.visibility = View.INVISIBLE
-                binding.answer4.setTextColor(resources.getColor(R.color.green_quiz))
+                activity?.resources?.getColor(R.color.green_quiz)?.let {
+                    binding.answer4.setTextColor(
+                        it
+                    )
+                }
             }
         }
         lifecycleScope.launch(Dispatchers.Main) {
@@ -362,26 +499,61 @@ P2pRtc.WebRtcEngineCallback{
             binding.card3.visibility = View.INVISIBLE
             binding.card4.visibility = View.INVISIBLE
 
-            binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
-            binding.answer2.setTextColor(resources.getColor(R.color.black_quiz))
-            binding.answer3.setTextColor(resources.getColor(R.color.black_quiz))
-            binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
+            activity?.resources?.getColor(R.color.black_quiz)?.let { binding.answer1.setTextColor(it) }
+            activity?.resources?.getColor(R.color.black_quiz)?.let { binding.answer2.setTextColor(it) }
+            activity?.resources?.getColor(R.color.black_quiz)?.let { binding.answer3.setTextColor(it) }
+            activity?.resources?.getColor(R.color.black_quiz)?.let { binding.answer4.setTextColor(it) }
             position++
-            if(position<questionSize.minus(1)){
-                binding.roundNumber.visibility = View.VISIBLE
-                binding.roundNumber.text = getString(R.string.round_1) + " " + position.plus(1).toString()
-                animationForRound()
-            }else{
+            try {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    delay(100)
+                    progressBar.progress = marks
+                    progressBar1.progress = opponentTeamMarks
+                    progressBar.progressTintList = activity?.resources?.getColor(R.color.blue2)?.let {
+                        ColorStateList.valueOf(
+                            it
+                        )
+                    }
+                    progressBar1.progressTintList = activity?.resources?.getColor(R.color.blue2)?.let {
+                        ColorStateList.valueOf(
+                            it
+                        )
+                    }
+                }
+            }catch (ex:Exception){
+
+            }
+
+            Log.d("position", "displayAnswerAndShowNextQuestion1: "+position)
+            if(position<=questionSize.minus(1)){
+                Log.d("position", "displayAnswerAndShowNextQuestion2: "+position)
+                if(position==questionSize.minus(1)){
+                    isLastQuestion = true
+                    Log.d("position", "displayAnswerAndShowNextQuestion3: "+position)
+                    binding.roundNumber.visibility = View.VISIBLE
+                    binding.roundNumber.text = "Last Round"
+                    binding.getReady.visibility = View.VISIBLE
+                    binding.getReady.text = "2X BONUS!"
+                    animationForRound()
+                }else{
+                    Log.d("position", "displayAnswerAndShowNextQuestion4: "+position)
+                    binding.roundNumber.visibility = View.VISIBLE
+                    binding.roundNumber.text = getString(R.string.round_1) + " " + position.plus(1).toString()
+                    animationForRound()
+                }
+            }
+            else{
+                Log.d("position", "displayAnswerAndShowNextQuestion5: "+position)
                 binding.roundNumber.visibility = View.INVISIBLE
             }
             binding.question.visibility = View.INVISIBLE
             //binding.roundNumber.visibility = View.VISIBLE
-            binding.marks1.setTextColor(resources.getColor(R.color.white))
-            binding.marks2.setTextColor(resources.getColor(R.color.white))
-            makeAgainCardSquare(binding.card1)
-            makeAgainCardSquare(binding.card2)
-            makeAgainCardSquare(binding.card3)
-            makeAgainCardSquare(binding.card4)
+            activity?.resources?.getColor(R.color.white)?.let { binding.marks1.setTextColor(it) }
+            activity?.resources?.getColor(R.color.white)?.let { binding.marks2.setTextColor(it) }
+            makeAgainCardSquare()
+            firebaseDatabase.deleteOpponentCutCard(currentUserTeamId?:"")
+            firebaseDatabase.deletePartnerCutCard(currentUserTeamId?:"")
+
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(1500)
                 getQuestions()
@@ -435,29 +607,40 @@ P2pRtc.WebRtcEngineCallback{
             currentUserTeamId = team1Id
             opponentTeamId = team2Id
 
+            if (team1UserId1 == currentUserId){
+                partnerId = team1UserId2
+            }else{
+                partnerId = team1UserId1
+            }
+
             try {
                 firebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
                 firebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getPartnerCutCard(currentUserTeamId?:"")
-                firebaseDatabase.getOpponentCutCard(currentUserTeamId?:"")
+                firebaseDatabase.getPartnerCutCard(currentUserTeamId?:"",this@QuestionFragment)
+                firebaseDatabase.getOpponentCutCard(currentUserTeamId?:"",this@QuestionFragment)
             } catch (ex: Exception) {
                 Log.d("error_fire", "initializeUsersTeamsData: " + ex.message)
             }
 
             val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+            //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+            binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team1User1Name?:"",30,true)
             binding.team1User1Name.text = team1User1Name
 
+
             val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+           // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+            binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team1User2Name?:"",30,true)
             binding.team1User2Name.text = team1User2Name
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            //ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team2User1Name?:"",30,true)
             binding.team2User1Name.text = team2User1Name
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team2User2Name?:"",30,true)
             binding.team2User2Name.text = team2User2Name
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
@@ -465,29 +648,39 @@ P2pRtc.WebRtcEngineCallback{
             currentUserTeamId = team2Id
             opponentTeamId = team1Id
 
+            if (team2UserId1 == currentUserId){
+                partnerId = team2UserId2
+            }else{
+                partnerId = team2UserId1
+            }
+
             try {
                 firebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
                 firebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getPartnerCutCard(currentUserTeamId?:"")
-                firebaseDatabase.getOpponentCutCard(currentUserTeamId?:"")
+                firebaseDatabase.getPartnerCutCard(currentUserTeamId?:"",this@QuestionFragment)
+                firebaseDatabase.getOpponentCutCard(currentUserTeamId?:"",this@QuestionFragment)
             }catch (ex:Exception){
                 Log.d("error_fire", "initializeUsersTeamsData: " + ex.message)
             }
 
             val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+            //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+            binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team2User1Name?:"",30,true)
             binding.team1User1Name.text = team2User1Name
 
             val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+            //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+            binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team2User2Name?:"",30,true)
             binding.team1User2Name.text = team2User2Name
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+          //  ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team1User1Name?:"",30,true)
             binding.team2User1Name.text = team1User1Name
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team1User2Name?:"",30,true)
             binding.team2User2Name.text = team1User2Name
 
         }
@@ -501,6 +694,8 @@ P2pRtc.WebRtcEngineCallback{
     companion object {
         var marks: Int = 0
         var opponentTeamMarks :Int =0
+        var isLastQuestion = false
+        var seconds = 0
 
         @JvmStatic
         fun newInstance(roomId: String?,startTime:String?,fromType :String?) =
@@ -516,7 +711,6 @@ P2pRtc.WebRtcEngineCallback{
         val animation = TranslateAnimation(20f, 20f, -200f, 20f)
         animation.duration = 1000
         animation.fillAfter = true
-        // animation.setAnimationListener(MyAnimationListener())
         v.startAnimation(animation)
         v.visibility = View.VISIBLE
         progress.visibility = View.VISIBLE
@@ -527,7 +721,6 @@ P2pRtc.WebRtcEngineCallback{
         val animation = TranslateAnimation(0f, 0f, -200f, 20f)
         animation.duration = 1000
         animation.fillAfter = true
-        // animation.setAnimationListener(MyAnimationListener())
         v.startAnimation(animation)
         v.visibility = View.VISIBLE
     }
@@ -540,6 +733,9 @@ P2pRtc.WebRtcEngineCallback{
         val animation1 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
         binding.roundNumber.startAnimation(animation1)
         binding.layoutForRounds.visibility = View.VISIBLE
+        binding.count.text = activity?.resources?.getText(R.string.fiften)
+        binding.progress.setAnimZero()
+        binding.progress1.setAnimZero()
 
         animation1.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {
@@ -555,10 +751,14 @@ P2pRtc.WebRtcEngineCallback{
             }
 
         })
+
+        lifecycleScope.launch {
+            myDelay()
+            startTimer()
+        }
     }
     private fun answerAnim() {
         val handler = Handler(Looper.getMainLooper())
-
         try {
             handler.postDelayed({
                 binding.card1.visibility = View.VISIBLE
@@ -571,11 +771,6 @@ P2pRtc.WebRtcEngineCallback{
             }, 2000)
         }catch (ex:Exception){
 
-        }
-        lifecycleScope.launch {
-            delay(2000)
-            myDelay()
-            startTimer()
         }
     }
     private fun selectOptionCheck(
@@ -592,32 +787,37 @@ P2pRtc.WebRtcEngineCallback{
             givenTeamId = teamId2
         }
 
-        activity?.application?.let {
-            AudioManagerQuiz.audioRecording.startPlaying(
-                it,
-                R.raw.user_click_anywhere
+        try {
+            activity?.application?.let {
+                AudioManagerQuiz.audioRecording.startPlaying(
+                    it,
+                    R.raw.user_click_anywhere,
+                    false
+                )
+            }
+
+            questionViewModel?.getSelectOption(
+                roomId,
+                question.que[position].id ?: "",
+                question.que[position].choices?.get(pos)?.id ?: "",
+                givenTeamId ?: ""
             )
+        }catch (ex:Exception){
+
         }
-        questionViewModel?.getSelectOption(
-            roomId,
-            question.que[position].id ?: "",
-            question.que[position].choices?.get(pos)?.id ?: "",
-            givenTeamId ?: ""
-        )
     }
 
     private fun getSelectOptionWithAnim(choiceAnswer: String, pos: Int) {
         disableCardClick()
         activity?.let {
             isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
-            //isCorrect = "true"
             questionViewModel?.selectOption?.observe(it, {
                 choiceAnswer(choiceAnswer, isCorrect ?: "")
-                Log.d("both_team", "getSelectOptionWithAnim: "+it.message)
+                var firstTeamAnswer = it.choiceData?.get(0)?.choiceData
+                Log.d("both_team", "getSelectOptionWithAnim: ${it}")
                 if (it.message == "Both teams selected answer before 7 seconds , show response and animations to all the users in room") {
-
-                    firebaseDatabase.createPartnerShowCutCard(currentUserTeamId?:"", isCorrect?:"", choiceAnswer)
                     firebaseDatabase.createOpponentTeamShowCutCard(opponentTeamId?:"", isCorrect?:"", choiceAnswer)
+                    firebaseDatabase.createPartnerShowCutCard(currentUserTeamId?:"", isCorrect?:"", firstTeamAnswer?:"")
 
                     //hame yaha partner ke liye call back likhna hoga jis se ham usko card ke dono side cut dikha sake
                 }
@@ -625,10 +825,41 @@ P2pRtc.WebRtcEngineCallback{
             // partnerId = getPartnerId()
 
             if (isCorrect == "true") {
-                marks += 10
+                marks += if (isLastQuestion) {
+                    (seconds * 2)
+                }else{
+                    seconds
+                }
             }
-            binding.marks1.text = marks.toString()
 
+            try {
+                if (isCorrect == "true"){
+                    if (position!=0)
+                        progressBar.progressTintList =
+                            activity?.resources?.getColor(R.color.green_quiz)?.let { it1 ->
+                                ColorStateList.valueOf(
+                                    it1
+                                )
+                            }
+
+                    binding.marks1.text = marks.toString()
+                    secondaryProgressStatus = marks
+                    progressBar.secondaryProgress = secondaryProgressStatus
+
+                    //yaha ka code dekhna hai once
+                    progressBar.progress = marks - (seconds)
+                }else{
+                    progressBar.progress = marks
+                    progressBar.progressTintList =
+                        activity?.resources?.getColor(R.color.blue2)?.let { it1 ->
+                            ColorStateList.valueOf(
+                                it1
+                            )
+                        }
+                }
+            }catch (ex:Exception){
+
+            }
             // yaha ham partner me uski id or answer bheje ge jis se usko vo answer dikha sake ki kya tick kiya hai
             isCorrect?.let { it1 ->
                 onOptionSelect(
@@ -653,39 +884,20 @@ P2pRtc.WebRtcEngineCallback{
         return choiceValue ?: ""
     }
 
-    //yaha ek array list hogi jisme sabhi user ki id hogi jisko hame animation dikhana hai
-    // or apni team member ko answer bhi dikhana hai
-    //or animation sabhi kio dikhnana
-
-    private fun getPartnerId(): String? {
-        var myPartnerId: String? = null
-        if (team1UserId1 == currentUserId) {
-            myPartnerId = team1UserId2
-        } else if (team1UserId2 == currentUserId) {
-            myPartnerId = team1UserId1
-        } else if (team2UserId1 == currentUserId) {
-            myPartnerId = team2UserId2
-        } else if (team2UserId2 == currentUserId) {
-            myPartnerId = team2UserId1
-        }
-        return myPartnerId
-    }
-
     override fun onNotificationForInvitePartner(
         channelName: String,
         fromUserId: String,
         fromUserName: String,
         fromUserImage: String
     ) {
-        TODO("Not yet implemented")
     }
 
     override fun onNotificationForPartnerNotAccept(
         userName: String?,
         userImageUrl: String,
-        fromUserId: String
+        fromUserId: String,
+        declineUserID:String
     ) {
-        TODO("Not yet implemented")
     }
 
     override fun onNotificationForPartnerAccept(
@@ -695,7 +907,7 @@ P2pRtc.WebRtcEngineCallback{
         opponentMemberId: String,
         mentorId: String
     ) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onGetRoomId(currentUserRoomID: String?, mentorId: String) {
@@ -705,125 +917,180 @@ P2pRtc.WebRtcEngineCallback{
         disableCardClick()
         when (choiceAnswer) {
             binding.answer1.text -> {
-                drawTriangleOnCard(binding.card1)
-                binding.answer2.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer3.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
-
-                if (isCorrect == "true") {
-                    try {
-                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer1.setTextColor(resources.getColor(R.color.green_quiz))
-
-                    }catch (ex:Exception){
-                        showToast(ex.message?:"")
+                try {
+                    drawTriangleOnCard(binding.imageCardLeft1)
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer2.setTextColor(
+                            it
+                        )
                     }
-                } else {
-                    try {
-                        binding.marks1.setTextColor(resources.getColor(R.color.red))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer1.setTextColor(resources.getColor(R.color.red))
-                    }catch (ex:Exception){
-
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer3.setTextColor(
+                            it
+                        )
                     }
-                }
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer4.setTextColor(
+                            it
+                        )
+                    }
 
-                lifecycleScope.launch(Dispatchers.Main) {
-                    delay(500)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
-                }
+                    if (isCorrect == "true") {
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.answer1.setTextColor(
+                                it
+                            )
+                        }
+                    } else {
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.answer1.setTextColor(
+                                it
+                            )
+                        }
+                    }
+                }catch (ex:Exception){ }
             }
             binding.answer2.text -> {
-                drawTriangleOnCard(binding.card2)
-                binding.answer3.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
-
                 try {
-                    if (isCorrect == "true") {
-                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer2.setTextColor(resources.getColor(R.color.green_quiz))
-                    } else {
-                        binding.marks1.setTextColor(resources.getColor(R.color.red))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer2.setTextColor(resources.getColor(R.color.red))
+                   drawTriangleOnCard(binding.imageCardLeft2)
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer3.setTextColor(
+                            it
+                        )
                     }
-                }catch (ex:Exception){
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer4.setTextColor(
+                            it
+                        )
+                    }
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer1.setTextColor(
+                            it
+                        )
+                    }
 
-                }
-
-                lifecycleScope.launch(Dispatchers.Main) {
-                    delay(500)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
-                }
+                    if (isCorrect == "true") {
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.answer2.setTextColor(
+                                it
+                            )
+                        }
+                    } else {
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.answer2.setTextColor(
+                                it
+                            )
+                        }
+                    }
+                }catch (ex:Exception){}
             }
             binding.answer3.text -> {
-                drawTriangleOnCard(binding.card3)
-                binding.answer2.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer4.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
-
                 try {
-                    if (isCorrect == "true") {
-                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer3.setTextColor(resources.getColor(R.color.green_quiz))
-                    } else {
-                        binding.marks1.setTextColor(resources.getColor(R.color.red))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer3.setTextColor(resources.getColor(R.color.red))
+                   drawTriangleOnCard(binding.imageCardLeft3)
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer2.setTextColor(
+                            it
+                        )
                     }
-                }catch (ex : Exception){
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer4.setTextColor(
+                            it
+                        )
+                    }
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer1.setTextColor(
+                            it
+                        )
+                    }
 
-                }
-
-                lifecycleScope.launch(Dispatchers.Main) {
-                    delay(500)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
-                }
+                    if (isCorrect == "true") {
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.answer3.setTextColor(
+                                it
+                            )
+                        }
+                    } else {
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.answer3.setTextColor(
+                                it
+                            )
+                        }
+                    }
+                }catch (ex : Exception){}
             }
             binding.answer4.text -> {
-                drawTriangleOnCard(binding.card4)
-                binding.answer3.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer1.setTextColor(resources.getColor(R.color.black_quiz))
-                binding.answer2.setTextColor(resources.getColor(R.color.black_quiz))
-
                 try {
-                    if (isCorrect == "true") {
-                        binding.marks1.setTextColor(resources.getColor(R.color.green_quiz))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer4.setTextColor(resources.getColor(R.color.green_quiz))
-                    } else {
-                        binding.marks1.setTextColor(resources.getColor(R.color.red))
-                        val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-                        binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                        binding.relativeAnim.startAnimation(animation)
-                        binding.answer4.setTextColor(resources.getColor(R.color.red))
+                    drawTriangleOnCard(binding.imageCardLeft4)
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer3.setTextColor(
+                            it
+                        )
                     }
-                }catch (ex:Exception){
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer1.setTextColor(
+                            it
+                        )
+                    }
+                    activity?.resources?.getColor(R.color.black_quiz)?.let {
+                        binding.answer2.setTextColor(
+                            it
+                        )
+                    }
 
-                }
-
-                lifecycleScope.launch(Dispatchers.Main) {
-                    delay(500)
-                    binding.relativeAnim.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
-                }
+                    if (isCorrect == "true") {
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            binding.answer4.setTextColor(
+                                it
+                            )
+                        }
+                    } else {
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.marks1.setTextColor(
+                                it
+                            )
+                        }
+                        activity?.resources?.getColor(R.color.red)?.let {
+                            binding.answer4.setTextColor(
+                                it
+                            )
+                        }
+                    }
+                }catch (ex:Exception){}
             }
         }
     }
@@ -853,6 +1120,39 @@ P2pRtc.WebRtcEngineCallback{
         choiceAnswer(choiceAnswer, isCorrect)
         marks = marks1.toInt()
         binding.marks1.text = marks.toString()
+
+        try {
+            if (isCorrect == "true"){
+                try {
+                    progressBar.secondaryProgress = marks
+                    progressBar.progress = marks - 10
+                    if (position!=0)
+                        progressBar.progressTintList =
+                            activity?.resources?.getColor(R.color.green_quiz)?.let {
+                                ColorStateList.valueOf(
+                                    it
+                                )
+                            }
+                }catch (ex:Exception){}
+            }else{
+                try {
+                    progressBar.progress = marks
+                    progressBar.progressTintList = activity?.resources?.getColor(R.color.blue2)?.let {
+                        ColorStateList.valueOf(
+                            it
+                        )
+                    }
+                    val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                    binding.verticalProgressbar.setBackgroundDrawable(resources.getDrawable(R.drawable.vertical_red))
+                    binding.verticalProgressbar.startAnimation(animation)
+
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        delay(500)
+                        binding.verticalProgressbar.setBackgroundDrawable(resources.getDrawable(R.drawable.vertical_black))
+                    }
+                }catch (ex:Exception){}
+            }
+        }catch (ex:Exception){}
         firebaseDatabase.deleteAnimUser(partnerUserId)
     }
 
@@ -862,27 +1162,39 @@ P2pRtc.WebRtcEngineCallback{
         binding.progress.pauseProgress()
         if (isCorrect == "true") {
             try {
-                binding.marks2.setTextColor(resources.getColor(R.color.green_quiz))
-                val animation = AnimationUtils.loadAnimation(context, R.anim.abc_popup_exit)
-                binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.green_line))
-                binding.relativeAnim1.startAnimation(animation)
-            }catch (ex:Exception){
-                showToast(ex.message?:"")
-            }
+                activity?.resources?.getColor(R.color.green_quiz)?.let {
+                    binding.marks2.setTextColor(
+                        it
+                    )
+                }
+                progressBar1.secondaryProgress = opponentTeamMarks
+                progressBar1.progress = opponentTeamMarks - 10
+                if (position!=0)
+                    progressBar1.progressTintList =
+                        activity?.resources?.getColor(R.color.green_quiz)?.let {
+                            ColorStateList.valueOf(
+                                it
+                            )
+                        }
+            }catch (ex:Exception){}
         } else {
             try {
-                binding.marks2.setTextColor(resources.getColor(R.color.red))
-                val animation = AnimationUtils.loadAnimation(context, R.anim.abc_popup_exit)
-                binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.red_line))
-                binding.relativeAnim1.startAnimation(animation)
-            }catch (ex:Exception){
-                showToast(ex.message?:"")
-            }
-        }
+                activity?.resources?.getColor(R.color.red)?.let { binding.marks2.setTextColor(it) }
+                progressBar1.progress = opponentTeamMarks
+                progressBar1.progressTintList = activity?.resources?.getColor(R.color.blue2)?.let {
+                    ColorStateList.valueOf(
+                        it
+                    )
+                }
+                val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                binding.verticalProgressbar1.setBackgroundDrawable(activity?.resources?.getDrawable(R.drawable.vertical_red))
+                binding.verticalProgressbar1.startAnimation(animation)
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            delay(500)
-            binding.relativeAnim1.setBackgroundDrawable(resources.getDrawable(R.drawable.black_line))
+                lifecycleScope.launch(Dispatchers.Main) {
+                    delay(500)
+                    binding.verticalProgressbar1.setBackgroundDrawable(activity?.resources?.getDrawable(R.drawable.vertical_black))
+                }
+            }catch (ex:Exception){}
         }
         firebaseDatabase.deleteOpponentAnimTeam(opponentTeamId ?: "")
     }
@@ -896,30 +1208,33 @@ P2pRtc.WebRtcEngineCallback{
             })
     }
     private fun showDialog() {
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val dialog = activity?.let { Dialog(it) }
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.custom_dialog)
+        dialog?.setCancelable(false)
+        dialog?.setContentView(R.layout.custom_dialog)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
-        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
-        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
+        val yesBtn = dialog?.findViewById<MaterialCardView>(R.id.btn_yes)
+        val noBtn = dialog?.findViewById<MaterialCardView>(R.id.btn_no)
+        val btnCancel = dialog?.findViewById<ImageView>(R.id.btn_cancel)
 
-        yesBtn.setOnClickListener {
+        yesBtn?.setOnClickListener {
             deleteUserRoomData(dialog)
         }
-        noBtn.setOnClickListener {
+        noBtn?.setOnClickListener {
             dialog.dismiss()
         }
 
-        btnCancel.setOnClickListener {
+        btnCancel?.setOnClickListener {
             dialog.dismiss()
         }
 
-        dialog.show()
+        dialog?.show()
     }
     private fun openFavouritePartnerScreen() {
+        position = 0
+        marks = 0
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
             ?.replace(
@@ -928,10 +1243,20 @@ P2pRtc.WebRtcEngineCallback{
             )
             ?.remove(this)
             ?.commit()
+        isLastQuestion=false
+        marks=0
+        position=0
+        seconds = 0
+        secondaryProgressStatus = 0
+        progressStatus = 0
     }
     override fun onDestroy() {
         super.onDestroy()
-        timer?.cancel()
+        try {
+            timer?.cancel()
+        }catch (ex:Exception){
+
+        }
     }
     private fun openWinScreen() {
         val fm = activity?.supportFragmentManager
@@ -950,39 +1275,60 @@ P2pRtc.WebRtcEngineCallback{
             )
             ?.remove(this)
             ?.commit()
+        position = 0
+        marks = 0
+        isLastQuestion = false
+        seconds = 0
+        secondaryProgressStatus = 0
+        progressStatus = 0
     }
     override fun onStart() {
         super.onStart()
         binding.callTime.base = SystemClock.elapsedRealtime().minus(callTimeCount?.toLong()?:0)
         binding.callTime.start()
-        Log.d("call_time_out", "onStart: "+callTimeCount)
     }
     override fun onOpponentPartnerCut(teamId: String, isCorrect: String, choiceAnswer: String) {
-        when (choiceAnswer) {
-            binding.answer1.text -> {
-                drawTriangleOnCardRight(binding.card1)
-                firebaseDatabase.deletePartnerCutCard(teamId)
-//                timer?.cancel()
-//                timer?.onFinish()
+        try {
+            when (choiceAnswer) {
+                binding.answer1.text -> {
+                    drawTriangleOnCard(binding.imageCardRight1)
+                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        delay(2000)
+                        timer?.cancel()
+                        timer?.onFinish()
+                    }
+                }
+                binding.answer2.text -> {
+                    drawTriangleOnCard(binding.imageCardRight2)
+                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        delay(2000)
+                        timer?.cancel()
+                        timer?.onFinish()
+                    }
+                }
+                binding.answer3.text -> {
+                    drawTriangleOnCard(binding.imageCardRight3)
+                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        delay(2000)
+                        timer?.cancel()
+                        timer?.onFinish()
+                    }
+                }
+                binding.answer4.text -> {
+                    drawTriangleOnCard(binding.imageCardRight4)
+                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        delay(2000)
+                        timer?.cancel()
+                        timer?.onFinish()
+                    }
+                }
             }
-            binding.answer2.text -> {
-                drawTriangleOnCardRight(binding.card2)
-                firebaseDatabase.deletePartnerCutCard(teamId)
-//                timer?.cancel()
-//                timer?.onFinish()
-            }
-            binding.answer3.text -> {
-                drawTriangleOnCardRight(binding.card3)
-                firebaseDatabase.deletePartnerCutCard(teamId)
-//                timer?.cancel()
-//                timer?.onFinish()
-            }
-            binding.answer4.text -> {
-                drawTriangleOnCardRight(binding.card4)
-                firebaseDatabase.deletePartnerCutCard(teamId)
-//                timer?.cancel()
-//                timer?.onFinish()
-            }
+        }catch (ex:Exception){
+            //Log.d("exception", "onOpponentPartnerCut: "+ex.message)
         }
     }
     override fun onOpponentTeamCutCard(
@@ -990,77 +1336,161 @@ P2pRtc.WebRtcEngineCallback{
         isCorrect: String,
         choiceAnswer: String
     ) {
-        when (choiceAnswer) {
-            binding.answer1.text -> {
-                drawTriangleOnCardRight(binding.card1)
-                firebaseDatabase.deleteOpponentCutCard(opponentTeamId)
-//                timer?.cancel()
-//                timer?.onFinish()
-            }
-            binding.answer2.text -> {
-                drawTriangleOnCardRight(binding.card2)
-                firebaseDatabase.deleteOpponentCutCard(opponentTeamId)
-//                timer?.cancel()
-//                timer?.onFinish()
-            }
-            binding.answer3.text -> {
-                drawTriangleOnCardRight(binding.card3)
-                firebaseDatabase.deleteOpponentCutCard(opponentTeamId)
-//                timer?.cancel()
-//                timer?.onFinish()
-            }
-            binding.answer4.text -> {
-                drawTriangleOnCardRight(binding.card4)
-                firebaseDatabase.deleteOpponentCutCard(opponentTeamId)
-//                timer?.cancel()
-//                timer?.onFinish()
-            }
-        }
+      try {
+          when (choiceAnswer) {
+              binding.answer1.text -> {
+                  drawTriangleOnCardRight(binding.imageCardRight1)
+                  firebaseDatabase.deleteOpponentCutCard(currentUserTeamId?:"")
+                  lifecycleScope.launch(Dispatchers.IO) {
+                      delay(2000)
+                      timer?.cancel()
+                      timer?.onFinish()
+                  }
+              }
+              binding.answer2.text -> {
+                  drawTriangleOnCardRight(binding.imageCardRight2)
+                  firebaseDatabase.deleteOpponentCutCard(currentUserTeamId?:"")
+                  lifecycleScope.launch(Dispatchers.IO) {
+                      delay(2000)
+                      timer?.cancel()
+                      timer?.onFinish()
+                  }
+              }
+              binding.answer3.text -> {
+                  drawTriangleOnCardRight(binding.imageCardRight3)
+                  firebaseDatabase.deleteOpponentCutCard(currentUserTeamId?:"")
+                  lifecycleScope.launch(Dispatchers.IO) {
+                      delay(2000)
+                      timer?.cancel()
+                      timer?.onFinish()
+                  }
+              }
+              binding.answer4.text -> {
+                  drawTriangleOnCardRight(binding.imageCardRight4)
+                  firebaseDatabase.deleteOpponentCutCard(currentUserTeamId?:"")
+                  lifecycleScope.launch(Dispatchers.IO) {
+                      delay(2000)
+                      timer?.cancel()
+                      timer?.onFinish()
+                  }
+              }
+          }
+      }catch (ex:Exception){
+          //Log.d("exception", "onOpponentTeamCutCard: "+ex.message)
+      }
     }
 
+    override fun onMicOnOff(partnerUserId: String,status: String) {
+        if (status == "true"){
+            binding.team1Mic2.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic_off))
+        }else{
+            binding.team1Mic2.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic))
+        }
+    }
     private fun deleteUserRoomData(dialog: Dialog){
         if (fromType == "Random"){
-            questionViewModel?.getClearRadius(RandomRoomData(roomId?:"",currentUserId?:""))
-            activity?.let {
-                questionViewModel?.clearRadius?.observe(it, {
-                    Log.d("message", "showDialog: "+it.message)
-                    dialog.dismiss()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openFavouritePartnerScreen()
-                    engine?.leaveChannel()
-                })
+            try {
+                questionViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+                activity?.let {
+                    questionViewModel?.clearRadius?.observe(it, {
+                        Log.d("message", "showDialog: "+it.message)
+                        dialog.dismiss()
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        openFavouritePartnerScreen()
+                        engine?.leaveChannel()
+                        binding.callTime.stop()
+                    })
+                }
+            }catch (ex:Exception){
+                Log.d("exception", "deleteUserRoomData: "+ex.message)
             }
         }else{
-            questionViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
-            activity?.let {
-                questionViewModel?.deleteData?.observe(it, Observer {
-                    showToast(it.message)
-                    dialog.dismiss()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openFavouritePartnerScreen()
-                    engine?.leaveChannel()
-                    //callback.onPartnerLeave()
-                })
+            try {
+                questionViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+                activity?.let {
+                    questionViewModel?.deleteData?.observe(it, Observer {
+                        dialog.dismiss()
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        openFavouritePartnerScreen()
+                        engine?.leaveChannel()
+                        binding.callTime.stop()
+                    })
+                }
+            }catch (ex:Exception){
+                Log.d("exception", "deleteUserRoomData: "+ex.message)
             }
         }
     }
-
     override fun onPartnerLeave() {
         super.onPartnerLeave()
         when {
             team1UserId1 == currentUserId -> {
-                binding.team1UserImage2.setAlpha(127)
+                try {
+                    requireActivity().runOnUiThread {
+                        binding.team1User2Name.alpha = 0.5f
+                        binding.team1UserImage2Shadow.visibility = View.VISIBLE
+                    }
+                }catch (ex:Exception){
+                    Log.d("error_res", "onPartnerLeave: "+ex.message)
+                }
             }
             team1UserId2 == currentUserId -> {
-                binding.team1UserImage1.setAlpha(127)
+                try {
+                    requireActivity().runOnUiThread {
+                        binding.team1User1Name.alpha = 0.5f
+                        binding.team1UserImage1Shadow.visibility = View.VISIBLE
+                    }
+                }catch (ex:Exception){
+                    Log.d("error_res", "onPartnerLeave: "+ex.message)
+                }
             }
             team2UserId1 == currentUserId -> {
-                binding.team2UserImage2.setAlpha(127)
+                try {
+                    requireActivity().runOnUiThread {
+                        binding.team2User2Name.alpha = 0.5f
+                        binding.team2UserImage2Shadow.visibility = View.VISIBLE
+                    }
+                }catch (ex:Exception){
+                    Log.d("error_res", "onPartnerLeave: "+ex.message)
+                }
             }
             team2UserId2 == currentUserId -> {
-                binding.team2UserImage1.setAlpha(127)
+                try {
+                    requireActivity().runOnUiThread {
+                        binding.team2User1Name.alpha = 0.5f
+                        binding.team2UserImage1Shadow.visibility = View.VISIBLE
+                    }
+                }catch (ex:Exception){
+                    Log.d("error_res", "onPartnerLeave: "+ex.message)
+                }
             }
         }
-        showToast("Partner Leave The Channel")
+    }
+    private fun muteCall() {
+        engine?.muteLocalAudioStream(true)
+    }
+    private fun unMuteCall() {
+        engine?.muteLocalAudioStream(false)
+    }
+    private fun muteUnMute(view: ImageView){
+        try {
+            if (flag == 1){
+                flag = 0
+                muteCall()
+                view.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic_off))
+                firebaseDatabase.createMicOnOff(partnerId?:"","true")
+            }else{
+                flag = 1
+                unMuteCall()
+                view.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic))
+                firebaseDatabase.createMicOnOff(partnerId?:"","false")
+            }
+        }catch (ex:Exception){
+
+        }
+    }
+    fun buttonEnableDisable(){
+        binding.team1Mic1.isEnabled = true
+        binding.team1Mic2.isEnabled = false
     }
 }

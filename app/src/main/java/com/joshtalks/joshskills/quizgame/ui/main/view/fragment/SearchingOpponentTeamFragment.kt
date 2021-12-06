@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.app.Dialog
+import android.graphics.BlurMaskFilter
+import android.graphics.Color
+import android.graphics.MaskFilter
+import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,8 +17,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSearchingOpponentTeamBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
@@ -34,7 +40,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 //Channel Name = team_id
-class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger {
+class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
+        P2pRtc.WebRtcEngineCallback{
+
     lateinit var binding:FragmentSearchingOpponentTeamBinding
     var startTime:String?=null
     var channelName:String?=null
@@ -123,7 +131,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         startTimer()
         activity?.let {
             searchOpponentTeamViewModel?.roomData?.observe(it, Observer {
-               showToast(it.message)
+              // showToast(it.message)
             })
         }
 
@@ -134,7 +142,9 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         }
 
         try {
-            engine = P2pRtc().initEngine(requireActivity())
+           // engine = P2pRtc().initEngine(requireActivity())
+            engine = P2pRtc().getEngineObj()
+            P2pRtc().addListener(callback)
         }catch (ex:Exception){
             Timber.d(ex)
         }
@@ -153,16 +163,17 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 }
             }
     }
-
     private fun setCurrentUserData() {
         binding.team1User1Name.text = Mentor.getInstance().getUser()?.firstName
         val imageUrl= Mentor.getInstance().getUser()?.photo?.replace("\n","")
-        ImageAdapter.imageUrl(binding.team1UserImage1,imageUrl)
+        binding.team1UserImage1.setUserImageOrInitials(imageUrl,Mentor.getInstance().getUser()?.firstName?:"",30,isRound = true)
+       // ImageAdapter.imageUrl(binding.team1UserImage1,imageUrl)
     }
     private fun setTeamMateData(userDetails: UserDetails?){
         binding.team1User2Name.text = userDetails?.name
         val imageUrl=userDetails?.imageUrl?.replace("\n","")
-        ImageAdapter.imageUrl(binding.team1UserImage2,imageUrl)
+        binding.team1UserImage2.setUserImageOrInitials(imageUrl,userDetails?.name?:"",30,isRound = true)
+       // ImageAdapter.imageUrl(binding.team1UserImage2,imageUrl)
     }
     private fun setupViewModel() {
         repository = SearchOpponentRepo()
@@ -170,20 +181,20 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         searchOpponentTeamViewModel = factory?.let {
             ViewModelProvider(this, it).get(SearchOpponentTeamViewModel::class.java)
         }
-        showToast("Add To Room")
+        //showToast("Add To Room")
         searchOpponentTeamViewModel?.addToRoomData(ChannelName(channelName))
     }
     override fun onStart() {
         super.onStart()
         call_time.visibility = View.VISIBLE
-        call_time.setBase(SystemClock.elapsedRealtime().minus(startTime?.toLong()!!))
+        call_time.base = SystemClock.elapsedRealtime().minus(startTime?.toLong()!!)
         call_time.start()
     }
     override fun onNotificationForInvitePartner(channelName: String, fromUserId: String, fromUserName: String, fromUserImage: String)
     {
 
     }
-    override fun onNotificationForPartnerNotAccept(userName: String?, userImageUrl: String, fromUserId: String)
+    override fun onNotificationForPartnerNotAccept(userName: String?, userImageUrl: String, fromUserId: String,declinrUserID:String)
     {
     }
     override fun onNotificationForPartnerAccept(channelName: String?, timeStamp: String, isAccept: String, opponentMemberId: String, mentorId: String) {
@@ -194,11 +205,11 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         roomId = currentUserRoomID
         Log.d("response_room", "onGetRoomId: "+currentUserRoomID)
             if (currentUserRoomID!=null){
-                //timer?.cancel()
                 searchOpponentTeamViewModel?.getRoomUserData(RandomRoomData(currentUserRoomID,mentorId))
                 activity?.let {
                     searchOpponentTeamViewModel?.roomUserData?.observe(it, Observer {
                         initializeUsersTeamsData(it.teamData)
+                        timer?.cancel()
                         timer?.onFinish()
                     })
                 }
@@ -244,20 +255,23 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             currentUserTeamId = team1Id
             opponentTeamId = team2Id
 
-            val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-            binding.team1User1Name.text = team1User1Name
+//            val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
+//            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+//            binding.team1User1Name.text = team1User1Name
 
             val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+            //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+            binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team1User2Name?:"",30,true)
             binding.team1User2Name.text = team1User2Name
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+           // ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team2User1Name?:"",30,true)
             binding.team2User1Name.text = team2User1Name
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team2User2Name?:"",30,true)
             binding.team2User2Name.text = team2User2Name
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
@@ -265,20 +279,23 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             currentUserTeamId = team2Id
             opponentTeamId = team1Id
 
-            val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-            binding.team1User1Name.text = team2User1Name
+//            val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
+//            ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+//            binding.team1User1Name.text = team2User1Name
 
             val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+            //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+            binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team2User2Name?:"",30,true)
             binding.team1User2Name.text = team2User2Name
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            //ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team1User1Name?:"",30,true)
             binding.team2User1Name.text = team1User1Name
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-            ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team1User2Name?:"",30,true)
             binding.team2User2Name.text = team1User2Name
 
         }
@@ -295,7 +312,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                     BothTeamMateFound.newInstance(startTime,roomId?:"",userDetails,channelName?:""),"BothTeamMateFound")
                 ?.commit()
             fm?.popBackStack()
-        },3000)
+        },4000)
     }
     private fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -311,6 +328,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
 
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.custom_dialog)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
         val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
@@ -322,31 +340,29 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         yesBtn.setOnClickListener {
             if (roomId!=null){
                 Log.d("room_id_data", "showDialog: "+roomId +" "+currentUserId)
-                searchOpponentTeamViewModel?.deleteUserRoomData(RandomRoomData(roomId?:"",currentUserId?:""))
+                searchOpponentTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
                 activity?.let {
                     searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-                        showToast(it.message)
+                       // showToast(it.message)
                         dialog.dismiss()
                         AudioManagerQuiz.audioRecording.stopPlaying()
                         engine?.leaveChannel()
+                        binding.callTime.stop()
                         timer?.cancel()
-                        timer?.onFinish()
                         openChoiceScreen()
-                        //callback.onPartnerLeave()
                     })
                 }
             }else{
                 searchOpponentTeamViewModel?.deleteUserAndTeamData(TeamDataDelete(currentUserTeamId?:"",currentUserId?:""))
                 activity?.let {
                     searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-                        showToast(it.message)
+                      // showToast(it.message)
                         dialog.dismiss()
                         AudioManagerQuiz.audioRecording.stopPlaying()
                         engine?.leaveChannel()
+                        binding.callTime.stop()
                         timer?.cancel()
-                        timer?.onFinish()
                         openChoiceScreen()
-                        //callback.onPartnerLeave()
                     })
                 }
             }
@@ -370,35 +386,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             ?.commit()
         fm?.popBackStack()
     }
-    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
-        override fun onChannelJoin() {
-            super.onChannelJoin()
-        }
 
-        override fun onConnect(callId: String) {
-            super.onConnect(callId)
-        }
-
-        override fun onDisconnect(callId: String?, channelName: String?) {
-            super.onDisconnect(callId, channelName)
-            engine?.leaveChannel()
-            showToast("Your Partner Game Left")
-        }
-
-        override fun onSpeakerOff() {
-            super.onSpeakerOff()
-        }
-
-        override fun onNetworkLost() {
-            super.onNetworkLost()
-        }
-
-        override fun onPartnerLeave() {
-            super.onPartnerLeave()
-            engine?.leaveChannel()
-            showToast("Your Partner Left")
-        }
-    }
     private fun startTimer() {
         timer = object : CountDownTimer(45000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -421,12 +409,32 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         searchOpponentTeamViewModel?.deleteUserAndTeamData(TeamDataDelete(currentUserTeamId?:"",currentUserId?:""))
         activity?.let {
             searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-                showToast(it.message)
+               // showToast(it.message)
                 AudioManagerQuiz.audioRecording.stopPlaying()
                 engine?.leaveChannel()
+                binding.callTime.stop()
                 openChoiceScreen()
-                //callback.onPartnerLeave()
             })
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        roomId = null
+    }
+
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+
+        override fun onPartnerLeave() {
+            super.onPartnerLeave()
+            try {
+                requireActivity().runOnUiThread {
+                    binding.team1User2Name.alpha = 0.5f
+                    binding.team1UserImage2Shadow.visibility = View.VISIBLE
+                }
+            }catch (ex:Exception){
+                Log.d("error_res", "onPartnerLeave: "+ex.message?:"")
+            }
         }
     }
 }

@@ -197,12 +197,26 @@
 
     <color name="transparent_color_notification">#66E00022</color>
     <color name="notification_timer">#35E00022</color>
-    <color name="gray_light">#dfe6f3</color>
 
     <color name="light_blue_quiz">#C5E5FE</color>
 
-    <color name="blue">#6600b5d9</color>
+    <color name="blue">#126A96</color>
+
+
     <color name="blue2">#BF00b5d9</color>
+    <color name="blue3">#6160C0D3</color>
+
+
+    <color name="gray_light">#dfe6f3</color>
+
+    <color name="gray_light_copy">#113239</color>
+    <color name="blue2_copy">#126A96</color>
+
+
+
     <color name="black_quiz">#000000</color>
     <color name="red_quiz">#FE5552</color>
+    <color name="shadow_progress_color_quiz">#055C39</color>
+    <color name="progess_color_quiz">#13B673</color>
+
 </resources>

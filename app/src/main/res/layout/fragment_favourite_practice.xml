@@ -119,7 +119,7 @@
                         android:layout_marginTop="@dimen/_3sdp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="3dp"
-                        android:src="@drawable/ic_cross">
+                        android:src="@drawable/ic_cross_quiz">
                     </ImageView>
 
             </RelativeLayout>
@@ -372,7 +372,7 @@
                             android:layout_marginTop="@dimen/_3sdp"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="3dp"
-                            android:src="@drawable/ic_cross">
+                            android:src="@drawable/ic_cross_quiz">
                         </ImageView>
 
 
@@ -383,74 +383,82 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:scaleType="fitXY"
+                android:layout_marginLeft="16dp"
                 android:onClick="@{()->clickHandler.onBack()}"
                 android:src="@drawable/ic_arrow_back"
                 android:layout_marginTop="30dp"
-                android:layout_marginLeft="20dp" />
+                 />
 
             <TextView
                 android:id="@+id/txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
+                android:layout_marginLeft="20dp"
                 android:text="@string/favourite_practice_partner"
-                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/search"
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                android:id="@+id/search"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:layout_below="@+id/txt"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:layout_marginRight="20dp"-->
+<!--                android:layout_marginLeft="20dp"-->
+<!--                app:cardBackgroundColor="@android:color/transparent"-->
+<!--                app:cardCornerRadius="18dp"-->
+<!--                android:elevation="10dp">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:id="@+id/relative_layout"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:background="@drawable/rectangle"-->
+<!--                    app:cardBackgroundColor="@android:color/transparent">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/searchImage"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerVertical="true"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:src="@drawable/ic_search_quiz" />-->
+
+            <EditText
+                android:id="@+id/inputSearch"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_below="@+id/txt"
+                android:layout_marginStart="19dp"
+                android:layout_marginLeft="19dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="15dp"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="18dp"
-                android:elevation="10dp">
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:autofillHints="Search"
+                android:background="@drawable/rectangle"
+                android:drawableStart="@drawable/ic_search_quiz"
+                android:drawablePadding="10dp"
+                android:hint="@string/search"
+                android:inputType="text"
+                android:paddingStart="10dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#B5B5B5"
+                android:textSize="@dimen/_15sdp" />
 
-                    <RelativeLayout
-                        android:id="@+id/relative_layout"
-                        android:layout_width="match_parent"
-                        app:cardBackgroundColor="@android:color/transparent"
-                        android:background="@drawable/rectangle"
-                        android:layout_height="50dp">
+<!--                </RelativeLayout>-->
 
-                        <ImageView
-                            android:id="@+id/searchImage"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginStart="8dp"
-                            android:src="@drawable/ic_search_quiz" />
-
-                        <EditText
-                            android:id="@+id/inputSearch"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="5dp"
-                            android:layout_toEndOf="@id/searchImage"
-                            android:autofillHints="Search"
-                            android:background="@null"
-                            android:hint="@string/search"
-                            android:inputType="text"
-                            android:textColor="#B5B5B5"
-                            android:textColorHint="#B5B5B5"
-                            android:textSize="@dimen/_15sdp" />
-
-                </RelativeLayout>
-
-            </com.google.android.material.card.MaterialCardView>
+<!--            </com.google.android.material.card.MaterialCardView>-->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycle_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/search"
+                android:layout_below="@+id/inputSearch"
                 android:layout_marginTop="25dp"
                 tools:listitem="@layout/custom_favourite" />
 
