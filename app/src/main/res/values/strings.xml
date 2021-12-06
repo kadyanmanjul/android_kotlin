@@ -973,7 +973,6 @@
     <string name="total_students_enrolled">%s students enrolled</string>
     <string name="edit_profile">Edit Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_awards_others">%s has not won any awards yet.\n\nIf you ever connect with him motivate him and let him know he can do it</string>
     <string name="no_awards_me">%s Param you have not won any awards yet. But you can do it.\n\nWe believe in you.</string>
     <string name="previous_dp">Previous Profile Photos (0)</string>

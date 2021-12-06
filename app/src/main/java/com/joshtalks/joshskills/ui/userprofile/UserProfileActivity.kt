@@ -49,8 +49,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
-import java.util.*
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.base_toolbar.*
@@ -61,6 +59,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
+
 
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 
@@ -233,9 +232,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         }
                     )
                 }
-                R.id.change_dp -> {
+                /*R.id.change_dp -> {
                     openChooser()
-                }
+                }*/
             }
             return@setOnMenuItemClickListener false
         }
