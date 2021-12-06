@@ -126,6 +126,7 @@ class GroupChatFragment : BaseFragment() {
             vm.groupCreator.set(it.getString(GROUPS_CREATOR, ""))
             vm.conversationId = it.getString(CONVERSATION_ID, "") ?: ""
             vm.adminId = it.getString(ADMIN_ID, "")
+            vm.unreadCount = it.getInt(GROUP_CHAT_UNREAD, 0)
         }
     }
 

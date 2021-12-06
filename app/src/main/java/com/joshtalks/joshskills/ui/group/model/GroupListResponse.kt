@@ -70,6 +70,5 @@ data class GroupsItem(
         else Utils.getMessageTimeInHours(Date(lastMsgTime / 10000))
 
     override fun getUnreadMsgCount() =
-        if (unreadCount == "0" || unreadCount == null) ""
-        else unreadCount
+        unreadCount ?: "0"
 }

@@ -57,20 +57,22 @@ class GroupChatViewModel : BaseViewModel() {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                Log.d(TAG, "onItemRangeInserted: ${positionStart} : ${itemCount}")
-                message.what = NEW_CHAT_ADDED
-                singleLiveEvent.value = message
+                Log.d(TAG, "onItemRangeInserted: ${positionStart} : ${itemCount} : {$unreadCount}")
+                if (positionStart == 0 && unreadCount != 0){
+                    unreadCount = 0
+                } else {
+                    message.what = NEW_CHAT_ADDED
+                    singleLiveEvent.value = message
+                }
             }
         })
-    }
-
-    fun newMessageAdded() {
     }
 
     val joiningNewGroup = ObservableBoolean(false)
     val fetchingGrpInfo = ObservableBoolean(false)
     var chatSendText: String = ""
     var scrollToEnd = false
+    var unreadCount = 0
     private val chatService : ChatService = PubNubService
 
     var groupId: String = ""

@@ -164,6 +164,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 data?.hasJoined()?.let {
                     if (it) {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
+                        putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
                         GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
                     }
                     putBoolean(HAS_JOINED_GROUP, it)
