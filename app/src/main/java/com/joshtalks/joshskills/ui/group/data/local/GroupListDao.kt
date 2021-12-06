@@ -34,6 +34,9 @@ interface GroupListDao {
     @Query("UPDATE group_list_table SET name = :groupName, groupIcon = :icon WHERE groupId = :id")
     suspend fun updateEditedGroup(id: String, groupName: String, icon: String)
 
+    @Query("UPDATE group_list_table SET name = :groupName WHERE groupId = :id")
+    suspend fun updateGroupName(id: String, groupName: String)
+
     @Query("UPDATE group_list_table SET unreadCount = 0 WHERE groupId = :id")
     suspend fun resetUnreadCount(id: String)
 

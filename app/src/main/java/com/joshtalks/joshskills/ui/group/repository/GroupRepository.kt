@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
+import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
@@ -98,6 +99,16 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                             messageId = "${pnMessageResult.timetoken}_${pnMessageResult.channel}_${messageItem.mentorId}"
                         )
                     )
+                    if (messageItem.getMessageType() == RECEIVE_META_MESSAGE_LOCAL && messageItem.msg.contains("changed")){
+                        val message = messageItem.msg
+                        when (message.contains("changed the group icon")) {
+                            true -> { TODO("UPDATE IMAGE ICON") }
+                            false -> {
+                                val newGroupName = messageItem.msg.substring(messageItem.msg.lastIndexOf("the group name to ") + 18)
+                                database.groupListDao().updateGroupName(pnMessageResult.channel, newGroupName)
+                            }
+                        }
+                    }
                     onNewMessageAdded?.invoke()
                 } catch (e : Exception) {
                     e.printStackTrace()
