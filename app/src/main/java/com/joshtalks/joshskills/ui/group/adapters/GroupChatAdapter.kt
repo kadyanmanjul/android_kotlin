@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
+import com.joshtalks.joshskills.databinding.GroupChatUnreadMsgBinding
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.viewholder.ChatViewHolder
@@ -44,6 +45,11 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
                 val view =
                     setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
                 MetaChatViewHolder(view)
+            }
+            UNREAD_MESSAGE -> {
+                val view =
+                    setViewHolder<GroupChatUnreadMsgBinding>(parent, R.layout.group_chat_unread_msg)
+                UnreadViewHolder(view)
             }
             else -> {
                 val view =
@@ -99,4 +105,10 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         }
     }
 
+    inner class UnreadViewHolder(val item: GroupChatUnreadMsgBinding) :
+        ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            item.itemData = groupChatData
+        }
+    }
 }

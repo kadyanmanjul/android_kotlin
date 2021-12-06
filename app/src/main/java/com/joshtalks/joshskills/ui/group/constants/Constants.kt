@@ -7,4 +7,5 @@ const val SENT_MESSAGE_LOCAL = 0
 const val SENT_META_MESSAGE_LOCAL = 1
 const val RECEIVE_MESSAGE_LOCAL = 2
 const val RECEIVE_META_MESSAGE_LOCAL = 3
-const val MESSAGE_ERROR= 4
+const val MESSAGE_ERROR = 4
+const val UNREAD_MESSAGE = 5

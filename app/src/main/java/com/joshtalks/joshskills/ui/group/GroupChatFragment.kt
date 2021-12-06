@@ -103,13 +103,20 @@ class GroupChatFragment : BaseFragment() {
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
                 SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString().trim())
                 NEW_CHAT_ADDED -> {
-                    val lastItemPosition = (binding.groupChatRv.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
-                    if (vm.scrollToEnd || lastItemPosition == 0) {
-                        binding.groupChatRv.layoutManager?.smoothScrollToPosition(binding.groupChatRv, RecyclerView.State(), 0)
-                        binding.scrollUnread.visibility = INVISIBLE
+                    if (it.data.getInt(GROUP_CHAT_UNREAD) != 0) {
+                        binding.groupChatRv.layoutManager?.scrollToPosition(
+                            it.data.getInt(GROUP_CHAT_UNREAD)
+                        )
+                    } else {
+                        val lastItemPosition = (binding.groupChatRv.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+                        if (vm.scrollToEnd || lastItemPosition == 0) {
+                            binding.groupChatRv.layoutManager?.smoothScrollToPosition(
+                                binding.groupChatRv, RecyclerView.State(), 0
+                            )
+                            binding.scrollUnread.visibility = INVISIBLE
+                        } else binding.scrollUnread.visibility = VISIBLE
+                        vm.scrollToEnd = false
                     }
-                    else binding.scrollUnread.visibility = VISIBLE
-                    vm.scrollToEnd = false
                 }
             }
         }
@@ -169,5 +176,6 @@ class GroupChatFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         vm.resetUnreadAndTimeToken()
+        vm.removeUnreadLabel()
     }
 }

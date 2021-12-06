@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#59FFFFFF">
+<layout xmlns:tools="http://schemas.android.com/tools">
 
-    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-        android:layout_width="wrap_content"
+    <data>
+
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="20 Unread Messages"
-        android:layout_gravity="center"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
-        android:textColor="@color/black"
-        android:layout_margin="@dimen/_4sdp"
-        android:paddingVertical="@dimen/_4sdp"
-        android:rotation="180"
-        android:paddingHorizontal="@dimen/_15sdp"
-        android:background="@drawable/rounded_grey_button_bg"
-        android:backgroundTint="@color/white"/>
+        android:background="#59FFFFFF">
 
-</FrameLayout>
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_4sdp"
+            android:background="@drawable/rounded_grey_button_bg"
+            android:backgroundTint="@color/white"
+            android:paddingHorizontal="@dimen/_15sdp"
+            android:paddingVertical="@dimen/_4sdp"
+            android:rotation="180"
+            android:text="@{itemData.message}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
+            android:textColor="@color/black"
+            tools:text="20 Unread Messages"/>
+
+    </FrameLayout>
+</layout>

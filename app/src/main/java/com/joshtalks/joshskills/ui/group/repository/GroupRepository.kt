@@ -428,4 +428,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
         return false
     }
+
+    suspend fun removeUnreadMsg() = database.groupChatDao().deleteUnreadLabel()
 }
