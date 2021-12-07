@@ -93,11 +93,12 @@ object PubNubService : ChatService {
     }
 
     override fun dispatchNotifications(groups: List<String>) {
-        pubnub.addPushNotificationsOnChannels()
-            .pushType(PNPushType.FCM)
-            .deviceId(PrefManager.getStringValue(FCM_TOKEN))
-            .channels(groups)
-            .sync()
+        if(groups.isNotEmpty())
+            pubnub.addPushNotificationsOnChannels()
+                .pushType(PNPushType.FCM)
+                .deviceId(PrefManager.getStringValue(FCM_TOKEN))
+                .channels(groups)
+                .sync()
     }
 
     override fun getLastMessageDetail(groupId: String): Pair<String, Long> {

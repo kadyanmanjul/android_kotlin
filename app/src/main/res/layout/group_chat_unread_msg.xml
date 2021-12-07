@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
@@ -11,7 +13,8 @@
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#59FFFFFF">
+        android:background="#59FFFFFF"
+        android:visibility="@{itemData.message.startsWith(`0`) ? View.GONE : View.VISIBLE, default=gone}">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:layout_width="wrap_content"
@@ -26,7 +29,7 @@
             android:text="@{itemData.message}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
             android:textColor="@color/black"
-            tools:text="20 Unread Messages"/>
+            tools:text="20 Unread Messages" />
 
     </FrameLayout>
 </layout>
