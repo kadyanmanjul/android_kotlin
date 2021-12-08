@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.ui.group.model.DefaultImage
 
 import java.lang.Exception
 
@@ -66,7 +67,7 @@ class GroupsAppBar @JvmOverloads constructor(
     fun setImage(url: String) {
         toolbarImageView.visibility = View.VISIBLE
         if (url.isEmpty())
-            toolbarImageView.setImageResource(R.drawable.josh_skill_logo)
+            toolbarImageView.setImageResource(DefaultImage.DEFAULT_GROUP_IMAGE.drwRes)
         else
             Glide.with(toolbarImageView)
                 .load(url)

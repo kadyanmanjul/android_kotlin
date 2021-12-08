@@ -24,5 +24,8 @@ data class ChatItem(
     val msgType: Int
 ) {
 
-    fun getMessageTime() = Utils.getMessageTimeInHours(Date(msgTime / 10000))
+    fun getMessageTime(): String {
+        val time = Utils.getMessageTimeInHours(Date(msgTime / 10000))
+        return if (time[0] == '0') time.substring(1) else time
+    }
 }

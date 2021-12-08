@@ -65,9 +65,14 @@ data class GroupsItem(
 
     override fun hasJoined() = lastMessage != null
 
-    override fun getLastMessageTime() =
-        if (lastMsgTime == 0L) Utils.getMessageTimeInHours(Date(createdAt?.times(1000)!!))
-        else Utils.getMessageTimeInHours(Date(lastMsgTime / 10000))
+    override fun getLastMessageTime(): String {
+        val time = if (lastMsgTime == 0L)
+            Utils.getMessageTimeInHours(Date(createdAt?.times(1000)!!))
+        else
+            Utils.getMessageTimeInHours(Date(lastMsgTime / 10000))
+
+        return if (time[0] == '0') time.substring(1) else time
+    }
 
     override fun getUnreadMsgCount() =
         unreadCount ?: "0"

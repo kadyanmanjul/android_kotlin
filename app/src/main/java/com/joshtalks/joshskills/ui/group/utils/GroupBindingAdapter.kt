@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
@@ -57,6 +58,12 @@ fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
 
 @BindingAdapter("groupImage")
 fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
+
+@BindingAdapter("groupImage", "defaultImage")
+fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {
+    if (defaultImage.isNotBlank())
+        this.setUserImageOrInitials(imageUrl, defaultImage, isRound = true)
+}
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: DefaultImage) {

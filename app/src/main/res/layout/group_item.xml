@@ -91,10 +91,11 @@
             android:layout_marginEnd="@dimen/_14sdp"
             android:text="@{itemData.lastMessageTime}"
             android:textColor="@{itemData.unreadMsgCount.equals(`0`) ? @color/read_color : @color/colorPrimaryDark}"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/_10ssp"
             android:visibility="@{itemData.hasJoined() ? View.VISIBLE : View.GONE, default=gone}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            tools:text="1:30 pm"
             tools:visibility="visible" />
 
         <TextView

@@ -20,7 +20,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/group_item_image"
-            defaultImage="@{DefaultImage.DEFAULT_PROFILE_IMAGE}"
+            defaultImage="@{itemData.memberName}"
             groupImage="@{itemData.getMemberURL()}"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
