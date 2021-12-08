@@ -61,7 +61,7 @@ class GroupChatViewModel : BaseViewModel() {
                 message.what = NEW_CHAT_ADDED
                 val bundle = Bundle()
                 if (positionStart == 0 && unreadCount != 0) {
-                    bundle.putInt(GROUP_CHAT_UNREAD, if (unreadCount > 4) 4 else unreadCount)
+                    bundle.putInt(GROUP_CHAT_UNREAD, if (unreadCount > 2) unreadCount - 1 else 0)
                     unreadCount = 0
                 } else bundle.putInt(GROUP_CHAT_UNREAD, 0)
                 message.data = bundle
@@ -270,7 +270,7 @@ class GroupChatViewModel : BaseViewModel() {
             chatService.sendGroupNotification(groupId, getNotification(msg))
             chatService.sendMessage(groupId, message)
             clearText()
-            removeUnreadLabel()
+            resetUnreadLabel()
         }
     }
 
@@ -302,7 +302,13 @@ class GroupChatViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun removeUnreadLabel() = viewModelScope.launch(Dispatchers.IO) {
-        repository.removeUnreadMsg()
+    fun resetUnreadLabel() = viewModelScope.launch(Dispatchers.IO) {
+        repository.resetUnreadLabel(groupId)
+    }
+
+    fun setUnreadLabel() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (unreadCount != 0) repository.setUnreadChatLabel(unreadCount, groupId)
+        }
     }
 }

@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
@@ -204,7 +205,17 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         if (groupList.isEmpty())
             return
         groupList.forEach { group ->
-            group?.let { database.groupListDao().insertGroupItem(it) }
+            group?.let {
+                database.groupListDao().insertGroupItem(it)
+                database.groupChatDao().insertMessage(ChatItem(
+                    messageId = "unread_${it.groupId}",
+                    message = "0 Unread Messages",
+                    groupId = it.groupId,
+                    msgType = UNREAD_MESSAGE,
+                    msgTime = it.lastMsgTime,
+                    sender = null
+                ))
+            }
         }
         val nextPage = pubNubResponse?.getPageInfo()?.pubNubNext
         Log.d(TAG, "fetchGroupList: Next Page H : ${nextPage?.hash}")
@@ -230,6 +241,14 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         totalCalls = null
                     )
                 )
+                database.groupChatDao().insertMessage(ChatItem(
+                    messageId = "unread_${groupId}",
+                    message = "0 Unread Messages",
+                    groupId = groupId,
+                    msgType = UNREAD_MESSAGE,
+                    msgTime = System.currentTimeMillis().times(10000),
+                    sender = null
+                ))
                 startChatEventListener()
                 val recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = response["group_id"] as String)
                 recentMessageTime?.let {
@@ -281,6 +300,14 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         totalCalls = null
                     )
                 )
+                database.groupChatDao().insertMessage(ChatItem(
+                    messageId = "unread_${response["group_id"] as String}",
+                    message = "0 Unread Messages",
+                    groupId = response["group_id"] as String,
+                    msgType = UNREAD_MESSAGE,
+                    msgTime = System.currentTimeMillis().times(10000),
+                    sender = null
+                ))
                 startChatEventListener()
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has created this group", response["group_id"] as String)
             } catch (exp: Exception) {
@@ -429,5 +456,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         return false
     }
 
-    suspend fun removeUnreadMsg() = database.groupChatDao().deleteUnreadLabel()
+    suspend fun resetUnreadLabel(id: String) = database.groupChatDao().resetUnreadLabel(id)
+
+    suspend fun setUnreadChatLabel(count: Int, id: String) {
+        val time = database.groupChatDao().getUnreadLabelTime(count, id)
+        Log.e("Info Sukesh","${time}")
+        database.groupChatDao().setUnreadLabelTime(count, time+1, id)
+    }
 }

@@ -6,7 +6,6 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem
@@ -46,15 +45,7 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
 
                     recentMessageTime?.let {
                         messages.addAll(chatService.getUnreadMessages(channelId, startTime = recentMessageTime))
-                        if (messages.size > 0)
-                            messages.add(ChatItem(
-                                messageId = "unread_${channelId}",
-                                message = "${messages.size} Unread Messages",
-                                groupId = channelId,
-                                msgType = UNREAD_MESSAGE,
-                                msgTime = recentMessageTime + 1,
-                                sender = null
-                            ))
+
                         database.groupChatDao().insertMessages(messages)
                         Log.d(TAG, "load: PREPEND : $loadType")
                     }

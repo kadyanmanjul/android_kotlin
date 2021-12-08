@@ -142,6 +142,8 @@ class GroupChatFragment : BaseFragment() {
         val emojiIconEditText = binding.groupChatSendMsg
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(emojiIconEditText)
 
+        vm.setUnreadLabel()
+
         binding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
@@ -176,6 +178,6 @@ class GroupChatFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         vm.resetUnreadAndTimeToken()
-        vm.removeUnreadLabel()
+        vm.resetUnreadLabel()
     }
 }
