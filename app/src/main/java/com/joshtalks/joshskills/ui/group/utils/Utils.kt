@@ -5,7 +5,6 @@ import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.MessageItem
-import com.pubnub.api.models.consumer.history.PNHistoryItemResult
 
 fun getMemberCount(memberText: String): Int {
     var memberCount = 1
@@ -30,6 +29,9 @@ fun MessageItem.getMessageType() = when (msgType) {
     else -> MESSAGE_ERROR
 }
 
+fun MessageItem.getLastMessage(sender: String) =
+    if (mentorId == Mentor.getInstance().getId()) "You: $msg"
+    else "$sender: $msg"
 
 fun pushMetaMessage(msg: String, groupId: String) {
     val chatService: ChatService = PubNubService

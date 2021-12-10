@@ -138,7 +138,7 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_5sdp"
-            android:background="@drawable/rect_round"
+            android:background="@drawable/rect_round_16"
             android:paddingEnd="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"

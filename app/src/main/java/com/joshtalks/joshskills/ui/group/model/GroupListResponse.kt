@@ -67,9 +67,9 @@ data class GroupsItem(
 
     override fun getLastMessageTime(): String {
         val time = if (lastMsgTime == 0L)
-            Utils.getMessageTimeInHours(Date(createdAt?.times(1000)!!))
+            Utils.getMessageTime(createdAt?.times(1000)!!)
         else
-            Utils.getMessageTimeInHours(Date(lastMsgTime / 10000))
+            Utils.getMessageTime(lastMsgTime / 10000)
 
         return if (time[0] == '0') time.substring(1) else time
     }

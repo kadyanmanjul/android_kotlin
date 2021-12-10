@@ -2,12 +2,15 @@ package com.joshtalks.joshskills.ui.group.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.text.isDigitsOnly
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils.getMessageTime
+import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
@@ -93,6 +96,8 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
     inner class MetaChatViewHolder(val item: GroupChatMetadataBinding) :
         ChatViewHolder(item) {
         override fun bindData(groupChatData: ChatItem) {
+            if (groupChatData.message.isDigitsOnly())
+                groupChatData.message = getMessageTime(groupChatData.message.toLong(), timeNeeded = false, DateTimeStyle.LONG)
             item.itemData = groupChatData
         }
     }

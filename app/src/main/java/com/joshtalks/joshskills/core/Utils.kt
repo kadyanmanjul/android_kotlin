@@ -182,7 +182,7 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true): String {
+    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
@@ -195,7 +195,7 @@ object Utils {
                 "Yesterday"
             }
             else -> {
-                DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
+                DateTimeUtils.formatWithStyle(date, style)
             }
         }
     }

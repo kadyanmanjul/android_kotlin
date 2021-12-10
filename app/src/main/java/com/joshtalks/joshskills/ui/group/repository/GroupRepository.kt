@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.PageInfo
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 
@@ -84,11 +86,12 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
-                    database.groupListDao().updateGroupItem(
-                        lastMessage = "${pnMessageResult.userMetadata.asString}: ${messageItem.msg}",
-                        lastMsgTime = pnMessageResult.timetoken,
-                        id = pnMessageResult.channel
-                    )
+                    if (pnMessageResult.userMetadata.asString != FROM_BACKEND_MSG_TIME)
+                        database.groupListDao().updateGroupItem(
+                            lastMessage = messageItem.getLastMessage(pnMessageResult.userMetadata.asString),
+                            lastMsgTime = pnMessageResult.timetoken,
+                            id = pnMessageResult.channel
+                        )
                     // Meta + Sender
                     database.groupChatDao().insertMessage(
                         ChatItem(
