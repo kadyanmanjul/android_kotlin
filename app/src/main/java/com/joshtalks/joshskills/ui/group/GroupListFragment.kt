@@ -51,6 +51,7 @@ class GroupListFragment : BaseFragment() {
                     Log.d(TAG, "onCreate: $groupList")
                     withContext(Dispatchers.Main) {
                         vm.adapter.submitData(groupList)
+                        initTooltip()
                     }
                 }
             }
@@ -62,12 +63,11 @@ class GroupListFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_list, container, false)
-        initTooltip()
         return binding.root
     }
 
     private fun initTooltip() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP)) {
+        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP) && vm.hasGroupData.get()) {
             binding.animLayout.visibility = VISIBLE
             binding.overlayGroupTooltip.visibility = VISIBLE
             binding.overlayLayout.visibility = VISIBLE
