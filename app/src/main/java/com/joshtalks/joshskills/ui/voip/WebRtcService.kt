@@ -1659,6 +1659,12 @@ class WebRtcService : BaseWebRtcService() {
         return false
     }
 
+    fun isGroupCall(): Boolean {
+        if (callData != null && callData!!.containsKey(RTC_IS_GROUP_CALL))
+            return true
+        return false
+    }
+
     fun isNewUserCall(): Boolean {
         if (callData != null && callData!!.containsKey(RTC_IS_NEW_USER_CALL)) {
             return true
@@ -1674,9 +1680,9 @@ class WebRtcService : BaseWebRtcService() {
         callData?.put(RTC_IS_NEW_USER_CALL, "true")
     }
 
-    private fun getCallerName(): String {
-        return callData?.get(RTC_NAME) ?: EMPTY
-    }
+    private fun getCallerName() = callData?.get(RTC_NAME) ?: EMPTY
+
+    private fun getGroupName() = callData?.get(RTC_WEB_GROUP_CALL_GROUP_NAME) ?: EMPTY
 
     fun getSpeaker() = isSpeakerEnabled
 
@@ -2038,8 +2044,8 @@ class WebRtcService : BaseWebRtcService() {
             pendingIntent,
             true
         )
-        val avatar: Bitmap? = getIncomingCallAvatar(isFavorite = isFavorite())
-        val customView = getRemoteViews(isFavorite = isFavorite())
+        val avatar: Bitmap? = getIncomingCallAvatar(isFavorite = isFavorite(), isFromGroup = isGroupCall())
+        val customView = getRemoteViews(isFavorite = isFavorite(), isFromGroup = isGroupCall())
 
         customView.setImageViewBitmap(R.id.photo, avatar)
         customView.setOnClickPendingIntent(R.id.answer_btn, answerPendingIntent)
@@ -2069,60 +2075,56 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    private fun getIncomingCallAvatar(isFavorite: Boolean): Bitmap? {
+    private fun getIncomingCallAvatar(isFavorite: Boolean, isFromGroup: Boolean): Bitmap? {
         return if (getCallerUrl().isNullOrBlank()) {
             getNameForImage().textDrawableBitmap(width = 80, height = 80)
         } else {
-            if (isFavorite) {
-                getCallerUrl()?.urlToBitmap()
-            } else {
-                getRandomName().textDrawableBitmap()
+            when {
+                isFavorite -> getCallerUrl()?.urlToBitmap()
+                isFromGroup -> getCallerUrl()?.urlToBitmap() //TODO: Have to change this part
+                else -> getRandomName().textDrawableBitmap()
             }
         }
     }
 
-    private fun getRemoteViews(isFavorite: Boolean): RemoteViews {
-        val layout = if (isFavorite) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    private fun getRemoteViews(isFavorite: Boolean, isFromGroup: Boolean): RemoteViews {
+        val layout = when{
+            isFavorite -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 R.layout.favorite_call_notification_patch
             } else {
                 R.layout.favorite_call_notification
             }
-        } else {
-            R.layout.call_notification
+            isFromGroup -> R.layout.group_call_notification
+            else -> R.layout.call_notification
         }
+
         val customView = RemoteViews(packageName, layout)
         customView.setTextViewText(
             R.id.name,
-            if (isFavorite) {
-                getString(R.string.favorite_p2p_title)
-            } else {
-                getString(R.string.p2p_title)
+            when {
+                isFavorite -> getString(R.string.favorite_p2p_title)
+                isFromGroup -> getString(R.string.group_p2p_title)
+                else -> getString(R.string.p2p_title)
             }
         )
         customView.setTextViewText(
             R.id.title,
-            if (isFavorite) {
-                getCallerName()
-            } else {
-                getString(R.string.p2p_subtitle)
+            when {
+                isFavorite -> getCallerName()
+                isFromGroup -> getGroupName()
+                else -> getString(R.string.p2p_subtitle)
             }
         )
 
         customView.setTextViewText(
             R.id.answer_text,
-            getActionText(
-                R.string.answer,
-                R.color.action_color
-            )
+            getActionText(R.string.answer, R.color.action_color)
         )
         customView.setTextViewText(
             R.id.decline_text,
-            getActionText(
-                R.string.hang_up,
-                R.color.error_color
-            )
+            getActionText(R.string.hang_up, R.color.error_color)
         )
+
         return customView
     }
 

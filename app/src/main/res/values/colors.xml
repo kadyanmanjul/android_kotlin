@@ -187,5 +187,7 @@
     <color name="pitch_black">#000000</color>
     <color name="unread_msg">#1FA856</color>
     <color name="read_color">#777777</color>
+    <color name="group_notif_bg">#FFF62A</color>
+    <color name="group_notif_black_bg">#2F2F2F</color>
 
 </resources>
