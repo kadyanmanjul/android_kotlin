@@ -97,7 +97,7 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         ChatViewHolder(item) {
         override fun bindData(groupChatData: ChatItem) {
             if (groupChatData.message.isDigitsOnly())
-                groupChatData.message = getMessageTime(groupChatData.message.toLong(), timeNeeded = false, DateTimeStyle.LONG)
+                groupChatData.message = getMessageTime(groupChatData.message.toLong().times(1000), timeNeeded = false, DateTimeStyle.LONG)
             item.itemData = groupChatData
         }
     }

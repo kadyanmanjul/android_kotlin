@@ -61,7 +61,7 @@ class GroupChatViewModel : BaseViewModel() {
                 message.what = NEW_CHAT_ADDED
                 val bundle = Bundle()
                 if (positionStart == 0 && unreadCount != 0) {
-                    bundle.putInt(GROUP_CHAT_UNREAD, if (unreadCount > 2) unreadCount - 1 else 0)
+                    bundle.putInt(GROUP_CHAT_UNREAD, if (unreadCount > 2) unreadCount - 2 else 0)
                     unreadCount = 0
                 } else bundle.putInt(GROUP_CHAT_UNREAD, 0)
                 message.data = bundle
@@ -113,15 +113,15 @@ class GroupChatViewModel : BaseViewModel() {
                 val response = repository.joinGroup(groupId)
                 if (response) {
                     withContext(Dispatchers.Main) {
-                        hasJoinedGroup.set(true)
                         joiningNewGroup.set(false)
-                        getOnlineUserCount()
                         message.what = REFRESH_GRP_LIST_HIDE_INFO
                         message.data = Bundle().apply {
                             putBoolean(SHOW_NEW_INFO, true)
                         }
                         singleLiveEvent.value = message
                         pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
+                        onBackPress()
+                        onBackPress()
                     }
                 } else joiningNewGroup.set(false)
             } catch (e: Exception) {
@@ -132,6 +132,7 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    //TODO: Not required, need to remove (getting data from pubnub now)
     fun getOnlineUserCount() {
         viewModelScope.launch {
             try {
@@ -306,9 +307,9 @@ class GroupChatViewModel : BaseViewModel() {
         repository.resetUnreadLabel(groupId)
     }
 
-    fun setUnreadLabel() {
+    fun setUnreadLabel(count: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (unreadCount != 0) repository.setUnreadChatLabel(unreadCount, groupId)
+            repository.setUnreadChatLabel(count, groupId)
         }
     }
 }

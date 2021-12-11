@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.group
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -123,17 +124,22 @@ class GroupChatFragment : BaseFragment() {
     }
 
     override fun setArguments() {
-        arguments?.let {
-            vm.groupHeader.set(it.getString(GROUPS_TITLE, ""))
-            vm.hasJoinedGroup.set(it.getBoolean(HAS_JOINED_GROUP, false))
-            vm.groupSubHeader.set(it.getString(GROUPS_CHAT_SUB_TITLE, ""))
-            vm.groupId = it.getString(GROUPS_ID, "")
-            vm.imageUrl.set(it.getString(GROUPS_IMAGE, ""))
-            vm.groupCreatedAt.set(it.getString(GROUPS_CREATED_TIME, ""))
-            vm.groupCreator.set(it.getString(GROUPS_CREATOR, ""))
-            vm.conversationId = it.getString(CONVERSATION_ID, "") ?: ""
-            vm.adminId = it.getString(ADMIN_ID, "")
-            vm.unreadCount = it.getInt(GROUP_CHAT_UNREAD, 0)
+        arguments?.let { args ->
+            vm.groupHeader.set(args.getString(GROUPS_TITLE, ""))
+            vm.hasJoinedGroup.set(args.getBoolean(HAS_JOINED_GROUP, false))
+            vm.groupSubHeader.set(args.getString(GROUPS_CHAT_SUB_TITLE, ""))
+            vm.groupId = args.getString(GROUPS_ID, "")
+            vm.imageUrl.set(args.getString(GROUPS_IMAGE, ""))
+            vm.groupCreatedAt.set(args.getString(GROUPS_CREATED_TIME, ""))
+            vm.groupCreator.set(args.getString(GROUPS_CREATOR, ""))
+            vm.conversationId = args.getString(CONVERSATION_ID, "") ?: ""
+            vm.adminId = args.getString(ADMIN_ID, "")
+            args.getInt(GROUP_CHAT_UNREAD, 0).let {
+                vm.unreadCount = it
+                if (it != 0) {
+                    vm.setUnreadLabel(it)
+                }
+            }
         }
     }
 
@@ -141,8 +147,6 @@ class GroupChatFragment : BaseFragment() {
         val rootView = binding.rootContainer
         val emojiIconEditText = binding.groupChatSendMsg
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(emojiIconEditText)
-
-        vm.setUnreadLabel()
 
         binding.scrollToEndButton.setOnClickListener {
             scrollToEnd()

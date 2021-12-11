@@ -31,14 +31,14 @@ interface GroupChatDao {
     @Query("DELETE FROM group_chat_db WHERE groupId = :id")
     suspend fun deleteGroupMessages(id: String)
 
-    @Query("UPDATE group_chat_db SET message = '0 Unread Messages' WHERE messageId LIKE 'unread%' AND groupId = :id")
+    @Query("UPDATE group_chat_db SET message = '0 Unread Messages', msgTime = 0 WHERE messageId LIKE 'unread%' AND groupId = :id")
     suspend fun resetUnreadLabel(id: String)
 
-    @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :id ORDER BY msgTime LIMIT :count-1, 1")
+    @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :id ORDER BY msgTime DESC LIMIT 1 OFFSET :count-1")
     suspend fun getUnreadLabelTime(count: Int, id: String): Long
 
-    @Query("UPDATE group_chat_db SET message = :count + ' Unread Messages', msgTime = :time WHERE messageId LIKE 'unread%' AND groupId = :id")
-    suspend fun setUnreadLabelTime(count: Int, time: Long, id: String)
+    @Query("UPDATE group_chat_db SET message = :msg, msgTime = :time WHERE messageId LIKE 'unread%' AND groupId = :id")
+    suspend fun setUnreadLabelTime(msg: String, time: Long, id: String)
 
     @Query("SELECT * FROM group_chat_db WHERE groupId = :id ORDER BY msgTime DESC")
     fun getPagedGroupChat(id: String): PagingSource<Int, ChatItem>

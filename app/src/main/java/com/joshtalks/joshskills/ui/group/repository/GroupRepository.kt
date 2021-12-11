@@ -215,7 +215,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     message = "0 Unread Messages",
                     groupId = it.groupId,
                     msgType = UNREAD_MESSAGE,
-                    msgTime = it.lastMsgTime,
+                    msgTime = 0,
                     sender = null
                 ))
             }
@@ -249,7 +249,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     message = "0 Unread Messages",
                     groupId = groupId,
                     msgType = UNREAD_MESSAGE,
-                    msgTime = System.currentTimeMillis().times(10000),
+                    msgTime = 0,
                     sender = null
                 ))
                 startChatEventListener()
@@ -463,7 +463,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun setUnreadChatLabel(count: Int, id: String) {
         val time = database.groupChatDao().getUnreadLabelTime(count, id)
-        Log.e("Info Sukesh","${time}")
-        database.groupChatDao().setUnreadLabelTime(count, time+1, id)
+        database.groupChatDao().setUnreadLabelTime("$count Unread Messages", time - 1, id)
     }
 }

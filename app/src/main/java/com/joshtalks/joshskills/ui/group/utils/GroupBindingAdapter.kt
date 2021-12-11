@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.group.utils
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 
 import androidx.appcompat.widget.AppCompatEditText
@@ -123,7 +122,6 @@ fun setGroupChatAdapter(
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val lastItemPosition = (recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
-            Log.d(TAG, "onScrolled: $lastItemPosition")
             if (lastItemPosition!! > 0) scrollView.visibility = View.VISIBLE
             else scrollView.visibility = View.GONE
         }
