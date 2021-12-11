@@ -1672,17 +1672,13 @@ class WebRtcService : BaseWebRtcService() {
         return false
     }
 
-    fun setAsFavourite() {
-        callData?.put(RTC_IS_FAVORITE, "true")
-    }
+    fun setAsFavourite() = callData?.put(RTC_IS_FAVORITE, "true")
 
-    fun setAsNewUserCall() {
-        callData?.put(RTC_IS_NEW_USER_CALL, "true")
-    }
+    fun setAsNewUserCall() = callData?.put(RTC_IS_NEW_USER_CALL, "true")
 
     private fun getCallerName() = callData?.get(RTC_NAME) ?: EMPTY
 
-    private fun getGroupName() = callData?.get(RTC_WEB_GROUP_CALL_GROUP_NAME) ?: EMPTY
+    private fun getGroupName() = callData?.get(RTC_WEB_GROUP_CALL_GROUP_NAME) ?: "EMPTY"
 
     fun getSpeaker() = isSpeakerEnabled
 
