@@ -163,17 +163,6 @@ class VoipCallFeedbackActivity : BaseActivity() {
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                 }
-                when (response) {
-                    "YES" -> {
-                        //showToast("$callerName is now added to your Favorite Practice Partners.")
-                    }
-                    "NO" -> {
-                        //showToast("$callerName is now added to your Blocklist.")
-                    }
-                    "MAYBE" -> {
-                        //showToast("Thank you for submitting the feedback.")
-                    }
-                }
                 finishAndRemoveTask()
             }
         }

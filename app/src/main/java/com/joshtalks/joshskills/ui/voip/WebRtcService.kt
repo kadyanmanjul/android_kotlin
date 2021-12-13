@@ -57,7 +57,6 @@ import io.agora.rtc.Constants
 import io.agora.rtc.Constants.*
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
-import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
@@ -874,7 +873,8 @@ class WebRtcService : BaseWebRtcService() {
     inner class HangUpRtcOnPstnCallAnsweredListener : PhoneStateListener() {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
-            Timber.tag(TAG).e("RTC=    %s isConversionRoomActive = %s", state,isConversionRoomActive)
+            Timber.tag(TAG)
+                .e("RTC=    %s isConversionRoomActive = %s", state, isConversionRoomActive)
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     if (isConversionRoomActive) {
@@ -1045,49 +1045,28 @@ class WebRtcService : BaseWebRtcService() {
                     setParameters("{\"che.audio.enable.aec\":true}")
                 }
 
-                when (isConversionRoomActive) {
-                    true -> {
-                        setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
-                        enableAudioVolumeIndication(1800, 3, true)
-                        setAudioProfile(
-                            AUDIO_PROFILE_SPEECH_STANDARD,
-                            AUDIO_SCENARIO_GAME_STREAMING
-                        )
-                        setDefaultAudioRoutetoSpeakerphone(true)
-                        if (isRoomCreatedByUser) {
-                            setClientRole(CLIENT_ROLE_BROADCASTER)
-                            Log.d(TAG, "Broadcaster role set")
 
-                        } else {
-                            setClientRole(CLIENT_ROLE_AUDIENCE)
-                            Log.d(TAG, "Audience role set")
-                        }
-                        val option = ChannelMediaOptions()
-                        option.autoSubscribeAudio = true
-                    }
-                    false -> {
-                        disableVideo()
-                        enableAudio()
-                        enableAudioVolumeIndication(500, 3, true)
-                        setAudioProfile(
-                            AUDIO_PROFILE_SPEECH_STANDARD,
-                            AUDIO_SCENARIO_EDUCATION
-                        )
-                        setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
-                        adjustRecordingSignalVolume(400)
-                        val audio = getSystemService(AUDIO_SERVICE) as AudioManager
-                        val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
-                        val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-                        adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
-                        enableDeepLearningDenoise(true)
-                        // Configuration for the publisher. When the network condition is poor, send audio only.
-                        setLocalPublishFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
+                disableVideo()
+                enableAudio()
+                enableAudioVolumeIndication(500, 3, true)
+                setAudioProfile(
+                    AUDIO_PROFILE_SPEECH_STANDARD,
+                    AUDIO_SCENARIO_EDUCATION
+                )
 
-                        // Configuration for the subscriber. Try to receive low stream under poor network conditions. When the current network conditions are not sufficient for video streams, receive audio stream only.
-                        setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
-                    }
+                val statusCode = setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
+                Log.d(TAG, "initEngine() called after setting Profile ${statusCode}")
+                adjustRecordingSignalVolume(400)
+                val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+                val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
+                enableDeepLearningDenoise(true)
+                // Configuration for the publisher. When the network condition is poor, send audio only.
+                setLocalPublishFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
 
-                }
+                // Configuration for the subscriber. Try to receive low stream under poor network conditions. When the current network conditions are not sufficient for video streams, receive audio stream only.
+                setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
 
 
             }
@@ -1107,12 +1086,21 @@ class WebRtcService : BaseWebRtcService() {
         if (!isConversionRoomActive) {
             executor.execute {
                 intent?.action?.run {
+                    removeActionNotifications()
+                    if (this == DisableP2PAction().action) {
+                        removeNotifications()
+                        addNotification(DisableP2PAction().action, null)
+                        removeInstance()
+                        stopSelf()
+                        return@execute
+                    }
                     initEngine {
                         try {
                             callForceDisconnect = false
                             when {
                                 this == InitLibrary().action -> {
                                     Timber.tag(TAG).e("LibraryInit")
+                                    addNotification(InitLibrary().action, null)
                                 }
                                 this == IncomingCall().action -> {
                                     if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
@@ -1185,11 +1173,6 @@ class WebRtcService : BaseWebRtcService() {
                                         )
                                     }
                                     endCall(reason = reason)
-                                }
-
-                                this == DisableP2PAction().action -> {
-                                    removeNotifications()
-                                    stopSelf()
                                 }
                                 this == NoUserFound().action -> {
                                     callData?.let {
@@ -1290,56 +1273,16 @@ class WebRtcService : BaseWebRtcService() {
                     }
                 }
             }
-        } else {
-            removeNotifications()
-            executor.execute {
-                intent?.action?.run {
-                    initEngine {
-                        try {
-                            when {
-                                this == ConversationRoomJoin().action -> {
-                                    isConversionRoomActive = true
-                                    showConversationRoomNotification()
-                                    val agoraUid = intent.getIntExtra(RTC_UID_KEY, 0)
-                                    conversationRoomToken = intent.getStringExtra(RTC_TOKEN_KEY)
-                                    conversationRoomChannelName =
-                                        intent.getStringExtra(RTC_CHANNEL_KEY)
-                                    val statusCode = agoraUid.let {
-                                        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-                                        mRtcEngine?.setEnableSpeakerphone(true)
-                                        audioManager.isSpeakerphoneOn = true
-                                        mRtcEngine?.joinChannel(
-                                            conversationRoomToken,
-                                            conversationRoomChannelName, "test",
-                                            it
-                                        )
-                                    } ?: -3
-                                    val isRoomCreatedByUserFromIntent =
-                                        intent.getBooleanExtra("isModerator", false) || isRoomCreatedByUser
-                                    if (isRoomCreatedByUserFromIntent) {
-                                        setClientRole(CLIENT_ROLE_BROADCASTER)
-                                        Log.d(
-                                            TAG,
-                                            "Broadcaster role set status code $statusCode"
-                                        )
-
-                                    } else {
-                                        setClientRole(CLIENT_ROLE_AUDIENCE)
-                                        Log.d(TAG, "Audience role set status code $statusCode")
-                                    }
-
-                                }
-                            }
-
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-                    }
-                }
-            }
-
         }
         return START_NOT_STICKY
+    }
+
+    private fun removeInstance() {
+        Log.d(TAG, "removeInstance() called")
+        RtcEngine.destroy()
+        isEngineInitialized = false
+        AppObjectController.mRtcEngine = null
+        retryInitLibrary = 0
     }
 
     fun addListener(callback: WebRtcCallback?) {
@@ -1422,6 +1365,10 @@ class WebRtcService : BaseWebRtcService() {
     fun removeIncomingNotification() {
         mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+    }
+
+    fun removeActionNotifications() {
+        mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
     }
 
     private fun startAutoPickCallActivity(autoPick: Boolean, isFromForceConnect: Boolean = false) {
@@ -1916,6 +1863,12 @@ class WebRtcService : BaseWebRtcService() {
                 CallDisconnect().action -> {
                     showNotification(
                         actionNotification("Disconnecting Call"),
+                        ACTION_NOTIFICATION_ID
+                    )
+                }
+                DisableP2PAction().action , InitLibrary().action -> {
+                    showNotification(
+                        actionNotification("Josh Skills"),
                         ACTION_NOTIFICATION_ID
                     )
                 }

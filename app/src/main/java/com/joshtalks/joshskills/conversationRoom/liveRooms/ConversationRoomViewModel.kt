@@ -495,6 +495,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                 getAudienceList().remove(userToMove)
                 setAudienceList(getAudienceList())
                 userToMove.isSpeaker = true
+                userToMove.isMicOn = false
                 userToMove.isHandRaised = false
                 userToMove.isInviteSent = true
                 getSpeakerList().add(userToMove)

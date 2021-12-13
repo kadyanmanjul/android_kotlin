@@ -50,8 +50,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE
-import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -97,8 +95,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //ConvoWebRtcService.initLibrary()
-        WebRtcService.disableP2P()
+        ConvoWebRtcService.initLibrary()
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             this.window.statusBarColor =
@@ -833,6 +830,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             val customMessage = JsonObject()
             customMessage.addProperty("id", vm.getAgoraUid())
             customMessage.addProperty("is_speaker", true)
+            customMessage.addProperty("is_mic_on", false)
             customMessage.addProperty("name", vm.getCurrentUser()?.name)
             customMessage.addProperty("action", "MOVE_TO_SPEAKER")
             vm.sendCustomMessage(customMessage, channelName)
@@ -903,7 +901,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun updateUiWhenSwitchToListener() {
         isRoomUserSpeaker = false
-        mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
+        mBoundService?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
         //mBoundService?.muteCall()
         binding.apply {
             muteBtn.visibility = View.GONE
@@ -917,8 +915,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun updateUiWhenSwitchToSpeaker(isMicOn: Any?) {
         isRoomUserSpeaker = true
         isInviteRequestComeFromModerator = true
-        mBoundService?.setClientRole(CLIENT_ROLE_BROADCASTER)
-        mBoundService?.enableAgoraAudio()
+        mBoundService?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         binding.handRaiseBtn.visibility = View.GONE
         binding.handUnraiseBtn.visibility = View.GONE
         setHandRaiseValueToFirestore(false)
@@ -1116,6 +1113,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         customMessage.addProperty("id", userUid.toString())
                         customMessage.addProperty("is_speaker", false)
                         customMessage.addProperty("name", userName)
+                        customMessage.addProperty("is_mic_on", false)
                         customMessage.addProperty("action", "MOVE_TO_AUDIENCE")
                         vm.sendCustomMessage(customMessage, channelName)
 
@@ -1126,6 +1124,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             val customMessage = JsonObject()
                             customMessage.addProperty("id", vm.getAgoraUid())
                             customMessage.addProperty("uid", userUid)
+                            customMessage.addProperty("is_mic_on", false)
                             customMessage.addProperty("action", "INVITE_SPEAKER")
                             vm.sendCustomMessage(customMessage, userUid.toString())
                         } else {

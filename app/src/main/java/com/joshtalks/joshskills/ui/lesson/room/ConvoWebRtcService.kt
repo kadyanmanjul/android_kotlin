@@ -33,6 +33,7 @@ import io.agora.rtc.Constants.*
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
+import io.agora.rtc.models.ClientRoleOptions
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -66,6 +67,7 @@ class ConvoWebRtcService : Service() {
     private val audioManager by lazy {
         getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
+    private var isEngineInitialized = false
 
     companion object {
         var isRoomEnded = false
@@ -102,6 +104,7 @@ class ConvoWebRtcService : Service() {
             ).apply {
                 action = InitLibrary().action
             }
+            WebRtcService.disableP2P()
             serviceIntent.startServiceForWebrtc()
         }
 
@@ -143,6 +146,7 @@ class ConvoWebRtcService : Service() {
 
             override fun onWarning(warn: Int) {
                 super.onWarning(warn)
+                Log.d(TAG, "onWarning() called with: warn = $warn")
             }
 
             override fun onError(err: Int) {
@@ -368,7 +372,7 @@ class ConvoWebRtcService : Service() {
         try {
             rtcEngine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
             try {
-                Thread.sleep(350)
+                Thread.sleep(200)
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
@@ -384,40 +388,47 @@ class ConvoWebRtcService : Service() {
                 rtcEngine?.addHandler(conversationRoomEventListener)
             }
 
-            if (rtcEngine != null) {
+            if (isEngineInitialized) {
                 callback.invoke()
+                return
             }
 
             rtcEngine?.apply {
-
                 if (BuildConfig.DEBUG) {
-                    setParameters("{\"rtc.log_filter\": 65535}")
+                    //setParameters("{\"rtc.log_filter\": 65535}")
                     //setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
                 }
-                setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
+                setParameters("{\"rtc.peer.offline_period\":${callReconnectTime}}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
 
-                setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
+                val statusCode = setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
+                Log.d(TAG, "initEngine() called after setting Profile ${statusCode}")
+                if (statusCode<0){
+                    if (retryInitLibrary == 3) {
+                        if (isRoomCreatedByUser) {
+                            endRoom(roomId, roomQuestionId)
+                        } else {
+                            leaveRoom(roomId, roomQuestionId)
+                        }
+                    }
+                    retryInitLibrary++
+                    initEngine(callback)
+
+                }
+
                 enableAudioVolumeIndication(1800, 3, true)
                 setAudioProfile(
                     AUDIO_PROFILE_SPEECH_STANDARD,
                     AUDIO_SCENARIO_GAME_STREAMING
                 )
                 setDefaultAudioRoutetoSpeakerphone(true)
-                if (isRoomCreatedByUser) {
-                    val client = setClientRole(CLIENT_ROLE_BROADCASTER)
-                    enableAgoraAudio()
-                    Log.d(TAG, "mRtcEngine Broadcaster role set setclient ${client}")
-
-                } else {
-                    val client = setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
-                    //muteCall()
-                    Log.d(TAG, "mRtcEngine Audience role set setclient ${client}")
-                }
                 val option = ChannelMediaOptions()
                 option.autoSubscribeAudio = true
-                callback.invoke()
 
+            }
+            if (rtcEngine != null) {
+                isEngineInitialized = true
+                callback.invoke()
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
@@ -452,7 +463,7 @@ class ConvoWebRtcService : Service() {
                                 val statusCode = agoraUid?.let {
                                     joinChannel(conversationRoomToken,conversationRoomChannelName,"test",it,option)
                                 } ?: -3
-                                Log.d(TAG, "onStartCommand() status code called ${statusCode}")
+                                Log.d(TAG, "join channel result retry ${statusCode}")
 
                             }
                         }
@@ -471,14 +482,14 @@ class ConvoWebRtcService : Service() {
         conversationRoomChannelName: String?,
         s: String,
         i: Int,
-        option:ChannelMediaOptions
-    ) :Int{
+        option: ChannelMediaOptions
+    ): Int {
         rtcEngine?.leaveChannel()
-        val statusCode =  rtcEngine?.joinChannel(
-             conversationRoomToken,
+        val statusCode = rtcEngine?.joinChannel(
+            conversationRoomToken,
             conversationRoomChannelName, s,
-            i,option
-        )?:-3
+            i, option
+        ) ?: -3
 
         Log.d(
             TAG,
@@ -500,8 +511,19 @@ class ConvoWebRtcService : Service() {
                 e.printStackTrace()
             }
             initEngine {
-                joinChannel(conversationRoomToken,conversationRoomChannelName, s, i,option)
+                joinChannel(conversationRoomToken, conversationRoomChannelName, s, i, option)
             }
+        }
+        if (isRoomCreatedByUser) {
+            val code = rtcEngine?.setClientRole(CLIENT_ROLE_BROADCASTER)?:-3
+            Log.d(TAG, "Broadcaster role setClient ${code}")
+
+        } else {
+            val clientRoleOptions = ClientRoleOptions()
+            clientRoleOptions.audienceLatencyLevel =
+                if (false) AUDIENCE_LATENCY_LEVEL_ULTRA_LOW_LATENCY else AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
+            val code = rtcEngine?.setClientRole(CLIENT_ROLE_AUDIENCE, clientRoleOptions) ?:-3
+            Log.d(TAG, "Audience role setClient ${code}")
         }
         rtcEngine?.setEnableSpeakerphone(true)
         return retryInitLibrary
@@ -516,7 +538,10 @@ class ConvoWebRtcService : Service() {
         roomId = intent.getIntExtra(ROOM_RTC_ROOM_ID, 0).toString()
         roomQuestionId = intent.getIntExtra(ROOM_RTC_ROOM_Q, 0)
         isRoomCreatedByUser = intent.getBooleanExtra(ROOM_RTC_IS_MODERATOR, false)
-        Log.d(TAG, "setData() called with: agoraUid = $agoraUid token ${conversationRoomToken} name ${conversationRoomChannelName} mUid ${moderatorUid} Topic ${channelTopic} roomId ${roomId} roomQ ${roomQuestionId}  ${isRoomCreatedByUser} ")
+        Log.d(
+            TAG,
+            "setData() called with: agoraUid = $agoraUid token ${conversationRoomToken} name ${conversationRoomChannelName} mUid ${moderatorUid} Topic ${channelTopic} roomId ${roomId} roomQ ${roomQuestionId}  ${isRoomCreatedByUser} "
+        )
     }
 
     fun addListener(callback: ConversationRoomCallback) {
@@ -547,8 +572,22 @@ class ConvoWebRtcService : Service() {
     }
 
     fun setClientRole(role: Int) {
-        val client = rtcEngine?.setClientRole(role)
-        Log.d(TAG, "setClientRole() called with: role = $role setclient = $client")
+        if (role == CLIENT_ROLE_AUDIENCE) {
+            val clientRoleOptions = ClientRoleOptions()
+            clientRoleOptions.audienceLatencyLevel =
+                if (false) AUDIENCE_LATENCY_LEVEL_ULTRA_LOW_LATENCY else AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
+            val client = rtcEngine?.setClientRole(role,clientRoleOptions)?:-3
+            if (client<0){
+                muteCall()
+            }
+            Log.d(TAG, "setClientRole() called with: CLIENT_ROLE_AUDIENCE setclient = $client")
+
+        } else {
+            val client = rtcEngine?.setClientRole(role)?:-3
+            Log.d(TAG, "setClientRole() called with: CLIENT_ROLE_BROAD setclient = $client")
+
+        }
+
     }
 
     fun leaveChannel() {
@@ -572,6 +611,7 @@ class ConvoWebRtcService : Service() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         joshAudioManager?.quitEverything()
         super.onTaskRemoved(rootIntent)
+        isEngineInitialized = false
         retryInitLibrary = 0
         Timber.tag(TAG).e("OnTaskRemoved")
     }
@@ -585,7 +625,9 @@ class ConvoWebRtcService : Service() {
         Log.d(TAG, "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         RtcEngine.destroy()
         retryInitLibrary = 0
+        isEngineInitialized = false
         joshAudioManager?.quitEverything()
+        rtcEngine = null
         AppObjectController.mRtcEngine = null
         TelephonyUtil.getManager(this)
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
@@ -670,16 +712,6 @@ class ConvoWebRtcService : Service() {
 
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()
-    }
-
-    fun enableAgoraAudio() {
-        rtcEngine?.apply {
-            val a = enableAudio()
-            val b = muteAllRemoteAudioStreams(false)
-            val c = muteLocalAudioStream(false)
-            val d = enableLocalAudio(true)
-            Log.d(TAG, "enableAgoraAudio() called a ${a} b ${b} c ${c} d ${d}")
-        }
     }
 
 }

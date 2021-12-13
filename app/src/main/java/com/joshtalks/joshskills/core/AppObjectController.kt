@@ -373,6 +373,7 @@ class AppObjectController {
         }
 
         fun getRtcEngine(context: Context): RtcEngine? {
+            Log.d("ABC", "getRtcEngine() called with: context = $context")
             initRtcEngine(context)
             return mRtcEngine
         }
