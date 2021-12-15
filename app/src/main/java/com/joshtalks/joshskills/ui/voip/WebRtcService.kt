@@ -1088,10 +1088,8 @@ class WebRtcService : BaseWebRtcService() {
                 intent?.action?.run {
                     removeActionNotifications()
                     if (this == DisableP2PAction().action) {
-                        removeNotifications()
                         addNotification(DisableP2PAction().action, null)
                         removeInstance()
-                        stopSelf()
                         return@execute
                     }
                     initEngine {
@@ -1283,6 +1281,7 @@ class WebRtcService : BaseWebRtcService() {
         isEngineInitialized = false
         AppObjectController.mRtcEngine = null
         retryInitLibrary = 0
+        removeNotifications()
     }
 
     fun addListener(callback: WebRtcCallback?) {
@@ -1762,7 +1761,7 @@ class WebRtcService : BaseWebRtcService() {
         stopRing()
         joshAudioManager?.stopConnectTone()
         isCallerJoined = false
-        eventListener = null
+        //eventListener = null
         isSpeakerEnabled = false
         isMicEnabled = true
         oppositeCallerId = null

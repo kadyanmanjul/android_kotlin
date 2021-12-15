@@ -22,9 +22,9 @@ import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBu
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.ConversationRoomJoin
 import com.joshtalks.joshskills.ui.voip.InitLibrary
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ROOM_CALL_NOTIFICATION_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ROOM_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.ui.voip.util.WebRtcAudioManager
@@ -242,7 +242,7 @@ class ConvoWebRtcService : Service() {
                         AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
                             request
                         )
-                    WebRtcService.initLibrary()
+                    //WebRtcService.initLibrary()
                     Log.d(TAG, "end room api call ${response.code()}")
                     if (response.isSuccessful) {
                         isRoomEnded = false
@@ -280,7 +280,7 @@ class ConvoWebRtcService : Service() {
                             AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
                                 request
                             )
-                        WebRtcService.initLibrary()
+                        //WebRtcService.initLibrary()
                         Log.d(TAG, "leave room api call")
                         if (response.isSuccessful) {
                             isRoomEnded = false
@@ -549,14 +549,14 @@ class ConvoWebRtcService : Service() {
     }
 
     fun removeIncomingNotification() {
-        mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
+        mNotificationManager?.cancel(ROOM_CALL_NOTIFICATION_ID)
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
     }
 
     private fun showConversationRoomNotification() {
         mNotificationManager?.cancelAll()
         showNotification(
-            conversationRoomNotification(), ACTION_NOTIFICATION_ID
+            conversationRoomNotification(), ROOM_CALL_NOTIFICATION_ID
         )
     }
 
@@ -655,7 +655,7 @@ class ConvoWebRtcService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannelName: CharSequence = "Voip Call Status"
             val mChannel = NotificationChannel(
-                CALL_NOTIFICATION_CHANNEL,
+                ROOM_NOTIFICATION_CHANNEL,
                 notificationChannelName,
                 NotificationManager.IMPORTANCE_MIN,
             ).apply {
@@ -693,8 +693,8 @@ class ConvoWebRtcService : Service() {
         )
 
         val lNotificationBuilder =
-            NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
-                .setChannelId(CALL_NOTIFICATION_CHANNEL)
+            NotificationCompat.Builder(this, ROOM_NOTIFICATION_CHANNEL)
+                .setChannelId(ROOM_NOTIFICATION_CHANNEL)
                 .setContentTitle("Conversation Room")
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
                 .setContentIntent(pendingIntent)
