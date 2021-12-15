@@ -83,6 +83,7 @@ const val RTC_IS_GROUP_CALL = "is_group_call"
 const val RTC_IS_GROUP_CALL_ID = "is_group_call_id"
 const val RTC_GROUP_CALL_GROUP_NAME = "group_call_group_name"
 const val RTC_WEB_GROUP_CALL_GROUP_NAME = "group_web_call_group_name"
+const val RTC_WEB_GROUP_PHOTO = "group_url"
 const val RTC_PARTNER_ID = "partner_id"
 const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 const val IS_CHANNEL_ACTIVE_KEY = "success"
@@ -1381,6 +1382,9 @@ class WebRtcService : BaseWebRtcService() {
                     if (isFavorite()) {
                         put(RTC_IS_FAVORITE, "true")
                     }
+                    if (isGroupCall()) {
+                        put(RTC_IS_GROUP_CALL, "true")
+                    }
                     if (isNewUserCall()) {
                         put(RTC_IS_NEW_USER_CALL, "true")
                     }
@@ -1401,6 +1405,9 @@ class WebRtcService : BaseWebRtcService() {
             callData?.apply {
                 if (isFavorite()) {
                     put(RTC_IS_FAVORITE, "true")
+                }
+                if (isGroupCall()) {
+                    put(RTC_IS_GROUP_CALL, "true")
                 }
                 if (isNewUserCall()) {
                     put(RTC_IS_NEW_USER_CALL, "true")
@@ -1441,6 +1448,9 @@ class WebRtcService : BaseWebRtcService() {
             data.apply {
                 if (isFavorite()) {
                     put(RTC_IS_FAVORITE, "true")
+                }
+                if (isGroupCall()) {
+                    put(RTC_IS_GROUP_CALL, "true")
                 }
                 if (isNewUserCall()) {
                     put(RTC_IS_NEW_USER_CALL, "true")
@@ -1650,6 +1660,10 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun getCallerUrl(): String? {
         return callData?.get(RTC_CALLER_PHOTO)
+    }
+
+    private fun getGroupUrl(): String? {
+        return callData?.get(RTC_WEB_GROUP_PHOTO)
     }
 
     fun isFavorite(): Boolean {
@@ -2071,15 +2085,19 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
+    private fun getNameForGroupImage(): String {
+        return try {
+            callData?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)?.substring(0, 2) ?: getRandomName()
+        } catch (ex: Exception) {
+            getRandomName()
+        }
+    }
+
     private fun getIncomingCallAvatar(isFavorite: Boolean, isFromGroup: Boolean): Bitmap? {
-        return if (getCallerUrl().isNullOrBlank()) {
-            getNameForImage().textDrawableBitmap(width = 80, height = 80)
-        } else {
-            when {
-                isFavorite -> getCallerUrl()?.urlToBitmap()
-                isFromGroup -> getCallerUrl()?.urlToBitmap() //TODO: Have to change this part
-                else -> getRandomName().textDrawableBitmap()
-            }
+        return when {
+            isFavorite -> getCallerUrl()?.urlToBitmap() ?: getNameForImage().textDrawableBitmap(width = 80, height = 80)
+            isFromGroup -> getGroupUrl()?.urlToBitmap() ?: getNameForGroupImage().textDrawableBitmap(width = 80, height = 80)
+            else -> getRandomName().textDrawableBitmap()
         }
     }
 
@@ -2286,6 +2304,9 @@ class WebRtcService : BaseWebRtcService() {
             callData?.apply {
                 if (isFavorite()) {
                     put(RTC_IS_FAVORITE, "true")
+                }
+                if (isGroupCall()) {
+                    put(RTC_IS_GROUP_CALL, "true")
                 }
                 if (isNewUserCall()) {
                     put(RTC_IS_NEW_USER_CALL, "true")
