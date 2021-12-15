@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull
 import com.pubnub.api.enums.PNPushType
 import kotlin.Exception
 
-
 private const val TAG = "PubNub_Service"
 
 object PubNubService : ChatService {
@@ -186,6 +185,7 @@ object PubNubService : ChatService {
                 .message(messageItem)
                 .meta("${Mentor.getInstance().getUser()?.firstName}")
                 .shouldStore(true)
+                .ttl(0)
                 .usePOST(true)
                 .sync()
         }

@@ -463,6 +463,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun setUnreadChatLabel(count: Int, id: String) {
         val time = database.groupChatDao().getUnreadLabelTime(count, id)
-        database.groupChatDao().setUnreadLabelTime("$count Unread Messages", time - 1, id)
+        if (time != null) {
+            database.groupChatDao().setUnreadLabelTime("$count Unread Messages", time - 1, id)
+        }
     }
 }

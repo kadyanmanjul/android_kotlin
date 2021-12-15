@@ -22,7 +22,7 @@ interface GroupChatDao {
     @Query("SELECT count(messageId) FROM group_chat_db WHERE groupId = :groupId")
     suspend fun getChatCount(groupId: String): Int
 
-    @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :groupId ORDER BY msgTime ASC limit 1")
+    @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :groupId AND messageId NOT LIKE 'unread%' ORDER BY msgTime ASC limit 1")
     suspend fun getLastMessageTime(groupId: String): Long?
 
     @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :groupId ORDER BY msgTime DESC limit 1")
@@ -35,7 +35,7 @@ interface GroupChatDao {
     suspend fun resetUnreadLabel(id: String)
 
     @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :id ORDER BY msgTime DESC LIMIT 1 OFFSET :count-1")
-    suspend fun getUnreadLabelTime(count: Int, id: String): Long
+    suspend fun getUnreadLabelTime(count: Int, id: String): Long?
 
     @Query("UPDATE group_chat_db SET message = :msg, msgTime = :time WHERE messageId LIKE 'unread%' AND groupId = :id")
     suspend fun setUnreadLabelTime(msg: String, time: Long, id: String)
