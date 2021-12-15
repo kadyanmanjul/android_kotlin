@@ -1688,6 +1688,8 @@ class WebRtcService : BaseWebRtcService() {
 
     fun setAsFavourite() = callData?.put(RTC_IS_FAVORITE, "true")
 
+    fun setAsGroupCall() = callData?.put(RTC_IS_GROUP_CALL, "true")
+
     fun setAsNewUserCall() = callData?.put(RTC_IS_NEW_USER_CALL, "true")
 
     private fun getCallerName() = callData?.get(RTC_NAME) ?: EMPTY

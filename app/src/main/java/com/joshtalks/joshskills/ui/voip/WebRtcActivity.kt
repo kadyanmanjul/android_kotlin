@@ -367,6 +367,16 @@ class WebRtcActivity : AppCompatActivity() {
         return (isSetAsFavourite == true || isFavouriteIntent)
     }
 
+    private fun isCallGroupPP(): Boolean {
+        val isSetAsGroup = mBoundService?.isGroupCall()
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        val isGroupCallIntent = map != null && map.containsKey(RTC_IS_GROUP_CALL)
+        if (isSetAsGroup == false && isGroupCallIntent) {
+            mBoundService?.setAsGroupCall()
+        }
+        return (isSetAsGroup == true || isGroupCallIntent)
+    }
+
     private fun isNewUserCall(): Boolean {
         val isSetAsNewUserCall = mBoundService?.isNewUserCall()
         val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
@@ -600,6 +610,7 @@ class WebRtcActivity : AppCompatActivity() {
             binding.tvGroupName.visibility = View.GONE
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
+            Log.d(TAG, "updateStatusLabel: ${map} : $isCallFromGroup")
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
@@ -618,6 +629,11 @@ class WebRtcActivity : AppCompatActivity() {
                         return@run
                     } else if (callConnected.not() && isCallFavoritePP()) {
                         binding.callStatus.text = getText(R.string.pp_favorite_incoming)
+                        return@run
+                    } else if (callConnected.not() && isCallGroupPP()) {
+                        binding.callStatus.text = getText(R.string.pp_group_incoming)
+                        binding.callerName.text = "${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}"
+                        setImageInIV(map?.get(RTC_WEB_GROUP_PHOTO))
                         return@run
                     } else if (callConnected.not() && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Incoming Call from"

@@ -531,6 +531,7 @@
     <string name="pp_calling">Calling Favorite Practice Partner</string>
     <string name="pp_connected">Favorite Practice Partner</string>
     <string name="pp_favorite_incoming">Favorite Practice Partner Calling</string>
+    <string name="pp_group_incoming">Incoming Call from group </string>
 
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
     <string name="spoke_with">Spoke for %s minutes with  %s</string>
