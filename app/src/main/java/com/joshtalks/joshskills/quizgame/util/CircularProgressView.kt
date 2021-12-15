@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.quizgame.utils
+package com.joshtalks.joshskills.quizgame.util
 
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
@@ -54,7 +54,7 @@ class CircularProgressView(
         ovalSize = if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.Q){
             70
         }else{
-            50
+            45
         }
         ovalSpace.set(
             horizontalCenter - ovalSize,

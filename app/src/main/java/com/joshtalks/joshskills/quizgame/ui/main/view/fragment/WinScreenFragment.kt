@@ -35,6 +35,14 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import timber.log.Timber
 
+const val YOU_WON:String = "You Won!"
+const val WINNER:String = "Winner"
+const val TEAM_SCORE :String ="team_score"
+const val OPPONENT_TEAM_MARKS:String ="opponent_team_marks"
+const val TEAM_ID :String ="team_id"
+const val OPPONENT_WON:String ="Opponent Won!"
+const val ZERO:String ="0"
+const val FIVE:String ="5"
 
 class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRtc.WebRtcEngineCallback {
     private lateinit var binding : FragmentWinScreenBinding
@@ -89,12 +97,12 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-           marks = it.getString("team_score")
-           opponentTeamMarks = it.getString("opponent_team_marks")
-           roomId = it.getString("room_id")
-           teamId = it.getString("team_id")
-           callTimeCount =it.getString("callTime")
-           fromType=it.getString("fromType")
+           marks = it.getString(TEAM_SCORE)
+           opponentTeamMarks = it.getString(OPPONENT_TEAM_MARKS)
+           roomId = it.getString(ROOM_ID)
+           teamId = it.getString(TEAM_ID)
+           callTimeCount =it.getString(CALL_TIME)
+           fromType=it.getString(FROM_TYPE)
         }
 
         setRoomUsersData()
@@ -141,10 +149,10 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
                 winnerTeamStatus = true
                 binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(5)).toString()
                 binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
-                binding.winningPointCurrent.text = "5"
-                binding.winningPointOpponent.text = "0"
+                binding.winningPointCurrent.text = FIVE
+                binding.winningPointOpponent.text = ZERO
                 binding.txtOpponentWin.visibility = View.VISIBLE
-                binding.txtOpponentWin.text = "You Won!"
+                binding.txtOpponentWin.text = YOU_WON
                 binding.conglutions.visibility = View.VISIBLE
                 binding.winImg11.visibility = View.VISIBLE
                 binding.conglutions.setImageResource(R.drawable.ic_congratulations)
@@ -154,8 +162,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
                 winnerTeamStatus = false
                 binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
                 binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
-                binding.winningPointCurrent.text = "0"
-                binding.winningPointOpponent.text = "0"
+                binding.winningPointCurrent.text = ZERO
+                binding.winningPointOpponent.text = ZERO
                 binding.conglutions.visibility = View.VISIBLE
                 binding.conglutions.setImageResource(R.drawable.ic_matcg_draw)
             }
@@ -163,11 +171,11 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
                 winnerTeamStatus = false
                 binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
                 binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(5)).toString()
-                binding.winningPointCurrent.text = "0"
-                binding.winningPointOpponent.text = "5"
-                binding.txtWinner.text = "Winner"
+                binding.winningPointCurrent.text = ZERO
+                binding.winningPointOpponent.text = FIVE
+                binding.txtWinner.text = WINNER
                 binding.txtOpponentWin.visibility = View.VISIBLE
-                binding.txtOpponentWin.text = "Opponent Won!"
+                binding.txtOpponentWin.text = OPPONENT_WON
                 binding.conglutions.visibility = View.VISIBLE
                 binding.conglutions.setImageResource(R.drawable.ic_opponentwon)
                 binding.winImg.visibility = View.VISIBLE
@@ -191,7 +199,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             makeNewTeam()
         }
 
-        if (fromType == "Random"){
+        if (fromType == RANDOM){
             binding.btnAddPeople.visibility = View.VISIBLE
         }
 
@@ -215,12 +223,12 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         fun newInstance(marks: String,opponentTeamMarks:String, roomId: String?,teamId:String?,callTime:String?,fromType:String) =
             WinScreenFragment().apply {
                 arguments = Bundle().apply {
-                    putString("team_score", marks)
-                    putString("opponent_team_marks",opponentTeamMarks)
-                    putString("room_id", roomId)
-                    putString("team_id", teamId)
-                    putString("callTime",callTime)
-                    putString("fromType",fromType)
+                    putString(TEAM_SCORE, marks)
+                    putString(OPPONENT_TEAM_MARKS,opponentTeamMarks)
+                    putString(ROOM_ID, roomId)
+                    putString(TEAM_ID, teamId)
+                    putString(CALL_TIME,callTime)
+                    putString(FROM_TYPE,fromType)
                 }
             }
     }
@@ -423,7 +431,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         fm?.popBackStack()
     }
     fun deleteData(dialog: Dialog){
-        if (fromType == "Random"){
+        if (fromType == RANDOM){
             saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
             activity?.let {
                 saveRoomDataViewModel?.clearRadius?.observe(it, {
@@ -446,7 +454,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         }
     }
     fun makeNewTeam(){
-        if (fromType == "Random"){
+        if (fromType == RANDOM){
             saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
             activity?.let {
                 saveRoomDataViewModel?.clearRadius?.observe(it, {

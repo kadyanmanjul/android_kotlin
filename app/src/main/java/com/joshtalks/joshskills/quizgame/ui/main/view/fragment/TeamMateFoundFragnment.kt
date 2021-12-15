@@ -38,7 +38,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import timber.log.Timber
 
-
+const val USER_ID:String = "userId"
 //Channel Name = team_id
 class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
     private lateinit var binding:FragmentTeamMateFoundFragnmentBinding
@@ -55,8 +55,8 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getString("userId")
-            channelName = it.getString("channelName")
+            userId = it.getString(USER_ID)
+            channelName = it.getString(CHANNEL_NAME)
         }
     }
 
@@ -115,13 +115,6 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
         binding.userName1.text = Mentor.getInstance().getUser()?.firstName
         val imageUrl=Mentor.getInstance().getUser()?.photo?.replace("\n","")
         binding.image.setUserImageOrInitials(imageUrl,Mentor.getInstance().getUser()?.firstName?:"",30,isRound = true)
-
-//        activity?.let {
-//            Glide.with(it)
-//                .load(imageUrl)
-//                .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
-//                .into(binding.image)
-//        }
     }
     private fun setUpData(){
         val repository = TeamMateFoundRepo()
@@ -144,12 +137,6 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
         val imageUrl=userDetails?.imageUrl?.replace("\n","")
         binding.image2.setUserImageOrInitials(imageUrl,userDetails?.name?:"",30,isRound = true)
 
-//        activity?.let {
-//            Glide.with(it)
-//                .load(imageUrl)
-//                .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
-//                .into(binding.image2)
-//        }
         binding.userName2.text = userDetails?.name
     }
     companion object {
@@ -157,8 +144,8 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
         fun newInstance(userId:String,channelName:String) =
             TeamMateFoundFragnment().apply {
                 arguments = Bundle().apply {
-                    putString("userId",userId)
-                    putString("channelName",channelName)
+                    putString(USER_ID,userId)
+                    putString(CHANNEL_NAME,channelName)
                 }
             }
     }

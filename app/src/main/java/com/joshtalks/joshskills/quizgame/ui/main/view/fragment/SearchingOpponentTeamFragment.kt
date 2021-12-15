@@ -12,12 +12,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserImageOrInitials
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.quizgame.ui.main.adapter.ImageAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -40,6 +42,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 //Channel Name = team_id
+const val USER_DATA:String ="user_data"
 class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         P2pRtc.WebRtcEngineCallback{
 
@@ -94,11 +97,11 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         super.onCreate(savedInstanceState)
         currentUserId= Mentor.getInstance().getUserId()
         arguments?.let {
-            startTime = it.getString("start_time")
-            userDetails = it.getParcelable("user_data")
-            channelName = it.getString("channelName")
+            startTime = it.getString(START_TIME)
+            userDetails = it.getParcelable(USER_DATA)
+            channelName = it.getString(CHANNEL_NAME)
             currentUserTeamId = channelName
-            Log.d("channel_name", "onCreate: "+channelName)
+            Log.d("channel_name", "onCreate: "+currentUserTeamId)
 
         }
         setupViewModel()
@@ -131,7 +134,6 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         startTimer()
         activity?.let {
             searchOpponentTeamViewModel?.roomData?.observe(it, Observer {
-              // showToast(it.message)
             })
         }
 
@@ -150,6 +152,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         }
 
         onBackPress()
+        dipDown(binding.vs1)
     }
     companion object {
         //mujhe yaha team id bhi lana padega piche se jis se me add to room api call kar saku or firebase se data la saku
@@ -157,9 +160,10 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         fun newInstance(param1: String,userDetails:UserDetails?,channelName: String?) =
             SearchingOpponentTeamFragment().apply {
                 arguments = Bundle().apply {
-                    putString("start_time",param1)
-                    putParcelable("user_data",userDetails)
-                    putString("channelName",channelName)
+                    putString(START_TIME,param1)
+                    putParcelable(USER_DATA,userDetails)
+                    putString(CHANNEL_NAME,channelName)
+                    Log.d("channel_name", "newInstance: $channelName")
                 }
             }
     }
@@ -181,7 +185,6 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         searchOpponentTeamViewModel = factory?.let {
             ViewModelProvider(this, it).get(SearchOpponentTeamViewModel::class.java)
         }
-        //showToast("Add To Room")
         searchOpponentTeamViewModel?.addToRoomData(ChannelName(channelName))
     }
     override fun onStart() {
@@ -343,7 +346,6 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 searchOpponentTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
                 activity?.let {
                     searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-                       // showToast(it.message)
                         dialog.dismiss()
                         AudioManagerQuiz.audioRecording.stopPlaying()
                         engine?.leaveChannel()
@@ -356,7 +358,6 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 searchOpponentTeamViewModel?.deleteUserAndTeamData(TeamDataDelete(currentUserTeamId?:"",currentUserId?:""))
                 activity?.let {
                     searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-                      // showToast(it.message)
                         dialog.dismiss()
                         AudioManagerQuiz.audioRecording.stopPlaying()
                         engine?.leaveChannel()
@@ -370,11 +371,9 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         noBtn.setOnClickListener {
             dialog.dismiss()
         }
-
         btnCancel.setOnClickListener {
             dialog.dismiss()
         }
-
         dialog.show()
     }
     private fun openChoiceScreen(){
@@ -386,7 +385,6 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             ?.commit()
         fm?.popBackStack()
     }
-
     private fun startTimer() {
         timer = object : CountDownTimer(45000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -399,7 +397,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 if (roomId!=null){
                     moveFragment()
                 }else {
-                    showToast("No Opponent Team Found Please Retry")
+                    showToast(NO_OPPONENT_FOUND)
                     deleteTeamData()
                 }
             }
@@ -409,7 +407,6 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         searchOpponentTeamViewModel?.deleteUserAndTeamData(TeamDataDelete(currentUserTeamId?:"",currentUserId?:""))
         activity?.let {
             searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-               // showToast(it.message)
                 AudioManagerQuiz.audioRecording.stopPlaying()
                 engine?.leaveChannel()
                 binding.callTime.stop()
@@ -436,5 +433,14 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 Log.d("error_res", "onPartnerLeave: "+ex.message?:"")
             }
         }
+    }
+
+    private fun dipDown(targetView: View) {
+        val myAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_anim)
+        val interpolator = MyBounceInterpolator(0.8, 18.0)
+        myAnim.interpolator = interpolator
+        myAnim.duration = 3000
+        myAnim.repeatCount = Animation.INFINITE
+        targetView.startAnimation(myAnim)
     }
 }

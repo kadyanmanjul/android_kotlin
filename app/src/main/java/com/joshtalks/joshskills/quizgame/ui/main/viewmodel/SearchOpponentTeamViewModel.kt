@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchOpponentRepo
 import com.joshtalks.joshskills.quizgame.ui.data.repository.TeamMateFoundRepo
@@ -64,7 +65,7 @@ class SearchOpponentTeamViewModel(
                 }
             }
         } catch (ex: Exception) {
-
+            showToast(ex.message?:"")
         }
     }
 

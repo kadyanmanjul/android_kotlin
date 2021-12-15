@@ -8,5 +8,4 @@ class SearchOpponentRepo {
     suspend fun getRoomUserData(randomRoomData: RandomRoomData) = RetrofitInstanse.getRetrofitInstance()?.getRoomUserDataTemp(randomRoomData)
     suspend fun deleteUserTeamData(teamDataDelete: TeamDataDelete) = RetrofitInstanse.getRetrofitInstance()?.getDeleteUserAndTeamFpp(teamDataDelete)
     suspend fun deleteUsersDataFromRoom(saveCallDurationRoomData: SaveCallDurationRoomData) = RetrofitInstanse.getRetrofitInstance()?.getDeleteUserFpp(saveCallDurationRoomData)
-
 }

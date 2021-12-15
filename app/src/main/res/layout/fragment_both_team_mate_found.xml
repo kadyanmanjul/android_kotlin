@@ -24,51 +24,48 @@
                 android:id="@+id/txtquiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_game_logo_grad"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:src="@drawable/ic_game_logo_grad"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_80sdp"
+            android:layout_marginTop="@dimen/_60sdp"
             android:id="@+id/card1"
             app:layout_constraintBottom_toTopOf="@+id/rel1"
             app:layout_constraintTop_toTopOf="@+id/txtquiz">
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/_20sdp"
                 android:layout_marginRight="@dimen/_20sdp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="45dp"
-                app:cardMaxElevation="20dp"
-                android:layout_marginTop="@dimen/_40sdp"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardElevation="@dimen/_35sdp"
+                app:cardMaxElevation="@dimen/_15sdp"
+                android:background="@drawable/new_card_border"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:strokeColor="#8785FB"
-                app:strokeWidth="2dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:background="@drawable/card_gradient">
+                app:strokeWidth="@dimen/_1sdp">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:text="Team Found"
+                        android:gravity="center"
+                        android:background="@drawable/new_card_border"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_14sdp"
                         android:textStyle="bold" />
-                </RelativeLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -78,19 +75,19 @@
             <RelativeLayout
                 android:id="@+id/rel1"
                 android:layout_width="match_parent"
-                android:layout_height="320dp"
+                android:layout_height="@dimen/_305sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card1">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp">
+                    android:layout_marginLeft="@dimen/_23sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/user_image1"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
@@ -102,7 +99,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image1"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -110,15 +107,16 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/relative_layout_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="30dp">
+                    android:layout_marginRight="@dimen/_23sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/user_image2"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
@@ -126,8 +124,8 @@
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:visibility="gone"
                         android:id="@+id/user_image_shadow2"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:src="@drawable/ic_offline_shadow_img"
                          />
 
@@ -137,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image2"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -147,12 +145,13 @@
                 <RelativeLayout
                     android:id="@+id/globe"
                     android:layout_width="match_parent"
-                    android:layout_height="95dp"
-                    android:layout_centerInParent="true">
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_below="@id/relative_layout_2"
+                    >
 
                     <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/vs"
                         android:src="@drawable/gvygybgygby" />
@@ -160,22 +159,22 @@
 
                     <RelativeLayout
                         android:id="@+id/vs1"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/ic_ellipse_79" />
 
                     <RelativeLayout
                         android:id="@+id/vs"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/back_vs">
 
                         <com.airbnb.lottie.LottieAnimationView
                             android:id="@+id/image9"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
                             android:layout_centerInParent="true"
                             app:lottie_autoPlay="true"
                             app:lottie_fileName="lottie/globeanim.json"
@@ -186,7 +185,7 @@
 
                     <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="100dp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/vs"
@@ -199,23 +198,23 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/globe"
                     android:layout_alignParentRight="true"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp">
+                    android:layout_marginLeft="@dimen/_23sdp"
+                    android:layout_marginRight="@dimen/_23sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/user_image4"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:visibility="invisible"
                         android:id="@+id/user_image4_shadow"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:src="@drawable/ic_offline_shadow_img"
+                        android:visibility="invisible"
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
 
@@ -225,7 +224,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image4"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -236,12 +235,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/globe"
-                    android:layout_marginLeft="30dp">
+                    android:layout_marginLeft="@dimen/_23sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/user_image3"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
@@ -252,22 +251,23 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image3"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
                 </RelativeLayout>
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="70dp"
-                    android:layout_height="25dp"
+                    android:layout_width="@dimen/_55sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    app:cardCornerRadius="12dp">
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    app:cardCornerRadius="@dimen/_10sdp">
 
                     <RelativeLayout
-                        android:layout_width="70dp"
-                        android:layout_height="25dp"
+                        android:layout_width="@dimen/_55sdp"
+                        android:layout_height="@dimen/_20sdp"
                         android:background="#000">
 
                         <Chronometer

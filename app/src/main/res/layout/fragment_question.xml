@@ -19,29 +19,28 @@
             <RelativeLayout
                 android:visibility="visible"
                 android:id="@+id/images_team1"
-                android:layout_width="95dp"
-                android:layout_marginTop="25dp"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_18sdp"
                 android:layout_height="wrap_content">
 
 
                 <RelativeLayout
-                    android:layout_width="55dp"
-                    android:layout_height="85dp"
-                    android:layout_marginLeft="@dimen/_3sdp"
-                    >
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_72sdp"
+                    android:layout_marginLeft="@dimen/_4sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image2"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image2_shadow"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
                         android:src="@drawable/ic_offline_shadow_img"
                         android:visibility="invisible" />
 
@@ -50,7 +49,7 @@
                         android:layout_width="@dimen/_100sdp"
                         android:layout_height="match_parent"
                          android:layout_below="@id/team1_user_image2"
-                         android:layout_marginTop="3dp"
+                         android:layout_marginTop="2sp"
                         android:layout_centerHorizontal="true">
                          <ImageView
                              android:id="@+id/team1_mic2"
@@ -64,14 +63,14 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_width="55dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_height="85dp">
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_72sdp"
+                    android:layout_alignParentRight="true">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image1"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
@@ -79,8 +78,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image1_shadow"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
                         android:src="@drawable/ic_offline_shadow_img"
                         android:visibility="invisible" />
 
@@ -89,8 +88,9 @@
                         android:layout_width="@dimen/_100sdp"
                         android:layout_height="match_parent"
                         android:layout_below="@id/team1_user_image1"
-                        android:layout_marginTop="3dp"
-                        android:layout_centerHorizontal="true">
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_2sdp">
+
                         <ImageView
                             android:id="@+id/team1_mic1"
                             android:layout_width="wrap_content"
@@ -100,25 +100,26 @@
                             android:src="@drawable/ic_new_mic" />
                     </RelativeLayout>
                 </RelativeLayout>
+
             </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
+            <RelativeLayout
+                    android:layout_width="@dimen/_55sdp"
+                    android:layout_height="@dimen/_55sdp"
                     android:layout_marginTop="@dimen/_22sdp"
                     android:layout_centerHorizontal="true">
 
                     <com.labs.circularprogress.CircularProgressView
                         android:id="@+id/progress"
-                        android:layout_width="65dp"
-                        android:layout_height="65dp"
+                        android:layout_width="@dimen/_55sdp"
+                        android:layout_height="@dimen/_55sdp"
                         android:layout_centerInParent="true"
                         android:visibility="visible" />
 
                     <com.labs.circularprogress.CircularProgressView1
                         android:id="@+id/progress1"
-                        android:layout_width="65dp"
-                        android:layout_height="65dp"
+                        android:layout_width="@dimen/_55sdp"
+                        android:layout_height="@dimen/_55sdp"
                         android:layout_centerInParent="true"
                         android:visibility="visible" />
 
@@ -143,7 +144,7 @@
                 android:visibility="visible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="38dp"
+                android:layout_marginTop="@dimen/_28sdp"
                 android:layout_marginLeft="@dimen/_5sdp"
                 android:layout_toRightOf="@+id/images_team1"
                 android:orientation="vertical">
@@ -185,55 +186,57 @@
             <RelativeLayout
                 android:visibility="visible"
                 android:id="@+id/images_team2"
-                android:layout_width="95dp"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_18sdp"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginRight="@dimen/_4sdp"
                 android:layout_height="wrap_content">
 
 
                 <RelativeLayout
-                    android:layout_width="55dp"
-                    android:layout_height="85dp"
-                    >
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_72sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team2_user_image1"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_alignParentRight="true"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:visibility="invisible"
                         android:id="@+id/team2_user_image1_shadow"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_alignParentRight="true"
                         android:src="@drawable/ic_offline_shadow_img"
-                        />
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_width="55dp"
-                    android:layout_height="85dp"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_72sdp"
                     android:layout_marginRight="@dimen/_3sdp"
                     android:layout_alignParentRight="true">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team2_user_image2"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
                         android:src="@drawable/josh_skill"
+                        android:layout_alignParentRight="true"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:visibility="invisible"
                         android:id="@+id/team2_user_image2_shadow"
-                        android:layout_width="50dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/_45sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_alignParentRight="true"
                         android:src="@drawable/ic_offline_shadow_img"
-                        />
+                        android:visibility="invisible" />
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -241,7 +244,7 @@
                 android:id="@+id/txt_layout2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="38dp"
+                android:layout_marginTop="@dimen/_28sdp"
                 android:layout_marginRight="@dimen/_5sdp"
                 android:layout_toLeftOf="@+id/images_team2"
                 android:orientation="vertical"
@@ -289,9 +292,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/images_team1"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginLeft="@dimen/_23sdp"
+                android:layout_marginRight="@dimen/_23sdp"
+                android:layout_marginTop="@dimen/_32sdp"
                 >
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -301,11 +304,11 @@
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
-                    android:visibility="invisible"
                     android:text="@string/who_said_if"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:visibility="visible" />
             </RelativeLayout>
 
             <LinearLayout
@@ -330,7 +333,6 @@
                     android:textSize="@dimen/_25sdp"
                     android:textColor="@color/white"
                     android:includeFontPadding = "false">
-                    <!--                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular">-->
                 </TextView>
 
                 <TextView
@@ -353,24 +355,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginLeft="28dp"
-                android:layout_marginTop="28dp"
-                android:layout_marginRight="28dp"
-                android:layout_marginBottom="28dp"
+                android:layout_marginLeft="@dimen/_23sdp"
+                android:layout_marginTop="@dimen/_23sdp"
+                android:layout_marginRight="@dimen/_23sdp"
+                android:layout_marginBottom="@dimen/_23sdp"
                 android:orientation="vertical"
                 android:visibility="invisible">
 
-                    <RelativeLayout
+                <RelativeLayout
                         android:id="@+id/card1"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:layout_marginTop="@dimen/_6sdp"
                         android:background="@drawable/custom_layout">
 
                         <ImageView
                             android:visibility="invisible"
                             android:id="@+id/image_card_left1"
-                            android:layout_width="24dp"
+                            android:layout_width="@dimen/_18sdp"
                             android:layout_height="@dimen/_24sdp"
                             android:layout_marginLeft="-13dp"
                             android:scaleType="fitXY"
@@ -380,7 +382,7 @@
                         <ImageView
                             android:visibility="invisible"
                             android:id="@+id/image_card_right1"
-                            android:layout_width="24dp"
+                            android:layout_width="@dimen/_18sdp"
                             android:layout_height="@dimen/_24sdp"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="-13dp"
@@ -404,13 +406,13 @@
                 <RelativeLayout
                     android:id="@+id/card2"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
                     <ImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_left2"
-                        android:layout_width="24dp"
+                        android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
@@ -420,7 +422,7 @@
                     <ImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_right2"
-                        android:layout_width="24dp"
+                        android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="-13dp"
@@ -444,13 +446,13 @@
                 <RelativeLayout
                     android:id="@+id/card3"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
                     <ImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_left3"
-                        android:layout_width="24dp"
+                        android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
@@ -460,7 +462,7 @@
                     <ImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_right3"
-                        android:layout_width="24dp"
+                        android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="-13dp"
@@ -484,13 +486,13 @@
                 <RelativeLayout
                     android:id="@+id/card4"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
                     <ImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_left4"
-                        android:layout_width="24dp"
+                        android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
@@ -500,7 +502,7 @@
                     <ImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_right4"
-                        android:layout_width="24dp"
+                        android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="-13dp"
@@ -519,16 +521,17 @@
                         android:textColor="#151415"
                         android:textStyle="bold" />
                 </RelativeLayout>
+
             </LinearLayout>
 
             <ProgressBar
                 android:id="@+id/vertical_progressbar"
                 style="@style/Widget.ProgressBar.Vertical"
-                android:layout_width="12dp"
-                android:layout_height="354dp"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_300sdp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginLeft="7dp"
-                android:layout_marginBottom="@dimen/_15sdp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_23sdp"
                 android:background="@drawable/vertical_black"
                 android:progress="0"
                 android:secondaryProgress="0"
@@ -536,13 +539,13 @@
 
             <ProgressBar
                 android:id="@+id/vertical_progressbar1"
-                android:layout_width="12dp"
+                android:layout_width="@dimen/_10sdp"
                 style="@style/Widget.ProgressBar.Vertical"
-                android:layout_height="354dp"
+                android:layout_height="@dimen/_300sdp"
                 android:background="@drawable/vertical_black"
-                android:layout_marginRight="7dp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_23sdp"
                 android:layout_alignParentBottom="true"
                 android:progress="0"
                 android:secondaryProgress="0" />

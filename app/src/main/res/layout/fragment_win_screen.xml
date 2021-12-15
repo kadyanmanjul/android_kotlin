@@ -165,7 +165,7 @@
                                 android:src="@drawable/josh_skill_bg" />
 
 
-                            <com.joshtalks.joshskills.quizgame.utils.CircularProgressView
+                            <com.joshtalks.joshskills.quizgame.util.CircularProgressView
                                 android:id="@+id/progress"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp" />
@@ -368,7 +368,7 @@
                     android:scaleType="fitXY"
                     />
 
-                <com.joshtalks.joshskills.quizgame.utils.TextViewOutline
+                <com.joshtalks.joshskills.quizgame.util.TextViewOutline
                     android:id="@+id/txt_winner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -889,7 +889,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/txt_opponent_win"
                 app:layout_constraintEnd_toStartOf="@+id/relativeLayout4"
                 app:layout_constraintStart_toEndOf="@+id/relativeLayout7" />
-            <com.joshtalks.joshskills.quizgame.utils.TextViewOutline
+            <com.joshtalks.joshskills.quizgame.util.TextViewOutline
                 android:visibility="invisible"
                 android:id="@+id/txt_opponent_win"
                 android:layout_width="wrap_content"
@@ -908,7 +908,7 @@
                 android:shadowRadius="1"
                 >
 
-            </com.joshtalks.joshskills.quizgame.utils.TextViewOutline>
+            </com.joshtalks.joshskills.quizgame.util.TextViewOutline>
 
 
             <RelativeLayout

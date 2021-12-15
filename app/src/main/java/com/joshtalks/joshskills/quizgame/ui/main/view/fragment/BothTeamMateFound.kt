@@ -1,16 +1,12 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.app.Dialog
-import android.graphics.BlurMaskFilter
 import android.graphics.Color
-import android.graphics.MaskFilter
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,31 +14,29 @@ import android.view.Window
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.BothTeamRepo
-import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchOpponentRepo
-import com.joshtalks.joshskills.quizgame.ui.main.adapter.ImageAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewProviderFactory
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentTeamViewModel
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
+
+const val START_TIME:String = "start_time"
+const val ROOM_ID:String ="room_id"
+const val CHANNEL_NAME = "channelName"
+const val USER_DETAILS:String ="userDetails"
+const val MESSAGE ="Your partner left the you have to play alone"
 
 class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     var startTime:String?=null
@@ -88,10 +82,10 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            startTime = it.getString("start_time")
-            roomId = it.getString("room_id")
-            userDetails = it.getParcelable("userDetails")
-            channelName = it.getString("channelName")
+            startTime = it.getString(START_TIME)
+            roomId = it.getString(ROOM_ID)
+            userDetails = it.getParcelable(USER_DETAILS)
+            channelName = it.getString(CHANNEL_NAME)
         }
         setupViewModel()
     }
@@ -136,10 +130,10 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
         fun newInstance(startTime: String,roomId:String,userDetails: UserDetails?, channelName: String) =
             BothTeamMateFound().apply {
                 arguments = Bundle().apply {
-                    putString("start_time",startTime)
-                    putString("room_id",roomId)
-                    putParcelable("userDetails",userDetails)
-                    putString("channelName",channelName)
+                    putString(START_TIME,startTime)
+                    putString(ROOM_ID,roomId)
+                    putParcelable(USER_DETAILS,userDetails)
+                    putString(CHANNEL_NAME,channelName)
                 }
             }
     }
@@ -159,7 +153,7 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     private fun getRoomData() {
         bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId?:"",currentUserId?:""))
         activity?.let {
-               bothTeamViewModel?.roomUserData?.observe(it, Observer {
+               bothTeamViewModel?.roomUserData?.observe(it, {
                    initializeUsersTeamsData(it.teamData)
                })
         }
@@ -284,7 +278,7 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
         yesBtn.setOnClickListener {
                 bothTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
                 activity?.let {
-                    bothTeamViewModel?.deleteData?.observe(it, Observer {
+                    bothTeamViewModel?.deleteData?.observe(it, {
                         engine?.leaveChannel()
                         binding.callTime.stop()
                         dialog.dismiss()
@@ -319,9 +313,10 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
                 requireActivity().runOnUiThread {
                     binding.userName4.alpha = 0.5f
                     binding.userImage4Shadow.visibility = View.VISIBLE
+                    showToast(MESSAGE)
                 }
             }catch (ex:Exception){
-                Log.d("error_res", "onPartnerLeave: "+ex.message)
+                showToast(ex.message?:"")
             }
         }
     }

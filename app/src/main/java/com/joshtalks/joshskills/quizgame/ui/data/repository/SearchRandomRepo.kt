@@ -7,9 +7,9 @@ import retrofit2.http.Body
 class SearchRandomRepo {
     suspend fun getSearchRandomData(userId: String) = RetrofitInstanse.getRetrofitInstance()?.searchRandomUser(mapOf("user_id" to userId))
 
-    suspend fun getStatus(userIdMentor: String?,status:String?) = RetrofitInstanse.getRetrofitInstance()?.changeUserStatus(
-        Status(userIdMentor,status)
-    )
+//    suspend fun getStatus(userIdMentor: String?,status:String?) = RetrofitInstanse.getRetrofitInstance()?.changeUserStatus(
+//        Status(userIdMentor,status)
+//    )
 
     suspend fun createRandomUserRoom(roomRandom: RoomRandom) = RetrofitInstanse.getRetrofitInstance()?.createRandomRoom(roomRandom)
 

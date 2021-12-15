@@ -20,7 +20,7 @@ class SearchRandomUserViewModel(
     AndroidViewModel(application111) {
 
     var searchRandomData: MutableLiveData<SearchRandomResponse> = MutableLiveData()
-    var statusResponse: MutableLiveData<Success> = MutableLiveData()
+    //var statusResponse: MutableLiveData<Success> = MutableLiveData()
     var roomRandomData: MutableLiveData<RoomData> = MutableLiveData()
     var randomRoomUser: MutableLiveData<RandomRoomDataResponse> = MutableLiveData()
     var deleteData: MutableLiveData<Success> = MutableLiveData()
@@ -40,20 +40,20 @@ class SearchRandomUserViewModel(
         }
     }
 
-    fun statusChange(userIdMentor: String?, status: String?) {
-        try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    val response = searchRandomRepo.getStatus(userIdMentor, status)
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        statusResponse.postValue(response.body())
-                    }
-                }
-            }
-        } catch (ex: Throwable) {
-            Timber.d(ex)
-        }
-    }
+//    fun statusChange(userIdMentor: String?, status: String?) {
+//        try {
+//            if (UpdateReceiver.isNetworkAvailable(application111)) {
+//                viewModelScope.launch(Dispatchers.IO) {
+//                    val response = searchRandomRepo.getStatus(userIdMentor, status)
+//                    if (response?.isSuccessful == true && response.body() != null) {
+//                        statusResponse.postValue(response.body())
+//                    }
+//                }
+//            }
+//        } catch (ex: Throwable) {
+//            Timber.d(ex)
+//        }
+//    }
 
     fun createRoomRandom(roomRandom: RoomRandom) {
         try {

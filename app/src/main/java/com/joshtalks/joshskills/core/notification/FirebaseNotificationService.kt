@@ -516,9 +516,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                 if (!PrefManager.getBoolValue(
                         PREF_IS_CONVERSATION_ROOM_ACTIVE
-                    )
+                    ) || !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                 ) {
                     incomingCallNotificationAction(notificationObject.actionData)
+                } else if (PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)) {
+                    callForceDisconnect()
                 }
                 return null
             }
@@ -1437,9 +1439,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                     if (!PrefManager.getBoolValue(
                             PREF_IS_CONVERSATION_ROOM_ACTIVE
-                        )
+                        ) || !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                     ) {
                         incomingCallNotificationAction(notificationObject.actionData)
+                    } else if (PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)) {
+                        callForceDisconnect()
                     }
                     null
                 }

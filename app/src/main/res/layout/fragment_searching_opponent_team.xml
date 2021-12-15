@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_game_logo_grad"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="@dimen/_30sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +32,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_60sdp"
                 android:id="@+id/card1"
                 app:layout_constraintBottom_toTopOf="@+id/relativeLayout6"
                 app:layout_constraintTop_toTopOf="@+id/txtquiz">
@@ -42,30 +43,25 @@
                     android:layout_height="100dp"
                     android:layout_marginLeft="@dimen/_20sdp"
                     android:layout_marginRight="@dimen/_20sdp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="45dp"
-                    android:layout_marginTop="@dimen/_40sdp"
-                    app:cardMaxElevation="20dp"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    android:background="@color/transparent"
+                    android:backgroundTint="@color/transparent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:strokeColor="#8785FB"
-                    app:strokeWidth="2dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:background="@drawable/card_gradient">
+                    app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_centerInParent="true"
+                            android:gravity="center"
                             android:text="Searching for opponent team..."
+                            android:background="@drawable/card_border"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                            android:textColor="@color/white" />
-                    </RelativeLayout>
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_14sdp"
+                            android:textStyle="bold" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -75,7 +71,7 @@
             <RelativeLayout
                 android:id="@+id/relativeLayout6"
                 android:layout_width="match_parent"
-                android:layout_height="320dp"
+                android:layout_height="@dimen/_305sdp"
                 android:layout_below="@id/card1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card1">
@@ -83,18 +79,18 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp">
+                    android:layout_marginLeft="@dimen/_23sdp">
 
                     <RelativeLayout
                         android:id="@+id/rela1"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:background="@drawable/image_border">
 
                         <com.airbnb.lottie.LottieAnimationView
                             android:id="@+id/team2_user_image1"
-                            android:layout_width="@dimen/_55sdp"
-                            android:layout_height="@dimen/_55sdp"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
                             android:layout_centerInParent="true"
                             app:lottie_autoPlay="true"
                             app:lottie_fileName="lottie/faceanim.json"
@@ -108,31 +104,30 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela1"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
-                        android:text="Searching..."
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:text=""
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/relative_layout_sec"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp">
+                    android:layout_marginRight="@dimen/_23sdp">
 
                     <RelativeLayout
                         android:id="@+id/rela2"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:background="@drawable/image_border">
 
                         <com.airbnb.lottie.LottieAnimationView
                             android:id="@+id/team2_user_image2"
-                            android:layout_width="@dimen/_55sdp"
-                            android:layout_height="@dimen/_55sdp"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
                             android:layout_centerInParent="true"
-                            android:layout_marginTop="3dp"
                             app:lottie_autoPlay="true"
                             app:lottie_fileName="lottie/faceanim.json"
                             app:lottie_loop="true" />
@@ -144,8 +139,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela2"
+                        android:layout_marginTop="@dimen/_2sdp"
                         android:layout_centerHorizontal="true"
-                        android:text="Searching..."
+                        android:text=""
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -154,36 +150,35 @@
                 <RelativeLayout
                     android:id="@+id/globe"
                     android:layout_width="match_parent"
-                    android:layout_height="95dp"
-                    android:layout_centerInParent="true"
-                    android:layout_marginTop="10dp">
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_below="@+id/relative_layout_sec"
+                    >
 
                     <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/vs"
                         android:src="@drawable/gvygybgygby" />
 
-
-                    <RelativeLayout
+                   <RelativeLayout
                         android:id="@+id/vs1"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/ic_ellipse_79" />
 
                     <RelativeLayout
                         android:id="@+id/vs"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/back_vs">
 
                         <com.airbnb.lottie.LottieAnimationView
                             android:id="@+id/image9"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
                             android:layout_centerInParent="true"
                             app:lottie_autoPlay="true"
                             app:lottie_fileName="lottie/globeanim.json"
@@ -194,7 +189,7 @@
 
                     <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="100dp"
+                        android:layout_height="@dimen/_80sdp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/vs"
@@ -212,26 +207,25 @@
 
                     <RelativeLayout
                         android:id="@+id/rela4"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:background="@drawable/image_border">
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/team1_user_image2"
-                            android:layout_width="@dimen/_55sdp"
-                            android:layout_height="@dimen/_55sdp"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
                             android:layout_centerInParent="true"
                             app:lottie_fileName="lottie/faceanim.json"
                             app:lottie_loop="true" />
 
                         <de.hdodenhof.circleimageview.CircleImageView
-                            android:visibility="invisible"
                             android:id="@+id/team1_user_image2_shadow"
-                            android:layout_width="@dimen/_55sdp"
-                            android:layout_height="@dimen/_55sdp"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
                             android:layout_centerInParent="true"
                             android:src="@drawable/ic_offline_shadow_img"
-                            />
+                            android:visibility="invisible" />
 
                     </RelativeLayout>
 
@@ -241,7 +235,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela4"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -256,17 +250,15 @@
 
                     <RelativeLayout
                         android:id="@+id/rela3"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
                         android:background="@drawable/image_border">
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/team1_user_image1"
-                            android:layout_width="@dimen/_55sdp"
-                            android:layout_height="@dimen/_55sdp"
-                            android:layout_centerInParent="true"
-                            app:lottie_fileName="lottie/faceanim.json"
-                            app:lottie_loop="true" />
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
+                            android:layout_centerInParent="true" />
 
                     </RelativeLayout>
 
@@ -276,7 +268,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela3"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="@dimen/_2sdp"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />

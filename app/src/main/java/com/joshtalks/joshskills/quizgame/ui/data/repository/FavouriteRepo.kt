@@ -14,9 +14,9 @@ class FavouriteRepo {
 
     suspend fun getChannelData(toMentorId: String?,channelName:String?) = RetrofitInstanse.getRetrofitInstance()?.getUserChannelId(AgoraToToken(toMentorId,channelName))
 
-    suspend fun getStatus(userIdMentor: String?,status:String?) = RetrofitInstanse.getRetrofitInstance()?.changeUserStatus(
-        Status(userIdMentor,status)
-    )
+//    suspend fun getStatus(userIdMentor: String?,status:String?) = RetrofitInstanse.getRetrofitInstance()?.changeUserStatus(
+//        Status(userIdMentor,status)
+//    )
 
     suspend fun addFavouritePartner(addFavouritePartner: AddFavouritePartner) = RetrofitInstanse.getRetrofitInstance()?.addUserAsFpp(addFavouritePartner)
 

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.quizgame.utils;
+package com.joshtalks.joshskills.quizgame.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;

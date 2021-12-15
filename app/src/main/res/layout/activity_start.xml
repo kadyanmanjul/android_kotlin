@@ -3,14 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
+
         <variable
             name="clickHandler"
             type="com.joshtalks.joshskills.quizgame.StartActivity" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModel" />
     </data>
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_layout"
         android:layout_width="match_parent"
@@ -35,16 +41,17 @@
             android:layout_height="80dp"
             app:cardCornerRadius="40dp"
             app:cardElevation="5dp"
+            android:background="@color/transparent"
+            android:backgroundTint="@color/transparent"
             android:layout_marginTop="@dimen/_125sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:strokeColor="#C3527E"
-            app:strokeWidth="2.5dp"
-            android:focusable="true"
-            android:clickable="true"
-            >
+            app:strokeWidth="2.5dp">
+<!--            android:focusable="true"-->
+<!--            android:clickable="true"-->
 
             <RelativeLayout
                 android:foreground="?android:attr/selectableItemBackground"

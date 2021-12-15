@@ -13,9 +13,6 @@ import android.view.animation.TranslateAnimation
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.ViewCompat
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -23,10 +20,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.util.CollectionUtils
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
-import com.google.android.material.shape.TriangleEdgeTreatment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentQuestionBinding
@@ -38,7 +31,6 @@ import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.tonyodev.fetch2core.calculateEstimatedTimeRemainingInMilliseconds
 import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
 import kotlinx.android.synthetic.main.fragment_question.*
@@ -46,6 +38,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+
+const val BOTH_TEAM_SELECTED :String = "Both teams selected answer before 7 seconds , show response and animations to all the users in room"
+const val CALL_TIME :String = "callTime"
+const val FROM_TYPE :String ="fromType"
+const val QUESTION_COUNT :String ="7"
+const val LAST_ROUND :String ="Last Round"
+const val ROUND_2X_BOUNCE:String = "2X BONUS!"
+const val RANDOM :String ="Random"
+
 
 class QuestionFragment : Fragment(),FirebaseDatabase.OnNotificationTrigger,FirebaseDatabase.OnAnimationTrigger,
 P2pRtc.WebRtcEngineCallback{
@@ -114,8 +115,8 @@ P2pRtc.WebRtcEngineCallback{
         currentUserId = Mentor.getInstance().getUserId()
         arguments?.let {
             roomId = it.getString("roomId")
-            callTimeCount = it.getString("callTime")
-            fromType = it.getString("fromType")
+            callTimeCount = it.getString(CALL_TIME)
+            fromType = it.getString(FROM_TYPE)
         }
         setupViewModel()
     }
@@ -268,39 +269,6 @@ P2pRtc.WebRtcEngineCallback{
     fun drawTriangleOnCard(view : View){
         try {
             view.visibility = View.VISIBLE
-//            if (view.isInvisible){
-//                when (view) {
-//                    binding.imageCardLeft1 -> {
-//                        binding.imageCardRight1.visibility = View.VISIBLE
-//                    }
-//                    binding.imageCardLeft2 -> {
-//                        binding.imageCardRight2.visibility = View.VISIBLE
-//                    }
-//                    binding.imageCardLeft3 -> {
-//                        binding.imageCardRight3.visibility = View.VISIBLE
-//                    }
-//                    binding.imageCardLeft3 -> {
-//                        binding.imageCardRight4.visibility = View.VISIBLE
-//                    }
-//                }
-//            }else{
-//                view.visibility = View.VISIBLE
-//            }
-//            val triangleEdgeTreatment = TriangleEdgeTreatment(30f, true)
-//            val shapeAppearanceModel = ShapeAppearanceModel()
-//                .toBuilder()
-//                .setLeftEdge(triangleEdgeTreatment)
-//                .build()
-//
-//            val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
-//            shapeDrawable.setCornerSize(3f)
-//
-//            shapeDrawable.fillColor = activity?.resources?.getColor(R.color.white)?.let {
-//                ColorStateList.valueOf(
-//                    it
-//                )
-//            }
-//            ViewCompat.setBackground(view, shapeDrawable)
         }catch (ex:Exception){
             Log.d("exception", "drawTriangleOnCard: "+ex.message)
         }
@@ -308,20 +276,6 @@ P2pRtc.WebRtcEngineCallback{
     fun drawTriangleOnCardRight(view : View){
         try {
             view.visibility = View.VISIBLE
-//            val triangleEdgeTreatment = TriangleEdgeTreatment(30f, true)
-//            val shapeAppearanceModel = ShapeAppearanceModel()
-//                .toBuilder()
-//                .setLeftEdge(triangleEdgeTreatment)
-//                .setRightEdge(triangleEdgeTreatment)
-//                .build()
-//            val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
-//            shapeDrawable.setCornerSize(3f)
-//            shapeDrawable.fillColor = activity?.resources?.getColor(R.color.white)?.let {
-//                ColorStateList.valueOf(
-//                    it
-//                )
-//            }
-//            ViewCompat.setBackground(view, shapeDrawable)
         }catch (ex:Exception){
             Log.d("exception", "drawTriangleOnCardRight: "+ ex.message)
         }
@@ -336,20 +290,6 @@ P2pRtc.WebRtcEngineCallback{
             binding.imageCardRight2.visibility = View.INVISIBLE
             binding.imageCardRight3.visibility = View.INVISIBLE
             binding.imageCardRight4.visibility = View.INVISIBLE
-//            val triangleEdgeTreatment = TriangleEdgeTreatment(0f, true)
-//            val shapeAppearanceModel = ShapeAppearanceModel()
-//                .toBuilder()
-//                .setLeftEdge(triangleEdgeTreatment)
-//                .setRightEdge(triangleEdgeTreatment)
-//                .build()
-//            val shapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
-//            shapeDrawable.setCornerSize(3f)
-//            shapeDrawable.fillColor = activity?.resources?.getColor(R.color.white)?.let {
-//                ColorStateList.valueOf(
-//                    it
-//                )
-//            }
-//            ViewCompat.setBackground(view, shapeDrawable)
         }catch (ex:Exception){
             Log.d("exception", "makeAgainCardSquare: "+ex.message)
         }
@@ -379,14 +319,8 @@ P2pRtc.WebRtcEngineCallback{
             questionSize = question.que.size
             val allQuestionsAnswer: Question = question.que[position]
 
-            //animateGetReady(binding.roundNumber)
             binding.question.visibility = View.VISIBLE
             binding.question.text = allQuestionsAnswer.question
-//            lifecycleScope.launch {
-//                //delay(1000)
-//                binding.question.visibility = View.VISIBLE
-//                binding.question.text = allQuestionsAnswer.question
-//            }
             answerAnim()
             choiceValue = getDisplayAnswerAfterQuesComplete()
             binding.answer1.text = allQuestionsAnswer.choices?.get(0)?.choiceData
@@ -403,7 +337,7 @@ P2pRtc.WebRtcEngineCallback{
             factory = QuestionProviderFactory(requireActivity().application, questionRepo!!)
             questionViewModel = ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
             questionViewModel = factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
-            questionViewModel?.getQuizQuestion(QuestionRequest("7",roomId?:""))
+            questionViewModel?.getQuizQuestion(QuestionRequest(QUESTION_COUNT,roomId?:""))
             try {
                 // questionViewModel?.getRoomUserData(RoomData(roomId?:""))
                 questionViewModel?.getRoomUserDataTemp(
@@ -524,26 +458,21 @@ P2pRtc.WebRtcEngineCallback{
 
             }
 
-            Log.d("position", "displayAnswerAndShowNextQuestion1: "+position)
             if(position<=questionSize.minus(1)){
-                Log.d("position", "displayAnswerAndShowNextQuestion2: "+position)
                 if(position==questionSize.minus(1)){
                     isLastQuestion = true
-                    Log.d("position", "displayAnswerAndShowNextQuestion3: "+position)
                     binding.roundNumber.visibility = View.VISIBLE
-                    binding.roundNumber.text = "Last Round"
+                    binding.roundNumber.text = LAST_ROUND
                     binding.getReady.visibility = View.VISIBLE
-                    binding.getReady.text = "2X BONUS!"
+                    binding.getReady.text = ROUND_2X_BOUNCE
                     animationForRound()
                 }else{
-                    Log.d("position", "displayAnswerAndShowNextQuestion4: "+position)
                     binding.roundNumber.visibility = View.VISIBLE
                     binding.roundNumber.text = getString(R.string.round_1) + " " + position.plus(1).toString()
                     animationForRound()
                 }
             }
             else{
-                Log.d("position", "displayAnswerAndShowNextQuestion5: "+position)
                 binding.roundNumber.visibility = View.INVISIBLE
             }
             binding.question.visibility = View.INVISIBLE
@@ -702,8 +631,8 @@ P2pRtc.WebRtcEngineCallback{
             QuestionFragment().apply {
                 arguments = Bundle().apply {
                     putString("roomId", roomId)
-                    putString("callTime",startTime)
-                    putString("fromType",fromType)
+                    putString(CALL_TIME,startTime)
+                    putString(FROM_TYPE,fromType)
                 }
             }
     }
@@ -813,9 +742,8 @@ P2pRtc.WebRtcEngineCallback{
             isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
             questionViewModel?.selectOption?.observe(it, {
                 choiceAnswer(choiceAnswer, isCorrect ?: "")
-                var firstTeamAnswer = it.choiceData?.get(0)?.choiceData
-                Log.d("both_team", "getSelectOptionWithAnim: ${it}")
-                if (it.message == "Both teams selected answer before 7 seconds , show response and animations to all the users in room") {
+                val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
+                if (it.message == BOTH_TEAM_SELECTED ) {
                     firebaseDatabase.createOpponentTeamShowCutCard(opponentTeamId?:"", isCorrect?:"", choiceAnswer)
                     firebaseDatabase.createPartnerShowCutCard(currentUserTeamId?:"", isCorrect?:"", firstTeamAnswer?:"")
 
@@ -824,7 +752,7 @@ P2pRtc.WebRtcEngineCallback{
             })
             // partnerId = getPartnerId()
 
-            if (isCorrect == "true") {
+            if (isCorrect == TRUE) {
                 marks += if (isLastQuestion) {
                     (seconds * 2)
                 }else{
@@ -833,7 +761,7 @@ P2pRtc.WebRtcEngineCallback{
             }
 
             try {
-                if (isCorrect == "true"){
+                if (isCorrect == TRUE){
                     if (position!=0)
                         progressBar.progressTintList =
                             activity?.resources?.getColor(R.color.green_quiz)?.let { it1 ->
@@ -935,7 +863,7 @@ P2pRtc.WebRtcEngineCallback{
                         )
                     }
 
-                    if (isCorrect == "true") {
+                    if (isCorrect == TRUE) {
                         activity?.resources?.getColor(R.color.green_quiz)?.let {
                             binding.marks1.setTextColor(
                                 it
@@ -979,7 +907,7 @@ P2pRtc.WebRtcEngineCallback{
                         )
                     }
 
-                    if (isCorrect == "true") {
+                    if (isCorrect == TRUE) {
                         activity?.resources?.getColor(R.color.green_quiz)?.let {
                             binding.marks1.setTextColor(
                                 it
@@ -1023,7 +951,7 @@ P2pRtc.WebRtcEngineCallback{
                         )
                     }
 
-                    if (isCorrect == "true") {
+                    if (isCorrect == TRUE) {
                         activity?.resources?.getColor(R.color.green_quiz)?.let {
                             binding.marks1.setTextColor(
                                 it
@@ -1067,7 +995,7 @@ P2pRtc.WebRtcEngineCallback{
                         )
                     }
 
-                    if (isCorrect == "true") {
+                    if (isCorrect == TRUE) {
                         activity?.resources?.getColor(R.color.green_quiz)?.let {
                             binding.marks1.setTextColor(
                                 it
@@ -1122,7 +1050,7 @@ P2pRtc.WebRtcEngineCallback{
         binding.marks1.text = marks.toString()
 
         try {
-            if (isCorrect == "true"){
+            if (isCorrect == TRUE){
                 try {
                     progressBar.secondaryProgress = marks
                     progressBar.progress = marks - 10
@@ -1160,7 +1088,7 @@ P2pRtc.WebRtcEngineCallback{
         opponentTeamMarks = marksOpponentTeam.toInt()
         binding.marks2.text = marksOpponentTeam
         binding.progress.pauseProgress()
-        if (isCorrect == "true") {
+        if (isCorrect == TRUE) {
             try {
                 activity?.resources?.getColor(R.color.green_quiz)?.let {
                     binding.marks2.setTextColor(
@@ -1381,14 +1309,14 @@ P2pRtc.WebRtcEngineCallback{
     }
 
     override fun onMicOnOff(partnerUserId: String,status: String) {
-        if (status == "true"){
+        if (status == TRUE){
             binding.team1Mic2.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic_off))
         }else{
             binding.team1Mic2.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic))
         }
     }
     private fun deleteUserRoomData(dialog: Dialog){
-        if (fromType == "Random"){
+        if (fromType == RANDOM ){
             try {
                 questionViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
                 activity?.let {

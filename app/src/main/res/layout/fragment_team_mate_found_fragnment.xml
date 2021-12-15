@@ -25,13 +25,12 @@
                 android:id="@+id/txt_quiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_game_logo_grad"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:src="@drawable/ic_game_logo_grad"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
 
             <TextView
@@ -40,10 +39,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txt_quiz"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="55dp"
+                android:layout_marginTop="@dimen/_42sdp"
+                android:letterSpacing="0"
                 android:text="@string/your_team_mate"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
                 android:textColor="@color/white"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textStyle="bold" />
 
             <RelativeLayout
@@ -51,40 +51,49 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/txt_quiz1"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="35dp"
-                android:layout_marginRight="30dp">
+                android:layout_marginLeft="@dimen/_25sdp"
+                android:layout_marginTop="@dimen/_27sdp"
+                android:layout_marginRight="@dimen/_25sdp">
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_alignParentLeft="true"
                     android:layout_height="wrap_content">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/image"
-                        android:layout_width="@dimen/_65sdp"
-                        android:layout_height="@dimen/_65sdp"
-                        android:layout_alignParentLeft="true"
-                        android:src="@drawable/josh_skill"
-                        app:civ_border_color="@color/light_blue"
-                        app:civ_border_width="@dimen/_2sdp" />
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:visibility="invisible"
-                        android:id="@+id/shadow_img1"
-                        android:layout_width="@dimen/_65sdp"
-                        android:layout_height="@dimen/_65sdp"
-                        android:layout_alignParentLeft="true"
-                        android:src="@drawable/ic_offline_shadow_img"
-                        />
+                    <RelativeLayout
+                        android:id="@+id/image_rel"
+                        android:background="@drawable/image_border"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/image"
+                            android:layout_width="@dimen/_76sdp"
+                            android:layout_height="@dimen/_76sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/josh_skill" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/shadow_img1"
+                            android:layout_width="@dimen/_76sdp"
+                            android:layout_height="@dimen/_76sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_offline_shadow_img"
+                            android:visibility="invisible" />
+
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/user_name1"
-                        android:layout_width="88dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/image"
-                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/image_rel"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_6sdp"
                         android:gravity="center"
+                        android:letterSpacing="0"
                         android:text="Harsh"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
 
@@ -93,41 +102,44 @@
 
                 <RelativeLayout
                     android:id="@+id/img"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_80sdp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true">
+                    <RelativeLayout
+                        android:id="@+id/image_rel1"
+                        android:background="@drawable/image_border"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/image2"
+                            android:layout_width="@dimen/_76sdp"
+                            android:layout_height="@dimen/_76sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/josh_skill"
+                           />
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/image2"
-                        android:layout_width="@dimen/_65sdp"
-                        android:layout_height="@dimen/_65sdp"
-                        android:layout_alignParentLeft="true"
-                        android:src="@drawable/josh_skill"
-                        app:civ_border_color="@color/light_blue"
-                        app:civ_border_width="@dimen/_2sdp" />
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:visibility="invisible"
                         android:id="@+id/shadow_img2"
-                        android:layout_width="@dimen/_65sdp"
-                        android:layout_height="@dimen/_65sdp"
-                        android:layout_alignParentLeft="true"
+                        android:layout_width="@dimen/_76sdp"
+                        android:layout_height="@dimen/_76sdp"
+                        android:layout_centerInParent="true"
                         android:src="@drawable/ic_offline_shadow_img"
-                        />
+                        android:visibility="invisible" />
+                    </RelativeLayout>
 
-
-                    <TextView
-                        android:id="@+id/user_name2"
-                        android:layout_width="88dp"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/image2"
-                        android:gravity="center"
-                        android:layout_marginTop="10dp"
-                        android:text="Shobhit"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
-
+                        <TextView
+                            android:id="@+id/user_name2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/image_rel1"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/_6sdp"
+                            android:gravity="center"
+                            android:letterSpacing="0"
+                            android:text="Harsh"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
+                            android:textColor="@color/white"
+                            android:textStyle="bold" />
 
                 </RelativeLayout>
 
@@ -139,16 +151,20 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
+                    android:letterSpacing="0"
                     android:text=""
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
                     android:textColor="@color/white"
+                    android:textStyle="bold"
                     android:visibility="invisible" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/image_sound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentBottom="true"
+                    android:layout_marginStart="3dp"
                     android:layout_marginBottom="@dimen/_30sdp"
                     android:background="@drawable/circle2"
                     android:backgroundTint="@color/blue33"
@@ -161,16 +177,15 @@
                     android:id="@+id/image_mute"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/_30sdp"
                     android:background="@drawable/circle2"
                     android:backgroundTint="@color/blue33"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/_14sdp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    app:srcCompat="@drawable/ic_baseline_mic_off"
-                    android:layout_marginBottom="@dimen/_30sdp"
-                    />
+                    app:srcCompat="@drawable/ic_baseline_mic_off" />
 
             </RelativeLayout>
 

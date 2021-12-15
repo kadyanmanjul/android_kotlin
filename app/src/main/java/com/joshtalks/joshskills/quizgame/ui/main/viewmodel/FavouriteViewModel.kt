@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.FavouriteRepo
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
@@ -22,7 +23,7 @@ class FavouriteViewModel(
     val fromTokenData: MutableLiveData<ChannelData> = MutableLiveData()
     val agoraToToken: MutableLiveData<AgoraToTokenResponse> = MutableLiveData()
     val agoraCallResponse: MutableLiveData<Success> = MutableLiveData()
-    val statusResponse: MutableLiveData<Success> = MutableLiveData()
+    //val statusResponse: MutableLiveData<Success> = MutableLiveData()
     var fppData: MutableLiveData<Success> = MutableLiveData()
 
     fun fetchFav(mentorId: String) {
@@ -74,20 +75,20 @@ class FavouriteViewModel(
         }
     }
 
-    fun statusChange(userIdMentor: String?, status: String?) {
-        try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    val response = favouriteRepo.getStatus(userIdMentor, status)
-                    if (response?.isSuccessful == true && response.body() != null) {
-                        statusResponse.postValue(response.body())
-                    }
-                }
-            }
-        } catch (ex: Throwable) {
-            Timber.d(ex)
-        }
-    }
+//    fun statusChange(userIdMentor: String?, status: String?) {
+//        try {
+//            if (UpdateReceiver.isNetworkAvailable(application111)) {
+//                viewModelScope.launch(Dispatchers.IO) {
+//                    val response = favouriteRepo.getStatus(userIdMentor, status)
+//                    if (response?.isSuccessful == true && response.body() != null) {
+//                        statusResponse.postValue(response.body())
+//                    }
+//                }
+//            }
+//        } catch (ex: Throwable) {
+//            showToast(ex.message?:"")
+//        }
+//    }
 
     fun addFavouritePracticePartner(addFavouritePartner: AddFavouritePartner) {
         try {

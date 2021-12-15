@@ -109,6 +109,8 @@ const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
 
+const val USER_ACTIVE_IN_GAME = "game_active"
+
 object PrefManager {
 
     private const val PREF_NAME_COMMON = "JoshSkills"

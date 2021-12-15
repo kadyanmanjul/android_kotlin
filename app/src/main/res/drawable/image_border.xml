@@ -4,12 +4,12 @@
 
     <!-- View border color and width -->
     <stroke
-        android:width="8dp"
+        android:width="@dimen/_8sdp"
         android:color="#C5E5FE" >
     </stroke>
 
     <corners
-        android:radius="38dp">
+        android:radius="@dimen/_38sdp">
     </corners>
 
 </shape>

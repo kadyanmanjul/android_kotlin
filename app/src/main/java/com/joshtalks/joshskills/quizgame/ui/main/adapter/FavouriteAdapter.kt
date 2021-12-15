@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -24,6 +25,8 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ACTIVE
+import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.IN_ACTIVE
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
@@ -85,9 +88,7 @@ class FavouriteAdapter(
 
     inner class FavViewHolder(val binding: CustomFavouriteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(favouriteDemoData: Favourite?,position: Int){
-            //binding.status.text = favouriteDemoData.status
             binding.userImage.setUserImageOrInitials(favouriteDemoData?.image,favouriteDemoData?.name?:"",30,isRound = true)
-            //imageUrl(binding.userImage, favouriteDemoData?.image)
             binding.userName.text=favouriteDemoData?.name
             binding.status.text = favouriteDemoData?.status
             if (favouriteDemoData?.name?.toLowerCase()?.contains(search?:"") == true) {
@@ -105,58 +106,25 @@ class FavouriteAdapter(
             }
 
             when (favouriteDemoData?.status) {
-                "active" -> {
+                ACTIVE -> {
                     binding.clickToken.setImageResource(R.drawable.ic_plus1)
                     binding.clickToken.setOnClickListener(View.OnClickListener {
                         AudioManagerQuiz.audioRecording.startPlaying(context,R.raw.tick_animation,false)
-                        binding.clickToken.setImageResource(R.drawable.ic_grass_timer)
+                        binding.clickToken.speed = 1.5F // How fast does the animation play
+                        binding.clickToken.repeatCount = LottieDrawable.INFINITE
+                        binding.clickToken.setAnimation("lottie/hourglass_anim.json")
+                        binding.clickToken.playAnimation()
                         binding.clickToken.isEnabled = false
                         openCourseListener.onClickForGetToken(arrayList?.get(position),position.toString())
                     })
                 }
-                "inactive" -> {
+                IN_ACTIVE -> {
                     binding.clickToken.visibility=View.INVISIBLE
                 }
                 else -> {
                     binding.clickToken.visibility=View.INVISIBLE
                 }
             }
-        }
-
-        fun imageUrl(imageView: ImageView, url: String?) {
-            val imageUrl=url?.replace("\n","")
-
-            if (imageUrl.isNullOrEmpty()) {
-                imageView.setImageResource(R.drawable.ic_josh_course)
-                return
-            }
-
-            val multi = MultiTransformation(
-                CropTransformation(
-                    Utils.dpToPx(48),
-                    Utils.dpToPx(48),
-                    CropTransformation.CropType.CENTER
-                ),
-                RoundedCornersTransformation(
-                    Utils.dpToPx(ROUND_CORNER),
-                    0,
-                    RoundedCornersTransformation.CornerType.ALL
-                )
-            )
-            Glide.with(AppObjectController.joshApplication)
-                .load(imageUrl)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .apply(
-                    RequestOptions.bitmapTransform(multi).apply(
-                        RequestOptions().placeholder(R.drawable.ic_josh_course)
-                            .error(R.drawable.ic_josh_course)
-                    )
-
-                )
-                .into(imageView)
         }
     }
 
