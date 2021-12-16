@@ -20,6 +20,7 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
@@ -84,6 +85,9 @@ const val IS_SHARABLE_VIDEO = "is_sharable_video"
 const val SHARED_ITEM = "shared_item"
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventListener {
+    val vm by lazy {
+        ViewModelProvider(this)[VideoPlayerViewModel::class.java]
+    }
 
     companion object {
         fun startConversionActivity(
@@ -447,7 +451,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     private fun setClickListeners() {
         binding.share.setOnClickListener {
+            Log.d(TAG, "setClickListeners: STOD_SHARE_WITH_FRIENDS")
             if (chatObject?.sharableVideoDownloadedLocalPath.isNullOrEmpty()) {
+                Log.d(TAG, "setClickListeners: STOD_SHARE_WITH_FRIENDS")
+                vm.saveImpression("STOD_SHARE_WITH_FRIENDS")
                 isVideoDownloadingStarted = true
                 downloadVideo(videoUrl!!, true)
             } else {
@@ -456,6 +463,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         }
 
         binding.saveGallery.setOnSingleClickListener {
+            Log.d(TAG, "setClickListeners: STOD_SAVE_TO_GALLERY")
+            vm.saveImpression("STOD_SAVE_TO_GALLERY")
             if (chatObject?.sharableVideoDownloadedLocalPath.isNullOrEmpty()) {
                 downloadVideo(videoUrl!!, false)
             } else {
@@ -647,6 +656,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     Intent.EXTRA_STREAM,
                     Uri.parse(this.sharableVideoDownloadedLocalPath!!)
                 )
+                waIntent.putExtra(Intent.EXTRA_TEXT, "I am practicing English everyday by talking to people. If I can do it, you can do it too. ${getAppShareUrl()}")
                 waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 startActivity(Intent.createChooser(waIntent, "Share with"))
 
@@ -655,6 +665,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
         }
     }
+
+    /*private fun getAppShareUrl(): String {
+        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
+    }*/
 
     private fun getAppShareUrl(): String {
         return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D${Mentor.getInstance().referralCode}"

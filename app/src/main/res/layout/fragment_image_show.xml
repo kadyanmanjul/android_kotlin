@@ -45,8 +45,9 @@
     <com.joshtalks.joshskills.core.custom_ui.ZoomageView
             android:id="@+id/big_image_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:zoomage_animateOnReset="true"
+            tools:src="@drawable/josh_skill"
             app:zoomage_autoCenter="true"
             app:zoomage_autoResetMode="UNDER"
             app:zoomage_maxScale="8"
