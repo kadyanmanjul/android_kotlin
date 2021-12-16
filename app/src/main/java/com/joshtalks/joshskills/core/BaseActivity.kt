@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -91,13 +90,12 @@ import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Type
-import java.util.*
-import kotlin.random.Random
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.lang.ref.WeakReference
+import java.lang.reflect.Type
+import java.util.*
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -204,7 +202,7 @@ abstract class BaseActivity :
             .getDynamicLink(intent)
             .addOnSuccessListener {
                 try {
-                    val referralCode = it.utmParameters.getString("utm_source", EMPTY) ?: EMPTY
+                    val referralCode = it?.utmParameters?.getString("utm_source", EMPTY) ?: EMPTY
                     //it.
                     val installReferrerModel =
                         InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()

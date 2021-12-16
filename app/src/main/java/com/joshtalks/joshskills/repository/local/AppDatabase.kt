@@ -478,15 +478,15 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_39_40: Migration = object : Migration(39,40) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE lesson_question ADD COLUMN conversation_question_id INTEGER ")
-                database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `conversationStatus` TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `groups_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
 
             }
         }
-
         private val MIGRATION_40_41: Migration = object : Migration(40,41) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `groups_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+                database.execSQL("ALTER TABLE lesson_question ADD COLUMN conversation_question_id INTEGER ")
+                database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `conversationStatus` TEXT")
+
             }
         }
 
