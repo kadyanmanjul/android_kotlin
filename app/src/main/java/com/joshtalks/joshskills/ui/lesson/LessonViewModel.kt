@@ -69,6 +69,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val speakingSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
     val eventLiveData: MutableLiveData<Event<Unit>> = MutableLiveData()
     var lessonIsConvoRoomActive: Boolean = false
+    var isFreeTrail = false
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {

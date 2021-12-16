@@ -141,6 +141,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             // InboxActivity.startInboxActivity(this)
             finish()
         }
+        viewModel.isFreeTrail = if (intent.hasExtra(IS_FREE_TRAIL)) intent.getBooleanExtra(IS_FREE_TRAIL, false) else false
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
@@ -1046,6 +1047,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     companion object {
         const val LESSON_ID = "lesson_id"
         const val IS_DEMO = "is_demo"
+        const val IS_FREE_TRAIL = "is_free_trail"
         const val IS_NEW_GRAMMAR = "is_new_grammar"
         const val IS_LESSON_COMPLETED = "is_lesson_completed"
         private const val WHATSAPP_URL = "whatsapp_url"
@@ -1061,13 +1063,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             testId: Int? = null,
             conversationId: String? = null,
             isNewGrammar: Boolean = false,
+            isFreeTrail : Boolean = false,
             isLessonCompleted: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
+            // TODO: Pass Free Trail Status
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
             putExtra(IS_NEW_GRAMMAR, isNewGrammar)
             putExtra(IS_LESSON_COMPLETED, isLessonCompleted)
             putExtra(CONVERSATION_ID, conversationId)
+            putExtra(IS_FREE_TRAIL, isFreeTrail)
             if (isDemo) {
                 putExtra(WHATSAPP_URL, whatsappUrl)
                 putExtra(TEST_ID, testId)

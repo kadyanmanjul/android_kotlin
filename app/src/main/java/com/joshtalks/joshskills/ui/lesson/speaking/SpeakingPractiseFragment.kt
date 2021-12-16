@@ -98,6 +98,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             DataBindingUtil.inflate(inflater, R.layout.speaking_practise_fragment, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         addObservers()
         // showTooltip()

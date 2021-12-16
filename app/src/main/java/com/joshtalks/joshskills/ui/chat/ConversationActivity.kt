@@ -1528,7 +1528,8 @@ class ConversationActivity :
                                     it.lessonId,
                                     conversationId = inboxEntity.conversation_id,
                                     isNewGrammar = it.isNewGrammar,
-                                    isLessonCompleted = it.isLessonCompleted
+                                    isLessonCompleted = it.isLessonCompleted,
+                                    isFreeTrail = inboxEntity.isCourseBought.not()
                                 ),
                                 LESSON_REQUEST_CODE
                             )

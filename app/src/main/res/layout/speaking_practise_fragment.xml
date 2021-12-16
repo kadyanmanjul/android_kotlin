@@ -4,9 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment" />
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.lesson.LessonViewModel" />
     </data>
 
     <FrameLayout
@@ -279,6 +283,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:visibility="@{vm.isFreeTrail ? View.GONE : View.VISIBLE}"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:layout_marginBottom="@dimen/_13sdp"
                         android:backgroundTint="@color/colorAccent"
