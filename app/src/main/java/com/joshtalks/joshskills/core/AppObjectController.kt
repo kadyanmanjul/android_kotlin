@@ -57,8 +57,6 @@ import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
-import io.sentry.Sentry
-import io.sentry.SentryLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -338,7 +336,7 @@ class AppObjectController {
                 //initBugsee()
                 //initSmartLookCam()
                 if (BuildConfig.DEBUG) {
-                    Sentry.setLevel(SentryLevel.ERROR)
+                    //Sentry.setLevel(SentryLevel.ERROR)
                 }
                 initUserExperionCam()
                 initFacebookService(joshApplication)

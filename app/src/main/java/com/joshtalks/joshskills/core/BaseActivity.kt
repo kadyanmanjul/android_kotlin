@@ -262,7 +262,7 @@ abstract class BaseActivity :
                 }
                 initNewRelic()
                 initFlurry()
-                setupSentryUser()
+                //setupSentryUser()
                 //UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
                 // UXCam.setUserProperty(String propertyName , String value)
 

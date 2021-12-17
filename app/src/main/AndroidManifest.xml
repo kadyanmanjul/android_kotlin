@@ -600,9 +600,9 @@
             android:name="FCM_SENDER_ID"
             android:value="id:359106841538" />
 
-        <meta-data android:name="io.sentry.dsn" android:value="https://4eb261d477d3450fba42d8c35d5fa188@o526914.ingest.sentry.io/6109802" />
-        <!-- Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-           We recommend adjusting this value in production. -->
+       <!-- <meta-data android:name="io.sentry.dsn" android:value="https://4eb261d477d3450fba42d8c35d5fa188@o526914.ingest.sentry.io/6109802" />
+        &lt;!&ndash; Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+           We recommend adjusting this value in production. &ndash;&gt;
         <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />
 
         <meta-data
@@ -622,8 +622,7 @@
             android:value="false" />
         <meta-data
             android:name="io.sentry.anr.timeout-interval-mills"
-            android:value="10000" />
-
+            android:value="10000" />-->
 
         <receiver
             android:name=".core.chrome.BrowserActionsReceiver"
