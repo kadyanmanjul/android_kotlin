@@ -19,7 +19,7 @@ interface ChatService {
     fun getLastMessageDetail(groupId: String) : Pair<String, Long>
     fun getMessageHistory(groupId: String, startTime : Long? = null) : List<ChatItem>
     fun getUnreadMessages(groupId: String, startTime : Long) : List<ChatItem>
-    fun getChannelMembers(groupId: String, adminId: String): MemberResult
+    fun getChannelMembers(groupId: String, adminId: String): MemberResult?
     fun setMemberPresence(groups: List<String>, isOnline: Boolean)
 }
 

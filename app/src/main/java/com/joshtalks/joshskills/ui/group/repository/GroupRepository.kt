@@ -353,7 +353,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         analyticsService.groupImpressionDetails(request)
 
-    fun getGroupMemberList(groupId: String, admin: String): MemberResult =
+    fun getGroupMemberList(groupId: String, admin: String): MemberResult? =
         chatService.getChannelMembers(groupId = groupId, adminId = admin)
 
     fun setUserPresence(isOnline: Boolean) {

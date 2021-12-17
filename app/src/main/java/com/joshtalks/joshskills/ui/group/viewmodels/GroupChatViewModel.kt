@@ -240,10 +240,10 @@ class GroupChatViewModel : BaseViewModel() {
         fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
-            memberCount.set(memberResult.memberCount)
-            groupSubHeader.set("${memberResult.memberCount} members, ${memberResult.onlineCount} online")
+            memberCount.set(memberResult?.memberCount)
+            groupSubHeader.set("${memberResult?.memberCount} members, TODO online")
             withContext(Dispatchers.Main){
-                memberAdapter.addMembersToList(memberResult.list)
+                memberAdapter.addMembersToList(memberResult?.list!!)
                 fetchingGrpInfo.set(false)
             }
         }

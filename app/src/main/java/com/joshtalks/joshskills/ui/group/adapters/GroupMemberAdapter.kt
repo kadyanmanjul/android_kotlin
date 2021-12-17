@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.databinding.GroupMemberItemBinding
+import com.pubnub.api.models.consumer.objects_api.member.PNMembers
 
-class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
+class GroupMemberAdapter(var memberList: List<PNMembers> = listOf()) :
     RecyclerView.Adapter<GroupMemberAdapter.MemberViewHolder>() {
 
     val memberLimit: Int = 6
@@ -16,7 +16,7 @@ class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
 
     inner class MemberViewHolder(private val item: GroupMemberItemBinding) :
         RecyclerView.ViewHolder(item.root) {
-        fun onBind(member: GroupMember) {
+        fun onBind(member: PNMembers) {
             item.itemData = member
         }
     }
@@ -48,8 +48,9 @@ class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
         notifyDataSetChanged()
     }
 
-    fun addMembersToList(members: List<GroupMember>) {
+    fun addMembersToList(members: MutableList<PNMembers>) {
         memberList = members
+        showAllMembers = false
         notifyDataSetChanged()
     }
 }

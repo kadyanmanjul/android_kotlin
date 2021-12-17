@@ -6,11 +6,16 @@
     <data>
 
         <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
+
         <import type="android.view.View" />
 
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.group.model.GroupMember" />
+            type="com.pubnub.api.models.consumer.objects_api.member.PNMembers" />
+
+        <variable
+            name="groupChatVM"
+            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,8 +25,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/group_item_image"
-            defaultImage="@{itemData.memberName}"
-            groupImage="@{itemData.getMemberURL()}"
+            defaultImage="@{itemData.uuid.name}"
+            groupImage="@{itemData.uuid.profileUrl}"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
             android:layout_marginStart="@dimen/_16sdp"
@@ -36,7 +41,7 @@
             android:layout_width="@dimen/_6sdp"
             android:layout_height="@dimen/_6sdp"
             android:src="@color/green"
-            android:visibility="@{itemData.online ? View.VISIBLE : View.GONE}"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/group_item_image"
             app:layout_constraintEnd_toEndOf="@+id/group_item_image" />
 
@@ -48,14 +53,14 @@
             android:layout_marginEnd="@dimen/_16sdp"
             android:fontFamily="@font/open_sans"
             android:letterSpacing="-0.01"
-            android:text="@{itemData.memberName}"
+            android:text="@{itemData.uuid.name}"
             android:textColor="@color/defaultContentColor"
             android:textSize="@dimen/_14ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/group_item_admin"
             app:layout_constraintStart_toEndOf="@+id/group_item_image"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="User name"/>
+            tools:text="User name" />
 
         <TextView
             android:id="@+id/group_item_admin"
@@ -69,10 +74,10 @@
             android:paddingEnd="@dimen/_4sdp"
             android:paddingBottom="@dimen/_2sdp"
             android:text="Group Admin"
-            android:visibility="@{itemData.admin ? View.VISIBLE : View.GONE}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_8ssp"
             android:textStyle="bold"
+            android:visibility="@{itemData.uuid.id == groupChatVM.adminId ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

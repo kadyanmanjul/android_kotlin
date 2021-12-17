@@ -202,40 +202,39 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun getChannelMembers(groupId: String, adminId: String): MemberResult {
+    override fun getChannelMembers(groupId: String, adminId: String): MemberResult? {
+        val adminMember = pubnub.channelMembers
+            .channel(groupId)
+            .limit(1)
+            .filter("uuid.id == '$adminId'")
+            .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+            .sync()
+
         val memberResult = pubnub.channelMembers
             .channel(groupId)
             .limit(512)
             .includeTotalCount(true)
+            .filter("uuid.id != '$adminId'")
             .includeUUID(Include.PNUUIDDetailsLevel.UUID)
             .sync()
 
-        val memberCount = memberResult?.totalCount
-        var onlineCount = 0
+        memberResult?.data?.add(0, adminMember?.data?.get(0))
 
-        val memberList = mutableListOf<GroupMember>()
-        memberResult?.data?.map {
-            val status = getCurrentPresence(it.uuid.id, groupId)
-            memberList.add(GroupMember(
-                mentorID = it.uuid.id,
-                memberName = it.uuid.name,
-                memberIcon = it.uuid.profileUrl,
-                isAdmin = adminId == it.uuid.id,
-                isOnline = getCurrentPresence(it.uuid.id, groupId)
-            ))
-            if(status) onlineCount++
-        }
-        memberList.sortByDescending { it.isOnline }
-        return MemberResult(memberList, memberCount, onlineCount)
+        return memberResult?.data?.let { MemberResult(it, memberResult.totalCount) }
     }
 
     override fun setMemberPresence(groups: List<String>, isOnline: Boolean) {
-        pubnub.setPresenceState()
-            .channels(groups)
-            .state(mapOf("is_online" to isOnline))
-            .sync()
+        try {
+            pubnub.setPresenceState()
+                .channels(groups)
+                .state(mapOf("is_online" to isOnline))
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
+    //TODO: have to remove presence
     fun getCurrentPresence(mentorId: String, groupId: String): Boolean {
         val presence = pubnub.presenceState
             .channels(listOf(groupId))
