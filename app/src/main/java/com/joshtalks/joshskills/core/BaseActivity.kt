@@ -90,6 +90,7 @@ import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import io.sentry.Sentry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -261,6 +262,7 @@ abstract class BaseActivity :
                 }
                 initNewRelic()
                 initFlurry()
+                setupSentryUser()
                 //UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
                 // UXCam.setUserProperty(String propertyName , String value)
 
@@ -473,6 +475,14 @@ abstract class BaseActivity :
                 LogException.catchException(ex)
             }
         }
+    }
+
+    private fun setupSentryUser() {
+        val user = io.sentry.protocol.User()
+        user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
+        user.username = User.getInstance().username
+        Sentry.setUser(user)
+
     }
 
     private fun initNewRelic() {
