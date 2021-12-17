@@ -434,6 +434,4 @@ dependencies {
     // Paging3
     implementation "androidx.paging:paging-runtime-ktx:3.0.1"
 
-    implementation 'com.yanzhenjie:permission:2.0.2'
-
 }
