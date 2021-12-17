@@ -254,6 +254,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             hasSharableVideo = true
             isSharableVideo = intent.getBooleanExtra(IS_SHARABLE_VIDEO, false)
             if (isSharableVideo) {
+                vm.saveImpression("VIDEO_OPENED_SHARABLE")
                 addObserver()
             }
         }
@@ -454,7 +455,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             Log.d(TAG, "setClickListeners: STOD_SHARE_WITH_FRIENDS")
             if (chatObject?.sharableVideoDownloadedLocalPath.isNullOrEmpty()) {
                 Log.d(TAG, "setClickListeners: STOD_SHARE_WITH_FRIENDS")
-                vm.saveImpression("STOD_SHARE_WITH_FRIENDS")
+                vm.saveImpression("VIDEO_SHARE_WITH_FRIENDS")
                 isVideoDownloadingStarted = true
                 downloadVideo(videoUrl!!, true)
             } else {
@@ -464,7 +465,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
         binding.saveGallery.setOnSingleClickListener {
             Log.d(TAG, "setClickListeners: STOD_SAVE_TO_GALLERY")
-            vm.saveImpression("STOD_SAVE_TO_GALLERY")
+            vm.saveImpression("VIDEO_SAVE_TO_GALLERY")
             if (chatObject?.sharableVideoDownloadedLocalPath.isNullOrEmpty()) {
                 downloadVideo(videoUrl!!, false)
             } else {
