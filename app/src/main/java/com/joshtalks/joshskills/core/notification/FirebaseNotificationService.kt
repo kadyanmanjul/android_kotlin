@@ -244,12 +244,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     //  }
                 }*/
 
-                if (notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM){
+                if (notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM) {
                     val obj = JSONObject(notificationObject.actionData)
                     val name = obj.getString("moderator_name")
                     val topic = obj.getString("topic")
                     notificationObject.contentTitle = getString(R.string.room_title)
-                    notificationObject.contentText = getString(R.string.convo_notification_title, name, topic)
+                    notificationObject.contentText =
+                        getString(R.string.convo_notification_title, name, topic)
                 }
 
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
@@ -520,22 +521,25 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                if ( !PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified) {
+                if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified
+                    && AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
+                ) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val intent = Intent(this,HeadsUpNotificationService::class.java).apply {
-                            putExtra(ConfigKey.ROOM_DATA,actionData)
+                        val intent = Intent(this, HeadsUpNotificationService::class.java).apply {
+                            putExtra(ConfigKey.ROOM_DATA, actionData)
                         }
                         intent.startServiceForWebrtc()
                     } else {
                         val roomId = JSONObject(actionData).getString("room_id")
-                        val topic = JSONObject(actionData).getString("topic")?: EMPTY
+                        val topic = JSONObject(actionData).getString("topic") ?: EMPTY
 
-                        if (roomId.isNotBlank())
-                        {
-                            return ConversationLiveRoomActivity.getIntentForNotification(AppObjectController.joshApplication,
-                                roomId,topicName = topic
+                        if (roomId.isNotBlank()) {
+                            return ConversationLiveRoomActivity.getIntentForNotification(
+                                AppObjectController.joshApplication,
+                                roomId, topicName = topic
                             )
-                        }  else return null
+                        } else return null
                     }
                 }
                 return null
@@ -1487,11 +1491,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
 
-                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null && User.getInstance().isVerified ) {
+                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null
+                        && User.getInstance().isVerified && AppObjectController.getFirebaseRemoteConfig()
+                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
+                    ) {
                         val roomId = JSONObject(actionData).getString("room_id")
-                        val topic = JSONObject(actionData).getString("topic")?: EMPTY
-                        if (roomId.isNotBlank())
-                        {
+                        val topic = JSONObject(actionData).getString("topic") ?: EMPTY
+                        if (roomId.isNotBlank()) {
                             ConversationLiveRoomActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,
                                 roomId,
@@ -1529,7 +1535,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     } catch (e: JSONException) {
                         ""
                     }
-                    WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
+                    WebRtcService.currentCallingGroupName =
+                        data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
                     WebRtcService.forceConnect(data)
                 } catch (t: Throwable) {
                     t.printStackTrace()
