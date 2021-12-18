@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.analytics
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
-import io.sentry.Sentry
 import timber.log.Timber
 
 object LogException {

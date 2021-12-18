@@ -433,8 +433,8 @@ dependencies {
 
     // Paging3
     implementation "androidx.paging:paging-runtime-ktx:3.0.1"
-
+/*
     //Sentry
-    implementation 'io.sentry:sentry-android:5.5.0'
+    implementation 'io.sentry:sentry-android:5.5.0'*/
 
 }
