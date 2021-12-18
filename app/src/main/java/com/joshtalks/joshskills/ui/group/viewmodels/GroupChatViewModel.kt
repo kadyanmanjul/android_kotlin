@@ -158,7 +158,7 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun resetUnreadAndTimeToken() {
         if (hasJoinedGroup.get()) {
-            viewModelScope.launch(Dispatchers.Main) {
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.resetUnreadAndTimeToken(groupId)
             }
         }
@@ -240,6 +240,7 @@ class GroupChatViewModel : BaseViewModel() {
         fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
+            Log.e("SukeshInfo", "${chatService.getOnlineMember(groupId)}")
             memberCount.set(memberResult?.memberCount)
             groupSubHeader.set("${memberResult?.memberCount} members, TODO online")
             withContext(Dispatchers.Main){

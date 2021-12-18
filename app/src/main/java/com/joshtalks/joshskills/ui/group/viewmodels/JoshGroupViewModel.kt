@@ -74,8 +74,6 @@ class JoshGroupViewModel : BaseViewModel() {
         repository.startChatEventListener()
     }
 
-    fun updatePresence(isOnline: Boolean) = repository.setUserPresence(isOnline)
-
     fun showImageThumb(imagePath: String) {
         message.what = GROUP_IMAGE_SELECTED
         message.obj = imagePath

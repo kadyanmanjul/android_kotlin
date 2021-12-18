@@ -4,13 +4,11 @@ import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.flurry.sdk.it
 import com.google.gson.Gson
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
@@ -140,10 +138,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             Log.d(TAG, "membership: $pnMembershipResult")
         }
 
-        override fun messageAction(
-            pubnub: PubNub,
-            pnMessageActionResult: PNMessageActionResult
-        ) {
+        override fun messageAction(pubnub: PubNub, pnMessageActionResult: PNMessageActionResult) {
             Log.d(TAG, "messageAction: $pnMessageActionResult")
         }
 
@@ -355,13 +350,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     fun getGroupMemberList(groupId: String, admin: String): MemberResult? =
         chatService.getChannelMembers(groupId = groupId, adminId = admin)
-
-    fun setUserPresence(isOnline: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val groups = database.groupListDao().getGroupIds()
-            if (groups.isNotEmpty()) chatService.setMemberPresence(groups, isOnline)
-        }
-    }
 
     suspend fun getOnlineUserCount(groupId: String) = apiService.getOnlineUserCount(groupId)
 

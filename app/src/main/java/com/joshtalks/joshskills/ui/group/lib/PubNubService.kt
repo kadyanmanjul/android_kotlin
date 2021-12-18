@@ -1,11 +1,8 @@
 package com.joshtalks.joshskills.ui.group.lib
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 
 import com.google.gson.Gson
-import com.joshtalks.joshskills.core.Event
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -30,7 +27,6 @@ private const val TAG = "PubNub_Service"
 
 object PubNubService : ChatService {
 
-    private val onlineCountLiveData = MutableLiveData(Event(-1))
     private val pubnub by lazy {
         config.publishKey = "pub-c-07a21ffa-a9e8-45af-93d3-256bb6b4bdd0"
         config.subscribeKey = "sub-c-308b8df2-4cfc-11ec-a76f-16acaa066210"
@@ -59,10 +55,6 @@ object PubNubService : ChatService {
     }
 
     override fun createGroup(groupName: String, imageUrl: String) {}
-
-    override fun getOnlineCount(groupName: String): LiveData<Event<Int>> = onlineCountLiveData
-
-    override fun getMembersCount(groupName: String): LiveData<Event<Int>> = onlineCountLiveData
 
     override fun fetchGroupList(pageInfo: PageInfo?): NetworkData? {
         Log.d(TAG, "fetchGroupList: $pageInfo")
@@ -223,35 +215,11 @@ object PubNubService : ChatService {
         return memberResult?.data?.let { MemberResult(it, memberResult.totalCount) }
     }
 
-    override fun setMemberPresence(groups: List<String>, isOnline: Boolean) {
-        try {
-            pubnub.setPresenceState()
-                .channels(groups)
-                .state(mapOf("is_online" to isOnline))
-                .sync()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    //TODO: have to remove presence
-    fun getCurrentPresence(mentorId: String, groupId: String): Boolean {
-        val presence = pubnub.presenceState
-            .channels(listOf(groupId))
-            .uuid(mentorId)
-            .sync()
-
-        presence?.stateByUUID?.map {
-            return it.value.asJsonObject.get("is_online") != null
-        }
-        return false
-    }
-
-    private fun getOnlineMember(groupName: String): Int {
+    override fun getOnlineMember(groupId: String): Int {
         val count = pubnub.hereNow()
-            .channels(listOf(groupName))
+            .channels(listOf(groupId))
             .sync()
-        return count?.channels?.get(groupName)?.occupancy ?: 0
+        return count?.channels?.get(groupId)?.occupancy ?: 0
     }
 }
 

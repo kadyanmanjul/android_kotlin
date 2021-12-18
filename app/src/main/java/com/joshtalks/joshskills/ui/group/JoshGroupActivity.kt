@@ -50,11 +50,6 @@ class JoshGroupActivity : BaseGroupActivity() {
         openGroupListFragment()
     }
 
-    override fun onResume() {
-        super.onResume()
-        vm.updatePresence(true)
-    }
-
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
@@ -68,7 +63,6 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REFRESH_GRP_LIST_HIDE_INFO -> setNewGroupVisibility(it.data)
-                //LISTEN_CHAT_EVENTS ->
             }
         }
     }
@@ -262,9 +256,4 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun setIntentExtras() {}
-
-    override fun onPause() {
-        super.onPause()
-        vm.updatePresence(false)
-    }
 }
