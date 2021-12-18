@@ -10,7 +10,6 @@ interface ChatService {
     fun sendMessage(groupName: String, messageItem: MessageItem)
     fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>)
     fun dispatchNotifications(groups : List<String>)
-    fun getOnlineMember(groupId: String) : Int
     fun fetchGroupList(pageInfo: PageInfo? = null) : NetworkData?
     fun getUnreadMessageCount(groupId: String, lastSeenTimestamp : Long) : Long
     fun getLastMessageDetail(groupId: String) : Pair<String, Long>

@@ -44,15 +44,14 @@ class GroupChatViewModel : BaseViewModel() {
     val repository = GroupRepository()
     val hasJoinedGroup = ObservableBoolean(false)
     var groupHeader = ObservableField("")
-    val groupSubHeader = ObservableField("")
     var imageUrl = ObservableField("")
     val groupCreator = ObservableField("")
     val groupCreatedAt = ObservableField("")
     var conversationId: String = ""
-    val userOnlineCount = ObservableField("")
     var memberCount = ObservableField(0)
     val memberAdapter = GroupMemberAdapter()
-    var showAllMembers = ObservableBoolean(false)
+    val groupSubHeader = ObservableField("")
+
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -127,20 +126,6 @@ class GroupChatViewModel : BaseViewModel() {
             } catch (e: Exception) {
                 joiningNewGroup.set(false)
                 showToast("Error joining group")
-                e.printStackTrace()
-            }
-        }
-    }
-
-    //TODO: Not required, need to remove (getting data from pubnub now)
-    fun getOnlineUserCount() {
-        viewModelScope.launch {
-            try {
-                val response = repository.getOnlineUserCount(groupId)
-                Log.d(TAG, "getOnlineUserCount: ${response["online_count"]}")
-                userOnlineCount.set("${(response["online_count"] as Double).toInt()}")
-            } catch (e: Exception) {
-                showToast("Unable to get online user count")
                 e.printStackTrace()
             }
         }
@@ -240,9 +225,8 @@ class GroupChatViewModel : BaseViewModel() {
         fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
-            Log.e("SukeshInfo", "${chatService.getOnlineMember(groupId)}")
             memberCount.set(memberResult?.memberCount)
-            groupSubHeader.set("${memberResult?.memberCount} members, TODO online")
+            groupSubHeader.set("${memberCount.get()} members, ${memberResult?.onlineCount} online")
             withContext(Dispatchers.Main){
                 memberAdapter.addMembersToList(memberResult?.list!!)
                 fetchingGrpInfo.set(false)

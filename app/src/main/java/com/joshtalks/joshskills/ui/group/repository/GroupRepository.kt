@@ -351,8 +351,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     fun getGroupMemberList(groupId: String, admin: String): MemberResult? =
         chatService.getChannelMembers(groupId = groupId, adminId = admin)
 
-    suspend fun getOnlineUserCount(groupId: String) = apiService.getOnlineUserCount(groupId)
-
     private fun getCompressImage(path: String): String {
         return try {
             AppDirectory.copy(

@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.ui.group.model
 
-import com.pubnub.api.models.consumer.objects_api.member.PNMembers
-
 data class GroupMember(
     val mentorID: String,
     val memberName: String,
@@ -12,4 +10,4 @@ data class GroupMember(
     fun getMemberURL() = if (memberIcon == "None") "" else memberIcon
 }
 
-class MemberResult(val list: MutableList<PNMembers>, val memberCount: Int?)
+class MemberResult(val list: MutableList<GroupMember>, val memberCount: Int?, val onlineCount: Int?)

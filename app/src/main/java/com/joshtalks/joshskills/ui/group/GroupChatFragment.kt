@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.group
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -89,6 +88,7 @@ class GroupChatFragment : BaseFragment() {
     override fun initViewBinding() {
         binding.vm = vm
         binding.executePendingBindings()
+        vm.memberCount.set(0)
     }
 
     override fun getConversationId(): String? {
@@ -175,7 +175,6 @@ class GroupChatFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        vm.getOnlineUserCount()
         vm.refreshGroupInfo()
     }
 

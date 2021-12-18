@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 import com.pubnub.api.enums.PNPushType
+import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
+import java.util.stream.Collectors
 import kotlin.Exception
 
 private const val TAG = "PubNub_Service"
@@ -195,12 +197,14 @@ object PubNubService : ChatService {
     }
 
     override fun getChannelMembers(groupId: String, adminId: String): MemberResult? {
+        val memberStatus = getOnlineMembers(groupId) ?: listOf()
+
         val adminMember = pubnub.channelMembers
             .channel(groupId)
             .limit(1)
             .filter("uuid.id == '$adminId'")
             .includeUUID(Include.PNUUIDDetailsLevel.UUID)
-            .sync()
+            .sync()!!.data[0].uuid
 
         val memberResult = pubnub.channelMembers
             .channel(groupId)
@@ -210,16 +214,25 @@ object PubNubService : ChatService {
             .includeUUID(Include.PNUUIDDetailsLevel.UUID)
             .sync()
 
-        memberResult?.data?.add(0, adminMember?.data?.get(0))
-
-        return memberResult?.data?.let { MemberResult(it, memberResult.totalCount) }
+        val memberList = mutableListOf<GroupMember>()
+        memberResult?.data?.map {
+            memberList.add(GroupMember(
+                mentorID = it.uuid.id,
+                memberName = it.uuid.name,
+                memberIcon = it.uuid.profileUrl,
+                isAdmin = false,
+                isOnline = memberStatus.contains(it.uuid.id)
+            ))
+        }
+        memberList.sortByDescending { it.isOnline }
+        memberList.add(0, GroupMember(adminMember.id, adminMember.name, adminMember.profileUrl, true, memberStatus.contains(adminMember.id)))
+        return MemberResult(memberList, memberResult?.totalCount, memberStatus.size)
     }
 
-    override fun getOnlineMember(groupId: String): Int {
-        val count = pubnub.hereNow()
-            .channels(listOf(groupId))
-            .sync()
-        return count?.channels?.get(groupId)?.occupancy ?: 0
-    }
+    private fun getOnlineMembers(groupId: String) = pubnub.hereNow()
+        .channels(listOf(groupId))
+        .sync()?.channels?.get(groupId)?.occupants
+        ?.stream()?.map(PNHereNowOccupantData::getUuid)
+        ?.collect(Collectors.toList())
 }
 
