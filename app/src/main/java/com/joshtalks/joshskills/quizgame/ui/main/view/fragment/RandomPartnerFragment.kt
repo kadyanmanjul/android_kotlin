@@ -15,6 +15,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,6 +25,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
@@ -34,6 +36,7 @@ import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomProviderF
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
+import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -108,10 +111,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     )
 
     private var engine: RtcEngine? = null
-    private var agora_app_id = "569a477f372a454b8101fc89ec6161e6"
-
-    private var myUid = 0
-    private var joined = false
     private var timer: CountDownTimer? = null
 
 
@@ -143,11 +142,10 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         super.onViewCreated(view, savedInstanceState)
 
         try {
-            engine = RtcEngine.create(activity, agora_app_id, iRtcEngineEventHandler)
-            //engine = P2pRtc().initEngine(requireActivity())
-        } catch (ex: Exception) {
+            engine = P2pRtc().getEngineObj()
+            //P2pRtc().addListener(callback)
+        }catch (ex:Exception){
             Timber.d(ex)
-            // showToast(ex.message?:"")
         }
         setUserActive()
         setCurrentUserData()
@@ -214,7 +212,10 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                     moveFragment()
                     timer?.cancel()
                 } else {
-                    showToast(NO_OPPONENT_FOUND)
+                   // showToast(NO_OPPONENT_FOUND)
+                       try {
+                           Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
+                       }catch (ex:Exception){ }
                     searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
                     activity?.let {
                         searchRandomViewModel?.deleteData?.observe(it, {
@@ -313,12 +314,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 opponentUserName = team1User1Name
             }
 
-//            val imageUrl1 = team1User1ImageUrl?.replace("\n","")
-//            ImageAdapter.imageUrl(binding.team1UserImage1,imageUrl1)
-//            binding.team1User1Name.text = team1User1Name
-
             val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
-            // ImageAdapter.imageUrl(binding.team1UserImage2,imageUrl2)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
                 team1User2Name ?: "",
@@ -330,7 +326,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             callConnectUser1AndUser2(team1User1ChannelName)
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team2UserImage1,imageUrl3)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
                 team2User1Name ?: "",
@@ -340,7 +335,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             binding.team2User1Name.text = team2User1Name
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
-            // ImageAdapter.imageUrl(binding.team2UserImage2,imageUrl4)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
                 team2User2Name ?: "",
@@ -348,11 +342,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 true
             )
             binding.team2User2Name.text = team2User2Name
-
-//            lifecycleScope.launch (Dispatchers.IO){
-//                delay(4000)
-//                moveFragment()
-//            }
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
 
@@ -365,12 +354,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 opponentUserName = team2User1Name
             }
 
-//            val imageUrl1 = team2User1ImageUrl?.replace("\n","")
-//            ImageAdapter.imageUrl(binding.team1UserImage1,imageUrl1)
-//            binding.team1User1Name.text = team2User1Name
-
             val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team1UserImage2,imageUrl2)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
                 team2User2Name ?: "",
@@ -382,7 +366,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             callConnectUser1AndUser2(team2User1ChannelName)
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-            // ImageAdapter.imageUrl(binding.team2UserImage1,imageUrl3)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
                 team1User1Name ?: "",
@@ -392,7 +375,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             binding.team2User1Name.text = team1User1Name
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-            // ImageAdapter.imageUrl(binding.team2UserImage2,imageUrl4)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
                 team1User2Name ?: "",
@@ -401,10 +383,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             )
             binding.team2User2Name.text = team1User2Name
 
-//            lifecycleScope.launch (Dispatchers.IO){
-//                delay(4000)
-//                moveFragment()
-//            }
         }
 
     }
@@ -574,66 +552,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             ?.commit()
     }
 
-    //    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
-//        override fun onChannelJoin() {
-//            super.onChannelJoin()
-//        }
-//
-//        override fun onConnect(callId: String) {
-//            super.onConnect(callId)
-//        }
-//
-//        override fun onDisconnect(callId: String?, channelName: String?) {
-//            super.onDisconnect(callId, channelName)
-//        }
-//
-//        override fun onSpeakerOff() {
-//            super.onSpeakerOff()
-//        }
-//
-//        override fun onNetworkLost() {
-//            super.onNetworkLost()
-//        }
-//
-//        override fun onPartnerLeave() {
-//            super.onPartnerLeave()
-//        }
-//    }
-    private val iRtcEngineEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
-        override fun onError(err: Int) {
-            // showToast("Error")
-        }
-
-        override fun onLeaveChannel(stats: RtcStats) {
-            super.onLeaveChannel(stats)
-            // showToast("Leave Channel")
-        }
-
-        override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
-            myUid = uid
-            joined = true
-            // showToast("Success fully Join"+uid)
-        }
-
-        override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
-            super.onRemoteAudioStateChanged(uid, state, reason, elapsed)
-            // showToast("Remote Audio State Change")
-        }
-
-        override fun onUserJoined(uid: Int, elapsed: Int) {
-            super.onUserJoined(uid, elapsed)
-            // showToast("User Joined")
-            //Here pass data of the current user
-            // moveFragment(favouriteUserId)
-        }
-
-        override fun onUserOffline(uid: Int, reason: Int) {}
-
-        override fun onActiveSpeaker(uid: Int) {
-            super.onActiveSpeaker(uid)
-        }
-    }
-
     private fun dipDown(targetView: View) {
         val myAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_anim)
         val interpolator = MyBounceInterpolator(0.8, 18.0)
@@ -642,5 +560,21 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         myAnim.repeatCount = Animation.INFINITE
         targetView.startAnimation(myAnim)
     }
+
+//    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+//
+//        override fun onPartnerLeave() {
+//            super.onPartnerLeave()
+//            try {
+//                requireActivity().runOnUiThread {
+//                    PrefManager.put(USER_LEFT_THE_GAME, true)
+//                    binding.userName2.alpha=0.5f
+//                    binding.shadowImg2.visibility = View.VISIBLE
+//                }
+//            }catch (ex:Exception){
+//                Log.d("error_res", "onPartnerLeave: "+ex.message?:"")
+//            }
+//        }
+//    }
 
 }

@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.card.MaterialCardView
@@ -48,7 +51,8 @@ import timber.log.Timber
 
 class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.WebRtcEngineCallback {
     private lateinit var binding: FragmentChoiceFragnmentBinding
-    private var mentorId:String?=null
+    private var mentorId:String=Mentor.getInstance().getUserId()
+    private var activityInstance: FragmentActivity? = null
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[ChoiceViewModel::class.java]
@@ -64,7 +68,6 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mentorId = Mentor.getInstance().getUserId()
         setUpViewModel()
     }
 
@@ -85,6 +88,8 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        activityInstance = activity
+        PrefManager.put(USER_LEFT_THE_GAME, false)
         playSound(R.raw.compress_background_util_quiz)
         onBackPress()
         try {
@@ -94,10 +99,21 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
             Timber.d(ex)
         }
         try {
-            firebaseDatabase.getUserDataFromFirestore(mentorId ?: "", this)
+            firebaseDatabase.getUserDataFromFirestore(mentorId, this)
         } catch (ex: Exception) {
             Timber.d(ex)
         }
+
+        if (isAdded && activityInstance != null) {
+            getAcceptCall()
+        } else {
+            showToast("Crash")
+        }
+    }
+
+    fun getAcceptCall() {
+        if (context?.let { UpdateReceiver.isNetworkAvailable(it) } == true)
+            firebaseDatabase.getAcceptCall(mentorId ?: "", this)
     }
 
     fun playSound(sound:Int){
@@ -241,7 +257,7 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
                                 TRUE,
                                 fromUserName,
                                 channelName,
-                                mentorId!!
+                                mentorId
                             )
                             initializeAgoraCall(channelName)
                             moveFragment(fromUserId, channelName)
@@ -263,14 +279,13 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
         }
         binding.butonDecline.setOnClickListener {
             invisibleView(binding.notificationCard)
-            mentorId?.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
         }
 
         binding.eee.setOnClickListener {
             invisibleView(binding.notificationCard)
-            mentorId?.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
         }
-
 
 
         //we have to do 10 second decline request done from firestore side beacuse is user not in fav screen so
@@ -278,7 +293,7 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
         lifecycleScope.launch {
             delay(10000)
             invisibleView(binding.notificationCard)
-            // mentorId?.let { it1 -> firebaseDatabase.deleteUserData(it1,fromUserId) }
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1,fromUserId) }
         }
     }
 
@@ -336,7 +351,20 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
         fromUserId: String,
         declinedUserId: String
     ) {
+        binding.cancelNotification.setOnClickListener {
+            firebaseDatabase.deleteDeclineData(mentorId)
+            invisibleView(binding.notificationCardNotPlay)
+        }
 
+        val handler = Handler(Looper.getMainLooper())
+        try {
+            handler.postDelayed({
+                firebaseDatabase.deleteDeclineData(mentorId)
+                invisibleView(binding.notificationCardNotPlay)
+            }, 10000)
+        } catch (ex: Exception) {
+
+        }
     }
 
     override fun onNotificationForPartnerAccept(
@@ -344,9 +372,14 @@ class ChoiceFragnment :Fragment(),FirebaseDatabase.OnNotificationTrigger,P2pRtc.
         timeStamp: String,
         isAccept: String,
         opponentMemberId: String,
-        mentorId: String
+        mentorIdIdAcceptedUser: String
     ) {
-
+        if (isAccept == TRUE) {
+            firebaseDatabase.deleteDataAcceptRequest(opponentMemberId)
+            firebaseDatabase.deleteRequested(mentorIdIdAcceptedUser)
+            channelName?.let { initializeAgoraCall(it) }
+            moveFragment(mentorIdIdAcceptedUser, channelName)
+        }
     }
 
     override fun onGetRoomId(currentUserRoomID: String?, mentorId: String) {

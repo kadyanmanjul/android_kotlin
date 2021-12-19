@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.util.CollectionUtils
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentQuestionBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
@@ -141,6 +142,9 @@ P2pRtc.WebRtcEngineCallback{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+            showFadeImage()
+        }
         Log.d("current_uid", "onViewCreated: " + currentUserId)
         progressBar=view.findViewById(R.id.vertical_progressbar)
         progressBar1=view.findViewById(R.id.vertical_progressbar1)
@@ -1351,6 +1355,11 @@ P2pRtc.WebRtcEngineCallback{
     }
     override fun onPartnerLeave() {
         super.onPartnerLeave()
+        PrefManager.put(USER_LEFT_THE_GAME, true)
+        showFadeImage()
+    }
+
+    private fun showFadeImage(){
         when {
             team1UserId1 == currentUserId -> {
                 try {
@@ -1372,26 +1381,26 @@ P2pRtc.WebRtcEngineCallback{
                     Log.d("error_res", "onPartnerLeave: "+ex.message)
                 }
             }
-            team2UserId1 == currentUserId -> {
-                try {
-                    requireActivity().runOnUiThread {
-                        binding.team2User2Name.alpha = 0.5f
-                        binding.team2UserImage2Shadow.visibility = View.VISIBLE
-                    }
-                }catch (ex:Exception){
-                    Log.d("error_res", "onPartnerLeave: "+ex.message)
-                }
-            }
-            team2UserId2 == currentUserId -> {
-                try {
-                    requireActivity().runOnUiThread {
-                        binding.team2User1Name.alpha = 0.5f
-                        binding.team2UserImage1Shadow.visibility = View.VISIBLE
-                    }
-                }catch (ex:Exception){
-                    Log.d("error_res", "onPartnerLeave: "+ex.message)
-                }
-            }
+//            team2UserId1 == currentUserId -> {
+//                try {
+//                    requireActivity().runOnUiThread {
+//                        binding.team2User2Name.alpha = 0.5f
+//                        binding.team2UserImage2Shadow.visibility = View.VISIBLE
+//                    }
+//                }catch (ex:Exception){
+//                    Log.d("error_res", "onPartnerLeave: "+ex.message)
+//                }
+//            }
+//            team2UserId2 == currentUserId -> {
+//                try {
+//                    requireActivity().runOnUiThread {
+//                        binding.team2User1Name.alpha = 0.5f
+//                        binding.team2UserImage1Shadow.visibility = View.VISIBLE
+//                    }
+//                }catch (ex:Exception){
+//                    Log.d("error_res", "onPartnerLeave: "+ex.message)
+//                }
+//            }
         }
     }
     private fun muteCall() {

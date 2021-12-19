@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.RandomFragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateFoundViewModel

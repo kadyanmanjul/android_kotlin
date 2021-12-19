@@ -13,8 +13,10 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
 import com.joshtalks.joshskills.databinding.ActivityStartBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.AddUserDb
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.StartRepo
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragnment
+import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.USER_LEFT_THE_GAME
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
@@ -28,8 +30,13 @@ class StartActivity : AppCompatActivity(){
     private var startRepo : StartRepo?=null
     private var startViewModel : StartViewModel?=null
     private var factory: StartViewProviderFactory? = null
-    private var mentorId:String?=null
+    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
+    private var mentorId:String=Mentor.getInstance().getUserId()
 
+    init {
+        firebaseDatabase.deleteRequested(mentorId)
+        firebaseDatabase.deleteDeclineData(mentorId)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startBinding = DataBindingUtil.setContentView(this, R.layout.activity_start)
@@ -38,6 +45,7 @@ class StartActivity : AppCompatActivity(){
         playSound(R.raw.compress_background_util_quiz)
 
         PrefManager.put(USER_ACTIVE_IN_GAME, true)
+        PrefManager.put(USER_LEFT_THE_GAME, false)
 
         mentorId = Mentor.getInstance().getUserId()
         updateReceiver = UpdateReceiver()

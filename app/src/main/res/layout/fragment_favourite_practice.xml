@@ -79,7 +79,7 @@
                                     android:gravity="center_vertical"
                                     android:text="@string/user_name"
                                     android:textColor="@color/test_color"
-                                    android:textSize="@dimen/_10ssp"
+                                    android:textSize="@dimen/_13ssp"
                                     android:textStyle="bold" />
 
                                 <View
@@ -98,7 +98,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/divider1"
                                     android:layout_marginLeft="@dimen/_5sdp"
-                                    android:layout_marginTop="@dimen/_6sdp"
+                                    android:layout_marginTop="@dimen/_4sdp"
                                     android:layout_toRightOf="@+id/layout"
                                     android:gravity="center_vertical"
                                     android:text="@string/can_t_play_"
@@ -184,7 +184,7 @@
                                 android:gravity="center_vertical"
                                 android:text="@string/user_name"
                                 android:textColor="#FDFC01"
-                                android:textSize="@dimen/_10sdp"
+                                android:textSize="@dimen/_13sdp"
                                 android:textStyle="bold" />
 
                             <View
@@ -203,7 +203,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/divider2"
                                 android:layout_marginLeft="@dimen/_5sdp"
-                                android:layout_marginTop="@dimen/_6sdp"
+                                android:layout_marginTop="@dimen/_4sdp"
                                 android:layout_toRightOf="@+id/notificaton_rel"
                                 android:gravity="center_vertical"
                                 android:text="@string/has_invited"
@@ -346,7 +346,7 @@
                                 android:gravity="center_vertical"
                                 android:text="@string/user_name"
                                 android:textColor="@color/test_color"
-                                android:textSize="@dimen/_10ssp"
+                                android:textSize="@dimen/_13ssp"
                                 android:textStyle="bold" />
 
                             <View
@@ -364,7 +364,7 @@
                                 android:layout_width="@dimen/_240sdp"                                android:layout_height="wrap_content"
                                 android:layout_below="@+id/divider4"
                                 android:layout_marginLeft="@dimen/_5sdp"
-                                android:layout_marginTop="@dimen/_6sdp"
+                                android:layout_marginTop="@dimen/_4sdp"
                                 android:layout_toRightOf="@+id/layout1"
                                 android:gravity="center_vertical"
                                 android:text="@string/alreadt_start"

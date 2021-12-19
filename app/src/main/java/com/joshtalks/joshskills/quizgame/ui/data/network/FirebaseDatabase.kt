@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.quizgame.ui.data.network
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.*
@@ -95,20 +97,60 @@ class FirebaseDatabase {
                     if (mId == doc.id) {
                         var fromUserId: String? = doc.data["fromUserId"].toString()
                         if (fromUserId == fUMId) {
-                            Log.d("sagar", "deleteUserData: " + fromUserId)
-                            cr.document(mId ?: "").delete().addOnCompleteListener(
-                                OnCompleteListener {
-                                    createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
-                                    fromUserId = null
-                                    fUMId = null
-                                    mId = null
-                                })
+                            try {
+                                    cr.document(mId ?: "").delete().addOnCompleteListener(
+                                        OnCompleteListener {
+                                            createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
+                                            fromUserId = ""
+                                            fUMId = ""
+                                            mId = ""
+                                        })
+                            } catch (ex: Exception) {
+
+                            }
                         }
                     }
                 }
             }
         }
     }
+
+//    fun deleteUserDataBy10Sec(mentorId: String, fromUserMentorId: String) {
+//        val cr1: CollectionReference = database.collection("Request")
+//        var mId: String? = mentorId
+//        var fUMId: String? = fromUserMentorId
+//        try {
+//            cr1.addSnapshotListener { value, e ->
+//                if (e != null) {
+//                    return@addSnapshotListener
+//                }
+//                for (doc in value!!) {
+//                    if (doc.exists()) {
+//                        if (mId == doc.id) {
+//                            var fromUserId: String? = doc.data["fromUserId"].toString()
+//                            if (fromUserId == fUMId) {
+//                                val handler = Handler(Looper.getMainLooper())
+//                                try {
+//                                    handler.postDelayed({
+//                                        cr1.document(mId ?: "").delete().addOnCompleteListener(
+//                                            OnCompleteListener {
+//                                                createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
+//                                                fromUserId = ""
+//                                                fUMId = ""
+//                                                mId = ""
+//                                            })
+//                                    }, 10000)
+//                                } catch (ex: Exception) {
+//
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }catch (ex:Exception){}
+//    }
 
     fun deleteRequested(mentorId: String) {
         var mId: String? = mentorId
@@ -122,7 +164,7 @@ class FirebaseDatabase {
                     if (mId == doc.id) {
                         cr.document(mId ?: "").delete().addOnCompleteListener(
                             OnCompleteListener {
-                                mId = null
+                                mId = ""
                             })
                     }
                 }

@@ -110,6 +110,7 @@ const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
 
 const val USER_ACTIVE_IN_GAME = "game_active"
+const val USER_LEFT_THE_GAME = "game_left"
 
 object PrefManager {
 

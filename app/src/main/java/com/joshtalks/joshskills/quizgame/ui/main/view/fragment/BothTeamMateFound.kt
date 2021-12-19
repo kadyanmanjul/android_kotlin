@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
@@ -111,7 +112,10 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+            binding.userName4.alpha = 0.5f
+            binding.userImage4Shadow.visibility = View.VISIBLE
+        }
         currentUserId = Mentor.getInstance().getUserId()
         getRoomData()
         moveFragment()
@@ -311,12 +315,13 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    PrefManager.put(USER_LEFT_THE_GAME, true)
                     binding.userName4.alpha = 0.5f
                     binding.userImage4Shadow.visibility = View.VISIBLE
-                    showToast(MESSAGE)
+                    //showToast(MESSAGE)
                 }
             }catch (ex:Exception){
-                showToast(ex.message?:"")
+              //  showToast(ex.message?:"")
             }
         }
     }

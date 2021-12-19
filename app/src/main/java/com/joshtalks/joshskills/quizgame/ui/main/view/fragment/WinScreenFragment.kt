@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
@@ -130,6 +131,11 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         currentUserId = Mentor.getInstance().getUserId()
         currentUserName = Mentor.getInstance().getUser()?.firstName
         currentUserImage = Mentor.getInstance().getUser()?.photo
+
+        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+            binding.team1User2Name.alpha =0.5f
+            binding.team1UserImage2Shadow.visibility = View.VISIBLE
+        }
 
         showRoomUserData()
         try {
@@ -478,6 +484,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
+                PrefManager.put(USER_LEFT_THE_GAME,false)
                 binding.btnPlayAgain.isEnabled = false
                 requireActivity().runOnUiThread {
                     binding.team1User2Name.alpha =0.5f

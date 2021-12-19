@@ -25,6 +25,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
@@ -82,13 +84,15 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+            binding.userName2.alpha=0.5f
+            binding.shadowImg2.visibility = View.VISIBLE
+        }
         currentUserId = Mentor.getInstance().getUserId()
 
         setCurrentUserData()
         setUpData()
         moveFragment()
-
 
         try {
             engine = P2pRtc().getEngineObj()
@@ -255,10 +259,12 @@ class TeamMateFoundFragnment : Fragment(),P2pRtc.WebRtcEngineCallback {
         }
     }
     private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
-    override fun onPartnerLeave() {
+
+        override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    PrefManager.put(USER_LEFT_THE_GAME, true)
                     binding.userName2.alpha=0.5f
                     binding.shadowImg2.visibility = View.VISIBLE
                 }

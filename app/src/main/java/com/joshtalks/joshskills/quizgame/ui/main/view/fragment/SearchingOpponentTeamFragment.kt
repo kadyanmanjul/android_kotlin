@@ -15,12 +15,14 @@ import android.view.Window
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSearchingOpponentTeamBinding
@@ -128,7 +130,10 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+            binding.team1User2Name.alpha = 0.5f
+            binding.team1UserImage2Shadow.visibility = View.VISIBLE
+        }
         setCurrentUserData()
         setTeamMateData(userDetails)
         startTimer()
@@ -397,7 +402,9 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 if (roomId!=null){
                     moveFragment()
                 }else {
-                    showToast(NO_OPPONENT_FOUND)
+                    try {
+                        Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
+                    }catch (ex:Exception){ }
                     deleteTeamData()
                 }
             }
@@ -421,13 +428,14 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     }
 
     private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
-
         override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    PrefManager.put(USER_LEFT_THE_GAME, true)
                     binding.team1User2Name.alpha = 0.5f
                     binding.team1UserImage2Shadow.visibility = View.VISIBLE
+
                 }
             }catch (ex:Exception){
                 Log.d("error_res", "onPartnerLeave: "+ex.message?:"")
