@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.Utils
-import java.util.Date
 
 data class GroupListResponse(
 
@@ -26,11 +25,11 @@ data class GroupsItem(
     @field:SerializedName("created_at")
     val createdAt: Long? = null,
 
-    val lastMessage: String? = null,
+    var lastMessage: String? = null,
 
-    val lastMsgTime: Long = 0,
+    var lastMsgTime: Long = 0,
 
-    val unreadCount: String? = null,
+    var unreadCount: String? = null,
 
     @field:SerializedName("name")
     val name: String? = null,

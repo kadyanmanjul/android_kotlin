@@ -7,6 +7,7 @@ import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 
 import com.joshtalks.joshskills.base.BaseViewModel
@@ -16,16 +17,14 @@ import com.joshtalks.joshskills.ui.group.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
+import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.internal.notifyAll
 
 import retrofit2.HttpException
 
@@ -50,7 +49,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val isFromGroupInfo = ObservableBoolean(false)
     var isImageChanged = false
     var conversationId: String = ""
-    var currentlyOpenedGroup = ""
+    var groupMemberCounts : Map<String, GroupMemberCount> = mapOf()
 
     val onItemClick: (GroupItemData) -> Unit = {
         // TODO : Check if has data
@@ -59,8 +58,12 @@ class JoshGroupViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun getGroupData() =
-        repository.getGroupListResult(::groupDataLoaded).flow.cachedIn(viewModelScope)
+    fun getGroupData(): Flow<PagingData<GroupsItem>> {
+        return if (isFromVoip.get())
+            repository.getGroupListLocal().flow.cachedIn(viewModelScope)
+        else
+            repository.getGroupListResult(::groupDataLoaded).flow.cachedIn(viewModelScope)
+    }
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
@@ -174,6 +177,15 @@ class JoshGroupViewModel : BaseViewModel() {
                 }
                 e.printStackTrace()
             }
+        }
+    }
+
+    suspend fun getGroupOnlineCount() {
+        addingNewGroup.set(true)
+        withContext(Dispatchers.IO) {
+            groupMemberCounts = repository.getGroupMembersCount()
+            Log.e("SukeshInfo1", "$groupMemberCounts")
+            addingNewGroup.set(false)
         }
     }
 }

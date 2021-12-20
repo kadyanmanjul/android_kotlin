@@ -9,7 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
+import com.joshtalks.joshskills.constants.OPEN_GROUP
+import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
+import com.joshtalks.joshskills.constants.SEARCH_GROUP
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -37,8 +40,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         DataBindingUtil.setContentView(this, R.layout.activity_josh_voip_groupctivity)
     }
 
-    override fun setIntentExtras() {
-    }
+    override fun setIntentExtras() {}
 
     override fun initViewBinding() {
         binding.vm = vm
@@ -60,7 +62,6 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
                     else
                         openGroupChat(it.obj as? GroupItemData)
                 }
-                OPEN_GROUP_INFO -> openGroupInfoFragment()
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 SEARCH_GROUP -> openGroupSearchFragment()
             }
@@ -175,16 +176,6 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
             val fragment = GroupChatFragment()
             fragment.arguments = bundle
             replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
-            addToBackStack(GROUPS_STACK)
-        }
-    }
-
-    private fun openGroupInfoFragment() {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-
-            val fragment = GroupInfoFragment()
-            replace(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }

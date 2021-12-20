@@ -12,7 +12,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
 import androidx.paging.map
 
 import com.joshtalks.joshskills.R
@@ -41,17 +40,29 @@ class GroupListFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenStarted {
-            vm.getGroupData().distinctUntilChanged().collectLatest {
-                Log.d(TAG, "onCreate: $it")
+            if (vm.isFromVoip.get()) {
                 withContext(Dispatchers.IO) {
-                    val groupList = it.map { data ->
-                            Log.d(TAG, "onCreate: $data")
+                    vm.getGroupOnlineCount()
+                    vm.getGroupData().distinctUntilChanged().collectLatest {
+                        val groupList = it.map { data ->
+                            val countDetails = vm.groupMemberCounts[data.groupId]
+                            data.lastMessage = "${countDetails?.memberCount} members, ${countDetails?.onlineCount} online"
+                            data.unreadCount = "0"
                             data as GroupItemData
+                        }
+                        withContext(Dispatchers.Main) { vm.adapter.submitData(groupList) }
                     }
-                    Log.d(TAG, "onCreate: $groupList")
-                    withContext(Dispatchers.Main) {
-                        vm.adapter.submitData(groupList)
-                        initTooltip()
+                }
+            } else {
+                vm.getGroupData().distinctUntilChanged().collectLatest {
+                    Log.d(TAG, "onCreate: $it")
+                    withContext(Dispatchers.IO) {
+                        val groupList = it.map { data -> data as GroupItemData }
+                        Log.d(TAG, "onCreate: $groupList")
+                        withContext(Dispatchers.Main) {
+                            vm.adapter.submitData(groupList)
+                            initTooltip()
+                        }
                     }
                 }
             }

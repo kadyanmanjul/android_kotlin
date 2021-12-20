@@ -54,6 +54,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONArray
 
 private const val TAG = "GroupRepository"
 
@@ -159,6 +160,12 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             fetchGroupListFromNetwork()
             onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
         }
+        return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
+            database.groupListDao().getPagedGroupList()
+        }
+    }
+
+    fun getGroupListLocal(): Pager<Int, GroupsItem> {
         return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
             database.groupListDao().getPagedGroupList()
         }
@@ -453,4 +460,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             database.groupChatDao().setUnreadLabelTime("$count Unread Messages", time - 1, id)
         }
     }
+
+    suspend fun getGroupMembersCount() = apiService.getOnlineUserCount(JSONArray(database.groupListDao().getGroupIds()))
 }

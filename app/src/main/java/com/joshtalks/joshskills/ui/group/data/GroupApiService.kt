@@ -1,17 +1,12 @@
 package com.joshtalks.joshskills.ui.group.data
 
 import com.joshtalks.joshskills.repository.service.DIR
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupListResponse
-import com.joshtalks.joshskills.ui.group.model.GroupRequest
-import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.group.model.*
+import org.json.JSONArray
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GroupApiService {
@@ -36,6 +31,6 @@ interface GroupApiService {
     @POST("$DIR/group/remove_member_group_v2/")
     suspend fun leaveGroup(@Body request : LeaveGroupRequest): Response<Unit>
 
-    @GET("$DIR/group/group_online_members/{group_id}")
-    suspend fun getOnlineUserCount(@Path("group_id") groupId: String): Map<String, Any?>
+    @POST("$DIR/group/group_online_members_count/")
+    suspend fun getOnlineUserCount(@Body request: JSONArray): Map<String, GroupMemberCount>
 }
