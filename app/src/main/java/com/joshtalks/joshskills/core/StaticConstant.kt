@@ -240,6 +240,10 @@ class FirebaseRemoteConfigKey {
         //
         const val IS_CONVERSATION_ROOM_ACTIVE = "IS_CONVERSATION_ROOM_ACTIVE"
 
+        const val SENTRY_SAMPLING_RATE = "SENTRY_SAMPLING_RATE"
+        const val SENTRY_ANR_TIME_OUT = "SENTRY_ANR_TIME_OUT"
+        const val SENTRY_SESSION_TIMEOUT = "SENTRY_SESSION_TIMEOUT"
+
     }
 }
 

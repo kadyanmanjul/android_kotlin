@@ -57,6 +57,11 @@ import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
+import io.sentry.Sentry
+import io.sentry.SentryLevel
+import io.sentry.android.core.SentryAndroid
+import io.sentry.android.fragment.FragmentLifecycleIntegration
+import io.sentry.android.okhttp.SentryOkHttpInterceptor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -253,6 +258,7 @@ class AppObjectController {
                     // .retryOnConnectionFailure(true)
                     .followSslRedirects(true)
                     .addInterceptor(StatusCodeInterceptor())
+                    .addInterceptor(SentryOkHttpInterceptor())
                     //   .addInterceptor(NewRelicHttpMetricsLogger())
                     //.addNetworkInterceptor(SmartlookOkHttpInterceptor())
                     .addInterceptor(HeaderInterceptor())
@@ -314,7 +320,9 @@ class AppObjectController {
                         builder.connectTimeout(5L, TimeUnit.SECONDS)
                             .writeTimeout(5L, TimeUnit.SECONDS)
                             .readTimeout(5L, TimeUnit.SECONDS)
-                            .callTimeout(5L, TimeUnit.SECONDS).build()
+                            .callTimeout(5L, TimeUnit.SECONDS)
+                            .addInterceptor(SentryOkHttpInterceptor())
+                            .build()
                     )
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
@@ -335,9 +343,7 @@ class AppObjectController {
                 //initUXCam()
                 //initBugsee()
                 //initSmartLookCam()
-                if (BuildConfig.DEBUG) {
-                    //Sentry.setLevel(SentryLevel.ERROR)
-                }
+                initSentry(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
                 initRtcEngine(joshApplication)
@@ -348,10 +354,63 @@ class AppObjectController {
             }
         }
 
+        /*
+
+
+        <meta-data
+        android:name="io.sentry.auto-init"
+        android:value="true" />
+        <meta-data
+        android:name="io.sentry.session-tracking.enable"
+        android:value="true" />
+
+        <meta-data
+        android:name="io.sentry.ndk.enable"
+        android:value="false" />
+        <meta-data
+        android:name="io.sentry.anr.enable"
+        android:value="false" />
+        <meta-data
+        android:name="io.sentry.anr.timeout-interval-mills"
+        android:value="10000" />*/
+
+        private fun initSentry(context: Context) {
+            SentryAndroid.init(context) { options ->
+                options.dsn =
+                    "https://4eb261d477d3450fba42d8c35d5fa188@o526914.ingest.sentry.io/6109802"
+                options.sampleRate =  getFirebaseRemoteConfig().getDouble(FirebaseRemoteConfigKey.SENTRY_SAMPLING_RATE)
+                options.environment = BuildConfig.FLAVOR.plus(BuildConfig.BUILD_TYPE)
+                options.serverName = BuildConfig.FLAVOR
+                options.isEnableAutoSessionTracking = true
+                options.isAnrEnabled = true
+                options.anrTimeoutIntervalMillis = getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_ANR_TIME_OUT)
+                options.sessionTrackingIntervalMillis = getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_SESSION_TIMEOUT)
+                options.addIntegration(
+                    FragmentLifecycleIntegration(
+                        joshApplication,
+                        enableFragmentLifecycleBreadcrumbs = true, // enabled by default
+                        enableAutoFragmentLifecycleTracing = true  // disabled by default
+                    )
+                )
+                /*options.addIntegration(
+                    SentryTimberIntegration(
+                        minEventLevel = SentryLevel.ERROR,
+                        minBreadcrumbLevel = SentryLevel.INFO
+                    )
+                )*/
+            }
+            if (BuildConfig.DEBUG) {
+                Sentry.setLevel(SentryLevel.ERROR)
+            }
+        }
+
         private fun initRtcEngine(context: Context): RtcEngine? {
             try {
 
-                mRtcEngine = RtcEngine.create(context,BuildConfig.AGORA_API_KEY,object : IRtcEngineEventHandler(){} )
+                mRtcEngine = RtcEngine.create(
+                    context,
+                    BuildConfig.AGORA_API_KEY,
+                    object : IRtcEngineEventHandler() {})
                 /*mRtcEngine = RtcEngine.create(RtcEngineConfig().apply {
                     mAppId = BuildConfig.AGORA_API_KEY
                     mContext = context

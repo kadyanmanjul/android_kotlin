@@ -716,4 +716,19 @@
         <value>true</value>
     </entry>
 
+    <entry>
+        <key>SENTRY_SAMPLING_RATE</key>
+        <value>0.6</value>
+    </entry>
+
+    <entry>
+        <key>SENTRY_ANR_TIME_OUT</key>
+        <value>4000</value>
+    </entry>
+
+    <entry>
+        <key>SENTRY_SESSION_TIMEOUT</key>
+        <value>30000</value>
+    </entry>
+
 </defaultsMap>
