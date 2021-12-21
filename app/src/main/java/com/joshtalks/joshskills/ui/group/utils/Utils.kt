@@ -29,9 +29,15 @@ fun MessageItem.getMessageType() = when (msgType) {
     else -> MESSAGE_ERROR
 }
 
-fun MessageItem.getLastMessage(sender: String) =
-    if (mentorId == Mentor.getInstance().getId()) "You: $msg"
-    else "$sender: $msg"
+fun MessageItem.getLastMessage(sender: String, msgType: Int) =
+    when {
+        msgType == 1 ->
+            if (mentorId == Mentor.getInstance().getId())
+                msg.replace("$sender has", "You have")
+            else msg
+        mentorId == Mentor.getInstance().getId() -> "You: $msg"
+        else -> "$sender: $msg"
+    }
 
 fun pushMetaMessage(msg: String, groupId: String) {
     val chatService: ChatService = PubNubService

@@ -103,14 +103,22 @@ object PubNubService : ChatService {
             .maximumPerChannel(1)
             .sync()
 
+        val msgObj = msg?.channels?.get(groupId)?.get(0)
+
         val message = try {
-            val messageItem = Gson().fromJson(msg?.channels?.get(groupId)?.get(0)?.message, MessageItem::class.java)
-            messageItem.msg
+            Gson().fromJson(msgObj?.message, MessageItem::class.java).msg
         } catch (e: Exception) {
-            msg?.channels?.get(groupId)?.get(0)?.message?.asString ?: ""
+            msgObj?.message?.asString ?: ""
         }
+
         Log.d(TAG, "getLastDetailsMessage: ${pubnub.timestamp.toLong()}")
-        return "${msg?.channels?.get(groupId)?.get(0)?.meta?.asString}: ${message}" to (msg?.channels?.get(groupId)?.get(0)?.timetoken ?: 0L)
+        return if (msgObj?.message?.asJsonObject?.get("msgType")?.asInt == 1) {
+            if (msgObj.uuid == Mentor.getInstance().getId())
+                message.replace("${msgObj?.meta?.asString} has", "You have") to (msgObj?.timetoken ?: 0L)
+            else
+                message to (msgObj?.timetoken ?: 0L)
+        }else
+            "${msgObj?.meta?.asString}: $message" to (msgObj?.timetoken ?: 0L)
     }
 
     override fun getMessageHistory(groupId: String, startTime : Long?) : List<ChatItem> {

@@ -87,7 +87,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
                     if (pnMessageResult.userMetadata.asString != FROM_BACKEND_MSG_TIME)
                         database.groupListDao().updateGroupItem(
-                            lastMessage = messageItem.getLastMessage(pnMessageResult.userMetadata.asString),
+                            lastMessage = messageItem.getLastMessage(pnMessageResult.userMetadata.asString, messageItem.msgType),
                             lastMsgTime = pnMessageResult.timetoken,
                             id = pnMessageResult.channel
                         )
