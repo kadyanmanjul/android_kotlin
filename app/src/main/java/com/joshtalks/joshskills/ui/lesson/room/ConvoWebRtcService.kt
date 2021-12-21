@@ -447,9 +447,16 @@ class ConvoWebRtcService : Service() {
                         when {
                             this == InitLibrary().action -> {
                                 Timber.tag(TAG).e("LibraryInit")
+                                showNotification(
+                                    conversationRoomNotification(InitLibrary().action),
+                                    ROOM_CALL_NOTIFICATION_ID
+                                )
                             }
                             this == ConversationRoomJoin().action -> {
-                                showConversationRoomNotification()
+                                showNotification(
+                                    conversationRoomNotification(ConversationRoomJoin().action),
+                                    ROOM_CALL_NOTIFICATION_ID
+                                )
                                 audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
                                 rtcEngine?.setDefaultAudioRoutetoSpeakerphone(true)
                                 audioManager.isSpeakerphoneOn = true
@@ -553,13 +560,6 @@ class ConvoWebRtcService : Service() {
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
     }
 
-    private fun showConversationRoomNotification() {
-        mNotificationManager?.cancelAll()
-        showNotification(
-            conversationRoomNotification(), ROOM_CALL_NOTIFICATION_ID
-        )
-    }
-
     fun muteCall() {
         val log = rtcEngine?.muteLocalAudioStream(true)
         Log.d(TAG, "muteCall() called ${log}")
@@ -649,7 +649,12 @@ class ConvoWebRtcService : Service() {
         }
     }
 
-    private fun conversationRoomNotification(): Notification {
+    private fun conversationRoomNotification(action : String): Notification {
+        // TODO
+        var isHavingPendingIntent = true
+        if (action == InitLibrary().action){
+            isHavingPendingIntent = false
+        }
         Timber.tag(TAG).e("actionNotification  ")
         mNotificationManager?.cancelAll()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -663,30 +668,6 @@ class ConvoWebRtcService : Service() {
             }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        val intent = ConversationLiveRoomActivity.getIntent(
-            context = this,
-            channelName = conversationRoomChannelName,
-            uid = agoraUid,
-            token = conversationRoomToken,
-            isRoomCreatedByUser = isRoomCreatedByUser,
-            roomId = roomId?.toInt(),
-            moderatorId = moderatorUid,
-            roomQuestionId = roomQuestionId,
-            topicName = channelTopic
-        )
-        Log.d(TAG, "channelName: $conversationRoomChannelName")
-
-        val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
-
-        val pendingIntent: PendingIntent =
-            intent.let { notificationIntent ->
-                PendingIntent.getActivity(
-                    this,
-                    uniqueInt,
-                    notificationIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            }
         Log.d(
             TAG,
             "conversationRoomNotification: pending intent channel $conversationRoomChannelName"
@@ -697,7 +678,6 @@ class ConvoWebRtcService : Service() {
                 .setChannelId(ROOM_NOTIFICATION_CHANNEL)
                 .setContentTitle("Conversation Room")
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
-                .setContentIntent(pendingIntent)
                 .setColor(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
@@ -706,6 +686,35 @@ class ConvoWebRtcService : Service() {
                 )
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
+
+        if (isHavingPendingIntent){
+            val intent = ConversationLiveRoomActivity.getIntent(
+                context = this,
+                channelName = conversationRoomChannelName,
+                uid = agoraUid,
+                token = conversationRoomToken,
+                isRoomCreatedByUser = isRoomCreatedByUser,
+                roomId = roomId?.toInt(),
+                moderatorId = moderatorUid,
+                roomQuestionId = roomQuestionId,
+                topicName = channelTopic
+            )
+            Log.d(TAG, "channelName: $conversationRoomChannelName")
+
+            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+
+            val pendingIntent: PendingIntent =
+                intent.let { notificationIntent ->
+                    PendingIntent.getActivity(
+                        this,
+                        uniqueInt,
+                        notificationIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                }
+            lNotificationBuilder.setContentIntent(pendingIntent)
+        }
+
         if (!conversationRoomTopicName.isNullOrEmpty()) {
             lNotificationBuilder.setContentText(conversationRoomTopicName)
         }

@@ -1140,6 +1140,7 @@ class WebRtcService : BaseWebRtcService() {
                                     removeIncomingNotification()
                                     val callData: HashMap<String, String?>? =
                                         intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+                                    addNotification(CallForceConnect().action,null)
                                     callConnectService(callData)
                                 }
                                 this == CallReject().action -> {
