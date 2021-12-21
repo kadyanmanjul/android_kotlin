@@ -182,6 +182,7 @@
             android:layout_marginBottom="@dimen/_5sdp"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorAccent"
+            android:foreground="?attr/actionBarItemBackground"
             android:onClick="@{vm::sendMessage}"
             android:paddingStart="@dimen/_5sdp"
             android:paddingTop="@dimen/_8sdp"

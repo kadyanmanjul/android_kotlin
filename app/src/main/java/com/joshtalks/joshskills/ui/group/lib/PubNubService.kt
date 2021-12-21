@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 import com.pubnub.api.enums.PNPushType
+import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadata
 import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
 import java.util.stream.Collectors
 import kotlin.Exception
@@ -207,12 +208,17 @@ object PubNubService : ChatService {
     override fun getChannelMembers(groupId: String, adminId: String): MemberResult? {
         val memberStatus = getOnlineMembers(groupId) ?: listOf()
 
-        val adminMember = pubnub.channelMembers
-            .channel(groupId)
-            .limit(1)
-            .filter("uuid.id == '$adminId'")
-            .includeUUID(Include.PNUUIDDetailsLevel.UUID)
-            .sync()!!.data[0].uuid
+        var adminMember: PNUUIDMetadata? = null
+        try {
+            adminMember = pubnub.channelMembers
+                .channel(groupId)
+                .limit(1)
+                .filter("uuid.id == '$adminId'")
+                .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+                .sync()!!.data[0].uuid
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
 
         val memberResult = pubnub.channelMembers
             .channel(groupId)
@@ -233,7 +239,9 @@ object PubNubService : ChatService {
             ))
         }
         memberList.sortByDescending { it.isOnline }
-        memberList.add(0, GroupMember(adminMember.id, adminMember.name, adminMember.profileUrl, true, memberStatus.contains(adminMember.id)))
+        if (adminMember != null) {
+            memberList.add(0, GroupMember(adminMember.id, adminMember.name, adminMember.profileUrl, true, memberStatus.contains(adminMember.id)))
+        }
         return MemberResult(memberList, memberResult?.totalCount, memberStatus.size)
     }
 
