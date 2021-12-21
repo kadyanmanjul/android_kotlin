@@ -234,9 +234,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     lessonIsNewGrammar = it.isNewGrammar
                 }
                 viewModel.lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
-                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
-                        && AppObjectController.getFirebaseRemoteConfig()
-                    .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE))
+                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
                 //viewModel.lessonIsConvoRoomActive  = true
 
                 if (lessonIsNewGrammar) {

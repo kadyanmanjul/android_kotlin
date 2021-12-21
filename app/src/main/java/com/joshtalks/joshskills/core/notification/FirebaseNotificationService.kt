@@ -522,8 +522,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
                 if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified
-                    && AppObjectController.getFirebaseRemoteConfig()
-                        .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
+                    && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
                 ) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this, HeadsUpNotificationService::class.java).apply {
@@ -1492,8 +1491,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
 
                     if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null
-                        && User.getInstance().isVerified && AppObjectController.getFirebaseRemoteConfig()
-                            .getBoolean(FirebaseRemoteConfigKey.IS_CONVERSATION_ROOM_ACTIVE)
+                        && User.getInstance().isVerified && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
                     ) {
                         val roomId = JSONObject(actionData).getString("room_id")
                         val topic = JSONObject(actionData).getString("topic") ?: EMPTY
