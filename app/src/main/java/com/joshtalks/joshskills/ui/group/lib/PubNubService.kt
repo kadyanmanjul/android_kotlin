@@ -242,7 +242,7 @@ object PubNubService : ChatService {
         if (adminMember != null) {
             memberList.add(0, GroupMember(adminMember.id, adminMember.name, adminMember.profileUrl, true, memberStatus.contains(adminMember.id)))
         }
-        return MemberResult(memberList, memberResult?.totalCount, memberStatus.size)
+        return MemberResult(memberList, memberList.size, memberStatus.size)
     }
 
     private fun getOnlineMembers(groupId: String) = pubnub.hereNow()

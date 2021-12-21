@@ -177,7 +177,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             setReorderingAllowed(true)
 
             val fragment = GroupInfoFragment()
-            replace(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
+            add(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }
