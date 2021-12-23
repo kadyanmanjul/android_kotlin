@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 import com.pubnub.api.enums.PNPushType
+import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadata
 import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
 import java.util.stream.Collectors
@@ -31,8 +32,8 @@ private const val TAG = "PubNub_Service"
 object PubNubService : ChatService {
 
     private val pubnub by lazy {
-        config.publishKey = "pub-c-07a21ffa-a9e8-45af-93d3-256bb6b4bdd0"
-        config.subscribeKey = "sub-c-308b8df2-4cfc-11ec-a76f-16acaa066210"
+        config.publishKey = "pub-c-41a8859c-cb6f-4d2e-8083-b7fad69d3554"//"pub-c-07a21ffa-a9e8-45af-93d3-256bb6b4bdd0"
+        config.subscribeKey = "sub-c-5fa89686-63b6-11ec-bc1d-9abcb724faed"//"sub-c-308b8df2-4cfc-11ec-a76f-16acaa066210"
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }
@@ -57,23 +58,26 @@ object PubNubService : ChatService {
         pubnub.unsubscribeAll()
     }
 
-    override fun createGroup(groupName: String, imageUrl: String) {}
-
     override fun fetchGroupList(pageInfo: PageInfo?): NetworkData? {
         Log.d(TAG, "fetchGroupList: $pageInfo")
-        val data = if (pageInfo == null)
-            pubnub.memberships
-                .includeChannel(Include.PNChannelDetailsLevel.CHANNEL_WITH_CUSTOM)
-                .includeCustom(true)
-                .limit(10)
-                .sync()
-        else
-            pubnub.memberships
-                .includeChannel(Include.PNChannelDetailsLevel.CHANNEL_WITH_CUSTOM)
-                .includeCustom(true)
-                .limit(10)
-                .page(pageInfo.pubNubNext ?: pageInfo.pubNubPrevious)
-                .sync()
+        val data: PNGetMembershipsResult?
+        try {
+            data = if (pageInfo == null)
+                pubnub.memberships
+                    .includeChannel(Include.PNChannelDetailsLevel.CHANNEL_WITH_CUSTOM)
+                    .includeCustom(true)
+                    .limit(10)
+                    .sync()
+            else
+                pubnub.memberships
+                    .includeChannel(Include.PNChannelDetailsLevel.CHANNEL_WITH_CUSTOM)
+                    .includeCustom(true)
+                    .limit(10)
+                    .page(pageInfo.pubNubNext ?: pageInfo.pubNubPrevious)
+                    .sync()
+        } catch (e: Exception){
+            return null
+        }
         return if (data == null) null else PubNubNetworkData(data)
     }
 
@@ -245,10 +249,14 @@ object PubNubService : ChatService {
         return MemberResult(memberList, memberList.size, memberStatus.size)
     }
 
-    private fun getOnlineMembers(groupId: String) = pubnub.hereNow()
-        .channels(listOf(groupId))
-        .sync()?.channels?.get(groupId)?.occupants
-        ?.stream()?.map(PNHereNowOccupantData::getUuid)
-        ?.collect(Collectors.toList())
+    private fun getOnlineMembers(groupId: String) = try {
+        pubnub.hereNow()
+            .channels(listOf(groupId))
+            .sync()?.channels?.get(groupId)?.occupants
+            ?.stream()?.map(PNHereNowOccupantData::getUuid)
+            ?.collect(Collectors.toList())
+    } catch (e: Exception){
+        null
+    }
 }
 

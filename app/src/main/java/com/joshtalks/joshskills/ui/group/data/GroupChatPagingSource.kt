@@ -9,6 +9,9 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.IOException
 import retrofit2.HttpException
 
@@ -32,11 +35,13 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
                     Log.d(TAG, "load: APPEND $loadType")
                     val lastMessageTime = database.groupChatDao().getLastMessageTime(groupId = channelId)
 
-                    messages.addAll(chatService.getMessageHistory(channelId, startTime = lastMessageTime))
+                    CoroutineScope(Dispatchers.IO).launch {
+                        messages.addAll(chatService.getMessageHistory(channelId, startTime = lastMessageTime))
 
-                    database.groupChatDao().insertMessages(messages)
-                    Log.d(TAG, "load: APPEND : $loadType")
+                        database.groupChatDao().insertMessages(messages)
+                        Log.d(TAG, "load: APPEND : $loadType")
                     }
+                }
 
                 // Getting Recent Messages
                 LoadType.PREPEND -> {

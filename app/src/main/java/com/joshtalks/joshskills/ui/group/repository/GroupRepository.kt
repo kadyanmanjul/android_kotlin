@@ -173,7 +173,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     @ExperimentalPagingApi
     fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {
-        return Pager(PagingConfig(20, enablePlaceholders = false,), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
+        return Pager(PagingConfig(20, enablePlaceholders = false), remoteMediator = GroupChatPagingSource(apiService, id, database)) {
             database.groupChatDao().getPagedGroupChat(id)
         }
     }
@@ -442,6 +442,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 e.printStackTrace()
             }
         }
+        database.timeTokenDao().deleteLeftGroups()
     }
 
     fun getRecentTimeToken(id: String) = database.timeTokenDao().getOpenedTime(id)?.times(10000)
@@ -462,6 +463,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             database.groupChatDao().setUnreadLabelTime("$count Unread Messages", time - 1, id)
         }
     }
+
+    suspend fun getGroupsCount() = database.groupListDao().getGroupsCount()
 
     suspend fun getGroupMembersCount() = apiService.getOnlineUserCount(JSONArray(database.groupListDao().getGroupIds()))
 }

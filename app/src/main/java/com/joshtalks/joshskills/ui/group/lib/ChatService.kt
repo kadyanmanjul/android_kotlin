@@ -6,7 +6,6 @@ interface ChatService {
     fun initializeChatService()
     fun <T> subscribeToChatEvents(groups : List<String>, observer: ChatEventObserver<T>)
     fun <T> unsubscribeToChatEvents(observer: ChatEventObserver<T>)
-    fun createGroup(groupName: String, imageUrl : String)
     fun sendMessage(groupName: String, messageItem: MessageItem)
     fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>)
     fun dispatchNotifications(groups : List<String>)

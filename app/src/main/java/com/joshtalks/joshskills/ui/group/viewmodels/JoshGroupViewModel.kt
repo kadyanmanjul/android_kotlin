@@ -49,10 +49,10 @@ class JoshGroupViewModel : BaseViewModel() {
     val isFromGroupInfo = ObservableBoolean(false)
     var isImageChanged = false
     var conversationId: String = ""
-    var groupMemberCounts : Map<String, GroupMemberCount> = mapOf()
+    val groupListCount = ObservableField(0)
+    var groupMemberCounts: Map<String, GroupMemberCount> = mapOf()
 
     val onItemClick: (GroupItemData) -> Unit = {
-        // TODO : Check if has data
         message.what = OPEN_GROUP
         message.obj = it
         singleLiveEvent.value = message
@@ -70,7 +70,7 @@ class JoshGroupViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    fun groupDataLoaded(size : Int) {
+    fun groupDataLoaded(size: Int) {
         hasGroupData.set(size > 0)
         hasGroupData.notifyChange()
         repository.subscribeNotifications()
@@ -184,8 +184,18 @@ class JoshGroupViewModel : BaseViewModel() {
         addingNewGroup.set(true)
         withContext(Dispatchers.IO) {
             groupMemberCounts = repository.getGroupMembersCount()
-            Log.e("SukeshInfo1", "$groupMemberCounts")
+            if (groupMemberCounts.isEmpty()) hasGroupData.set(false)
             addingNewGroup.set(false)
+        }
+    }
+
+    fun setGroupsCount() = viewModelScope.launch(Dispatchers.IO) {
+        groupListCount.set(repository.getGroupsCount())
+        withContext(Dispatchers.Main) {
+            if (groupListCount.get() != 0) {
+                message.what = INIT_LIST_TOOLTIP
+                singleLiveEvent.value = message
+            }
         }
     }
 }

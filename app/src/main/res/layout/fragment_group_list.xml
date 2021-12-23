@@ -37,7 +37,7 @@
                 onBackPressed="@{vm::onBackPress}"
                 onFirstIconPressed="@{vm::onSearch}"
                 onSecondIconPressed="@{vm::onMoreOption}"
-                secondIcon="@{vm.isFromVoip() ? R.drawable.josh_skill_logo : R.drawable.ic_more_option}"
+                secondIcon="@{vm.isFromVoip() ? 0 : R.drawable.ic_more_option}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -91,7 +91,6 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
             android:textColor="@color/white"
             android:textSize="@dimen/_12ssp"
-            android:visibility="gone"
             app:cornerRadius="@dimen/_36sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -99,8 +98,7 @@
             app:layout_constraintTop_toTopOf="@+id/appBarLayout"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.8"
-            app:rippleColor="@color/white"
-            tools:visibility="visible" />
+            app:rippleColor="@color/white" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_rv"
@@ -120,6 +118,30 @@
             android:layout_height="wrap_content"
             android:visibility="@{vm.hasGroupData ? View.GONE : View.VISIBLE}"
             app:constraint_referenced_ids="group_search_description,group_description,btn_call_practice_partner" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:onClick="@{vm::onSearch}"
+            android:text="Find Groups to join"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0) ? View.GONE : View.VISIBLE}"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            android:layout_marginBottom="@dimen/_50sdp"
+            app:rippleColor="@color/white" />
 
         <FrameLayout
             android:id="@+id/anim_layout"

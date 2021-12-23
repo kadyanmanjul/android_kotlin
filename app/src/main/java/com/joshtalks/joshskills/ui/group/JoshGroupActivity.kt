@@ -62,7 +62,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
-                REFRESH_GRP_LIST_HIDE_INFO -> setNewGroupVisibility(it.data)
+                REFRESH_GRP_LIST_HIDE_INFO -> {
+                    setNewGroupVisibility(it.data)
+                    vm.setGroupsCount()
+                }
             }
         }
     }

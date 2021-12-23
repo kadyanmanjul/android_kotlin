@@ -49,7 +49,6 @@ class GroupChatFragment : BaseFragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.group_chat_fragment, container, false)
         init()
-        initTooltip()
         return binding.root
     }
 
@@ -64,15 +63,17 @@ class GroupChatFragment : BaseFragment() {
                 }
             }
         }
-        if (vm.hasJoinedGroup.get())
+        if (vm.hasJoinedGroup.get()) {
             vm.getGroupInfo()
+            initTooltip()
+        }
     }
 
     private fun initTooltip() {
         if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_CALL_TOOLTIP)) {
-            binding.animLayout.visibility = View.VISIBLE
-            binding.overlayGroupTooltip.visibility = View.VISIBLE
-            binding.overlayLayout.visibility = View.VISIBLE
+            binding.animLayout.visibility = VISIBLE
+            binding.overlayGroupTooltip.visibility = VISIBLE
+            binding.overlayLayout.visibility = VISIBLE
 
             PrefManager.put(HAS_SEEN_GROUP_CALL_TOOLTIP, true)
 
@@ -111,9 +112,7 @@ class GroupChatFragment : BaseFragment() {
                     } else {
                         val lastItemPosition = (binding.groupChatRv.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
                         if (vm.scrollToEnd || lastItemPosition == 0) {
-                            binding.groupChatRv.layoutManager?.smoothScrollToPosition(
-                                binding.groupChatRv, RecyclerView.State(), 0
-                            )
+                            binding.groupChatRv.layoutManager?.scrollToPosition(0)
                             binding.scrollUnread.visibility = INVISIBLE
                         } else binding.scrollUnread.visibility = VISIBLE
                         vm.scrollToEnd = false

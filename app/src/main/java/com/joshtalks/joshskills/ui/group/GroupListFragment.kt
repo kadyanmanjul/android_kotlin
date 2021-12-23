@@ -16,6 +16,7 @@ import androidx.paging.map
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.constants.INIT_LIST_TOOLTIP
 import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
@@ -40,6 +41,7 @@ class GroupListFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenStarted {
+            vm.setGroupsCount()
             if (vm.isFromVoip.get()) {
                 withContext(Dispatchers.IO) {
                     vm.getGroupOnlineCount()
@@ -61,7 +63,6 @@ class GroupListFragment : BaseFragment() {
                         Log.d(TAG, "onCreate: $groupList")
                         withContext(Dispatchers.Main) {
                             vm.adapter.submitData(groupList)
-                            initTooltip()
                         }
                     }
                 }
@@ -78,7 +79,7 @@ class GroupListFragment : BaseFragment() {
     }
 
     private fun initTooltip() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP) && vm.hasGroupData.get()) {
+        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP)) {
             binding.animLayout.visibility = VISIBLE
             binding.overlayGroupTooltip.visibility = VISIBLE
             binding.overlayLayout.visibility = VISIBLE
@@ -108,9 +109,8 @@ class GroupListFragment : BaseFragment() {
     override fun initViewState() {
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                OPEN_POPUP_MENU -> {
-                    openPopupMenu()
-                }
+                OPEN_POPUP_MENU -> openPopupMenu()
+                INIT_LIST_TOOLTIP -> initTooltip()
             }
         }
     }
