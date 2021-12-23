@@ -9,6 +9,7 @@
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.SearchingOpponentTeamFragment" />
     </data>
     <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".quizgame.ui.main.view.fragment.SearchingOpponentTeamFragment">
@@ -18,7 +19,7 @@
             android:background="@drawable/ic_game_back"
             android:layout_height="match_parent">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/txtquiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +52,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_centerInParent="true"
@@ -98,7 +99,7 @@
 
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team2_user1_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -134,7 +135,7 @@
 
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team2_user2_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,11 +151,10 @@
                 <RelativeLayout
                     android:id="@+id/globe"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_below="@+id/relative_layout_sec"
-                    >
+                    android:layout_height="@dimen/_85sdp"
+                    android:layout_below="@+id/relative_layout_sec">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_80sdp"
                         android:layout_centerVertical="true"
@@ -187,7 +187,7 @@
 
                     </RelativeLayout>
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
                         android:layout_alignParentRight="true"
@@ -229,7 +229,7 @@
 
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team1_user2_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
 
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team1_user1_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

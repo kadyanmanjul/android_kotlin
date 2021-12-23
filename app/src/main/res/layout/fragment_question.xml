@@ -31,16 +31,16 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image2"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image2_shadow"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:src="@drawable/ic_offline_shadow_img"
                         android:visibility="invisible" />
 
@@ -51,7 +51,8 @@
                          android:layout_below="@id/team1_user_image2"
                          android:layout_marginTop="2sp"
                         android:layout_centerHorizontal="true">
-                         <ImageView
+
+                         <androidx.appcompat.widget.AppCompatImageView
                              android:id="@+id/team1_mic2"
                              android:layout_width="wrap_content"
                              android:layout_height="wrap_content"
@@ -69,8 +70,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image1"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
@@ -78,8 +79,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team1_user_image1_shadow"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:src="@drawable/ic_offline_shadow_img"
                         android:visibility="invisible" />
 
@@ -91,7 +92,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="@dimen/_2sdp">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/team1_mic1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -149,7 +150,7 @@
                 android:layout_toRightOf="@+id/images_team1"
                 android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team1_user1_name"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
@@ -160,7 +161,7 @@
                     android:textColor="#fff"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team1_user2_name"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
@@ -171,7 +172,7 @@
                     android:textColor="#fff"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/marks1"
                     android:layout_width="@dimen/_42sdp"
                     android:layout_height="0dp"
@@ -199,8 +200,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team2_user_image1"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:layout_alignParentRight="true"
                         android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
@@ -208,8 +209,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team2_user_image1_shadow"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:layout_alignParentRight="true"
                         android:src="@drawable/ic_offline_shadow_img"
                         android:visibility="invisible" />
@@ -223,8 +224,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team2_user_image2"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:src="@drawable/josh_skill"
                         android:layout_alignParentRight="true"
                         app:civ_border_color="@color/light_blue"
@@ -232,8 +233,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team2_user_image2_shadow"
-                        android:layout_width="@dimen/_45sdp"
-                        android:layout_height="@dimen/_50sdp"
+                        android:layout_width="@dimen/_47sdp"
+                        android:layout_height="@dimen/_47sdp"
                         android:layout_alignParentRight="true"
                         android:src="@drawable/ic_offline_shadow_img"
                         android:visibility="invisible" />
@@ -250,7 +251,7 @@
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team2_user1_name"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
@@ -262,7 +263,7 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="#fff" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team2_user2_name"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
@@ -294,8 +295,7 @@
                 android:layout_below="@+id/images_team1"
                 android:layout_marginLeft="@dimen/_23sdp"
                 android:layout_marginRight="@dimen/_23sdp"
-                android:layout_marginTop="@dimen/_32sdp"
-                >
+                android:layout_marginTop="@dimen/_20sdp">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/question"
@@ -320,7 +320,7 @@
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/round_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -333,9 +333,9 @@
                     android:textSize="@dimen/_25sdp"
                     android:textColor="@color/white"
                     android:includeFontPadding = "false">
-                </TextView>
+                </androidx.appcompat.widget.AppCompatTextView>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/get_ready_"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -369,7 +369,7 @@
                         android:layout_marginTop="@dimen/_6sdp"
                         android:background="@drawable/custom_layout">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:visibility="invisible"
                             android:id="@+id/image_card_left1"
                             android:layout_width="@dimen/_18sdp"
@@ -379,7 +379,7 @@
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_left_cut_card_icon" />
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:visibility="invisible"
                             android:id="@+id/image_card_right1"
                             android:layout_width="@dimen/_18sdp"
@@ -390,17 +390,17 @@
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_right_cut_card" />
 
-                        <TextView
-                            android:id="@+id/answer1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="@string/cornelius_f"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                            android:textColor="#151415"
-                            android:textStyle="bold" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/answer1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/cornelius_f"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                        android:textColor="#151415"
+                        android:textStyle="bold" />
                     </RelativeLayout>
 
                 <RelativeLayout
@@ -409,7 +409,7 @@
                     android:layout_height="@dimen/_70sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_left2"
                         android:layout_width="@dimen/_18sdp"
@@ -419,7 +419,7 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_left_cut_card_icon" />
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_right2"
                         android:layout_width="@dimen/_18sdp"
@@ -430,7 +430,7 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_right_cut_card" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -449,7 +449,7 @@
                     android:layout_height="@dimen/_70sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_left3"
                         android:layout_width="@dimen/_18sdp"
@@ -459,7 +459,7 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_left_cut_card_icon" />
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_right3"
                         android:layout_width="@dimen/_18sdp"
@@ -470,7 +470,7 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_right_cut_card" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -489,7 +489,7 @@
                     android:layout_height="@dimen/_70sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_left4"
                         android:layout_width="@dimen/_18sdp"
@@ -499,7 +499,7 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_left_cut_card_icon" />
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
                         android:id="@+id/image_card_right4"
                         android:layout_width="@dimen/_18sdp"
@@ -509,7 +509,7 @@
                         android:scaleType="fitXY"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_right_cut_card" />
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.Manifest
-import android.app.Dialog
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,12 +10,10 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,8 +24,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.lottie.LottieDrawable
-import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentFavouritePracticeBinding
@@ -37,13 +34,12 @@ import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
 import com.joshtalks.joshskills.quizgame.ui.data.model.ChannelData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.data.repository.FavouriteRepo
 import com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FavouriteViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ViewModelProviderFactory
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -52,7 +48,6 @@ import io.agora.rtc.models.ChannelMediaOptions
 import kotlinx.android.synthetic.main.fragment_favourite_practice.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -70,30 +65,37 @@ const val STATUS_CHANGE: String = "Status changed successfully"
 
 
 class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
-    FirebaseDatabase.OnNotificationTrigger,
+    FirebaseTemp.OnNotificationTriggerTemp,
     P2pRtc.WebRtcEngineCallback, FirebaseDatabase.OnMakeFriendTrigger,
     FirebaseDatabase.OnLiveStatus {
 
     private lateinit var binding: FragmentFavouritePracticeBinding
     private var favouriteAdapter: FavouriteAdapter? = null
     private var favouriteViewModel: FavouriteViewModel? = null
-    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
+    private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
     private var channelName: String? = null
     private var fromTokenId: String? = null
     private var fromUserId: String? = null
     private var favouriteUserId: String? = null
-    private val PERMISSION_REQ_ID = 22
+    //private val PERMISSION_REQ_ID = 22
     private var engine: RtcEngine? = null
     private var activityInstance: FragmentActivity? = null
     private var repository: FavouriteRepo? = null
     private var factory: ViewModelProviderFactory? = null
     private var mentorId: String = Mentor.getInstance().getUserId()
+    var userName: String? = Mentor.getInstance().getUser()?.firstName
+    var imageUrl: String? = Mentor.getInstance().getUser()?.photo
+    val handler = Handler(Looper.getMainLooper())
+    val handler1 = Handler(Looper.getMainLooper())
+    val handler2 = Handler(Looper.getMainLooper())
+    val handler4 = Handler(Looper.getMainLooper())
 
     private var arrayList: ArrayList<Favourite>? = null
-    private var REQUESTED_PERMISSIONS = arrayOf(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.CAMERA
-    )
+
+//    private var REQUESTED_PERMISSIONS = arrayOf(
+//        Manifest.permission.RECORD_AUDIO,
+//        Manifest.permission.CAMERA
+//    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,6 +129,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.container.setBackgroundColor(Color.WHITE);
 
         activityInstance = activity
 
@@ -142,7 +145,8 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             getFavouritePracticePartner()
             //It's is use for get current user channel data further use for join in the agora call
             getFromAgoraToken()
-            //This is use for change user status
+            getFriendRequest()
+        //This is use for change user status
             // changeStatus()
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -155,7 +159,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         //own channel id and we will subscribe this id if any changes then create notification
         try {
             firebaseDatabase.getUserDataFromFirestore(
-                mentorId ?: "",
+                mentorId,
                 this
             )//yaha par mentor id pass karna hai
         } catch (ex: Exception) {
@@ -209,11 +213,45 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 
     private fun initRV(favouriteList: ArrayList<Favourite>?) {
         arrayList = favouriteList
-        favouriteAdapter?.addItems(favouriteList)
+        val activeList :ArrayList<Favourite> = java.util.ArrayList()
+        val inGameList :ArrayList<Favourite> = java.util.ArrayList()
+        val searchList :ArrayList<Favourite> = java.util.ArrayList()
+        val inActiveList :ArrayList<Favourite> = java.util.ArrayList()
+        val list: ArrayList<Favourite> = java.util.ArrayList()
+        if (favouriteList!=null){
+            for (f in favouriteList){
+                if (f.status == ACTIVE){
+                    activeList.add(f)
+                }
+            }
+            for (f1 in favouriteList){
+                if (f1.status == IN_GAME){
+                    inGameList.add(f1)
+                }
+            }
+            for (f2 in favouriteList){
+                if (f2.status == SEARCHING){
+                    searchList.add(f2)
+                }
+            }
+            for (f3 in favouriteList){
+                if (f3.status == IN_ACTIVE){
+                    inActiveList.add(f3)
+                }
+            }
+            list.addAll(activeList)
+            list.addAll(inGameList)
+            list.addAll(searchList)
+            list.addAll(inActiveList)
+
+            arrayList = list
+        }
+
+        favouriteAdapter?.addItems(list)
         binding.recycleView.setHasFixedSize(true)
         binding.recycleView.layoutManager = LinearLayoutManager(activity)
         favouriteAdapter =
-            activity?.let { FavouriteAdapter(it, favouriteList, this, firebaseDatabase) }
+            activity?.let { FavouriteAdapter(it, list, this, firebaseDatabase) }
         recycle_view.adapter = favouriteAdapter
         for (v in 0 until arrayList?.size!!) {
             firebaseDatabase.statusLive(arrayList?.get(v)?.uuid ?: "", this)
@@ -227,7 +265,9 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     }
 
     fun onBack() {
-        showDialog()
+        //showDialog()
+        positiveBtnAction()
+      // CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
     }
 
     override fun onClickForGetToken(favourite: Favourite?, position: String) {
@@ -236,36 +276,36 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             firebaseDatabase.createRequest(
                 favouriteUserId,
                 channelName,
-                mentorId!!
+                mentorId
             )
         }
     }
 
     fun initializeAgoraCall(channelName: String) {
         // Check permission
-        if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
+       // if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
             CoroutineScope(Dispatchers.IO).launch {
                 joinChannel(channelName)
-            }
+          //  }
             //WebRtcEngine.initLibrary()
         }
     }
 
-    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
-        if (activity?.let { ContextCompat.checkSelfPermission(it, permission) } !=
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            activity?.let {
-                ActivityCompat.requestPermissions(
-                    it,
-                    REQUESTED_PERMISSIONS,
-                    requestCode
-                )
-            }
-            return false
-        }
-        return true
-    }
+//    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
+//        if (activity?.let { ContextCompat.checkSelfPermission(it, permission) } !=
+//            PackageManager.PERMISSION_GRANTED
+//        ) {
+//            activity?.let {
+//                ActivityCompat.requestPermissions(
+//                    it,
+//                    REQUESTED_PERMISSIONS,
+//                    requestCode
+//                )
+//            }
+//            return false
+//        }
+//        return true
+//    }
 
     private fun joinChannel(channelId: String) {
         engine?.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
@@ -289,75 +329,75 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
     }
 
-    override fun onNotificationForInvitePartner(
-        channelName: String,
-        fromUserId: String,
-        fromUserName: String,
-        fromUserImageUrl: String
-    ) {
-        var i = 0
-        try {
-            visibleView(binding.notificationCard)
-
-            binding.progress.animateProgress()
-            binding.userName.text = fromUserName
-            val imageUrl = fromUserImageUrl.replace("\n", "")
-
-            binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
-        } catch (ex: Exception) {
-            Timber.d(ex)
-        }
-
-        binding.buttonAccept.setOnClickListener {
-            i = 1
-            invisibleView(binding.notificationCard)
-            favouriteViewModel?.getChannelData(mentorId, channelName)
-            activity?.let {
-                favouriteViewModel?.agoraToToken?.observe(it, {
-                    when {
-                        it?.message.equals(TEAM_CREATED) -> {
-                            firebaseDatabase.deleteRequested(mentorId ?: "")
-                            firebaseDatabase.acceptRequest(
-                                fromUserId,
-                                TRUE,
-                                fromUserName,
-                                channelName,
-                                mentorId
-                            )
-                            initializeAgoraCall(channelName)
-                            moveFragment(fromUserId, channelName)
-                        }
-                        it?.message.equals(USER_ALREADY_JOIN) -> {
-                            visibleView(binding.notificationCardAlready)
-                        }
-                        it?.message.equals(USER_LEFT_THE_GAME) -> {
-                            showToast(PARTNER_LEFT_THE_GAME)
-                        }
-                    }
-                })
-            }
-        }
-
-        binding.alreadyNotification.setOnClickListener {
-            invisibleView(binding.notificationCardAlready)
-
-        }
-        binding.butonDecline.setOnClickListener {
-            invisibleView(binding.notificationCard)
-            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-        }
-
-        binding.eee.setOnClickListener {
-            invisibleView(binding.notificationCard)
-            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-        }
-
-        lifecycleScope.launch {
-            delay(10000)
-            invisibleView(binding.notificationCard)
-            firebaseDatabase.deleteUserData(mentorId,fromUserId)
-        }
-    }
+//    override fun onNotificationForInvitePartner(
+//        channelName: String,
+//        fromUserId: String,
+//        fromUserName: String,
+//        fromUserImageUrl: String
+//    ) {
+//        var i = 0
+//        try {
+//            visibleView(binding.notificationCard)
+//
+//            binding.progress.animateProgress()
+//            binding.userName.text = fromUserName
+//            val imageUrl = fromUserImageUrl.replace("\n", "")
+//
+//            binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
+//        } catch (ex: Exception) {
+//            Timber.d(ex)
+//        }
+//
+//        binding.buttonAccept.setOnClickListener {
+//            i = 1
+//            invisibleView(binding.notificationCard)
+//            favouriteViewModel?.getChannelData(mentorId, channelName)
+//            activity?.let {
+//                favouriteViewModel?.agoraToToken?.observe(it, {
+//                    when {
+//                        it?.message.equals(TEAM_CREATED) -> {
+//                            firebaseDatabase.deleteRequested(mentorId ?: "")
+//                            firebaseDatabase.acceptRequest(
+//                                fromUserId,
+//                                TRUE,
+//                                fromUserName,
+//                                channelName,
+//                                mentorId
+//                            )
+//                            initializeAgoraCall(channelName)
+//                            moveFragment(fromUserId, channelName)
+//                        }
+//                        it?.message.equals(USER_ALREADY_JOIN) -> {
+//                            visibleView(binding.notificationCardAlready)
+//                        }
+//                        it?.message.equals(USER_LEFT_THE_GAME) -> {
+//                            showToast(PARTNER_LEFT_THE_GAME)
+//                        }
+//                    }
+//                })
+//            }
+//        }
+//
+//        binding.alreadyNotification.setOnClickListener {
+//            invisibleView(binding.notificationCardAlready)
+//
+//        }
+//        binding.butonDecline.setOnClickListener {
+//            invisibleView(binding.notificationCard)
+//            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+//        }
+//
+//        binding.eee.setOnClickListener {
+//            invisibleView(binding.notificationCard)
+//            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+//        }
+//
+//        lifecycleScope.launch {
+//            delay(10000)
+//            invisibleView(binding.notificationCard)
+//            firebaseDatabase.deleteUserData(mentorId,fromUserId)
+//        }
+//    }
 
     fun deleteData() {
         if (context?.let { UpdateReceiver.isNetworkAvailable(it) } == true)
@@ -379,77 +419,49 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             firebaseDatabase.getAcceptCall(mentorId, this)
     }
 
-    override fun onNotificationForPartnerNotAccept(
-        userName: String?,
-        userImageUrl: String,
-        fromUserId: String,
-        declinedUserId: String
-    ) {
-        val pos = favouriteAdapter?.getPositionById(declinedUserId)
-        val holder: FavouriteAdapter.FavViewHolder =
-            binding.recycleView.findViewHolderForAdapterPosition(
-                pos ?: 0
-            ) as FavouriteAdapter.FavViewHolder
-        if (fromUserId == mentorId) {
-            try {
-                holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
-                holder.binding.clickToken.isEnabled = true
-
-                val image = userImageUrl.replace("\n", "")
-                visibleView(binding.notificationCardNotPlay)
-                binding.userNameForNotPlay.text = userName
-                binding.userImageForNotPaly.setUserImageOrInitials(
-                    image,
-                    userName ?: "",
-                    30,
-                    isRound = true
-                )
-
-            } catch (ex: Exception) {
-                Timber.d(ex)
-
-            }
-        }
-
-        binding.cancelNotification.setOnClickListener {
-            firebaseDatabase.deleteDeclineData(mentorId)
-            invisibleView(binding.notificationCardNotPlay)
-        }
-
-        lifecycleScope.launch {
-            delay(10000)
-            firebaseDatabase.deleteDeclineData(mentorId)
-            invisibleView(binding.notificationCardNotPlay)
-        }
-    }
-
-    override fun onNotificationForPartnerAccept(
-        channelName: String?,
-        timeStamp: String,
-        isAccept: String,
-        opponentMemberId: String,
-        mentorIdIdAcceptedUser: String
-    ) {
-        if (isAccept == TRUE) {
-            firebaseDatabase.deleteDataAcceptRequest(opponentMemberId)
-            firebaseDatabase.deleteRequested(mentorIdIdAcceptedUser)
-            channelName?.let { initializeAgoraCall(it) }
-            moveFragment(mentorIdIdAcceptedUser, channelName)
-        }
-    }
-
-    override fun onGetRoomId(currentUserRoomID: String?, mentorId: String) {
-
-    }
-
-    override fun onShowAnim(
-        mentorId: String,
-        isCorrect: String,
-        choiceAnswer: String,
-        marks: String
-    ) {
-
-    }
+//    override fun onNotificationForPartnerNotAccept(
+//        userName: String?,
+//        userImageUrl: String,
+//        fromUserId: String,
+//        declinedUserId: String
+//    ) {
+//        val pos = favouriteAdapter?.getPositionById(declinedUserId)
+//        val holder: FavouriteAdapter.FavViewHolder =
+//            binding.recycleView.findViewHolderForAdapterPosition(
+//                pos ?: 0
+//            ) as FavouriteAdapter.FavViewHolder
+//        if (fromUserId == mentorId) {
+//            try {
+//                holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
+//                holder.binding.clickToken.isEnabled = true
+//
+//                val image = userImageUrl.replace("\n", "")
+//                visibleView(binding.notificationCardNotPlay)
+//                binding.userNameForNotPlay.text = userName
+//                binding.userImageForNotPaly.setUserImageOrInitials(
+//                    image,
+//                    userName ?: "",
+//                    30,
+//                    isRound = true
+//                )
+//
+//            } catch (ex: Exception) {
+//                Timber.d(ex)
+//
+//            }
+//        }
+//
+//        binding.cancelNotification.setOnClickListener {
+//            firebaseDatabase.deleteDeclineData(mentorId)
+//            invisibleView(binding.notificationCardNotPlay)
+//        }
+//
+//        lifecycleScope.launch {
+//            delay(10000)
+//            firebaseDatabase.deleteDeclineData(mentorId)
+//            invisibleView(binding.notificationCardNotPlay)
+//        }
+//    }
 
     private fun getFavouritePracticePartner() {
         activity?.let {
@@ -492,42 +504,14 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    showDialog()
+                    //showDialog()
+                    CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
                 }
             })
     }
-
-    private fun showDialog() {
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.custom_dialog)
-
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
-        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
-        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
-
-        yesBtn.setOnClickListener {
-            try {
-                dialog.dismiss()
-                AudioManagerQuiz.audioRecording.stopPlaying()
-                openChoiceScreen()
-            } catch (ex: Exception) {
-                showToast(ex.message ?: "")
-            }
-        }
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
+    fun positiveBtnAction() {
+        AudioManagerQuiz.audioRecording.stopPlaying()
+        openChoiceScreen()
     }
 
     private fun openChoiceScreen() {
@@ -536,7 +520,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                ChoiceFragnment.newInstance(), "Favourite"
+                ChoiceFragment.newInstance(), "Favourite"
             )
             ?.remove(this)
             ?.commit()
@@ -549,6 +533,8 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         isAccept: String
     ) {
         try {
+            handler2.removeCallbacksAndMessages(null)
+
             //binding.notificationCard.visibility = View.VISIBLE
             visibleView(binding.notificationCard)
             binding.progress.animateProgress()
@@ -571,17 +557,26 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             )
             activity?.let {
                 favouriteViewModel?.fppData?.observe(it, {
+                    firebaseDatabase.deleteRequest(mentorId)
                 })
             }
         }
 
         binding.butonDecline.setOnClickListener {
-            //binding.notificationCard.visibility = View.INVISIBLE
             invisibleView(binding.notificationCard)
-            firebaseDatabase.deleteRequest(mentorId ?: "")
+            handler2.removeCallbacksAndMessages(null)
+            firebaseDatabase.deleteRequested(mentorId)
         }
+        try {
+            handler2.postDelayed({
+                invisibleView(binding.notificationCard)
+                firebaseDatabase.deleteRequested(mentorId)
+            }, 10000)
+        } catch (ex: Exception) { }
 
-
+    }
+    fun getFriendRequest(){
+        firebaseDatabase.getFriendRequests(mentorId,this)
     }
 
     override fun onPlayAgainNotificationFromApi(userName: String, userImage: String) {
@@ -595,7 +590,6 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     ) {
 
     }
-
 
     fun searchFavouritePartner() {
         binding.inputSearch.setRawInputType(InputType.TYPE_CLASS_TEXT)
@@ -630,7 +624,19 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
                 }
             }
         }
+        //check if length is  < 0 so print toast No data Found
+        if (temp.size <= 0) {
+            showSnackBar(binding.container,Snackbar.LENGTH_SHORT,"No matching user found")
+        }
         favouriteAdapter?.updateList(temp, text)
+    }
+
+    fun showSnackBar(view: View, duration: Int, action_lable: String?) {
+        lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    PointSnackbar.make(view, duration, action_lable)?.show()
+            }
+        }
     }
 
     override fun onGetLiveStatus(status: String, mentorId: String) {
@@ -674,6 +680,159 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             }
         } catch (ex: Exception) {
 
+        }
+    }
+
+    override fun onNotificationForInvitePartnerTemp(
+        channelName: String,
+        fromUserId: String,
+        fromUserName: String,
+        fromUserImage: String
+    ) {
+        var i = 0
+        showToast("Fav Notification call")
+
+        handler.removeCallbacksAndMessages(null)
+        try {
+            visibleView(binding.notificationCard)
+
+            binding.progress.animateProgress()
+            binding.userName.text = fromUserName
+            val imageUrl = fromUserImage.replace("\n", "")
+
+            binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
+        } catch (ex: Exception) {
+            Timber.d(ex)
+        }
+
+        binding.buttonAccept.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
+            i = 1
+            invisibleView(binding.notificationCard)
+            favouriteViewModel?.getChannelData(mentorId, channelName)
+            activity?.let {
+                favouriteViewModel?.agoraToToken?.observe(it, {
+                    when {
+                        it?.message.equals(TEAM_CREATED) -> {
+                            firebaseDatabase.deleteRequested(mentorId)
+                            firebaseDatabase.acceptRequest(
+                                fromUserId,
+                                TRUE,
+                                fromUserName,
+                                channelName,
+                                mentorId
+                            )
+                            initializeAgoraCall(channelName)
+                            moveFragment(fromUserId, channelName)
+                        }
+                        it?.message.equals(USER_ALREADY_JOIN) -> {
+                            binding.userImageForAlready.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
+                            binding.userNameForAlready.text = fromUserName
+                            visibleView(binding.notificationCardAlready)
+                        }
+                        it?.message.equals(USER_LEFT_THE_GAME) -> {
+                            showToast(PARTNER_LEFT_THE_GAME)
+                        }
+                    }
+                })
+            }
+        }
+
+        binding.alreadyNotification.setOnClickListener {
+            handler4.removeCallbacksAndMessages(null)
+            invisibleView(binding.notificationCardAlready)
+        }
+        binding.butonDecline.setOnClickListener {
+            invisibleView(binding.notificationCard)
+            handler.removeCallbacksAndMessages(null)
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl,mentorId)
+        }
+
+        binding.eee.setOnClickListener {
+            invisibleView(binding.notificationCard)
+            handler.removeCallbacksAndMessages(null)
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl,mentorId)
+        }
+        try {
+            handler4.postDelayed({
+                invisibleView(binding.notificationCardAlready)
+            }, 10000)
+        }catch (ex:Exception){}
+
+        try {
+            handler.postDelayed({
+            showToast("Fav Accept")
+                invisibleView(binding.notificationCard)
+                mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+                firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl,mentorId)
+            }, 10000)
+        } catch (ex: Exception) { }
+    }
+
+    override fun onNotificationForPartnerNotAcceptTemp(
+        userName: String?,
+        userImageUrl: String,
+        fromUserId: String,
+        declinedUserId: String
+    ) {
+        showToast("Fav Decline  Notification call")
+
+        handler1.removeCallbacksAndMessages(null)
+        val pos = favouriteAdapter?.getPositionById(declinedUserId)
+        val holder: FavouriteAdapter.FavViewHolder =
+            binding.recycleView.findViewHolderForAdapterPosition(
+                pos ?: 0
+            ) as FavouriteAdapter.FavViewHolder
+        if (fromUserId == mentorId) {
+            try {
+                holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
+                holder.binding.clickToken.isEnabled = true
+
+                val image = userImageUrl.replace("\n", "")
+                visibleView(binding.notificationCardNotPlay)
+                binding.userNameForNotPlay.text = userName
+                binding.userImageForNotPaly.setUserImageOrInitials(
+                    image,
+                    userName ?: "",
+                    30,
+                    isRound = true
+                )
+
+            } catch (ex: Exception) {
+                Timber.d(ex)
+
+            }
+        }
+
+        binding.cancelNotification.setOnClickListener {
+            handler1.removeCallbacksAndMessages(null)
+            firebaseDatabase.deleteDeclineData(mentorId)
+            invisibleView(binding.notificationCardNotPlay)
+        }
+
+        try {
+            handler1.postDelayed({
+                showToast("Fav Decline")
+                firebaseDatabase.deleteDeclineData(mentorId)
+                invisibleView(binding.notificationCardNotPlay)
+            }, 10000)
+        } catch (ex: Exception) { }
+    }
+
+    override fun onNotificationForPartnerAcceptTemp(
+        channelName: String?,
+        timeStamp: String,
+        isAccept: String,
+        opponentMemberId: String,
+        mentorId: String
+    ) {
+        if (isAccept == TRUE) {
+            firebaseDatabase.deleteDataAcceptRequest(opponentMemberId)
+            firebaseDatabase.deleteRequested(mentorId)
+            channelName?.let { initializeAgoraCall(it) }
+            moveFragment(mentorId, channelName)
         }
     }
 }

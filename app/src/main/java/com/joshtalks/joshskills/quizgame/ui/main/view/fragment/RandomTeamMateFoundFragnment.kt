@@ -1,28 +1,26 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
-import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.RandomFragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateFoundViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -74,14 +72,19 @@ class RandomTeamMateFoundFragnment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.container.setBackgroundColor(Color.WHITE)
         currentUserId = Mentor.getInstance().getUserId()
         setCurrentUserData()
         setData()
         moveFragment()
-
+        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)){
+            binding.userName2.alpha=0.5f
+            binding.shadowImg2.visibility = View.VISIBLE
+        }
         try {
-            engine = P2pRtc().initEngine(requireActivity())
-        } catch (ex: Exception) {
+            engine = P2pRtc().getEngineObj()
+            P2pRtc().addListener(callback)
+        }catch (ex:Exception){
             Timber.d(ex)
         }
 
@@ -178,40 +181,16 @@ class RandomTeamMateFoundFragnment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    //CustomDialogQuiz(activity!!).show()
-                    showDialog()
+                    CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
                 }
             })
     }
 
-    private fun showDialog() {
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.custom_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
-        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
-        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
-
-        yesBtn.setOnClickListener {
-            dialog.dismiss()
-            AudioManagerQuiz.audioRecording.stopPlaying()
-            openChoiceScreen()
-            engine?.leaveChannel()
-            binding.callTime.stop()
-        }
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
+    fun positiveBtnAction(){
+        AudioManagerQuiz.audioRecording.stopPlaying()
+        openChoiceScreen()
+        engine?.leaveChannel()
+        binding.callTime.stop()
     }
 
     fun openChoiceScreen() {
@@ -220,9 +199,23 @@ class RandomTeamMateFoundFragnment : Fragment() {
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                ChoiceFragnment.newInstance(), "Question"
+                ChoiceFragment.newInstance(), "Question"
             )
             ?.remove(this)
             ?.commit()
+    }
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+        override fun onPartnerLeave() {
+            super.onPartnerLeave()
+            try {
+                requireActivity().runOnUiThread {
+                    PrefManager.put(USER_LEAVE_THE_GAME, true)
+                    binding.userName2.alpha=0.5f
+                    binding.shadowImg2.visibility = View.VISIBLE
+                }
+            }catch (ex:Exception){
+                Timber.d(ex)
+            }
+        }
     }
 }

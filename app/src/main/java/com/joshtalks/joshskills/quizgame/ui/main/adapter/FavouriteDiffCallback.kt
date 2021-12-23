@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.quizgame.ui.main.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.joshtalks.joshskills.quizgame.ui.data.FavouriteDemoData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 
 data class FavouriteDiffCallback(

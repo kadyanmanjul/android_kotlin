@@ -29,38 +29,33 @@
                 android:layout_marginLeft="@dimen/_16sdp"
                 android:src="@drawable/ic_game_back" />
 
-            <TextView
-                android:id="@+id/user_name"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_11sdp"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/user_image"
-                android:text="Shobhit"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
-                android:textColor="@color/white" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/user_name"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_11sdp"
-                android:layout_toRightOf="@+id/user_image"
-                android:text="idle"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                android:textColor="#16CBCE" />
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:text="Shobhit"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
 
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:background="#38383A"
-                android:layout_marginLeft="@dimen/_6sdp"
-                android:layout_toRightOf="@+id/user_image"
-                android:layout_alignParentBottom="true" />
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/user_name"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:text="idle"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                    android:textColor="#16CBCE" />
+            </RelativeLayout>
 
 
                 <RelativeLayout

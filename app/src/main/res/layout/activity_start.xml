@@ -17,14 +17,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:id="@+id/root_layout"
+        android:background="@drawable/bg_start_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_start_screen"
         tools:context=".quizgame.StartActivity">
 
-        <ImageView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,11 +40,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.card.MaterialCardView
+            android:onClick="@{vm.onItemClick}"
             android:id="@+id/rectangle_9"
-            android:layout_width="180dp"
-            android:layout_height="80dp"
-            app:cardCornerRadius="40dp"
-            app:cardElevation="5dp"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_62sdp"
+            app:cardCornerRadius="@dimen/_30sdp"
+            app:cardElevation="@dimen/_3sdp"
             android:background="@color/transparent"
             android:backgroundTint="@color/transparent"
             android:layout_marginTop="@dimen/_125sdp"
@@ -57,19 +62,20 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/start_game_btn_gradient"
-                android:onClick="@{()->clickHandler.startQuiz()}">
+                android:background="@drawable/start_game_btn_gradient">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:paddingTop="@dimen/_5sdp"
-                android:src="@drawable/ic_play_img"></ImageView>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:src="@drawable/ic_play_img" />
             </RelativeLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
     </FrameLayout>
 </layout>

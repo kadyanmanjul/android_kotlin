@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
-import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,23 +8,21 @@ import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.BothTeamRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -112,7 +108,8 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+        binding.container.setBackgroundColor(Color.WHITE);
+        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)){
             binding.userName4.alpha = 0.5f
             binding.userImage4Shadow.visibility = View.VISIBLE
         }
@@ -260,52 +257,27 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     private fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                showDialog()
+                CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
             }
         })
     }
-    private fun showDialog() {
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.custom_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
-        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
-        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
-
-        //yaha hame phele check karna hai room id bani ya nahi agar ban chuki hai tu hame clear radius karna hai jsi
-        // jis se room data or firebase vo user delete ho jaye
-        //agar room nahi bana hai tu sirf user ko dlete karna hai
-        yesBtn.setOnClickListener {
-                bothTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
-                activity?.let {
-                    bothTeamViewModel?.deleteData?.observe(it, {
-                        engine?.leaveChannel()
-                        binding.callTime.stop()
-                        dialog.dismiss()
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        openChoiceScreen()
-                    })
-                }
+    fun positiveBtnAction() {
+        bothTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
+        activity?.let {
+            bothTeamViewModel?.deleteData?.observe(it, {
+                engine?.leaveChannel()
+                binding.callTime.stop()
+                AudioManagerQuiz.audioRecording.stopPlaying()
+                openChoiceScreen()
+            })
         }
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
-    private fun openChoiceScreen(){
+   private fun openChoiceScreen(){
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
             ?.replace(R.id.container,
-                ChoiceFragnment.newInstance(),"BothTeamMate")
+                ChoiceFragment.newInstance(),"BothTeamMate")
             ?.remove(this)
             ?.commit()
         fm?.popBackStack()
@@ -315,10 +287,9 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
-                    PrefManager.put(USER_LEFT_THE_GAME, true)
+                    PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName4.alpha = 0.5f
                     binding.userImage4Shadow.visibility = View.VISIBLE
-                    //showToast(MESSAGE)
                 }
             }catch (ex:Exception){
               //  showToast(ex.message?:"")

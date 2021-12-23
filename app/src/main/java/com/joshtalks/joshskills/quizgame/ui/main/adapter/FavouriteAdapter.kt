@@ -7,36 +7,28 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieDrawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable
-import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
-import com.bumptech.glide.load.MultiTransformation
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ACTIVE
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.IN_ACTIVE
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
-import jp.wasabeef.glide.transformations.CropTransformation
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 
 class FavouriteAdapter(
     var context: Context, var arrayList: ArrayList<Favourite>?,
     private val openCourseListener: QuizBaseInterface,
-    var firebaseDatabase: FirebaseDatabase
+    var firebaseDatabase: FirebaseTemp
 ):
     RecyclerView.Adapter<FavouriteAdapter.FavViewHolder>(){
 
@@ -54,10 +46,6 @@ class FavouriteAdapter(
     }
 
     fun updateList(list: ArrayList<Favourite>,searchString:String) {
-        //check if length is  < 0 so print toast No data Found
-        if (list.size < 0) {
-            Toast.makeText(context, "No data Found", Toast.LENGTH_SHORT).show()
-        }else{
             arrayList = list
             search = searchString
 //            val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(FavouriteDiffCallback(list, arrayList))
@@ -65,7 +53,6 @@ class FavouriteAdapter(
 //            arrayList?.clear()
 //            arrayList?.addAll(list)
             notifyDataSetChanged()
-        }
     }
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -89,7 +76,9 @@ class FavouriteAdapter(
     inner class FavViewHolder(val binding: CustomFavouriteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(favouriteDemoData: Favourite?,position: Int){
             binding.userImage.setUserImageOrInitials(favouriteDemoData?.image,favouriteDemoData?.name?:"",30,isRound = true)
-            binding.userName.text=favouriteDemoData?.name
+
+            val upperString = capitalizeString(favouriteDemoData?.name)
+            binding.userName.text=upperString
             binding.status.text = favouriteDemoData?.status
             if (favouriteDemoData?.name?.toLowerCase()?.contains(search?:"") == true) {
                 val startPos: Int? = favouriteDemoData.name?.toLowerCase()?.indexOf(search?:"")
@@ -136,6 +125,15 @@ class FavouriteAdapter(
         }
         return pos
     }
+    fun capitalizeString(str: String?): String {
+        var retStr = str
+        try {
+            retStr = str?.substring(0, 1)?.toUpperCase() + str?.substring(1)
+        } catch (e: Exception) {
+        }
+        return retStr?:""
+    }
+
     interface QuizBaseInterface {
         fun onClickForGetToken(favourite: Favourite?,position: String)
     }

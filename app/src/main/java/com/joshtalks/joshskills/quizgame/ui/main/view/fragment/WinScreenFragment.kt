@@ -2,16 +2,12 @@ package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,9 +15,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
@@ -31,6 +27,7 @@ import com.joshtalks.joshskills.quizgame.ui.data.repository.SaveRoomRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
 import com.joshtalks.joshskills.quizgame.util.P2pRtc
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -128,11 +125,12 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.container.setBackgroundColor(Color.WHITE)
         currentUserId = Mentor.getInstance().getUserId()
         currentUserName = Mentor.getInstance().getUser()?.firstName
         currentUserImage = Mentor.getInstance().getUser()?.photo
 
-        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)){
             binding.team1User2Name.alpha =0.5f
             binding.team1UserImage2Shadow.visibility = View.VISIBLE
         }
@@ -196,7 +194,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         getFriendRequest()
         activity?.let {
             saveRoomDataViewModel?.saveRoomDetailsData?.observe(it, Observer {
-                Log.d("success_save", "onViewCreated: "+it.message)
+                Timber.d(it.message)
                 getPlayAgainDataFromFirebase()
             })
         }
@@ -396,41 +394,38 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    showDialog()
+                    CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
                 }
             })
     }
-    private fun showDialog() {
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.custom_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
-        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
-        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
-
-        yesBtn.setOnClickListener {
-           deleteData(dialog)
-        }
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
+    fun positiveBtnAction(){
+            if (fromType == RANDOM){
+                saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+                activity?.let {
+                    saveRoomDataViewModel?.clearRadius?.observe(it, {
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        engine?.leaveChannel()
+                        openFavouritePartnerScreen()
+                    })
+                }
+            }else{
+                saveRoomDataViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+                activity?.let {
+                    saveRoomDataViewModel?.deleteData?.observe(it, Observer {
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        engine?.leaveChannel()
+                        openFavouritePartnerScreen()
+                    })
+                }
+            }
     }
     fun openFavouritePartnerScreen() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                ChoiceFragnment.newInstance(), "Win"
+                ChoiceFragment.newInstance(), "Win"
             )
             ?.remove(this)
             ?.commit()
@@ -484,14 +479,14 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
-                PrefManager.put(USER_LEFT_THE_GAME,false)
+                PrefManager.put(USER_LEAVE_THE_GAME,false)
                 binding.btnPlayAgain.isEnabled = false
                 requireActivity().runOnUiThread {
                     binding.team1User2Name.alpha =0.5f
                     binding.team1UserImage2Shadow.visibility = View.VISIBLE
                 }
             }catch (ex:Exception){
-                Log.d("error_res", "onPartnerLeave: "+ex.message)
+                Timber.d(ex)
             }
         }
     }
@@ -524,7 +519,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             saveRoomDataViewModel?.addFavouritePracticePartner(AddFavouritePartner(fromMentorId,currentUserId))
             activity?.let {
                 saveRoomDataViewModel?.fppData?.observe(it, Observer {
-                   // showToast(it.message)
                     firebaseDatabase.deleteRequest(currentUserId?:"")
                 })
             }

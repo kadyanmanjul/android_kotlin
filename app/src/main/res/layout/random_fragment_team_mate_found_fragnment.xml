@@ -20,7 +20,7 @@
             android:id="@+id/rel"
             android:background="@drawable/ic_game_back">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt_quiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt_quiz1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,16 +63,16 @@
                         android:background="@drawable/image_border"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_80sdp">
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/image"
-                        android:layout_width="@dimen/_76sdp"
-                        android:layout_height="@dimen/_76sdp"
-                        android:src="@drawable/josh_skill"
-                        app:civ_border_color="@color/light_blue"
-                        app:civ_border_width="@dimen/_3sdp" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/image"
+                            android:layout_width="@dimen/_76sdp"
+                            android:layout_height="@dimen/_76sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/img_5" />
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -97,18 +97,24 @@
                         android:background="@drawable/image_border"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_80sdp">
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/image2"
-                        android:layout_width="@dimen/_76sdp"
-                        android:layout_height="@dimen/_76sdp"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/josh_skill"
-                        app:civ_border_color="@color/light_blue"
-                        app:civ_border_width="@dimen/_3sdp" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/image2"
+                            android:layout_width="@dimen/_76sdp"
+                            android:layout_height="@dimen/_76sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/img_5" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/shadow_img2"
+                            android:layout_width="@dimen/_76sdp"
+                            android:layout_height="@dimen/_76sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_offline_shadow_img"
+                            android:visibility="invisible" />
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

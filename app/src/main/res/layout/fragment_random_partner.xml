@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="clickHandler"
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.RandomPartnerFragment" />
     </data>
 
     <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/ic_game_back">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/txtquiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_centerInParent="true"
@@ -98,7 +98,7 @@
 
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team2_user1_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -123,7 +123,6 @@
                         android:layout_height="@dimen/_70sdp"
                         android:background="@drawable/image_border">
 
-
                         <com.airbnb.lottie.LottieAnimationView
                             android:id="@+id/team2_user_image2"
                             android:layout_width="@dimen/_63sdp"
@@ -137,7 +136,7 @@
 
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team2_user2_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -153,10 +152,11 @@
                 <RelativeLayout
                     android:id="@+id/globe"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_80sdp"
+                    android:layout_height="@dimen/_85sdp"
+                    android:layout_centerInParent="true"
                     android:layout_below="@+id/relative_layout_sec">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_80sdp"
                         android:layout_centerVertical="true"
@@ -168,6 +168,7 @@
                         android:id="@+id/vs1"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_80sdp"
+                        android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/ic_ellipse_79" />
 
@@ -175,8 +176,7 @@
                         android:id="@+id/vs"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_80sdp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:background="@drawable/back_vs">
 
                         <com.airbnb.lottie.LottieAnimationView
@@ -192,9 +192,9 @@
 
                     </RelativeLayout>
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_80sdp"
+                        android:layout_height="@dimen/_85sdp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/vs"
@@ -224,9 +224,10 @@
                             app:lottie_autoPlay="true"
                             app:lottie_fileName="lottie/faceanim.json"
                             app:lottie_loop="true" />
+
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team1_user2_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -258,7 +259,7 @@
                             android:layout_centerInParent="true" />
                     </RelativeLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team1_user1_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

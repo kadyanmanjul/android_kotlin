@@ -9,6 +9,7 @@
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.BothTeamMateFound" />
     </data>
     <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".quizgame.ui.main.view.fragment.BothTeamMateFound">
@@ -20,7 +21,7 @@
             android:layout_height="match_parent">
 
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/txtquiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,16 +56,15 @@
                 app:strokeColor="#8785FB"
                 app:strokeWidth="@dimen/_1sdp">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:text="Team Found"
                         android:gravity="center"
                         android:background="@drawable/new_card_border"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_14sdp"
                         android:textStyle="bold" />
 
             </com.google.android.material.card.MaterialCardView>
@@ -93,7 +93,7 @@
                         app:civ_border_width="@dimen/_4sdp" />
 
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -126,10 +126,9 @@
                         android:id="@+id/user_image_shadow2"
                         android:layout_width="@dimen/_70sdp"
                         android:layout_height="@dimen/_70sdp"
-                        android:src="@drawable/ic_offline_shadow_img"
-                         />
+                        android:src="@drawable/ic_offline_shadow_img" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -146,10 +145,10 @@
                     android:id="@+id/globe"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_80sdp"
-                    android:layout_below="@id/relative_layout_2"
-                    >
+                    android:layout_centerInParent="true"
+                    android:layout_below="@id/relative_layout_2">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_80sdp"
                         android:layout_centerVertical="true"
@@ -161,6 +160,7 @@
                         android:id="@+id/vs1"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_80sdp"
+                        android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/ic_ellipse_79" />
 
@@ -168,6 +168,7 @@
                         android:id="@+id/vs"
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_80sdp"
+                        android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/back_vs">
 
@@ -183,7 +184,7 @@
 
                     </RelativeLayout>
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_80sdp"
                         android:layout_alignParentRight="true"
@@ -218,7 +219,7 @@
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -245,7 +246,7 @@
                         app:civ_border_color="@color/light_blue_quiz"
                         app:civ_border_width="@dimen/_4sdp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

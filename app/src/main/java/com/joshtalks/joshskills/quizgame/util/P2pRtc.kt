@@ -23,7 +23,6 @@ class P2pRtc {
 
             override fun onLeaveChannel(stats: RtcStats) {
                 super.onLeaveChannel(stats)
-                //callCallback?.get()?.onPartnerLeave()
             }
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
             }

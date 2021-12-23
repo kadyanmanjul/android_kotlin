@@ -4,7 +4,7 @@
     <data>
         <variable
             name="clickHandler"
-            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragnment" />
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment" />
 
         <variable
             name="vm"
@@ -91,7 +91,7 @@
                                 android:layout_toRightOf="@+id/layout"
                                 android:background="#86AA99" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txt_msg_not_play"
                                 android:layout_width="@dimen/_240sdp"
                                 android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
             </RelativeLayout>
 
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/cancel_notification"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_24sdp"
@@ -173,7 +173,7 @@
 
                         </RelativeLayout>
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/user_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -196,7 +196,7 @@
                             android:layout_toRightOf="@+id/notificaton_rel"
                             android:background="#86AA99" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_msg2"
                             android:layout_width="@dimen/_200sdp"
                             android:layout_height="wrap_content"
@@ -234,7 +234,7 @@
                                     android:layout_height="match_parent"
                                     android:background="@drawable/red_gradient">
 
-                                    <TextView
+                                    <androidx.appcompat.widget.AppCompatTextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
@@ -261,7 +261,7 @@
                                     android:layout_height="match_parent"
                                     android:background="@drawable/accept_button_gradient">
 
-                                    <TextView
+                                    <androidx.appcompat.widget.AppCompatTextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
@@ -280,7 +280,7 @@
 
             </RelativeLayout>
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/eee"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_24sdp"
@@ -335,7 +335,7 @@
                                 android:src="@drawable/josh_skill_bg" />
                         </RelativeLayout>
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/user_name_for_already"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -358,7 +358,7 @@
                             android:layout_toRightOf="@+id/layout1"
                             android:background="#86AA99" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_msg_already"
                             android:layout_width="@dimen/_240sdp"                                android:layout_height="wrap_content"
                             android:layout_below="@+id/divider4"
@@ -378,7 +378,7 @@
             </RelativeLayout>
 
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/already_notification"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_24sdp"
@@ -393,7 +393,7 @@
 
         </RelativeLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/build_your_"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -424,7 +424,7 @@
                 android:id="@+id/rectangle_9"
                 android:layout_width="@dimen/_130sdp"
                 android:layout_height="@dimen/_135sdp"
-                android:onClick="@{()->clickHandler.openFavouritePartnerScreen()}"
+                android:onClick="@{()->clickHandler.openFavouriteScreen()}"
                 app:strokeColor="#C3527E"
                 android:layout_marginRight="@dimen/_10sdp"
                 android:background="@color/transparent"
@@ -437,7 +437,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/favourite_gradient">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
@@ -468,7 +468,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/random_gradient">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"

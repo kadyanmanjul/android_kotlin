@@ -2,10 +2,8 @@ package com.joshtalks.joshskills.quizgame.ui
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -17,11 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
-import com.joshtalks.joshskills.databinding.FavoriteItemLayoutBinding
-import com.joshtalks.joshskills.databinding.InboxItemLayoutBinding
 import com.joshtalks.joshskills.quizgame.ui.data.FavouriteDemoData
-import com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteDiffCallback
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -53,7 +47,7 @@ class FavouriteAdapterDemo(var context: Context, var arrayList: ArrayList<Favour
     }
 
     class FavViewHolder(val binding: CustomFavouriteBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(favouriteDemoData: FavouriteDemoData,position: Int){
+        fun bind(favouriteDemoData: FavouriteDemoData, position: Int){
             binding.status.text = favouriteDemoData.status
             imageUrl(binding.userImage, favouriteDemoData.image)
             binding.userName.text=favouriteDemoData.name

@@ -993,8 +993,7 @@
     <string name="accept">Accept</string>
 
 
-    <string name="match_score">Winning \Bonus </string>
-
+    <string name="match_bonus">Winning \Bonus </string>
     <string name="opponent_wo">Opponent Won!</string>
 
     <string name="round_1">ROUND</string>
@@ -1010,5 +1009,13 @@
     <string name="zero">0</string>
     <string name="play">Play!</string>
 
+    <string name="lets_play_again">Let"'"s Play again</string>
+    <string name="winner">Winner!</string>
+    <string name="team_2">Team 2</string>
+    <string name="team_1">Team 1</string>
+    <string name="match_score">Match\n Score</string>
+    <string name="score_text">110</string>
+    <string name="bonus_marks">5</string>
+    <string name="total">Total</string>
 
 </resources>

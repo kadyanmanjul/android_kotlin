@@ -22,7 +22,6 @@ class RetrofitInstanse {
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
         var api:Api?=null
-       // private lateinit var retrofit: Retrofit
         fun getRetrofitInstance(): Api? {
             try {
                 val builder = OkHttpClient().newBuilder()
@@ -58,16 +57,12 @@ class RetrofitInstanse {
             return api
         }
 
-        private fun cache(): Cache? {
+        private fun cache(): Cache {
             return Cache(
                 File(AppObjectController.joshApplication.cacheDir, "api_cache"),
                 cacheSize
             )
         }
-//        private val retrofit = Retrofit.Builder()
-//            .baseUrl(Url.base_url)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
     }
 
 }

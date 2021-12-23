@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.Manifest
-import android.app.Dialog
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -14,7 +12,6 @@ import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
@@ -23,20 +20,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchRandomRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModel
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -104,11 +98,11 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     private var currentUserTeamId: String? = null
 
-    private val PERMISSION_REQ_ID = 22
-    private var REQUESTED_PERMISSIONS = arrayOf(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.CAMERA
-    )
+//    private val PERMISSION_REQ_ID = 22
+//    private var REQUESTED_PERMISSIONS = arrayOf(
+//        Manifest.permission.RECORD_AUDIO,
+//        Manifest.permission.CAMERA
+//    )
 
     private var engine: RtcEngine? = null
     private var timer: CountDownTimer? = null
@@ -134,20 +128,19 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             )
         binding.lifecycleOwner = this
         binding.clickHandler = this
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.container.setBackgroundColor(Color.WHITE)
 
         try {
             engine = P2pRtc().getEngineObj()
-            //P2pRtc().addListener(callback)
+            P2pRtc().addListener(callback)
         }catch (ex:Exception){
             Timber.d(ex)
         }
-        setUserActive()
         setCurrentUserData()
         onBackPress()
         searchRandomUser(currentUserId ?: "")
@@ -157,8 +150,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         } catch (ex: Exception) {
 
         }
-
-        dipDown(binding.vs1)
+        UtilsQuiz.dipDown(binding.vs1,requireActivity())
     }
 
     companion object {
@@ -180,7 +172,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             30,
             isRound = true
         )
-        //ImageAdapter.imageUrl(binding.team1UserImage1,imageUrl)
     }
 
     fun searchRandomUser(mentorId: String) {
@@ -188,7 +179,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             searchRandomViewModel?.getSearchRandomUserData(mentorId)
             activity?.let {
                 searchRandomViewModel?.searchRandomData?.observe(it, {
-                    Log.d("response_random", "searchRandomUser: " + it.data + " " + it.message)
                     if (it.message == FOUR_USER_FOUND_MSG) {
                         createRandomUserRoom(it.data)
                     }
@@ -197,10 +187,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         } catch (ex: Exception) {
 
         }
-
-        //yaha par ham agar 4 user id mil gai hai tu create room wali api call karuga
-        //then room create hone ke bad ham us room id ke response me data milgea us se call connect or
-        //data show karuga 2 team wise
     }
 
     private fun startTimer() {
@@ -212,7 +198,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                     moveFragment()
                     timer?.cancel()
                 } else {
-                   // showToast(NO_OPPONENT_FOUND)
                        try {
                            Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
                        }catch (ex:Exception){ }
@@ -236,11 +221,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         searchRandomViewModel = factory?.let {
             ViewModelProvider(this, it).get(SearchRandomUserViewModel::class.java)
         }
-       // searchRandomViewModel?.statusChange(currentUserId, ACTIVE)
-    }
-
-    fun setUserActive() {
-       // activity?.let { searchRandomViewModel?.statusResponse?.observe(it, {}) }
     }
 
     fun createRandomUserRoom(listOfUsers: ArrayList<String>) {
@@ -248,7 +228,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             searchRandomViewModel?.createRoomRandom(RoomRandom(listOfUsers))
             activity?.let {
                 searchRandomViewModel?.roomRandomData?.observe(it, {
-                    Log.d("response_roomid", "searchRandomUser: " + it.roomId)
+                    Timber.d(it.roomId)
                 })
             }
         } catch (ex: Exception) {
@@ -388,7 +368,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     }
 
     override fun onSearchUserIdFetch(roomId: String) {
-        Log.d("random_roomid", "onSearchUserIdFetch: " + roomId)
+        Timber.d(roomId)
         userRoomId = roomId
         try {
             searchRandomViewModel?.getRandomUserDataByRoom(
@@ -399,7 +379,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             )
             activity?.let {
                 searchRandomViewModel?.randomRoomUser?.observe(it, Observer {
-                    Log.d("response_roomid", "searchRandomUser: " + it.roomId)
+                    Timber.d(it.roomId)
                     initializeUsersTeamsData(it?.teamData)
                     binding.image9.pauseAnimation()
                     timer?.cancel()
@@ -408,16 +388,16 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             }
         } catch (ex: Exception) {
             //showToast(ex.message?:"")
-            Log.d("error_resp", "getRandomUserDataByRoom: " + ex.message)
+            Timber.d(ex)
         }
     }
 
     fun callConnectUser1AndUser2(channelName: String?) {
-        if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
+       // if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
             CoroutineScope(Dispatchers.IO).launch {
                 joinChannel(channelName ?: "")
             }
-        }
+      //  }
     }
 
     private fun joinChannel(channelId: String) {
@@ -442,21 +422,21 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         }
     }
 
-    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
-        if (activity?.let { ContextCompat.checkSelfPermission(it, permission) } !=
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            activity?.let {
-                ActivityCompat.requestPermissions(
-                    it,
-                    REQUESTED_PERMISSIONS,
-                    requestCode
-                )
-            }
-            return false
-        }
-        return true
-    }
+//    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
+//        if (activity?.let { ContextCompat.checkSelfPermission(it, permission) } !=
+//            PackageManager.PERMISSION_GRANTED
+//        ) {
+//            activity?.let {
+//                ActivityCompat.requestPermissions(
+//                    it,
+//                    REQUESTED_PERMISSIONS,
+//                    requestCode
+//                )
+//            }
+//            return false
+//        }
+//        return true
+//    }
 
     fun moveFragment() {
         //val startTime :String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
@@ -481,63 +461,38 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    //CustomDialogQuiz(activity!!).show()
-                    showDialog()
+                    CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
                 }
             })
     }
 
-    private fun showDialog() {
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.custom_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
-        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
-        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
-
-        yesBtn.setOnClickListener {
-            if (userRoomId != null) {
-                searchRandomViewModel?.getClearRadius(
-                    SaveCallDurationRoomData(
-                        userRoomId ?: "",
-                        currentUserId ?: "",
-                        currentUserTeamId ?: "",
-                        ""
-                    )
+    fun positiveBtnAction(){
+        if (userRoomId != null) {
+            searchRandomViewModel?.getClearRadius(
+                SaveCallDurationRoomData(
+                    userRoomId ?: "",
+                    currentUserId ?: "",
+                    currentUserTeamId ?: "",
+                    ""
                 )
-                activity?.let {
-                    searchRandomViewModel?.clearRadius?.observe(it, Observer {
-                        dialog.dismiss()
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        openChoiceScreen()
-                        engine?.leaveChannel()
-                    })
-                }
-            } else {
-                searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
-                activity?.let {
-                    searchRandomViewModel?.deleteData?.observe(it, Observer {
-                        dialog.dismiss()
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        openChoiceScreen()
-                        engine?.leaveChannel()
-                    })
-                }
+            )
+            activity?.let {
+                searchRandomViewModel?.clearRadius?.observe(it, Observer {
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    openChoiceScreen()
+                    engine?.leaveChannel()
+                })
+            }
+        } else {
+            searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
+            activity?.let {
+                searchRandomViewModel?.deleteData?.observe(it, Observer {
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    openChoiceScreen()
+                    engine?.leaveChannel()
+                })
             }
         }
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     fun openChoiceScreen() {
@@ -546,35 +501,22 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                ChoiceFragnment.newInstance(), "Question"
+                ChoiceFragment.newInstance(), "Question"
             )
             ?.remove(this)
             ?.commit()
     }
 
-    private fun dipDown(targetView: View) {
-        val myAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_anim)
-        val interpolator = MyBounceInterpolator(0.8, 18.0)
-        myAnim.interpolator = interpolator
-        myAnim.duration = 3000
-        myAnim.repeatCount = Animation.INFINITE
-        targetView.startAnimation(myAnim)
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+        override fun onPartnerLeave() {
+            super.onPartnerLeave()
+            try {
+                requireActivity().runOnUiThread {
+                    PrefManager.put(USER_LEAVE_THE_GAME, true)
+                }
+            }catch (ex:Exception){
+                Timber.d(ex)
+            }
+        }
     }
-
-//    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
-//
-//        override fun onPartnerLeave() {
-//            super.onPartnerLeave()
-//            try {
-//                requireActivity().runOnUiThread {
-//                    PrefManager.put(USER_LEFT_THE_GAME, true)
-//                    binding.userName2.alpha=0.5f
-//                    binding.shadowImg2.visibility = View.VISIBLE
-//                }
-//            }catch (ex:Exception){
-//                Log.d("error_res", "onPartnerLeave: "+ex.message?:"")
-//            }
-//        }
-//    }
-
 }

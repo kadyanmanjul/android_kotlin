@@ -1,9 +1,5 @@
 package com.joshtalks.joshskills.quizgame.ui.data.network
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.*
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -11,25 +7,14 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 class FirebaseDatabase {
 
     private var database = FirebaseFirestore.getInstance()
-    private var collectionReference: CollectionReference = database.collection("Request")
-    private var acceptRequestCollection: CollectionReference = database.collection("Accept_Request")
-
     private var collectionCurrentUserRoomId: CollectionReference = database.collection("UserRoom")
-    private var requestDecline: CollectionReference = database.collection("request_decline")
     private var animShow: CollectionReference = database.collection("ShowAnim")
-
     private var opponentAnimShow: CollectionReference = database.collection("OpponentShowAnim")
-
     private var randomUser: CollectionReference = database.collection("UserRoom")
-
     private var partnerShowCutCard: CollectionReference = database.collection("PartnerShowCut")
     private var opponentShowCutCard: CollectionReference = database.collection("OpponentShowCut")
-
-    private var sentFriendRequest: CollectionReference = database.collection("FriendRequest")
-
+    private var sentFriendRequest: CollectionReference = database.collection(FRIEND_REQUEST)
     private var statuCollection :CollectionReference = database.collection("UserStatus")
-
-    private var liveStatus: CollectionReference = database.collection("UserStatus")
     private var userPlayAgain: CollectionReference = database.collection("UserPlay")
     private var  playAgainNotification : CollectionReference = database.collection("PlayAgain")
     private var muteUnmute :CollectionReference = database.collection("MuteUnmute")
@@ -42,263 +27,6 @@ class FirebaseDatabase {
     var onNotificationTrigger: OnNotificationTrigger? = null
     var onRandomUserTrigger: OnRandomUserTrigger? = null
     var onAnimationTrigger: OnAnimationTrigger? = null
-
-
-    fun createRequest(favUserId: String?, channelName: String?, mentorId: String) {
-        val channel: HashMap<String, Any> = HashMap()
-        channel["fromUserId"] = mentorId
-        channel["fromUserName"] = userName ?: ""
-        channel["fromImageUrl"] = imageUrl ?: ""
-        channel["channelName"] = channelName ?: ""
-        channel["timestamp"] = FieldValue.serverTimestamp()
-        channel["isAccept"] = "false"
-        collectionReference.document(favUserId ?: "").set(channel)
-    }
-
-    fun getUserDataFromFirestore(mentorId: String, onNotificationTrigger1: OnNotificationTrigger) {
-        try {
-                val cr: CollectionReference = database.collection("Request")
-                cr.addSnapshotListener { value, e ->
-                    if (e != null) {
-                        return@addSnapshotListener
-                    }
-                    for (doc in value!!) {
-                        if (doc.exists()) {
-                            if (mentorId == doc.id) {
-                                var channelName: String = doc.data["channelName"].toString()
-                                var fromUserId = doc.data["fromUserId"].toString()
-                                var fromUserName = doc.data["fromUserName"].toString()
-                                var fromImageUrl = doc.data["fromImageUrl"]?.toString()
-                                onNotificationTrigger1.onNotificationForInvitePartner(
-                                    channelName,
-                                    fromUserId,
-                                    fromUserName,
-                                    fromImageUrl ?: ""
-                                )
-                            }
-                        }
-                    }
-                }
-        }catch (ex:Exception){
-
-        }
-    }
-
-    fun deleteUserData(mentorId: String, fromUserMentorId: String) {
-        val cr: CollectionReference = database.collection("Request")
-        var mId: String? = mentorId
-        var fUMId: String? = fromUserMentorId
-        cr.addSnapshotListener { value, e ->
-            if (e != null) {
-                return@addSnapshotListener
-            }
-            for (doc in value!!) {
-                if (doc.exists()) {
-                    if (mId == doc.id) {
-                        var fromUserId: String? = doc.data["fromUserId"].toString()
-                        if (fromUserId == fUMId) {
-                            try {
-                                    cr.document(mId ?: "").delete().addOnCompleteListener(
-                                        OnCompleteListener {
-                                            createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
-                                            fromUserId = ""
-                                            fUMId = ""
-                                            mId = ""
-                                        })
-                            } catch (ex: Exception) {
-
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-//    fun deleteUserDataBy10Sec(mentorId: String, fromUserMentorId: String) {
-//        val cr1: CollectionReference = database.collection("Request")
-//        var mId: String? = mentorId
-//        var fUMId: String? = fromUserMentorId
-//        try {
-//            cr1.addSnapshotListener { value, e ->
-//                if (e != null) {
-//                    return@addSnapshotListener
-//                }
-//                for (doc in value!!) {
-//                    if (doc.exists()) {
-//                        if (mId == doc.id) {
-//                            var fromUserId: String? = doc.data["fromUserId"].toString()
-//                            if (fromUserId == fUMId) {
-//                                val handler = Handler(Looper.getMainLooper())
-//                                try {
-//                                    handler.postDelayed({
-//                                        cr1.document(mId ?: "").delete().addOnCompleteListener(
-//                                            OnCompleteListener {
-//                                                createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
-//                                                fromUserId = ""
-//                                                fUMId = ""
-//                                                mId = ""
-//                                            })
-//                                    }, 10000)
-//                                } catch (ex: Exception) {
-//
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//        }catch (ex:Exception){}
-//    }
-
-    fun deleteRequested(mentorId: String) {
-        var mId: String? = mentorId
-        val cr: CollectionReference = database.collection("Request")
-        cr.addSnapshotListener { value, e ->
-            if (e != null) {
-                return@addSnapshotListener
-            }
-            for (doc in value!!) {
-                if (doc.exists()) {
-                    if (mId == doc.id) {
-                        cr.document(mId ?: "").delete().addOnCompleteListener(
-                            OnCompleteListener {
-                                mId = ""
-                            })
-                    }
-                }
-            }
-        }
-    }
-
-    fun acceptRequest(
-        opponentMemberId: String,
-        isAccept: String,
-        opponentMemberName: String,
-        channelName: String,
-        mentorId: String
-    ) {
-        val channel: HashMap<String, Any> = HashMap()
-        channel["mentorId"] = mentorId
-        channel["opponentMemberId"] = opponentMemberId
-        channel["opponentMemberName"] = opponentMemberName
-        channel["channelName"] = channelName
-        channel["timestamp"] = FieldValue.serverTimestamp()
-        channel["isAccept"] = isAccept
-        acceptRequestCollection.document(opponentMemberId).set(channel)
-    }
-
-    fun getAcceptCall(mentorId: String, onNotificationTrigger123: OnNotificationTrigger) {
-        var acceptRequestC: CollectionReference = database.collection("Accept_Request")
-        var mID: String? = mentorId
-        acceptRequestC
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mID == doc.id) {
-                            var channelName = doc.data["channelName"].toString()
-                            var timestamp = doc.data["timestamp"].toString()
-                            var isAccept = doc.data["isAccept"].toString()
-                            var opponentMemberId = doc.data["opponentMemberId"].toString()
-                            var mentorIdIdAcceptedUser = doc.data["mentorId"].toString()
-                            if (isAccept == "true") {
-                                onNotificationTrigger123.onNotificationForPartnerAccept(
-                                    channelName,
-                                    timestamp,
-                                    isAccept,
-                                    opponentMemberId,
-                                    mentorIdIdAcceptedUser
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-    }
-
-    fun createRequestDecline(
-        fromUserId: String,
-        declineUserName: String?,
-        declineUserImage: String?,
-        declinedUserId:String?
-    ) {
-        val channel: HashMap<String, Any> = HashMap()
-        channel["declineUserName"] = declineUserName ?: ""
-        channel["declineUserImage"] = declineUserImage ?: ""
-        channel["declineUserId"] = declinedUserId ?: ""
-        requestDecline.document(fromUserId).set(channel)
-    }
-
-    fun getDeclineCall(mentorId: String, onNotificationTrigger1122: OnNotificationTrigger) {
-        var mID: String? = mentorId
-        var rD: CollectionReference = database.collection("request_decline")
-        rD.addSnapshotListener { value, e ->
-            if (e != null) {
-                return@addSnapshotListener
-            }
-            for (doc in value!!) {
-                if (doc.exists()) {
-                    if (mID == doc.id) {
-                        val declinedUserName = doc.data["declineUserName"].toString()
-                        val declinedUserImage = doc.data["declineUserImage"].toString()
-                        var declinedUserId = doc.data["declineUserId"].toString()
-                        onNotificationTrigger1122.onNotificationForPartnerNotAccept(
-                            declinedUserName,
-                            declinedUserImage,
-                            mentorId,
-                            declinedUserId
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    fun deleteDeclineData(mentorId: String) {
-        var mId: String? = mentorId
-        var requestD: CollectionReference = database.collection("request_decline")
-        requestD
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mId == doc.id) {
-                            requestD.document(mId ?: "").delete().addOnCompleteListener(
-                                OnCompleteListener {
-                                    mId = null
-                                })
-                        }
-                    }
-                }
-            }
-    }
-
-    fun deleteDataAcceptRequest(mentorId: String) {
-        var mId: String? = mentorId
-        var acceptRequestC: CollectionReference = database.collection("Accept_Request")
-        acceptRequestC
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mId == doc.id) {
-                            acceptRequestC.document(mentorId).delete().addOnCompleteListener(
-                                OnCompleteListener {
-                                    mId = null
-                                })
-                        }
-                    }
-                }
-            }
-    }
 
     fun getCurrentUserRoomId(mentorId: String, onNotificationTrigger: OnNotificationTrigger) {
         this.onNotificationTrigger = onNotificationTrigger
@@ -319,8 +47,8 @@ class FirebaseDatabase {
             }
     }
 
-    fun acceptOrDeclineRequest(mentorId: String, opponentMemberId: String, isAccept: String, ) {
-
+    fun deleteRoomData(mentorId: String){
+        collectionCurrentUserRoomId.document(mentorId).delete()
     }
 
     fun createShowAnimForAnotherUser(
@@ -561,10 +289,10 @@ class FirebaseDatabase {
                 for (doc in value!!) {
                     if (doc.exists()) {
                         if (toUserId == doc.id) {
-                            var fromUserId = doc.data["fromUserId"].toString()
-                            var fromUserName = doc.data["fromUserName"].toString()
-                            var fromImageUrl = doc.data["fromImageUrl"].toString()
-                            var isAccept = doc.data["isAccept"].toString()
+                            val fromUserId = doc.data["fromUserId"].toString()
+                            val fromUserName = doc.data["fromUserName"].toString()
+                            val fromImageUrl = doc.data["fromImageUrl"].toString()
+                            val isAccept = doc.data["isAccept"].toString()
                             onMakeFriendTrigger.onSentFriendRequest(
                                 fromUserId,
                                 fromUserName,
@@ -615,8 +343,8 @@ class FirebaseDatabase {
                 for (doc in value!!) {
                     if (doc.exists()) {
                         if (mentorId == doc.id) {
-                            var userImage = doc.data["userImage"].toString()
-                            var userName = doc.data["userName"].toString()
+                            val userImage = doc.data["userImage"].toString()
+                            val userName = doc.data["userName"].toString()
                             onMakeFriendTrigger.onPartnerPlayAgainNotification(userName,userImage,mentorId)
                         }
                     }
@@ -633,8 +361,8 @@ class FirebaseDatabase {
                 for (doc in value!!) {
                     if (doc.exists()) {
                         if (mentorId == doc.id) {
-                            var userImage = doc.data["image"].toString()
-                            var userName = doc.data["name"].toString()
+                            val userImage = doc.data["image"].toString()
+                            val userName = doc.data["name"].toString()
                             onMakeFriendTrigger.onPlayAgainNotificationFromApi(userName,userImage)
                         }
                     }
@@ -651,9 +379,6 @@ class FirebaseDatabase {
     }
 
     fun deleteAllData(mentorId: String){
-        collectionReference.document(mentorId).delete()
-        requestDecline.document(mentorId).delete()
-        acceptRequestCollection.document(mentorId).delete()
         sentFriendRequest.document(mentorId).delete()
     }
 
@@ -666,7 +391,7 @@ class FirebaseDatabase {
                         for (doc in value!!) {
                             if (doc.exists()) {
                                 if (mentorId == doc.id) {
-                                    var status = doc.data["status"].toString()
+                                    val status = doc.data["status"].toString()
                                     onLiveStatus.onGetLiveStatus(status,mentorId)
                                 }
                             }
@@ -690,7 +415,7 @@ class FirebaseDatabase {
                 for (doc in value!!) {
                     if (doc.exists()) {
                         if (mentorId == doc.id) {
-                            var status = doc.data["isMute"].toString()
+                            val status = doc.data["isMute"].toString()
                             onAnimationTrigger.onMicOnOff(mentorId,status)
                         }
                     }
@@ -701,9 +426,6 @@ class FirebaseDatabase {
         muteUnmute.document(mentorId).delete()
     }
     interface OnNotificationTrigger{
-        fun onNotificationForInvitePartner(channelName: String,fromUserId :String , fromUserName:String,fromUserImage:String)
-        fun onNotificationForPartnerNotAccept(userName:String?,userImageUrl:String,fromUserId:String,declinedUserId: String)
-        fun onNotificationForPartnerAccept(channelName:String?,timeStamp:String,isAccept: String,opponentMemberId: String,mentorId: String)
         fun onGetRoomId(currentUserRoomID:String?,mentorId: String)
         fun onShowAnim(mentorId: String,isCorrect:String,choiceAnswer:String,marks: String)
     }

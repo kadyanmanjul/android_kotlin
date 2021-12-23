@@ -1,46 +1,33 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
-import android.app.Dialog
-import android.graphics.BlurMaskFilter
 import android.graphics.Color
-import android.graphics.MaskFilter
-import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSearchingOpponentTeamBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchOpponentRepo
-import com.joshtalks.joshskills.quizgame.ui.main.adapter.ImageAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentViewProviderFactory
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 //Channel Name = team_id
@@ -103,8 +90,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             userDetails = it.getParcelable(USER_DATA)
             channelName = it.getString(CHANNEL_NAME)
             currentUserTeamId = channelName
-            Log.d("channel_name", "onCreate: "+currentUserTeamId)
-
+            Timber.d(currentUserTeamId)
         }
         setupViewModel()
     }
@@ -130,7 +116,8 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (PrefManager.getBoolValue(USER_LEFT_THE_GAME)){
+        binding.container.setBackgroundColor(Color.WHITE)
+        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)){
             binding.team1User2Name.alpha = 0.5f
             binding.team1UserImage2Shadow.visibility = View.VISIBLE
         }
@@ -157,7 +144,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         }
 
         onBackPress()
-        dipDown(binding.vs1)
+        UtilsQuiz.dipDown(binding.vs1,requireActivity())
     }
     companion object {
         //mujhe yaha team id bhi lana padega piche se jis se me add to room api call kar saku or firebase se data la saku
@@ -168,7 +155,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                     putString(START_TIME,param1)
                     putParcelable(USER_DATA,userDetails)
                     putString(CHANNEL_NAME,channelName)
-                    Log.d("channel_name", "newInstance: $channelName")
+                    Timber.d(channelName)
                 }
             }
     }
@@ -198,20 +185,11 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         call_time.base = SystemClock.elapsedRealtime().minus(startTime?.toLong()!!)
         call_time.start()
     }
-    override fun onNotificationForInvitePartner(channelName: String, fromUserId: String, fromUserName: String, fromUserImage: String)
-    {
-
-    }
-    override fun onNotificationForPartnerNotAccept(userName: String?, userImageUrl: String, fromUserId: String,declinrUserID:String)
-    {
-    }
-    override fun onNotificationForPartnerAccept(channelName: String?, timeStamp: String, isAccept: String, opponentMemberId: String, mentorId: String) {
-    }
 
     //yaha hame room wali list me current user ki room id milegi
     override fun onGetRoomId(currentUserRoomID: String?,mentorId: String) {
         roomId = currentUserRoomID
-        Log.d("response_room", "onGetRoomId: "+currentUserRoomID)
+        Timber.d(currentUserRoomID)
             if (currentUserRoomID!=null){
                 searchOpponentTeamViewModel?.getRoomUserData(RandomRoomData(currentUserRoomID,mentorId))
                 activity?.let {
@@ -326,66 +304,42 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 //CustomDialogQuiz(activity!!).show()
-              showDialog()
+           //   showDialog()
+                CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
             }
         })
     }
-    private fun showDialog() {
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.custom_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val yesBtn = dialog.findViewById<MaterialCardView>(R.id.btn_yes)
-        val noBtn = dialog.findViewById<MaterialCardView>(R.id.btn_no)
-        val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
-
-        //yaha hame phele check karna hai room id bani ya nahi agar ban chuki hai tu hame clear radius karna hai jsi
-        // jis se room data or firebase vo user delete ho jaye
-        //agar room nahi bana hai tu sirf user ko delete karna hai
-        yesBtn.setOnClickListener {
-            if (roomId!=null){
-                Log.d("room_id_data", "showDialog: "+roomId +" "+currentUserId)
-                searchOpponentTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
-                activity?.let {
-                    searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-                        dialog.dismiss()
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        engine?.leaveChannel()
-                        binding.callTime.stop()
-                        timer?.cancel()
-                        openChoiceScreen()
-                    })
-                }
-            }else{
-                searchOpponentTeamViewModel?.deleteUserAndTeamData(TeamDataDelete(currentUserTeamId?:"",currentUserId?:""))
-                activity?.let {
-                    searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
-                        dialog.dismiss()
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        engine?.leaveChannel()
-                        binding.callTime.stop()
-                        timer?.cancel()
-                        openChoiceScreen()
-                    })
-                }
+    fun positiveBtnAction() {
+        if (roomId!=null){
+            searchOpponentTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
+            activity?.let {
+                searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    engine?.leaveChannel()
+                    binding.callTime.stop()
+                    timer?.cancel()
+                    openChoiceScreen()
+                })
+            }
+        }else{
+            searchOpponentTeamViewModel?.deleteUserAndTeamData(TeamDataDelete(currentUserTeamId?:"",currentUserId?:""))
+            activity?.let {
+                searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    engine?.leaveChannel()
+                    binding.callTime.stop()
+                    timer?.cancel()
+                    openChoiceScreen()
+                })
             }
         }
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-        btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
     }
     private fun openChoiceScreen(){
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
             ?.replace(R.id.container,
-                ChoiceFragnment.newInstance(),"TeamMate")
+                ChoiceFragment.newInstance(),"TeamMate")
             ?.remove(this)
             ?.commit()
         fm?.popBackStack()
@@ -432,23 +386,14 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
-                    PrefManager.put(USER_LEFT_THE_GAME, true)
+                    PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.team1User2Name.alpha = 0.5f
                     binding.team1UserImage2Shadow.visibility = View.VISIBLE
 
                 }
             }catch (ex:Exception){
-                Log.d("error_res", "onPartnerLeave: "+ex.message?:"")
+                Timber.d(ex)
             }
         }
-    }
-
-    private fun dipDown(targetView: View) {
-        val myAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_anim)
-        val interpolator = MyBounceInterpolator(0.8, 18.0)
-        myAnim.interpolator = interpolator
-        myAnim.duration = 3000
-        myAnim.repeatCount = Animation.INFINITE
-        targetView.startAnimation(myAnim)
     }
 }
