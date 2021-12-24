@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -122,7 +124,10 @@ class GroupChatViewModel : BaseViewModel() {
                         onBackPress()
                         onBackPress()
                     }
-                } else joiningNewGroup.set(false)
+                } else {
+                    joiningNewGroup.set(false)
+                    showToast("Error joining group")
+                }
             } catch (e: Exception) {
                 joiningNewGroup.set(false)
                 showToast("Error joining group")
@@ -182,7 +187,12 @@ class GroupChatViewModel : BaseViewModel() {
                     groupId = groupId,
                     mentorId = Mentor.getInstance().getId()
                 )
-                val groupCount = repository.leaveGroupFromServer(request)
+                val groupCount = repository.leaveGroupFromServer(request) ?: -1
+                if (groupCount == -1) {
+                    showToast("An error has occurred")
+                    onBackPress()
+                    return@launch
+                }
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has left the group", groupId)
                 withContext(Dispatchers.Main) {
                     message.what = REFRESH_GRP_LIST_HIDE_INFO
@@ -207,15 +217,25 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun showExitDialog(view: View) {
         val builder = AlertDialog.Builder(view.context)
-        builder.setMessage("Exit \"${groupHeader.get()}\" group?")
+        val dialog: AlertDialog = builder.setMessage("Exit \"${groupHeader.get()}\" group?")
             .setPositiveButton("Exit") { dialog, id ->
                 leaveGroup()
             }
-            .setNegativeButton(R.string.cancel) { dialog, id ->
+            .setNegativeButton("Cancel") { dialog, id ->
                 dialog.cancel()
             }
+            .create()
 
-        builder.show()
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#107BE5"))
+        }
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).let{
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#8D8D8D"))
+        }
     }
 
     @ExperimentalPagingApi
@@ -236,7 +256,7 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun expandGroupList(view: View) {
         view.visibility = View.GONE
-        memberAdapter.shouldShowAll()
+        memberAdapter.shouldShowAll(true)
     }
 
     fun sendMessage(view: View) {

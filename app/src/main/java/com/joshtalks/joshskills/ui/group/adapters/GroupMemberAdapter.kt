@@ -43,8 +43,8 @@ class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
         }
     }
 
-    fun shouldShowAll(){
-        showAllMembers = true
+    fun shouldShowAll(boolean: Boolean){
+        showAllMembers = boolean
         notifyDataSetChanged()
     }
 

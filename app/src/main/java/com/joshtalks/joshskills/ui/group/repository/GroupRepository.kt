@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
@@ -321,6 +322,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 Log.e(TAG, "Error: ${exp.message}")
                 exp.printStackTrace()
             }
+        else
+            showToast("An error has occurred")
     }
 
     suspend fun editGroupInServer(request: EditGroupRequest, isNameChanged: Boolean): Boolean {
@@ -344,14 +347,15 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         return response.isSuccessful
     }
 
-    suspend fun leaveGroupFromServer(request: LeaveGroupRequest): Int {
+    suspend fun leaveGroupFromServer(request: LeaveGroupRequest): Int? {
         val response = apiService.leaveGroup(request)
         if (response.isSuccessful) {
             database.groupListDao().deleteGroupItem(request.groupId)
             database.timeTokenDao().deleteTimeToken(request.groupId)
             database.groupChatDao().deleteGroupMessages(request.groupId)
+            return database.groupListDao().getGroupsCount()
         }
-        return database.groupListDao().getGroupsCount()
+        return null
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =

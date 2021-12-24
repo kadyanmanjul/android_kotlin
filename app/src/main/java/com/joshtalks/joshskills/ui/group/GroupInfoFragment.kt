@@ -33,6 +33,7 @@ class GroupInfoFragment : BaseFragment() {
     override fun initViewBinding() {
         binding.vm = vm
         binding.executePendingBindings()
+        vm.memberAdapter.shouldShowAll(false)
     }
 
     override fun initViewState() {}
