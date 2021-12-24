@@ -290,15 +290,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel?
             chatObject?.run {
                 videoId = intent.getStringExtra(VIDEO_ID)
-                Log.d("Manjul", "onCreate() called chat ${this}")
                 CoroutineScope(Dispatchers.IO).launch {
-                    Log.d(
-                        "Manjul",
-                        "onCreate() called chat from db: chat ${
-                            AppObjectController.appDatabase.chatDao()
-                                .getChatObject(chatObject!!.chatId)
-                        }"
-                    )
                 }
                 if (chatObject?.url != null) {
                     if (chatObject?.downloadedLocalPath.isNullOrEmpty() && isVideoUrlAvailable.not()) {
@@ -525,7 +517,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
             videoDownloadPath = fileName
             registerDownloadReceiver(fileName)
-            Log.d("Manjul", "downloadFile() called fileName ${fileName}")
 
             val env = Environment.DIRECTORY_DOWNLOADS
 
@@ -616,12 +607,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     fun inviteFriends(dynamicLink: String) {
         var referralText =
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
-        val refAmount =
-            AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
-                .toString()
-        referralText = referralText.replace(REPLACE_HOLDER, userReferralCode)
-        referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
+            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_SHARABLE_VIDEO)
         referralText = referralText.plus("\n").plus(dynamicLink)
         chatObject?.run {
             try {
@@ -644,7 +630,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath
                 val destination = fileDir + File.separator + this.sharableVideoDownloadedLocalPath
 
-                Log.d("Manjul", "inviteFriends() called video :${destination}  path : ${this.sharableVideoDownloadedLocalPath} ")
                 val waIntent = Intent(Intent.ACTION_SEND)
                 waIntent.type = "*/*"
                 waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
