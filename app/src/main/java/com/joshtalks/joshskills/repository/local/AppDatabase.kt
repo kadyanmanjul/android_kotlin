@@ -493,7 +493,7 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_41_42: Migration = object : Migration(41,42) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN video_id INTEGER ")
-                database.execSQL("ALTER TABLE video_watch_table ADD COLUMN is_sync INTEGER NOT NULL DEFAULT 0 ")
+                database.execSQL("ALTER TABLE video_watch_table ADD COLUMN is_sharable_video INTEGER NOT NULL DEFAULT 0 ")
             }
         }
 
