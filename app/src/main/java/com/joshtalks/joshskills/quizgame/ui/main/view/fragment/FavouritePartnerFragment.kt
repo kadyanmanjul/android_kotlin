@@ -77,6 +77,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     private var fromTokenId: String? = null
     private var fromUserId: String? = null
     private var favouriteUserId: String? = null
+
     //private val PERMISSION_REQ_ID = 22
     private var engine: RtcEngine? = null
     private var activityInstance: FragmentActivity? = null
@@ -89,6 +90,8 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     val handler1 = Handler(Looper.getMainLooper())
     val handler2 = Handler(Looper.getMainLooper())
     val handler4 = Handler(Looper.getMainLooper())
+
+    var isActiveFrag = false
 
     private var arrayList: ArrayList<Favourite>? = null
 
@@ -146,7 +149,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             //It's is use for get current user channel data further use for join in the agora call
             getFromAgoraToken()
             getFriendRequest()
-        //This is use for change user status
+            //This is use for change user status
             // changeStatus()
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -213,29 +216,29 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 
     private fun initRV(favouriteList: ArrayList<Favourite>?) {
         arrayList = favouriteList
-        val activeList :ArrayList<Favourite> = java.util.ArrayList()
-        val inGameList :ArrayList<Favourite> = java.util.ArrayList()
-        val searchList :ArrayList<Favourite> = java.util.ArrayList()
-        val inActiveList :ArrayList<Favourite> = java.util.ArrayList()
+        val activeList: ArrayList<Favourite> = java.util.ArrayList()
+        val inGameList: ArrayList<Favourite> = java.util.ArrayList()
+        val searchList: ArrayList<Favourite> = java.util.ArrayList()
+        val inActiveList: ArrayList<Favourite> = java.util.ArrayList()
         val list: ArrayList<Favourite> = java.util.ArrayList()
-        if (favouriteList!=null){
-            for (f in favouriteList){
-                if (f.status == ACTIVE){
+        if (favouriteList != null) {
+            for (f in favouriteList) {
+                if (f.status == ACTIVE) {
                     activeList.add(f)
                 }
             }
-            for (f1 in favouriteList){
-                if (f1.status == IN_GAME){
+            for (f1 in favouriteList) {
+                if (f1.status == IN_GAME) {
                     inGameList.add(f1)
                 }
             }
-            for (f2 in favouriteList){
-                if (f2.status == SEARCHING){
+            for (f2 in favouriteList) {
+                if (f2.status == SEARCHING) {
                     searchList.add(f2)
                 }
             }
-            for (f3 in favouriteList){
-                if (f3.status == IN_ACTIVE){
+            for (f3 in favouriteList) {
+                if (f3.status == IN_ACTIVE) {
                     inActiveList.add(f3)
                 }
             }
@@ -267,7 +270,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     fun onBack() {
         //showDialog()
         positiveBtnAction()
-      // CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
+        // CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
     }
 
     override fun onClickForGetToken(favourite: Favourite?, position: String) {
@@ -283,10 +286,10 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 
     fun initializeAgoraCall(channelName: String) {
         // Check permission
-       // if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
-            CoroutineScope(Dispatchers.IO).launch {
-                joinChannel(channelName)
-          //  }
+        // if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
+        CoroutineScope(Dispatchers.IO).launch {
+            joinChannel(channelName)
+            //  }
             //WebRtcEngine.initLibrary()
         }
     }
@@ -509,6 +512,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
                 }
             })
     }
+
     fun positiveBtnAction() {
         AudioManagerQuiz.audioRecording.stopPlaying()
         openChoiceScreen()
@@ -572,11 +576,13 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
                 invisibleView(binding.notificationCard)
                 firebaseDatabase.deleteRequested(mentorId)
             }, 10000)
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
 
     }
-    fun getFriendRequest(){
-        firebaseDatabase.getFriendRequests(mentorId,this)
+
+    fun getFriendRequest() {
+        firebaseDatabase.getFriendRequests(mentorId, this)
     }
 
     override fun onPlayAgainNotificationFromApi(userName: String, userImage: String) {
@@ -626,15 +632,15 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
         //check if length is  < 0 so print toast No data Found
         if (temp.size <= 0) {
-            showSnackBar(binding.container,Snackbar.LENGTH_SHORT,"No matching user found")
+            showSnackBar(binding.container, Snackbar.LENGTH_SHORT, "No matching user found")
         }
         favouriteAdapter?.updateList(temp, text)
     }
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    PointSnackbar.make(view, duration, action_lable)?.show()
+            lifecycleScope.launch(Dispatchers.Main) {
+                PointSnackbar.make(view, duration, action_lable)?.show()
             }
         }
     }
@@ -683,6 +689,16 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        isActiveFrag = true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isActiveFrag = false
+    }
+
     override fun onNotificationForInvitePartnerTemp(
         channelName: String,
         fromUserId: String,
@@ -690,8 +706,6 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         fromUserImage: String
     ) {
         var i = 0
-        showToast("Fav Notification call")
-
         handler.removeCallbacksAndMessages(null)
         try {
             visibleView(binding.notificationCard)
@@ -726,7 +740,12 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
                             moveFragment(fromUserId, channelName)
                         }
                         it?.message.equals(USER_ALREADY_JOIN) -> {
-                            binding.userImageForAlready.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
+                            binding.userImageForAlready.setUserImageOrInitials(
+                                imageUrl,
+                                fromUserName,
+                                30,
+                                isRound = true
+                            )
                             binding.userNameForAlready.text = fromUserName
                             visibleView(binding.notificationCardAlready)
                         }
@@ -746,29 +765,32 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             invisibleView(binding.notificationCard)
             handler.removeCallbacksAndMessages(null)
             mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-            firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl,mentorId)
+            firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
         }
 
         binding.eee.setOnClickListener {
             invisibleView(binding.notificationCard)
             handler.removeCallbacksAndMessages(null)
             mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-            firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl,mentorId)
+            firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
         }
         try {
             handler4.postDelayed({
                 invisibleView(binding.notificationCardAlready)
             }, 10000)
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
 
         try {
-            handler.postDelayed({
-            showToast("Fav Accept")
-                invisibleView(binding.notificationCard)
-                mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-                firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl,mentorId)
-            }, 10000)
-        } catch (ex: Exception) { }
+            if (isActiveFrag){
+                handler.postDelayed({
+                    invisibleView(binding.notificationCard)
+                    mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+                    firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
+                }, 10000)
+            }
+        } catch (ex: Exception) {
+        }
     }
 
     override fun onNotificationForPartnerNotAcceptTemp(
@@ -777,8 +799,6 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         fromUserId: String,
         declinedUserId: String
     ) {
-        showToast("Fav Decline  Notification call")
-
         handler1.removeCallbacksAndMessages(null)
         val pos = favouriteAdapter?.getPositionById(declinedUserId)
         val holder: FavouriteAdapter.FavViewHolder =
@@ -813,12 +833,14 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
 
         try {
-            handler1.postDelayed({
-                showToast("Fav Decline")
-                firebaseDatabase.deleteDeclineData(mentorId)
-                invisibleView(binding.notificationCardNotPlay)
-            }, 10000)
-        } catch (ex: Exception) { }
+            if (isActiveFrag){
+                handler1.postDelayed({
+                    firebaseDatabase.deleteDeclineData(mentorId)
+                    invisibleView(binding.notificationCardNotPlay)
+                }, 10000)
+            }
+        } catch (ex: Exception) {
+        }
     }
 
     override fun onNotificationForPartnerAcceptTemp(

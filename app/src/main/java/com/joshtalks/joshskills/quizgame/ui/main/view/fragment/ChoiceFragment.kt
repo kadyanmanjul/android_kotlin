@@ -46,6 +46,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         ViewModelProvider(requireActivity())[ChoiceViewModel::class.java]
     }
 
+    var isShowFrag = false
     private lateinit var binding: FragmentChoiceFragnmentBinding
     private var mentorId: String = Mentor.getInstance().getUserId()
 
@@ -60,7 +61,8 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
 
     private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
-//    private var REQUESTED_PERMISSIONS = arrayOf(
+
+    //    private var REQUESTED_PERMISSIONS = arrayOf(
 //        Manifest.permission.RECORD_AUDIO,
 //        Manifest.permission.CAMERA
 //    )
@@ -119,6 +121,11 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         } else {
             showToast("Crash")
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isShowFrag = true
     }
 
     fun deleteData() {
@@ -199,9 +206,9 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     fun initializeAgoraCall(channelName: String) {
         // Check permission
         //if (checkSelfPermiss ion(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
-            CoroutineScope(Dispatchers.IO).launch {
-                joinChannel(channelName)
-         //   }
+        CoroutineScope(Dispatchers.IO).launch {
+            joinChannel(channelName)
+            //   }
             //WebRtcEngine.initLibrary()
         }
     }
@@ -250,7 +257,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         fromUserName: String,
         fromUserImage: String
     ) {
-        showToast("Choice Notification call")
         var i = 0
         handler5.removeCallbacksAndMessages(null)
         try {
@@ -286,7 +292,12 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
                             moveFragment(fromUserId, channelName)
                         }
                         it?.message.equals(USER_ALREADY_JOIN) -> {
-                            binding.userImageForAlready.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
+                            binding.userImageForAlready.setUserImageOrInitials(
+                                imageUrl,
+                                fromUserName,
+                                30,
+                                isRound = true
+                            )
                             binding.userNameForAlready.text = fromUserName
                             visibleView(binding.notificationCardAlready)
                         }
@@ -320,15 +331,18 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             handler4.postDelayed({
                 invisibleView(binding.notificationCardAlready)
             }, 10000)
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
         try {
-            handler5.postDelayed({
-            showToast("Choice Accept")
-                invisibleView(binding.notificationCard)
-                mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-                firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
-            }, 10000)
-        } catch (ex: Exception) { }
+            if (isShowFrag){
+                handler5.postDelayed({
+                    invisibleView(binding.notificationCard)
+                    mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+                    firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
+                }, 10000)
+            }
+        } catch (ex: Exception) {
+        }
     }
 
     override fun onNotificationForPartnerNotAcceptTemp(
@@ -337,8 +351,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         fromUserId: String,
         declinedUserId: String
     ) {
-        showToast("Choice Decline Notification")
-
         handler9.removeCallbacksAndMessages(null)
         val image = userImageUrl.replace("\n", "")
         visibleView(binding.notificationCardNotPlay)
@@ -356,12 +368,14 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         }
 
         try {
-            handler9.postDelayed({
-                showToast("Choice Decline")
-                firebaseDatabase.deleteDeclineData(mentorId)
-                invisibleView(binding.notificationCardNotPlay)
-            }, 10000)
-        } catch (ex: Exception) { }
+            if (isShowFrag){
+                handler9.postDelayed({
+                    firebaseDatabase.deleteDeclineData(mentorId)
+                    invisibleView(binding.notificationCardNotPlay)
+                }, 10000)
+            }
+        } catch (ex: Exception) {
+        }
     }
 
     override fun onNotificationForPartnerAcceptTemp(
@@ -457,8 +471,10 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     fun openFavouriteScreen() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
-            ?.replace(R.id.container,
-                FavouritePartnerFragment.newInstance(), FAVOURITE_FRAGMENT)
+            ?.replace(
+                R.id.container,
+                FavouritePartnerFragment.newInstance(), FAVOURITE_FRAGMENT
+            )
             ?.remove(this)
             ?.commit()
     }
@@ -466,14 +482,17 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     fun openRandomScreen() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
-            ?.replace(R.id.container,
-                RandomPartnerFragment.newInstance(), RANDOM_PARTNER_FRAGMENT)
+            ?.replace(
+                R.id.container,
+                RandomPartnerFragment.newInstance(), RANDOM_PARTNER_FRAGMENT
+            )
             ?.remove(this)
             ?.commit()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        isShowFrag = false
         handler2.removeCallbacksAndMessages(null)
         handler4.removeCallbacksAndMessages(null)
         handler5.removeCallbacksAndMessages(null)

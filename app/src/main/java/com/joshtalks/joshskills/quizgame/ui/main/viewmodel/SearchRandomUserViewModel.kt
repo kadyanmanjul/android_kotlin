@@ -40,21 +40,6 @@ class SearchRandomUserViewModel(
         }
     }
 
-//    fun statusChange(userIdMentor: String?, status: String?) {
-//        try {
-//            if (UpdateReceiver.isNetworkAvailable(application111)) {
-//                viewModelScope.launch(Dispatchers.IO) {
-//                    val response = searchRandomRepo.getStatus(userIdMentor, status)
-//                    if (response?.isSuccessful == true && response.body() != null) {
-//                        statusResponse.postValue(response.body())
-//                    }
-//                }
-//            }
-//        } catch (ex: Throwable) {
-//            Timber.d(ex)
-//        }
-//    }
-
     fun createRoomRandom(roomRandom: RoomRandom) {
         try {
             if (UpdateReceiver.isNetworkAvailable(application111)) {

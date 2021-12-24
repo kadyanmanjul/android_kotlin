@@ -372,7 +372,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
             questionViewModel?.getQuizQuestion(QuestionRequest(QUESTION_COUNT, roomId ?: ""))
             try {
-                // questionViewModel?.getRoomUserData(RoomData(roomId?:""))
                 questionViewModel?.getRoomUserDataTemp(
                     RandomRoomData(
                         roomId ?: "",
@@ -520,30 +519,29 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             } catch (ex: Exception) {
 
             }
+            try {
+                if (position <= questionSize.minus(1)) {
+                    if (position == questionSize.minus(1)) {
+                        isLastQuestion = true
+                        binding.roundNumber.visibility = View.VISIBLE
+                        binding.roundNumber.text = LAST_ROUND
+                        binding.getReady.visibility = View.VISIBLE
+                        binding.getReady.text = ROUND_2X_BOUNCE
+                        animationForRound()
+                    } else {
+                        binding.roundNumber.visibility = View.VISIBLE
+                        binding.roundNumber.text =
+                            getString(R.string.round_1) + " " + position.plus(1).toString()
 
-            if (position <= questionSize.minus(1)) {
-                if (position == questionSize.minus(1)) {
-                    isLastQuestion = true
-                    binding.roundNumber.visibility = View.VISIBLE
-                    binding.roundNumber.text = LAST_ROUND
-                    binding.getReady.visibility = View.VISIBLE
-                    binding.getReady.text = ROUND_2X_BOUNCE
-                    animationForRound()
+                        animationForRound()
+                    }
                 } else {
-                    binding.roundNumber.visibility = View.VISIBLE
-                    binding.roundNumber.text =
-                        getString(R.string.round_1) + " " + position.plus(1).toString()
-                    animationForRound()
+                    binding.roundNumber.visibility = View.INVISIBLE
                 }
-            } else {
-                binding.roundNumber.visibility = View.INVISIBLE
-            }
-            binding.question.visibility = View.INVISIBLE
-            //binding.roundNumber.visibility = View.VISIBLE
-//            activity?.resources?.getColor(R.color.white)?.let { binding.marks1.setTextColor(it) }
-//            activity?.resources?.getColor(R.color.white)?.let { binding.marks2.setTextColor(it) }
-            binding.marks1.setTextColor(getWhiteColor())
-            binding.marks2.setTextColor(getWhiteColor())
+                binding.question.visibility = View.INVISIBLE
+                binding.marks1.setTextColor(getWhiteColor())
+                binding.marks2.setTextColor(getWhiteColor())
+            }catch (ex:Exception){}
 
             makeAgainCardSquare()
             firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
@@ -748,62 +746,69 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     }
 
     private fun scaleAnimationForTeam1(v: View) {
-        val animation = TranslateAnimation(20f, 20f, -200f, 20f)
-        animation.duration = 1000
-        animation.fillAfter = true
-        v.startAnimation(animation)
-        v.visibility = View.VISIBLE
-        progress.visibility = View.VISIBLE
-        progress1.visibility = View.VISIBLE
-
+        try {
+            val animation = TranslateAnimation(20f, 20f, -200f, 20f)
+            animation.duration = 1000
+            animation.fillAfter = true
+            v.startAnimation(animation)
+            v.visibility = View.VISIBLE
+            progress.visibility = View.VISIBLE
+            progress1.visibility = View.VISIBLE
+        }catch (ex:Exception){}
     }
 
     private fun scaleAnimationForTeam2(v: View) {
-        val animation = TranslateAnimation(0f, 0f, -200f, 20f)
-        animation.duration = 1000
-        animation.fillAfter = true
-        v.startAnimation(animation)
-        v.visibility = View.VISIBLE
+        try {
+            val animation = TranslateAnimation(0f, 0f, -200f, 20f)
+            animation.duration = 1000
+            animation.fillAfter = true
+            v.startAnimation(animation)
+            v.visibility = View.VISIBLE
+        }catch (ex:Exception){}
     }
 
     private fun animationForText(v: View) {
-        val animation1 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
-        v.startAnimation(animation1)
-        v.visibility = View.VISIBLE
+        try {
+            val animation1 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
+            v.startAnimation(animation1)
+            v.visibility = View.VISIBLE
+        }catch (ex:Exception){}
     }
 
     private fun animationForRound() {
-        val animation1 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
-        binding.roundNumber.startAnimation(animation1)
-        binding.layoutForRounds.visibility = View.VISIBLE
-        binding.count.text = activity?.resources?.getText(R.string.fiften)
-        binding.progress.setAnimZero()
-        binding.progress1.setAnimZero()
+        try {
+            val animation1 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
+            binding.roundNumber.startAnimation(animation1)
+            binding.layoutForRounds.visibility = View.VISIBLE
+            binding.count.text = activity?.resources?.getText(R.string.fiften)
+            binding.progress.setAnimZero()
+            binding.progress1.setAnimZero()
 
-        animation1.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation?) {
-                binding.layoutForRounds.visibility = View.VISIBLE
+            animation1.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                    binding.layoutForRounds.visibility = View.VISIBLE
+                }
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    binding.layoutForRounds.visibility = View.INVISIBLE
+
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {
+                }
+
+            })
+
+            lifecycleScope.launch {
+                myDelay()
+                startTimer()
             }
-
-            override fun onAnimationEnd(animation: Animation?) {
-                binding.layoutForRounds.visibility = View.INVISIBLE
-
-            }
-
-            override fun onAnimationRepeat(animation: Animation?) {
-            }
-
-        })
-
-        lifecycleScope.launch {
-            myDelay()
-            startTimer()
-        }
+        }catch (ex:Exception){}
     }
 
     private fun answerAnim() {
-        val handler = Handler(Looper.getMainLooper())
         try {
+            val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
                 binding.card1.visibility = View.VISIBLE
                 binding.card2.visibility = View.VISIBLE
@@ -813,9 +818,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 val animation3 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
                 binding.layoutCard.startAnimation(animation3)
             }, 2000)
-        } catch (ex: Exception) {
-
-        }
+        } catch (ex: Exception) { }
     }
 
     private fun selectOptionCheck(
@@ -854,75 +857,77 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     private fun getSelectOptionWithAnim(choiceAnswer: String, pos: Int) {
         disableCardClick()
-        activity?.let {
-            isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
-            questionViewModel?.selectOption?.observe(it, {
-                choiceAnswer(choiceAnswer, isCorrect ?: "")
-                val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
-                if (it.message == BOTH_TEAM_SELECTED) {
-                    firebaseDatabase.createOpponentTeamShowCutCard(
-                        opponentTeamId ?: "",
-                        isCorrect ?: "",
-                        choiceAnswer
-                    )
-                    firebaseDatabase.createPartnerShowCutCard(
-                        currentUserTeamId ?: "",
-                        isCorrect ?: "",
-                        firstTeamAnswer ?: ""
-                    )
+        try {
+            activity?.let {
+                isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
+                questionViewModel?.selectOption?.observe(it, {
+                    choiceAnswer(choiceAnswer, isCorrect ?: "")
+                    val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
+                    if (it.message == BOTH_TEAM_SELECTED) {
+                        firebaseDatabase.createOpponentTeamShowCutCard(
+                            opponentTeamId ?: "",
+                            isCorrect ?: "",
+                            choiceAnswer
+                        )
+                        firebaseDatabase.createPartnerShowCutCard(
+                            currentUserTeamId ?: "",
+                            isCorrect ?: "",
+                            firstTeamAnswer ?: ""
+                        )
 
-                    //hame yaha partner ke liye call back likhna hoga jis se ham usko card ke dono side cut dikha sake
-                }
-            })
-            // partnerId = getPartnerId()
+                        //hame yaha partner ke liye call back likhna hoga jis se ham usko card ke dono side cut dikha sake
+                    }
+                })
+                // partnerId = getPartnerId()
 
-            if (isCorrect == TRUE) {
-                marks += if (isLastQuestion) {
-                    (seconds * 2)
-                } else {
-                    seconds
-                }
-            }
-
-            try {
                 if (isCorrect == TRUE) {
-                    if (position != 0)
-                        progressBar.progressTintList = ColorStateList.valueOf(getGreenColor())
+                    marks += if (isLastQuestion) {
+                        (seconds * 2)
+                    } else {
+                        seconds
+                    }
+                }
+
+                try {
+                    if (isCorrect == TRUE) {
+                        if (position != 0)
+                            progressBar.progressTintList = ColorStateList.valueOf(getGreenColor())
 
 //                            activity?.resources?.getColor(R.color.green_quiz)?.let { it1 ->
 //                                ColorStateList.valueOf(getGreenColor())
 //                            }
 
-                    binding.marks1.text = marks.toString()
-                    secondaryProgressStatus = marks
-                    progressBar.secondaryProgress = secondaryProgressStatus
+                        binding.marks1.text = marks.toString()
+                        secondaryProgressStatus = marks
+                        progressBar.secondaryProgress = secondaryProgressStatus
 
-                    //yaha ka code dekhna hai once
-                    progressBar.progress = marks - (seconds)
-                } else {
-                    progressBar.progress = marks
-                    progressBar.progressTintList = ColorStateList.valueOf(getBlue2Color())
+                        //yaha ka code dekhna hai once
+                        progressBar.progress = marks - (seconds)
+                    } else {
+                        progressBar.progress = marks
+                        progressBar.progressTintList = ColorStateList.valueOf(getBlue2Color())
 //                        activity?.resources?.getColor(R.color.blue2)?.let { it1 ->
 //                            ColorStateList.valueOf(
 //                                it1
 //                            )
 //                        }
+                    }
+                } catch (ex: Exception) {
+
                 }
-            } catch (ex: Exception) {
+                // yaha ham partner me uski id or answer bheje ge jis se usko vo answer dikha sake ki kya tick kiya hai
+                isCorrect?.let { it1 ->
+                    onOptionSelect(
+                        currentUserTeamId,
+                        it1,
+                        choiceAnswer,
+                        marks.toString(),
+                        opponentTeamId
+                    )
+                }
 
             }
-            // yaha ham partner me uski id or answer bheje ge jis se usko vo answer dikha sake ki kya tick kiya hai
-            isCorrect?.let { it1 ->
-                onOptionSelect(
-                    currentUserTeamId,
-                    it1,
-                    choiceAnswer,
-                    marks.toString(),
-                    opponentTeamId
-                )
-            }
-
-        }
+        }catch (ex:Exception){}
     }
 
     private fun getDisplayAnswerAfterQuesComplete(): String {
