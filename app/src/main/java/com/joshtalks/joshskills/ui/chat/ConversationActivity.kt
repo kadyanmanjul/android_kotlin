@@ -1571,7 +1571,7 @@ class ConversationActivity :
                                 this,
                                 chatObj,
                                 title,
-                                null,
+                                chatObj.sharingVideoId.toString(),
                                 it.videoUrl,
                                 conversationId = inboxEntity.conversation_id,
                                 isSharableVideo = true,

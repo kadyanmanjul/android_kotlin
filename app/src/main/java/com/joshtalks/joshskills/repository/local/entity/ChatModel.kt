@@ -106,6 +106,10 @@ data class ChatModel(
     @SerializedName("award_mentor_id")
     var awardUserId: Int? = null,
 
+    @ColumnInfo(name = "video_id")
+    @SerializedName("video_id")
+    var sharingVideoId: Int? = null,
+
     @Ignore
     @SerializedName("award_mentor")
     var awardMentorModel: AwardMentorModel? = null,

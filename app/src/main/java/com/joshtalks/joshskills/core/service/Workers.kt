@@ -431,7 +431,11 @@ class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
         if (chatIdList.isNullOrEmpty().not()) {
             chatIdList.forEach {
                 try {
-                    AppObjectController.chatNetworkService.engageVideoApiV2(it)
+                    if (it.isSharableVideo){
+                        AppObjectController.chatNetworkService.engageSharableVideoApi(it)
+                    } else{
+                        AppObjectController.chatNetworkService.engageVideoApiV2(it)
+                    }
                     syncEngageVideoList.add(it.id)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()

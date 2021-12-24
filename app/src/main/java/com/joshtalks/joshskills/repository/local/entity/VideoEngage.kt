@@ -1,14 +1,7 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.ConvectorForGraph
@@ -50,6 +43,10 @@ data class VideoEngage(
     @Expose
     @ColumnInfo(name = "is_sync")
     var isSync: Boolean = false
+
+    @Expose
+    @ColumnInfo(name = "is_sharable_video")
+    var isSharableVideo: Boolean = false
 }
 
 @Dao

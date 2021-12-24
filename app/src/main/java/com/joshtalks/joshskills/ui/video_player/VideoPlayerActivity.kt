@@ -24,12 +24,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
-import com.google.firebase.dynamiclinks.ShortDynamicLink
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.dynamiclinks.ktx.googleAnalyticsParameters
-import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
-import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -69,6 +63,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 import kotlin.random.Random
 
 const val VIDEO_OBJECT = "video_"
@@ -169,16 +164,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     protected var onDownloadComplete = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            Log.d(
-                "Manjul",
-                "onReceive() called with: context = $context, intent = $intent ${chatObject}"
-            )
-            if (id > -1) {
+            if (downloadID == id) {
                 try {
-                    val downloadManager =
-                        getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                    val uri: Uri = downloadManager.getUriForDownloadedFile(id)
-                    chatObject?.sharableVideoDownloadedLocalPath = uri.toString()
+                    chatObject?.sharableVideoDownloadedLocalPath = videoDownloadPath
                     CoroutineScope(Dispatchers.IO).launch {
                         chatObject?.let {
                             AppObjectController.appDatabase.chatDao().updateChatMessageOnAnyThread(
@@ -301,6 +289,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel?
             chatObject?.run {
+                videoId = intent.getStringExtra(VIDEO_ID)
                 Log.d("Manjul", "onCreate() called chat ${this}")
                 CoroutineScope(Dispatchers.IO).launch {
                     Log.d(
@@ -536,6 +525,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
             videoDownloadPath = fileName
             registerDownloadReceiver(fileName)
+            Log.d("Manjul", "downloadFile() called fileName ${fileName}")
 
             val env = Environment.DIRECTORY_DOWNLOADS
 
@@ -650,14 +640,18 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                         Timber.e(ex)
                     }
                 }
+
+                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath
+                val destination = fileDir + File.separator + this.sharableVideoDownloadedLocalPath
+
+                Log.d("Manjul", "inviteFriends() called video :${destination}  path : ${this.sharableVideoDownloadedLocalPath} ")
                 val waIntent = Intent(Intent.ACTION_SEND)
                 waIntent.type = "*/*"
                 waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
                 waIntent.putExtra(
                     Intent.EXTRA_STREAM,
-                    Uri.parse(this.sharableVideoDownloadedLocalPath!!)
+                    Uri.parse(destination)
                 )
-                waIntent.putExtra(Intent.EXTRA_TEXT, "I am practicing English everyday by talking to people. If I can do it, you can do it too. ${getAppShareUrl()}")
                 waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 startActivity(Intent.createChooser(waIntent, "Share with"))
 
@@ -666,10 +660,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
         }
     }
-
-    /*private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
-    }*/
 
     private fun getAppShareUrl(): String {
         return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D${Mentor.getInstance().referralCode}"
@@ -884,14 +874,27 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
 
             videoId?.run {
-                EngagementNetworkHelper.engageVideoApi(
-                    VideoEngage(
+                if (isSharableVideo.not()){
+                    EngagementNetworkHelper.engageVideoApi(
+                        VideoEngage(
+                            videoViewGraphList.toList(),
+                            this.toInt(),
+                            countUpTimer.time.toLong(),
+                            courseID = courseId,
+                        )
+                    )
+                }else{
+                   val videoEngage = VideoEngage(
                         videoViewGraphList.toList(),
                         this.toInt(),
                         countUpTimer.time.toLong(),
                         courseID = courseId,
                     )
-                )
+                    videoEngage.isSharableVideo = true
+                    EngagementNetworkHelper.engageVideoApi(
+                        videoEngage
+                    )
+                }
             }
         } catch (ex: Exception) {
         }
