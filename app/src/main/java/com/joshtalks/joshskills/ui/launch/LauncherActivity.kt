@@ -110,6 +110,7 @@ class LauncherActivity : CoreJoshActivity() {
             Branch.sessionBuilder(WeakReference(this@LauncherActivity).get())
                 .withCallback { referringParams, error ->
                     try {
+                        Log.d("Yash", "handleIntent: referringParams=>  $referringParams")
                         val jsonParams =
                             referringParams ?: (Branch.getInstance().firstReferringParams
                                 ?: Branch.getInstance().latestReferringParams)
@@ -119,25 +120,26 @@ class LauncherActivity : CoreJoshActivity() {
                         var exploreType: String? = null
                         val installReferrerModel =
                             InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                        if (error == null) {
+                        jsonParams?.let {
                             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                            if (jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
+                            if (it.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
                                 testId =
-                                    jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                            } else if (jsonParams?.has(Defines.Jsonkey.ContentType.key) == true) {
-                                exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
-                                    jsonParams.getString(Defines.Jsonkey.ContentType.key)
+                                    it.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+                            } else if (it.has(Defines.Jsonkey.ContentType.key)) {
+                                exploreType = if (it.has(Defines.Jsonkey.ContentType.key)) {
+                                    it.getString(Defines.Jsonkey.ContentType.key)
                                 } else null
                             }
-                            if (jsonParams?.has(Defines.Jsonkey.ReferralCode.key) == true)
+                            if (it.has(Defines.Jsonkey.ReferralCode.key))
                                 installReferrerModel.utmSource =
-                                    jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
-                            if (jsonParams?.has(Defines.Jsonkey.UTMMedium.key) == true)
+                                    it.getString(Defines.Jsonkey.ReferralCode.key)
+                            if (it.has(Defines.Jsonkey.UTMMedium.key))
                                 installReferrerModel.utmMedium =
-                                    jsonParams.getString(Defines.Jsonkey.UTMMedium.key)
-                            if (jsonParams?.has(Defines.Jsonkey.UTMCampaign.key) == true)
+                                    it.getString(Defines.Jsonkey.UTMMedium.key)
+                            if (it.has(Defines.Jsonkey.UTMCampaign.key))
                                 installReferrerModel.utmTerm =
-                                    jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
+                                    it.getString(Defines.Jsonkey.UTMCampaign.key)
+                            Log.i("Yash", "handleIntent: $installReferrerModel")
                             InstallReferrerModel.update(installReferrerModel)
                         }
                         if (isFinishing.not()) {
@@ -188,6 +190,7 @@ class LauncherActivity : CoreJoshActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
+//        intent.putExtra("branch_force_new_session", true)
         handleIntent()
     }
 
@@ -266,7 +269,6 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun initAfterBranch(testId: String? = null, exploreType: String? = null) {
-        Log.i(TAG, "initAfterBranch: ")
         lifecycleScope.launch(Dispatchers.IO) {
             when {
                 testId != null -> {
@@ -338,17 +340,27 @@ class LauncherActivity : CoreJoshActivity() {
             }
             obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             InstallReferrerModel.getPrefObject()?.let {
+                Log.e("Yash", "initGaid: InstallReferrerModel=> $it")
                 obj.installOn = it.installOn
                 obj.utmMedium =
-                    if (it.otherInfo != null && it.otherInfo!!.containsKey("utm_medium"))
+                    if (it.utmMedium.isNullOrEmpty() && it.otherInfo != null && it.otherInfo!!.containsKey(
+                            "utm_medium"
+                        )
+                    )
                         it.otherInfo!!["utm_medium"]
                     else it.utmMedium
                 obj.utmSource =
-                    if (it.otherInfo != null && it.otherInfo!!.containsKey("utm_source"))
+                    if (it.utmSource.isNullOrEmpty() && it.otherInfo != null && it.otherInfo!!.containsKey(
+                            "utm_source"
+                        )
+                    )
                         it.otherInfo!!["utm_source"]
                     else it.utmSource
                 obj.utmTerm =
-                    if (it.otherInfo != null && it.otherInfo!!.containsKey("utm_campaign"))
+                    if (it.utmTerm.isNullOrEmpty() && it.otherInfo != null && it.otherInfo!!.containsKey(
+                            "utm_campaign"
+                        )
+                    )
                         it.otherInfo!!["utm_campaign"]
                     else it.utmTerm
             }

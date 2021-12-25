@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -231,16 +232,17 @@ abstract class BaseActivity :
                             ?: Branch.getInstance().latestReferringParams)
                     val installReferrerModel =
                             InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                    if (error == null) {
+                    jsonParams?.let {
                         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                        if (jsonParams?.has(Defines.Jsonkey.ReferralCode.key) == true)
-                            installReferrerModel.utmSource = jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
-                        if (jsonParams?.has(Defines.Jsonkey.UTMMedium.key) == true)
-                            installReferrerModel.utmMedium = jsonParams.getString(Defines.Jsonkey.UTMMedium.key)
-                        if (jsonParams?.has(Defines.Jsonkey.UTMCampaign.key) == true)
-                            installReferrerModel.utmTerm = jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
+                        if (it.has(Defines.Jsonkey.ReferralCode.key))
+                            installReferrerModel.utmSource = it.getString(Defines.Jsonkey.ReferralCode.key)
+                        if (it.has(Defines.Jsonkey.UTMMedium.key))
+                            installReferrerModel.utmMedium = it.getString(Defines.Jsonkey.UTMMedium.key)
+                        if (it.has(Defines.Jsonkey.UTMCampaign.key))
+                            installReferrerModel.utmTerm = it.getString(Defines.Jsonkey.UTMCampaign.key)
                     }
                     if (isFinishing.not()) {
+                        Log.i(TAG, "processBranchDynamicLinks: $installReferrerModel")
                         InstallReferrerModel.update(installReferrerModel)
                     }
                 } catch (ex: Throwable) {

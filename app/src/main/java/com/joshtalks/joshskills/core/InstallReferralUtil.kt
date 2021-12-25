@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.content.Context
 import android.os.RemoteException
 import android.text.TextUtils
+import android.util.Log
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -41,6 +42,10 @@ object InstallReferralUtil {
                                         val response = referrerClient.installReferrer
                                         val rawReferrerString =
                                             URLDecoder.decode(response.installReferrer, "UTF-8")
+                                        Log.d(
+                                            TAG,
+                                            "onInstallReferrerSetupFinished: $rawReferrerString"
+                                        )
                                         val  referrerMap = HashMap<String, String>()
                                         val referralParams =
                                             rawReferrerString.split("&").toTypedArray()
@@ -109,6 +114,7 @@ object InstallReferralUtil {
                                             installReferrerModel.installOn = (Date().time / 1000)
                                         }
                                         InstallReferrerModel.update(installReferrerModel)
+                                        Log.i(TAG, "onInstallReferrerSetupFinished: $installReferrerModel")
                                         appAnalytics.push()
                                     } catch (ex: Exception) {
                                         ex.printStackTrace()

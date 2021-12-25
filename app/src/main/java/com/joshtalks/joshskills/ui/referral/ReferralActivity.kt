@@ -205,6 +205,7 @@ class ReferralActivity : BaseActivity() {
             .setFeature("sharing")
             .setCampaign("referral")
             .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
+            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
             .addControlParameter(
                 Defines.Jsonkey.UTMMedium.key,
                 userReferralCode.plus(System.currentTimeMillis())
