@@ -378,7 +378,11 @@ class AppObjectController {
             SentryAndroid.init(context) { options ->
                 options.dsn =
                     "https://4eb261d477d3450fba42d8c35d5fa188@o526914.ingest.sentry.io/6109802"
-                options.sampleRate =  getFirebaseRemoteConfig().getDouble(FirebaseRemoteConfigKey.SENTRY_SAMPLING_RATE)
+                var rate = getFirebaseRemoteConfig().getDouble(FirebaseRemoteConfigKey.SENTRY_SAMPLING_RATE) ?: 0.6
+                if (rate <= 0.0 || rate > 1.0){
+                    rate = 0.6
+                }
+                options.sampleRate =  rate
                 options.environment = BuildConfig.FLAVOR.plus(BuildConfig.BUILD_TYPE)
                 options.serverName = BuildConfig.FLAVOR
                 options.isEnableAutoSessionTracking = true
