@@ -183,7 +183,7 @@ class JoshGroupViewModel : BaseViewModel() {
     suspend fun getGroupOnlineCount() {
         addingNewGroup.set(true)
         withContext(Dispatchers.IO) {
-            groupMemberCounts = repository.getGroupMembersCount()
+            groupMemberCounts = repository.getGroupMembersCount() ?: mapOf()
             if (groupMemberCounts.isEmpty()) hasGroupData.set(false)
             addingNewGroup.set(false)
         }
