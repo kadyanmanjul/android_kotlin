@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.utils
 
+import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
@@ -139,6 +141,10 @@ fun setOnSearch(view: AppCompatEditText, query: MutableStateFlow<String>) {
         override fun afterTextChanged(s: Editable?) {
             query.value = s.toString()
         }
-
     })
+}
+
+@BindingAdapter("textColor")
+fun JoshTextView.setTextColor(value: String) {
+    this.setTextColor(Color.parseColor(value))
 }

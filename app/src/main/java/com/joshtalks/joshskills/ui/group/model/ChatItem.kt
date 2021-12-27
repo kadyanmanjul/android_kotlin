@@ -4,6 +4,7 @@ import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.ui.group.utils.getColorHexCode
 import java.util.Date
 
 @Entity(tableName = "group_chat_db")
@@ -28,4 +29,6 @@ data class ChatItem(
         val time = Utils.getMessageTimeInHours(Date(msgTime / 10000))
         return if (time[0] == '0') time.substring(1) else time
     }
+
+    fun getColorFromId() = getColorHexCode(messageId.substring(messageId.lastIndexOf("_") + 1))
 }
