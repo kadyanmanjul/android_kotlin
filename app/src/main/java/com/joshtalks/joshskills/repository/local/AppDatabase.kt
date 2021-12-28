@@ -60,7 +60,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupsItem::class, TimeTokenRequest::class ,
-        GroupListEntity::class ,ChatItem::class
+        ChatItem::class
     ],
     version = 43,
     exportSchema = true
