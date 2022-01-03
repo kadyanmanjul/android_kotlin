@@ -91,4 +91,7 @@ interface Api {
 
     @POST("$DIR/quiz/back_from_main_screen/")
     suspend fun homeInactive(@Body params: Status): Response<Success>
+
+    @POST("$DIR/quiz/save_call_duration/")
+    suspend fun saveCallDuration(@Body prams :SaveCallDuration) : Response<CallDurationResponse>
 }

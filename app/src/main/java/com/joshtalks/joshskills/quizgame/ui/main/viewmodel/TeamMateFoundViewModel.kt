@@ -4,9 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.quizgame.ui.data.model.Success
-import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
-import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails
+import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.TeamMateFoundRepo
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +19,8 @@ class TeamMateFoundViewModel(
     val userData: MutableLiveData<UserDetails> = MutableLiveData()
 
     val deleteData: MutableLiveData<Success> = MutableLiveData()
+
+    val saveCallDuration :MutableLiveData<CallDurationResponse> = MutableLiveData()
 
     fun getChannelData(mentorId: String) {
         try {
@@ -44,6 +44,21 @@ class TeamMateFoundViewModel(
                     val response = teamMateFoundRepo.deleteUserData(teamDataDelete)
                     if (response?.isSuccessful == true && response.body() != null) {
                         deleteData.postValue(response.body())
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+
+        }
+    }
+
+    fun saveCallDuration(callDuration: SaveCallDuration) {
+        try {
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = teamMateFoundRepo.saveDurationOfCall(callDuration)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        saveCallDuration.postValue(response.body())
                     }
                 }
             }

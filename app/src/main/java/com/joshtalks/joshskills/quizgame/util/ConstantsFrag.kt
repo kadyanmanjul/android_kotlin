@@ -7,3 +7,6 @@ const val GROUPS_STACK = "GROUPS_BACK_STACK"
 const val CHOICE_FRAGMENT = "CHOICE_FRAGMENT"
 
 const val CHANGE_USER_STATUS = "User status changed to inactive , data deleted from UserStatusRedis"
+
+const val CALL_DURATION_RESPONSE = "Call duration saved successfully"
+const val NO_MATCHING_USER_FOUND = "No matching user found"

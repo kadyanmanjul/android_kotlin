@@ -19,6 +19,7 @@ class BothTeamViewModel(
 
     var roomUserData: MutableLiveData<RandomRoomResponse> = MutableLiveData()
     var deleteData: MutableLiveData<Success> = MutableLiveData()
+    val saveCallDuration :MutableLiveData<CallDurationResponse> = MutableLiveData()
 
     fun getRoomUserData(randomRoomData: RandomRoomData) {
         try {
@@ -49,4 +50,20 @@ class BothTeamViewModel(
            // ex.showAppropriateMsg()
         }
     }
+
+    fun saveCallDuration(callDuration: SaveCallDuration) {
+        try {
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = bothTeamRepo.saveDurationOfCall(callDuration)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        saveCallDuration.postValue(response.body())
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+
+        }
+    }
+
 }

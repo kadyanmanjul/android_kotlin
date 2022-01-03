@@ -449,7 +449,8 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                     RandomTeamMateFoundFragnment.newInstance(
                         userRoomId ?: "",
                         opponentUserImage ?: "",
-                        opponentUserName ?: ""
+                        opponentUserName ?: "",
+                        currentUserTeamId?:""
                     ), "RandomPartnerFragment"
                 )
                 ?.commit()

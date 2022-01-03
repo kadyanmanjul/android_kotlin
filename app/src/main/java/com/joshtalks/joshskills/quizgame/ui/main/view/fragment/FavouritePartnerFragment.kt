@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -13,10 +11,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -632,19 +627,16 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
         //check if length is  < 0 so print toast No data Found
         if (temp.size <= 0) {
-            showSnackBar(binding.container, Snackbar.LENGTH_SHORT, "No matching user found")
+            lifecycleScope.launch(Dispatchers.Main) {
+                UtilsQuiz.showSnackBar(
+                    binding.container,
+                    Snackbar.LENGTH_SHORT,
+                    NO_MATCHING_USER_FOUND
+                )
+            }
         }
         favouriteAdapter?.updateList(temp, text)
     }
-
-    fun showSnackBar(view: View, duration: Int, action_lable: String?) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                PointSnackbar.make(view, duration, action_lable)?.show()
-            }
-        }
-    }
-
     override fun onGetLiveStatus(status: String, mentorId: String) {
         try {
             val pos: Int = favouriteAdapter?.getPositionById(mentorId) ?: 0
@@ -782,7 +774,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
 
         try {
-            if (isActiveFrag){
+            if (isActiveFrag) {
                 handler.postDelayed({
                     invisibleView(binding.notificationCard)
                     mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
@@ -833,7 +825,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
 
         try {
-            if (isActiveFrag){
+            if (isActiveFrag) {
                 handler1.postDelayed({
                     firebaseDatabase.deleteDeclineData(mentorId)
                     invisibleView(binding.notificationCardNotPlay)

@@ -59,8 +59,8 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     private var activityInstance: FragmentActivity? = null
     var userName: String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
-
     private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
+    private var mainFirebaseDatabase:FirebaseDatabase=FirebaseDatabase()
 
     //    private var REQUESTED_PERMISSIONS = arrayOf(
 //        Manifest.permission.RECORD_AUDIO,
@@ -91,6 +91,15 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         return binding.root
     }
 
+    init {
+        firebaseDatabase.deleteRequested(mentorId)
+        firebaseDatabase.deleteDeclineData(mentorId)
+
+        mainFirebaseDatabase.deleteMuteUnmute(mentorId)
+        mainFirebaseDatabase.deleteAllData(mentorId)
+        mainFirebaseDatabase.deleteRoomData(mentorId)
+        mainFirebaseDatabase.deleteAnimUser(mentorId)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         activityInstance = activity
         binding.container.setBackgroundColor(Color.WHITE);

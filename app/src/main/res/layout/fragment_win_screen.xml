@@ -636,7 +636,7 @@
 
             <RelativeLayout
                 android:id="@+id/rel_img"
-                android:layout_width="@dimen/_62sdp"
+                android:layout_width="@dimen/_60sdp"
                 android:layout_height="wrap_content">
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -646,12 +646,13 @@
                     android:src="@drawable/josh_skill_bg"
                     app:civ_border_color="@color/light_blue_quiz"
                     app:civ_border_width="@dimen/_2sdp"
-                    android:layout_alignParentRight="true" />
+                    />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/team1_user_image2_shadow"
                     android:layout_width="@dimen/_60sdp"
                     android:layout_height="@dimen/_60sdp"
+                    android:layout_centerInParent="true"
                     android:src="@drawable/ic_offline_shadow_img"
                     android:visibility="invisible" />
 

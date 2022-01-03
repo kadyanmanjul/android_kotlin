@@ -13,22 +13,29 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.RandomFragmentTeamMateFoundFragnmentBinding
+import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
+import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDurationRoomData
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateFoundViewModel
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 //Channel Name = team_id
 const val OPPONENT_USER_IMAGE: String = "opponentUserImage"
 const val OPPONENT_USER_NAME: String = "opponentUserName"
+const val CURRENT_USER_TEAM_ID:String ="current_user_team_id"
 
 class RandomTeamMateFoundFragnment : Fragment() {
     private lateinit var binding: RandomFragmentTeamMateFoundFragnmentBinding
@@ -40,6 +47,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
     private var engine: RtcEngine? = null
     private var flag = 1
     private var flagSound = 1
+    private var currentUserTeamId: String?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,6 +55,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
             roomId = it.getString("roomId")
             opponentUserImage = it.getString(OPPONENT_USER_IMAGE)
             opponentUserName = it.getString(OPPONENT_USER_NAME)
+            currentUserTeamId=it.getString(CURRENT_USER_TEAM_ID)
         }
     }
 
@@ -150,12 +159,13 @@ class RandomTeamMateFoundFragnment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(roomId: String?, opponentUserImage: String, opponentUserName: String?) =
+        fun newInstance(roomId: String?, opponentUserImage: String, opponentUserName: String?,currentUserTeamId:String) =
             RandomTeamMateFoundFragnment().apply {
                 arguments = Bundle().apply {
                     putString("roomId", roomId)
                     putString(OPPONENT_USER_IMAGE, opponentUserImage)
                     putString(OPPONENT_USER_NAME, opponentUserName)
+                    putString(CURRENT_USER_TEAM_ID,currentUserTeamId)
                 }
             }
     }
@@ -186,11 +196,43 @@ class RandomTeamMateFoundFragnment : Fragment() {
             })
     }
 
-    fun positiveBtnAction(){
-        AudioManagerQuiz.audioRecording.stopPlaying()
-        openChoiceScreen()
-        engine?.leaveChannel()
-        binding.callTime.stop()
+    fun positiveBtnAction() {
+        val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+        randomTeamMateFoundViewModel?.saveCallDuration(
+            SaveCallDuration(
+                currentUserTeamId ?: "",
+                startTime.toInt().div(1000).toString(),
+                currentUserId ?: ""
+            )
+        )
+
+        randomTeamMateFoundViewModel?.getClearRadius(
+            SaveCallDurationRoomData(
+                roomId ?: "",
+                currentUserId ?: "",
+                currentUserTeamId ?: "",
+                startTime.toInt().div(1000).toString()
+            )
+        )
+
+        activity?.let {
+            randomTeamMateFoundViewModel?.saveCallDuration?.observe(it, Observer {
+                if (it.message == CALL_DURATION_RESPONSE) {
+                    val points = it.points
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        UtilsQuiz.showSnackBar(
+                            binding.container,
+                            Snackbar.LENGTH_SHORT,
+                            "You earned +$points for speaking in English"
+                        )
+                    }
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    openChoiceScreen()
+                    engine?.leaveChannel()
+                    binding.callTime.stop()
+                }
+            })
+        }
     }
 
     fun openChoiceScreen() {

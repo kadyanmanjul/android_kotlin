@@ -18,22 +18,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.util.CollectionUtils
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.FragmentQuestionBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.QuestionRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
+import kotlinx.android.synthetic.main.cell_grammar_heading_layout.*
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
 import kotlinx.android.synthetic.main.fragment_question.*
 import kotlinx.coroutines.Dispatchers
@@ -112,7 +110,11 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     lateinit var progressBar: ProgressBar
     lateinit var progressBar1: ProgressBar
 
+    val handlerForTimer = Handler(Looper.getMainLooper())
 
+    //val handlerForAnswerAnim = Handler(Looper.getMainLooper())
+    //val handlerOpponentTeamCutCard = Handler(Looper.getMainLooper())
+    var isUiShown = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -166,7 +168,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         AudioManagerQuiz.audioRecording.stopPlaying()
         if (position == 0) {
             animationForText(binding.roundNumber)
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.Main) {
                 myDelay()
                 startTimer()
             }
@@ -393,7 +395,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 false
             )
         }
-        val handler = Handler(Looper.getMainLooper())
         try {
             timer = object : CountDownTimer(16000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
@@ -416,7 +417,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     displayAnswerAndShowNextQuestion()
                 }
             }
-            handler.postDelayed({
+            handlerForTimer.postDelayed({
                 timer?.start()
             }, 2000)
         } catch (ex: Exception) {
@@ -424,55 +425,37 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     }
 
     fun displayAnswerAndShowNextQuestion() {
-        when (choiceValue) {
-            binding.answer1.text -> {
-                binding.card2.visibility = View.INVISIBLE
-                binding.card3.visibility = View.INVISIBLE
-                binding.card4.visibility = View.INVISIBLE
+        try {
+            when (choiceValue) {
+                binding.answer1.text -> {
+                    binding.card2.visibility = View.INVISIBLE
+                    binding.card3.visibility = View.INVISIBLE
+                    binding.card4.visibility = View.INVISIBLE
 
-                binding.answer1.setTextColor(getGreenColor())
+                    binding.answer1.setTextColor(getGreenColor())
+                }
+                binding.answer2.text -> {
+                    binding.card1.visibility = View.INVISIBLE
+                    binding.card3.visibility = View.INVISIBLE
+                    binding.card4.visibility = View.INVISIBLE
 
-//                activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                    binding.answer1.setTextColor(
-//                        it
-//                    )
-//                }
-            }
-            binding.answer2.text -> {
-                binding.card1.visibility = View.INVISIBLE
-                binding.card3.visibility = View.INVISIBLE
-                binding.card4.visibility = View.INVISIBLE
+                    binding.answer2.setTextColor(getGreenColor())
+                }
+                binding.answer3.text -> {
+                    binding.card1.visibility = View.INVISIBLE
+                    binding.card2.visibility = View.INVISIBLE
+                    binding.card4.visibility = View.INVISIBLE
 
-                binding.answer2.setTextColor(getGreenColor())
-//                activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                    binding.answer2.setTextColor(
-//                        it
-//                    )
-//                }
+                    binding.answer3.setTextColor(getGreenColor())
+                }
+                binding.answer4.text -> {
+                    binding.card1.visibility = View.INVISIBLE
+                    binding.card2.visibility = View.INVISIBLE
+                    binding.card3.visibility = View.INVISIBLE
+                    binding.answer4.setTextColor(getGreenColor())
+                }
             }
-            binding.answer3.text -> {
-                binding.card1.visibility = View.INVISIBLE
-                binding.card2.visibility = View.INVISIBLE
-                binding.card4.visibility = View.INVISIBLE
-
-                binding.answer3.setTextColor(getGreenColor())
-//                activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                    binding.answer3.setTextColor(
-//                        it
-//                    )
-                //}
-            }
-            binding.answer4.text -> {
-                binding.card1.visibility = View.INVISIBLE
-                binding.card2.visibility = View.INVISIBLE
-                binding.card3.visibility = View.INVISIBLE
-                binding.answer4.setTextColor(getGreenColor())
-//                activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                    binding.answer4.setTextColor(
-//                        it
-//                    )
-//                }
-            }
+        } catch (ex: Exception) {
         }
         lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
@@ -485,17 +468,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.answer2.setTextColor(getBlackColor())
             binding.answer3.setTextColor(getBlackColor())
             binding.answer4.setTextColor(getBlackColor())
-//            activity?.resources?.getColor(R.color.black_quiz)
-//                ?.let { binding.answer1.setTextColor(it) }
-//
-//            activity?.resources?.getColor(R.color.black_quiz)
-//                ?.let { binding.answer2.setTextColor(it) }
-//
-//            activity?.resources?.getColor(R.color.black_quiz)
-//                ?.let { binding.answer3.setTextColor(it) }
-//
-//            activity?.resources?.getColor(R.color.black_quiz)
-//                ?.let { binding.answer4.setTextColor(it) }
 
             position++
             try {
@@ -504,17 +476,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     progressBar.progress = marks
                     progressBar1.progress = opponentTeamMarks
                     progressBar.progressTintList = ColorStateList.valueOf(getBlue2Color())
-//                        activity?.resources?.getColor(R.color.blue2)?.let {
-//                            ColorStateList.valueOf(
-//                                it
-//                            )
-//                        }
+
                     progressBar1.progressTintList = ColorStateList.valueOf(getBlue2Color())
-//                        activity?.resources?.getColor(R.color.blue2)?.let {
-//                            ColorStateList.valueOf(
-//                                it
-//                            )
-//                        }
                 }
             } catch (ex: Exception) {
 
@@ -541,7 +504,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.question.visibility = View.INVISIBLE
                 binding.marks1.setTextColor(getWhiteColor())
                 binding.marks2.setTextColor(getWhiteColor())
-            }catch (ex:Exception){}
+            } catch (ex: Exception) {
+            }
 
             makeAgainCardSquare()
             firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
@@ -618,7 +582,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
 
             val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
             binding.team1UserImage1.setUserImageOrInitials(
                 imageUrl1,
                 team1User1Name ?: "",
@@ -629,7 +592,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
 
             val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
-            // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
                 team1User2Name ?: "",
@@ -639,7 +601,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.team1User2Name.text = team1User2Name
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
                 team2User1Name ?: "",
@@ -649,7 +610,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.team2User1Name.text = team2User1Name
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
                 team2User2Name ?: "",
@@ -679,7 +639,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
 
             val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
             binding.team1UserImage1.setUserImageOrInitials(
                 imageUrl1,
                 team2User1Name ?: "",
@@ -689,7 +648,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.team1User1Name.text = team2User1Name
 
             val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
                 team2User2Name ?: "",
@@ -699,7 +657,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.team1User2Name.text = team2User2Name
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-            //  ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
                 team1User1Name ?: "",
@@ -709,7 +666,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.team2User1Name.text = team1User1Name
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
                 team1User2Name ?: "",
@@ -722,7 +678,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     }
 
     private fun myDelay() {
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.Main) {
             binding.progress.animateProgress()
             binding.progress1.animateProgress()
         }
@@ -754,7 +710,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             v.visibility = View.VISIBLE
             progress.visibility = View.VISIBLE
             progress1.visibility = View.VISIBLE
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
     }
 
     private fun scaleAnimationForTeam2(v: View) {
@@ -764,7 +721,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             animation.fillAfter = true
             v.startAnimation(animation)
             v.visibility = View.VISIBLE
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
     }
 
     private fun animationForText(v: View) {
@@ -772,7 +730,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             val animation1 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
             v.startAnimation(animation1)
             v.visibility = View.VISIBLE
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
     }
 
     private fun animationForRound() {
@@ -799,25 +758,28 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
             })
 
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.Main) {
                 myDelay()
                 startTimer()
             }
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
     }
 
     private fun answerAnim() {
         try {
-            val handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({
-                binding.card1.visibility = View.VISIBLE
-                binding.card2.visibility = View.VISIBLE
-                binding.card3.visibility = View.VISIBLE
-                binding.card4.visibility = View.VISIBLE
+            if (isUiShown){
+                lifecycleScope.launch(Dispatchers.Main) {
+                    delay(2000)
+                    binding.card1.visibility = View.VISIBLE
+                    binding.card2.visibility = View.VISIBLE
+                    binding.card3.visibility = View.VISIBLE
+                    binding.card4.visibility = View.VISIBLE
 
-                val animation3 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
-                binding.layoutCard.startAnimation(animation3)
-            }, 2000)
+                    val animation3 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
+                    binding.layoutCard.startAnimation(animation3)
+                }
+            }
         } catch (ex: Exception) { }
     }
 
@@ -893,10 +855,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         if (position != 0)
                             progressBar.progressTintList = ColorStateList.valueOf(getGreenColor())
 
-//                            activity?.resources?.getColor(R.color.green_quiz)?.let { it1 ->
-//                                ColorStateList.valueOf(getGreenColor())
-//                            }
-
                         binding.marks1.text = marks.toString()
                         secondaryProgressStatus = marks
                         progressBar.secondaryProgress = secondaryProgressStatus
@@ -906,11 +864,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     } else {
                         progressBar.progress = marks
                         progressBar.progressTintList = ColorStateList.valueOf(getBlue2Color())
-//                        activity?.resources?.getColor(R.color.blue2)?.let { it1 ->
-//                            ColorStateList.valueOf(
-//                                it1
-//                            )
-//                        }
                     }
                 } catch (ex: Exception) {
 
@@ -927,7 +880,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 }
 
             }
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
     }
 
     private fun getDisplayAnswerAfterQuesComplete(): String {
@@ -954,48 +908,13 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     binding.answer2.setTextColor(getBlackColor())
                     binding.answer3.setTextColor(getBlackColor())
                     binding.answer4.setTextColor(getBlackColor())
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer2.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer3.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer4.setTextColor(
-//                            it
-//                        )
-//                    }
 
                     if (isCorrect == TRUE) {
                         binding.marks1.setTextColor(getGreenColor())
                         binding.answer1.setTextColor(getGreenColor())
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.answer1.setTextColor(
-//                                it
-//                            )
-//                        }
                     } else {
                         binding.marks1.setTextColor(getRedColor())
                         binding.answer1.setTextColor(getRedColor())
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.answer1.setTextColor(
-//                                it
-//                            )
-//                        }
                     }
                 } catch (ex: Exception) {
                 }
@@ -1006,48 +925,12 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     binding.answer3.setTextColor(getBlackColor())
                     binding.answer4.setTextColor(getBlackColor())
                     binding.answer1.setTextColor(getBlackColor())
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer3.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer4.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer1.setTextColor(
-//                            it
-//                        )
-//                    }
-
                     if (isCorrect == TRUE) {
                         binding.marks1.setTextColor(getGreenColor())
                         binding.answer2.setTextColor(getGreenColor())
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.answer2.setTextColor(
-//                                it
-//                            )
-//                        }
                     } else {
                         binding.marks1.setTextColor(getRedColor())
                         binding.answer2.setTextColor(getRedColor())
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.answer2.setTextColor(
-//                                it
-//                            )
-//                        }
                     }
                 } catch (ex: Exception) {
                 }
@@ -1058,48 +941,13 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     binding.answer2.setTextColor(getBlackColor())
                     binding.answer4.setTextColor(getBlackColor())
                     binding.answer1.setTextColor(getBlackColor())
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer2.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer4.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer1.setTextColor(
-//                            it
-//                        )
-//                    }
 
                     if (isCorrect == TRUE) {
                         binding.marks1.setTextColor(getGreenColor())
                         binding.answer3.setTextColor(getGreenColor())
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.answer3.setTextColor(
-//                                it
-//                            )
-//                        }
                     } else {
                         binding.marks1.setTextColor(getRedColor())
                         binding.answer3.setTextColor(getRedColor())
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.answer3.setTextColor(
-//                                it
-//                            )
-//                        }
                     }
                 } catch (ex: Exception) {
                 }
@@ -1110,48 +958,14 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     binding.answer3.setTextColor(getBlackColor())
                     binding.answer1.setTextColor(getBlackColor())
                     binding.answer2.setTextColor(getBlackColor())
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer3.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer1.setTextColor(
-//                            it
-//                        )
-//                    }
-//                    activity?.resources?.getColor(R.color.black_quiz)?.let {
-//                        binding.answer2.setTextColor(
-//                            it
-//                        )
-//                    }
 
                     if (isCorrect == TRUE) {
                         binding.marks1.setTextColor(getGreenColor())
                         binding.answer4.setTextColor(getGreenColor())
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            binding.answer4.setTextColor(
-//                                it
-//                            )
-//                        }
                     } else {
                         binding.marks1.setTextColor(getRedColor())
                         binding.answer4.setTextColor(getRedColor())
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.marks1.setTextColor(
-//                                it
-//                            )
-//                        }
-//                        activity?.resources?.getColor(R.color.red)?.let {
-//                            binding.answer4.setTextColor(
-//                                it
-//                            )
-//                        }
+
                     }
                 } catch (ex: Exception) {
                 }
@@ -1179,9 +993,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         choiceAnswer: String,
         marks1: String
     ) {
-        //yaha animation show karna hai
-        // val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
-        // imageView1.startAnimation(animation)
         binding.progress1.pauseProgress()
         disableCardClick()
         choiceAnswer(choiceAnswer, isCorrect)
@@ -1195,22 +1006,12 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     progressBar.progress = marks - 10
                     if (position != 0)
                         progressBar.progressTintList = ColorStateList.valueOf(getGreenColor())
-//                            activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                                ColorStateList.valueOf(
-//                                    it
-//                                )
-//                            }
                 } catch (ex: Exception) {
                 }
             } else {
                 try {
                     progressBar.progress = marks
                     progressBar.progressTintList = ColorStateList.valueOf(getBlue2Color())
-//                        activity?.resources?.getColor(R.color.blue2)?.let {
-//                        ColorStateList.valueOf(
-//                            it
-//                        )
-//                    }
                     val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
                     ContextCompat.getDrawable(
                         AppObjectController.joshApplication,
@@ -1242,33 +1043,17 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         if (isCorrect == TRUE) {
             try {
                 binding.marks2.setTextColor(getGreenColor())
-//                activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                    binding.marks2.setTextColor(
-//                        it
-//                    )
-//                }
                 progressBar1.secondaryProgress = opponentTeamMarks
                 progressBar1.progress = opponentTeamMarks - 10
                 if (position != 0)
                     progressBar1.progressTintList = ColorStateList.valueOf(getGreenColor())
-//                        activity?.resources?.getColor(R.color.green_quiz)?.let {
-//                            ColorStateList.valueOf(
-//                                it
-//                            )
-//                        }
             } catch (ex: Exception) {
             }
         } else {
             try {
                 binding.marks2.setTextColor(getRedColor())
-               // activity?.resources?.getColor(R.color.red)?.let { binding.marks2.setTextColor(it) }
                 progressBar1.progress = opponentTeamMarks
                 progressBar1.progressTintList = ColorStateList.valueOf(getBlue2Color())
-//                    activity?.resources?.getColor(R.color.blue2)?.let {
-//                    ColorStateList.valueOf(
-//                        it
-//                    )
-//                  }
                 val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
                 binding.verticalProgressbar1.setBackgroundDrawable(getVerticalRedDrawable())
                 binding.verticalProgressbar1.startAnimation(animation)
@@ -1294,6 +1079,15 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     }
 
     fun positiveBtnAction() {
+        val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+        questionViewModel?.saveCallDuration(
+            SaveCallDuration(
+                currentUserTeamId ?: "",
+                startTime.toInt().div(1000).toString(),
+                currentUserId ?: ""
+            )
+        )
+
         if (fromType == RANDOM) {
             try {
                 questionViewModel?.getClearRadius(
@@ -1305,11 +1099,21 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel?.clearRadius?.observe(it, {
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        openFavouritePartnerScreen()
-                        engine?.leaveChannel()
-                        binding.callTime.stop()
+                    questionViewModel?.saveCallDuration?.observe(it, {
+                        if (it.message == CALL_DURATION_RESPONSE) {
+                            val points = it.points
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                UtilsQuiz.showSnackBar(
+                                    binding.container,
+                                    Snackbar.LENGTH_SHORT,
+                                    "You earned +$points for speaking in English"
+                                )
+                            }
+                            AudioManagerQuiz.audioRecording.stopPlaying()
+                            openFavouritePartnerScreen()
+                            engine?.leaveChannel()
+                            binding.callTime.stop()
+                        }
                     })
                 }
             } catch (ex: Exception) {
@@ -1325,11 +1129,21 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel?.deleteData?.observe(it, Observer {
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        openFavouritePartnerScreen()
-                        engine?.leaveChannel()
-                        binding.callTime.stop()
+                    questionViewModel?.saveCallDuration?.observe(it, {
+                        if (it.message == CALL_DURATION_RESPONSE) {
+                            val points = it.points
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                UtilsQuiz.showSnackBar(
+                                    binding.container,
+                                    Snackbar.LENGTH_SHORT,
+                                    "You earned +$points for speaking in English"
+                                )
+                            }
+                            AudioManagerQuiz.audioRecording.stopPlaying()
+                            openFavouritePartnerScreen()
+                            engine?.leaveChannel()
+                            binding.callTime.stop()
+                        }
                     })
                 }
             } catch (ex: Exception) {
@@ -1359,10 +1173,15 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     override fun onDestroy() {
         super.onDestroy()
         try {
+            isUiShown = false
+            handlerForTimer.removeCallbacksAndMessages(null)
             timer?.cancel()
-        } catch (ex: Exception) {
+        } catch (ex: Exception) { }
+    }
 
-        }
+    override fun onResume() {
+        super.onResume()
+        isUiShown = true
     }
 
     private fun openWinScreen() {
@@ -1402,7 +1221,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer1.text -> {
                     drawTriangleOnCard(binding.imageCardRight1)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1411,7 +1230,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer2.text -> {
                     drawTriangleOnCard(binding.imageCardRight2)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1420,7 +1239,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer3.text -> {
                     drawTriangleOnCard(binding.imageCardRight3)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1429,7 +1248,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer4.text -> {
                     drawTriangleOnCard(binding.imageCardRight4)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1451,7 +1270,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer1.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight1)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1460,7 +1279,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer2.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight2)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1469,7 +1288,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer3.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight3)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1478,7 +1297,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer4.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight4)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
                         timer?.cancel()
                         timer?.onFinish()
@@ -1523,7 +1342,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         binding.team1UserImage2Shadow.visibility = View.VISIBLE
                     }
                 } catch (ex: Exception) {
-                   Timber.d(ex)
+                    Timber.d(ex)
                 }
             }
             team1UserId2 == currentUserId -> {
@@ -1542,7 +1361,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         binding.team2User2Name.alpha = 0.5f
                         binding.team2UserImage2Shadow.visibility = View.VISIBLE
                     }
-                }catch (ex:Exception){
+                } catch (ex: Exception) {
                     Timber.d(ex)
                 }
             }
@@ -1552,8 +1371,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         binding.team2User1Name.alpha = 0.5f
                         binding.team2UserImage1Shadow.visibility = View.VISIBLE
                     }
-                }catch (ex:Exception){
-                   Timber.d(ex)
+                } catch (ex: Exception) {
+                    Timber.d(ex)
                 }
             }
         }
@@ -1622,11 +1441,18 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         return ContextCompat.getColor(AppObjectController.joshApplication, R.color.white)
     }
 
-    fun getVerticalRedDrawable() :Drawable?{
-        return ContextCompat.getDrawable(AppObjectController.joshApplication,R.drawable.vertical_red)
+    fun getVerticalRedDrawable(): Drawable? {
+        return ContextCompat.getDrawable(
+            AppObjectController.joshApplication,
+            R.drawable.vertical_red
+        )
     }
 
-    fun getVerticalBlackDrawable():Drawable?{
-        return ContextCompat.getDrawable(AppObjectController.joshApplication,R.drawable.vertical_black)
+    fun getVerticalBlackDrawable(): Drawable? {
+        return ContextCompat.getDrawable(
+            AppObjectController.joshApplication,
+            R.drawable.vertical_black
+        )
     }
+
 }

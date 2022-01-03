@@ -1017,5 +1017,6 @@
     <string name="score_text">110</string>
     <string name="bonus_marks">5</string>
     <string name="total">Total</string>
+    <string name="points_earn_quiz_from_quiz">You earned </string>
 
 </resources>

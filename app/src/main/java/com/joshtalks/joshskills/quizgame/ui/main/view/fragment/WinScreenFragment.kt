@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
@@ -26,11 +30,11 @@ import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SaveRoomRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewProviderFactory
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 const val YOU_WON:String = "You Won!"
@@ -400,26 +404,55 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
     }
 
     fun positiveBtnAction(){
+        //val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+        saveRoomDataViewModel?.saveCallDuration(
+            SaveCallDuration(
+                currentUserTeamId ?: "",
+                time?.div(1000).toString(),
+                currentUserId ?: ""
+            )
+        )
             if (fromType == RANDOM){
                 saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
-                activity?.let {
-                    saveRoomDataViewModel?.clearRadius?.observe(it, {
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        engine?.leaveChannel()
-                        openFavouritePartnerScreen()
-                    })
-                }
+                    activity?.let {
+                        saveRoomDataViewModel?.saveCallDuration?.observe(it, {
+                            if (it.message == CALL_DURATION_RESPONSE) {
+                                val points = it.points
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    UtilsQuiz.showSnackBar(
+                                        binding.container,
+                                        Snackbar.LENGTH_SHORT,
+                                        "You earned +$points for speaking in English"
+                                    )
+                                }
+                                AudioManagerQuiz.audioRecording.stopPlaying()
+                                engine?.leaveChannel()
+                                openFavouritePartnerScreen()
+                            }
+                        })
+                    }
             }else{
                 saveRoomDataViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
                 activity?.let {
-                    saveRoomDataViewModel?.deleteData?.observe(it, Observer {
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        engine?.leaveChannel()
-                        openFavouritePartnerScreen()
+                    saveRoomDataViewModel?.saveCallDuration?.observe(it, {
+                        if (it.message == CALL_DURATION_RESPONSE) {
+                            val points = it.points
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                UtilsQuiz.showSnackBar(
+                                    binding.container,
+                                    Snackbar.LENGTH_SHORT,
+                                    "You earned +$points for speaking in English"
+                                )
+                            }
+                            AudioManagerQuiz.audioRecording.stopPlaying()
+                            engine?.leaveChannel()
+                            openFavouritePartnerScreen()
+                        }
                     })
                 }
             }
     }
+
     fun openFavouritePartnerScreen() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()

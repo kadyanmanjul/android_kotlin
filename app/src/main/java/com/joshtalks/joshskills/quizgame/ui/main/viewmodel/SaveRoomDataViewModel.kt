@@ -25,6 +25,7 @@ class SaveRoomDataViewModel(
     var fppData: MutableLiveData<Success> = MutableLiveData()
     var addToRoom: MutableLiveData<AddToRoomResponse> = MutableLiveData()
     var playAgainData: MutableLiveData<Success> = MutableLiveData()
+    val saveCallDuration :MutableLiveData<CallDurationResponse> = MutableLiveData()
 
     fun saveRoomDetails(saveRoomDetails: SaveRoomDetails) {
         try {
@@ -114,5 +115,18 @@ class SaveRoomDataViewModel(
         } catch (ex: Throwable) {
             Timber.d(ex)
         }
+    }
+
+    fun saveCallDuration(callDuration: SaveCallDuration) {
+        try {
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = saveRoomRepo.saveDurationOfCall(callDuration)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        saveCallDuration.postValue(response.body())
+                    }
+                }
+            }
+        } catch (ex: Exception) {}
     }
 }

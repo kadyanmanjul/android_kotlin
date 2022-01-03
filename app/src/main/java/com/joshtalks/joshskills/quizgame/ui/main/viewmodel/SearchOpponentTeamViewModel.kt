@@ -23,6 +23,7 @@ class SearchOpponentTeamViewModel(
     var roomUserData: MutableLiveData<RandomRoomResponse> = MutableLiveData()
     var deleteData: MutableLiveData<Success> = MutableLiveData()
     var saveDuration: MutableLiveData<Success> = MutableLiveData()
+    val saveCallDuration: MutableLiveData<CallDurationResponse> = MutableLiveData()
 
     fun addToRoomData(teamId: ChannelName) {
         try {
@@ -65,7 +66,7 @@ class SearchOpponentTeamViewModel(
                 }
             }
         } catch (ex: Exception) {
-            showToast(ex.message?:"")
+            showToast(ex.message ?: "")
         }
     }
 
@@ -83,5 +84,18 @@ class SearchOpponentTeamViewModel(
         } catch (ex: Exception) {
 
         }
+    }
+
+    fun saveCallDuration(callDuration: SaveCallDuration) {
+        try {
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = searchOpponentRepo.saveDurationOfCall(callDuration)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        saveCallDuration.postValue(response.body())
+                    }
+                }
+            }
+        } catch (ex: Exception) {}
     }
 }

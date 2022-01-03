@@ -106,6 +106,7 @@ class StartActivity : BaseQuizActivity() {
         firebaseDatabase.deleteMuteUnmute(mentorId)
         firebaseDatabase.deleteAllData(mentorId)
         firebaseDatabase.deleteRoomData(mentorId)
+        firebaseDatabase.deleteAnimUser(mentorId)
     }
 
     // TODO: Need to refactor

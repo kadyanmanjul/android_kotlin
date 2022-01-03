@@ -21,6 +21,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
     var roomUserDataTemp: MutableLiveData<RandomRoomResponse> = MutableLiveData()
     var clearRadius: MutableLiveData<Success> = MutableLiveData()
     var deleteData: MutableLiveData<Success> = MutableLiveData()
+    val saveCallDuration :MutableLiveData<CallDurationResponse> = MutableLiveData()
 
 
     fun getQuizQuestion(questionRequest: QuestionRequest) {
@@ -111,6 +112,21 @@ class QuestionViewModel(var application111: Application, private val questionRep
             }
         } catch (ex: Exception) {
             ex.showAppropriateMsg()
+        }
+    }
+
+    fun saveCallDuration(callDuration: SaveCallDuration) {
+        try {
+            if (UpdateReceiver.isNetworkAvailable(application111)) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = questionRepo.saveDurationOfCall(callDuration)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        saveCallDuration.postValue(response.body())
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+
         }
     }
 }

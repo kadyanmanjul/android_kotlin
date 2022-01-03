@@ -12,40 +12,43 @@ import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.BothTeamRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewProviderFactory
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
-const val START_TIME:String = "start_time"
-const val ROOM_ID:String ="room_id"
+const val START_TIME: String = "start_time"
+const val ROOM_ID: String = "room_id"
 const val CHANNEL_NAME = "channelName"
-const val USER_DETAILS:String ="userDetails"
-const val MESSAGE ="Your partner left the you have to play alone"
+const val USER_DETAILS: String = "userDetails"
+const val MESSAGE = "Your partner left the you have to play alone"
 
-class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
-    var startTime:String?=null
-    private var roomId:String?=null
-    private var userDetails : UserDetails? = null
-    private var channelName:String?=null
-    var bothTeamRepo : BothTeamRepo?=null
-    var factory : BothTeamViewProviderFactory?=null
-    var bothTeamViewModel:BothTeamViewModel?=null
+class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
+    var startTime: String? = null
+    private var roomId: String? = null
+    private var userDetails: UserDetails? = null
+    private var channelName: String? = null
+    var bothTeamRepo: BothTeamRepo? = null
+    var factory: BothTeamViewProviderFactory? = null
+    var bothTeamViewModel: BothTeamViewModel? = null
     lateinit var binding: FragmentBothTeamMateFoundBinding
-    var teamId1 :String?=null
-    var teamId2 : String?=null
+    var teamId1: String? = null
+    var teamId2: String? = null
     private var team1Id: String? = null
     private var usersInTeam1: UsersInTeam1? = null
     private var team2Id: String? = null
@@ -71,9 +74,9 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     private var team2User1ImageUrl: String? = null
     private var team2User2ImageUrl: String? = null
 
-    private var currentUserTeamId:String?=null
+    private var currentUserTeamId: String? = null
 
-    private var currentUserId : String?=null
+    private var currentUserId: String? = null
     private var engine: RtcEngine? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,14 +93,14 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View{
+    ): View {
         binding =
-        DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_both_team_mate_found,
-            container,
-            false
-        )
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_both_team_mate_found,
+                container,
+                false
+            )
         binding.lifecycleOwner = this
         binding.clickHandler = this
         binding.callTime.visibility = View.VISIBLE
@@ -109,7 +112,7 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE);
-        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)){
+        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             binding.userName4.alpha = 0.5f
             binding.userImage4Shadow.visibility = View.VISIBLE
         }
@@ -120,7 +123,7 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
         try {
             engine = P2pRtc().initEngine(requireActivity())
             P2pRtc().addListener(callback)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Timber.d(ex)
         }
         onBackPress()
@@ -128,22 +131,29 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
 
     companion object {
         @JvmStatic
-        fun newInstance(startTime: String,roomId:String,userDetails: UserDetails?, channelName: String) =
+        fun newInstance(
+            startTime: String,
+            roomId: String,
+            userDetails: UserDetails?,
+            channelName: String
+        ) =
             BothTeamMateFound().apply {
                 arguments = Bundle().apply {
-                    putString(START_TIME,startTime)
-                    putString(ROOM_ID,roomId)
-                    putParcelable(USER_DETAILS,userDetails)
-                    putString(CHANNEL_NAME,channelName)
+                    putString(START_TIME, startTime)
+                    putString(ROOM_ID, roomId)
+                    putParcelable(USER_DETAILS, userDetails)
+                    putString(CHANNEL_NAME, channelName)
                 }
             }
     }
+
     override fun onStart() {
         super.onStart()
         call_time.visibility = View.VISIBLE
         call_time.base = SystemClock.elapsedRealtime().minus(startTime?.toLong()!!)
         call_time.start()
     }
+
     private fun setupViewModel() {
         bothTeamRepo = BothTeamRepo()
         factory = activity?.application?.let { BothTeamViewProviderFactory(it, bothTeamRepo!!) }
@@ -151,14 +161,16 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
             ViewModelProvider(this, it).get(BothTeamViewModel::class.java)
         }
     }
+
     private fun getRoomData() {
-        bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId?:"",currentUserId?:""))
+        bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId ?: "", currentUserId ?: ""))
         activity?.let {
-               bothTeamViewModel?.roomUserData?.observe(it, {
-                   initializeUsersTeamsData(it.teamData)
-               })
+            bothTeamViewModel?.roomUserData?.observe(it, {
+                initializeUsersTeamsData(it.teamData)
+            })
         }
     }
+
     private fun initializeUsersTeamsData(teamsData: TeamsData) {
         team1Id = teamsData.team1Id
         team2Id = teamsData.team2Id
@@ -193,96 +205,133 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
         team2User2ImageUrl = user4?.imageUrl
 
 
-        if (team1UserId1 == currentUserId || team1UserId2 == currentUserId){
+        if (team1UserId1 == currentUserId || team1UserId2 == currentUserId) {
 
             currentUserTeamId = team1Id
 
-            val imageUrl1 = team1User1ImageUrl?.replace("\n","")
-           // ImageAdapter.imageUrl(binding.userImage3,imageUrl1)
-            binding.userImage3.setUserImageOrInitials(imageUrl1,team1User1Name?:"",30,true)
+            val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
+            // ImageAdapter.imageUrl(binding.userImage3,imageUrl1)
+            binding.userImage3.setUserImageOrInitials(imageUrl1, team1User1Name ?: "", 30, true)
             binding.userName3.text = team1User1Name
 
-            val imageUrl2= team1User2ImageUrl?.replace("\n","")
-           // ImageAdapter.imageUrl(binding.userImage4,imageUrl2)
-            binding.userImage4.setUserImageOrInitials(imageUrl2,team1User2Name?:"",30,true)
+            val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
+            // ImageAdapter.imageUrl(binding.userImage4,imageUrl2)
+            binding.userImage4.setUserImageOrInitials(imageUrl2, team1User2Name ?: "", 30, true)
             binding.userName4.text = team1User2Name
 
-            val imageUrl3 = team2User1ImageUrl?.replace("\n","")
+            val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage1,imageUrl3)
-            binding.userImage1.setUserImageOrInitials(imageUrl3,team2User1Name?:"",30,true)
+            binding.userImage1.setUserImageOrInitials(imageUrl3, team2User1Name ?: "", 30, true)
             binding.userName1.text = team2User1Name
 
-            val imageUrl4= team2User2ImageUrl?.replace("\n","")
+            val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage2,imageUrl4)
-            binding.userImage2.setUserImageOrInitials(imageUrl4,team2User2Name?:"",30,true)
+            binding.userImage2.setUserImageOrInitials(imageUrl4, team2User2Name ?: "", 30, true)
             binding.userName2.text = team2User2Name
 
-        }else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId){
+        } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
 
             currentUserTeamId = team2Id
 
-            val imageUrl1 = team2User1ImageUrl?.replace("\n","")
+            val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage3,imageUrl1)
-            binding.userImage3.setUserImageOrInitials(imageUrl1,team2User1Name?:"",30,true)
+            binding.userImage3.setUserImageOrInitials(imageUrl1, team2User1Name ?: "", 30, true)
             binding.userName3.text = team2User1Name
 
-            val imageUrl2= team2User2ImageUrl?.replace("\n","")
+            val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage4,imageUrl2)
-            binding.userImage4.setUserImageOrInitials(imageUrl2,team2User2Name?:"",30,true)
+            binding.userImage4.setUserImageOrInitials(imageUrl2, team2User2Name ?: "", 30, true)
             binding.userName4.text = team2User2Name
 
-            val imageUrl3 = team1User1ImageUrl?.replace("\n","")
+            val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage1,imageUrl3)
-            binding.userImage1.setUserImageOrInitials(imageUrl3,team1User1Name?:"",30,true)
+            binding.userImage1.setUserImageOrInitials(imageUrl3, team1User1Name ?: "", 30, true)
             binding.userName1.text = team1User1Name
 
-            val imageUrl4= team1User2ImageUrl?.replace("\n","")
+            val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage2,imageUrl4)
-            binding.userImage2.setUserImageOrInitials(imageUrl4,team1User2Name?:"",30,true)
+            binding.userImage2.setUserImageOrInitials(imageUrl4, team1User2Name ?: "", 30, true)
             binding.userName2.text = team1User2Name
         }
     }
-    private fun moveFragment(){
+
+    private fun moveFragment() {
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
-            val startTime :String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+            val startTime: String =
+                (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
             val fm = activity?.supportFragmentManager
             fm?.beginTransaction()
-                ?.replace(R.id.container,
-                    QuestionFragment.newInstance(roomId,startTime,"Favourite"),"SearchingOpponentTeam")
+                ?.replace(
+                    R.id.container,
+                    QuestionFragment.newInstance(roomId, startTime, "Favourite"),
+                    "SearchingOpponentTeam"
+                )
                 ?.commit()
             fm?.popBackStack()
         }, 3000)
     }
+
     private fun onBackPress() {
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
-            }
-        })
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    CustomDialogQuiz(requireActivity()).showDialog(::positiveBtnAction)
+                }
+            })
     }
 
     fun positiveBtnAction() {
-        bothTeamViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",startTime?:""))
+        val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+        bothTeamViewModel?.deleteUserRoomData(
+            SaveCallDurationRoomData(
+                roomId ?: "",
+                currentUserId ?: "",
+                currentUserTeamId ?: "",
+                startTime ?: ""
+            )
+        )
+        bothTeamViewModel?.saveCallDuration(
+            SaveCallDuration(
+                channelName ?: "",
+                startTime.toInt().div(1000).toString(),
+                currentUserId ?: ""
+            )
+        )
         activity?.let {
-            bothTeamViewModel?.deleteData?.observe(it, {
-                engine?.leaveChannel()
-                binding.callTime.stop()
-                AudioManagerQuiz.audioRecording.stopPlaying()
-                openChoiceScreen()
+            bothTeamViewModel?.saveCallDuration?.observe(it, {
+                if (it.message == CALL_DURATION_RESPONSE) {
+                    val points = it.points
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        UtilsQuiz.showSnackBar(
+                            binding.container,
+                            Snackbar.LENGTH_SHORT,
+                            "You earned +$points for speaking in English"
+                        )
+                    }
+                    engine?.leaveChannel()
+                    binding.callTime.stop()
+                    AudioManagerQuiz.audioRecording.stopPlaying()
+                    openChoiceScreen()
+                }
             })
         }
     }
-   private fun openChoiceScreen(){
+
+    private fun openChoiceScreen() {
         val fm = activity?.supportFragmentManager
         fm?.beginTransaction()
-            ?.replace(R.id.container,
-                ChoiceFragment.newInstance(),"BothTeamMate")
+            ?.replace(
+                R.id.container,
+                ChoiceFragment.newInstance(), "BothTeamMate"
+            )
             ?.remove(this)
             ?.commit()
         fm?.popBackStack()
     }
-    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback {
         override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
@@ -291,8 +340,8 @@ class BothTeamMateFound : Fragment(),P2pRtc.WebRtcEngineCallback {
                     binding.userName4.alpha = 0.5f
                     binding.userImage4Shadow.visibility = View.VISIBLE
                 }
-            }catch (ex:Exception){
-              //  showToast(ex.message?:"")
+            } catch (ex: Exception) {
+                //  showToast(ex.message?:"")
             }
         }
     }
