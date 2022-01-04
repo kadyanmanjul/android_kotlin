@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.repository
 
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -454,7 +455,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun getLastSentMsgTime(id: String): Boolean {
         val timeFromDb = database.groupsAnalyticsDao().getLastSentMsgTime(id)
-        if (timeFromDb == null || System.currentTimeMillis() - timeFromDb > 86400000) {
+        if (timeFromDb == null || !DateUtils.isToday(timeFromDb)) {
             database.groupsAnalyticsDao().setLastSentMsgTime(GroupChatAnalyticsEntity(id, System.currentTimeMillis()))
             return true
         }

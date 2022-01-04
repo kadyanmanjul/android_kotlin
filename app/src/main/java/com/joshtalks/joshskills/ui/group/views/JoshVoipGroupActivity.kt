@@ -130,7 +130,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
             com.joshtalks.joshskills.core.showToast("You are the only member, Can't Initiate a Call")
             return
         }
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER)
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER, groupItemData?.getUniqueId() ?: "")
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
