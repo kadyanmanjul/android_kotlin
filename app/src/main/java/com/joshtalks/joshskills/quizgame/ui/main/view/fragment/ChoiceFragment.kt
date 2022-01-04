@@ -57,7 +57,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     var userName: String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
     private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
-    private var mainFirebaseDatabase:FirebaseDatabase=FirebaseDatabase()
+    private var mainFirebaseDatabase: FirebaseDatabase = FirebaseDatabase()
 
     private var engine: RtcEngine? = null
 
@@ -92,6 +92,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         mainFirebaseDatabase.deleteRoomData(mentorId)
         mainFirebaseDatabase.deleteAnimUser(mentorId)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         activityInstance = activity
         binding.container.setBackgroundColor(Color.WHITE);
@@ -314,7 +315,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         } catch (ex: Exception) {
         }
         try {
-            if (isShowFrag){
+            if (isShowFrag) {
                 handler5.postDelayed({
                     invisibleView(binding.notificationCard)
                     mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
@@ -348,7 +349,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         }
 
         try {
-            if (isShowFrag){
+            if (isShowFrag) {
                 handler9.postDelayed({
                     firebaseDatabase.deleteDeclineData(mentorId)
                     invisibleView(binding.notificationCardNotPlay)

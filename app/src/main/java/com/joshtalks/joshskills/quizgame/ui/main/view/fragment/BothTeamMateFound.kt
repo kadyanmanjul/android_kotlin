@@ -150,6 +150,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
         call_time.base = SystemClock.elapsedRealtime().minus(startTime?.toLong()!!)
         call_time.start()
     }
+
     private fun getRoomData() {
         bothTeamViewModel.getRoomUserData(RandomRoomData(roomId ?: "", currentUserId ?: ""))
         activity?.let {

@@ -624,6 +624,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
         favouriteAdapter?.updateList(temp, text)
     }
+
     override fun onGetLiveStatus(status: String, mentorId: String) {
         try {
             val pos: Int = favouriteAdapter?.getPositionById(mentorId) ?: 0

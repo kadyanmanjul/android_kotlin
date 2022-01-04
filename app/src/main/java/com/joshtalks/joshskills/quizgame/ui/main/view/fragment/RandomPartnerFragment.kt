@@ -96,12 +96,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     private var currentUserTeamId: String? = null
 
-//    private val PERMISSION_REQ_ID = 22
-//    private var REQUESTED_PERMISSIONS = arrayOf(
-//        Manifest.permission.RECORD_AUDIO,
-//        Manifest.permission.CAMERA
-//    )
-
     private var engine: RtcEngine? = null
     private var timer: CountDownTimer? = null
 
@@ -197,7 +191,8 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 } else {
                     try {
                         Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
-                    } catch (ex: Exception) { }
+                    } catch (ex: Exception) {
+                    }
                     searchRandomViewModel.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
                     activity?.let {
                         searchRandomViewModel.deleteData.observe(it, {
