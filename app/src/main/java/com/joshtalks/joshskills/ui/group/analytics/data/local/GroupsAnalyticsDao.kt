@@ -1,9 +1,7 @@
 package com.joshtalks.joshskills.ui.group.analytics.data.local
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.annotation.Nullable
+import androidx.room.*
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 
 @Dao
@@ -18,4 +16,11 @@ interface GroupsAnalyticsDao {
     @Transaction
     @Query("DELETE from groups_analytics WHERE id =:id")
     suspend fun deleteAnalytics(id: Long)
+
+    @Nullable
+    @Query("SELECT lastSentMsgTime FROM group_chat_analytics WHERE groupId = :id")
+    suspend fun getLastSentMsgTime(id: String): Long?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setLastSentMsgTime(item: GroupChatAnalyticsEntity)
 }

@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicDao
 import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
+import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.data.local.GroupChatDao
@@ -59,8 +60,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupsItem::class, TimeTokenRequest::class ,
-        ChatItem::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class
     ],
     version = 43,
     exportSchema = true
@@ -512,6 +513,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT, `adminId` TEXT)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT, `timeToken` INTEGER)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`message_id` INTEGER PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `msgTime` INTEGER NOT NULL, `groupId` TEXT NOT NULL, `msgType` INTEGER NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_analytics` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastSentMsgTime` INTEGER)")
                 database.execSQL("ALTER TABLE `groups_analytics` ADD COLUMN `groupId` TEXT")
             }
         }

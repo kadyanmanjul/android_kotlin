@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
+import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
@@ -168,7 +169,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     fun getGroupListLocal(): Pager<Int, GroupsItem> {
         return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
-            database.groupListDao().getPagedGroupList()
+            database.groupListDao().getGroupListLocal()
         }
     }
 
@@ -452,8 +453,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     fun getRecentTimeToken(id: String) = database.timeTokenDao().getOpenedTime(id)?.times(10000)
 
     suspend fun getLastSentMsgTime(id: String): Boolean {
-        if (System.currentTimeMillis() - database.groupListDao().getLastSentMsgTime(id) > 86400000) {
-            database.groupListDao().setLastSentMsgTime(System.currentTimeMillis(), id)
+        val timeFromDb = database.groupsAnalyticsDao().getLastSentMsgTime(id)
+        if (timeFromDb == null || System.currentTimeMillis() - timeFromDb > 86400000) {
+            database.groupsAnalyticsDao().setLastSentMsgTime(GroupChatAnalyticsEntity(id, System.currentTimeMillis()))
             return true
         }
         return false

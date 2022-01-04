@@ -12,3 +12,10 @@ data class GroupsAnalyticsEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 }
+
+@Entity(tableName = "group_chat_analytics")
+data class GroupChatAnalyticsEntity(
+    @PrimaryKey
+    val groupId: String,
+    val lastSentMsgTime: Long
+)

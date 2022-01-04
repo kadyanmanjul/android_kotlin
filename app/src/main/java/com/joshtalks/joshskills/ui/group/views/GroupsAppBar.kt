@@ -98,8 +98,11 @@ class GroupsAppBar @JvmOverloads constructor(
     }
 
     fun secondIcon(drawableRes: Int) {
-        secondIconImageView.visibility = View.VISIBLE
-        setDrawableImage(drawableRes, secondIconImageView)
+        if (drawableRes == 0) secondIconImageView.visibility = View.GONE
+        else {
+            secondIconImageView.visibility = View.VISIBLE
+            setDrawableImage(drawableRes, secondIconImageView)
+        }
     }
 
     private fun setDrawableImage(drawableRes: Int, imageView: ImageView) {
