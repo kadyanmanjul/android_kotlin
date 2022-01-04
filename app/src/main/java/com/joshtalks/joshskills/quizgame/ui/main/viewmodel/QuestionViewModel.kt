@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.quizgame.ui.main.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.quizgame.base.BaseViewModel
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.QuestionRepo
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
@@ -11,9 +11,10 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class QuestionViewModel(var application111: Application, private val questionRepo: QuestionRepo) :
-    AndroidViewModel(application111) {
+class QuestionViewModel(var application11: Application) :
+    BaseViewModel(application11) {
 
+    val questionRepo = QuestionRepo()
     val questionData: MutableLiveData<QuestionResponse> = MutableLiveData()
     val selectOption: MutableLiveData<SelectOptionResponse> = MutableLiveData()
     val displayAnswerData: MutableLiveData<DisplayAnswerResponse> = MutableLiveData()
@@ -26,7 +27,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
 
     fun getQuizQuestion(questionRequest: QuestionRequest) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = questionRepo.getQuestion(questionRequest)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -41,7 +42,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
 
     fun getSelectOption(roomId: String, questionId: String, answerId: String, teamId: String) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response =
                         questionRepo.getSelectAnswer(roomId, questionId, answerId, teamId)
@@ -57,7 +58,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
 
     fun getDisplayAnswerData(roomId: String, questionId: String) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = questionRepo.getDisplayCorrectAnswer(roomId, questionId)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -72,7 +73,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
 
     fun getRoomUserDataTemp(randomRoomData: RandomRoomData) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = questionRepo.getRoomDataTemp(randomRoomData)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -87,7 +88,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
 
     fun getClearRadius(saveCallDurationRoomData: SaveCallDurationRoomData) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = questionRepo.clearRoomRadius(saveCallDurationRoomData)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -102,7 +103,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
 
     fun deleteUserRoomData(saveCallDurationRoomData: SaveCallDurationRoomData) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = questionRepo.deleteUsersDataFromRoom(saveCallDurationRoomData)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -117,7 +118,7 @@ class QuestionViewModel(var application111: Application, private val questionRep
 
     fun saveCallDuration(callDuration: SaveCallDuration) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = questionRepo.saveDurationOfCall(callDuration)
                     if (response?.isSuccessful == true && response.body() != null) {

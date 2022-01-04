@@ -1,22 +1,20 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -32,7 +30,6 @@ import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
-import kotlinx.android.synthetic.main.fragment_favourite_practice.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,11 +59,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
     private var mainFirebaseDatabase:FirebaseDatabase=FirebaseDatabase()
 
-    //    private var REQUESTED_PERMISSIONS = arrayOf(
-//        Manifest.permission.RECORD_AUDIO,
-//        Manifest.permission.CAMERA
-//    )
-//    private val PERMISSION_REQ_ID = 22
     private var engine: RtcEngine? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,12 +130,12 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     }
 
     fun deleteData() {
-        if (context?.let { UpdateReceiver.isNetworkAvailable(it) } == true)
+        if (UpdateReceiver.isNetworkAvailable())
             firebaseDatabase.getDeclineCall(mentorId, this)
     }
 
     fun getAcceptCall() {
-        if (context?.let { UpdateReceiver.isNetworkAvailable(it) } == true)
+        if (UpdateReceiver.isNetworkAvailable())
             firebaseDatabase.getAcceptCall(mentorId, this)
     }
 
@@ -185,7 +177,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             vm.homeInactiveResponse.observe(this, {
                 if (it.message == CHANGE_USER_STATUS) {
                     requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    PrefManager.put(USER_ACTIVE_IN_GAME, false)
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     firebaseDatabase.deleteRequested(mentorId)
                     firebaseDatabase.deleteDeclineData(mentorId)
@@ -213,30 +204,10 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     }
 
     fun initializeAgoraCall(channelName: String) {
-        // Check permission
-        //if (checkSelfPermiss ion(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
         CoroutineScope(Dispatchers.IO).launch {
             joinChannel(channelName)
-            //   }
-            //WebRtcEngine.initLibrary()
         }
     }
-
-//    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
-//        if (activity?.let { ContextCompat.checkSelfPermission(it, permission) } !=
-//            PackageManager.PERMISSION_GRANTED
-//        ) {
-//            activity?.let {
-//                ActivityCompat.requestPermissions(
-//                    it,
-//                    REQUESTED_PERMISSIONS,
-//                    requestCode
-//                )
-//            }
-//            return false
-//        }
-//        return true
-//    }
 
     private fun joinChannel(channelId: String) {
         engine?.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)

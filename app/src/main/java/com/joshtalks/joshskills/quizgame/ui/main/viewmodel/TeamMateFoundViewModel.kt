@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.quizgame.ui.main.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.quizgame.base.BaseViewModel
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.TeamMateFoundRepo
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
@@ -11,20 +11,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class TeamMateFoundViewModel(
-    var application111: Application,
-    private val teamMateFoundRepo: TeamMateFoundRepo
-) : AndroidViewModel(application111) {
+class TeamMateFoundViewModel(var application11: Application, ) : BaseViewModel(application11) {
+    val teamMateFoundRepo = TeamMateFoundRepo()
 
     val userData: MutableLiveData<UserDetails> = MutableLiveData()
 
     val deleteData: MutableLiveData<Success> = MutableLiveData()
 
-    val saveCallDuration :MutableLiveData<CallDurationResponse> = MutableLiveData()
+    val saveCallDuration: MutableLiveData<CallDurationResponse> = MutableLiveData()
 
     fun getChannelData(mentorId: String) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = teamMateFoundRepo.getUserDetails(mentorId)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -39,7 +37,7 @@ class TeamMateFoundViewModel(
 
     fun deleteUserRadiusData(teamDataDelete: TeamDataDelete) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = teamMateFoundRepo.deleteUserData(teamDataDelete)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -54,7 +52,7 @@ class TeamMateFoundViewModel(
 
     fun saveCallDuration(callDuration: SaveCallDuration) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = teamMateFoundRepo.saveDurationOfCall(callDuration)
                     if (response?.isSuccessful == true && response.body() != null) {

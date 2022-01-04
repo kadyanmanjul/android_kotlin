@@ -21,12 +21,10 @@ import com.google.android.gms.common.util.CollectionUtils
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.FragmentQuestionBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.repository.QuestionRepo
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionProviderFactory
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -60,9 +58,9 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     private var givenTeamId: String? = null
     private var currentUserId: String? = null
 
-    private var questionRepo: QuestionRepo? = null
-    private var factory: QuestionProviderFactory? = null
-    private var questionViewModel: QuestionViewModel? = null
+    val questionViewModel by lazy {
+        ViewModelProvider(requireActivity())[QuestionViewModel::class.java]
+    }
     private var choiceValue: String? = null
 
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
@@ -177,7 +175,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         //buttonEnableDisable()
         activity?.let {
             try {
-                questionViewModel?.questionData?.observe(it, Observer {
+                questionViewModel.questionData.observe(it, Observer {
                     Timber.d(it.toString())
                     question = it
                     getQuestions()
@@ -366,15 +364,9 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     private fun setupViewModel() {
         try {
-            questionRepo = QuestionRepo()
-            factory = QuestionProviderFactory(requireActivity().application, questionRepo!!)
-            questionViewModel =
-                ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
-            questionViewModel =
-                factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
-            questionViewModel?.getQuizQuestion(QuestionRequest(QUESTION_COUNT, roomId ?: ""))
+            questionViewModel.getQuizQuestion(QuestionRequest(QUESTION_COUNT, roomId ?: ""))
             try {
-                questionViewModel?.getRoomUserDataTemp(
+                questionViewModel.getRoomUserDataTemp(
                     RandomRoomData(
                         roomId ?: "",
                         currentUserId ?: ""
@@ -520,7 +512,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     fun showRoomUserData() {
         activity?.let {
-            questionViewModel?.roomUserDataTemp?.observe(it, Observer {
+            questionViewModel.roomUserDataTemp.observe(it, Observer {
                 initializeUsersTeamsData(it.teamData)
             })
         }
@@ -768,7 +760,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     private fun answerAnim() {
         try {
-            if (isUiShown){
+            if (isUiShown) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(2000)
                     binding.card1.visibility = View.VISIBLE
@@ -776,11 +768,13 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     binding.card3.visibility = View.VISIBLE
                     binding.card4.visibility = View.VISIBLE
 
-                    val animation3 = AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
+                    val animation3 =
+                        AnimationUtils.loadAnimation(activity, R.anim.fade_out_for_text)
                     binding.layoutCard.startAnimation(animation3)
                 }
             }
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
     }
 
     private fun selectOptionCheck(
@@ -806,7 +800,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 )
             }
 
-            questionViewModel?.getSelectOption(
+            questionViewModel.getSelectOption(
                 roomId,
                 question.que[position].id ?: "",
                 question.que[position].choices?.get(pos)?.id ?: "",
@@ -822,7 +816,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         try {
             activity?.let {
                 isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
-                questionViewModel?.selectOption?.observe(it, {
+                questionViewModel.selectOption.observe(it, {
                     choiceAnswer(choiceAnswer, isCorrect ?: "")
                     val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
                     if (it.message == BOTH_TEAM_SELECTED) {
@@ -885,10 +879,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     }
 
     private fun getDisplayAnswerAfterQuesComplete(): String {
-        questionViewModel?.getDisplayAnswerData(roomId ?: "", question.que[position].id ?: "")
+        questionViewModel.getDisplayAnswerData(roomId ?: "", question.que[position].id ?: "")
         enableCardClick()
         activity?.let {
-            questionViewModel?.displayAnswerData?.observe(it, { displayAnswerData ->
+            questionViewModel.displayAnswerData.observe(it, { displayAnswerData ->
                 choiceValue = displayAnswerData.correctChoiceValue
             })
         }
@@ -1080,7 +1074,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        questionViewModel?.saveCallDuration(
+        questionViewModel.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -1090,7 +1084,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
         if (fromType == RANDOM) {
             try {
-                questionViewModel?.getClearRadius(
+                questionViewModel.getClearRadius(
                     SaveCallDurationRoomData(
                         roomId ?: "",
                         currentUserId ?: "",
@@ -1099,7 +1093,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel?.saveCallDuration?.observe(it, {
+                    questionViewModel.saveCallDuration.observe(it, {
                         if (it.message == CALL_DURATION_RESPONSE) {
                             val points = it.points
                             lifecycleScope.launch(Dispatchers.Main) {
@@ -1120,7 +1114,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
         } else {
             try {
-                questionViewModel?.deleteUserRoomData(
+                questionViewModel.deleteUserRoomData(
                     SaveCallDurationRoomData(
                         roomId ?: "",
                         currentUserId ?: "",
@@ -1129,7 +1123,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel?.saveCallDuration?.observe(it, {
+                    questionViewModel.saveCallDuration.observe(it, {
                         if (it.message == CALL_DURATION_RESPONSE) {
                             val points = it.points
                             lifecycleScope.launch(Dispatchers.Main) {
@@ -1176,7 +1170,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             isUiShown = false
             handlerForTimer.removeCallbacksAndMessages(null)
             timer?.cancel()
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
     }
 
     override fun onResume() {

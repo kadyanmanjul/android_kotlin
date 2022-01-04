@@ -22,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_85sdp"
             android:visibility="invisible"
+            android:elevation="@dimen/_10sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -131,6 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_85sdp"
             android:visibility="invisible"
+            android:elevation="@dimen/_10sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -380,7 +382,7 @@
                 android:layout_centerHorizontal="true"
                 android:scaleType="fitXY"
                 android:src="@drawable/image_win_sign"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
             <com.joshtalks.joshskills.quizgame.util.TextViewOutline
                 android:id="@+id/txt_winner"
@@ -395,7 +397,7 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
                 android:textColor="#C8B005"
                 android:textStyle="bold"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
         </RelativeLayout>
 

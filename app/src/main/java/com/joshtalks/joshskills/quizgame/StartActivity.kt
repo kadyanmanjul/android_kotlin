@@ -1,15 +1,16 @@
 package com.joshtalks.joshskills.quizgame
 
-import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.ActivityStartBinding
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
-import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ACTIVE
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
@@ -48,7 +49,7 @@ class StartActivity : BaseQuizActivity() {
 
     override fun onCreated() {
         try {
-            if (com.joshtalks.joshskills.core.Utils.isInternetAvailable()){
+            if (Utils.isInternetAvailable()){
                 vm.addUserToDB()
             }
         } catch (e: Exception) {
@@ -59,7 +60,7 @@ class StartActivity : BaseQuizActivity() {
         event.observe(this) {
             when (it.what) {
                 ON_BACK_PRESSED -> popBackStack()
-                OPEN_CHOICE_SCREEN -> startGroupCall()
+                OPEN_CHOICE_SCREEN -> startQuizGame()
             }
         }
     }
@@ -80,6 +81,7 @@ class StartActivity : BaseQuizActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        PrefManager.put(USER_ACTIVE_IN_GAME, false)
         AudioManagerQuiz.audioRecording.stopPlaying()
     }
 
@@ -110,10 +112,14 @@ class StartActivity : BaseQuizActivity() {
     }
 
     // TODO: Need to refactor
-    private fun startGroupCall() {
+    private fun startQuizGame() {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
-            openChoiceScreen()
-            return
+            if (Utils.isInternetAvailable()) {
+                openChoiceScreen()
+                return
+            }else{
+                showToast(getString(R.string.internet_not_available_msz))
+            }
         }
         PermissionUtils.callingFeaturePermission(
             this,
@@ -128,8 +134,12 @@ class StartActivity : BaseQuizActivity() {
                             return
                         }
                         if (flag) {
-                            openChoiceScreen()
-                            return
+                            if (Utils.isInternetAvailable()) {
+                                openChoiceScreen()
+                                return
+                            }else{
+                                showToast(getString(R.string.internet_not_available_msz))
+                            }
                         } else {
                             MaterialDialog(this@StartActivity).show {
                                 message(R.string.call_start_permission_message)

@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.lottie.LottieDrawable
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentFavouritePracticeBinding
@@ -30,10 +29,8 @@ import com.joshtalks.joshskills.quizgame.ui.data.model.ChannelData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
-import com.joshtalks.joshskills.quizgame.ui.data.repository.FavouriteRepo
 import com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FavouriteViewModel
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ViewModelProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
@@ -66,7 +63,9 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 
     private lateinit var binding: FragmentFavouritePracticeBinding
     private var favouriteAdapter: FavouriteAdapter? = null
-    private var favouriteViewModel: FavouriteViewModel? = null
+    private val favouriteViewModel by lazy {
+        ViewModelProvider(requireActivity())[FavouriteViewModel::class.java]
+    }
     private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
     private var channelName: String? = null
     private var fromTokenId: String? = null
@@ -76,8 +75,6 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     //private val PERMISSION_REQ_ID = 22
     private var engine: RtcEngine? = null
     private var activityInstance: FragmentActivity? = null
-    private var repository: FavouriteRepo? = null
-    private var factory: ViewModelProviderFactory? = null
     private var mentorId: String = Mentor.getInstance().getUserId()
     var userName: String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
@@ -193,17 +190,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 
     private fun setupViewModel() {
         try {
-            repository = FavouriteRepo()
-            factory = activity?.application?.let { ViewModelProviderFactory(it, repository!!) }
-            favouriteViewModel = factory?.let {
-                ViewModelProvider(this, it).get(FavouriteViewModel::class.java)
-            }
-        } catch (ex: Exception) {
-
-        }
-        try {
-            favouriteViewModel?.fetchFav(mentorId ?: "")
-            // favouriteViewModel?.statusChange(mentorId, ACTIVE)
+            favouriteViewModel.fetchFav(mentorId ?: "")
         } catch (ex: Exception) {
             showToast(ex.message ?: "")
         }
@@ -398,7 +385,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 //    }
 
     fun deleteData() {
-        if (context?.let { UpdateReceiver.isNetworkAvailable(it) } == true)
+        if (UpdateReceiver.isNetworkAvailable())
             firebaseDatabase.getDeclineCall(mentorId, this)
     }
 
@@ -413,7 +400,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     }
 
     fun getAcceptCall() {
-        if (context?.let { UpdateReceiver.isNetworkAvailable(it) } == true)
+        if (UpdateReceiver.isNetworkAvailable())
             firebaseDatabase.getAcceptCall(mentorId, this)
     }
 
@@ -464,7 +451,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     private fun getFavouritePracticePartner() {
         activity?.let {
             try {
-                favouriteViewModel?.favData?.observe(it, {
+                favouriteViewModel.favData.observe(it, {
                     initRV(it.data)
                 })
             } catch (ex: Exception) {
@@ -476,7 +463,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     private fun getFromAgoraToken() {
         activity?.let {
             try {
-                favouriteViewModel?.fromTokenData?.observe(it, {
+                favouriteViewModel.fromTokenData.observe(it, {
                     fromAgoraToken(it)
                 })
             } catch (ex: Exception) {
@@ -548,14 +535,14 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         binding.buttonAccept.setOnClickListener {
             //binding.notificationCard.visibility = View.INVISIBLE
             invisibleView(binding.notificationCard)
-            favouriteViewModel?.addFavouritePracticePartner(
+            favouriteViewModel.addFavouritePracticePartner(
                 AddFavouritePartner(
                     fromMentorId,
                     mentorId
                 )
             )
             activity?.let {
-                favouriteViewModel?.fppData?.observe(it, {
+                favouriteViewModel.fppData.observe(it, {
                     firebaseDatabase.deleteRequest(mentorId)
                 })
             }
@@ -715,9 +702,9 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             handler.removeCallbacksAndMessages(null)
             i = 1
             invisibleView(binding.notificationCard)
-            favouriteViewModel?.getChannelData(mentorId, channelName)
+            favouriteViewModel.getChannelData(mentorId, channelName)
             activity?.let {
-                favouriteViewModel?.agoraToToken?.observe(it, {
+                favouriteViewModel.agoraToToken.observe(it, {
                     when {
                         it?.message.equals(TEAM_CREATED) -> {
                             firebaseDatabase.deleteRequested(mentorId)

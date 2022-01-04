@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.quizgame.ui.main.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.quizgame.base.BaseViewModel
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SaveRoomRepo
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
@@ -12,12 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class SaveRoomDataViewModel(
-    var application111: Application,
-    private val saveRoomRepo: SaveRoomRepo
-) :
-    AndroidViewModel(application111) {
+class SaveRoomDataViewModel(var application11: Application) : BaseViewModel(application11) {
 
+    val saveRoomRepo = SaveRoomRepo()
     var saveRoomDetailsData: MutableLiveData<Success> = MutableLiveData()
     var roomUserDataTemp: MutableLiveData<RandomRoomResponse> = MutableLiveData()
     var clearRadius: MutableLiveData<Success> = MutableLiveData()
@@ -25,11 +22,11 @@ class SaveRoomDataViewModel(
     var fppData: MutableLiveData<Success> = MutableLiveData()
     var addToRoom: MutableLiveData<AddToRoomResponse> = MutableLiveData()
     var playAgainData: MutableLiveData<Success> = MutableLiveData()
-    val saveCallDuration :MutableLiveData<CallDurationResponse> = MutableLiveData()
+    val saveCallDuration: MutableLiveData<CallDurationResponse> = MutableLiveData()
 
     fun saveRoomDetails(saveRoomDetails: SaveRoomDetails) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = saveRoomRepo.saveRoomData(saveRoomDetails)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -44,7 +41,7 @@ class SaveRoomDataViewModel(
 
     fun getRoomUserDataTemp(randomRoomData: RandomRoomData) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = saveRoomRepo.getRoomDataTemp(randomRoomData)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -59,7 +56,7 @@ class SaveRoomDataViewModel(
 
     fun getClearRadius(saveCallDurationRoomData: SaveCallDurationRoomData) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = saveRoomRepo.clearRoomRadius(saveCallDurationRoomData)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -74,7 +71,7 @@ class SaveRoomDataViewModel(
 
     fun deleteUserRoomData(saveCallDurationRoomData: SaveCallDurationRoomData) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = saveRoomRepo.deleteUsersDataFromRoom(saveCallDurationRoomData)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -89,7 +86,7 @@ class SaveRoomDataViewModel(
 
     fun addFavouritePracticePartner(addFavouritePartner: AddFavouritePartner) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = saveRoomRepo.addFavouritePartner(addFavouritePartner)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -104,7 +101,7 @@ class SaveRoomDataViewModel(
 
     fun playAgainWithSamePlayer(playAgain: PlayAgain) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = saveRoomRepo.playAgainData(playAgain)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -119,7 +116,7 @@ class SaveRoomDataViewModel(
 
     fun saveCallDuration(callDuration: SaveCallDuration) {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (UpdateReceiver.isNetworkAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = saveRoomRepo.saveDurationOfCall(callDuration)
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -127,6 +124,7 @@ class SaveRoomDataViewModel(
                     }
                 }
             }
-        } catch (ex: Exception) {}
+        } catch (ex: Exception) {
+        }
     }
 }

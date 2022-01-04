@@ -2,13 +2,10 @@ package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.graphics.Color
 import android.os.*
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
@@ -19,14 +16,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentSearchingOpponentTeamBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchOpponentRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentTeamViewModel
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -44,15 +38,12 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     lateinit var binding: FragmentSearchingOpponentTeamBinding
     var startTime: String? = null
     var channelName: String? = null
-    var repository: SearchOpponentRepo? = null
-    var factory: SearchOpponentViewProviderFactory? = null
-    var searchOpponentTeamViewModel: SearchOpponentTeamViewModel? = null
+    val searchOpponentTeamViewModel by lazy {
+        ViewModelProvider(requireActivity())[SearchOpponentTeamViewModel::class.java]
+    }
     var userDetails: UserDetails? = null
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
     var roomId: String? = null
-    private var teamId1: String? = null
-    private var teamId2: String? = null
-
     private var team1Id: String? = null
     private var usersInTeam1: UsersInTeam1? = null
     private var team2Id: String? = null
@@ -130,7 +121,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         setTeamMateData(userDetails)
         startTimer()
         activity?.let {
-            searchOpponentTeamViewModel?.roomData?.observe(it, Observer {
+            searchOpponentTeamViewModel.roomData.observe(it, Observer {
             })
         }
 
@@ -191,12 +182,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     }
 
     private fun setupViewModel() {
-        repository = SearchOpponentRepo()
-        factory = activity?.application?.let { SearchOpponentViewProviderFactory(it, repository!!) }
-        searchOpponentTeamViewModel = factory?.let {
-            ViewModelProvider(this, it).get(SearchOpponentTeamViewModel::class.java)
-        }
-        searchOpponentTeamViewModel?.addToRoomData(ChannelName(channelName))
+        searchOpponentTeamViewModel.addToRoomData(ChannelName(channelName))
     }
 
     override fun onStart() {
@@ -211,14 +197,14 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         roomId = currentUserRoomID
         Timber.d(currentUserRoomID)
         if (currentUserRoomID != null) {
-            searchOpponentTeamViewModel?.getRoomUserData(
+            searchOpponentTeamViewModel.getRoomUserData(
                 RandomRoomData(
                     currentUserRoomID,
                     mentorId
                 )
             )
             activity?.let {
-                searchOpponentTeamViewModel?.roomUserData?.observe(it, Observer {
+                searchOpponentTeamViewModel.roomUserData.observe(it, Observer {
                     initializeUsersTeamsData(it.teamData)
                     timer?.cancel()
                     timer?.onFinish()
@@ -379,7 +365,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        searchOpponentTeamViewModel?.saveCallDuration(
+        searchOpponentTeamViewModel.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -387,7 +373,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
             )
         )
         if (roomId != null) {
-            searchOpponentTeamViewModel?.deleteUserRoomData(
+            searchOpponentTeamViewModel.deleteUserRoomData(
                 SaveCallDurationRoomData(
                     roomId ?: "",
                     currentUserId ?: "",
@@ -396,7 +382,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 )
             )
             activity?.let {
-                searchOpponentTeamViewModel?.saveCallDuration?.observe(it, Observer {
+                searchOpponentTeamViewModel.saveCallDuration.observe(it, Observer {
                     if (it.message == CALL_DURATION_RESPONSE) {
                         val points = it.points
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -415,13 +401,13 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 })
             }
         } else {
-            searchOpponentTeamViewModel?.deleteUserAndTeamData(
+            searchOpponentTeamViewModel.deleteUserAndTeamData(
                 TeamDataDelete(
                     currentUserTeamId ?: "", currentUserId ?: ""
                 )
             )
             activity?.let {
-                searchOpponentTeamViewModel?.saveCallDuration?.observe(it, Observer {
+                searchOpponentTeamViewModel.saveCallDuration.observe(it, Observer {
                     if (it.message == CALL_DURATION_RESPONSE) {
                         val points = it.points
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -477,14 +463,14 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     }
 
     private fun deleteTeamData() {
-        searchOpponentTeamViewModel?.deleteUserAndTeamData(
+        searchOpponentTeamViewModel.deleteUserAndTeamData(
             TeamDataDelete(
                 currentUserTeamId ?: "",
                 currentUserId ?: ""
             )
         )
         activity?.let {
-            searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
+            searchOpponentTeamViewModel.deleteData.observe(it, Observer {
                 AudioManagerQuiz.audioRecording.stopPlaying()
                 engine?.leaveChannel()
                 binding.callTime.stop()

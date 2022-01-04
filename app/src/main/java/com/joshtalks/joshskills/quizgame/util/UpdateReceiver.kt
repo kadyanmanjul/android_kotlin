@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
+import android.net.NetworkCapabilities
+import android.os.Build
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
 
 class UpdateReceiver : BroadcastReceiver(){
@@ -13,18 +15,31 @@ class UpdateReceiver : BroadcastReceiver(){
     override fun onReceive(context: Context, intent: Intent) {
         val action: String? = intent.getAction()
         if (action.equals(CONNECTIVITY_CHANGE, ignoreCase = true)) {
-            if (!isNetworkAvailable(context)) {
-                showToast("The Internet connection appears to be offline")
+            if (!isNetworkAvailable()) {
+                showToast("Seems like your Internet is too slow or not available.")
             }
         }
     }
 
     companion object{
-        fun isNetworkAvailable(context: Context): Boolean {
-            val connectivityManager: ConnectivityManager =
-                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetworkInfo: NetworkInfo? = connectivityManager.getActiveNetworkInfo()
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected()
+        fun isNetworkAvailable(): Boolean {
+            val connectivityManager =
+                AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val nw = connectivityManager.activeNetwork ?: return false
+                val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+                return when {
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> true
+                    // for other device how are able to connect with Ethernet
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                    else -> false
+                }
+            } else {
+                val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+                return nwInfo.isConnected
+            }
         }
     }
 }

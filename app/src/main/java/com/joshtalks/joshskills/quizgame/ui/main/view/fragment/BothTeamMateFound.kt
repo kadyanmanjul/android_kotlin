@@ -17,13 +17,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
-import com.joshtalks.joshskills.quizgame.ui.data.repository.BothTeamRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -43,9 +40,10 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
     private var roomId: String? = null
     private var userDetails: UserDetails? = null
     private var channelName: String? = null
-    var bothTeamRepo: BothTeamRepo? = null
-    var factory: BothTeamViewProviderFactory? = null
-    var bothTeamViewModel: BothTeamViewModel? = null
+    val bothTeamViewModel by lazy {
+        ViewModelProvider(requireActivity())[BothTeamViewModel::class.java]
+    }
+
     lateinit var binding: FragmentBothTeamMateFoundBinding
     var teamId1: String? = null
     var teamId2: String? = null
@@ -87,7 +85,6 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             userDetails = it.getParcelable(USER_DETAILS)
             channelName = it.getString(CHANNEL_NAME)
         }
-        setupViewModel()
     }
 
     override fun onCreateView(
@@ -153,19 +150,10 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
         call_time.base = SystemClock.elapsedRealtime().minus(startTime?.toLong()!!)
         call_time.start()
     }
-
-    private fun setupViewModel() {
-        bothTeamRepo = BothTeamRepo()
-        factory = activity?.application?.let { BothTeamViewProviderFactory(it, bothTeamRepo!!) }
-        bothTeamViewModel = factory?.let {
-            ViewModelProvider(this, it).get(BothTeamViewModel::class.java)
-        }
-    }
-
     private fun getRoomData() {
-        bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId ?: "", currentUserId ?: ""))
+        bothTeamViewModel.getRoomUserData(RandomRoomData(roomId ?: "", currentUserId ?: ""))
         activity?.let {
-            bothTeamViewModel?.roomUserData?.observe(it, {
+            bothTeamViewModel.roomUserData.observe(it, {
                 initializeUsersTeamsData(it.teamData)
             })
         }
@@ -284,7 +272,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        bothTeamViewModel?.deleteUserRoomData(
+        bothTeamViewModel.deleteUserRoomData(
             SaveCallDurationRoomData(
                 roomId ?: "",
                 currentUserId ?: "",
@@ -292,7 +280,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
                 startTime ?: ""
             )
         )
-        bothTeamViewModel?.saveCallDuration(
+        bothTeamViewModel.saveCallDuration(
             SaveCallDuration(
                 channelName ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -300,7 +288,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             )
         )
         activity?.let {
-            bothTeamViewModel?.saveCallDuration?.observe(it, {
+            bothTeamViewModel.saveCallDuration.observe(it, {
                 if (it.message == CALL_DURATION_RESPONSE) {
                     val points = it.points
                     lifecycleScope.launch(Dispatchers.Main) {

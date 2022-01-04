@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,12 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.RandomFragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
@@ -35,11 +34,13 @@ import timber.log.Timber
 //Channel Name = team_id
 const val OPPONENT_USER_IMAGE: String = "opponentUserImage"
 const val OPPONENT_USER_NAME: String = "opponentUserName"
-const val CURRENT_USER_TEAM_ID:String ="current_user_team_id"
+const val CURRENT_USER_TEAM_ID: String = "current_user_team_id"
 
-class RandomTeamMateFoundFragnment : Fragment() {
+class RandomTeamMateFoundFragment : Fragment() {
     private lateinit var binding: RandomFragmentTeamMateFoundFragnmentBinding
-    private var randomTeamMateFoundViewModel: RandomTeamMateFoundViewModel? = null
+    val randomTeamMateFoundViewModel by lazy {
+        ViewModelProvider(requireActivity())[RandomTeamMateFoundViewModel::class.java]
+    }
     private var roomId: String? = null
     private var currentUserId: String? = null
     private var opponentUserImage: String? = null
@@ -47,7 +48,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
     private var engine: RtcEngine? = null
     private var flag = 1
     private var flagSound = 1
-    private var currentUserTeamId: String?=null
+    private var currentUserTeamId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,7 +56,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
             roomId = it.getString("roomId")
             opponentUserImage = it.getString(OPPONENT_USER_IMAGE)
             opponentUserName = it.getString(OPPONENT_USER_NAME)
-            currentUserTeamId=it.getString(CURRENT_USER_TEAM_ID)
+            currentUserTeamId = it.getString(CURRENT_USER_TEAM_ID)
         }
     }
 
@@ -86,14 +87,14 @@ class RandomTeamMateFoundFragnment : Fragment() {
         setCurrentUserData()
         setData()
         moveFragment()
-        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)){
-            binding.userName2.alpha=0.5f
+        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
+            binding.userName2.alpha = 0.5f
             binding.shadowImg2.visibility = View.VISIBLE
         }
         try {
             engine = P2pRtc().getEngineObj()
             P2pRtc().addListener(callback)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Timber.d(ex)
         }
 
@@ -159,13 +160,18 @@ class RandomTeamMateFoundFragnment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(roomId: String?, opponentUserImage: String, opponentUserName: String?,currentUserTeamId:String) =
-            RandomTeamMateFoundFragnment().apply {
+        fun newInstance(
+            roomId: String?,
+            opponentUserImage: String,
+            opponentUserName: String?,
+            currentUserTeamId: String
+        ) =
+            RandomTeamMateFoundFragment().apply {
                 arguments = Bundle().apply {
                     putString("roomId", roomId)
                     putString(OPPONENT_USER_IMAGE, opponentUserImage)
                     putString(OPPONENT_USER_NAME, opponentUserName)
-                    putString(CURRENT_USER_TEAM_ID,currentUserTeamId)
+                    putString(CURRENT_USER_TEAM_ID, currentUserTeamId)
                 }
             }
     }
@@ -198,7 +204,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        randomTeamMateFoundViewModel?.saveCallDuration(
+        randomTeamMateFoundViewModel.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -206,7 +212,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
             )
         )
 
-        randomTeamMateFoundViewModel?.getClearRadius(
+        randomTeamMateFoundViewModel.getClearRadius(
             SaveCallDurationRoomData(
                 roomId ?: "",
                 currentUserId ?: "",
@@ -216,7 +222,7 @@ class RandomTeamMateFoundFragnment : Fragment() {
         )
 
         activity?.let {
-            randomTeamMateFoundViewModel?.saveCallDuration?.observe(it, Observer {
+            randomTeamMateFoundViewModel.saveCallDuration.observe(it, Observer {
                 if (it.message == CALL_DURATION_RESPONSE) {
                     val points = it.points
                     lifecycleScope.launch(Dispatchers.Main) {
@@ -246,16 +252,17 @@ class RandomTeamMateFoundFragnment : Fragment() {
             ?.remove(this)
             ?.commit()
     }
-    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback {
         override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
-                    binding.userName2.alpha=0.5f
+                    binding.userName2.alpha = 0.5f
                     binding.shadowImg2.visibility = View.VISIBLE
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Timber.d(ex)
             }
         }

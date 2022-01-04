@@ -8,6 +8,8 @@ import android.view.Window
 import android.widget.ImageView
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.showToast
 
 
 class CustomDialogQuiz(var activity: Activity) {
@@ -25,8 +27,12 @@ class CustomDialogQuiz(var activity: Activity) {
         val btnCancel = dialog.findViewById<ImageView>(R.id.btn_cancel)
 
         yesBtn.setOnClickListener {
-            positiveBtnAction()
-            dialog.dismiss()
+            if (Utils.isInternetAvailable()){
+                positiveBtnAction()
+                dialog.dismiss()
+            }else{
+                showToast("Seems like your Internet is too slow or not available.")
+            }
         }
         noBtn.setOnClickListener {
             dialog.dismiss()
@@ -37,14 +43,4 @@ class CustomDialogQuiz(var activity: Activity) {
         }
         dialog.show()
     }
-
-//    private fun openChoiceScreen(){
-//        val fm = activity.supportFragmentManager
-//        fm?.beginTransaction()
-//            ?.replace(R.id.container,
-//                ChoiceFragnment.newInstance(),"TeamMate")
-//            ?.remove(this)
-//            ?.commit()
-//        fm?.popBackStack()
-//    }
 }

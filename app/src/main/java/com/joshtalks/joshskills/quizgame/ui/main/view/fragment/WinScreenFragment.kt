@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,15 +20,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.repository.SaveRoomRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -52,9 +48,9 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
     private var roomId: String? = null
     private var teamId : String? = null
     private var winnerTeamStatus : Boolean?=null
-    private var saveRoomRepo : SaveRoomRepo?=null
-    private var factory: SaveRoomDataViewProviderFactory? = null
-    private var saveRoomDataViewModel: SaveRoomDataViewModel? = null
+    private val saveRoomDataViewModel by lazy {
+        ViewModelProvider(requireActivity())[SaveRoomDataViewModel::class.java]
+    }
     private var currentUserId :String?=null
     private var opponentTeamMarks:String?=null
 
@@ -244,9 +240,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         saveRoomDataViewModel?.saveRoomDetails(saveRoomDetails)
     }
     fun setRoomUsersData(){
-        saveRoomRepo = SaveRoomRepo()
-        factory = SaveRoomDataViewProviderFactory(requireActivity().application, saveRoomRepo!!)
-        saveRoomDataViewModel = ViewModelProvider(this, factory!!).get(SaveRoomDataViewModel::class.java)
         saveRoomDataViewModel?.getRoomUserDataTemp(RandomRoomData(
             roomId ?: "",
             currentUserId ?: ""

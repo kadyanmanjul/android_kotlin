@@ -4,12 +4,12 @@ import android.app.Application
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.base.BaseViewModel
 import com.joshtalks.joshskills.quizgame.ui.data.model.Success
 import com.joshtalks.joshskills.quizgame.ui.data.repository.StartRepo
 import com.joshtalks.joshskills.quizgame.util.OPEN_CHOICE_SCREEN
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -21,12 +21,11 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
     fun onItemClick(view: View) {
         message.what = OPEN_CHOICE_SCREEN
         singleLiveEvent.value = message
-        //view.visibility = View.GONE
     }
 
     fun addUserToDB() {
         try {
-            if (com.joshtalks.joshskills.core.Utils.isInternetAvailable()) {
+            if (Utils.isInternetAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = startRepo.addUserInDb()
                     if (response?.isSuccessful == true && response.body() != null) {
@@ -34,12 +33,11 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
                     }
                 }
             }
-        } catch (ex: Exception) {
-        }
+        } catch (ex: Exception) { }
     }
     fun homeInactive() {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (Utils.isInternetAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = startRepo.getHomeInactive()
                 }
@@ -51,7 +49,7 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
 
     fun statusChange() {
         try {
-            if (UpdateReceiver.isNetworkAvailable(application111)) {
+            if (Utils.isInternetAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = startRepo.getStatus()
                     if (response?.isSuccessful == true && response.body() != null) {

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,16 +19,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
 import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
 import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails
-import com.joshtalks.joshskills.quizgame.ui.data.repository.TeamMateFoundRepo
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.TeamMateFoundViewModel
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.TeamMateViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -45,7 +40,9 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
     private var userId: String? = null
     private var channelName: String? = null
     private var userDetails: UserDetails? = null
-    private var teamMateFoundViewModel: TeamMateFoundViewModel? = null
+    val teamMateFoundViewModel by lazy {
+        ViewModelProvider(requireActivity())[TeamMateFoundViewModel::class.java]
+    }
     private var engine: RtcEngine? = null
     private var currentUserId: String? = null
     private var flag = 1
@@ -128,17 +125,9 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
     }
 
     private fun setUpData() {
-        val repository = TeamMateFoundRepo()
-        val factory = activity?.application?.let { TeamMateViewProviderFactory(it, repository) }
-        teamMateFoundViewModel = factory?.let {
-            ViewModelProvider(
-                this,
-                it
-            ).get(TeamMateFoundViewModel::class.java)
-        }
-        userId?.let { teamMateFoundViewModel?.getChannelData(it) }
+        userId?.let { teamMateFoundViewModel.getChannelData(it) }
         activity?.let {
-            teamMateFoundViewModel?.userData?.observe(it, Observer {
+            teamMateFoundViewModel.userData.observe(it, Observer {
                 setData(it)
             })
         }
@@ -195,21 +184,21 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        teamMateFoundViewModel?.saveCallDuration(
+        teamMateFoundViewModel.saveCallDuration(
             SaveCallDuration(
                 channelName ?: "",
                 startTime.toInt().div(1000).toString(),
                 currentUserId ?: ""
             )
         )
-        teamMateFoundViewModel?.deleteUserRadiusData(
+        teamMateFoundViewModel.deleteUserRadiusData(
             TeamDataDelete(
                 channelName ?: "",
                 currentUserId ?: ""
             )
         )
         activity?.let {
-            teamMateFoundViewModel?.saveCallDuration?.observe(it, Observer {
+            teamMateFoundViewModel.saveCallDuration.observe(it, Observer {
                 if (it.message == CALL_DURATION_RESPONSE) {
                     val points = it.points
                     lifecycleScope.launch(Dispatchers.Main) {

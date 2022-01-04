@@ -1,21 +1,17 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.util.Log
-import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -24,13 +20,15 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchRandomRepo
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModel
-import com.joshtalks.joshskills.quizgame.util.*
+import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
+import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
+import com.joshtalks.joshskills.quizgame.util.P2pRtc
+import com.joshtalks.joshskills.quizgame.util.UtilsQuiz
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -47,9 +45,9 @@ const val NO_OPPONENT_FOUND = "No Opponent Team Found Please Retry"
 class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     lateinit var binding: FragmentRandomPartnerBinding
-    var repository: SearchRandomRepo? = null
-    var factory: SearchRandomProviderFactory? = null
-    var searchRandomViewModel: SearchRandomUserViewModel? = null
+    val searchRandomViewModel by lazy {
+        ViewModelProvider(requireActivity())[SearchRandomUserViewModel::class.java]
+    }
     var currentUserId: String? = null
     var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
     var userRoomId: String? = null
@@ -112,7 +110,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         currentUserId = Mentor.getInstance().getUserId()
-        setUpViewModel()
     }
 
     override fun onCreateView(
@@ -138,7 +135,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         try {
             engine = P2pRtc().getEngineObj()
             P2pRtc().addListener(callback)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Timber.d(ex)
         }
         setCurrentUserData()
@@ -150,7 +147,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         } catch (ex: Exception) {
 
         }
-        UtilsQuiz.dipDown(binding.vs1,requireActivity())
+        UtilsQuiz.dipDown(binding.vs1, requireActivity())
     }
 
     companion object {
@@ -176,9 +173,9 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     fun searchRandomUser(mentorId: String) {
         try {
-            searchRandomViewModel?.getSearchRandomUserData(mentorId)
+            searchRandomViewModel.getSearchRandomUserData(mentorId)
             activity?.let {
-                searchRandomViewModel?.searchRandomData?.observe(it, {
+                searchRandomViewModel.searchRandomData.observe(it, {
                     if (it.message == FOUR_USER_FOUND_MSG) {
                         createRandomUserRoom(it.data)
                     }
@@ -198,12 +195,12 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                     moveFragment()
                     timer?.cancel()
                 } else {
-                       try {
-                           Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
-                       }catch (ex:Exception){ }
-                    searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
+                    try {
+                        Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
+                    } catch (ex: Exception) { }
+                    searchRandomViewModel.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
                     activity?.let {
-                        searchRandomViewModel?.deleteData?.observe(it, {
+                        searchRandomViewModel.deleteData.observe(it, {
                             AudioManagerQuiz.audioRecording.stopPlaying()
                             openChoiceScreen()
                             engine?.leaveChannel()
@@ -215,19 +212,11 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         }.start()
     }
 
-    fun setUpViewModel() {
-        repository = SearchRandomRepo()
-        factory = activity?.application?.let { SearchRandomProviderFactory(it, repository!!) }
-        searchRandomViewModel = factory?.let {
-            ViewModelProvider(this, it).get(SearchRandomUserViewModel::class.java)
-        }
-    }
-
     fun createRandomUserRoom(listOfUsers: ArrayList<String>) {
         try {
-            searchRandomViewModel?.createRoomRandom(RoomRandom(listOfUsers))
+            searchRandomViewModel.createRoomRandom(RoomRandom(listOfUsers))
             activity?.let {
-                searchRandomViewModel?.roomRandomData?.observe(it, {
+                searchRandomViewModel.roomRandomData.observe(it, {
                     Timber.d(it.roomId)
                 })
             }
@@ -371,14 +360,14 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         Timber.d(roomId)
         userRoomId = roomId
         try {
-            searchRandomViewModel?.getRandomUserDataByRoom(
+            searchRandomViewModel.getRandomUserDataByRoom(
                 RandomRoomData(
                     userRoomId ?: "",
                     currentUserId ?: ""
                 )
             )
             activity?.let {
-                searchRandomViewModel?.randomRoomUser?.observe(it, Observer {
+                searchRandomViewModel.randomRoomUser.observe(it, Observer {
                     Timber.d(it.roomId)
                     initializeUsersTeamsData(it?.teamData)
                     binding.image9.pauseAnimation()
@@ -393,11 +382,11 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     }
 
     fun callConnectUser1AndUser2(channelName: String?) {
-       // if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
-            CoroutineScope(Dispatchers.IO).launch {
-                joinChannel(channelName ?: "")
-            }
-      //  }
+        // if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
+        CoroutineScope(Dispatchers.IO).launch {
+            joinChannel(channelName ?: "")
+        }
+        //  }
     }
 
     private fun joinChannel(channelId: String) {
@@ -446,11 +435,11 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             fm?.beginTransaction()
                 ?.replace(
                     R.id.container,
-                    RandomTeamMateFoundFragnment.newInstance(
+                    RandomTeamMateFoundFragment.newInstance(
                         userRoomId ?: "",
                         opponentUserImage ?: "",
                         opponentUserName ?: "",
-                        currentUserTeamId?:""
+                        currentUserTeamId ?: ""
                     ), "RandomPartnerFragment"
                 )
                 ?.commit()
@@ -467,9 +456,9 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             })
     }
 
-    fun positiveBtnAction(){
+    fun positiveBtnAction() {
         if (userRoomId != null) {
-            searchRandomViewModel?.getClearRadius(
+            searchRandomViewModel.getClearRadius(
                 SaveCallDurationRoomData(
                     userRoomId ?: "",
                     currentUserId ?: "",
@@ -478,16 +467,16 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 )
             )
             activity?.let {
-                searchRandomViewModel?.clearRadius?.observe(it, Observer {
+                searchRandomViewModel.clearRadius.observe(it, Observer {
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     openChoiceScreen()
                     engine?.leaveChannel()
                 })
             }
         } else {
-            searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
+            searchRandomViewModel.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
             activity?.let {
-                searchRandomViewModel?.deleteData?.observe(it, Observer {
+                searchRandomViewModel.deleteData.observe(it, Observer {
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     openChoiceScreen()
                     engine?.leaveChannel()
@@ -508,14 +497,14 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             ?.commit()
     }
 
-    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback {
         override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Timber.d(ex)
             }
         }
