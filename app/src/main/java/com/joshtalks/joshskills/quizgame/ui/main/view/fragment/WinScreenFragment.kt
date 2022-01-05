@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,26 +34,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-const val YOU_WON:String = "You Won!"
-const val WINNER:String = "Winner"
-const val TEAM_SCORE :String ="team_score"
-const val OPPONENT_TEAM_MARKS:String ="opponent_team_marks"
-const val TEAM_ID :String ="team_id"
-const val OPPONENT_WON:String ="Opponent Won!"
-const val ZERO:String ="0"
-const val FIVE:String ="5"
+const val YOU_WON: String = "You Won!"
+const val WINNER: String = "Winner"
+const val TEAM_SCORE: String = "team_score"
+const val OPPONENT_TEAM_MARKS: String = "opponent_team_marks"
+const val TEAM_ID: String = "team_id"
+const val OPPONENT_WON: String = "Opponent Won!"
+const val ZERO: String = "0"
+const val FIVE: String = "5"
 
-class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRtc.WebRtcEngineCallback {
-    private lateinit var binding : FragmentWinScreenBinding
+class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
+    P2pRtc.WebRtcEngineCallback {
+    private lateinit var binding: FragmentWinScreenBinding
     private var marks: String? = null
     private var roomId: String? = null
-    private var teamId : String? = null
-    private var winnerTeamStatus : Boolean?=null
+    private var teamId: String? = null
+    private var winnerTeamStatus: Boolean? = null
     private val saveRoomDataViewModel by lazy {
         ViewModelProvider(requireActivity())[SaveRoomDataViewModel::class.java]
     }
-    private var currentUserId :String?=null
-    private var opponentTeamMarks:String?=null
+    private var currentUserId: String? = null
+    private var opponentTeamMarks: String? = null
 
     private var team1Id: String? = null
     private var usersInTeam1: UsersInTeam1? = null
@@ -81,26 +83,26 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
 
     private var currentUserTeamId: String? = null
     private var opponentTeamId: String? = null
-    private var callTimeCount:String?=null
-    private var fromType:String?=null
+    private var callTimeCount: String? = null
+    private var fromType: String? = null
     private var engine: RtcEngine? = null
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
 
-    private var partnerId:String?=null
-    private var partnerName : String?=null
-    private var partnerImage : String?=null
-    private var currentUserName:String?=null
-    private var currentUserImage:String?=null
-    var time:Int? = 0
+    private var partnerId: String? = null
+    private var partnerName: String? = null
+    private var partnerImage: String? = null
+    private var currentUserName: String? = null
+    private var currentUserImage: String? = null
+    var time: Int? = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-           marks = it.getString(TEAM_SCORE)
-           opponentTeamMarks = it.getString(OPPONENT_TEAM_MARKS)
-           roomId = it.getString(ROOM_ID)
-           teamId = it.getString(TEAM_ID)
-           callTimeCount =it.getString(CALL_TIME)
-           fromType=it.getString(FROM_TYPE)
+            marks = it.getString(TEAM_SCORE)
+            opponentTeamMarks = it.getString(OPPONENT_TEAM_MARKS)
+            roomId = it.getString(ROOM_ID)
+            teamId = it.getString(TEAM_ID)
+            callTimeCount = it.getString(CALL_TIME)
+            fromType = it.getString(FROM_TYPE)
         }
 
         setRoomUsersData()
@@ -119,6 +121,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             )
         binding.lifecycleOwner = this
         binding.clickHandler = this
+        binding.callTime.start()
 
         return binding.root
     }
@@ -130,8 +133,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         currentUserName = Mentor.getInstance().getUser()?.firstName
         currentUserImage = Mentor.getInstance().getUser()?.photo
 
-        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)){
-            binding.team1User2Name.alpha =0.5f
+        if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
+            binding.team1User2Name.alpha = 0.5f
             binding.team1UserImage2Shadow.visibility = View.VISIBLE
         }
 
@@ -139,7 +142,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         try {
             engine = activity?.let { P2pRtc().initEngine(it) }
             P2pRtc().addListener(callback)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Timber.d(ex)
         }
 
@@ -149,10 +152,11 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         onBackPress()
 
         when {
-            marks?.toInt()?:0 > opponentTeamMarks?.toInt()?:0 -> {
+            marks?.toInt() ?: 0 > opponentTeamMarks?.toInt() ?: 0 -> {
                 winnerTeamStatus = true
                 binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(5)).toString()
-                binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
+                binding.opponentUserTotalMarks.text =
+                    (opponentTeamMarks?.toInt()?.plus(0)).toString()
                 binding.winningPointCurrent.text = FIVE
                 binding.winningPointOpponent.text = ZERO
                 binding.txtOpponentWin.visibility = View.VISIBLE
@@ -162,10 +166,11 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
                 binding.conglutions.setImageResource(R.drawable.ic_congratulations)
                 //yaha congulation wala or won ka icon lagana hai
             }
-            marks?.toInt()?:0 == opponentTeamMarks?.toInt()?:0 -> {
+            marks?.toInt() ?: 0 == opponentTeamMarks?.toInt() ?: 0 -> {
                 winnerTeamStatus = false
                 binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
-                binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(0)).toString()
+                binding.opponentUserTotalMarks.text =
+                    (opponentTeamMarks?.toInt()?.plus(0)).toString()
                 binding.winningPointCurrent.text = ZERO
                 binding.winningPointOpponent.text = ZERO
                 binding.conglutions.visibility = View.VISIBLE
@@ -174,7 +179,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             else -> {
                 winnerTeamStatus = false
                 binding.currentUserTotalMarks.text = (marks?.toInt()?.plus(0)).toString()
-                binding.opponentUserTotalMarks.text = (opponentTeamMarks?.toInt()?.plus(5)).toString()
+                binding.opponentUserTotalMarks.text =
+                    (opponentTeamMarks?.toInt()?.plus(5)).toString()
                 binding.winningPointCurrent.text = ZERO
                 binding.winningPointOpponent.text = FIVE
                 binding.txtWinner.text = WINNER
@@ -188,12 +194,11 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
                 //yaha opponent won wala or won ka icon lagana hai
             }
         }
-
         time = callTimeCount?.toInt()?.div(1000)
 
         getFriendRequest()
         activity?.let {
-            saveRoomDataViewModel?.saveRoomDetailsData?.observe(it, Observer {
+            saveRoomDataViewModel.saveRoomDetailsData.observe(it, Observer {
                 Timber.d(it.message)
                 getPlayAgainDataFromFirebase()
             })
@@ -203,57 +208,96 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             makeNewTeam()
         }
 
-        if (fromType == RANDOM){
+        if (fromType == RANDOM) {
             binding.btnAddPeople.visibility = View.VISIBLE
         }
 
         binding.btnAddPeople.setOnClickListener {
-            firebaseDatabase.createFriendRequest(currentUserId?:"",currentUserName?:"",currentUserImage?:"",partnerId?:"")
+            firebaseDatabase.createFriendRequest(
+                currentUserId ?: "",
+                currentUserName ?: "",
+                currentUserImage ?: "",
+                partnerId ?: ""
+            )
         }
 
         binding.btnPlayAgain.setOnClickListener {
-            firebaseDatabase.createPlayAgainNotification(partnerId?:"",currentUserName?:"",currentUserImage?:"")
-            playAgainApiCall(PlayAgain(currentUserTeamId?:"",currentUserId?:""))
+            firebaseDatabase.createPlayAgainNotification(
+                partnerId ?: "",
+                currentUserName ?: "",
+                currentUserImage ?: ""
+            )
+            playAgainApiCall(PlayAgain(currentUserTeamId ?: "", currentUserId ?: ""))
         }
 
-        firebaseDatabase.getPartnerPlayAgainNotification(currentUserId?:"",this)
+        firebaseDatabase.getPartnerPlayAgainNotification(currentUserId ?: "", this)
     }
 
-    fun getFriendRequest(){
-        firebaseDatabase.getFriendRequests(currentUserId?:"",this)
+    fun getFriendRequest() {
+        firebaseDatabase.getFriendRequests(currentUserId ?: "", this)
     }
+
+    override fun onStart() {
+        super.onStart()
+        binding.callTime.base = SystemClock.elapsedRealtime().minus(callTimeCount?.toLong() ?: 0)
+        binding.callTime.start()
+    }
+
+
     companion object {
         @JvmStatic
-        fun newInstance(marks: String,opponentTeamMarks:String, roomId: String?,teamId:String?,callTime:String?,fromType:String) =
+        fun newInstance(
+            marks: String,
+            opponentTeamMarks: String,
+            roomId: String?,
+            teamId: String?,
+            callTime: String?,
+            fromType: String
+        ) =
             WinScreenFragment().apply {
                 arguments = Bundle().apply {
                     putString(TEAM_SCORE, marks)
-                    putString(OPPONENT_TEAM_MARKS,opponentTeamMarks)
+                    putString(OPPONENT_TEAM_MARKS, opponentTeamMarks)
                     putString(ROOM_ID, roomId)
                     putString(TEAM_ID, teamId)
-                    putString(CALL_TIME,callTime)
-                    putString(FROM_TYPE,fromType)
+                    putString(CALL_TIME, callTime)
+                    putString(FROM_TYPE, fromType)
                 }
             }
     }
-    fun setUpViewModel(saveRoomDetails: SaveRoomDetails){
-        saveRoomDataViewModel?.saveRoomDetails(saveRoomDetails)
+
+    fun setUpViewModel(saveRoomDetails: SaveRoomDetails) {
+        saveRoomDataViewModel.saveRoomDetails(saveRoomDetails)
     }
-    fun setRoomUsersData(){
-        saveRoomDataViewModel?.getRoomUserDataTemp(RandomRoomData(
-            roomId ?: "",
-            currentUserId ?: ""
-        ))
+
+    fun setRoomUsersData() {
+        saveRoomDataViewModel.getRoomUserDataTemp(
+            RandomRoomData(
+                roomId ?: "",
+                currentUserId ?: ""
+            )
+        )
     }
+
     fun showRoomUserData() {
         activity?.let {
-            saveRoomDataViewModel?.roomUserDataTemp?.observe(it, Observer {
+            saveRoomDataViewModel.roomUserDataTemp.observe(it, Observer {
                 initializeUsersTeamsData(it.teamData)
-                setUpViewModel(SaveRoomDetails(roomId,teamId,marks,winnerTeamStatus, time?.toString(),currentUserId))
-                deleteAllFromFirestore(currentUserId?:"")
+                setUpViewModel(
+                    SaveRoomDetails(
+                        roomId,
+                        teamId,
+                        marks,
+                        winnerTeamStatus,
+                        time?.toString(),
+                        currentUserId
+                    )
+                )
+                deleteAllFromFirestore(currentUserId ?: "")
             })
         }
     }
+
     fun initializeUsersTeamsData(teamsData: TeamsData) {
         team1Id = teamsData.team1Id
         team2Id = teamsData.team2Id
@@ -291,12 +335,12 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         if (team1UserId1 == currentUserId || team1UserId2 == currentUserId) {
             //yaha par ham jo current user hai usko niche set karte hai or uske partner ko bhi
 
-            if(team1UserId1  == currentUserId){
-                partnerId =  team1UserId2
+            if (team1UserId1 == currentUserId) {
+                partnerId = team1UserId2
                 partnerImage = team1User2ImageUrl
                 partnerName = team1User2Name
-            }else{
-                partnerId =  team1UserId1
+            } else {
+                partnerId = team1UserId1
                 partnerImage = team1User1ImageUrl
                 partnerName = team1User1Name
             }
@@ -305,46 +349,76 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
 
             binding.txtOnButtonPlayagain.text = "Play Again\nwith $partnerName"
 
-            if (currentUserId==team1UserId1){
+            if (currentUserId == team1UserId1) {
                 val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team1User1Name?:"",30,true)
+                binding.team1UserImage1.setUserImageOrInitials(
+                    imageUrl1,
+                    team1User1Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User1Name.text = team1User1Name
 
                 val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
-                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team1User2Name?:"",30,true)
+                binding.team1UserImage2.setUserImageOrInitials(
+                    imageUrl2,
+                    team1User2Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User2Name.text = team1User2Name
-            }else{
+            } else {
                 val imageUrl2 = team1User1ImageUrl?.replace("\n", "")
-               // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
-                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team1User2Name?:"",30,true)
+                // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+                binding.team1UserImage2.setUserImageOrInitials(
+                    imageUrl2,
+                    team1User2Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User2Name.text = team1User1Name
 
                 val imageUrl1 = team1User2ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team1User2Name?:"",30,true)
+                binding.team1UserImage1.setUserImageOrInitials(
+                    imageUrl1,
+                    team1User2Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User1Name.text = team1User2Name
             }
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-          //  ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
-            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team2User1Name?:"",30,true)
+            //  ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(
+                imageUrl3,
+                team2User1Name ?: "",
+                30,
+                true
+            )
             binding.team2User1Name.text = team2User1Name
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
-            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team2User2Name?:"",30,true)
+            binding.team2UserImage2.setUserImageOrInitials(
+                imageUrl4,
+                team2User2Name ?: "",
+                30,
+                true
+            )
             binding.team2User2Name.text = team2User2Name
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
-           if(team2UserId1  == currentUserId){
-               partnerId = team2UserId2
-               partnerImage = team2User2ImageUrl
-               partnerName = team2User2Name
-            }else{
-               partnerId = team2UserId1
-               partnerImage = team2User1ImageUrl
-               partnerName = team2User1Name
+            if (team2UserId1 == currentUserId) {
+                partnerId = team2UserId2
+                partnerImage = team2User2ImageUrl
+                partnerName = team2User2Name
+            } else {
+                partnerId = team2UserId1
+                partnerImage = team2User1ImageUrl
+                partnerName = team2User1Name
             }
 
             binding.txtOnButtonPlayagain.text = "Play Again\nwith $partnerName"
@@ -353,39 +427,70 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             opponentTeamId = team1Id
 
 
-            if(team2UserId1 == currentUserId){
+            if (team2UserId1 == currentUserId) {
                 val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
-               // ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team2User1Name?:"",30,true)
+                // ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
+                binding.team1UserImage1.setUserImageOrInitials(
+                    imageUrl1,
+                    team2User1Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User1Name.text = team2User1Name
 
                 val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-               // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
-                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team2User2Name?:"",30,true)
+                // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
+                binding.team1UserImage2.setUserImageOrInitials(
+                    imageUrl2,
+                    team2User2Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User2Name.text = team2User2Name
-            }else{
+            } else {
                 val imageUrl1 = team2User2ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
-                binding.team1UserImage1.setUserImageOrInitials(imageUrl1,team2User2Name?:"",30,true)
+                binding.team1UserImage1.setUserImageOrInitials(
+                    imageUrl1,
+                    team2User2Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User1Name.text = team2User2Name
 
                 val imageUrl2 = team2User1ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
-                binding.team1UserImage2.setUserImageOrInitials(imageUrl2,team2User1Name?:"",30,true)
+                binding.team1UserImage2.setUserImageOrInitials(
+                    imageUrl2,
+                    team2User1Name ?: "",
+                    30,
+                    true
+                )
                 binding.team1User2Name.text = team2User1Name
             }
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-           // ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
-            binding.team2UserImage1.setUserImageOrInitials(imageUrl3,team1User1Name?:"",30,true)
+            // ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
+            binding.team2UserImage1.setUserImageOrInitials(
+                imageUrl3,
+                team1User1Name ?: "",
+                30,
+                true
+            )
             binding.team2User1Name.text = team1User1Name
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-           // ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
-            binding.team2UserImage2.setUserImageOrInitials(imageUrl4,team1User2Name?:"",30,true)
+            // ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
+            binding.team2UserImage2.setUserImageOrInitials(
+                imageUrl4,
+                team1User2Name ?: "",
+                30,
+                true
+            )
             binding.team2User2Name.text = team1User2Name
         }
     }
+
     fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
@@ -396,54 +501,68 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             })
     }
 
-    fun positiveBtnAction(){
-        //val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        saveRoomDataViewModel?.saveCallDuration(
+    fun positiveBtnAction() {
+        val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+        saveRoomDataViewModel.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
-                time?.div(1000).toString(),
+                startTime.toInt().div(1000).toString(),
                 currentUserId ?: ""
             )
         )
-            if (fromType == RANDOM){
-                saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
-                    activity?.let {
-                        saveRoomDataViewModel?.saveCallDuration?.observe(it, {
-                            if (it.message == CALL_DURATION_RESPONSE) {
-                                val points = it.points
-                                lifecycleScope.launch(Dispatchers.Main) {
-                                    UtilsQuiz.showSnackBar(
-                                        binding.container,
-                                        Snackbar.LENGTH_SHORT,
-                                        "You earned +$points for speaking in English"
-                                    )
-                                }
-                                AudioManagerQuiz.audioRecording.stopPlaying()
-                                engine?.leaveChannel()
-                                openFavouritePartnerScreen()
-                            }
-                        })
-                    }
-            }else{
-                saveRoomDataViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
-                activity?.let {
-                    saveRoomDataViewModel?.saveCallDuration?.observe(it, {
-                        if (it.message == CALL_DURATION_RESPONSE) {
-                            val points = it.points
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                UtilsQuiz.showSnackBar(
-                                    binding.container,
-                                    Snackbar.LENGTH_SHORT,
-                                    "You earned +$points for speaking in English"
-                                )
-                            }
-                            AudioManagerQuiz.audioRecording.stopPlaying()
-                            engine?.leaveChannel()
-                            openFavouritePartnerScreen()
+        if (fromType == RANDOM) {
+            saveRoomDataViewModel.getClearRadius(
+                SaveCallDurationRoomData(
+                    roomId ?: "",
+                    currentUserId ?: "",
+                    currentUserTeamId ?: "",
+                    callTimeCount ?: ""
+                )
+            )
+            activity?.let {
+                saveRoomDataViewModel.saveCallDuration.observe(it, {
+                    if (it.message == CALL_DURATION_RESPONSE) {
+                        val points = it.points
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            UtilsQuiz.showSnackBar(
+                                binding.container,
+                                Snackbar.LENGTH_SHORT,
+                                "You earned +$points for speaking in English"
+                            )
                         }
-                    })
-                }
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        engine?.leaveChannel()
+                        openFavouritePartnerScreen()
+                    }
+                })
             }
+        } else {
+            saveRoomDataViewModel.deleteUserRoomData(
+                SaveCallDurationRoomData(
+                    roomId ?: "",
+                    currentUserId ?: "",
+                    currentUserTeamId ?: "",
+                    callTimeCount ?: ""
+                )
+            )
+            activity?.let {
+                saveRoomDataViewModel.saveCallDuration.observe(it, {
+                    if (it.message == CALL_DURATION_RESPONSE) {
+                        val points = it.points
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            UtilsQuiz.showSnackBar(
+                                binding.container,
+                                Snackbar.LENGTH_SHORT,
+                                "You earned +$points for speaking in English"
+                            )
+                        }
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        engine?.leaveChannel()
+                        openFavouritePartnerScreen()
+                    }
+                })
+            }
+        }
     }
 
     fun openFavouritePartnerScreen() {
@@ -457,21 +576,36 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             ?.commit()
         fm?.popBackStack()
     }
-    fun deleteData(dialog: Dialog){
-        if (fromType == RANDOM){
-            saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+
+    fun deleteData(dialog: Dialog) {
+        if (fromType == RANDOM) {
+            saveRoomDataViewModel.getClearRadius(
+                SaveCallDurationRoomData(
+                    roomId ?: "",
+                    currentUserId ?: "",
+                    currentUserTeamId ?: "",
+                    callTimeCount ?: ""
+                )
+            )
             activity?.let {
-                saveRoomDataViewModel?.clearRadius?.observe(it, {
+                saveRoomDataViewModel.clearRadius.observe(it, {
                     dialog.dismiss()
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
                     openFavouritePartnerScreen()
                 })
             }
-        }else{
-            saveRoomDataViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+        } else {
+            saveRoomDataViewModel.deleteUserRoomData(
+                SaveCallDurationRoomData(
+                    roomId ?: "",
+                    currentUserId ?: "",
+                    currentUserTeamId ?: "",
+                    callTimeCount ?: ""
+                )
+            )
             activity?.let {
-                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
+                saveRoomDataViewModel.deleteData.observe(it, Observer {
                     dialog.dismiss()
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
@@ -480,20 +614,35 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             }
         }
     }
-    fun makeNewTeam(){
-        if (fromType == RANDOM){
-            saveRoomDataViewModel?.getClearRadius(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+
+    fun makeNewTeam() {
+        if (fromType == RANDOM) {
+            saveRoomDataViewModel.getClearRadius(
+                SaveCallDurationRoomData(
+                    roomId ?: "",
+                    currentUserId ?: "",
+                    currentUserTeamId ?: "",
+                    callTimeCount ?: ""
+                )
+            )
             activity?.let {
-                saveRoomDataViewModel?.clearRadius?.observe(it, {
+                saveRoomDataViewModel.clearRadius.observe(it, {
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
                     openFavouritePartnerScreen()
                 })
             }
-        }else{
-            saveRoomDataViewModel?.deleteUserRoomData(SaveCallDurationRoomData(roomId?:"",currentUserId?:"",currentUserTeamId?:"",callTimeCount?:""))
+        } else {
+            saveRoomDataViewModel.deleteUserRoomData(
+                SaveCallDurationRoomData(
+                    roomId ?: "",
+                    currentUserId ?: "",
+                    currentUserTeamId ?: "",
+                    callTimeCount ?: ""
+                )
+            )
             activity?.let {
-                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
+                saveRoomDataViewModel.deleteData.observe(it, Observer {
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
                     openFavouritePartnerScreen()
@@ -501,17 +650,18 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             }
         }
     }
-    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback{
+
+    private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback {
         override fun onPartnerLeave() {
             super.onPartnerLeave()
             try {
-                PrefManager.put(USER_LEAVE_THE_GAME,false)
+                PrefManager.put(USER_LEAVE_THE_GAME, false)
                 binding.btnPlayAgain.isEnabled = false
                 requireActivity().runOnUiThread {
-                    binding.team1User2Name.alpha =0.5f
+                    binding.team1User2Name.alpha = 0.5f
                     binding.team1UserImage2Shadow.visibility = View.VISIBLE
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 Timber.d(ex)
             }
         }
@@ -528,36 +678,44 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
             binding.notificationCard.visibility = View.VISIBLE
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
-            val imageUrl=fromImageUrl.replace("\n","")
+            val imageUrl = fromImageUrl.replace("\n", "")
 
             activity?.let {
                 Glide.with(it)
                     .load(imageUrl)
-                    .apply(RequestOptions.placeholderOf(R.drawable.ic_josh_course).error(R.drawable.ic_josh_course))
+                    .apply(
+                        RequestOptions.placeholderOf(R.drawable.ic_josh_course)
+                            .error(R.drawable.ic_josh_course)
+                    )
                     .into(binding.userImage)
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             Timber.d(ex)
         }
 
         binding.buttonAccept.setOnClickListener {
             binding.notificationCard.visibility = View.INVISIBLE
-            saveRoomDataViewModel?.addFavouritePracticePartner(AddFavouritePartner(fromMentorId,currentUserId))
+            saveRoomDataViewModel.addFavouritePracticePartner(
+                AddFavouritePartner(
+                    fromMentorId,
+                    currentUserId
+                )
+            )
             activity?.let {
-                saveRoomDataViewModel?.fppData?.observe(it, Observer {
-                    firebaseDatabase.deleteRequest(currentUserId?:"")
+                saveRoomDataViewModel.fppData.observe(it, Observer {
+                    firebaseDatabase.deleteRequest(currentUserId ?: "")
                 })
             }
         }
 
-        binding.butonDecline.setOnClickListener{
+        binding.butonDecline.setOnClickListener {
             binding.notificationCard.visibility = View.INVISIBLE
-            firebaseDatabase.deleteRequest(currentUserId?:"")
+            firebaseDatabase.deleteRequest(currentUserId ?: "")
         }
     }
 
-    private fun againPlayGame(){
-        firebaseDatabase.deleteUserPlayAgainCollection(currentUserId?:"")
+    private fun againPlayGame() {
+        firebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
 
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
@@ -573,18 +731,18 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
                 ?.remove(this)
                 ?.commit()
             fm?.popBackStack()
-        },2000)
+        }, 2000)
     }
 
-    private fun getPlayAgainDataFromFirebase(){
-        firebaseDatabase.getPlayAgainAPiData(currentUserId?:"",this@WinScreenFragment)
+    private fun getPlayAgainDataFromFirebase() {
+        firebaseDatabase.getPlayAgainAPiData(currentUserId ?: "", this@WinScreenFragment)
     }
 
-    private fun playAgainApiCall(playAgain: PlayAgain){
-        saveRoomDataViewModel?.playAgainWithSamePlayer(playAgain)
+    private fun playAgainApiCall(playAgain: PlayAgain) {
+        saveRoomDataViewModel.playAgainWithSamePlayer(playAgain)
         activity?.let {
-            saveRoomDataViewModel?.playAgainData?.observe(it, {
-                if (it.message == "Both Member Added"){
+            saveRoomDataViewModel.playAgainData.observe(it, {
+                if (it.message == "Both Member Added") {
                     getPlayAgainDataFromFirebase()
                 }
             })
@@ -595,8 +753,12 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
         againPlayGame()
     }
 
-    override fun onPartnerPlayAgainNotification(userName: String, userImage: String,mentorId:String) {
-        if (mentorId  == currentUserId) {
+    override fun onPartnerPlayAgainNotification(
+        userName: String,
+        userImage: String,
+        mentorId: String
+    ) {
+        if (mentorId == currentUserId) {
             binding.notificationPlayAgain.visibility = View.VISIBLE
             binding.userNameForNotPlay.text = userName
             activity?.let {
@@ -620,7 +782,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
                     binding.notificationPlayAgain.visibility = View.INVISIBLE
                     firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
                 }, 10000)
-            } catch (ex: Exception) {}
+            } catch (ex: Exception) {
+            }
 
         }
     }
@@ -628,17 +791,17 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,P2pRt
     override fun onDestroy() {
         super.onDestroy()
         try {
-            firebaseDatabase.deleteUserPlayAgainCollection(currentUserId?:"")
-        }catch (ex:Exception){
-           showToast(ex.message?:"")
+            firebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
+        } catch (ex: Exception) {
+            showToast(ex.message ?: "")
         }
     }
 
-    fun deleteAllFromFirestore(mentorId: String){
+    fun deleteAllFromFirestore(mentorId: String) {
         firebaseDatabase.deleteAllData(mentorId)
         firebaseDatabase.deleteMuteUnmute(mentorId)
-        firebaseDatabase.deletePartnerCutCard(currentUserTeamId?:"")
-        firebaseDatabase.deleteAnimUser(partnerId?:"")
-        firebaseDatabase.deleteOpponentCutCard(currentUserTeamId?:"")
+        firebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: "")
+        firebaseDatabase.deleteAnimUser(partnerId ?: "")
+        firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
     }
 }

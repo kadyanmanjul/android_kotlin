@@ -982,6 +982,18 @@
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <Chronometer
+            android:id="@+id/call_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_play_again"
+            app:layout_constraintTop_toBottomOf="@+id/txt_opponent_win" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

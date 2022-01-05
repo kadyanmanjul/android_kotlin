@@ -53,7 +53,6 @@ const val PARTNER_LEFT_THE_GAME: String = "Partner has left the game please try 
 const val TEAM_CREATED: String = "Team created successfully"
 const val TRUE: String = "true"
 const val FALSE: String = "false"
-const val STATUS_CHANGE: String = "Status changed successfully"
 
 
 class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
@@ -237,7 +236,7 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         binding.recycleView.layoutManager = LinearLayoutManager(activity)
         favouriteAdapter =
             activity?.let { FavouriteAdapter(it, list, this, firebaseDatabase) }
-        recycle_view.adapter = favouriteAdapter
+        binding.recycleView.adapter = favouriteAdapter
         for (v in 0 until arrayList?.size!!) {
             firebaseDatabase.statusLive(arrayList?.get(v)?.uuid ?: "", this)
         }
