@@ -10,8 +10,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 
 import com.vanniktech.emoji.EmojiPopup
+import kotlinx.coroutines.CoroutineScope
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -57,10 +58,7 @@ class GroupChatFragment : BaseFragment() {
         super.onStart()
         lifecycleScope.launchWhenStarted {
             vm.getChatData().distinctUntilChanged().collectLatest {
-                withContext(Dispatchers.Main) {
-                    vm.chatAdapter.submitData(it)
-                    binding.groupChatRv.layoutManager?.baseline
-                }
+                withContext(Dispatchers.Main) { vm.chatAdapter.submitData(it) }
             }
         }
         if (vm.hasJoinedGroup.get()) {
@@ -181,5 +179,12 @@ class GroupChatFragment : BaseFragment() {
         super.onPause()
         vm.resetUnreadAndTimeToken()
         vm.resetUnreadLabel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CoroutineScope(Dispatchers.IO).launch {
+            vm.chatAdapter.submitData(PagingData.empty())
+        }
     }
 }

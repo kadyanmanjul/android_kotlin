@@ -13,8 +13,8 @@ interface GroupListDao {
     @Query("SELECT * FROM group_list_table ORDER BY lastMsgTime DESC")
     fun getPagedGroupList(): PagingSource<Int, GroupsItem>
 
-    @Query("SELECT * FROM group_list_table ORDER BY name")
-    fun getGroupListLocal(): PagingSource<Int, GroupsItem>
+    @Query("SELECT * FROM group_list_table ORDER BY lastMsgTime DESC")
+    fun getGroupListLocal(): List<GroupsItem>
 
     @Query("SELECT groupId FROM group_list_table")
     suspend fun getGroupIds(): List<String>

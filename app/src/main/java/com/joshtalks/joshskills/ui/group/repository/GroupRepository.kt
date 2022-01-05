@@ -168,11 +168,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
-    fun getGroupListLocal(): Pager<Int, GroupsItem> {
-        return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
-            database.groupListDao().getGroupListLocal()
-        }
-    }
+    fun getGroupListLocal() = database.groupListDao().getGroupListLocal()
 
     @ExperimentalPagingApi
     fun getGroupChatListResult(id: String): Pager<Int, ChatItem> {

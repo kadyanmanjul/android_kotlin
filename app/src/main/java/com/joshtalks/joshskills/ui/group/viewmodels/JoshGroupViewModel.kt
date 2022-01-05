@@ -59,11 +59,10 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun getGroupData(): Flow<PagingData<GroupsItem>> {
-        return if (isFromVoip.get())
-            repository.getGroupListLocal().flow.cachedIn(viewModelScope)
-        else
-            repository.getGroupListResult(::groupDataLoaded).flow.cachedIn(viewModelScope)
+        return repository.getGroupListResult(::groupDataLoaded).flow.cachedIn(viewModelScope)
     }
+
+    fun getGroupLocalData() = repository.getGroupListLocal()
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED

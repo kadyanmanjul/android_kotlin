@@ -12,6 +12,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import androidx.paging.map
 
 import com.joshtalks.joshskills.R
@@ -45,14 +46,14 @@ class GroupListFragment : BaseFragment() {
             if (vm.isFromVoip.get()) {
                 withContext(Dispatchers.IO) {
                     vm.getGroupOnlineCount()
-                    vm.getGroupData().distinctUntilChanged().collectLatest {
+                    vm.getGroupLocalData().let {
                         val groupList = it.map { data ->
                             val countDetails = vm.groupMemberCounts[data.groupId]
                             data.lastMessage = "${countDetails?.memberCount} members, ${countDetails?.onlineCount} online"
                             data.unreadCount = "0"
                             data as GroupItemData
                         }
-                        withContext(Dispatchers.Main) { vm.adapter.submitData(groupList) }
+                        withContext(Dispatchers.Main) { vm.adapter.submitData(PagingData.from(groupList)) }
                     }
                 }
             } else {
