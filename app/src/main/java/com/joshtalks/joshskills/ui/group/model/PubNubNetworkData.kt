@@ -18,7 +18,7 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
     val repository = GroupRepository()
 
     override fun getData(): GroupListResponse {
-        Log.d(TAG, "getData: $data")
+
         groupList.clear()
         for (group in data.data) {
             try {
@@ -26,7 +26,7 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
                 val channelMembershipCustom = group.custom as JsonObject
                 val customMap = getCustomMap(channelCustom)
                 val (lastMsg, lastMessageTime) = chatService.getLastMessageDetail(group.channel.id)
-                Log.d(TAG, "getData: Custom -- $channelCustom")
+
                 val response = GroupsItem(
                     groupId = group.channel.id,
                     name = group.channel.name,
@@ -48,7 +48,6 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
                 showToast("An error has occurred")
             }
         }
-        Log.d(TAG, "getData: $groupList")
         return GroupListResponse(groups = groupList.toList())
     }
 

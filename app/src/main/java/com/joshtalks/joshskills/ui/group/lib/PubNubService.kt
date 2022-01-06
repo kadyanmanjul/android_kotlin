@@ -86,7 +86,7 @@ object PubNubService : ChatService {
             .channels(listOf(groupId))
             .channelsTimetoken(listOf(lastSeenTimestamp))
             .sync()
-        Log.d(TAG, "getUnreadMessageCount: ${pubnub.timestamp.toLong()}")
+
         return count?.channels?.get(groupId) ?: 0L
     }
 
@@ -116,12 +116,11 @@ object PubNubService : ChatService {
             msgObj?.message?.asString ?: ""
         }
 
-        Log.d(TAG, "getLastDetailsMessage: ${pubnub.timestamp.toLong()}")
         return if (msgObj?.message?.asJsonObject?.get("msgType")?.asInt == 1) {
             if (msgObj.uuid == Mentor.getInstance().getId())
-                message.replace("${msgObj?.meta?.asString} has", "You have") to (msgObj?.timetoken ?: 0L)
+                message.replace("${msgObj.meta?.asString} has", "You have") to (msgObj.timetoken ?: 0L)
             else
-                message to (msgObj?.timetoken ?: 0L)
+                message to (msgObj.timetoken ?: 0L)
         }else
             "${msgObj?.meta?.asString}: $message" to (msgObj?.timetoken ?: 0L)
     }

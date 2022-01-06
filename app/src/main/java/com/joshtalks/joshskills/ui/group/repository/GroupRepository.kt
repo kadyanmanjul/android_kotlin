@@ -79,12 +79,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             this.onNewMessageAdded = onNewMessageAdded
         }
 
-        override fun status(pubnub: PubNub, pnStatus: PNStatus) {
-            Log.d(TAG, "status: ${pnStatus}")
-        }
+        override fun status(pubnub: PubNub, pnStatus: PNStatus) {}
 
         override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-            Log.d(TAG, "message: $pnMessageResult")
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
@@ -122,29 +119,17 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             }
         }
 
-        override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
-            Log.d(TAG, "presence: $pnPresenceEventResult")
-        }
+        override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {}
 
-        override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
-            Log.d(TAG, "signal: $pnSignalResult")
-        }
+        override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
 
-        override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
-            Log.d(TAG, "uuid: $pnUUIDMetadataResult")
-        }
+        override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
 
-        override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
-            Log.d(TAG, "channel: $pnChannelMetadataResult")
-        }
+        override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {}
 
-        override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
-            Log.d(TAG, "membership: $pnMembershipResult")
-        }
+        override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
 
-        override fun messageAction(pubnub: PubNub, pnMessageActionResult: PNMessageActionResult) {
-            Log.d(TAG, "messageAction: $pnMessageActionResult")
-        }
+        override fun messageAction(pubnub: PubNub, pnMessageActionResult: PNMessageActionResult) {}
 
         override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
     }
@@ -222,8 +207,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             }
         }
         val nextPage = pubNubResponse?.getPageInfo()?.pubNubNext
-        Log.d(TAG, "fetchGroupList: Next Page H : ${nextPage?.hash}")
-        Log.d(TAG, "fetchGroupList: Next Page ${nextPage}")
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 

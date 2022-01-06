@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 
 import androidx.databinding.ObservableBoolean
@@ -58,7 +57,6 @@ class GroupChatViewModel : BaseViewModel() {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                Log.d(TAG, "onItemRangeInserted: ${positionStart} : ${itemCount} : {$unreadCount}")
                 message.what = NEW_CHAT_ADDED
                 val bundle = Bundle()
                 if (positionStart == 0 && unreadCount != 0) {
