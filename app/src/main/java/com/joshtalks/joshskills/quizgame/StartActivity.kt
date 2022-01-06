@@ -109,6 +109,8 @@ class StartActivity : BaseQuizActivity() {
         firebaseDatabase.deleteAllData(mentorId)
         firebaseDatabase.deleteRoomData(mentorId)
         firebaseDatabase.deleteAnimUser(mentorId)
+        firebaseDatabase.deleteUserPlayAgainCollection(mentorId)
+        firebaseDatabase.deletePlayAgainNotification(mentorId)
     }
 
     // TODO: Need to refactor

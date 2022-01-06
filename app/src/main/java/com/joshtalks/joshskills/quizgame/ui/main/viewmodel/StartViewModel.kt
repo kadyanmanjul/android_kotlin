@@ -21,6 +21,7 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
     fun onItemClick(view: View) {
         message.what = OPEN_CHOICE_SCREEN
         singleLiveEvent.value = message
+        view.visibility = View.GONE
     }
 
     fun addUserToDB() {

@@ -143,6 +143,11 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         return binding.root
     }
 
+    init {
+        position=0
+        marks=0
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE)
@@ -180,16 +185,12 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     question = it
                     getQuestions()
                 })
-            } catch (ex: Exception) {
-                Timber.d(ex)
-            }
+            } catch (ex: Exception) { }
         }
         try {
             engine = activity?.let { P2pRtc().initEngine(it) }
             P2pRtc().addListener(this)
-        } catch (ex: Exception) {
-            Timber.d(ex)
-        }
+        } catch (ex: Exception) { }
 
         binding.card1.setOnClickListener {
             try {
@@ -208,9 +209,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     0
                 )
                 getSelectOptionWithAnim(binding.answer1.text.toString(), 0)
-            } catch (ex: Exception) {
-
-            }
+            } catch (ex: Exception) { }
         }
         binding.card2.setOnClickListener {
             try {
@@ -229,9 +228,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     1
                 )
                 getSelectOptionWithAnim(binding.answer2.text.toString(), 1)
-            } catch (ex: Exception) {
-
-            }
+            } catch (ex: Exception) { }
         }
         binding.card3.setOnClickListener {
             try {
@@ -251,9 +248,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 )
 
                 getSelectOptionWithAnim(binding.answer3.text.toString(), 2)
-            } catch (ex: Exception) {
-
-            }
+            } catch (ex: Exception) { }
         }
         binding.card4.setOnClickListener {
             try {
@@ -272,40 +267,31 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     3
                 )
                 getSelectOptionWithAnim(binding.answer4.text.toString(), 3)
-            } catch (ex: Exception) {
-
-            }
+            } catch (ex: Exception) { }
         }
 
         try {
             binding.team1Mic1Click.setOnClickListener {
                 muteUnMute(binding.team1Mic1)
             }
-        } catch (ex: Exception) {
-        }
+        } catch (ex: Exception) { }
 
         try {
             firebaseDatabase.getMuteOrUnMute(currentUserId ?: "", this)
-        } catch (ex: Exception) {
-
-        }
+        } catch (ex: Exception) { }
         buttonEnableDisable()
     }
 
     fun drawTriangleOnCard(view: View) {
         try {
             view.visibility = View.VISIBLE
-        } catch (ex: Exception) {
-            Timber.d(ex)
-        }
+        } catch (ex: Exception) { }
     }
 
     fun drawTriangleOnCardRight(view: View) {
         try {
             view.visibility = View.VISIBLE
-        } catch (ex: Exception) {
-            Timber.d(ex)
-        }
+        } catch (ex: Exception) { }
     }
 
     fun makeAgainCardSquare() {
@@ -318,9 +304,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.imageCardRight2.visibility = View.INVISIBLE
             binding.imageCardRight3.visibility = View.INVISIBLE
             binding.imageCardRight4.visibility = View.INVISIBLE
-        } catch (ex: Exception) {
-            Timber.d(ex)
-        }
+        } catch (ex: Exception) { }
     }
 
     fun slideAnimationLToR() {
@@ -373,6 +357,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
             } catch (e: Exception) {
+
             }
         } catch (ex: Exception) {
 
@@ -412,8 +397,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             handlerForTimer.postDelayed({
                 timer?.start()
             }, 2000)
-        } catch (ex: Exception) {
-        }
+        } catch (ex: Exception) { }
     }
 
     fun displayAnswerAndShowNextQuestion() {
@@ -486,7 +470,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     } else {
                         binding.roundNumber.visibility = View.VISIBLE
                         binding.roundNumber.text =
-                            getString(R.string.round_1) + " " + position.plus(1).toString()
+                            "ROUND" + " " + position.plus(1).toString()
 
                         animationForRound()
                     }
@@ -496,8 +480,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.question.visibility = View.INVISIBLE
                 binding.marks1.setTextColor(getWhiteColor())
                 binding.marks2.setTextColor(getWhiteColor())
-            } catch (ex: Exception) {
-            }
+            } catch (ex: Exception) { }
 
             makeAgainCardSquare()
             firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
