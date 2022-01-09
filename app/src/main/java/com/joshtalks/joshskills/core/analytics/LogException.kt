@@ -15,7 +15,11 @@ object LogException {
             //return
         }
       //  NewRelic.recordHandledException(throwable as Exception)
-        Sentry.captureException(throwable)
+        try {
+            Sentry.captureException(throwable)
+        } catch (ex:Exception){
+            ex.printStackTrace()
+        }
         FirebaseCrashlytics.getInstance().recordException(throwable)
     }
 
@@ -24,7 +28,11 @@ object LogException {
            //return
         }
         // NewRelic.recordCustomEvent(tag.name, mutableMapOf())
-        Sentry.captureMessage(tag.name + error, SentryLevel.ERROR)
+        try {
+            Sentry.captureMessage(tag.name + error, SentryLevel.ERROR)
+        } catch (ex:Exception){
+            ex.printStackTrace()
+        }
         FirebaseCrashlytics.getInstance().log("(" + tag.NAME + ") - " + error)
 
     }

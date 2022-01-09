@@ -480,11 +480,15 @@ abstract class BaseActivity :
     }
 
     private fun setupSentryUser() {
-        val user = io.sentry.protocol.User()
-        user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
-        user.username = User.getInstance().username
-        user.email = User.getInstance().email
-        Sentry.setUser(user)
+        try {
+            val user = io.sentry.protocol.User()
+            user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
+            user.username = User.getInstance().username
+            user.email = User.getInstance().email
+            Sentry.setUser(user)
+        } catch (ex:Exception){
+            ex.printStackTrace()
+        }
 
     }
 
