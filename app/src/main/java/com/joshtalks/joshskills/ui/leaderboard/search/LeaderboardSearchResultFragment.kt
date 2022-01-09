@@ -178,7 +178,8 @@ class LeaderboardSearchResultFragment : Fragment() {
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 intervalType,
                 USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-                conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
+                conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID),
+                isFromConversationRoom = true
             )
         }
     }

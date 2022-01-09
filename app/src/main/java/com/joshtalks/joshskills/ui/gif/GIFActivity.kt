@@ -100,7 +100,8 @@ class GIFActivity : CoreJoshActivity() {
             this, Mentor.getInstance().getId(),
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             null, USER_PROFILE_FLOW_FROM.AWARD.value,
-            conversationId = intent.getStringExtra(CONVERSATION_ID)
+            conversationId = intent.getStringExtra(CONVERSATION_ID),
+            isFromConversationRoom = true
         )
     }
 }

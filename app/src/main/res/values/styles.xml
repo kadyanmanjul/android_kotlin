@@ -125,6 +125,13 @@
         <item name="android:background">@drawable/bg_rounded_bottom_sheet</item>
     </style>
 
+    <style name="BaseBottomSheetDialogBlank" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <style name="TextStyle.ChipText" parent="TextAppearance.JoshTypography.Caption_Normal_SemiBold">
         <item name="android:textSize">@dimen/_9ssp</item>
     </style>

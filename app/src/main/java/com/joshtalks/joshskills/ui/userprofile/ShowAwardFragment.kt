@@ -120,7 +120,7 @@ class ShowAwardFragment : DialogFragment() {
         UserProfileActivity.startUserProfileActivity(
             requireActivity(), Mentor.getInstance().getId(),
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null, USER_PROFILE_FLOW_FROM.AWARD.value
+            null, USER_PROFILE_FLOW_FROM.AWARD.value, isFromConversationRoom = true
         )
         dismiss()
     }

@@ -174,7 +174,7 @@ android {
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
             /*For Port
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9004\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9011\""
             */
             applicationVariants.all { variant ->
                 variant.outputs.all {

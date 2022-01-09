@@ -23,6 +23,9 @@ class AwardItemViewHolder(var award: Award, var context: Context) {
     @View(R.id.date)
     lateinit var date: AppCompatTextView
 
+//    @View(R.id.txt_count_award)
+//    lateinit var count: AppCompatTextView
+
     @View(R.id.image)
     lateinit var image: ImageView
 

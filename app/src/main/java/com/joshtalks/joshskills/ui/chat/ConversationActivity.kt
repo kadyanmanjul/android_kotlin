@@ -864,7 +864,8 @@ class ConversationActivity :
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 null,
                 it,
-                conversationId = inboxEntity.conversation_id
+                conversationId = inboxEntity.conversation_id,
+                isFromConversationRoom = true
             )
         }
     }

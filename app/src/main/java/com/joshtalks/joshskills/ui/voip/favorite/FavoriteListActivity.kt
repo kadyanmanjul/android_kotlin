@@ -120,7 +120,12 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     private fun openProfileScreen(fc: FavoriteCaller) {
-        UserProfileActivity.startUserProfileActivity(this, mentorId = fc.mentorId, conversationId = intent.getStringExtra(CONVERSATION_ID))
+        UserProfileActivity.startUserProfileActivity(
+            this,
+            mentorId = fc.mentorId,
+            conversationId = intent.getStringExtra(CONVERSATION_ID),
+            isFromConversationRoom = true
+        )
     }
 
     override fun onItemLongClick(view: View?, position: Int) {

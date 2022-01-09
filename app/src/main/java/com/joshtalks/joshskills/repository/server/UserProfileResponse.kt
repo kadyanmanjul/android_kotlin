@@ -13,7 +13,7 @@ data class UserProfileResponse(
     @SerializedName("createdAt")
     val createdAt: Int?,
     @SerializedName("date_of_birth")
-    val dateOfBirth: Int?,
+    val dateOfBirth: String?,
     @SerializedName("joined_on")
     val joinedOn: String?,
     @SerializedName("lastActiveAt")
@@ -61,7 +61,13 @@ data class UserProfileResponse(
     @SerializedName("expire_date")
     val expiryDate: Date? = null,
     @SerializedName("is_conv_room_active")
-    val isConvRoomActive: Boolean
+    val isConvRoomActive: Boolean,
+    @SerializedName("hometown")
+    val hometown: String? = EMPTY,
+    @SerializedName("profile_pictures")
+    val previousProfilePictures: PreviousProfilePictures? = null,
+    @SerializedName("course_enrolled")
+    val enrolledCoursesList: EnrolledCoursesList? = null
 )
 
 data class GroupInfo(
@@ -125,5 +131,7 @@ data class Award(
     @SerializedName("is_achieved")
     val is_achieved: Boolean = false,
     @SerializedName("is_seen")
-    val isSeen: Boolean?
+    val isSeen: Boolean?,
+    @SerializedName("count")
+    val count: Int = 0
 ) : Parcelable
