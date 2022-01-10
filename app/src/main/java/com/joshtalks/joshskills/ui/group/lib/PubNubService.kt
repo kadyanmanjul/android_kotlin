@@ -15,15 +15,13 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
 import com.pubnub.api.enums.PNPushType
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadata
 import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
+import kotlinx.coroutines.*
 import java.util.stream.Collectors
 import kotlin.Exception
 
@@ -91,12 +89,17 @@ object PubNubService : ChatService {
     }
 
     override fun dispatchNotifications(groups: List<String>) {
-        if(groups.isNotEmpty())
-            pubnub.addPushNotificationsOnChannels()
-                .pushType(PNPushType.FCM)
-                .deviceId(PrefManager.getStringValue(FCM_TOKEN))
-                .channels(groups)
-                .sync()
+        try {
+            if (groups.isNotEmpty())
+                pubnub.addPushNotificationsOnChannels()
+                    .pushType(PNPushType.FCM)
+                    .deviceId(PrefManager.getStringValue(FCM_TOKEN))
+                    .channels(groups)
+                    .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e(TAG, "Error in dispatching notifications")
+        }
     }
 
     override fun getLastMessageDetail(groupId: String): Pair<String, Long> {
@@ -129,7 +132,7 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun getMessageHistory(groupId: String, startTime : Long?) : List<ChatItem> {
+    override fun getMessageHistoryAsync(groupId: String, startTime : Long?) = CoroutineScope(Dispatchers.IO).async {
         val history = pubnub.history()
             .channel(groupId)
             .includeMeta(true)
@@ -155,10 +158,10 @@ object PubNubService : ChatService {
                 e.printStackTrace()
             }
         }
-        return messages
+        return@async messages
     }
 
-    override fun getUnreadMessages(groupId: String, startTime: Long): List<ChatItem> {
+    override fun getUnreadMessagesAsync(groupId: String, startTime: Long) = CoroutineScope(Dispatchers.IO).async {
         val history = pubnub.history()
             .channel(groupId)
             .includeMeta(true)
@@ -185,7 +188,7 @@ object PubNubService : ChatService {
                 e.printStackTrace()
             }
         }
-        return messages
+        return@async messages
     }
 
     override fun sendMessage(groupName: String, messageItem: MessageItem) {

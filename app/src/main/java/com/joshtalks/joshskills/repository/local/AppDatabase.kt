@@ -510,10 +510,10 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_42_43: Migration = object : Migration(42,43) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` TEXT, `unreadCount` TEXT, `adminId` TEXT)")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT, `timeToken` INTEGER)")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`message_id` INTEGER PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `msgTime` INTEGER NOT NULL, `groupId` TEXT NOT NULL, `msgType` INTEGER NOT NULL)")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_analytics` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastSentMsgTime` INTEGER)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `adminId` TEXT, `groupIcon` TEXT, `createdAt` INTEGER, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT NOT NULL, `timeToken` INTEGER NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`messageId` TEXT PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `msgTime` INTEGER NOT NULL, `groupId` TEXT NOT NULL, `msgType` INTEGER NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_analytics` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastSentMsgTime` INTEGER NOT NULL)")
                 database.execSQL("ALTER TABLE `groups_analytics` ADD COLUMN `groupId` TEXT")
             }
         }

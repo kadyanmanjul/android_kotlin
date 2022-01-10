@@ -252,10 +252,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     suspend fun fetchUnreadMessage(startTime : Long, groupId: String) {
-        val messages = chatService.getUnreadMessages(
+        val messages = chatService.getUnreadMessagesAsync(
             groupId,
             startTime = startTime
-        )
+        ).await()
         database.groupChatDao().insertMessages(messages)
         if(messages.isEmpty())
             return
