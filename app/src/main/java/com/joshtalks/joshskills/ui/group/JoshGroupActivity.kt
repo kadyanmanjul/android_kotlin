@@ -27,6 +27,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 import timber.log.Timber
 
@@ -259,4 +262,11 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun setIntentExtras() {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CoroutineScope(Dispatchers.IO).launch {
+            vm.deleteExtraMessages()
+        }
+    }
 }

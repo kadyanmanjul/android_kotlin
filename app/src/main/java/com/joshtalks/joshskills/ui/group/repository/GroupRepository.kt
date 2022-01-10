@@ -413,6 +413,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         )
     }
 
+    suspend fun removeExtraMessages() {
+        val ids = database.groupListDao().getGroupIds()
+        for (id in ids) database.groupChatDao().deleteOldGroupMessages(id)
+    }
+
     suspend fun fireTimeTokenAPI() {
         val timeTokenList = database.timeTokenDao().getAllTimeTokens()
         for (token in timeTokenList) {

@@ -31,6 +31,9 @@ interface GroupChatDao {
     @Query("DELETE FROM group_chat_db WHERE groupId = :id")
     suspend fun deleteGroupMessages(id: String)
 
+    @Query("DELETE FROM group_chat_db WHERE groupId = :id AND messageId NOT IN (SELECT messageId FROM group_chat_db WHERE groupId = :id ORDER BY msgTime DESC LIMIT 250)")
+    suspend fun deleteOldGroupMessages(id: String)
+
     @Query("UPDATE group_chat_db SET message = '0 Unread Messages', msgTime = 0 WHERE messageId LIKE 'unread%' AND groupId = :id")
     suspend fun resetUnreadLabel(id: String)
 

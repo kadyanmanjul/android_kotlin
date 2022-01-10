@@ -35,12 +35,10 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
                     Log.d(TAG, "load: APPEND $loadType")
                     val lastMessageTime = database.groupChatDao().getLastMessageTime(groupId = channelId)
 
-                    CoroutineScope(Dispatchers.IO).launch {
-                        messages.addAll(chatService.getMessageHistory(channelId, startTime = lastMessageTime))
+                    messages.addAll(chatService.getMessageHistory(channelId, startTime = lastMessageTime))
 
-                        database.groupChatDao().insertMessages(messages)
-                        Log.d(TAG, "load: APPEND : $loadType")
-                    }
+                    database.groupChatDao().insertMessages(messages)
+                    Log.d(TAG, "load: APPEND : $loadType")
                 }
 
                 // Getting Recent Messages

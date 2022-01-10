@@ -197,4 +197,6 @@ class JoshGroupViewModel : BaseViewModel() {
             }
         }
     }
+
+    suspend fun deleteExtraMessages() = repository.removeExtraMessages()
 }
