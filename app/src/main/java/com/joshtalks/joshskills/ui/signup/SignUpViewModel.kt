@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -295,6 +296,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
+                Log.d("sakshi", response.toString())
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = isUserVerified
