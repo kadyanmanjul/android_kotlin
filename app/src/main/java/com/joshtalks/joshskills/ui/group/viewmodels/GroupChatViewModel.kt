@@ -139,7 +139,7 @@ class GroupChatViewModel : BaseViewModel() {
             val item = repository.getGroupItem(groupId)
             if (item != null) {
                 groupHeader.set(item.name)
-                imageUrl.set(item.groupIcon)
+                imageUrl.set(item.groupIcon ?: "")
             }
         }
     }

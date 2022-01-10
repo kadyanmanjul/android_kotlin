@@ -121,8 +121,12 @@ object PubNubService : ChatService {
                 message.replace("${msgObj.meta?.asString} has", "You have") to (msgObj.timetoken ?: 0L)
             else
                 message to (msgObj.timetoken ?: 0L)
-        }else
-            "${msgObj?.meta?.asString}: $message" to (msgObj?.timetoken ?: 0L)
+        } else {
+            if (msgObj?.uuid == Mentor.getInstance().getId())
+                "You: $message" to (msgObj.timetoken ?: 0L)
+            else
+                "${msgObj?.meta?.asString}: $message" to (msgObj?.timetoken ?: 0L)
+        }
     }
 
     override fun getMessageHistory(groupId: String, startTime : Long?) : List<ChatItem> {
