@@ -13,8 +13,8 @@ interface ChatService {
     fun fetchGroupList(pageInfo: PageInfo? = null) : NetworkData?
     fun getUnreadMessageCount(groupId: String, lastSeenTimestamp : Long) : Long
     fun getLastMessageDetail(groupId: String) : Pair<String, Long>
-    fun getMessageHistoryAsync(groupId: String, startTime : Long? = null) : Deferred<MutableList<ChatItem>>
-    fun getUnreadMessagesAsync(groupId: String, startTime : Long) : Deferred<MutableList<ChatItem>>
+    fun getMessageHistory(groupId: String, startTime : Long? = null) : List<ChatItem>
+    fun getUnreadMessages(groupId: String, startTime : Long) : List<ChatItem>
     fun getChannelMembers(groupId: String, adminId: String): MemberResult?
 }
 

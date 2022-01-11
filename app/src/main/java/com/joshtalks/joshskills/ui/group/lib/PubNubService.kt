@@ -132,7 +132,7 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun getMessageHistoryAsync(groupId: String, startTime : Long?) = CoroutineScope(Dispatchers.IO).async {
+    override fun getMessageHistory(groupId: String, startTime : Long?): List<ChatItem> {
         val history = pubnub.history()
             .channel(groupId)
             .includeMeta(true)
@@ -158,10 +158,10 @@ object PubNubService : ChatService {
                 e.printStackTrace()
             }
         }
-        return@async messages
+        return messages
     }
 
-    override fun getUnreadMessagesAsync(groupId: String, startTime: Long) = CoroutineScope(Dispatchers.IO).async {
+    override fun getUnreadMessages(groupId: String, startTime: Long): List<ChatItem> {
         val history = pubnub.history()
             .channel(groupId)
             .includeMeta(true)
@@ -188,7 +188,7 @@ object PubNubService : ChatService {
                 e.printStackTrace()
             }
         }
-        return@async messages
+        return messages
     }
 
     override fun sendMessage(groupName: String, messageItem: MessageItem) {

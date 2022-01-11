@@ -9,6 +9,10 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import retrofit2.HttpException
 
@@ -32,7 +36,9 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
                     Log.d(TAG, "load: APPEND $loadType")
                     val lastMessageTime = database.groupChatDao().getLastMessageTime(groupId = channelId)
 
-                    messages.addAll(chatService.getMessageHistoryAsync(channelId, startTime = lastMessageTime).await())
+                    withContext(Dispatchers.IO) {
+                        messages.addAll(chatService.getMessageHistory(channelId, startTime = lastMessageTime))
+                    }
 
                     database.groupChatDao().insertMessages(messages)
                     Log.d(TAG, "load: APPEND : $loadType")
@@ -44,7 +50,9 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
                     val recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = channelId)
 
                     recentMessageTime?.let {
-                        messages.addAll(chatService.getUnreadMessagesAsync(channelId, startTime = recentMessageTime).await())
+                        withContext(Dispatchers.IO) {
+                            messages.addAll(chatService.getUnreadMessages(channelId, startTime = recentMessageTime))
+                        }
 
                         database.groupChatDao().insertMessages(messages)
                         Log.d(TAG, "load: PREPEND : $loadType")
