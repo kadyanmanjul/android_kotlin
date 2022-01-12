@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.NonNull
@@ -76,6 +77,7 @@ import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -274,11 +276,12 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onVerificationRequired(p0: TrueError?) {
-
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                viewModel.verifyUserViaTrueCaller(trueProfile)
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.verifyUserViaTrueCaller(trueProfile)
+                }
             }
 
         })
@@ -388,8 +391,8 @@ class SignUpActivity : BaseActivity() {
         }
         fbCallbackManager.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
-           // TruecallerSDK.getInstance().onActivityResultObtained(this, resultCode, data)
-            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
+            TruecallerSDK.getInstance()
+                .onActivityResultObtained(this, requestCode, resultCode, data)
             return
         }
         hideProgressBar()
@@ -475,7 +478,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun handleFirebaseAuth(
-        accountUser: FirebaseUser?
+        accountUser: FirebaseUser?,
     ) {
         if (accountUser != null) {
 
@@ -536,7 +539,7 @@ class SignUpActivity : BaseActivity() {
         countryCode: String,
         phoneNumber: String,
         service: VerificationService = VerificationService.SMS_COUNTRY,
-        verificationVia: VerificationVia = VerificationVia.SMS
+        verificationVia: VerificationVia = VerificationVia.SMS,
     ) {
 
         when (service) {
@@ -686,13 +689,13 @@ class SignUpActivity : BaseActivity() {
 
     //Use link = https://docs.truecaller.com/truecaller-sdk/android/integrating-with-your-app/verifying-non-truecaller-users
     private fun verificationThroughTrueCaller(
-        phoneNumber: String
+        phoneNumber: String,
     ) {
         val apiCallback: VerificationCallback = object : VerificationCallback {
             @SuppressLint("SwitchIntDef")
             override fun onRequestSuccess(
                 requestCode: Int,
-                @Nullable extras: VerificationDataBundle?
+                @Nullable extras: VerificationDataBundle?,
             ) {
                 when (requestCode) {
                     VerificationCallback.TYPE_MISSED_CALL_INITIATED -> {
@@ -760,7 +763,7 @@ class SignUpActivity : BaseActivity() {
 
                 override fun onPermissionRationaleShouldBeShown(
                     p0: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
+                    token: PermissionToken?,
                 ) {
                     viewModel.verificationStatus.postValue(VerificationStatus.USER_DENY)
                     token?.continuePermissionRequest()

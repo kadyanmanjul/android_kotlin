@@ -33,6 +33,7 @@ import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -119,9 +120,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun verifyUserViaTrueCaller(profile: TrueProfile) {
+    suspend fun verifyUserViaTrueCaller(profile: TrueProfile) {
         progressBarStatus.postValue(true)
-        viewModelScope.launch(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             try {
                 val trueCallerLoginRequest = TrueCallerLoginRequest(
                     profile.payload,
@@ -134,11 +135,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
-                            RegistrationMethods.MOBILE_NUMBER
+                            RegistrationMethods.TRUE_CALLER
                         )
                         updateFromLoginResponse(this)
                     }
-                    return@launch
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
@@ -296,7 +296,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
-                Log.d("sakshi", response.toString())
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = isUserVerified
