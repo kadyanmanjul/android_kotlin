@@ -16,9 +16,12 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/member_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/group_item_image"
@@ -37,8 +40,8 @@
             android:id="@+id/member_online_status"
             android:layout_width="@dimen/_6sdp"
             android:layout_height="@dimen/_6sdp"
-            android:src="#30E364"
             android:layout_margin="@dimen/_1sdp"
+            android:src="#30E364"
             android:visibility="@{itemData.online ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="@+id/group_item_image"
             app:layout_constraintEnd_toEndOf="@+id/group_item_image" />

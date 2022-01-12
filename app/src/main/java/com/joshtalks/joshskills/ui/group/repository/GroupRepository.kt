@@ -252,10 +252,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     suspend fun fetchUnreadMessage(startTime : Long, groupId: String) {
-        val messages = chatService.getUnreadMessagesAsync(
-            groupId,
-            startTime = startTime
-        ).await()
+        val messages = chatService.getUnreadMessages(groupId, startTime = startTime)
         database.groupChatDao().insertMessages(messages)
         if(messages.isEmpty())
             return
@@ -337,6 +334,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             return database.groupListDao().getGroupsCount()
         }
         return null
+    }
+
+    suspend fun removeMemberFromGroup(request: LeaveGroupRequest): Boolean {
+        val response = apiService.leaveGroup(request)
+        if (response.isSuccessful)
+            return true
+        return false
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =

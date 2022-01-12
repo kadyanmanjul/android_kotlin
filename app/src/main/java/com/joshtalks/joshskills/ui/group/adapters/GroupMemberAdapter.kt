@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.group.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,12 +14,20 @@ class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
 
     val memberLimit: Int = 6
     var showAllMembers = false
+    var itemClick: ((GroupMember, View) -> Unit)? = null
 
     inner class MemberViewHolder(private val item: GroupMemberItemBinding) :
         RecyclerView.ViewHolder(item.root) {
         fun onBind(member: GroupMember) {
             item.itemData = member
+            item.memberContainer.setOnClickListener {
+                itemClick?.invoke(member, item.root)
+            }
         }
+    }
+
+    fun setListener(function: (GroupMember, View) -> Unit) {
+        itemClick = function
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
@@ -43,7 +52,7 @@ class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
         }
     }
 
-    fun shouldShowAll(boolean: Boolean){
+    fun shouldShowAll(boolean: Boolean) {
         showAllMembers = boolean
         notifyDataSetChanged()
     }

@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.views.GroupsAppBar
 
 import de.hdodenhof.circleimageview.CircleImageView
@@ -95,14 +96,17 @@ fun setGroupAdapter(
     adapter.setListener(function)
 }
 
-@BindingAdapter("groupMemberAdapter")
+@BindingAdapter("groupMemberAdapter", "onMemberItemClick")
 fun setGroupMemberAdapter(
     view: RecyclerView,
     adapter: GroupMemberAdapter,
+    function: (GroupMember, View) -> Unit
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)
     view.adapter = adapter
+
+    adapter.setListener(function)
 }
 
 @BindingAdapter("groupChatAdapter", "scrollToBottom")

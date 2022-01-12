@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -26,6 +27,7 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.MESSAGE
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -42,16 +44,26 @@ import kotlinx.coroutines.withContext
 private const val TAG = "GroupChatViewModel"
 
 class GroupChatViewModel : BaseViewModel() {
+
     val repository = GroupRepository()
     val hasJoinedGroup = ObservableBoolean(false)
     var groupHeader = ObservableField("")
     var imageUrl = ObservableField("")
     val groupCreator = ObservableField("")
     val groupCreatedAt = ObservableField("")
-    var conversationId: String = ""
     var memberCount = ObservableField(0)
     val memberAdapter = GroupMemberAdapter()
     val groupSubHeader = ObservableField("")
+    val joiningNewGroup = ObservableBoolean(false)
+    val fetchingGrpInfo = ObservableBoolean(false)
+    var scrollToEnd = false
+    var unreadCount = 0
+    private val chatService : ChatService = PubNubService
+
+    var groupId: String = ""
+    var adminId: String = ""
+    var conversationId: String = ""
+    var chatSendText: String = ""
 
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -69,15 +81,25 @@ class GroupChatViewModel : BaseViewModel() {
         })
     }
 
-    val joiningNewGroup = ObservableBoolean(false)
-    val fetchingGrpInfo = ObservableBoolean(false)
-    var chatSendText: String = ""
-    var scrollToEnd = false
-    var unreadCount = 0
-    private val chatService : ChatService = PubNubService
+    val openMemberPopup: (GroupMember, View) -> Unit = { it, view ->
+        if (!it.isAdmin) {
+            val builder = AlertDialog.Builder(view.context)
+            val memberOptions = arrayOf("Remove ${it.memberName}")
+            builder.setAdapter(ArrayAdapter(view.context, android.R.layout.simple_list_item_1, memberOptions)) { _, item ->
+                when(item) {
+                    0 -> {
+                        val removeMsg = "Remove ${it.memberName} from \"${groupHeader.get()}\" group?"
+                        showAlertDialog(view, removeMsg, "Ok") {
+                            removeMemberFromGroup(it.mentorID, it.memberName)
+                        }
+                    }
+                }
+            }
 
-    var groupId: String = ""
-    var adminId: String = ""
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+    }
 
     fun onBackPress() {
         message.what = ON_BACK_PRESSED
@@ -134,6 +156,36 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    fun showExitDialog(view: View) {
+        showAlertDialog(view, "Exit \"${groupHeader.get()}\" group?", "Exit") { leaveGroup() }
+    }
+
+    fun removeMemberFromGroup(mentorId: String, memberName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = LeaveGroupRequest(
+                    groupId = groupId,
+                    mentorId = mentorId
+                )
+                val response = repository.removeMemberFromGroup(request)
+                if (!response) {
+                    showToast("An error has occurred")
+                    dismissProgressDialog()
+                    return@launch
+                }
+                getGroupInfo()
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId)
+                dismissProgressDialog()
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    dismissProgressDialog()
+                    showToast("An error has occurred")
+                }
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun refreshGroupInfo() {
         viewModelScope.launch(Dispatchers.Main) {
             val item = repository.getGroupItem(groupId)
@@ -178,7 +230,6 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun leaveGroup() {
-        fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = LeaveGroupRequest(
@@ -199,13 +250,13 @@ class GroupChatViewModel : BaseViewModel() {
                     }
                     singleLiveEvent.value = message
                     repository.startChatEventListener()
-                    fetchingGrpInfo.set(false)
+                    dismissProgressDialog()
                     onBackPress()
                     onBackPress()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    fetchingGrpInfo.set(false)
+                    dismissProgressDialog()
                     showToast("An error has occurred")
                 }
                 e.printStackTrace()
@@ -213,11 +264,12 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
-    fun showExitDialog(view: View) {
+    fun showAlertDialog(view: View, dialogMessage: String, positiveBtnText: String, function: () -> Unit) {
         val builder = AlertDialog.Builder(view.context)
-        val dialog: AlertDialog = builder.setMessage("Exit \"${groupHeader.get()}\" group?")
-            .setPositiveButton("Exit") { dialog, id ->
-                leaveGroup()
+        val dialog: AlertDialog = builder.setMessage(dialogMessage)
+            .setPositiveButton(positiveBtnText) { dialog, id ->
+                showProgressDialog(view.context, "Removing member...")
+                function.invoke()
             }
             .setNegativeButton("Cancel") { dialog, id ->
                 dialog.cancel()
