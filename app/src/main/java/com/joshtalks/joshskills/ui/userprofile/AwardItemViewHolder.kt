@@ -39,7 +39,7 @@ class AwardItemViewHolder(var award: Award, var context: Context) {
 
     private fun initView() {
         title.text = award.awardText
-        date.text = award.dateText
+        date.text = award.recentDate
         award.imageUrl?.let {
             image.setImage(it, context)
         }

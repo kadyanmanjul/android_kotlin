@@ -10,6 +10,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
+import com.flurry.sdk.it
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -35,7 +36,8 @@ class SeeAllAwardActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        awardCategory = intent.getParcelableArrayListExtra<AwardCategory>(AWARD_CATEGORY) as List<AwardCategory>
+        awardCategory =
+            intent.getParcelableArrayListExtra<AwardCategory>(AWARD_CATEGORY) as List<AwardCategory>
         binding = DataBindingUtil.setContentView(this, R.layout.fragment_see_all_award)
         binding.lifecycleOwner = this
         binding.fragment = this
@@ -65,8 +67,8 @@ class SeeAllAwardActivity : BaseActivity() {
 
     private fun initRecyclerView() {
 
-        awardCategory.forEach { awardCategory ->
-            val view = addLinerLayout(awardCategory)
+        awardCategory.forEach {
+            val view = addLinerLayout(it)
             if (view != null) {
                 binding.multiLineLl.addView(view)
             } else {
@@ -85,17 +87,26 @@ class SeeAllAwardActivity : BaseActivity() {
 //        viewDivider.visibility = View.VISIBLE
         val recyclerView = view.findViewById(R.id.rv) as PlaceHolderView
         recyclerView.visibility = View.VISIBLE
-        title.text = awardCategory.label
+//        title.text = awardCategory.label
         val linearLayoutManager = GridLayoutManager(
             this, 3
         )
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView.builder.setLayoutManager(linearLayoutManager)
-        title.setText(awardCategory.label)
+
         awardCategory.awards?.forEach {
-            recyclerView.addView(AwardItemViewHolder(it, this))
+           var localAward : Award = it
+            title.setText(it.awardText)
+            it.dateList?.forEach {
+                localAward.recentDate=it
+                recyclerView.addView(AwardItemViewHolder(localAward, this))
+            }
+
+
+
+
         }
-        recyclerView.isNestedScrollingEnabled=true
+        recyclerView.isNestedScrollingEnabled = true
         return view
     }
 

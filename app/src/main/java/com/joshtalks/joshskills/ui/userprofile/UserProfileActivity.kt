@@ -173,6 +173,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
 
         }
+        binding.userAge.setOnClickListener{
+            if (mentorId == Mentor.getInstance().getId()) {
+                binding.userAge.isClickable=true
+                EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
+            }
+        }
 
     }
 
@@ -193,16 +199,16 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             }
         }
-//        with(iv_edit) {
-//            if (mentorId == Mentor.getInstance().getId()) {
-//                visibility = View.VISIBLE
-//                setOnClickListener {
-//                    openEditProfileScreen()
-//                }
-//            } else {
-//                visibility = View.GONE
-//            }
-//        }
+        with(iv_edit) {
+            if (mentorId == Mentor.getInstance().getId()) {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    openEditProfileScreen()
+                }
+            } else {
+                visibility = View.GONE
+            }
+        }
         text_message_title.text = getString(R.string.profile)
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
                 .getId()
@@ -353,14 +359,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
         if (userData.age == null || userData.age <= 1) {
-            binding.userAge.text = "___________"
+            binding.userAge.text = "\t\t\t"
             binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.black))
         } else {
             binding.userAge.text = userData.age.toString()
             binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
         }
         if (userData.hometown.isNullOrBlank()) {
-            binding.txtUserHometown.text = "___________"
+            binding.txtUserHometown.text = "_________"
+            binding.txtUserHometown.letterSpacing.to(0)
             binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.black))
         } else {
             binding.txtUserHometown.text = userData.hometown
@@ -520,6 +527,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         var index = 0
 
         awardCategory.awards?.forEach {
+
+
             if (mentorId == Mentor.getInstance().getId()) {
                 setAwardView(it, index, view!!)
 
@@ -644,11 +653,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         count: AppCompatTextView
     ) {
         title.text = award.awardText
-        if (award.dateText.isNullOrBlank()) {
+        if (award.recentDate.isNullOrBlank()) {
             date.visibility = View.INVISIBLE
         } else {
             date.visibility = View.VISIBLE
-            date.text = award.dateText
+            date.text = award.recentDate
         }
         award.imageUrl?.let {
             image.setImage(it, this)

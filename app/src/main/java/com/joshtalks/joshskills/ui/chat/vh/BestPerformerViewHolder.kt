@@ -71,7 +71,9 @@ class BestPerformerViewHolder(view: View, userId: String) : BaseViewHolder(view,
                             null,
                             awardMentorModel.awardDescription,
                             true,
-                            true
+                            true,
+                            0,
+                            null
                         )
                     )
                 )

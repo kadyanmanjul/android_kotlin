@@ -205,7 +205,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtLabelHometown"
-                tools:text="Patiala" />
+                />
 
             <View
                 android:id="@+id/seperator3"
@@ -262,6 +262,7 @@
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="168dp"
                 android:layout_marginBottom="@dimen/_40sdp"
                 android:backgroundTint="@color/button_color"
                 android:gravity="center"
@@ -273,7 +274,8 @@
                 app:cornerRadius="@dimen/_50sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTxtBatch" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
