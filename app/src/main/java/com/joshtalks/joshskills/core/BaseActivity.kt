@@ -389,6 +389,15 @@ abstract class BaseActivity :
         }
     }
 
+    fun getSignUpProfileForFreeTrialFragmentIntent(isFromOnBoardingFlow: Boolean = false): Intent {
+        return Intent(this, SignUpProfileForFreeTrialFragment::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            //putExtra(SHOW_OVERLAY, true)
+            //putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
+        }
+    }
+
     protected fun openSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", packageName, null)
