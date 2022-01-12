@@ -592,7 +592,7 @@
             android:value="@bool/branch_test" />
         <meta-data
             android:name="com.truecaller.android.sdk.PartnerKey"
-            android:value="@string/truecaller_key" />
+            android:value="@string/partnerKey" />
         <meta-data
             android:name="CLEVERTAP_BACKGROUND_SYNC"
             android:value="1" /> <!-- replace below value with your FCM project number. -->
