@@ -94,16 +94,13 @@ class SeeAllAwardActivity : BaseActivity() {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView.builder.setLayoutManager(linearLayoutManager)
 
-        awardCategory.awards?.forEach {
-           var localAward : Award = it
-            title.setText(it.awardText)
-            it.dateList?.forEach {
-                localAward.recentDate=it
-                recyclerView.addView(AwardItemViewHolder(localAward, this))
+        awardCategory.awards?.forEach { award ->
+            var localAward : Award = award
+            title.setText(award.awardText)
+            award.dateList?.forEach {
+
+                recyclerView.addView(AwardItemViewHolder(localAward,it, this))
             }
-
-
-
 
         }
         recyclerView.isNestedScrollingEnabled = true

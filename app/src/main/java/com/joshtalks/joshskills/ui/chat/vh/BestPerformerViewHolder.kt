@@ -73,6 +73,7 @@ class BestPerformerViewHolder(view: View, userId: String) : BaseViewHolder(view,
                             true,
                             true,
                             0,
+                            null,
                             null
                         )
                     )

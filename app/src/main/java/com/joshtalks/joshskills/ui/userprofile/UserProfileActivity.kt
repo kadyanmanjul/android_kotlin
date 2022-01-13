@@ -653,11 +653,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         count: AppCompatTextView
     ) {
         title.text = award.awardText
-        if (award.recentDate.isNullOrBlank()) {
+        if (award.dateText.isNullOrBlank()) {
             date.visibility = View.INVISIBLE
         } else {
             date.visibility = View.VISIBLE
-            date.text = award.recentDate
+            date.text = award.dateText
         }
         award.imageUrl?.let {
             image.setImage(it, this)

@@ -123,7 +123,7 @@ data class Award(
     @SerializedName("sort_order")
     val sortOrder: Int?,
     @SerializedName("date_text")
-    val dateText:String?,
+    var dateText:String?,
     @SerializedName("image_url")
     val imageUrl: String?,
     @SerializedName("award_description")
@@ -135,8 +135,11 @@ data class Award(
     @SerializedName("count")
     val count: Int = 0,
     @SerializedName("date_list")
-    val dateList: List<String>?,
-    var recentDate:String?=dateList?.last(),
+    val dateList: List<String?>?,
+
+    var recentDate:String?
+
+
 ) : Parcelable
 
 

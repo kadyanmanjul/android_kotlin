@@ -15,7 +15,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.award_item_view_holder)
-class AwardItemViewHolder(var award: Award, var context: Context) {
+class AwardItemViewHolder(var award: Award,var dateText:String?,  var context: Context) {
 
     @View(R.id.title)
     lateinit var title: AppCompatTextView
@@ -39,7 +39,7 @@ class AwardItemViewHolder(var award: Award, var context: Context) {
 
     private fun initView() {
         title.text = award.awardText
-        date.text = award.recentDate
+        date.text = dateText
         award.imageUrl?.let {
             image.setImage(it, context)
         }
