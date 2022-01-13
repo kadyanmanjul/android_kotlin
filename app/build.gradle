@@ -173,9 +173,9 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
-            /*For Port
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9004\""
-            */
+            //For Port
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9007\""
+
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"

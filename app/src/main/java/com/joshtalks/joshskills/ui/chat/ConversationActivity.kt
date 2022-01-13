@@ -429,6 +429,23 @@ class ConversationActivity :
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             }
+            conversationBinding.ivIconReferral.setOnClickListener {
+
+                AppAnalytics
+                    .create(AnalyticsEvent.REFER_CONVERSATION_ICON_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam(
+                        AnalyticsEvent.REFERRAL_CODE.NAME,
+                        Mentor.getInstance().referralCode
+                    )
+                    .push()
+
+                ReferralActivity.startReferralActivity(
+                    this@ConversationActivity,
+                    ConversationActivity::class.java.name
+                )
+            }
 
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             profileFeatureActiveView(inboxEntity.isCapsuleCourse)
@@ -436,6 +453,17 @@ class ConversationActivity :
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
+
+                        AppAnalytics
+                            .create(AnalyticsEvent.REFER_BUTTON_CONVERSATION_MENU.NAME)
+                            .addBasicParam()
+                            .addUserDetails()
+                            .addParam(
+                                AnalyticsEvent.REFERRAL_CODE.NAME,
+                                Mentor.getInstance().referralCode
+                            )
+                            .push()
+
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
                             ConversationActivity::class.java.name

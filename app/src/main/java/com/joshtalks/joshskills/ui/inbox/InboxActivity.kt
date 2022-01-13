@@ -83,6 +83,22 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         text_message_title.text = getString(R.string.inbox_header)
         iv_reminder.visibility = GONE
         iv_setting.visibility = View.VISIBLE
+
+        iv_icon_referral.setOnClickListener {
+
+            AppAnalytics
+                .create(AnalyticsEvent.REFER_INBOX_ICON_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(
+                    AnalyticsEvent.REFERRAL_CODE.NAME,
+                    Mentor.getInstance().referralCode
+                )
+                .push()
+
+            ReferralActivity.startReferralActivity(this@InboxActivity)
+        }
+        
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.apply {
             itemAnimator = null
@@ -118,6 +134,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
     }
 
+
+
+
+
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {
             popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
@@ -126,6 +146,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 when (it.itemId) {
                     R.id.menu_referral -> {
                         AppAnalytics
+                            //.create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
                             .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
                             .addBasicParam()
                             .addUserDetails()

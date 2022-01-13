@@ -99,6 +99,23 @@
                 app:layout_constraintEnd_toStartOf="@+id/iv_setting"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_bell"
+                tools:visibility="gone" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_icon_referral"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/_4sdp"
+                android:tint="@color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_setting"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_referral"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView

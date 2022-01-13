@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.referral
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -24,6 +25,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.util.ApplicationSelectorReceiver
 import com.muddzdev.styleabletoast.StyleableToast
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
@@ -81,6 +83,9 @@ class ReferralActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
+
+
+
         activityReferralBinding = DataBindingUtil.setContentView(this, R.layout.activity_referral)
         activityReferralBinding.lifecycleOwner = this
         activityReferralBinding.handler = this
@@ -310,6 +315,10 @@ class ReferralActivity : BaseActivity() {
                 waIntent.setPackage(packageString)
             }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
+
+
+
+
             startActivity(Intent.createChooser(waIntent, "Share with"))
             AppAnalytics
                 .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)
