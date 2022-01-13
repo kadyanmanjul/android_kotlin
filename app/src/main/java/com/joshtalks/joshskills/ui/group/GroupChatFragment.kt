@@ -17,10 +17,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLEAR_CHAT_TEXT
 import com.joshtalks.joshskills.constants.OPEN_EMOJI_KEYBOARD
+import com.joshtalks.joshskills.constants.OPEN_GROUP_INFO
 import com.joshtalks.joshskills.constants.NEW_CHAT_ADDED
 import com.joshtalks.joshskills.constants.SEND_MSG
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_CALL_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
@@ -102,6 +104,7 @@ class GroupChatFragment : BaseFragment() {
                 }
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
                 SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString().trim())
+                OPEN_GROUP_INFO -> hideKeyboard(requireContext())
                 NEW_CHAT_ADDED -> {
                     if (it.data.getInt(GROUP_CHAT_UNREAD) != 0) {
                         binding.groupChatRv.layoutManager?.scrollToPosition(

@@ -26,7 +26,7 @@ class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
         }
     }
 
-    fun setListener(function: (GroupMember, View) -> Unit) {
+    fun setListener(function: ((GroupMember, View) -> Unit)?) {
         itemClick = function
     }
 

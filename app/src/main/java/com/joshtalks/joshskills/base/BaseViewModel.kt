@@ -4,20 +4,21 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.os.Message
 import androidx.lifecycle.ViewModel
+import com.joshtalks.joshskills.R
 
 open class BaseViewModel : ViewModel() {
     protected var message = Message()
 
     protected var singleLiveEvent = EventLiveData
 
-    lateinit var progressDialog : ProgressDialog
+    var progressDialog: ProgressDialog? = null
 
     fun showProgressDialog(context: Context, msg: String) {
-        progressDialog = ProgressDialog(context)
-        progressDialog.setCancelable(true)
-        progressDialog.setMessage(msg)
-        progressDialog.show()
+        progressDialog = ProgressDialog(context, R.style.AlertDialogStyle)
+        progressDialog?.setCancelable(true)
+        progressDialog?.setMessage(msg)
+        progressDialog?.show()
     }
 
-    fun dismissProgressDialog() = progressDialog.dismiss()
+    fun dismissProgressDialog() = progressDialog?.dismiss()
 }

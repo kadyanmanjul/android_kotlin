@@ -54,7 +54,6 @@ class GroupChatViewModel : BaseViewModel() {
     var memberCount = ObservableField(0)
     val memberAdapter = GroupMemberAdapter()
     val groupSubHeader = ObservableField("")
-    val joiningNewGroup = ObservableBoolean(false)
     val fetchingGrpInfo = ObservableBoolean(false)
     var scrollToEnd = false
     var unreadCount = 0
@@ -89,7 +88,7 @@ class GroupChatViewModel : BaseViewModel() {
                 when(item) {
                     0 -> {
                         val removeMsg = "Remove ${it.memberName} from \"${groupHeader.get()}\" group?"
-                        showAlertDialog(view, removeMsg, "Ok") {
+                        showAlertDialog(view, removeMsg, "Ok", "Removing member") {
                             removeMemberFromGroup(it.mentorID, it.memberName)
                         }
                     }
@@ -128,13 +127,13 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
-        joiningNewGroup.set(true)
+        showProgressDialog(view.context, "Joining Group...")
         viewModelScope.launch {
             try {
                 val response = repository.joinGroup(groupId)
                 if (response) {
                     withContext(Dispatchers.Main) {
-                        joiningNewGroup.set(false)
+                        dismissProgressDialog()
                         message.what = REFRESH_GRP_LIST_HIDE_INFO
                         message.data = Bundle().apply {
                             putBoolean(SHOW_NEW_INFO, true)
@@ -145,11 +144,11 @@ class GroupChatViewModel : BaseViewModel() {
                         onBackPress()
                     }
                 } else {
-                    joiningNewGroup.set(false)
+                    dismissProgressDialog()
                     showToast("Error joining group")
                 }
             } catch (e: Exception) {
-                joiningNewGroup.set(false)
+                dismissProgressDialog()
                 showToast("Error joining group")
                 e.printStackTrace()
             }
@@ -157,7 +156,12 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun showExitDialog(view: View) {
-        showAlertDialog(view, "Exit \"${groupHeader.get()}\" group?", "Exit") { leaveGroup() }
+        showAlertDialog(
+            view,
+            "Exit \"${groupHeader.get()}\" group?",
+            "Exit",
+            "Leaving group"
+        ) { leaveGroup() }
     }
 
     fun removeMemberFromGroup(mentorId: String, memberName: String) {
@@ -175,7 +179,6 @@ class GroupChatViewModel : BaseViewModel() {
                 }
                 getGroupInfo()
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId)
-                dismissProgressDialog()
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     dismissProgressDialog()
@@ -264,11 +267,11 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
-    fun showAlertDialog(view: View, dialogMessage: String, positiveBtnText: String, function: () -> Unit) {
+    fun showAlertDialog(view: View, dialogMessage: String, positiveBtnText: String, loadMsg: String, function: () -> Unit) {
         val builder = AlertDialog.Builder(view.context)
         val dialog: AlertDialog = builder.setMessage(dialogMessage)
             .setPositiveButton(positiveBtnText) { dialog, id ->
-                showProgressDialog(view.context, "Removing member...")
+                showProgressDialog(view.context, "$loadMsg...")
                 function.invoke()
             }
             .setNegativeButton("Cancel") { dialog, id ->
@@ -300,6 +303,7 @@ class GroupChatViewModel : BaseViewModel() {
             withContext(Dispatchers.Main){
                 memberAdapter.addMembersToList(memberResult?.list!!)
                 fetchingGrpInfo.set(false)
+                dismissProgressDialog()
             }
         }
     }

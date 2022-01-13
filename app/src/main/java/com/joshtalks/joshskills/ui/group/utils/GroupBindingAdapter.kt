@@ -100,7 +100,7 @@ fun setGroupAdapter(
 fun setGroupMemberAdapter(
     view: RecyclerView,
     adapter: GroupMemberAdapter,
-    function: (GroupMember, View) -> Unit
+    function: ((GroupMember, View) -> Unit)?
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)

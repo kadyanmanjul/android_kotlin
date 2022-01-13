@@ -702,4 +702,8 @@
         <item name="cornerSize">@dimen/_18sdp</item>
     </style>
 
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
 </resources>
