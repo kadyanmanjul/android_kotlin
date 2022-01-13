@@ -67,7 +67,7 @@ class SeeAllAwardActivity : BaseActivity() {
 
     private fun initRecyclerView() {
 
-        awardCategory.forEach {
+        awardCategory.first().awards?.forEach {
             val view = addLinerLayout(it)
             if (view != null) {
                 binding.multiLineLl.addView(view)
@@ -78,7 +78,7 @@ class SeeAllAwardActivity : BaseActivity() {
     }
 
     @SuppressLint("WrongViewCast")
-    private fun addLinerLayout(awardCategory: AwardCategory): View? {
+    private fun addLinerLayout(award: Award): View? {
         val layoutInflater =
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
@@ -93,17 +93,18 @@ class SeeAllAwardActivity : BaseActivity() {
         )
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView.builder.setLayoutManager(linearLayoutManager)
+        var localAward: Award = award
+        title.setText(award.awardText)
+        award.dateList?.forEach {
 
-        awardCategory.awards?.forEach { award ->
-            var localAward : Award = award
-            title.setText(award.awardText)
-            award.dateList?.forEach {
-
-                recyclerView.addView(AwardItemViewHolder(localAward,it, this))
-            }
-
+            recyclerView.addView(AwardItemViewHolder(localAward, it, this))
         }
+
+
+
+
         recyclerView.isNestedScrollingEnabled = true
+
         return view
     }
 

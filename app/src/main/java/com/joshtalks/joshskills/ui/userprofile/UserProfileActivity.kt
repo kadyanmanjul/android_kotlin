@@ -146,6 +146,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         .show(supportFragmentManager, "ImageShow")
                 } else {
                     openChooser()
+
                 }
             } else {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
@@ -157,6 +158,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.editPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 openChooser()
+
             }
         }
         binding.labelViewMoreAwards.setOnClickListener {
@@ -328,6 +330,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         viewModel.apiCallStatus.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
                 hideProgressBar()
+                getProfileData(intervalType,previousPage)
             } else if (it == ApiCallStatus.FAILED) {
                 hideProgressBar()
             } else if (it == ApiCallStatus.START) {
@@ -359,18 +362,21 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
         if (userData.age == null || userData.age <= 1) {
-            binding.userAge.text = "\t\t\t"
+            binding.userAge.text = "_________"
+            binding.userAge.letterSpacing=0.0F
             binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.black))
         } else {
             binding.userAge.text = userData.age.toString()
+            binding.txtUserHometown.letterSpacing=0.05F
             binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
         }
         if (userData.hometown.isNullOrBlank()) {
             binding.txtUserHometown.text = "_________"
-            binding.txtUserHometown.letterSpacing.to(0)
+            binding.txtUserHometown.letterSpacing=0.0F
             binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.black))
         } else {
             binding.txtUserHometown.text = userData.hometown
+            binding.txtUserHometown.letterSpacing=0.05F
             binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
         }
         binding.joinedOn.text = userData.joinedOn
@@ -477,7 +483,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.labelEnrolledCourses.text = userData.enrolledCoursesList.label
             binding.enrolledCoursesLl.removeAllViews()
             var countCourses=0
-            userData.enrolledCoursesList.courses.sortedBy { it.sortOrder }.forEach { course ->
+            userData.enrolledCoursesList.courses.forEach { course ->
                 if (countCourses < 3){
                     val view = getEnrolledCourseLayoutItem(course)
                 if (view != null) {
@@ -514,6 +520,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             viewModel.getUserProfileUrl().isNullOrBlank(),
             isFromRegistration = false
         )
+
     }
 
     @SuppressLint("WrongViewCast")
@@ -526,7 +533,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         var haveAchievedAwards = false
         var index = 0
 
-        awardCategory.awards?.forEach {
+        awardCategory.awards?.sortedBy { it.sortOrder }?.forEach {
 
 
             if (mentorId == Mentor.getInstance().getId()) {
