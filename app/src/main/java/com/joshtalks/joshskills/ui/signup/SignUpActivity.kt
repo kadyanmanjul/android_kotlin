@@ -88,12 +88,14 @@ const val FLOW_FROM = "Flow"
 class SignUpActivity : BaseActivity() {
 
     private lateinit var appAnalytics: AppAnalytics
+    //tc
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
     private val viewModelForDpUpload: UserProfileViewModel by lazy {
         ViewModelProvider(this).get(UserProfileViewModel::class.java)
     }
+    //tc
     private lateinit var binding: ActivitySignUpV2Binding
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
@@ -125,9 +127,10 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
-
+        //tc
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
+        //tc
         addViewModelObserver()
         initLoginFeatures()
         setupTrueCaller()
@@ -138,7 +141,7 @@ class SignUpActivity : BaseActivity() {
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
-
+    //tc
     private fun addViewModelObserver() {
         viewModel.signUpStatus.observe(this, Observer {
             hideProgressBar()
@@ -265,7 +268,7 @@ class SignUpActivity : BaseActivity() {
                 }
             })
     }
-
+    //tc
     private fun setupTrueCaller() {
         val trueScope = TruecallerSdkScope.Builder(this, object : ITrueCallback {
             override fun onFailureProfileShared(trueError: TrueError) {
@@ -296,7 +299,7 @@ class SignUpActivity : BaseActivity() {
             TruecallerSDK.getInstance().setLocale(locale)
         }
     }
-
+    //tc
     private fun openSignUpOptionsFragment() {
         binding.skip.visibility = View.GONE
         binding.ivHelp.visibility = View.GONE
@@ -310,7 +313,7 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
-
+    //tc taking us to next fragment
     private fun openProfileDetailFragment(isRegistrationScreenFirstTime: Boolean) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
@@ -322,7 +325,6 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
-
     private fun openProfilePicUpdateFragment() {
         binding.skip.visibility = View.VISIBLE
         binding.ivHelp.visibility = View.GONE
@@ -348,7 +350,7 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
-
+    //tc
     private fun openNumberVerificationFragment() {
         appAnalytics.addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
         supportFragmentManager.commit(true) {
@@ -360,12 +362,12 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
-
+    //tc
     override fun onResume() {
         super.onResume()
         addObserver()
     }
-
+    //tc
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val url = data?.data?.path ?: EMPTY
@@ -408,15 +410,16 @@ class SignUpActivity : BaseActivity() {
         LoginManager.getInstance().logIn(this, listOf("public_profile", "email"))
     }
 
+    //tc
     private fun trueCallerLogin() {
         TruecallerSDK.getInstance().getUserProfile(this@SignUpActivity)
     }
-
+    //tc
     fun showPrivacyPolicyDialog() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         showWebViewDialog(url)
     }
-
+    //tc
     fun onSkipPressed() {
         logSkipEvent()
         viewModel.changeSignupStatusToProfilePicSkipped()
@@ -457,7 +460,7 @@ class SignUpActivity : BaseActivity() {
         request.parameters = parameters
         request.executeAsync()
     }
-
+    //tc
     private fun handleGoogleSignInResult(account: GoogleSignInAccount) {
         if (account.idToken.isNullOrEmpty().not()) {
             val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
@@ -510,6 +513,7 @@ class SignUpActivity : BaseActivity() {
                             showProgressBar()
                             gmailLogin()
                         }
+                        //tc
                         LoginViaStatus.TRUECALLER -> {
                             showProgressBar()
                             trueCallerLogin()
@@ -534,7 +538,7 @@ class SignUpActivity : BaseActivity() {
             return
         }
     }
-
+    //tc
     fun createVerification(
         countryCode: String,
         phoneNumber: String,
@@ -688,6 +692,8 @@ class SignUpActivity : BaseActivity() {
     }*/
 
     //Use link = https://docs.truecaller.com/truecaller-sdk/android/integrating-with-your-app/verifying-non-truecaller-users
+    //to verify non trueCaller users
+    //tc
     private fun verificationThroughTrueCaller(
         phoneNumber: String,
     ) {
@@ -726,7 +732,7 @@ class SignUpActivity : BaseActivity() {
             TruecallerSDK.getInstance().requestVerification("IN", phoneNumber, apiCallback, this)
         }
     }
-
+    //tc
     private fun flashCallVerificationPermissionCheck(callback: () -> Unit = {}) {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             arrayListOf(
@@ -770,17 +776,18 @@ class SignUpActivity : BaseActivity() {
                 }
             }).check()
     }
-
+    //tc
     override fun onPause() {
         super.onPause()
         compositeDisposable.clear()
     }
-
+    //tc
     override fun onStop() {
         appAnalytics.push()
         super.onStop()
     }
 
+    //tc
     override fun onDestroy() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onDestroy()

@@ -381,7 +381,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
-    override fun onPaymentError(p0: Int, p1: String?) {
+    override fun onPaymentError(p0: Int, p1: String?) { //check if the payment is success (again)
         // isBackPressDisabled = true
         uiHandler.post {
             showPaymentFailedDialog()
@@ -393,7 +393,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
         }
-        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
+        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig() //102 - 526
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
