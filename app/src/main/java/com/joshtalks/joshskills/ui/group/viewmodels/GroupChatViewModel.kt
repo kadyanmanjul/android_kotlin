@@ -178,6 +178,7 @@ class GroupChatViewModel : BaseViewModel() {
                     return@launch
                 }
                 getGroupInfo()
+                GroupAnalytics.push(GroupAnalytics.Event.MEMBER_REMOVED_FROM_GROUP, groupId, mentorId)
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {

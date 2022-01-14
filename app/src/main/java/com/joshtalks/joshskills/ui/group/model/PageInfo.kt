@@ -11,7 +11,7 @@ import com.pubnub.api.models.consumer.PNPage
 //    override fun getNextPage(): Int = next
 //}
 
-// TODO: Must have to refactor
+// TODO: Must have to refactor (Because we have hard coupled the PN object)
 data class PageInfo(val pubNubPrevious : PNPage? = null, val pubNubNext : PNPage? = null, val currentPage : Int = -1)
 
 //interface PageInfo<T> {

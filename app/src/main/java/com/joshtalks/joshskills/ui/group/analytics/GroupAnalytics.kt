@@ -16,6 +16,7 @@ import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 private const val TAG = "GroupsAnalytics"
+
 object GroupAnalytics {
     // TODO: Inject using Dagger2
     private val database by lazy {
@@ -36,14 +37,19 @@ object GroupAnalytics {
         FIND_GROUPS_TO_JOIN("FIND_GROUPS_TO_JOIN"),
         MAIN_GROUP_ICON("MAIN_GROUP_ICON"),
         OPEN_GROUP("OPEN_GROUP"),
-        MESSAGE_SENT("MESSAGE_SENT")
+        MESSAGE_SENT("MESSAGE_SENT"),
+        MEMBER_REMOVED_FROM_GROUP("MEMBER_REMOVED_FROM_GROUP")
     }
 
-    fun push(event: GroupsEvent, groupId: String = "") {
+    fun push(
+        event: GroupsEvent,
+        groupId: String = "",
+        mentorId: String = Mentor.getInstance().getId()
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             val analyticsData = GroupsAnalyticsEntity(
                 event.value,
-                Mentor.getInstance().getId(),
+                mentorId,
                 groupId
             )
             database?.groupsAnalyticsDao()?.saveAnalytics(analyticsData)
@@ -71,13 +77,11 @@ object GroupAnalytics {
     }
 
     private fun getApiRequest(analyticsData: GroupsAnalyticsEntity): Map<String, Any?> {
-        val request = mutableMapOf<String, String>().apply {
+        return mutableMapOf<String, String>().apply {
             this[GROUPS_ANALYTICS_EVENTS_API_KEY] = analyticsData.event
             this[GROUPS_ANALYTICS_MENTOR_ID_API_KEY] = analyticsData.mentorId
             this[GROUPS_ANALYTICS_GROUP_ID_API_KEY] = analyticsData.groupId ?: ""
         }
-
-        return request
     }
 
     fun checkMsgTime(event: GroupsEvent, groupId: String) {
@@ -94,5 +98,5 @@ object GroupAnalytics {
 }
 
 interface GroupsEvent {
-    val value : String
+    val value: String
 }
