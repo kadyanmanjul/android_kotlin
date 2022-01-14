@@ -20,10 +20,11 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
@@ -41,15 +42,18 @@ import timber.log.Timber
 
 const val FOUR_USER_FOUND_MSG: String = "4 users found in Redis successfully"
 const val NO_OPPONENT_FOUND = "No Opponent Team Found Please Retry"
+const val USER_DELETED_SUCCESSFULLY = "User deleted successfully"
 
 class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     lateinit var binding: FragmentRandomPartnerBinding
-    val searchRandomViewModel by lazy {
-        ViewModelProvider(requireActivity())[SearchRandomUserViewModel::class.java]
-    }
-    var currentUserId: String? = null
+
+    var factory: SearchRandomProviderFactory? = null
+    var searchRandomViewModel: SearchRandomUserViewModel? = null
+    var currentUserId = Mentor.getInstance().getId()
     var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
+    var firebasetemp: FirebaseTemp = FirebaseTemp()
+
     var userRoomId: String? = null
 
     var team1Id: String? = null
@@ -99,11 +103,14 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     private var engine: RtcEngine? = null
     private var timer: CountDownTimer? = null
 
+    // private var isUiActive: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        currentUserId = Mentor.getInstance().getUserId()
+        setUpViewModel()
+
     }
 
     override fun onCreateView(
@@ -125,6 +132,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE)
+        //  FirebaseDatabase().getRoomTime(currentUserId ?: "", this)
 
         try {
             engine = P2pRtc().getEngineObj()
@@ -134,10 +142,10 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         }
         setCurrentUserData()
         onBackPress()
-        searchRandomUser(currentUserId ?: "")
+        searchRandomUser(currentUserId)
         startTimer()
         try {
-            firebaseDatabase.getRandomUserId(currentUserId ?: "", this)
+            firebaseDatabase.getRandomUserId(currentUserId, this)
         } catch (ex: Exception) {
 
         }
@@ -154,6 +162,14 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             }
     }
 
+    fun setUpViewModel() {
+        factory = activity?.application?.let { SearchRandomProviderFactory(it) }
+        searchRandomViewModel = factory?.let {
+            ViewModelProvider(this, it).get(SearchRandomUserViewModel::class.java)
+        }
+        // searchRandomViewModel?.statusChange(currentUserId, ACTIVE)
+    }
+
     fun setCurrentUserData() {
         binding.team1User1Name.text = Mentor.getInstance().getUser()?.firstName
         val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", "")
@@ -167,9 +183,9 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     fun searchRandomUser(mentorId: String) {
         try {
-            searchRandomViewModel.getSearchRandomUserData(mentorId)
+            searchRandomViewModel?.getSearchRandomUserData(mentorId)
             activity?.let {
-                searchRandomViewModel.searchRandomData.observe(it, {
+                searchRandomViewModel?.searchRandomData?.observe(it, {
                     if (it.message == FOUR_USER_FOUND_MSG) {
                         createRandomUserRoom(it.data)
                     }
@@ -193,13 +209,16 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                         Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
                     } catch (ex: Exception) {
                     }
-                    searchRandomViewModel.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
+                    searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId))
                     activity?.let {
-                        searchRandomViewModel.deleteData.observe(it, {
-                            AudioManagerQuiz.audioRecording.stopPlaying()
-                            openChoiceScreen()
-                            engine?.leaveChannel()
-                            timer?.cancel()
+                        searchRandomViewModel?.deleteData?.observe(it, {
+                            if (it.message == USER_DELETED_SUCCESSFULLY) {
+                                firebasetemp.changeUserStatus(currentUserId, ACTIVE)
+                                AudioManagerQuiz.audioRecording.stopPlaying()
+                                openChoiceScreen()
+                                engine?.leaveChannel()
+                                timer?.cancel()
+                            }
                         })
                     }
                 }
@@ -209,9 +228,9 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     fun createRandomUserRoom(listOfUsers: ArrayList<String>) {
         try {
-            searchRandomViewModel.createRoomRandom(RoomRandom(listOfUsers))
+            searchRandomViewModel?.createRoomRandom(RoomRandom(listOfUsers, currentUserId))
             activity?.let {
-                searchRandomViewModel.roomRandomData.observe(it, {
+                searchRandomViewModel?.roomRandomData?.observe(it, {
                     Timber.d(it.roomId)
                 })
             }
@@ -285,7 +304,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 30,
                 true
             )
-            binding.team1User2Name.text = team1User2Name
+            binding.team1User2Name.text = UtilsQuiz.getSplitName(team1User2Name)
 
             callConnectUser1AndUser2(team1User1ChannelName)
 
@@ -296,7 +315,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 30,
                 true
             )
-            binding.team2User1Name.text = team2User1Name
+            binding.team2User1Name.text = UtilsQuiz.getSplitName(team2User1Name)
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
             binding.team2UserImage2.setUserImageOrInitials(
@@ -305,7 +324,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 30,
                 true
             )
-            binding.team2User2Name.text = team2User2Name
+            binding.team2User2Name.text = UtilsQuiz.getSplitName(team2User2Name)
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
 
@@ -325,7 +344,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 30,
                 true
             )
-            binding.team1User2Name.text = team2User2Name
+            binding.team1User2Name.text = UtilsQuiz.getSplitName(team2User2Name)
 
             callConnectUser1AndUser2(team2User1ChannelName)
 
@@ -336,7 +355,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 30,
                 true
             )
-            binding.team2User1Name.text = team1User1Name
+            binding.team2User1Name.text = UtilsQuiz.getSplitName(team1User1Name)
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
             binding.team2UserImage2.setUserImageOrInitials(
@@ -345,43 +364,43 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 30,
                 true
             )
-            binding.team2User2Name.text = team1User2Name
+            binding.team2User2Name.text = UtilsQuiz.getSplitName(team1User2Name)
 
         }
 
     }
 
     override fun onSearchUserIdFetch(roomId: String) {
-        Timber.d(roomId)
         userRoomId = roomId
         try {
-            searchRandomViewModel.getRandomUserDataByRoom(
-                RandomRoomData(
-                    userRoomId ?: "",
-                    currentUserId ?: ""
+            if (userRoomId != null) {
+                // if (isUiActive){
+                searchRandomViewModel?.getRandomUserDataByRoom(
+                    RandomRoomData(
+                        userRoomId ?: "",
+                        currentUserId
+                    )
                 )
-            )
-            activity?.let {
-                searchRandomViewModel.randomRoomUser.observe(it, Observer {
-                    Timber.d(it.roomId)
-                    initializeUsersTeamsData(it?.teamData)
-                    binding.image9.pauseAnimation()
-                    timer?.cancel()
-                    timer?.onFinish()
-                })
+                activity?.let {
+                    searchRandomViewModel?.randomRoomUser?.observe(it, Observer {
+                        Timber.d(it.roomId)
+                        initializeUsersTeamsData(it?.teamData)
+                        binding.image9.pauseAnimation()
+                        timer?.cancel()
+                        timer?.onFinish()
+                    })
+                }
+                // }
             }
         } catch (ex: Exception) {
-            //showToast(ex.message?:"")
             Timber.d(ex)
         }
     }
 
     fun callConnectUser1AndUser2(channelName: String?) {
-        // if (checkSelfPermission(REQUESTED_PERMISSIONS[0], PERMISSION_REQ_ID)) {
         CoroutineScope(Dispatchers.IO).launch {
             joinChannel(channelName ?: "")
         }
-        //  }
     }
 
     private fun joinChannel(channelId: String) {
@@ -406,24 +425,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         }
     }
 
-//    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
-//        if (activity?.let { ContextCompat.checkSelfPermission(it, permission) } !=
-//            PackageManager.PERMISSION_GRANTED
-//        ) {
-//            activity?.let {
-//                ActivityCompat.requestPermissions(
-//                    it,
-//                    REQUESTED_PERMISSIONS,
-//                    requestCode
-//                )
-//            }
-//            return false
-//        }
-//        return true
-//    }
-
     fun moveFragment() {
-        //val startTime :String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             val fm = activity?.supportFragmentManager
@@ -434,12 +436,37 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                         userRoomId ?: "",
                         opponentUserImage ?: "",
                         opponentUserName ?: "",
-                        currentUserTeamId ?: ""
+                        currentUserTeamId ?: "",
+                        0
                     ), "RandomPartnerFragment"
                 )
                 ?.commit()
         }, 4000)
     }
+
+//    fun moveFragmentWhenRoomCreated(time: Long) {
+//        val android = ((System.currentTimeMillis() / 1000) % 60)
+//        val serverTime = (time) % 60
+//
+//        val countDown = serverTime - android
+//
+//        val handler = Handler(Looper.getMainLooper())
+//        handler.postDelayed({
+//            val fm = activity?.supportFragmentManager
+//            fm?.beginTransaction()
+//                ?.replace(
+//                    R.id.container,
+//                    RandomTeamMateFoundFragment.newInstance(
+//                        userRoomId ?: "",
+//                        opponentUserImage ?: "",
+//                        opponentUserName ?: "",
+//                        currentUserTeamId ?: ""
+//                    ), "RandomPartnerFragment"
+//                )
+//                ?.commit()
+//        }, (countDown - 15) * 1000)
+//    }
+
 
     fun onBackPress() {
         activity?.onBackPressedDispatcher?.addCallback(
@@ -453,25 +480,26 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
     fun positiveBtnAction() {
         if (userRoomId != null) {
-            searchRandomViewModel.getClearRadius(
+            searchRandomViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
                     userRoomId ?: "",
-                    currentUserId ?: "",
+                    currentUserId,
                     currentUserTeamId ?: "",
                     ""
                 )
             )
             activity?.let {
-                searchRandomViewModel.clearRadius.observe(it, Observer {
+                searchRandomViewModel?.clearRadius?.observe(it, Observer {
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     openChoiceScreen()
                     engine?.leaveChannel()
                 })
             }
         } else {
-            searchRandomViewModel.deleteUserRadiusData(DeleteUserData(currentUserId ?: ""))
+            searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId))
             activity?.let {
-                searchRandomViewModel.deleteData.observe(it, Observer {
+                searchRandomViewModel?.deleteData?.observe(it, Observer {
+                    firebasetemp.changeUserStatus(currentUserId, ACTIVE)
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     openChoiceScreen()
                     engine?.leaveChannel()

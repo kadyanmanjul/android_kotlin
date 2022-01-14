@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.TranslateAnimation
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -24,13 +26,17 @@ import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
+import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
+import kotlinx.android.synthetic.main.fragment_question.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -49,12 +55,13 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     private var marks: String? = null
     private var roomId: String? = null
     private var teamId: String? = null
-    private var winnerTeamStatus: Boolean? = null
-    private val saveRoomDataViewModel by lazy {
-        ViewModelProvider(requireActivity())[SaveRoomDataViewModel::class.java]
-    }
+    private var winnerTeamStatus: Boolean? = false
+
+    private var factory: SaveRoomDataViewProviderFactory? = null
+    private var saveRoomDataViewModel: SaveRoomDataViewModel? = null
     private var currentUserId: String? = null
     private var opponentTeamMarks: String? = null
+    private var isUiActive = false
 
     private var team1Id: String? = null
     private var usersInTeam1: UsersInTeam1? = null
@@ -94,6 +101,10 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     private var currentUserName: String? = null
     private var currentUserImage: String? = null
     var time: Int? = 0
+
+    val handler = Handler(Looper.getMainLooper())
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -105,6 +116,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             fromType = it.getString(FROM_TYPE)
         }
 
+        Log.d("winscreen", "onCreate: ")
         setRoomUsersData()
     }
 
@@ -119,8 +131,10 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 container,
                 false
             )
+        binding.vm = saveRoomDataViewModel
         binding.lifecycleOwner = this
         binding.clickHandler = this
+        binding.executePendingBindings()
         binding.callTime.start()
 
         return binding.root
@@ -128,8 +142,10 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("winscreen", "onViewCreated: ")
+
         binding.container.setBackgroundColor(Color.WHITE)
-        currentUserId = Mentor.getInstance().getUserId()
+        currentUserId = Mentor.getInstance().getId()
         currentUserName = Mentor.getInstance().getUser()?.firstName
         currentUserImage = Mentor.getInstance().getUser()?.photo
 
@@ -139,6 +155,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         }
 
         showRoomUserData()
+
         try {
             engine = activity?.let { P2pRtc().initEngine(it) }
             P2pRtc().addListener(callback)
@@ -198,13 +215,15 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
         getFriendRequest()
         activity?.let {
-            saveRoomDataViewModel.saveRoomDetailsData.observe(it, Observer {
+            saveRoomDataViewModel?.saveRoomDetailsData?.observe(it, Observer {
                 Timber.d(it.message)
                 getPlayAgainDataFromFirebase()
             })
         }
 
         binding.btnMakeNewTeam.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAKE_NEW_TEAM_BUTTON)
+            AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
             makeNewTeam()
         }
 
@@ -213,6 +232,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         }
 
         binding.btnAddPeople.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ADD_TO_FRIEND_LIST)
+            AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
             firebaseDatabase.createFriendRequest(
                 currentUserId ?: "",
                 currentUserName ?: "",
@@ -222,12 +243,21 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         }
 
         binding.btnPlayAgain.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_PLAY_AGAIN_BUTTON)
+            AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
+            binding.btnPlayAgain.isEnabled = false
             firebaseDatabase.createPlayAgainNotification(
                 partnerId ?: "",
                 currentUserName ?: "",
                 currentUserImage ?: ""
             )
             playAgainApiCall(PlayAgain(currentUserTeamId ?: "", currentUserId ?: ""))
+            lifecycleScope.launch(Dispatchers.Main) {
+                if (isUiActive) {
+                    delay(10000)
+                    binding.btnPlayAgain.isEnabled = true
+                }
+            }
         }
 
         firebaseDatabase.getPartnerPlayAgainNotification(currentUserId ?: "", this)
@@ -243,6 +273,10 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         binding.callTime.start()
     }
 
+    override fun onResume() {
+        super.onResume()
+        isUiActive = true
+    }
 
     companion object {
         @JvmStatic
@@ -267,21 +301,18 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     }
 
     fun setUpViewModel(saveRoomDetails: SaveRoomDetails) {
-        saveRoomDataViewModel.saveRoomDetails(saveRoomDetails)
+        saveRoomDataViewModel?.saveRoomDetails(saveRoomDetails)
     }
 
     fun setRoomUsersData() {
-        saveRoomDataViewModel.getRoomUserDataTemp(
-            RandomRoomData(
-                roomId ?: "",
-                currentUserId ?: ""
-            )
-        )
+        factory = SaveRoomDataViewProviderFactory(requireActivity().application)
+        saveRoomDataViewModel = ViewModelProvider(this, factory!!).get(SaveRoomDataViewModel::class.java)
+        saveRoomDataViewModel?.getRoomUserDataTemp(RandomRoomData(roomId ?: "", currentUserId ?: ""))
     }
 
     fun showRoomUserData() {
         activity?.let {
-            saveRoomDataViewModel.roomUserDataTemp.observe(it, Observer {
+            saveRoomDataViewModel?.roomUserDataTemp?.observe(it, Observer {
                 initializeUsersTeamsData(it.teamData)
                 setUpViewModel(
                     SaveRoomDetails(
@@ -298,12 +329,12 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         }
     }
 
-    fun initializeUsersTeamsData(teamsData: TeamsData) {
-        team1Id = teamsData.team1Id
-        team2Id = teamsData.team2Id
+    fun initializeUsersTeamsData(teamsData: TeamsData?) {
+        team1Id = teamsData?.team1Id
+        team2Id = teamsData?.team2Id
 
-        usersInTeam1 = teamsData.usersInTeam1
-        usersInTeam2 = teamsData.usersInTeam2
+        usersInTeam1 = teamsData?.usersInTeam1
+        usersInTeam2 = teamsData?.usersInTeam2
 
         //Team 1 ke Users
         user1 = usersInTeam1?.user1
@@ -347,7 +378,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             currentUserTeamId = team1Id
             opponentTeamId = team2Id
 
-            binding.txtOnButtonPlayagain.text = "Play Again\nwith $partnerName"
+
+            binding.txtOnButtonPlayagain.text = "Play Again\nwith ${getSplitName(partnerName)}"
 
             if (currentUserId == team1UserId1) {
                 val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
@@ -358,7 +390,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User1Name.text = team1User1Name
+                binding.team1User1Name.text = getSplitName(team1User1Name)
 
                 val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
@@ -368,7 +400,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User2Name.text = team1User2Name
+                binding.team1User2Name.text = getSplitName(team1User2Name)
             } else {
                 val imageUrl2 = team1User1ImageUrl?.replace("\n", "")
                 // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
@@ -378,7 +410,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User2Name.text = team1User1Name
+                binding.team1User2Name.text = getSplitName(team1User1Name)
 
                 val imageUrl1 = team1User2ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
@@ -388,7 +420,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User1Name.text = team1User2Name
+                binding.team1User1Name.text = getSplitName(team1User2Name)
             }
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
             //  ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
@@ -398,7 +430,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 30,
                 true
             )
-            binding.team2User1Name.text = team2User1Name
+            binding.team2User1Name.text = getSplitName(team2User1Name)
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
@@ -408,7 +440,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 30,
                 true
             )
-            binding.team2User2Name.text = team2User2Name
+            binding.team2User2Name.text = getSplitName(team2User2Name)
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
             if (team2UserId1 == currentUserId) {
@@ -421,7 +453,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 partnerName = team2User1Name
             }
 
-            binding.txtOnButtonPlayagain.text = "Play Again\nwith $partnerName"
+            binding.txtOnButtonPlayagain.text = "Play Again\nwith ${getSplitName(partnerName)}"
 
             currentUserTeamId = team2Id
             opponentTeamId = team1Id
@@ -436,7 +468,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User1Name.text = team2User1Name
+                binding.team1User1Name.text = getSplitName(team2User1Name)
 
                 val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
                 // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
@@ -446,7 +478,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User2Name.text = team2User2Name
+                binding.team1User2Name.text = getSplitName(team2User2Name)
             } else {
                 val imageUrl1 = team2User2ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
@@ -456,7 +488,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User1Name.text = team2User2Name
+                binding.team1User1Name.text = getSplitName(team2User2Name)
 
                 val imageUrl2 = team2User1ImageUrl?.replace("\n", "")
                 //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
@@ -466,7 +498,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                     30,
                     true
                 )
-                binding.team1User2Name.text = team2User1Name
+                binding.team1User2Name.text = getSplitName(team2User1Name)
             }
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
@@ -477,7 +509,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 30,
                 true
             )
-            binding.team2User1Name.text = team1User1Name
+            binding.team2User1Name.text = getSplitName(team1User1Name)
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
             // ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
@@ -487,7 +519,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 30,
                 true
             )
-            binding.team2User2Name.text = team1User2Name
+            binding.team2User2Name.text = getSplitName(team1User2Name)
         }
     }
 
@@ -503,7 +535,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        saveRoomDataViewModel.saveCallDuration(
+        saveRoomDataViewModel?.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -511,7 +543,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             )
         )
         if (fromType == RANDOM) {
-            saveRoomDataViewModel.getClearRadius(
+            saveRoomDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
                     roomId ?: "",
                     currentUserId ?: "",
@@ -520,7 +552,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel.saveCallDuration.observe(it, {
+                saveRoomDataViewModel?.saveCallDuration?.observe(it, {
                     if (it.message == CALL_DURATION_RESPONSE) {
                         val points = it.points
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -537,7 +569,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 })
             }
         } else {
-            saveRoomDataViewModel.deleteUserRoomData(
+            saveRoomDataViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
                     roomId ?: "",
                     currentUserId ?: "",
@@ -546,7 +578,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel.saveCallDuration.observe(it, {
+                saveRoomDataViewModel?.saveCallDuration?.observe(it, {
                     if (it.message == CALL_DURATION_RESPONSE) {
                         val points = it.points
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -579,7 +611,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
     fun deleteData(dialog: Dialog) {
         if (fromType == RANDOM) {
-            saveRoomDataViewModel.getClearRadius(
+            saveRoomDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
                     roomId ?: "",
                     currentUserId ?: "",
@@ -588,7 +620,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel.clearRadius.observe(it, {
+                saveRoomDataViewModel?.clearRadius?.observe(it, {
                     dialog.dismiss()
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
@@ -596,7 +628,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 })
             }
         } else {
-            saveRoomDataViewModel.deleteUserRoomData(
+            saveRoomDataViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
                     roomId ?: "",
                     currentUserId ?: "",
@@ -605,7 +637,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel.deleteData.observe(it, Observer {
+                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
                     dialog.dismiss()
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
@@ -617,7 +649,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
     fun makeNewTeam() {
         if (fromType == RANDOM) {
-            saveRoomDataViewModel.getClearRadius(
+            saveRoomDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
                     roomId ?: "",
                     currentUserId ?: "",
@@ -626,14 +658,14 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel.clearRadius.observe(it, {
+                saveRoomDataViewModel?.clearRadius?.observe(it, {
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
                     openFavouritePartnerScreen()
                 })
             }
         } else {
-            saveRoomDataViewModel.deleteUserRoomData(
+            saveRoomDataViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
                     roomId ?: "",
                     currentUserId ?: "",
@@ -642,7 +674,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel.deleteData.observe(it, Observer {
+                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     engine?.leaveChannel()
                     openFavouritePartnerScreen()
@@ -675,7 +707,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     ) {
 
         try {
-            binding.notificationCard.visibility = View.VISIBLE
+            scaleAnimationForNotification(binding.notificationCard)
+            //  binding.notificationCard.visibility = View.VISIBLE
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromImageUrl.replace("\n", "")
@@ -693,25 +726,51 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             Timber.d(ex)
         }
 
+        binding.eee.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
+            if (isUiActive)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            //binding.notificationCard.visibility = View.INVISIBLE
+            firebaseDatabase.deleteRequest(currentUserId ?: "")
+        }
+
         binding.buttonAccept.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
+            handler.removeCallbacksAndMessages(null)
             binding.notificationCard.visibility = View.INVISIBLE
-            saveRoomDataViewModel.addFavouritePracticePartner(
+            saveRoomDataViewModel?.addFavouritePracticePartner(
                 AddFavouritePartner(
                     fromMentorId,
+                    currentUserId,
                     currentUserId
                 )
             )
             activity?.let {
-                saveRoomDataViewModel.fppData.observe(it, Observer {
+                saveRoomDataViewModel?.fppData?.observe(it, Observer {
                     firebaseDatabase.deleteRequest(currentUserId ?: "")
                 })
             }
         }
 
         binding.butonDecline.setOnClickListener {
-            binding.notificationCard.visibility = View.INVISIBLE
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
+            handler.removeCallbacksAndMessages(null)
+            if (isUiActive)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            //binding.notificationCard.visibility = View.INVISIBLE
             firebaseDatabase.deleteRequest(currentUserId ?: "")
         }
+
+        try {
+            handler.postDelayed({
+                if (isUiActive)
+                    CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+                //  binding.notificationCard.visibility = View.INVISIBLE
+                firebaseDatabase.deleteRequest(currentUserId ?: "")
+            }, 10000)
+        } catch (ex: Exception) {
+        }
+
     }
 
     private fun againPlayGame() {
@@ -739,9 +798,9 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     }
 
     private fun playAgainApiCall(playAgain: PlayAgain) {
-        saveRoomDataViewModel.playAgainWithSamePlayer(playAgain)
+        saveRoomDataViewModel?.playAgainWithSamePlayer(playAgain)
         activity?.let {
-            saveRoomDataViewModel.playAgainData.observe(it, {
+            saveRoomDataViewModel?.playAgainData?.observe(it, {
                 if (it.message == "Both Member Added") {
                     getPlayAgainDataFromFirebase()
                 }
@@ -759,8 +818,11 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         mentorId: String
     ) {
         if (mentorId == currentUserId) {
-            binding.notificationPlayAgain.visibility = View.VISIBLE
+            firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+            scaleAnimationForNotification1(binding.notificationPlayAgain)
+            // binding.notificationPlayAgain.visibility = View.VISIBLE
             binding.userNameForNotPlay.text = userName
+            binding.txtMsgPlayAgain.text = "Click on Play Again to play another game with $userName"
             activity?.let {
                 Glide.with(it)
                     .load(userImage)
@@ -772,14 +834,20 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             }
 
             binding.cancelNotification.setOnClickListener {
-                binding.notificationPlayAgain.visibility = View.INVISIBLE
+                handler.removeCallbacksAndMessages(null)
+                if (isUiActive)
+                    CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationPlayAgain)
+                // binding.notificationPlayAgain.visibility = View.INVISIBLE
                 firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
             }
 
             try {
-                val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({
-                    binding.notificationPlayAgain.visibility = View.INVISIBLE
+                    if (isUiActive)
+                        CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
+                            binding.notificationPlayAgain
+                        )
+                    //  binding.notificationPlayAgain.visibility = View.INVISIBLE
                     firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
                 }, 10000)
             } catch (ex: Exception) {
@@ -788,9 +856,30 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         }
     }
 
+    private fun scaleAnimationForNotification(v: View) {
+        try {
+            val animation = TranslateAnimation(0f, 0f, -100f, 0f)
+            animation.duration = 700
+            v.startAnimation(animation)
+            v.visibility = View.VISIBLE
+        } catch (ex: Exception) {
+        }
+    }
+
+    private fun scaleAnimationForNotification1(v: View) {
+        try {
+            val animation = TranslateAnimation(0f, 0f, -100f, 0f)
+            animation.duration = 700
+            v.startAnimation(animation)
+            v.visibility = View.VISIBLE
+        } catch (ex: Exception) {
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         try {
+            isUiActive = false
             firebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
         } catch (ex: Exception) {
             showToast(ex.message ?: "")
@@ -803,5 +892,9 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         firebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: "")
         firebaseDatabase.deleteAnimUser(partnerId ?: "")
         firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+    }
+
+    fun getSplitName(name: String?): String {
+        return name?.split(" ")?.get(0).toString()
     }
 }

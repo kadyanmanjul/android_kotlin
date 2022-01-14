@@ -111,6 +111,7 @@ const val ONBOARDING_STAGE = "onboarding_stage"
 
 const val USER_ACTIVE_IN_GAME = "game_active"
 const val USER_LEAVE_THE_GAME = "game_left"
+const val USER_MUTE_OR_NOT = "mute_un_mute"
 
 object PrefManager {
 

@@ -44,22 +44,22 @@
                         android:src="@drawable/ic_offline_shadow_img"
                         android:visibility="invisible" />
 
-                     <RelativeLayout
+                    <RelativeLayout
                         android:id="@+id/team2_mic1_click"
-                        android:layout_width="@dimen/_100sdp"
-                        android:layout_height="match_parent"
-                         android:layout_below="@id/team1_user_image2"
-                         android:layout_marginTop="2sp"
-                        android:layout_centerHorizontal="true">
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_below="@id/team1_user_image2"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_2sdp">
 
-                         <androidx.appcompat.widget.AppCompatImageView
-                             android:id="@+id/team1_mic2"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:layout_centerHorizontal="true"
-                             android:scaleType="fitXY"
-                             android:src="@drawable/ic_new_mic" />
-                     </RelativeLayout>
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/team1_mic2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="fitXY"
+                            app:srcCompat="@drawable/ic_new_mic" />
+                    </RelativeLayout>
 
                 </RelativeLayout>
 
@@ -86,8 +86,8 @@
 
                     <RelativeLayout
                         android:id="@+id/team1_mic1_click"
-                        android:layout_width="@dimen/_100sdp"
-                        android:layout_height="match_parent"
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
                         android:layout_below="@id/team1_user_image1"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="@dimen/_2sdp">
@@ -98,7 +98,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:scaleType="fitXY"
-                            android:src="@drawable/ic_new_mic" />
+                            app:srcCompat="@drawable/ic_new_mic" />
                     </RelativeLayout>
                 </RelativeLayout>
 
@@ -110,14 +110,14 @@
                     android:layout_marginTop="@dimen/_22sdp"
                     android:layout_centerHorizontal="true">
 
-                    <com.labs.circularprogress.CircularProgressView
+                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.CircularProgressView
                         android:id="@+id/progress"
                         android:layout_width="@dimen/_55sdp"
                         android:layout_height="@dimen/_55sdp"
                         android:layout_centerInParent="true"
                         android:visibility="visible" />
 
-                    <com.labs.circularprogress.CircularProgressView1
+                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.CircularProgressView1
                         android:id="@+id/progress1"
                         android:layout_width="@dimen/_55sdp"
                         android:layout_height="@dimen/_55sdp"
@@ -377,7 +377,7 @@
                             android:layout_marginLeft="-13dp"
                             android:scaleType="fitXY"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/ic_left_cut_card_icon" />
+                            app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:visibility="invisible"
@@ -388,7 +388,7 @@
                             android:layout_marginRight="-13dp"
                             android:scaleType="fitXY"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/ic_right_cut_card" />
+                            app:srcCompat="@drawable/ic_right_cut_card" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer1"
@@ -417,7 +417,7 @@
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_left_cut_card_icon" />
+                        app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
@@ -428,7 +428,7 @@
                         android:layout_marginRight="-13dp"
                         android:scaleType="fitXY"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_cut_card" />
+                        app:srcCompat="@drawable/ic_right_cut_card" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer2"
@@ -457,7 +457,7 @@
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_left_cut_card_icon" />
+                        app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
@@ -468,7 +468,7 @@
                         android:layout_marginRight="-13dp"
                         android:scaleType="fitXY"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_cut_card" />
+                        app:srcCompat="@drawable/ic_right_cut_card" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer3"
@@ -497,7 +497,7 @@
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_left_cut_card_icon" />
+                        app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:visibility="invisible"
@@ -508,7 +508,7 @@
                         android:layout_marginRight="-13dp"
                         android:scaleType="fitXY"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_cut_card" />
+                        app:srcCompat="@drawable/ic_right_cut_card" />
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer4"
                         android:layout_width="wrap_content"

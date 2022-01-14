@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.*
+import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -24,7 +25,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentQuestionBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -48,7 +49,7 @@ const val RANDOM: String = "Random"
 
 
 class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
-    FirebaseDatabase.OnAnimationTrigger,
+    FirebaseDatabase.OnAnimationTrigger, FirebaseDatabase.OnTimeUpdate,
     P2pRtc.WebRtcEngineCallback {
     private lateinit var binding: FragmentQuestionBinding
     private var position: Int = 0
@@ -57,10 +58,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     private var timer: CountDownTimer? = null
     private var givenTeamId: String? = null
     private var currentUserId: String? = null
+    private var actualTime: Long = 15
 
-    val questionViewModel by lazy {
-        ViewModelProvider(requireActivity())[QuestionViewModel::class.java]
-    }
+    private var factory: QuestionProviderFactory? = null
+    private var questionViewModel: QuestionViewModel? = null
     private var choiceValue: String? = null
 
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
@@ -116,7 +117,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        currentUserId = Mentor.getInstance().getUserId()
+        currentUserId = Mentor.getInstance().getId()
         arguments?.let {
             roomId = it.getString("roomId")
             callTimeCount = it.getString(CALL_TIME)
@@ -144,8 +145,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     }
 
     init {
-        position=0
-        marks=0
+        position = 0
+        marks = 0
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -153,6 +154,9 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         binding.container.setBackgroundColor(Color.WHITE)
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             showFadeImage()
+        }
+        if (PrefManager.getBoolValue(USER_MUTE_OR_NOT)) {
+            muteUnMute(binding.team1Mic1)
         }
         Timber.d(currentUserId)
         progressBar = view.findViewById(R.id.vertical_progressbar)
@@ -180,23 +184,25 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         //buttonEnableDisable()
         activity?.let {
             try {
-                questionViewModel.questionData.observe(it, Observer {
+                questionViewModel?.questionData?.observe(it, Observer {
                     Timber.d(it.toString())
                     question = it
                     getQuestions()
                 })
-            } catch (ex: Exception) { }
+            } catch (ex: Exception) {
+            }
         }
         try {
             engine = activity?.let { P2pRtc().initEngine(it) }
             P2pRtc().addListener(this)
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
 
         binding.card1.setOnClickListener {
             try {
                 AudioManagerQuiz.audioRecording.startPlaying(
                     requireActivity(),
-                    R.raw.tick_animation,
+                    R.raw.click,
                     false
                 )
                 drawTriangleOnCard(binding.imageCardLeft1)
@@ -209,13 +215,14 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     0
                 )
                 getSelectOptionWithAnim(binding.answer1.text.toString(), 0)
-            } catch (ex: Exception) { }
+            } catch (ex: Exception) {
+            }
         }
         binding.card2.setOnClickListener {
             try {
                 AudioManagerQuiz.audioRecording.startPlaying(
                     requireActivity(),
-                    R.raw.tick_animation,
+                    R.raw.click,
                     false
                 )
                 drawTriangleOnCard(binding.imageCardLeft2)
@@ -228,13 +235,14 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     1
                 )
                 getSelectOptionWithAnim(binding.answer2.text.toString(), 1)
-            } catch (ex: Exception) { }
+            } catch (ex: Exception) {
+            }
         }
         binding.card3.setOnClickListener {
             try {
                 AudioManagerQuiz.audioRecording.startPlaying(
                     requireActivity(),
-                    R.raw.tick_animation,
+                    R.raw.click,
                     false
                 )
                 drawTriangleOnCard(binding.imageCardLeft3)
@@ -248,13 +256,14 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 )
 
                 getSelectOptionWithAnim(binding.answer3.text.toString(), 2)
-            } catch (ex: Exception) { }
+            } catch (ex: Exception) {
+            }
         }
         binding.card4.setOnClickListener {
             try {
                 AudioManagerQuiz.audioRecording.startPlaying(
                     requireActivity(),
-                    R.raw.tick_animation,
+                    R.raw.click,
                     false
                 )
                 drawTriangleOnCard(binding.imageCardLeft4)
@@ -267,31 +276,36 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     3
                 )
                 getSelectOptionWithAnim(binding.answer4.text.toString(), 3)
-            } catch (ex: Exception) { }
+            } catch (ex: Exception) {
+            }
         }
 
         try {
             binding.team1Mic1Click.setOnClickListener {
                 muteUnMute(binding.team1Mic1)
             }
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
 
         try {
             firebaseDatabase.getMuteOrUnMute(currentUserId ?: "", this)
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
         buttonEnableDisable()
     }
 
     fun drawTriangleOnCard(view: View) {
         try {
             view.visibility = View.VISIBLE
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
     }
 
     fun drawTriangleOnCardRight(view: View) {
         try {
             view.visibility = View.VISIBLE
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
     }
 
     fun makeAgainCardSquare() {
@@ -304,7 +318,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.imageCardRight2.visibility = View.INVISIBLE
             binding.imageCardRight3.visibility = View.INVISIBLE
             binding.imageCardRight4.visibility = View.INVISIBLE
-        } catch (ex: Exception) { }
+        } catch (ex: Exception) {
+        }
     }
 
     fun slideAnimationLToR() {
@@ -348,9 +363,18 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     private fun setupViewModel() {
         try {
-            questionViewModel.getQuizQuestion(QuestionRequest(QUESTION_COUNT, roomId ?: ""))
+            factory = QuestionProviderFactory(requireActivity().application)
+            questionViewModel = ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
+            questionViewModel = factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
+            questionViewModel?.getQuizQuestion(
+                QuestionRequest(
+                    QUESTION_COUNT,
+                    roomId ?: "",
+                    currentUserId
+                )
+            )
             try {
-                questionViewModel.getRoomUserDataTemp(
+                questionViewModel?.getRoomUserDataTemp(
                     RandomRoomData(
                         roomId ?: "",
                         currentUserId ?: ""
@@ -390,14 +414,17 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 }
 
                 override fun onFinish() {
+                    Timber.d("$position")
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     displayAnswerAndShowNextQuestion()
                 }
             }
-            handlerForTimer.postDelayed({
+            lifecycleScope.launch(Dispatchers.Main) {
+                delay(2000)
                 timer?.start()
-            }, 2000)
-        } catch (ex: Exception) { }
+            }
+        } catch (ex: Exception) {
+        }
     }
 
     fun displayAnswerAndShowNextQuestion() {
@@ -433,6 +460,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
         } catch (ex: Exception) {
         }
+
         lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
             binding.card1.visibility = View.INVISIBLE
@@ -444,7 +472,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             binding.answer2.setTextColor(getBlackColor())
             binding.answer3.setTextColor(getBlackColor())
             binding.answer4.setTextColor(getBlackColor())
-
             position++
             try {
                 lifecycleScope.launch(Dispatchers.Main) {
@@ -480,7 +507,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.question.visibility = View.INVISIBLE
                 binding.marks1.setTextColor(getWhiteColor())
                 binding.marks2.setTextColor(getWhiteColor())
-            } catch (ex: Exception) { }
+            } catch (ex: Exception) {
+            }
 
             makeAgainCardSquare()
             firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
@@ -495,18 +523,18 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     fun showRoomUserData() {
         activity?.let {
-            questionViewModel.roomUserDataTemp.observe(it, Observer {
+            questionViewModel?.roomUserDataTemp?.observe(it, Observer {
                 initializeUsersTeamsData(it.teamData)
             })
         }
     }
 
-    fun initializeUsersTeamsData(teamsData: TeamsData) {
-        team1Id = teamsData.team1Id
-        team2Id = teamsData.team2Id
+    fun initializeUsersTeamsData(teamsData: TeamsData?) {
+        team1Id = teamsData?.team1Id
+        team2Id = teamsData?.team2Id
 
-        usersInTeam1 = teamsData.usersInTeam1
-        usersInTeam2 = teamsData.usersInTeam2
+        usersInTeam1 = teamsData?.usersInTeam1
+        usersInTeam2 = teamsData?.usersInTeam2
 
         //Team 1 ke Users
         user1 = usersInTeam1?.user1
@@ -563,7 +591,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team1User1Name.text = team1User1Name
+            binding.team1User1Name.text = getSplitName(team1User1Name)
 
 
             val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
@@ -573,7 +601,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team1User2Name.text = team1User2Name
+            binding.team1User2Name.text = getSplitName(team1User2Name)
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
             binding.team2UserImage1.setUserImageOrInitials(
@@ -582,7 +610,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team2User1Name.text = team2User1Name
+            binding.team2User1Name.text = getSplitName(team2User1Name)
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
             binding.team2UserImage2.setUserImageOrInitials(
@@ -591,7 +619,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team2User2Name.text = team2User2Name
+            binding.team2User2Name.text = getSplitName(team2User2Name)
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
 
@@ -620,7 +648,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team1User1Name.text = team2User1Name
+            binding.team1User1Name.text = getSplitName(team2User1Name)
 
             val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
             binding.team1UserImage2.setUserImageOrInitials(
@@ -629,7 +657,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team1User2Name.text = team2User2Name
+            binding.team1User2Name.text = getSplitName(team2User2Name)
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
             binding.team2UserImage1.setUserImageOrInitials(
@@ -638,7 +666,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team2User1Name.text = team1User1Name
+            binding.team2User1Name.text = getSplitName(team1User1Name)
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
             binding.team2UserImage2.setUserImageOrInitials(
@@ -647,7 +675,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 30,
                 true
             )
-            binding.team2User2Name.text = team1User2Name
+            binding.team2User2Name.text = getSplitName(team1User2Name)
 
         }
     }
@@ -778,12 +806,12 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             activity?.application?.let {
                 AudioManagerQuiz.audioRecording.startPlaying(
                     it,
-                    R.raw.user_click_anywhere,
+                    R.raw.click,
                     false
                 )
             }
 
-            questionViewModel.getSelectOption(
+            questionViewModel?.getSelectOption(
                 roomId,
                 question.que[position].id ?: "",
                 question.que[position].choices?.get(pos)?.id ?: "",
@@ -797,12 +825,16 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     private fun getSelectOptionWithAnim(choiceAnswer: String, pos: Int) {
         disableCardClick()
         try {
+
             activity?.let {
                 isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
-                questionViewModel.selectOption.observe(it, {
+                questionViewModel?.selectOption?.observe(it, {
                     choiceAnswer(choiceAnswer, isCorrect ?: "")
                     val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
                     if (it.message == BOTH_TEAM_SELECTED) {
+                        val time = (System.currentTimeMillis() / 1000) % 60
+
+                        firebaseDatabase.updateTime(currentUserId ?: "", time + actualTime)
                         firebaseDatabase.createOpponentTeamShowCutCard(
                             opponentTeamId ?: "",
                             isCorrect ?: "",
@@ -862,10 +894,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     }
 
     private fun getDisplayAnswerAfterQuesComplete(): String {
-        questionViewModel.getDisplayAnswerData(roomId ?: "", question.que[position].id ?: "")
+        questionViewModel?.getDisplayAnswerData(roomId ?: "", question.que[position].id ?: "")
         enableCardClick()
         activity?.let {
-            questionViewModel.displayAnswerData.observe(it, { displayAnswerData ->
+            questionViewModel?.displayAnswerData?.observe(it, { displayAnswerData ->
                 choiceValue = displayAnswerData.correctChoiceValue
             })
         }
@@ -1057,7 +1089,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        questionViewModel.saveCallDuration(
+        questionViewModel?.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -1067,7 +1099,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
         if (fromType == RANDOM) {
             try {
-                questionViewModel.getClearRadius(
+                questionViewModel?.getClearRadius(
                     SaveCallDurationRoomData(
                         roomId ?: "",
                         currentUserId ?: "",
@@ -1076,7 +1108,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel.saveCallDuration.observe(it, {
+                    questionViewModel?.saveCallDuration?.observe(it, {
                         if (it.message == CALL_DURATION_RESPONSE) {
                             val points = it.points
                             lifecycleScope.launch(Dispatchers.Main) {
@@ -1088,6 +1120,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                             }
                             AudioManagerQuiz.audioRecording.stopPlaying()
                             openFavouritePartnerScreen()
+                            //firebaseDatabase.deleteTimeChange(currentUserId ?: "")
                             engine?.leaveChannel()
                             binding.callTime.stop()
                         }
@@ -1097,7 +1130,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
         } else {
             try {
-                questionViewModel.deleteUserRoomData(
+                questionViewModel?.deleteUserRoomData(
                     SaveCallDurationRoomData(
                         roomId ?: "",
                         currentUserId ?: "",
@@ -1106,7 +1139,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel.saveCallDuration.observe(it, {
+                    questionViewModel?.saveCallDuration?.observe(it, {
                         if (it.message == CALL_DURATION_RESPONSE) {
                             val points = it.points
                             lifecycleScope.launch(Dispatchers.Main) {
@@ -1151,6 +1184,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         super.onDestroy()
         try {
             isUiShown = false
+            PrefManager.put(USER_MUTE_OR_NOT, false)
             handlerForTimer.removeCallbacksAndMessages(null)
             timer?.cancel()
         } catch (ex: Exception) {
@@ -1201,6 +1235,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     firebaseDatabase.deletePartnerCutCard(teamId)
                     lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
+                        Log.d("number_call", "onOpponentPartnerCut: ")
                         timer?.cancel()
                         timer?.onFinish()
                     }
@@ -1210,6 +1245,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     firebaseDatabase.deletePartnerCutCard(teamId)
                     lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
+                        Log.d("number_call", "onOpponentPartnerCut: ")
+
                         timer?.cancel()
                         timer?.onFinish()
                     }
@@ -1219,6 +1256,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     firebaseDatabase.deletePartnerCutCard(teamId)
                     lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
+                        Log.d("number_call", "onOpponentPartnerCut: ")
+
                         timer?.cancel()
                         timer?.onFinish()
                     }
@@ -1228,6 +1267,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     firebaseDatabase.deletePartnerCutCard(teamId)
                     lifecycleScope.launch(Dispatchers.Main) {
                         delay(2000)
+                        Log.d("number_call", "onOpponentPartnerCut: ")
+
                         timer?.cancel()
                         timer?.onFinish()
                     }
@@ -1380,6 +1421,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             } else {
                 flag = 1
                 unMuteCall()
+                PrefManager.put(USER_MUTE_OR_NOT, false)
                 view.setImageDrawable(
                     ContextCompat.getDrawable(
                         AppObjectController.joshApplication,
@@ -1431,6 +1473,14 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             AppObjectController.joshApplication,
             R.drawable.vertical_black
         )
+    }
+
+    fun getSplitName(name: String?): String {
+        return name?.split(" ")?.get(0).toString()
+    }
+
+    override fun onTimeUpdateMethod(time: Long) {
+        TODO()
     }
 
 }

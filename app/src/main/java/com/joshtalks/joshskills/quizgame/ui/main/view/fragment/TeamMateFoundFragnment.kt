@@ -19,12 +19,15 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
+import com.joshtalks.joshskills.core.USER_MUTE_OR_NOT
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
 import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
 import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.TeamMateFoundViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.TeamMateViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -40,11 +43,13 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
     private var userId: String? = null
     private var channelName: String? = null
     private var userDetails: UserDetails? = null
-    val teamMateFoundViewModel by lazy {
-        ViewModelProvider(requireActivity())[TeamMateFoundViewModel::class.java]
-    }
+
+
+    private var teamMateFoundViewModel: TeamMateFoundViewModel? = null
+
+    private var firebaseTemp = FirebaseTemp()
     private var engine: RtcEngine? = null
-    private var currentUserId: String? = null
+    private var currentUserId = Mentor.getInstance().getId()
     private var flag = 1
     private var flagSound = 1
 
@@ -80,11 +85,11 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE)
+        PrefManager.put(USER_MUTE_OR_NOT, false)
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             binding.userName2.alpha = 0.5f
             binding.shadowImg2.visibility = View.VISIBLE
         }
-        currentUserId = Mentor.getInstance().getUserId()
 
         setCurrentUserData()
         setUpData()
@@ -125,9 +130,16 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
     }
 
     private fun setUpData() {
-        userId?.let { teamMateFoundViewModel.getChannelData(it) }
+        val factory = activity?.application?.let { TeamMateViewProviderFactory(it) }
+        teamMateFoundViewModel = factory?.let {
+            ViewModelProvider(
+                this,
+                it
+            ).get(TeamMateFoundViewModel::class.java)
+        }
+        userId?.let { teamMateFoundViewModel?.getChannelData(it) }
         activity?.let {
-            teamMateFoundViewModel.userData.observe(it, Observer {
+            teamMateFoundViewModel?.userData?.observe(it, Observer {
                 setData(it)
             })
         }
@@ -135,11 +147,11 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
 
     private fun setData(userDetails: UserDetails?) {
         this.userDetails = userDetails
-        binding.txtQuiz1.text = userDetails?.name + " is your team mate"
+        binding.txtQuiz1.text = UtilsQuiz.getSplitName(userDetails?.name) + " is your team mate"
         val imageUrl = userDetails?.imageUrl?.replace("\n", "")
         binding.image2.setUserImageOrInitials(imageUrl, userDetails?.name ?: "", 30, isRound = true)
 
-        binding.userName2.text = userDetails?.name
+        binding.userName2.text = UtilsQuiz.getSplitName(userDetails?.name)
     }
 
     companion object {
@@ -184,22 +196,23 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        teamMateFoundViewModel.saveCallDuration(
+        teamMateFoundViewModel?.saveCallDuration(
             SaveCallDuration(
                 channelName ?: "",
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId
             )
         )
-        teamMateFoundViewModel.deleteUserRadiusData(
+        teamMateFoundViewModel?.deleteUserRadiusData(
             TeamDataDelete(
                 channelName ?: "",
-                currentUserId ?: ""
+                currentUserId
             )
         )
         activity?.let {
-            teamMateFoundViewModel.saveCallDuration.observe(it, Observer {
+            teamMateFoundViewModel?.saveCallDuration?.observe(it, Observer {
                 if (it.message == CALL_DURATION_RESPONSE) {
+                    firebaseTemp.changeUserStatus(currentUserId, ACTIVE)
                     val points = it.points
                     lifecycleScope.launch(Dispatchers.Main) {
                         UtilsQuiz.showSnackBar(
@@ -256,6 +269,7 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
         if (flag == 0) {
             flag = 1
             unMuteCall()
+            PrefManager.put(USER_MUTE_OR_NOT, false)
 
             binding.imageMute.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.blue33)
@@ -266,6 +280,8 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
         } else {
             flag = 0
             muteCall()
+            PrefManager.put(USER_MUTE_OR_NOT, true)
+
             binding.imageMute.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.white)
 
@@ -287,5 +303,10 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
                 Timber.d(ex)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PrefManager.put(USER_MUTE_OR_NOT, false)
     }
 }

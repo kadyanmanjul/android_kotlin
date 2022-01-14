@@ -1,9 +1,8 @@
-package com.labs.circularprogress
+package com.joshtalks.joshskills.quizgame.ui.main.view.customview
 
 import android.animation.Animator
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
-import android.app.Application
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -13,11 +12,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import androidx.core.animation.addListener
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 
 class CircularProgressView(
     context: Context?,
@@ -30,8 +26,8 @@ class CircularProgressView(
         const val PERCENTAGE_VALUE_HOLDER = "percentage"
     }
 
-    var valuesHolder : PropertyValuesHolder?=null
-    var animator : Animator?=null
+    var valuesHolder: PropertyValuesHolder? = null
+    var animator: Animator? = null
 
     private var currentPercentage = 0
 
@@ -44,7 +40,7 @@ class CircularProgressView(
     }
 
     private val fillArcColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-     //   context?.resources?.getColor(R.color.gray_light_copy, null) ?: Color.GREEN
+        //   context?.resources?.getColor(R.color.gray_light_copy, null) ?: Color.GREEN
         context?.resources?.getColor(R.color.blue2, null) ?: Color.GREEN
     } else {
         TODO("VERSION.SDK_INT < M")
@@ -68,7 +64,7 @@ class CircularProgressView(
     override fun onDraw(canvas: Canvas?) {
         setSpace()
         canvas?.let {
-           drawBackgroundArc(it)
+            drawBackgroundArc(it)
             drawInnerArc(it)
         }
     }
@@ -96,12 +92,12 @@ class CircularProgressView(
         canvas.drawArc(ovalSpace, 270f, percentageToFill, false, fillArcPaint)
     }
 
-     fun getCurrentPercentageToFill() =
+    fun getCurrentPercentageToFill() =
         (-ARC_FULL_ROTATION_DEGREE * (currentPercentage / PERCENTAGE_DIVIDER)).toFloat()
 
     fun animateProgress() {
         valuesHolder = PropertyValuesHolder.ofFloat("percentage", 100f, 0f)
-         animator = ValueAnimator().apply {
+        animator = ValueAnimator().apply {
             setValues(valuesHolder)
             duration = 16000
 
@@ -114,13 +110,14 @@ class CircularProgressView(
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             animator?.start()
-        },2000)
+        }, 2000)
     }
+
     fun pauseProgress() {
         animator?.pause()
     }
 
-    fun setAnimZero(){
+    fun setAnimZero() {
         animator?.end()
     }
 }

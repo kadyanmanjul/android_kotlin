@@ -24,6 +24,7 @@
                 android:id="@+id/notification_card_not_play"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_85sdp"
+                android:elevation="@dimen/_10sdp"
                 android:visibility="invisible">
 
                 <RelativeLayout
@@ -121,7 +122,7 @@
                     android:layout_marginTop="@dimen/_3sdp"
                     android:layout_marginRight="@dimen/_2sdp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/ic_cross_quiz"
+                    app:srcCompat="@drawable/ic_cross_quiz"
                     app:strokeColor="#fff"
                     app:strokeWidth="@dimen/_1sdp" />
 
@@ -131,6 +132,7 @@
                 android:id="@+id/notification_card"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_85sdp"
+                android:elevation="@dimen/_10sdp"
                 android:visibility="invisible">
 
                 <RelativeLayout
@@ -292,7 +294,7 @@
                     android:layout_marginTop="@dimen/_3sdp"
                     android:layout_marginRight="@dimen/_2sdp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/ic_cross_quiz"
+                    app:srcCompat="@drawable/ic_cross_quiz"
                     app:strokeColor="#fff"
                     app:strokeWidth="1dp" />
             </RelativeLayout>
@@ -301,6 +303,7 @@
                 android:id="@+id/notification_card_already"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_85sdp"
+                android:elevation="@dimen/_10sdp"
                 android:visibility="invisible">
 
                 <RelativeLayout
@@ -394,7 +397,7 @@
                     android:layout_marginTop="@dimen/_3sdp"
                     android:layout_marginRight="@dimen/_2sdp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/ic_cross_quiz"
+                    app:srcCompat="@drawable/ic_cross_quiz"
                     app:strokeColor="#fff"
                     app:strokeWidth="@dimen/_1sdp" />
 
@@ -409,7 +412,7 @@
                 android:layout_marginTop="@dimen/_25sdp"
                 android:onClick="@{()->clickHandler.onBack()}"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_arrow_back" />
+                app:srcCompat="@drawable/ic_arrow_back" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt"

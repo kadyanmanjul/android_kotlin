@@ -18,7 +18,6 @@ class QuestionViewModel(var application11: Application) :
     val questionData: MutableLiveData<QuestionResponse> = MutableLiveData()
     val selectOption: MutableLiveData<SelectOptionResponse> = MutableLiveData()
     val displayAnswerData: MutableLiveData<DisplayAnswerResponse> = MutableLiveData()
-    var roomUserData: MutableLiveData<RoomUserData> = MutableLiveData()
     var roomUserDataTemp: MutableLiveData<RandomRoomResponse> = MutableLiveData()
     var clearRadius: MutableLiveData<Success> = MutableLiveData()
     var deleteData: MutableLiveData<Success> = MutableLiveData()

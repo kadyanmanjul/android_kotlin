@@ -6,9 +6,7 @@ data class Favourite(
     @SerializedName("uuid")
     var uuid: String? = null,
     @SerializedName("name")
-    var name:String? = null,
+    var name: String? = null,
     @SerializedName("image_url")
-    var image:String? = null,
-    @SerializedName("user_status")
-    var status:String?
+    var image: String? = null
 )

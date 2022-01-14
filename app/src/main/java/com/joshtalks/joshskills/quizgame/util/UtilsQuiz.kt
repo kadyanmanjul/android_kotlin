@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.TranslateAnimation
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
@@ -22,5 +23,9 @@ object UtilsQuiz {
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
             PointSnackbar.make(view, duration, action_lable)?.show()
+    }
+
+    fun getSplitName(name: String?): String {
+        return name?.split(" ")?.get(0).toString()
     }
 }

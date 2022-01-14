@@ -1,14 +1,17 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.graphics.Color
+import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,13 +20,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.RandomFragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDurationRoomData
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateFoundViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateViewModelFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -36,11 +39,11 @@ const val OPPONENT_USER_IMAGE: String = "opponentUserImage"
 const val OPPONENT_USER_NAME: String = "opponentUserName"
 const val CURRENT_USER_TEAM_ID: String = "current_user_team_id"
 
-class RandomTeamMateFoundFragment : Fragment() {
+class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
     private lateinit var binding: RandomFragmentTeamMateFoundFragnmentBinding
-    val randomTeamMateFoundViewModel by lazy {
-        ViewModelProvider(requireActivity())[RandomTeamMateFoundViewModel::class.java]
-    }
+
+    private var randomTeamMateFoundViewModel: RandomTeamMateFoundViewModel? = null
+
     private var roomId: String? = null
     private var currentUserId: String? = null
     private var opponentUserImage: String? = null
@@ -48,15 +51,19 @@ class RandomTeamMateFoundFragment : Fragment() {
     private var engine: RtcEngine? = null
     private var flag = 1
     private var flagSound = 1
+    private var time: Long = 0
     private var currentUserTeamId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        currentUserId = Mentor.getInstance().getId()
+        //FirebaseDatabase().getRoomTime(currentUserId ?: "", this)
 
         arguments?.let {
             roomId = it.getString("roomId")
             opponentUserImage = it.getString(OPPONENT_USER_IMAGE)
             opponentUserName = it.getString(OPPONENT_USER_NAME)
             currentUserTeamId = it.getString(CURRENT_USER_TEAM_ID)
+            time = it.getLong("Time")
         }
     }
 
@@ -83,10 +90,11 @@ class RandomTeamMateFoundFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE)
-        currentUserId = Mentor.getInstance().getUserId()
+        PrefManager.put(USER_MUTE_OR_NOT, false)
         setCurrentUserData()
+        // moveFragment()
+        FirebaseDatabase().getRoomTime(roomId ?: "", this)
         setData()
-        moveFragment()
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             binding.userName2.alpha = 0.5f
             binding.shadowImg2.visibility = View.VISIBLE
@@ -103,7 +111,8 @@ class RandomTeamMateFoundFragment : Fragment() {
         }
 
         binding.imageSound.setOnClickListener {
-            engine?.setDefaultAudioRoutetoSpeakerphone(true)
+            //  engine?.setDefaultAudioRoutetoSpeakerphone(true)
+            speakerOnOff()
         }
 
         onBackPress()
@@ -117,11 +126,40 @@ class RandomTeamMateFoundFragment : Fragment() {
         engine?.muteLocalAudioStream(false)
     }
 
+    fun setUpViewModel() {
+        val factory = activity?.application?.let { RandomTeamMateViewModelFactory(it) }
+        randomTeamMateFoundViewModel = factory?.let {
+            ViewModelProvider(
+                this,
+                it
+            ).get(RandomTeamMateFoundViewModel::class.java)
+        }
+    }
+
+    fun switchAudioMode() {
+        updateStatusLabel(binding.imageSound, P2pRtc().getSpeaker())
+        P2pRtc().switchAudioSpeaker()
+        requireActivity().volumeControlStream = AudioManager.STREAM_VOICE_CALL
+    }
+
+    private fun updateStatusLabel(view: AppCompatImageButton, enable: Boolean) {
+        if (enable) {
+            view.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.dis_color_10f)
+            view.imageTintList = ContextCompat.getColorStateList(requireContext(), R.color.white)
+        } else {
+            view.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.white)
+            view.imageTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.blue33)
+        }
+    }
+
     private fun muteUnmute() {
         if (flag == 0) {
             flag = 1
             unMuteCall()
-
+            PrefManager.put(USER_MUTE_OR_NOT, false)
             binding.imageMute.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.blue33)
 
@@ -131,6 +169,7 @@ class RandomTeamMateFoundFragment : Fragment() {
         } else {
             flag = 0
             muteCall()
+            PrefManager.put(USER_MUTE_OR_NOT, true)
             binding.imageMute.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.white)
 
@@ -151,11 +190,11 @@ class RandomTeamMateFoundFragment : Fragment() {
     }
 
     private fun setData() {
-        binding.txtQuiz1.text = opponentUserName + " is your team mate"
+        binding.txtQuiz1.text = UtilsQuiz.getSplitName(opponentUserName) + " is your team mate"
         val imageUrl = opponentUserImage?.replace("\n", "")
         binding.image2.setUserImageOrInitials(imageUrl, opponentUserName ?: "", 30, isRound = true)
 
-        binding.userName2.text = opponentUserName
+        binding.userName2.text = UtilsQuiz.getSplitName(opponentUserName)
     }
 
     companion object {
@@ -164,7 +203,8 @@ class RandomTeamMateFoundFragment : Fragment() {
             roomId: String?,
             opponentUserImage: String,
             opponentUserName: String?,
-            currentUserTeamId: String
+            currentUserTeamId: String,
+            time: Long
         ) =
             RandomTeamMateFoundFragment().apply {
                 arguments = Bundle().apply {
@@ -172,24 +212,31 @@ class RandomTeamMateFoundFragment : Fragment() {
                     putString(OPPONENT_USER_IMAGE, opponentUserImage)
                     putString(OPPONENT_USER_NAME, opponentUserName)
                     putString(CURRENT_USER_TEAM_ID, currentUserTeamId)
+                    putLong("Time", time)
                 }
             }
     }
 
-    private fun moveFragment() {
+    private fun moveFragment(time: Long) {
+//        val android = (System.currentTimeMillis() / 1000) % 60
+//        val serverTime = (time) % 60
+//        val countDown = serverTime - android
+        val cdt = (time - (System.currentTimeMillis() / 1000)) % 60
+
+        Log.d("android_time", "moveFragment: $time :::::: $cdt")
+
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
-            val startTime: String =
-                (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+            val startTime = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
             val fm = activity?.supportFragmentManager
             fm?.beginTransaction()
                 ?.replace(
                     R.id.container,
-                    QuestionFragment.newInstance(roomId, startTime, RANDOM),
-                    "SearchingOpponentTeam"
+                    QuestionFragment.newInstance(roomId, startTime, RANDOM), "SearchingOpponentTeam"
                 )
                 ?.commit()
-        }, 4000)
+        }, (cdt - 15) * 1000)
+        //(countDown - 14) * 1000)(cdt - 15) * 1000
     }
 
     fun onBackPress() {
@@ -202,9 +249,32 @@ class RandomTeamMateFoundFragment : Fragment() {
             })
     }
 
+    private fun speakerOnOff() {
+        if (flagSound == 0) {
+            flagSound = 1
+            engine?.setDefaultAudioRoutetoSpeakerphone(false)
+
+
+            binding.imageSound.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.blue33)
+
+            binding.imageSound.imageTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.white)
+
+        } else {
+            flagSound = 0
+            engine?.setDefaultAudioRoutetoSpeakerphone(true)
+            binding.imageSound.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.white)
+
+            binding.imageSound.imageTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.grey_61)
+        }
+    }
+
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        randomTeamMateFoundViewModel.saveCallDuration(
+        randomTeamMateFoundViewModel?.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -212,7 +282,7 @@ class RandomTeamMateFoundFragment : Fragment() {
             )
         )
 
-        randomTeamMateFoundViewModel.getClearRadius(
+        randomTeamMateFoundViewModel?.getClearRadius(
             SaveCallDurationRoomData(
                 roomId ?: "",
                 currentUserId ?: "",
@@ -222,13 +292,13 @@ class RandomTeamMateFoundFragment : Fragment() {
         )
 
         activity?.let {
-            randomTeamMateFoundViewModel.saveCallDuration.observe(it, Observer {
+            randomTeamMateFoundViewModel?.saveCallDuration?.observe(it, Observer {
                 if (it.message == CALL_DURATION_RESPONSE) {
                     val points = it.points
                     lifecycleScope.launch(Dispatchers.Main) {
                         UtilsQuiz.showSnackBar(
                             binding.container,
-                            Snackbar.LENGTH_SHORT,
+                            Snackbar.LENGTH_LONG,
                             "You earned +$points for speaking in English"
                         )
                     }
@@ -266,5 +336,25 @@ class RandomTeamMateFoundFragment : Fragment() {
                 Timber.d(ex)
             }
         }
+
+        override fun onSpeakerOff() {
+            super.onSpeakerOff()
+            AppObjectController.uiHandler.post {
+                updateStatusLabel(binding.imageSound, enable = true)
+            }
+        }
+    }
+
+//    override fun onTimeChangeMethod(time: Long) {
+//        moveFragment(time)
+//    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PrefManager.put(USER_MUTE_OR_NOT, false)
+    }
+
+    override fun onTimeChangeMethod(time: Long) {
+        moveFragment(time)
     }
 }

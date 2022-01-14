@@ -1,4 +1,4 @@
-package com.labs.circularprogress
+package com.joshtalks.joshskills.quizgame.ui.main.view.customview
 
 import android.animation.Animator
 import android.animation.PropertyValuesHolder
@@ -13,7 +13,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
-import androidx.annotation.RequiresApi
 import com.joshtalks.joshskills.R
 
 class CircularProgressView1(
@@ -27,15 +26,15 @@ class CircularProgressView1(
         const val PERCENTAGE_VALUE_HOLDER = "percentage"
     }
 
-    var valuesHolder : PropertyValuesHolder?=null
-    var animator : Animator?=null
+    var valuesHolder: PropertyValuesHolder? = null
+    var animator: Animator? = null
 
     private var currentPercentage = 0
-    private var i =0
+    private var i = 0
 
     private val ovalSpace = RectF()
 
-//    private val parentArcColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    //    private val parentArcColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //        context?.resources?.getColor(R.color.blue, null) ?: Color.GRAY
 //    } else {
 //        TODO("VERSION.SDK_INT < M")
@@ -64,7 +63,7 @@ class CircularProgressView1(
     override fun onDraw(canvas: Canvas?) {
         setSpace()
         canvas?.let {
-           // drawBackgroundArc(it)
+            // drawBackgroundArc(it)
             drawInnerArc(it)
         }
     }
@@ -85,7 +84,7 @@ class CircularProgressView1(
 ////        val percentageToFill = getCurrentPercentageToFill()
 ////        canvas.drawArc(ovalSpace, 90f, percentageToFill, false, parentArcPaint)
 //        it.drawArc(ovalSpace, 0f, 360f, false, parentArcPaint)
-   // }
+    // }
 
     private fun drawInnerArc(canvas: Canvas) {
         val percentageToFill = getCurrentPercentageToFill()
@@ -98,7 +97,7 @@ class CircularProgressView1(
     fun animateProgress() {
 
         valuesHolder = PropertyValuesHolder.ofFloat("percentage", 100f, 0f)
-         animator = ValueAnimator().apply {
+        animator = ValueAnimator().apply {
             setValues(valuesHolder)
             duration = 16000
 
@@ -111,13 +110,15 @@ class CircularProgressView1(
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             animator?.start()
-        },2000)
+        }, 2000)
 
     }
+
     fun pauseProgress() {
         animator?.pause()
     }
-    fun setAnimZero(){
+
+    fun setAnimZero() {
         animator?.end()
     }
 }

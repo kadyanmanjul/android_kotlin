@@ -36,7 +36,7 @@ class FavouriteViewModel(var application11: Application) : BaseViewModel(applica
                         }
 
                         val fromToken = async {
-                            val response = favouriteRepo.getAgoraFromToken(mentorId)
+                            val response = favouriteRepo.getAgoraFromToken(AgoraFromToken(mentorId,mentorId))
                             if (response?.isSuccessful == true && response.body() != null) {
                                 fromTokenData.postValue(response.body())
                             }

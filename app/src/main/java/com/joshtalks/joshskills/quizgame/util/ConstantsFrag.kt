@@ -10,3 +10,4 @@ const val CHANGE_USER_STATUS = "User status changed to inactive , data deleted f
 
 const val CALL_DURATION_RESPONSE = "Call duration saved successfully"
 const val NO_MATCHING_USER_FOUND = "No matching user found"
+const val NO_FPP_FOUND = "No favourite practice partner found"

@@ -8,15 +8,17 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 const val DIR = "api/skill/v1"
+const val GAME_ANALYTICS_MENTOR_ID_API_KEY = "user_id"
+const val GAME_ANALYTICS_EVENTS_API_KEY = "game_event_name"
 
 interface Api {
     // FPP
     @GET("$DIR/fpp/favourite_practise_partner/")
-    suspend fun getFavourite(@Query("mentor_id") mentorId: String)
+    suspend fun getFavourite(@Query("mentor_id") mentorId: String, @Query("user_id") userId: String)
             : Response<FavouriteList>
 
     @POST("$DIR/fpp/quiz_agora_from_token/")
-    suspend fun getAgoraFromToken(@Body params: Map<String, String>)
+    suspend fun getAgoraFromToken(@Body params: AgoraFromToken)
             : Response<ChannelData>
 
     @POST("$DIR/fpp/quiz_agora_to_token/")
@@ -65,7 +67,10 @@ interface Api {
     suspend fun changeUserStatus(@Body params: Status): Response<Success>
 
     @GET("$DIR/quiz/userdata/")
-    suspend fun getUserDetails(@Query("mentor_id") mentorId: String)
+    suspend fun getUserDetails(
+        @Query("mentor_id") mentorId: String,
+        @Query("user_id") userId: String
+    )
             : Response<UserDetails>
 
     @POST("$DIR/quiz/questions/")
@@ -93,5 +98,9 @@ interface Api {
     suspend fun homeInactive(@Body params: Status): Response<Success>
 
     @POST("$DIR/quiz/save_call_duration/")
-    suspend fun saveCallDuration(@Body prams :SaveCallDuration) : Response<CallDurationResponse>
+    suspend fun saveCallDuration(@Body prams: SaveCallDuration): Response<CallDurationResponse>
+
+    @POST("$DIR/quiz/impression/track_game_impressions/")
+    @JvmSuppressWildcards
+    suspend fun gameImpressionDetails(@Body params: Map<String, Any?>): Response<Unit>
 }

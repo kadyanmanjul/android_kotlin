@@ -4,10 +4,13 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
+import androidx.annotation.RequiresApi
+import com.joshtalks.joshskills.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class AudioManagerQuiz() {
@@ -29,6 +32,23 @@ class AudioManagerQuiz() {
                 ex.printStackTrace()
             }
         }
+    }
+
+    fun tickPlaying(application:Context){
+            try {
+                val mediaPlayer: MediaPlayer = MediaPlayer.create(
+                    application,
+                    R.raw.click
+                )
+                mediaPlayer.setVolume(0.6f,0.6f)
+                mediaPlayer.setOnCompletionListener { mediaPlayer ->
+                    mediaPlayer.reset()
+                    mediaPlayer.release()
+                }
+                mediaPlayer.start()
+            } catch (ex: Exception) {
+                Timber.d(ex)
+            }
     }
 
     fun isPlaying(): Boolean {

@@ -10,7 +10,7 @@ const val REQUEST_NOTIFICATION = "RequestTemp"
 const val REQUEST_DECLINE = "RequestDecline"
 const val USER_STATUS = "UserStatus"
 const val ACCEPT_REQUEST = "Accept_Request"
-const val FRIEND_REQUEST ="FriendRequest"
+const val FRIEND_REQUEST = "FriendRequest"
 
 
 class FirebaseTemp {
@@ -18,7 +18,7 @@ class FirebaseTemp {
 
     private var collectionReference: CollectionReference = database.collection(REQUEST_NOTIFICATION)
     private var requestDecline: CollectionReference = database.collection(REQUEST_DECLINE)
-    private var statusCollection :CollectionReference = database.collection(USER_STATUS)
+    private var statusCollection: CollectionReference = database.collection(USER_STATUS)
     private var acceptRequestCollection: CollectionReference = database.collection(ACCEPT_REQUEST)
     private var sentFriendRequest: CollectionReference = database.collection(FRIEND_REQUEST)
 
@@ -36,7 +36,10 @@ class FirebaseTemp {
         collectionReference.document(favUserId ?: "").set(channel)
     }
 
-    fun getUserDataFromFirestore(mentorId: String, onNotificationTrigger1: OnNotificationTriggerTemp) {
+    fun getUserDataFromFirestore(
+        mentorId: String,
+        onNotificationTrigger1: OnNotificationTriggerTemp
+    ) {
         try {
             val cr: CollectionReference = database.collection(REQUEST_NOTIFICATION)
             cr.addSnapshotListener { value, e ->
@@ -60,7 +63,7 @@ class FirebaseTemp {
                     }
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }
@@ -78,13 +81,14 @@ class FirebaseTemp {
                         var fromUserId: String? = doc.data["fromUserId"].toString()
                         if (fromUserId == fUMId) {
                             try {
-                                collectionReference.document(mId ?: "").delete().addOnCompleteListener(
-                                    OnCompleteListener {
-                                        //createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
-                                        fromUserId = ""
-                                        fUMId = ""
-                                        mId = ""
-                                    })
+                                collectionReference.document(mId ?: "").delete()
+                                    .addOnCompleteListener(
+                                        OnCompleteListener {
+                                            //createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
+                                            fromUserId = ""
+                                            fUMId = ""
+                                            mId = ""
+                                        })
                             } catch (ex: Exception) {
 
                             }
@@ -166,11 +170,12 @@ class FirebaseTemp {
                 }
             }
     }
+
     fun createRequestDecline(
         fromUserId: String,
         declineUserName: String?,
         declineUserImage: String?,
-        declinedUserId:String?
+        declinedUserId: String?
     ) {
         val channel: HashMap<String, Any> = HashMap()
         channel["declineUserName"] = declineUserName ?: ""
@@ -181,7 +186,7 @@ class FirebaseTemp {
 
     fun getDeclineCall(mentorId: String, onNotificationTrigger1: OnNotificationTriggerTemp) {
         val mID: String = mentorId
-       // val rD: CollectionReference = database.collection(REQUEST_DECLINE)
+        // val rD: CollectionReference = database.collection(REQUEST_DECLINE)
         requestDecline.addSnapshotListener { value, e ->
             if (e != null) {
                 return@addSnapshotListener
@@ -204,13 +209,14 @@ class FirebaseTemp {
         }
     }
 
-    fun deleteAllData(mentorId: String){
+    fun deleteAllData(mentorId: String) {
         collectionReference.document(mentorId).delete()
         requestDecline.document(mentorId).delete()
         acceptRequestCollection.document(mentorId).delete()
         sentFriendRequest.document(mentorId).delete()
     }
-    fun statusLive(mentorId: String,onLiveStatus: FirebaseDatabase.OnLiveStatus){
+
+    fun statusLive(mentorId: String, onLiveStatus: FirebaseDatabase.OnLiveStatus) {
         statusCollection
             .addSnapshotListener { value, e ->
                 if (e != null) {
@@ -220,12 +226,19 @@ class FirebaseTemp {
                     if (doc.exists()) {
                         if (mentorId == doc.id) {
                             val status = doc.data["status"].toString()
-                            onLiveStatus.onGetLiveStatus(status,mentorId)
+                            onLiveStatus.onGetLiveStatus(status, mentorId)
                         }
                     }
                 }
             }
     }
+
+    fun changeUserStatus(mentorId: String, status: String) {
+        val channel: HashMap<String, Any> = HashMap()
+        channel["status"] = status
+        statusCollection.document(mentorId).set(channel)
+    }
+
     fun acceptRequest(
         opponentMemberId: String,
         isAccept: String,
@@ -242,6 +255,7 @@ class FirebaseTemp {
         channel["isAccept"] = isAccept
         acceptRequestCollection.document(opponentMemberId).set(channel)
     }
+
     fun deleteDataAcceptRequest(mentorId: String) {
         var mId: String? = mentorId
         val acceptRequestC: CollectionReference = database.collection(ACCEPT_REQUEST)
@@ -262,7 +276,11 @@ class FirebaseTemp {
                 }
             }
     }
-    fun getFriendRequests(toUserId: String, onMakeFriendTrigger: FirebaseDatabase.OnMakeFriendTrigger) {
+
+    fun getFriendRequests(
+        toUserId: String,
+        onMakeFriendTrigger: FirebaseDatabase.OnMakeFriendTrigger
+    ) {
         sentFriendRequest
             .addSnapshotListener { value, e ->
                 if (e != null) {
@@ -286,13 +304,32 @@ class FirebaseTemp {
                 }
             }
     }
+
     fun deleteRequest(mentorId: String) {
         sentFriendRequest.document(mentorId).delete()
     }
 
-    interface OnNotificationTriggerTemp{
-        fun onNotificationForInvitePartnerTemp(channelName: String,fromUserId :String , fromUserName:String,fromUserImage:String)
-        fun onNotificationForPartnerNotAcceptTemp(userName:String?,userImageUrl:String,fromUserId:String,declinedUserId: String)
-        fun onNotificationForPartnerAcceptTemp(channelName:String?,timeStamp:String,isAccept: String,opponentMemberId: String,mentorId: String)
+    interface OnNotificationTriggerTemp {
+        fun onNotificationForInvitePartnerTemp(
+            channelName: String,
+            fromUserId: String,
+            fromUserName: String,
+            fromUserImage: String
+        )
+
+        fun onNotificationForPartnerNotAcceptTemp(
+            userName: String?,
+            userImageUrl: String,
+            fromUserId: String,
+            declinedUserId: String
+        )
+
+        fun onNotificationForPartnerAcceptTemp(
+            channelName: String?,
+            timeStamp: String,
+            isAccept: String,
+            opponentMemberId: String,
+            mentorId: String
+        )
     }
 }

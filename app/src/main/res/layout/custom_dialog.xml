@@ -69,7 +69,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:layout_gravity="center_vertical"
-                        android:text="Do you really wanna exit?"
+                        android:text="Do you really want to exit?"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_13sdp"
                         android:textStyle="bold" />

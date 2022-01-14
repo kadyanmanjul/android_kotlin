@@ -1,12 +1,11 @@
 package com.joshtalks.joshskills.repository.local
 
+// import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import android.content.Context
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-
 import com.google.gson.reflect.TypeToken
-
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
@@ -14,6 +13,8 @@ import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
+import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsDao
+import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsEntity
 import com.joshtalks.joshskills.repository.local.dao.*
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -45,7 +46,6 @@ import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
-
 import java.math.BigDecimal
 import java.util.*
 
@@ -61,7 +61,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
-        GroupsItem::class, TimeTokenRequest::class, ChatItem::class
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class , GameAnalyticsEntity::class
     ],
     version = 43,
     exportSchema = true
@@ -515,6 +515,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`messageId` TEXT PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `msgTime` INTEGER NOT NULL, `groupId` TEXT NOT NULL, `msgType` INTEGER NOT NULL)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_analytics` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastSentMsgTime` INTEGER NOT NULL)")
                 database.execSQL("ALTER TABLE `groups_analytics` ADD COLUMN `groupId` TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `game_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
             }
         }
 
@@ -560,6 +561,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun groupListDao(): GroupListDao
     abstract fun timeTokenDao(): TimeTokenDao
     abstract fun groupChatDao(): GroupChatDao
+    abstract fun gameAnalyticsDao(): GameAnalyticsDao
 }
 
 class MessageTypeConverters {

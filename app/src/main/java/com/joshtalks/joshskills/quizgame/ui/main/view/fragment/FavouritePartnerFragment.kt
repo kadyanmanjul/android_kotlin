@@ -11,6 +11,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.TranslateAnimation
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -24,6 +27,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentFavouritePracticeBinding
+import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
 import com.joshtalks.joshskills.quizgame.ui.data.model.ChannelData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
@@ -37,7 +41,6 @@ import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
-import kotlinx.android.synthetic.main.fragment_favourite_practice.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,7 +77,8 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     //private val PERMISSION_REQ_ID = 22
     private var engine: RtcEngine? = null
     private var activityInstance: FragmentActivity? = null
-    private var mentorId: String = Mentor.getInstance().getUserId()
+
+    private var mentorId: String = Mentor.getInstance().getId()
     var userName: String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
     val handler = Handler(Looper.getMainLooper())
@@ -197,45 +201,45 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
 
     private fun initRV(favouriteList: ArrayList<Favourite>?) {
         arrayList = favouriteList
-        val activeList: ArrayList<Favourite> = java.util.ArrayList()
-        val inGameList: ArrayList<Favourite> = java.util.ArrayList()
-        val searchList: ArrayList<Favourite> = java.util.ArrayList()
-        val inActiveList: ArrayList<Favourite> = java.util.ArrayList()
-        val list: ArrayList<Favourite> = java.util.ArrayList()
-        if (favouriteList != null) {
-            for (f in favouriteList) {
-                if (f.status == ACTIVE) {
-                    activeList.add(f)
-                }
-            }
-            for (f1 in favouriteList) {
-                if (f1.status == IN_GAME) {
-                    inGameList.add(f1)
-                }
-            }
-            for (f2 in favouriteList) {
-                if (f2.status == SEARCHING) {
-                    searchList.add(f2)
-                }
-            }
-            for (f3 in favouriteList) {
-                if (f3.status == IN_ACTIVE) {
-                    inActiveList.add(f3)
-                }
-            }
-            list.addAll(activeList)
-            list.addAll(inGameList)
-            list.addAll(searchList)
-            list.addAll(inActiveList)
+//        val activeList: ArrayList<Favourite> = java.util.ArrayList()
+//        val inGameList: ArrayList<Favourite> = java.util.ArrayList()
+//        val searchList: ArrayList<Favourite> = java.util.ArrayList()
+//        val inActiveList: ArrayList<Favourite> = java.util.ArrayList()
+//        val list: ArrayList<Favourite> = java.util.ArrayList()
+        // arrayList = list
+//        if (favouriteList != null) {
+//            for (f in favouriteList) {
+//                if (f.status == ACTIVE) {
+//                    activeList.add(f)
+//                }
+//            }
+//            for (f1 in favouriteList) {
+//                if (f1.status == IN_GAME) {
+//                    inGameList.add(f1)
+//                }
+//            }
+//            for (f2 in favouriteList) {
+//                if (f2.status == SEARCHING) {
+//                    searchList.add(f2)
+//                }
+//            }
+//            for (f3 in favouriteList) {
+//                if (f3.status == IN_ACTIVE) {
+//                    inActiveList.add(f3)
+//                }
+//            }
+//            list.addAll(activeList)
+//            list.addAll(inGameList)
+//            list.addAll(searchList)
+//            list.addAll(inActiveList)
+//
+//            arrayList = list
+//        }
 
-            arrayList = list
-        }
-
-        favouriteAdapter?.addItems(list)
+        favouriteAdapter?.addItems(arrayList)
         binding.recycleView.setHasFixedSize(true)
         binding.recycleView.layoutManager = LinearLayoutManager(activity)
-        favouriteAdapter =
-            activity?.let { FavouriteAdapter(it, list, this, firebaseDatabase) }
+        favouriteAdapter = activity?.let { FavouriteAdapter(it, arrayList, this, firebaseDatabase) }
         binding.recycleView.adapter = favouriteAdapter
         for (v in 0 until arrayList?.size!!) {
             firebaseDatabase.statusLive(arrayList?.get(v)?.uuid ?: "", this)
@@ -275,22 +279,6 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
     }
 
-//    private fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
-//        if (activity?.let { ContextCompat.checkSelfPermission(it, permission) } !=
-//            PackageManager.PERMISSION_GRANTED
-//        ) {
-//            activity?.let {
-//                ActivityCompat.requestPermissions(
-//                    it,
-//                    REQUESTED_PERMISSIONS,
-//                    requestCode
-//                )
-//            }
-//            return false
-//        }
-//        return true
-//    }
-
     private fun joinChannel(channelId: String) {
         engine?.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
@@ -313,76 +301,6 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
     }
 
-//    override fun onNotificationForInvitePartner(
-//        channelName: String,
-//        fromUserId: String,
-//        fromUserName: String,
-//        fromUserImageUrl: String
-//    ) {
-//        var i = 0
-//        try {
-//            visibleView(binding.notificationCard)
-//
-//            binding.progress.animateProgress()
-//            binding.userName.text = fromUserName
-//            val imageUrl = fromUserImageUrl.replace("\n", "")
-//
-//            binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
-//        } catch (ex: Exception) {
-//            Timber.d(ex)
-//        }
-//
-//        binding.buttonAccept.setOnClickListener {
-//            i = 1
-//            invisibleView(binding.notificationCard)
-//            favouriteViewModel?.getChannelData(mentorId, channelName)
-//            activity?.let {
-//                favouriteViewModel?.agoraToToken?.observe(it, {
-//                    when {
-//                        it?.message.equals(TEAM_CREATED) -> {
-//                            firebaseDatabase.deleteRequested(mentorId ?: "")
-//                            firebaseDatabase.acceptRequest(
-//                                fromUserId,
-//                                TRUE,
-//                                fromUserName,
-//                                channelName,
-//                                mentorId
-//                            )
-//                            initializeAgoraCall(channelName)
-//                            moveFragment(fromUserId, channelName)
-//                        }
-//                        it?.message.equals(USER_ALREADY_JOIN) -> {
-//                            visibleView(binding.notificationCardAlready)
-//                        }
-//                        it?.message.equals(USER_LEFT_THE_GAME) -> {
-//                            showToast(PARTNER_LEFT_THE_GAME)
-//                        }
-//                    }
-//                })
-//            }
-//        }
-//
-//        binding.alreadyNotification.setOnClickListener {
-//            invisibleView(binding.notificationCardAlready)
-//
-//        }
-//        binding.butonDecline.setOnClickListener {
-//            invisibleView(binding.notificationCard)
-//            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-//        }
-//
-//        binding.eee.setOnClickListener {
-//            invisibleView(binding.notificationCard)
-//            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
-//        }
-//
-//        lifecycleScope.launch {
-//            delay(10000)
-//            invisibleView(binding.notificationCard)
-//            firebaseDatabase.deleteUserData(mentorId,fromUserId)
-//        }
-//    }
-
     fun deleteData() {
         if (UpdateReceiver.isNetworkAvailable())
             firebaseDatabase.getDeclineCall(mentorId, this)
@@ -403,55 +321,23 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             firebaseDatabase.getAcceptCall(mentorId, this)
     }
 
-//    override fun onNotificationForPartnerNotAccept(
-//        userName: String?,
-//        userImageUrl: String,
-//        fromUserId: String,
-//        declinedUserId: String
-//    ) {
-//        val pos = favouriteAdapter?.getPositionById(declinedUserId)
-//        val holder: FavouriteAdapter.FavViewHolder =
-//            binding.recycleView.findViewHolderForAdapterPosition(
-//                pos ?: 0
-//            ) as FavouriteAdapter.FavViewHolder
-//        if (fromUserId == mentorId) {
-//            try {
-//                holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
-//                holder.binding.clickToken.isEnabled = true
-//
-//                val image = userImageUrl.replace("\n", "")
-//                visibleView(binding.notificationCardNotPlay)
-//                binding.userNameForNotPlay.text = userName
-//                binding.userImageForNotPaly.setUserImageOrInitials(
-//                    image,
-//                    userName ?: "",
-//                    30,
-//                    isRound = true
-//                )
-//
-//            } catch (ex: Exception) {
-//                Timber.d(ex)
-//
-//            }
-//        }
-//
-//        binding.cancelNotification.setOnClickListener {
-//            firebaseDatabase.deleteDeclineData(mentorId)
-//            invisibleView(binding.notificationCardNotPlay)
-//        }
-//
-//        lifecycleScope.launch {
-//            delay(10000)
-//            firebaseDatabase.deleteDeclineData(mentorId)
-//            invisibleView(binding.notificationCardNotPlay)
-//        }
-//    }
-
     private fun getFavouritePracticePartner() {
         activity?.let {
             try {
                 favouriteViewModel.favData.observe(it, {
-                    initRV(it.data)
+                    if (it.data != null) {
+                        if (it.data?.size!! > 0) {
+                            initRV(it.data)
+                        } else {
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                UtilsQuiz.showSnackBar(
+                                    binding.container,
+                                    Snackbar.LENGTH_SHORT,
+                                    NO_FPP_FOUND
+                                )
+                            }
+                        }
+                    }
                 })
             } catch (ex: Exception) {
                 showToast(ex.message ?: "")
@@ -511,6 +397,8 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             ?.commit()
     }
 
+
+    //TODO
     override fun onSentFriendRequest(
         fromMentorId: String,
         fromUserName: String,
@@ -519,9 +407,10 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
     ) {
         try {
             handler2.removeCallbacksAndMessages(null)
-
             //binding.notificationCard.visibility = View.VISIBLE
-            visibleView(binding.notificationCard)
+            //visibleView(binding.notificationCard)
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromImageUrl.replace("\n", "")
@@ -532,11 +421,17 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
 
         binding.buttonAccept.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
+
+            tickSound()
             //binding.notificationCard.visibility = View.INVISIBLE
-            invisibleView(binding.notificationCard)
+            //invisibleView(binding.notificationCard)
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             favouriteViewModel.addFavouritePracticePartner(
                 AddFavouritePartner(
                     fromMentorId,
+                    mentorId,
                     mentorId
                 )
             )
@@ -548,13 +443,19 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
 
         binding.butonDecline.setOnClickListener {
-            invisibleView(binding.notificationCard)
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
+            tickSound()
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            // invisibleView(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
             firebaseDatabase.deleteRequested(mentorId)
         }
         try {
             handler2.postDelayed({
-                invisibleView(binding.notificationCard)
+                if (isActiveFrag)
+                    CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+                // invisibleView(binding.notificationCard)
                 firebaseDatabase.deleteRequested(mentorId)
             }, 10000)
         } catch (ex: Exception) {
@@ -628,10 +529,9 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         try {
             val pos: Int = favouriteAdapter?.getPositionById(mentorId) ?: 0
             val holder: FavouriteAdapter.FavViewHolder =
-                binding.recycleView.findViewHolderForAdapterPosition(
-                    pos
-                ) as FavouriteAdapter.FavViewHolder
+                binding.recycleView.findViewHolderForAdapterPosition(pos) as FavouriteAdapter.FavViewHolder
             holder.binding.status.text = status
+
             when (status) {
                 IN_ACTIVE -> {
                     holder.binding.clickToken.visibility = View.INVISIBLE
@@ -640,19 +540,18 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
                     holder.binding.clickToken.visibility = View.VISIBLE
                     holder.binding.clickToken.setImageResource(R.drawable.ic_plus1)
                     holder.binding.clickToken.setOnClickListener {
-                        context?.let { it1 ->
-                            AudioManagerQuiz.audioRecording.startPlaying(
-                                it1,
-                                R.raw.tick_animation,
-                                false
-                            )
+                        if (UpdateReceiver.isNetworkAvailable()) {
+                            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_INVITE)
+                            tickSound()
+                            holder.binding.clickToken.speed = 1.5F
+                            holder.binding.clickToken.repeatCount = LottieDrawable.INFINITE
+                            holder.binding.clickToken.setAnimation("lottie/hourglass_anim.json")
+                            holder.binding.clickToken.playAnimation()
+                            holder.binding.clickToken.isEnabled = false
+                            onClickForGetToken(arrayList?.get(pos), pos.toString())
+                        } else {
+                            showToast("Seems like your Internet is too slow or not available.")
                         }
-                        holder.binding.clickToken.speed = 1.5F // How fast does the animation play
-                        holder.binding.clickToken.repeatCount = LottieDrawable.INFINITE
-                        holder.binding.clickToken.setAnimation("lottie/hourglass_anim.json")
-                        holder.binding.clickToken.playAnimation()
-                        holder.binding.clickToken.isEnabled = false
-                        onClickForGetToken(arrayList?.get(pos), pos.toString())
                     }
                     holder.binding.clickToken.isEnabled = true
                 }
@@ -687,21 +586,26 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         var i = 0
         handler.removeCallbacksAndMessages(null)
         try {
-            visibleView(binding.notificationCard)
-
+            //visibleView(binding.notificationCard)
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromUserImage.replace("\n", "")
-
             binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
         } catch (ex: Exception) {
             Timber.d(ex)
         }
 
         binding.buttonAccept.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
+
+            tickSound()
             handler.removeCallbacksAndMessages(null)
             i = 1
-            invisibleView(binding.notificationCard)
+            //invisibleView(binding.notificationCard)
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             favouriteViewModel.getChannelData(mentorId, channelName)
             activity?.let {
                 favouriteViewModel.agoraToToken.observe(it, {
@@ -726,7 +630,11 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
                                 isRound = true
                             )
                             binding.userNameForAlready.text = fromUserName
-                            visibleView(binding.notificationCardAlready)
+                            //visibleView(binding.notificationCardAlready)
+                            if (isActiveFrag)
+                                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(
+                                    binding.notificationCardAlready
+                                )
                         }
                         it?.message.equals(USER_LEFT_THE_GAME) -> {
                             showToast(PARTNER_LEFT_THE_GAME)
@@ -737,33 +645,47 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         }
 
         binding.alreadyNotification.setOnClickListener {
+            tickSound()
             handler4.removeCallbacksAndMessages(null)
-            invisibleView(binding.notificationCardAlready)
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCardAlready)
+            // invisibleView(binding.notificationCardAlready)
         }
         binding.butonDecline.setOnClickListener {
-            invisibleView(binding.notificationCard)
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
+            tickSound()
             handler.removeCallbacksAndMessages(null)
+            // invisibleView(binding.notificationCard)
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
         }
 
         binding.eee.setOnClickListener {
-            invisibleView(binding.notificationCard)
+            tickSound()
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            //invisibleView(binding.notificationCard)
             handler.removeCallbacksAndMessages(null)
             mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
         }
-        try {
-            handler4.postDelayed({
-                invisibleView(binding.notificationCardAlready)
-            }, 10000)
-        } catch (ex: Exception) {
-        }
+//        try {
+//            handler4.postDelayed({
+//                UtilsQuiz.scaleAnimationForNotificationUpper(binding.notificationCardAlready)
+//                //invisibleView(binding.notificationCardAlready)
+//            }, 10000)
+//        } catch (ex: Exception) { }
 
         try {
             if (isActiveFrag) {
                 handler.postDelayed({
-                    invisibleView(binding.notificationCard)
+                    if (isActiveFrag)
+                        CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
+                            binding.notificationCard
+                        )
+                    // invisibleView(binding.notificationCard)
                     mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
                     firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
                 }, 10000)
@@ -778,44 +700,55 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
         fromUserId: String,
         declinedUserId: String
     ) {
-        handler1.removeCallbacksAndMessages(null)
-        val pos = favouriteAdapter?.getPositionById(declinedUserId)
-        val holder: FavouriteAdapter.FavViewHolder =
-            binding.recycleView.findViewHolderForAdapterPosition(
-                pos ?: 0
-            ) as FavouriteAdapter.FavViewHolder
-        if (fromUserId == mentorId) {
-            try {
-                holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
-                holder.binding.clickToken.isEnabled = true
+        try {
+            handler1.removeCallbacksAndMessages(null)
+            val pos = favouriteAdapter?.getPositionById(declinedUserId)
+            val holder: FavouriteAdapter.FavViewHolder =
+                binding.recycleView.findViewHolderForAdapterPosition(
+                    pos ?: 0
+                ) as FavouriteAdapter.FavViewHolder
+            if (fromUserId == mentorId) {
+                try {
+                    holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
+                    holder.binding.clickToken.isEnabled = true
+                    val image = userImageUrl.replace("\n", "")
+                    // visibleView(binding.notificationCardNotPlay)
+                    if (isActiveFrag)
+                        CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCardNotPlay)
+                    binding.userNameForNotPlay.text = userName
+                    binding.userImageForNotPaly.setUserImageOrInitials(
+                        image,
+                        userName ?: "",
+                        30,
+                        isRound = true
+                    )
 
-                val image = userImageUrl.replace("\n", "")
-                visibleView(binding.notificationCardNotPlay)
-                binding.userNameForNotPlay.text = userName
-                binding.userImageForNotPaly.setUserImageOrInitials(
-                    image,
-                    userName ?: "",
-                    30,
-                    isRound = true
-                )
+                } catch (ex: Exception) {
+                    Timber.d(ex)
 
-            } catch (ex: Exception) {
-                Timber.d(ex)
-
+                }
             }
+        } catch (ex: Exception) {
         }
 
         binding.cancelNotification.setOnClickListener {
+            tickSound()
             handler1.removeCallbacksAndMessages(null)
             firebaseDatabase.deleteDeclineData(mentorId)
-            invisibleView(binding.notificationCardNotPlay)
+            if (isActiveFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCardNotPlay)
+            // invisibleView(binding.notificationCardNotPlay)
         }
 
         try {
             if (isActiveFrag) {
                 handler1.postDelayed({
                     firebaseDatabase.deleteDeclineData(mentorId)
-                    invisibleView(binding.notificationCardNotPlay)
+                    if (isActiveFrag)
+                        CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
+                            binding.notificationCardNotPlay
+                        )
+                    // invisibleView(binding.notificationCardNotPlay)
                 }, 10000)
             }
         } catch (ex: Exception) {
@@ -836,4 +769,9 @@ class FavouritePartnerFragment : Fragment(), FavouriteAdapter.QuizBaseInterface,
             moveFragment(mentorId, channelName)
         }
     }
+
+    fun tickSound() {
+        AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
+    }
+
 }

@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.BothTeamViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -40,9 +41,9 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
     private var roomId: String? = null
     private var userDetails: UserDetails? = null
     private var channelName: String? = null
-    val bothTeamViewModel by lazy {
-        ViewModelProvider(requireActivity())[BothTeamViewModel::class.java]
-    }
+
+    var factory: BothTeamViewProviderFactory? = null
+    var bothTeamViewModel: BothTeamViewModel? = null
 
     lateinit var binding: FragmentBothTeamMateFoundBinding
     var teamId1: String? = null
@@ -85,6 +86,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             userDetails = it.getParcelable(USER_DETAILS)
             channelName = it.getString(CHANNEL_NAME)
         }
+        setupViewModel()
     }
 
     override fun onCreateView(
@@ -113,7 +115,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             binding.userName4.alpha = 0.5f
             binding.userImage4Shadow.visibility = View.VISIBLE
         }
-        currentUserId = Mentor.getInstance().getUserId()
+        currentUserId = Mentor.getInstance().getId()
         getRoomData()
         moveFragment()
 
@@ -151,21 +153,29 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
         call_time.start()
     }
 
+    private fun setupViewModel() {
+        factory = activity?.application?.let { BothTeamViewProviderFactory(it) }
+        bothTeamViewModel = factory?.let {
+            ViewModelProvider(this, it).get(BothTeamViewModel::class.java)
+        }
+
+    }
+
     private fun getRoomData() {
-        bothTeamViewModel.getRoomUserData(RandomRoomData(roomId ?: "", currentUserId ?: ""))
+        bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId ?: "", currentUserId ?: ""))
         activity?.let {
-            bothTeamViewModel.roomUserData.observe(it, {
+            bothTeamViewModel?.roomUserData?.observe(it, {
                 initializeUsersTeamsData(it.teamData)
             })
         }
     }
 
-    private fun initializeUsersTeamsData(teamsData: TeamsData) {
-        team1Id = teamsData.team1Id
-        team2Id = teamsData.team2Id
+    private fun initializeUsersTeamsData(teamsData: TeamsData?) {
+        team1Id = teamsData?.team1Id
+        team2Id = teamsData?.team2Id
 
-        usersInTeam1 = teamsData.usersInTeam1
-        usersInTeam2 = teamsData.usersInTeam2
+        usersInTeam1 = teamsData?.usersInTeam1
+        usersInTeam2 = teamsData?.usersInTeam2
 
         //Team 1 ke Users
         user1 = usersInTeam1?.user1
@@ -201,22 +211,22 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
             // ImageAdapter.imageUrl(binding.userImage3,imageUrl1)
             binding.userImage3.setUserImageOrInitials(imageUrl1, team1User1Name ?: "", 30, true)
-            binding.userName3.text = team1User1Name
+            binding.userName3.text = UtilsQuiz.getSplitName(team1User1Name)
 
             val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
             // ImageAdapter.imageUrl(binding.userImage4,imageUrl2)
             binding.userImage4.setUserImageOrInitials(imageUrl2, team1User2Name ?: "", 30, true)
-            binding.userName4.text = team1User2Name
+            binding.userName4.text = UtilsQuiz.getSplitName(team1User2Name)
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage1,imageUrl3)
             binding.userImage1.setUserImageOrInitials(imageUrl3, team2User1Name ?: "", 30, true)
-            binding.userName1.text = team2User1Name
+            binding.userName1.text = UtilsQuiz.getSplitName(team2User1Name)
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage2,imageUrl4)
             binding.userImage2.setUserImageOrInitials(imageUrl4, team2User2Name ?: "", 30, true)
-            binding.userName2.text = team2User2Name
+            binding.userName2.text = UtilsQuiz.getSplitName(team2User2Name)
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
 
@@ -225,22 +235,22 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage3,imageUrl1)
             binding.userImage3.setUserImageOrInitials(imageUrl1, team2User1Name ?: "", 30, true)
-            binding.userName3.text = team2User1Name
+            binding.userName3.text = UtilsQuiz.getSplitName(team2User1Name)
 
             val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage4,imageUrl2)
             binding.userImage4.setUserImageOrInitials(imageUrl2, team2User2Name ?: "", 30, true)
-            binding.userName4.text = team2User2Name
+            binding.userName4.text = UtilsQuiz.getSplitName(team2User2Name)
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage1,imageUrl3)
             binding.userImage1.setUserImageOrInitials(imageUrl3, team1User1Name ?: "", 30, true)
-            binding.userName1.text = team1User1Name
+            binding.userName1.text = UtilsQuiz.getSplitName(team1User1Name)
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.userImage2,imageUrl4)
             binding.userImage2.setUserImageOrInitials(imageUrl4, team1User2Name ?: "", 30, true)
-            binding.userName2.text = team1User2Name
+            binding.userName2.text = UtilsQuiz.getSplitName(team1User2Name)
         }
     }
 
@@ -273,7 +283,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        bothTeamViewModel.deleteUserRoomData(
+        bothTeamViewModel?.deleteUserRoomData(
             SaveCallDurationRoomData(
                 roomId ?: "",
                 currentUserId ?: "",
@@ -281,7 +291,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
                 startTime ?: ""
             )
         )
-        bothTeamViewModel.saveCallDuration(
+        bothTeamViewModel?.saveCallDuration(
             SaveCallDuration(
                 channelName ?: "",
                 startTime.toInt().div(1000).toString(),
@@ -289,7 +299,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             )
         )
         activity?.let {
-            bothTeamViewModel.saveCallDuration.observe(it, {
+            bothTeamViewModel?.saveCallDuration?.observe(it, {
                 if (it.message == CALL_DURATION_RESPONSE) {
                     val points = it.points
                     lifecycleScope.launch(Dispatchers.Main) {
@@ -330,7 +340,7 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
                     binding.userImage4Shadow.visibility = View.VISIBLE
                 }
             } catch (ex: Exception) {
-                //  showToast(ex.message?:"")
+
             }
         }
     }

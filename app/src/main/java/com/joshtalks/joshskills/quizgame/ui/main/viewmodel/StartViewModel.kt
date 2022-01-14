@@ -19,9 +19,13 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
     val statusResponse: MutableLiveData<Success> = MutableLiveData()
 
     fun onItemClick(view: View) {
-        message.what = OPEN_CHOICE_SCREEN
-        singleLiveEvent.value = message
-        view.visibility = View.GONE
+        if (Utils.isInternetAvailable()) {
+            message.what = OPEN_CHOICE_SCREEN
+            singleLiveEvent.value = message
+            //view.visibility = View.GONE
+        }else{
+            showToast("Seems like your Internet is too slow or not available.")
+        }
     }
 
     fun addUserToDB() {
@@ -33,6 +37,8 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
                         addData.postValue(response.body())
                     }
                 }
+            }else{
+                showToast("Seems like your Internet is too slow or not available.")
             }
         } catch (ex: Exception) { }
     }

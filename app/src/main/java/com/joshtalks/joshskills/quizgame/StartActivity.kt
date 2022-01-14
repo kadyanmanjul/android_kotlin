@@ -1,14 +1,14 @@
 package com.joshtalks.joshskills.quizgame
 
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityStartBinding
+import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment
@@ -22,6 +22,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class StartActivity : BaseQuizActivity() {
 
@@ -34,7 +37,7 @@ class StartActivity : BaseQuizActivity() {
 
     private var firebaseTemp: FirebaseTemp = FirebaseTemp()
     private var firebaseDatabase = FirebaseDatabase()
-    private var mentorId: String = Mentor.getInstance().getUserId()
+    private var mentorId: String = Mentor.getInstance().getId()
 
     init {
         deleteDataFromFireStore()
@@ -73,6 +76,12 @@ class StartActivity : BaseQuizActivity() {
     }
 
     fun openChoiceScreen() {
+        GameAnalytics.push(GameAnalytics.Event.CLICK_ON_PLAY_BUTTON)
+        AudioManagerQuiz.audioRecording.tickPlaying(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(1000)
+            binding.rectangle9.visibility = View.GONE
+        }
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.container,  ChoiceFragment(), CHOICE_FRAGMENT)

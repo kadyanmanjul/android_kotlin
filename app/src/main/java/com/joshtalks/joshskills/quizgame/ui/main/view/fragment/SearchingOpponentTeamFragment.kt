@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
 import android.graphics.Color
 import android.os.*
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentSearchingOpponentTeamBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentTeamViewModel
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -28,6 +30,8 @@ import kotlinx.android.synthetic.main.fragment_both_team_mate_found.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentViewProviderFactory
+
 
 //Channel Name = team_id
 const val USER_DATA: String = "user_data"
@@ -38,9 +42,10 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     lateinit var binding: FragmentSearchingOpponentTeamBinding
     var startTime: String? = null
     var channelName: String? = null
-    val searchOpponentTeamViewModel by lazy {
-        ViewModelProvider(requireActivity())[SearchOpponentTeamViewModel::class.java]
-    }
+
+    var searchOpponentTeamViewModel: SearchOpponentTeamViewModel? = null
+
+    var firebaseTemp = FirebaseTemp()
     var userDetails: UserDetails? = null
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
     var roomId: String? = null
@@ -68,8 +73,9 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     private var team1User2ImageUrl: String? = null
     private var team2User1ImageUrl: String? = null
     private var team2User2ImageUrl: String? = null
+    var factory: SearchOpponentViewProviderFactory? = null
 
-    private var currentUserId: String? = null
+    private var currentUserId = Mentor.getInstance().getId()
 
     private var currentUserTeamId: String? = null
     private var opponentTeamId: String? = null
@@ -77,10 +83,11 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     private var engine: RtcEngine? = null
     private var timer: CountDownTimer? = null
 
+    //private var isUiActive: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        currentUserId = Mentor.getInstance().getUserId()
         arguments?.let {
             startTime = it.getString(START_TIME)
             userDetails = it.getParcelable(USER_DATA)
@@ -121,12 +128,12 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         setTeamMateData(userDetails)
         startTimer()
         activity?.let {
-            searchOpponentTeamViewModel.roomData.observe(it, Observer {
+            searchOpponentTeamViewModel?.roomData?.observe(it, Observer {
             })
         }
 
         try {
-            firebaseDatabase.getCurrentUserRoomId(Mentor.getInstance().getUserId(), this)
+            firebaseDatabase.getCurrentUserRoomId(Mentor.getInstance().getId(), this)
         } catch (ex: Exception) {
             Timber.d(ex)
         }
@@ -170,7 +177,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     }
 
     private fun setTeamMateData(userDetails: UserDetails?) {
-        binding.team1User2Name.text = userDetails?.name
+        binding.team1User2Name.text = UtilsQuiz.getSplitName(userDetails?.name)
         val imageUrl = userDetails?.imageUrl?.replace("\n", "")
         binding.team1UserImage2.setUserImageOrInitials(
             imageUrl,
@@ -182,7 +189,17 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     }
 
     private fun setupViewModel() {
-        searchOpponentTeamViewModel.addToRoomData(ChannelName(channelName))
+        Log.d("search_opponent", "setupViewModel: AddToRoom")
+        factory = activity?.application?.let { SearchOpponentViewProviderFactory(it) }
+        searchOpponentTeamViewModel = factory?.let {
+            ViewModelProvider(this, it).get(SearchOpponentTeamViewModel::class.java)
+        }
+        searchOpponentTeamViewModel?.addToRoomData(
+            ChannelName(
+                channelName,
+                Mentor.getInstance().getId()
+            )
+        )
     }
 
     override fun onStart() {
@@ -197,28 +214,32 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
         roomId = currentUserRoomID
         Timber.d(currentUserRoomID)
         if (currentUserRoomID != null) {
-            searchOpponentTeamViewModel.getRoomUserData(
+            //if (isUiActive){
+            Log.d("search_opponent", "setupViewModel: AddToRoom")
+            searchOpponentTeamViewModel?.getRoomUserData(
                 RandomRoomData(
                     currentUserRoomID,
                     mentorId
                 )
             )
             activity?.let {
-                searchOpponentTeamViewModel.roomUserData.observe(it, Observer {
+                searchOpponentTeamViewModel?.roomUserData?.observe(it, Observer {
                     initializeUsersTeamsData(it.teamData)
                     timer?.cancel()
                     timer?.onFinish()
                 })
             }
+          //}
         }
     }
 
-    private fun initializeUsersTeamsData(teamsData: TeamsData) {
-        team1Id = teamsData.team1Id
-        team2Id = teamsData.team2Id
 
-        usersInTeam1 = teamsData.usersInTeam1
-        usersInTeam2 = teamsData.usersInTeam2
+    private fun initializeUsersTeamsData(teamsData: TeamsData?) {
+        team1Id = teamsData?.team1Id
+        team2Id = teamsData?.team2Id
+
+        usersInTeam1 = teamsData?.usersInTeam1
+        usersInTeam2 = teamsData?.usersInTeam2
 
         //Team 1 ke Users
         user1 = usersInTeam1?.user1
@@ -265,7 +286,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 30,
                 true
             )
-            binding.team1User2Name.text = team1User2Name
+            binding.team1User2Name.text = UtilsQuiz.getSplitName(team1User2Name)
 
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
             // ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
@@ -275,7 +296,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 30,
                 true
             )
-            binding.team2User1Name.text = team2User1Name
+            binding.team2User1Name.text = UtilsQuiz.getSplitName(team2User1Name)
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
@@ -285,7 +306,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 30,
                 true
             )
-            binding.team2User2Name.text = team2User2Name
+            binding.team2User2Name.text = UtilsQuiz.getSplitName(team2User2Name)
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
 
@@ -304,7 +325,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 30,
                 true
             )
-            binding.team1User2Name.text = team2User2Name
+            binding.team1User2Name.text = UtilsQuiz.getSplitName(team2User2Name)
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
@@ -314,7 +335,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 30,
                 true
             )
-            binding.team2User1Name.text = team1User1Name
+            binding.team2User1Name.text = UtilsQuiz.getSplitName(team1User1Name)
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
             //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
@@ -324,7 +345,7 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 30,
                 true
             )
-            binding.team2User2Name.text = team1User2Name
+            binding.team2User2Name.text = UtilsQuiz.getSplitName(team1User2Name)
 
         }
     }
@@ -365,24 +386,24 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
 
     fun positiveBtnAction() {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
-        searchOpponentTeamViewModel.saveCallDuration(
+        searchOpponentTeamViewModel?.saveCallDuration(
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId
             )
         )
         if (roomId != null) {
-            searchOpponentTeamViewModel.deleteUserRoomData(
+            searchOpponentTeamViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
                     roomId ?: "",
-                    currentUserId ?: "",
+                    currentUserId,
                     currentUserTeamId ?: "",
                     startTime
                 )
             )
             activity?.let {
-                searchOpponentTeamViewModel.saveCallDuration.observe(it, Observer {
+                searchOpponentTeamViewModel?.saveCallDuration?.observe(it, Observer {
                     if (it.message == CALL_DURATION_RESPONSE) {
                         val points = it.points
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -401,14 +422,15 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
                 })
             }
         } else {
-            searchOpponentTeamViewModel.deleteUserAndTeamData(
+            searchOpponentTeamViewModel?.deleteUserAndTeamData(
                 TeamDataDelete(
-                    currentUserTeamId ?: "", currentUserId ?: ""
+                    currentUserTeamId ?: "", currentUserId
                 )
             )
             activity?.let {
-                searchOpponentTeamViewModel.saveCallDuration.observe(it, Observer {
+                searchOpponentTeamViewModel?.saveCallDuration?.observe(it, Observer {
                     if (it.message == CALL_DURATION_RESPONSE) {
+                        firebaseTemp.changeUserStatus(currentUserId, ACTIVE)
                         val points = it.points
                         lifecycleScope.launch(Dispatchers.Main) {
                             UtilsQuiz.showSnackBar(
@@ -463,14 +485,15 @@ class SearchingOpponentTeamFragment : Fragment(), FirebaseDatabase.OnNotificatio
     }
 
     private fun deleteTeamData() {
-        searchOpponentTeamViewModel.deleteUserAndTeamData(
+        searchOpponentTeamViewModel?.deleteUserAndTeamData(
             TeamDataDelete(
                 currentUserTeamId ?: "",
-                currentUserId ?: ""
+                currentUserId
             )
         )
         activity?.let {
-            searchOpponentTeamViewModel.deleteData.observe(it, Observer {
+            searchOpponentTeamViewModel?.deleteData?.observe(it, Observer {
+                firebaseTemp.changeUserStatus(currentUserId, ACTIVE)
                 AudioManagerQuiz.audioRecording.stopPlaying()
                 engine?.leaveChannel()
                 binding.callTime.stop()

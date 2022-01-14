@@ -1,23 +1,24 @@
 package com.joshtalks.joshskills.quizgame.ui.data.repository
 
-import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
-import com.joshtalks.joshskills.quizgame.ui.data.model.AgoraCallResponse
-import com.joshtalks.joshskills.quizgame.ui.data.model.AgoraToToken
-import com.joshtalks.joshskills.quizgame.ui.data.model.Status
-import com.joshtalks.joshskills.quizgame.ui.data.network.RetrofitInstanse
+import com.joshtalks.joshskills.quizgame.ui.data.model.*
+import com.joshtalks.joshskills.quizgame.ui.data.network.RetrofitInstance
+import com.joshtalks.joshskills.repository.local.model.Mentor
 
 class FavouriteRepo {
 
-    suspend fun getFavourite(mentorId:String) = RetrofitInstanse.getRetrofitInstance()?.getFavourite(mentorId)
+    suspend fun getFavourite(mentorId: String) =
+        RetrofitInstance.getRetrofitInstance()?.getFavourite(mentorId, mentorId)
 
-    suspend fun getAgoraFromToken(mentorId: String) = RetrofitInstanse.getRetrofitInstance()?.getAgoraFromToken(mapOf("from_mentor_id" to mentorId))
+    suspend fun getAgoraFromToken(fromToken: AgoraFromToken) =
+        RetrofitInstance.getRetrofitInstance()
+            ?.getAgoraFromToken(fromToken)
 
-    suspend fun getChannelData(toMentorId: String?,channelName:String?) = RetrofitInstanse.getRetrofitInstance()?.getUserChannelId(AgoraToToken(toMentorId,channelName))
 
-//    suspend fun getStatus(userIdMentor: String?,status:String?) = RetrofitInstanse.getRetrofitInstance()?.changeUserStatus(
-//        Status(userIdMentor,status)
-//    )
+    suspend fun getChannelData(toMentorId: String?, channelName: String?) =
+        RetrofitInstance.getRetrofitInstance()
+            ?.getUserChannelId(AgoraToToken(toMentorId, channelName, Mentor.getInstance().getId()))
 
-    suspend fun addFavouritePartner(addFavouritePartner: AddFavouritePartner) = RetrofitInstanse.getRetrofitInstance()?.addUserAsFpp(addFavouritePartner)
+    suspend fun addFavouritePartner(addFavouritePartner: AddFavouritePartner) =
+        RetrofitInstance.getRetrofitInstance()?.addUserAsFpp(addFavouritePartner)
 
 }

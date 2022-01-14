@@ -6,7 +6,13 @@
         <variable
             name="clickHandler"
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.WinScreenFragment" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel" />
     </data>
+
+
 <FrameLayout
     android:id="@+id/container"
     android:layout_width="match_parent"
@@ -20,7 +26,7 @@
         <RelativeLayout
             android:id="@+id/notification_play_again"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_85sdp"
+            android:layout_height="@dimen/_90sdp"
             android:visibility="invisible"
             android:elevation="@dimen/_10sdp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,12 +35,12 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_70sdp">
+                android:layout_height="@dimen/_80sdp">
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_60sdp"
+                    android:layout_height="@dimen/_70sdp"
                     android:layout_marginLeft="@dimen/_11sdp"
-                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_18sdp"
                     android:layout_marginRight="@dimen/_7sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
                     app:cardCornerRadius="@dimen/_10sdp"
@@ -94,7 +100,7 @@
                                 android:background="#86AA99" />
 
                             <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/txt_msg_not_play"
+                                android:id="@+id/txt_msg_play_again"
                                 android:layout_width="@dimen/_240sdp"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/divider1"
@@ -118,7 +124,7 @@
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_24sdp"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginRight="@dimen/_2sdp"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_cross_quiz"
@@ -130,7 +136,7 @@
         <RelativeLayout
             android:id="@+id/notification_card"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_85sdp"
+            android:layout_height="@dimen/_90sdp"
             android:visibility="invisible"
             android:elevation="@dimen/_10sdp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -139,12 +145,12 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_70sdp">
+                android:layout_height="@dimen/_80sdp">
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_60sdp"
                     android:layout_marginLeft="@dimen/_11sdp"
-                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_18sdp"
                     android:layout_marginRight="@dimen/_7sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
                     app:cardCornerRadius="@dimen/_10sdp"
@@ -212,7 +218,7 @@
                             android:layout_marginTop="@dimen/_3sdp"
                             android:layout_toRightOf="@+id/notificaton_rel"
                             android:gravity="center_vertical"
-                            android:text="@string/has_invited"
+                            android:text="sent you friend request"
                             android:textColor="@color/white"
                             android:letterSpacing="0.01"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"/>
@@ -290,7 +296,7 @@
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_24sdp"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginRight="@dimen/_2sdp"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_cross_quiz"
@@ -599,7 +605,7 @@
                 android:layout_height="@dimen/_75sdp"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/vs"
-                android:src="@drawable/gvygybgygby" />
+                android:src="@drawable/left_to_right" />
 
             <RelativeLayout
                 android:id="@+id/vs"

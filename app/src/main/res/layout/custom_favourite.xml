@@ -52,7 +52,7 @@
                     android:layout_below="@id/user_name"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_3sdp"
-                    android:text="idle"
+                    android:text="Inactive"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                     android:textColor="#16CBCE" />
             </RelativeLayout>
@@ -66,6 +66,7 @@
                     android:layout_marginRight="@dimen/_25sdp">
 
                     <com.airbnb.lottie.LottieAnimationView
+                        android:visibility="invisible"
                         android:id="@+id/click_token"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

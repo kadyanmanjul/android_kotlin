@@ -2,15 +2,15 @@ package com.joshtalks.joshskills.quizgame.ui.data.repository
 
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDurationRoomData
-import com.joshtalks.joshskills.quizgame.ui.data.network.RetrofitInstanse
+import com.joshtalks.joshskills.quizgame.ui.data.network.RetrofitInstance
 
 class RandomTeamMateFoundRepo {
     suspend fun getUserDetails(mentorId: String) =
-        RetrofitInstanse.getRetrofitInstance()?.getUserDetails(mentorId)
+        RetrofitInstance.getRetrofitInstance()?.getUserDetails(mentorId, mentorId)
 
     suspend fun saveDurationOfCall(saveCallDuration: SaveCallDuration) =
-        RetrofitInstanse.getRetrofitInstance()?.saveCallDuration(saveCallDuration)
+        RetrofitInstance.getRetrofitInstance()?.saveCallDuration(saveCallDuration)
 
     suspend fun clearRoomRadius(saveCallDurationRoomData: SaveCallDurationRoomData) =
-        RetrofitInstanse.getRetrofitInstance()?.clearRadius(saveCallDurationRoomData)
+        RetrofitInstance.getRetrofitInstance()?.clearRadius(saveCallDurationRoomData)
 }

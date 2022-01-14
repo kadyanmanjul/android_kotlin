@@ -2,4 +2,7 @@ package com.joshtalks.joshskills.quizgame.ui.data.model
 
 import com.google.gson.annotations.SerializedName
 
-class ChannelName (@SerializedName("team_id") var channelName:String?)
+class ChannelName(
+    @SerializedName("team_id") var channelName: String?,
+    @SerializedName("user_id") var userId: String? = null
+)

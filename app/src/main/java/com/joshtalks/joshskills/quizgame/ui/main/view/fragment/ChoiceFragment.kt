@@ -17,13 +17,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
+import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentChoiceFragnmentBinding
 import com.joshtalks.joshskills.quizgame.StartActivity
+import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
@@ -42,10 +47,11 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     val vm by lazy {
         ViewModelProvider(requireActivity())[ChoiceViewModel::class.java]
     }
+    private var factory: ChoiceViewModelProviderFactory? = null
 
     var isShowFrag = false
     private lateinit var binding: FragmentChoiceFragnmentBinding
-    private var mentorId: String = Mentor.getInstance().getUserId()
+    private var mentorId: String = Mentor.getInstance().getId()
 
     val handler5 = Handler(Looper.getMainLooper())
     val handler9 = Handler(Looper.getMainLooper())
@@ -152,6 +158,10 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         }
     }
 
+    fun tickSound() {
+        AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() =
@@ -181,6 +191,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
                     AudioManagerQuiz.audioRecording.stopPlaying()
                     firebaseDatabase.deleteRequested(mentorId)
                     firebaseDatabase.deleteDeclineData(mentorId)
+                    firebaseDatabase.changeUserStatus(mentorId, IN_ACTIVE)
                     moveToNewActivity()
                 }
             })
@@ -191,6 +202,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
 
     fun setUpViewModel() {
         try {
+            factory = activity?.application?.let { ChoiceViewModelProviderFactory(it) }
             vm.statusChange(mentorId, ACTIVE)
         } catch (ex: Exception) {
 
@@ -241,21 +253,25 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         var i = 0
         handler5.removeCallbacksAndMessages(null)
         try {
-            visibleView(binding.notificationCard)
-
+            // visibleView(binding.notificationCard)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromUserImage.replace("\n", "")
-
             binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
         } catch (ex: Exception) {
             Timber.d(ex)
         }
 
         binding.buttonAccept.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
+            tickSound()
             handler5.removeCallbacksAndMessages(null)
             i = 1
-            invisibleView(binding.notificationCard)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            // invisibleView(binding.notificationCard)
             vm.getChannelData(mentorId, channelName)
             activity?.let {
                 vm.agoraToToken.observe(it, {
@@ -279,8 +295,12 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
                                 30,
                                 isRound = true
                             )
+                            if (isShowFrag)
+                                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(
+                                    binding.notificationCardAlready
+                                )
                             binding.userNameForAlready.text = fromUserName
-                            visibleView(binding.notificationCardAlready)
+                            //visibleView(binding.notificationCardAlready)
                         }
                         it?.message.equals(USER_LEFT_THE_GAME) -> {
                             showToast(PARTNER_LEFT_THE_GAME)
@@ -291,33 +311,50 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         }
 
         binding.alreadyNotification.setOnClickListener {
+            tickSound()
             handler4.removeCallbacksAndMessages(null)
-            invisibleView(binding.notificationCardAlready)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCardAlready)
+            //invisibleView(binding.notificationCardAlready)
         }
         binding.butonDecline.setOnClickListener {
-            invisibleView(binding.notificationCard)
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
+
+            tickSound()
+            // invisibleView(binding.notificationCard)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler5.removeCallbacksAndMessages(null)
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
             mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
         }
 
         binding.eee.setOnClickListener {
-            invisibleView(binding.notificationCard)
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
+            tickSound()
+            // invisibleView(binding.notificationCard)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler5.removeCallbacksAndMessages(null)
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
             mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
         }
 
-        try {
-            handler4.postDelayed({
-                invisibleView(binding.notificationCardAlready)
-            }, 10000)
-        } catch (ex: Exception) {
-        }
+//        try {
+//            handler4.postDelayed({
+//                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCardAlready)
+//                //invisibleView(binding.notificationCardAlready)
+//            }, 10000)
+//        } catch (ex: Exception) {
+//        }
         try {
             if (isShowFrag) {
                 handler5.postDelayed({
-                    invisibleView(binding.notificationCard)
+                    if (isShowFrag)
+                        CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
+                            binding.notificationCard
+                        )
+                    //invisibleView(binding.notificationCard)
                     mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
                     firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
                 }, 10000)
@@ -334,7 +371,9 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     ) {
         handler9.removeCallbacksAndMessages(null)
         val image = userImageUrl.replace("\n", "")
-        visibleView(binding.notificationCardNotPlay)
+        //visibleView(binding.notificationCardNotPlay)
+        if (isShowFrag)
+            CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCardNotPlay)
         binding.userNameForNotPlay.text = userName
         binding.userImageForNotPaly.setUserImageOrInitials(
             image,
@@ -343,16 +382,23 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             isRound = true
         )
         binding.cancelNotification.setOnClickListener {
+            tickSound()
             handler9.removeCallbacksAndMessages(null)
             firebaseDatabase.deleteDeclineData(mentorId)
-            invisibleView(binding.notificationCardNotPlay)
+            // invisibleView(binding.notificationCardNotPlay)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCardNotPlay)
         }
 
         try {
             if (isShowFrag) {
                 handler9.postDelayed({
                     firebaseDatabase.deleteDeclineData(mentorId)
-                    invisibleView(binding.notificationCardNotPlay)
+                    if (isShowFrag)
+                        CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
+                            binding.notificationCardNotPlay
+                        )
+                    //invisibleView(binding.notificationCardNotPlay)
                 }, 10000)
             }
         } catch (ex: Exception) {
@@ -402,7 +448,9 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     ) {
         try {
             handler2.removeCallbacksAndMessages(null)
-            visibleView(binding.notificationCard)
+            //visibleView(binding.notificationCard)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromImageUrl.replace("\n", "")
@@ -412,21 +460,31 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         }
 
         binding.buttonAccept.setOnClickListener {
-            invisibleView(binding.notificationCard)
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
+            tickSound()
+            //invisibleView(binding.notificationCard)
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
             vm.addFavouritePracticePartner(AddFavouritePartner(fromMentorId, mentorId))
             firebaseDatabase.deleteRequest(mentorId)
         }
 
         binding.butonDecline.setOnClickListener {
-            invisibleView(binding.notificationCard)
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
+            tickSound()
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            // invisibleView(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
             firebaseDatabase.deleteRequested(mentorId)
         }
 
         try {
             handler2.postDelayed({
-                invisibleView(binding.notificationCard)
+                if (isShowFrag)
+                    CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+                //invisibleView(binding.notificationCard)
                 firebaseDatabase.deleteRequested(mentorId)
             }, 10000)
         } catch (ex: Exception) {
@@ -437,38 +495,47 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         firebaseDatabase.getFriendRequests(mentorId, this)
     }
 
-    override fun onPlayAgainNotificationFromApi(userName: String, userImage: String) {
-        TODO("Not yet implemented")
-    }
+    override fun onPlayAgainNotificationFromApi(userName: String, userImage: String) {}
 
     override fun onPartnerPlayAgainNotification(
         userName: String,
         userImage: String,
         mentorId: String
     ) {
-        TODO("Not yet implemented")
     }
 
     fun openFavouriteScreen() {
-        val fm = activity?.supportFragmentManager
-        fm?.beginTransaction()
-            ?.replace(
-                R.id.container,
-                FavouritePartnerFragment.newInstance(), FAVOURITE_FRAGMENT
-            )
-            ?.remove(this)
-            ?.commit()
+        tickSound()
+        if (UpdateReceiver.isNetworkAvailable()) {
+            GameAnalytics.push(GameAnalytics.Event.OPEN_FPP)
+            val fm = activity?.supportFragmentManager
+            fm?.beginTransaction()
+                ?.replace(
+                    R.id.container,
+                    FavouritePartnerFragment.newInstance(), FAVOURITE_FRAGMENT
+                )
+                ?.remove(this)
+                ?.commit()
+        } else {
+            showToast("Seems like your Internet is too slow or not available.")
+        }
     }
 
     fun openRandomScreen() {
-        val fm = activity?.supportFragmentManager
-        fm?.beginTransaction()
-            ?.replace(
-                R.id.container,
-                RandomPartnerFragment.newInstance(), RANDOM_PARTNER_FRAGMENT
-            )
-            ?.remove(this)
-            ?.commit()
+        tickSound()
+        if (UpdateReceiver.isNetworkAvailable()) {
+            GameAnalytics.push(GameAnalytics.Event.OPEN_RANDOM)
+            val fm = activity?.supportFragmentManager
+            fm?.beginTransaction()
+                ?.replace(
+                    R.id.container,
+                    RandomPartnerFragment.newInstance(), RANDOM_PARTNER_FRAGMENT
+                )
+                ?.remove(this)
+                ?.commit()
+        } else {
+            showToast("Seems like your Internet is too slow or not available.")
+        }
     }
 
     override fun onDestroy() {

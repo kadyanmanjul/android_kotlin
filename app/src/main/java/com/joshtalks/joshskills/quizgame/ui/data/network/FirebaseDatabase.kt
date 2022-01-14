@@ -14,10 +14,10 @@ class FirebaseDatabase {
     private var partnerShowCutCard: CollectionReference = database.collection("PartnerShowCut")
     private var opponentShowCutCard: CollectionReference = database.collection("OpponentShowCut")
     private var sentFriendRequest: CollectionReference = database.collection(FRIEND_REQUEST)
-    private var statuCollection :CollectionReference = database.collection("UserStatus")
     private var userPlayAgain: CollectionReference = database.collection("UserPlay")
-    private var  playAgainNotification : CollectionReference = database.collection("PlayAgain")
-    private var muteUnmute :CollectionReference = database.collection("MuteUnmute")
+    private var playAgainNotification: CollectionReference = database.collection("PlayAgain")
+    private var muteUnmute: CollectionReference = database.collection("MuteUnmute")
+    private var changeTime: CollectionReference = database.collection("RoomTime")
 
 
     //var mentorId : String = Mentor.getInstance().getUserId()
@@ -47,7 +47,7 @@ class FirebaseDatabase {
             }
     }
 
-    fun deleteRoomData(mentorId: String){
+    fun deleteRoomData(mentorId: String) {
         collectionCurrentUserRoomId.document(mentorId).delete()
     }
 
@@ -106,7 +106,7 @@ class FirebaseDatabase {
                         }
                     }
                 }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }
@@ -176,27 +176,26 @@ class FirebaseDatabase {
         partnerShowCutCard.document(currentUserTeamId).set(channel)
     }
 
-    fun getPartnerCutCard(teamId: String,onAnimationTrigger: OnAnimationTrigger) {
+    fun getPartnerCutCard(teamId: String, onAnimationTrigger: OnAnimationTrigger) {
         this.onAnimationTrigger = onAnimationTrigger
-        partnerShowCutCard
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (teamId == doc.id) {
-                            val isCorrect = doc.data["isCorrect"].toString()
-                            val choiceAnswer = doc.data["choiceAnswer"].toString()
-                            onAnimationTrigger.onOpponentPartnerCut(
-                                teamId,
-                                isCorrect,
-                                choiceAnswer
-                            )
-                        }
+        partnerShowCutCard.addSnapshotListener { value, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+            for (doc in value!!) {
+                if (doc.exists()) {
+                    if (teamId == doc.id) {
+                        val isCorrect = doc.data["isCorrect"].toString()
+                        val choiceAnswer = doc.data["choiceAnswer"].toString()
+                        onAnimationTrigger.onOpponentPartnerCut(
+                            teamId,
+                            isCorrect,
+                            choiceAnswer
+                        )
                     }
                 }
             }
+        }
     }
 
     fun deletePartnerCutCard(teamId: String) {
@@ -226,7 +225,7 @@ class FirebaseDatabase {
         opponentShowCutCard.document(opponentTeamId).set(channel)
     }
 
-    fun getOpponentCutCard(opponentTeamId: String,onAnimationTrigger: OnAnimationTrigger) {
+    fun getOpponentCutCard(opponentTeamId: String, onAnimationTrigger: OnAnimationTrigger) {
         this.onAnimationTrigger = onAnimationTrigger
         opponentShowCutCard
             .addSnapshotListener { value, e ->
@@ -264,6 +263,26 @@ class FirebaseDatabase {
                 }
             }
     }
+
+    fun getRoomTime(roomId: String, onTimeChange: OnTimeChange) {
+        changeTime.addSnapshotListener { value, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+            for (doc in value!!) {
+                if (doc.exists()) {
+                    if (roomId == doc.id) {
+                        onTimeChange.onTimeChangeMethod(doc.data["time"] as Long)
+                    }
+                }
+            }
+        }
+    }
+
+
+//    fun deleteTimeChange(mentorId: String) {
+//        changeTime.document(mentorId).delete()
+//    }
 
     fun createFriendRequest(
         fromMentorId: String,
@@ -309,8 +328,8 @@ class FirebaseDatabase {
         sentFriendRequest.document(mentorId).delete()
     }
 
-    fun getLiveStatus(mentorId: String) :String{
-        var status:String?=null
+    fun getLiveStatus(mentorId: String): String {
+        var status: String? = null
         sentFriendRequest
             .addSnapshotListener { value, e ->
                 if (e != null) {
@@ -319,22 +338,25 @@ class FirebaseDatabase {
                 for (doc in value!!) {
                     if (doc.exists()) {
                         if (mentorId == doc.id) {
-                             status = doc.data["status"].toString()
+                            status = doc.data["status"].toString()
                         }
                     }
                 }
             }
-        return status?:""
+        return status ?: ""
     }
 
-    fun createPlayAgainNotification(partnerUserId: String,userName: String,userImage: String){
+    fun createPlayAgainNotification(partnerUserId: String, userName: String, userImage: String) {
         val channel: HashMap<String, Any> = HashMap()
         channel["userName"] = userName
         channel["userImage"] = userImage
         playAgainNotification.document(partnerUserId).set(channel)
     }
 
-    fun getPartnerPlayAgainNotification(mentorId: String,onMakeFriendTrigger: OnMakeFriendTrigger){
+    fun getPartnerPlayAgainNotification(
+        mentorId: String,
+        onMakeFriendTrigger: OnMakeFriendTrigger
+    ) {
         playAgainNotification
             .addSnapshotListener { value, e ->
                 if (e != null) {
@@ -345,14 +367,18 @@ class FirebaseDatabase {
                         if (mentorId == doc.id) {
                             val userImage = doc.data["userImage"].toString()
                             val userName = doc.data["userName"].toString()
-                            onMakeFriendTrigger.onPartnerPlayAgainNotification(userName,userImage,mentorId)
+                            onMakeFriendTrigger.onPartnerPlayAgainNotification(
+                                userName,
+                                userImage,
+                                mentorId
+                            )
                         }
                     }
                 }
             }
     }
 
-    fun getPlayAgainAPiData(mentorId: String,onMakeFriendTrigger: OnMakeFriendTrigger) {
+    fun getPlayAgainAPiData(mentorId: String, onMakeFriendTrigger: OnMakeFriendTrigger) {
         userPlayAgain
             .addSnapshotListener { value, e ->
                 if (e != null) {
@@ -363,50 +389,33 @@ class FirebaseDatabase {
                         if (mentorId == doc.id) {
                             val userImage = doc.data["image"].toString()
                             val userName = doc.data["name"].toString()
-                            onMakeFriendTrigger.onPlayAgainNotificationFromApi(userName,userImage)
+                            onMakeFriendTrigger.onPlayAgainNotificationFromApi(userName, userImage)
                         }
                     }
                 }
             }
     }
 
-    fun deleteUserPlayAgainCollection(mentorId: String){
+    fun deleteUserPlayAgainCollection(mentorId: String) {
         userPlayAgain.document(mentorId).delete()
     }
 
-    fun deletePlayAgainNotification(mentorId: String){
+    fun deletePlayAgainNotification(mentorId: String) {
         playAgainNotification.document(mentorId).delete()
     }
 
-    fun deleteAllData(mentorId: String){
+    fun deleteAllData(mentorId: String) {
         sentFriendRequest.document(mentorId).delete()
     }
 
-    fun statusLive(mentorId: String,onLiveStatus: OnLiveStatus){
-                statuCollection
-                    .addSnapshotListener { value, e ->
-                        if (e != null) {
-                            return@addSnapshotListener
-                        }
-                        for (doc in value!!) {
-                            if (doc.exists()) {
-                                if (mentorId == doc.id) {
-                                    val status = doc.data["status"].toString()
-                                    onLiveStatus.onGetLiveStatus(status,mentorId)
-                                }
-                            }
-                        }
-                }
-    }
-
-    fun createMicOnOff(partnerId: String,isMute: String){
+    fun createMicOnOff(partnerId: String, isMute: String) {
         val channel: HashMap<String, Any> = HashMap()
         channel["partnerId"] = partnerId
         channel["isMute"] = isMute
         muteUnmute.document(partnerId).set(channel)
     }
 
-    fun getMuteOrUnMute(mentorId: String, onAnimationTrigger: OnAnimationTrigger){
+    fun getMuteOrUnMute(mentorId: String, onAnimationTrigger: OnAnimationTrigger) {
         muteUnmute
             .addSnapshotListener { value, e ->
                 if (e != null) {
@@ -416,36 +425,77 @@ class FirebaseDatabase {
                     if (doc.exists()) {
                         if (mentorId == doc.id) {
                             val status = doc.data["isMute"].toString()
-                            onAnimationTrigger.onMicOnOff(mentorId,status)
+                            onAnimationTrigger.onMicOnOff(mentorId, status)
                         }
                     }
                 }
             }
     }
-    fun deleteMuteUnmute(mentorId: String){
+
+    fun updateTime(mentorId: String, time: Long) {
+        val channel: HashMap<String, Long> = HashMap()
+        channel["time"] = time
+        collectionCurrentUserRoomId.document(mentorId).set(channel)
+    }
+
+    fun getUpdatedTime(mentorId: String, onTimeUpdate: OnTimeUpdate) {
+        collectionCurrentUserRoomId
+            .addSnapshotListener { value, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                for (doc in value!!) {
+                    if (doc.exists()) {
+                        if (mentorId == doc.id) {
+                            val time = doc.data["time"] as Long
+                            onTimeUpdate.onTimeUpdateMethod(time)
+                        }
+                    }
+                }
+            }
+    }
+
+    fun deleteMuteUnmute(mentorId: String) {
         muteUnmute.document(mentorId).delete()
     }
-    interface OnNotificationTrigger{
-        fun onGetRoomId(currentUserRoomID:String?,mentorId: String)
-        fun onShowAnim(mentorId: String,isCorrect:String,choiceAnswer:String,marks: String)
-    }
-    interface OnRandomUserTrigger{
-        fun onSearchUserIdFetch(roomId:String)
-    }
-    interface OnAnimationTrigger{
-        fun onOpponentShowAnim(opponentTeamId: String?,isCorrect: String,marks: String)
-        fun onOpponentPartnerCut(teamId: String,isCorrect:String,choiceAnswer:String)
-        fun onOpponentTeamCutCard(opponentTeamId: String,isCorrect:String,choiceAnswer:String)
-        fun onMicOnOff(partnerUserId: String,status:String)
+
+    interface OnNotificationTrigger {
+        fun onGetRoomId(currentUserRoomID: String?, mentorId: String)
+        fun onShowAnim(mentorId: String, isCorrect: String, choiceAnswer: String, marks: String)
     }
 
-    interface OnMakeFriendTrigger{
-        fun onSentFriendRequest(fromMentorId:String,fromUserName:String,fromImageUrl:String,isAccept: String)
-        fun onPlayAgainNotificationFromApi(userName:String, userImage:String)
-        fun onPartnerPlayAgainNotification(userName: String,userImage: String,mentorId: String)
+    interface OnRandomUserTrigger {
+        fun onSearchUserIdFetch(roomId: String)
     }
 
-    interface OnLiveStatus{
-        fun onGetLiveStatus(status: String,mentorId: String)
+    interface OnAnimationTrigger {
+        fun onOpponentShowAnim(opponentTeamId: String?, isCorrect: String, marks: String)
+        fun onOpponentPartnerCut(teamId: String, isCorrect: String, choiceAnswer: String)
+        fun onOpponentTeamCutCard(opponentTeamId: String, isCorrect: String, choiceAnswer: String)
+        fun onMicOnOff(partnerUserId: String, status: String)
+    }
+
+    interface OnMakeFriendTrigger {
+        fun onSentFriendRequest(
+            fromMentorId: String,
+            fromUserName: String,
+            fromImageUrl: String,
+            isAccept: String
+        )
+
+        fun onPlayAgainNotificationFromApi(userName: String, userImage: String)
+        fun onPartnerPlayAgainNotification(userName: String, userImage: String, mentorId: String)
+    }
+
+    interface OnLiveStatus {
+        fun onGetLiveStatus(status: String, mentorId: String)
+    }
+
+    interface OnTimeChange {
+        fun onTimeChangeMethod(time: Long)
+    }
+
+    interface OnTimeUpdate {
+        fun onTimeUpdateMethod(time: Long)
     }
 }

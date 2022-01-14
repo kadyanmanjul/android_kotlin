@@ -983,7 +983,7 @@
     <string name="your_team_mate">Harsh is your team mate</string>
     <string name="make_new_te">Make New Team</string>
     <string name="play_again_">Play Again\nwith Opponent</string>
-    <string name="has_invited">has invited you to his team</string>
+    <string name="has_invited">has invited you to play</string>
     <string name="can_t_play_">Can"'"t Play Right Now</string>
     <string name="alreadt_start">Already started the game</string>
     <string name="accept">Accept</string>
@@ -1005,7 +1005,7 @@
     <string name="zero">0</string>
     <string name="play">Play!</string>
 
-    <string name="lets_play_again">Let"'"s Play again</string>
+    <string name="lets_play_again">Click on Play Again to play another game with</string>
     <string name="winner">Winner!</string>
     <string name="team_2">Team 2</string>
     <string name="team_1">Team 1</string>
