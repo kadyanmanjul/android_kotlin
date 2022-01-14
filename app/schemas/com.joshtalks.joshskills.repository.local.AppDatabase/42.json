@@ -1,0 +1,2730 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 42,
+    "identityHash": "e01eb6ad0d0284b3931ca51868e9c741",
+    "entities": [
+      {
+        "tableName": "course",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`courseId` TEXT NOT NULL, `duration` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `course_name` TEXT NOT NULL, `teacher_id` TEXT NOT NULL, `conversation_id` TEXT, `course_icon` TEXT, `course_created_date` INTEGER, `chat_type` TEXT, `report_status` INTEGER NOT NULL, `batch_started` TEXT NOT NULL, `voicecall_status` INTEGER NOT NULL, `is_group_active` INTEGER NOT NULL, `is_points_active` INTEGER NOT NULL, `is_course_locked` INTEGER NOT NULL, `is_course_bought` INTEGER NOT NULL, `expire_date` INTEGER, PRIMARY KEY(`courseId`))",
+        "fields": [
+          {
+            "fieldPath": "courseId",
+            "columnName": "courseId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "is_deleted",
+            "columnName": "is_deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "courseName",
+            "columnName": "course_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "teacherId",
+            "columnName": "teacher_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conversationId",
+            "columnName": "conversation_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "courseIcon",
+            "columnName": "course_icon",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "courseCreatedDate",
+            "columnName": "course_created_date",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "chatType",
+            "columnName": "chat_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "reportStatus",
+            "columnName": "report_status",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "batchStarted",
+            "columnName": "batch_started",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "voiceCallStatus",
+            "columnName": "voicecall_status",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isGroupActive",
+            "columnName": "is_group_active",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPointsActive",
+            "columnName": "is_points_active",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCourseLocked",
+            "columnName": "is_course_locked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCourseBought",
+            "columnName": "is_course_bought",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryDate",
+            "columnName": "expire_date",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "courseId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "chat_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chat_id` TEXT NOT NULL, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `is_seen` INTEGER NOT NULL, `text` TEXT, `type` TEXT, `url` TEXT, `duration` INTEGER NOT NULL, `message_deliver_status` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, `chat_local_id` TEXT, `is_delete_message` INTEGER NOT NULL, `download_progress` INTEGER NOT NULL, `status` TEXT, `question_id` INTEGER, `content_download_date` INTEGER NOT NULL, `message_time` REAL NOT NULL, `last_use_time` INTEGER, `award_mentor_id` INTEGER NOT NULL, `award_user_id` INTEGER, `video_id` INTEGER, `sharableVideoDownloadedLocalPath` TEXT, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, `id` TEXT, `user` TEXT, `user_type` TEXT, PRIMARY KEY(`chat_id`))",
+        "fields": [
+          {
+            "fieldPath": "chatId",
+            "columnName": "chat_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conversationId",
+            "columnName": "conversation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modified",
+            "columnName": "modified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSeen",
+            "columnName": "is_seen",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageDeliverStatus",
+            "columnName": "message_deliver_status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSync",
+            "columnName": "is_sync",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chatLocalId",
+            "columnName": "chat_local_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isDeleteMessage",
+            "columnName": "is_delete_message",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progress",
+            "columnName": "download_progress",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "question_id",
+            "columnName": "question_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "contentDownloadDate",
+            "columnName": "content_download_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageTime",
+            "columnName": "message_time",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUseTime",
+            "columnName": "last_use_time",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "awardMentorId",
+            "columnName": "award_mentor_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "awardUserId",
+            "columnName": "award_user_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sharingVideoId",
+            "columnName": "video_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sharableVideoDownloadedLocalPath",
+            "columnName": "sharableVideoDownloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadedLocalPath",
+            "columnName": "downloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloadStartTime",
+            "columnName": "lastDownloadStartTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sender.id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sender.user",
+            "columnName": "user",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sender.user_type",
+            "columnName": "user_type",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "chat_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_chat_table_chat_id_conversation_id",
+            "unique": false,
+            "columnNames": [
+              "chat_id",
+              "conversation_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chat_table_chat_id_conversation_id` ON `${TABLE_NAME}` (`chat_id`, `conversation_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "question_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`questionId` TEXT NOT NULL, `chatId` TEXT NOT NULL, `course_id` INTEGER NOT NULL, `lesson_id` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `material_type` TEXT NOT NULL, `parent_id` TEXT, `qText` TEXT, `title` TEXT, `question_type` TEXT NOT NULL, `type` TEXT NOT NULL, `feedback_require` TEXT, `expectedEngageType` TEXT, `practice_no` INTEGER, `interval` INTEGER NOT NULL, `assessment_id` INTEGER, `conversation_practice_id` TEXT, `practice_word` TEXT, `chat_type` TEXT, `status` TEXT NOT NULL, `lesson_status` TEXT, `certificate_exam_id` INTEGER, `topic_id` TEXT, `vp_sort_order` INTEGER NOT NULL, `practice_engagements` TEXT, `cexam_attemptLeft` INTEGER, `cexam_attemptOn` TEXT, `cexam_attempted` INTEGER, `cexam_batchIcon` TEXT, `cexam_code` TEXT, `cexam_eligibilityDate` TEXT, `cexam_marks` REAL, `cexam_passedOn` TEXT, `cexam_examStatus` TEXT, `cexam_text` TEXT, PRIMARY KEY(`questionId`))",
+        "fields": [
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chatId",
+            "columnName": "chatId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "course_id",
+            "columnName": "course_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lesson_id",
+            "columnName": "lesson_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDeleted",
+            "columnName": "isDeleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "material_type",
+            "columnName": "material_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parent_id",
+            "columnName": "parent_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "qText",
+            "columnName": "qText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "questionType",
+            "columnName": "question_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "feedback_require",
+            "columnName": "feedback_require",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "expectedEngageType",
+            "columnName": "expectedEngageType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiceNo",
+            "columnName": "practice_no",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "interval",
+            "columnName": "interval",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assessmentId",
+            "columnName": "assessment_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversationPracticeId",
+            "columnName": "conversation_practice_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiceWord",
+            "columnName": "practice_word",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "chatType",
+            "columnName": "chat_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lessonStatus",
+            "columnName": "lesson_status",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "certificateExamId",
+            "columnName": "certificate_exam_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "topicId",
+            "columnName": "topic_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "vpSortOrder",
+            "columnName": "vp_sort_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "practiceEngagement",
+            "columnName": "practice_engagements",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.attemptLeft",
+            "columnName": "cexam_attemptLeft",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.attemptOn",
+            "columnName": "cexam_attemptOn",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.attempted",
+            "columnName": "cexam_attempted",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.batchIcon",
+            "columnName": "cexam_batchIcon",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.code",
+            "columnName": "cexam_code",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.eligibilityDate",
+            "columnName": "cexam_eligibilityDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.marks",
+            "columnName": "cexam_marks",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.passedOn",
+            "columnName": "cexam_passedOn",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.examStatus",
+            "columnName": "cexam_examStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cexamDetail.text",
+            "columnName": "cexam_text",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "questionId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "VideoTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`video_url` TEXT, `id` TEXT NOT NULL, `video_image_url` TEXT NOT NULL, `duration` INTEGER NOT NULL, `video_height` INTEGER NOT NULL, `video_width` INTEGER NOT NULL, `thumbnail_height` INTEGER NOT NULL, `thumbnail_width` INTEGER NOT NULL, `bit_rate` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "video_url",
+            "columnName": "video_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "video_image_url",
+            "columnName": "video_image_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "video_height",
+            "columnName": "video_height",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "video_width",
+            "columnName": "video_width",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnail_height",
+            "columnName": "thumbnail_height",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnail_width",
+            "columnName": "thumbnail_width",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bit_rate",
+            "columnName": "bit_rate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "is_deleted",
+            "columnName": "is_deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "interval",
+            "columnName": "interval",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadedLocalPath",
+            "columnName": "downloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloadStartTime",
+            "columnName": "lastDownloadStartTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "AudioTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`audio_url` TEXT NOT NULL, `audioId` TEXT NOT NULL, `duration` INTEGER NOT NULL, `bit_rate` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`audioId`))",
+        "fields": [
+          {
+            "fieldPath": "audio_url",
+            "columnName": "audio_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "audioId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bit_rate",
+            "columnName": "bit_rate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "is_deleted",
+            "columnName": "is_deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadedLocalPath",
+            "columnName": "downloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloadStartTime",
+            "columnName": "lastDownloadStartTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "audioId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "OptionTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `type` TEXT NOT NULL, `text` TEXT NOT NULL, `order` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadedLocalPath",
+            "columnName": "downloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloadStartTime",
+            "columnName": "lastDownloadStartTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "PdfTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `url` TEXT NOT NULL, `is_deleted` INTEGER NOT NULL, `total_view` INTEGER NOT NULL, `thumbnail` TEXT, `size` TEXT NOT NULL, `pages` TEXT, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "is_deleted",
+            "columnName": "is_deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalView",
+            "columnName": "total_view",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnail",
+            "columnName": "thumbnail",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "size",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pages",
+            "columnName": "pages",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadedLocalPath",
+            "columnName": "downloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloadStartTime",
+            "columnName": "lastDownloadStartTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ImageTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `is_deleted` INTEGER NOT NULL, `height` INTEGER NOT NULL, `width` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "is_deleted",
+            "columnName": "is_deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "height",
+            "columnName": "height",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "width",
+            "columnName": "width",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadedLocalPath",
+            "columnName": "downloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloadStartTime",
+            "columnName": "lastDownloadStartTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "video_watch_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`graph` TEXT NOT NULL, `videoId` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL, `course_id` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mentorId` TEXT, `gID` TEXT, `is_sync` INTEGER NOT NULL, `is_sharable_video` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "graph",
+            "columnName": "graph",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "videoId",
+            "columnName": "videoId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "watchTime",
+            "columnName": "watchTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "courseID",
+            "columnName": "course_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mentorId",
+            "columnName": "mentorId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gID",
+            "columnName": "gID",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isSync",
+            "columnName": "is_sync",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSharableVideo",
+            "columnName": "is_sharable_video",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "feedback_engage",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "nps_event_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `day` INTEGER NOT NULL, `enable` INTEGER NOT NULL, `event` TEXT NOT NULL, `event_name` TEXT NOT NULL, `event_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`day`, `event_id`, `event_name`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enable",
+            "columnName": "enable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "event",
+            "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventName",
+            "columnName": "event_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventId",
+            "columnName": "event_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "day",
+            "event_id",
+            "event_name"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "assessments",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `icon_url` TEXT, `text1` TEXT, `text2` TEXT, `score_text` TEXT, `heading` TEXT NOT NULL, `title` TEXT, `imageUrl` TEXT, `description` TEXT, `type` TEXT NOT NULL, `status` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "localId",
+            "columnName": "localId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remoteId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iconUrl",
+            "columnName": "icon_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "text1",
+            "columnName": "text1",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "text2",
+            "columnName": "text2",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "scoreText",
+            "columnName": "score_text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "heading",
+            "columnName": "heading",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "localId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_assessments_remoteId",
+            "unique": true,
+            "columnNames": [
+              "remoteId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessments_remoteId` ON `${TABLE_NAME}` (`remoteId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "assessment_questions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT NOT NULL, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "localId",
+            "columnName": "localId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remoteId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assessmentId",
+            "columnName": "assessmentId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subText",
+            "columnName": "subText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaUrl",
+            "columnName": "mediaUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaType",
+            "columnName": "mediaType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaUrl2",
+            "columnName": "mediaUrl2",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mediaType2",
+            "columnName": "mediaType2",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "videoThumbnailUrl",
+            "columnName": "videoThumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "choiceType",
+            "columnName": "choiceType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAttempted",
+            "columnName": "isAttempted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isNewHeader",
+            "columnName": "isNewHeader",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "listOfAnswers",
+            "columnName": "listOfAnswers",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "localId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_assessment_questions_assessmentId",
+            "unique": false,
+            "columnNames": [
+              "assessmentId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_assessment_questions_assessmentId` ON `${TABLE_NAME}` (`assessmentId`)"
+          },
+          {
+            "name": "index_assessment_questions_remoteId",
+            "unique": true,
+            "columnNames": [
+              "remoteId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `${TABLE_NAME}` (`remoteId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "assessments",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "assessmentId"
+            ],
+            "referencedColumns": [
+              "remoteId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "assessment_choice",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `text` TEXT, `imageUrl` TEXT, `isCorrect` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `correctAnswerOrder` INTEGER NOT NULL, `column` TEXT NOT NULL, `userSelectedOrder` INTEGER NOT NULL, `isSelectedByUser` INTEGER NOT NULL, `audioUrl` TEXT, `localAudioUrl` TEXT, `downloadStatus` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "localId",
+            "columnName": "localId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remoteId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isCorrect",
+            "columnName": "isCorrect",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correctAnswerOrder",
+            "columnName": "correctAnswerOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "column",
+            "columnName": "column",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userSelectedOrder",
+            "columnName": "userSelectedOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSelectedByUser",
+            "columnName": "isSelectedByUser",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "audioUrl",
+            "columnName": "audioUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "localAudioUrl",
+            "columnName": "localAudioUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "localId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_assessment_choice_questionId",
+            "unique": false,
+            "columnNames": [
+              "questionId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_assessment_choice_questionId` ON `${TABLE_NAME}` (`questionId`)"
+          },
+          {
+            "name": "index_assessment_choice_remoteId",
+            "unique": true,
+            "columnNames": [
+              "remoteId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_choice_remoteId` ON `${TABLE_NAME}` (`remoteId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "assessment_questions",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "questionId"
+            ],
+            "referencedColumns": [
+              "remoteId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "assessment_revise_concept",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionId` INTEGER NOT NULL, `heading` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `videoThumbnailUrl` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "localId",
+            "columnName": "localId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heading",
+            "columnName": "heading",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaUrl",
+            "columnName": "mediaUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaType",
+            "columnName": "mediaType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "videoThumbnailUrl",
+            "columnName": "videoThumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "localId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_assessment_revise_concept_questionId",
+            "unique": false,
+            "columnNames": [
+              "questionId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_assessment_revise_concept_questionId` ON `${TABLE_NAME}` (`questionId`)"
+          },
+          {
+            "name": "index_assessment_revise_concept_localId",
+            "unique": true,
+            "columnNames": [
+              "localId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_revise_concept_localId` ON `${TABLE_NAME}` (`localId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "assessment_questions",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "questionId"
+            ],
+            "referencedColumns": [
+              "remoteId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "assessment_intro",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` TEXT NOT NULL, `assessmentId` INTEGER NOT NULL, `title` TEXT, `description` TEXT, `imageUrl` TEXT, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "localId",
+            "columnName": "localId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assessmentId",
+            "columnName": "assessmentId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "localId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_assessment_intro_assessmentId",
+            "unique": false,
+            "columnNames": [
+              "assessmentId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_assessment_intro_assessmentId` ON `${TABLE_NAME}` (`assessmentId`)"
+          },
+          {
+            "name": "index_assessment_intro_localId",
+            "unique": true,
+            "columnNames": [
+              "localId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_localId` ON `${TABLE_NAME}` (`localId`)"
+          },
+          {
+            "name": "index_assessment_intro_type",
+            "unique": true,
+            "columnNames": [
+              "type"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_type` ON `${TABLE_NAME}` (`type`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "assessments",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "assessmentId"
+            ],
+            "referencedColumns": [
+              "remoteId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "reminder_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`reminder_id` INTEGER NOT NULL, `mentor_id` TEXT NOT NULL, `reminder_frequency` TEXT NOT NULL, `status` TEXT NOT NULL, `reminder_time` TEXT NOT NULL, PRIMARY KEY(`reminder_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "reminder_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mentor",
+            "columnName": "mentor_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reminderFrequency",
+            "columnName": "reminder_frequency",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reminderTime",
+            "columnName": "reminder_time",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "reminder_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_reminder_table_reminder_id",
+            "unique": false,
+            "columnNames": [
+              "reminder_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_reminder_table_reminder_id` ON `${TABLE_NAME}` (`reminder_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "app_usage",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`usage_time` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "usageTime",
+            "columnName": "usage_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usageDate",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "app_activity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`activity` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "activityName",
+            "columnName": "activity",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usageDate",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "LessonModel",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER NOT NULL, `chat_id` TEXT NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `status` TEXT, `grammarStatus` TEXT, `vocabularyStatus` TEXT, `readingStatus` TEXT, `speakingStatus` TEXT, `conversationStatus` TEXT, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `show_new_grammar_screen` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "lesson_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chatId",
+            "columnName": "chat_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lessonNo",
+            "columnName": "lesson_no",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lessonName",
+            "columnName": "lesson_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnail",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "courseId",
+            "columnName": "course",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "interval",
+            "columnName": "interval",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "grammarStatus",
+            "columnName": "grammarStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "vocabStatus",
+            "columnName": "vocabularyStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "readingStatus",
+            "columnName": "readingStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "speakingStatus",
+            "columnName": "speakingStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversationStatus",
+            "columnName": "conversationStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modified",
+            "columnName": "modified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isNewGrammar",
+            "columnName": "show_new_grammar_screen",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "lesson_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "pending_task_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`request_object` TEXT NOT NULL, `type` TEXT NOT NULL, `retry_count` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "requestObject",
+            "columnName": "request_object",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numberOfRetries",
+            "columnName": "retry_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "practise_engagement_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`questionForId` TEXT, `practiseId` INTEGER NOT NULL, `question` INTEGER NOT NULL, `answerUrl` TEXT NOT NULL, `duration` INTEGER NOT NULL, `practiceDate` TEXT NOT NULL, `feedbackRequire` TEXT, `text` TEXT, `localPath` TEXT, `transcriptId` TEXT, `pointsList` TEXT NOT NULL, `uploadStatus` TEXT NOT NULL, `feedback_feedbackId` INTEGER, `feedback_feedbackTitle` TEXT, `feedback_feedbackText` TEXT, `feedback_studentAudioUrl` TEXT, `feedback_teacherAudioUrl` TEXT, `feedback_wrong_word_list` TEXT, `feedback_created` INTEGER, `feedback_error` INTEGER, `feedback_pro_text` TEXT, `feedback_pro_description` TEXT, `feedback_rec_text` TEXT, `feedback_spd_text` TEXT, `feedback_spd_description` TEXT, PRIMARY KEY(`practiseId`), FOREIGN KEY(`questionForId`) REFERENCES `question_table`(`questionId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "questionForId",
+            "columnName": "questionForId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseId",
+            "columnName": "practiseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "question",
+            "columnName": "question",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answerUrl",
+            "columnName": "answerUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "practiceDate",
+            "columnName": "practiceDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "feedbackRequire",
+            "columnName": "feedbackRequire",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "localPath",
+            "columnName": "localPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "transcriptId",
+            "columnName": "transcriptId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pointsList",
+            "columnName": "pointsList",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploadStatus",
+            "columnName": "uploadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "practiseFeedback.feedbackId",
+            "columnName": "feedback_feedbackId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.feedbackTitle",
+            "columnName": "feedback_feedbackTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.feedbackText",
+            "columnName": "feedback_feedbackText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.studentAudioUrl",
+            "columnName": "feedback_studentAudioUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.teacherAudioUrl",
+            "columnName": "feedback_teacherAudioUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.pointsList",
+            "columnName": "feedback_wrong_word_list",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.created",
+            "columnName": "feedback_created",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.error",
+            "columnName": "feedback_error",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.pronunciation.text",
+            "columnName": "feedback_pro_text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.pronunciation.description",
+            "columnName": "feedback_pro_description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.recommendation.text",
+            "columnName": "feedback_rec_text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.speed.text",
+            "columnName": "feedback_spd_text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiseFeedback.speed.description",
+            "columnName": "feedback_spd_description",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "practiseId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_practise_engagement_table_practiseId_question_questionForId",
+            "unique": false,
+            "columnNames": [
+              "practiseId",
+              "question",
+              "questionForId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_practise_engagement_table_practiseId_question_questionForId` ON `${TABLE_NAME}` (`practiseId`, `question`, `questionForId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "question_table",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "questionForId"
+            ],
+            "referencedColumns": [
+              "questionId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "AwardMentorModel",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `award_image_url` TEXT, `award_text` TEXT, `description` TEXT, `award_description` TEXT, `performer_name` TEXT, `performer_photo_url` TEXT, `total_points_text` TEXT, `mentor_id` TEXT, `award_type` TEXT NOT NULL, `date_text` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "awardImageUrl",
+            "columnName": "award_image_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "awardText",
+            "columnName": "award_text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "awardDescription",
+            "columnName": "award_description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "performerName",
+            "columnName": "performer_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "performerPhotoUrl",
+            "columnName": "performer_photo_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "totalPointsText",
+            "columnName": "total_points_text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mentorId",
+            "columnName": "mentor_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "awardType",
+            "columnName": "award_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateText",
+            "columnName": "date_text",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "lesson_question",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `lessonId` INTEGER NOT NULL, `qText` TEXT, `type` TEXT NOT NULL, `materialType` TEXT NOT NULL, `isDeleted` INTEGER NOT NULL, `title` TEXT, `practice_word` TEXT, `practice_engagements` TEXT, `expectedEngageType` TEXT, `conversation_question_id` INTEGER, `interval` INTEGER NOT NULL, `assessment_id` INTEGER, `topic_id` TEXT, `chat_type` TEXT, `status` TEXT NOT NULL, `vp_sort_order` INTEGER NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lessonId",
+            "columnName": "lessonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "qText",
+            "columnName": "qText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "materialType",
+            "columnName": "materialType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDeleted",
+            "columnName": "isDeleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiceWord",
+            "columnName": "practice_word",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "practiceEngagement",
+            "columnName": "practice_engagements",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "expectedEngageType",
+            "columnName": "expectedEngageType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversation_question_id",
+            "columnName": "conversation_question_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "interval",
+            "columnName": "interval",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assessmentId",
+            "columnName": "assessment_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "topicId",
+            "columnName": "topic_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "chatType",
+            "columnName": "chat_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vpSortOrder",
+            "columnName": "vp_sort_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modified",
+            "columnName": "modified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadStatus",
+            "columnName": "downloadStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadedLocalPath",
+            "columnName": "downloadedLocalPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastDownloadStartTime",
+            "columnName": "lastDownloadStartTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SpeakingTopic",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic_name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `already_talked` INTEGER NOT NULL, `total_new_student_calls` INTEGER NOT NULL, `required_new_student_calls` INTEGER NOT NULL, `is_new_student_calls_activated` INTEGER NOT NULL, `isFromDb` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topicName",
+            "columnName": "topic_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "alreadyTalked",
+            "columnName": "already_talked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalNewStudentCalls",
+            "columnName": "total_new_student_calls",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requiredNewStudentCalls",
+            "columnName": "required_new_student_calls",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isNewStudentCallsActivated",
+            "columnName": "is_new_student_calls_activated",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFromDb",
+            "columnName": "isFromDb",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "RecentSearch",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`keyword` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`keyword`))",
+        "fields": [
+          {
+            "fieldPath": "keyword",
+            "columnName": "keyword",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "keyword"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "favorite_caller",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `photo_url` TEXT, `minutes_spoken` INTEGER NOT NULL, `total_calls` INTEGER NOT NULL, `last_called_at` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `mentor_id` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "photo_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "minutesSpoken",
+            "columnName": "minutes_spoken",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalCalls",
+            "columnName": "total_calls",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastCalledAt",
+            "columnName": "last_called_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDeleted",
+            "columnName": "is_deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mentorId",
+            "columnName": "mentor_id",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "course_usage",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `screen_name` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "start_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "end_time",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversationId",
+            "columnName": "conversation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usageDate",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "screenName",
+            "columnName": "screen_name",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "assessment_question_feedback",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctAnswerHeading` TEXT, `correctAnswerText` TEXT, `wrongAnswerHeading` TEXT, `wrongAnswerText` TEXT, `wrongAnswerHeading2` TEXT, `wrongAnswerText2` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "localId",
+            "columnName": "localId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remoteId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correctAnswerHeading",
+            "columnName": "correctAnswerHeading",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "correctAnswerText",
+            "columnName": "correctAnswerText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wrongAnswerHeading",
+            "columnName": "wrongAnswerHeading",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wrongAnswerText",
+            "columnName": "wrongAnswerText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wrongAnswerHeading2",
+            "columnName": "wrongAnswerHeading2",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wrongAnswerText2",
+            "columnName": "wrongAnswerText2",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "localId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_assessment_question_feedback_questionId",
+            "unique": true,
+            "columnNames": [
+              "questionId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_question_feedback_questionId` ON `${TABLE_NAME}` (`questionId`)"
+          },
+          {
+            "name": "index_assessment_question_feedback_localId",
+            "unique": true,
+            "columnNames": [
+              "localId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_question_feedback_localId` ON `${TABLE_NAME}` (`localId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "assessment_questions",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "questionId"
+            ],
+            "referencedColumns": [
+              "remoteId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "voip_analytics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `agoraCallId` TEXT NOT NULL, `agoraMentorUid` TEXT NOT NULL, `timeStamp` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "event",
+            "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "agoraCallId",
+            "columnName": "agoraCallId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "agoraMentorUid",
+            "columnName": "agoraMentorUid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeStamp",
+            "columnName": "timeStamp",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "groups_analytics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "event",
+            "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mentorId",
+            "columnName": "mentorId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e01eb6ad0d0284b3931ca51868e9c741')"
+    ]
+  }
+}
