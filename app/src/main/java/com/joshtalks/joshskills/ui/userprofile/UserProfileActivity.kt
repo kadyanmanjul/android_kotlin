@@ -7,6 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -69,6 +71,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var previousPage: String? = EMPTY
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
+    private var isSeniorStudent: Boolean = false
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
 
@@ -170,14 +173,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         binding.txtUserHometown.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
-                binding.txtUserHometown.isClickable=true
+                binding.txtUserHometown.isClickable = true
                 EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
             }
 
         }
-        binding.userAge.setOnClickListener{
+        binding.userAge.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
-                binding.userAge.isClickable=true
+                binding.userAge.isClickable = true
                 EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
             }
         }
@@ -330,7 +333,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         viewModel.apiCallStatus.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
                 hideProgressBar()
-                getProfileData(intervalType,previousPage)
+                getProfileData(intervalType, previousPage)
             } else if (it == ApiCallStatus.FAILED) {
                 hideProgressBar()
             } else if (it == ApiCallStatus.START) {
@@ -363,20 +366,20 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.userAge.text = userData.age.toString()
         if (userData.age == null || userData.age <= 1) {
             binding.userAge.text = "_________"
-            binding.userAge.letterSpacing=0.0F
+            binding.userAge.letterSpacing = 0.0F
             binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.black))
         } else {
             binding.userAge.text = userData.age.toString()
-            binding.txtUserHometown.letterSpacing=0.05F
+            binding.txtUserHometown.letterSpacing = 0.05F
             binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
         }
         if (userData.hometown.isNullOrBlank()) {
             binding.txtUserHometown.text = "_________"
-            binding.txtUserHometown.letterSpacing=0.0F
+            binding.txtUserHometown.letterSpacing = 0.0F
             binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.black))
         } else {
             binding.txtUserHometown.text = userData.hometown
-            binding.txtUserHometown.letterSpacing=0.05F
+            binding.txtUserHometown.letterSpacing = 0.05F
             binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
         }
         binding.joinedOn.text = userData.joinedOn
@@ -445,17 +448,34 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
         binding.streaksText.visibility = View.GONE
+        if (userData.isSeniorStudent) {
+            this.isSeniorStudent = true
+            binding.awardsLayout.visibility = View.VISIBLE
+            binding.multiLineLl.visibility = View.VISIBLE
+            binding.multiLineLl.removeAllViews()
+            val layoutInflater =
+                AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
+            val title = view.findViewById(R.id.title) as AppCompatTextView
+            title.text = "Senior Student"
+            setSeniorStudentAwardView(view!!)
+            if (view != null) {
+                binding.multiLineLl.addView(view)
+            }
+        }
 
         if (userData.awardCategory.isNullOrEmpty()) {
-            binding.awardsLayout.visibility = View.GONE
-            binding.multiLineLl.visibility = View.GONE
+            binding.labelViewMoreAwards.visibility = View.GONE
+            if (userData.isSeniorStudent == false) {
+                binding.awardsLayout.visibility = View.GONE
+                binding.multiLineLl.visibility = View.GONE
+            }
         } else {
             this.awardCategory = userData.awardCategory
             binding.awardsLayout.visibility = View.VISIBLE
             binding.multiLineLl.visibility = View.VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {
                 binding.labelViewMoreAwards.visibility = View.VISIBLE
-                binding.multiLineLl.removeAllViews()
                 userData.awardCategory?.sortedBy { it.sortOrder }?.forEach { awardCategory ->
                     val view = getAwardLayoutItem(awardCategory)
                     if (view != null) {
@@ -482,18 +502,31 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.enrolledCoursesLl.visibility = View.VISIBLE
             binding.labelEnrolledCourses.text = userData.enrolledCoursesList.label
             binding.enrolledCoursesLl.removeAllViews()
-            var countCourses=0
+            var countCourses = 0
             userData.enrolledCoursesList.courses.forEach { course ->
-                if (countCourses < 3){
+                if (countCourses < 3) {
                     val view = getEnrolledCourseLayoutItem(course)
-                if (view != null) {
-                    binding.enrolledCoursesLl.addView(view)
-                    countCourses++
-                }
+                    if (view != null) {
+                        binding.enrolledCoursesLl.addView(view)
+                        countCourses++
+                    }
                 }
             }
         }
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
+    }
+
+    private fun setSeniorStudentAwardView(view: View) {
+        var v: View? = view.findViewById<ConstraintLayout>(R.id.award1)
+        v?.visibility = View.VISIBLE
+        var image: ImageView = view.findViewById(R.id.image_award1)
+        var title: AppCompatTextView = view.findViewById(R.id.title_award1)
+        var date: AppCompatTextView = view.findViewById(R.id.date_award1)
+        var count: AppCompatTextView = view.findViewById(R.id.txt_count_award1)
+        date.visibility =  GONE
+        title.visibility =  GONE
+        count.visibility =  GONE
+        image.setImageResource(R.drawable.senior_student_badge)
     }
 
     private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
@@ -683,7 +716,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     fun showAllAwards() {
         awardCategory?.let {
-            SeeAllAwardActivity.startSeeAllAwardActivity(this, it)
+            SeeAllAwardActivity.startSeeAllAwardActivity(this, it, this.isSeniorStudent)
         }
     }
 
@@ -726,7 +759,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     private fun openAwardPopUp(award: Award) {
-        showAward(listOf(award), true)
+//        showAward(listOf(award), true)
     }
 
     override fun onStop() {

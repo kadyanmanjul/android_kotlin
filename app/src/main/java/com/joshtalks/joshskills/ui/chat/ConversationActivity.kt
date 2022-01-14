@@ -1099,7 +1099,7 @@ class ConversationActivity :
                 ?.let { unseenAwards.addAll(it) }
         }
         if (unseenAwards.isNotEmpty()) {
-            showAward(unseenAwards)
+//            showAward(unseenAwards)
         }
     }
 
@@ -1548,7 +1548,7 @@ class ConversationActivity :
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        showAward(listOf(it.award), true)
+//                        showAward(listOf(it.award), true)
                     },
                     {
                         it.printStackTrace()
