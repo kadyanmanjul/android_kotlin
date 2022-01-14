@@ -632,5 +632,12 @@
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
+<!--    style of dialog box-->
+    <style name="dialog_theme" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:colorBackground">@color/report_black</item>
 
+    </style>
 </resources>

@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 
 const val USER_UNIQUE_ID = "user_unique_id"
 const val GID_SET_FOR_USER = "gid_set_for_user"
@@ -101,6 +103,9 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
+public const val BLOCK_ISSUE = "block_issue_list"
+public  const val REPORT_ISSUE = "report_issue_list"
+
 
 object PrefManager {
 
@@ -211,6 +216,17 @@ object PrefManager {
     fun put(key: String, value: Boolean, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putBoolean(key, value).apply()
         else prefManagerCommon.edit().putBoolean(key, value).apply()
+    }
+
+    fun putPrefObject(key: String, objects: Any){
+        val gson = Gson()
+        val jsonString = gson.toJson(objects)
+        put(key = key, value=jsonString)
+    }
+    fun getPrefObject(key: String):ReportModel?{
+        val gson = Gson()
+        val json: String = getStringValue(key=key, defaultValue = "") as String
+        return gson.fromJson(json, ReportModel::class.java)
     }
 
 

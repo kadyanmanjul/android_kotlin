@@ -118,6 +118,8 @@
     <color name="call_action_color">#5ee067</color>
     <color name="call_decline_color">#ef5050</color>
     <color name="brown">#511615</color>
+    <color name="report_black">#343434</color>
+
 
     <!-- Here you can add color of your choice  -->
     <color name="ucrop_color_toolbar">@color/colorPrimary</color>
@@ -176,5 +178,6 @@
     <!--Colors for Groups-->
     <color name="group_coming_soon">#47555E</color>
     <color name="join_group">#25D366</color>
+    <color name="report_white">#F5F5F5</color>
 
 </resources>

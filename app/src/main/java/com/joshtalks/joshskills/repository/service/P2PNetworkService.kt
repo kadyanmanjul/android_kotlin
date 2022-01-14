@@ -4,6 +4,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
+import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
 import retrofit2.Response
 import retrofit2.http.Body
@@ -55,4 +56,10 @@ interface P2PNetworkService {
     @GET("$DIR/voicecall/agora_fake_call/")
     suspend fun getFakeCall(): FirestoreNotificationObject
 
+    @JvmSuppressWildcards
+    @POST("$DIR/voicecall/agora_call_feedback_submit/")
+    suspend fun sendP2pCallReportSubmit(@Body params: Map<String, Any>)
+
+    @GET("$DIR/voicecall/agora_call_feedback_options/{value}")
+    suspend fun getP2pCallOptions(@Path("value") value: String): ReportModel
 }

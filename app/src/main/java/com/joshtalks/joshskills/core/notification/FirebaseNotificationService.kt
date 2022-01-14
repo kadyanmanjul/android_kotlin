@@ -638,40 +638,40 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
     }
 
-    private fun callForceConnect(actionData: String?) {
-        actionData?.let {
-            try {
-                val obj = JSONObject(it)
-                val data = HashMap<String, String>()
-                data[RTC_TOKEN_KEY] = obj.getString("token")
-                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
-                data[RTC_UID_KEY] = obj.getString("uid")
-                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-                try {
-                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
-                    obj.getString("group_name")
-                } catch (e: JSONException) {
-                    ""
-                }
-                WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
-                WebRtcService.forceConnect(data)
-            } catch (t: Throwable) {
-                t.printStackTrace()
-            }
-        }
-    }
+//    private fun callForceConnect(actionData: String?) {
+//        actionData?.let {
+//            try {
+//                val obj = JSONObject(it)
+//                val data = HashMap<String, String>()
+//                data[RTC_TOKEN_KEY] = obj.getString("token")
+//                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+//                data[RTC_UID_KEY] = obj.getString("uid")
+//                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+//                try {
+//                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                }
+//                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
+//                    obj.getString("group_name")
+//                } catch (e: JSONException) {
+//                    ""
+//                }
+//                WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
+//                WebRtcService.forceConnect(data)
+//            } catch (t: Throwable) {
+//                t.printStackTrace()
+//            }
+//        }
+//    }
 
-    private fun callForceDisconnect() {
-        WebRtcService.forceDisconnect()
-    }
-
-    private fun callDisconnectNotificationAction() {
-        WebRtcService.disconnectCallFromCallie()
-    }
+//    private fun callForceDisconnect() {
+//        WebRtcService.forceDisconnect()
+//    }
+//
+//    private fun callDisconnectNotificationAction() {
+//        WebRtcService.disconnectCallFromCallie()
+//    }
 
     private fun declineCallWhenInConversationRoom(actionData: String?) {
         actionData?.let {
@@ -693,43 +693,43 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     }
 
-    private fun incomingCallNotificationAction(actionData: String?) {
-        actionData?.let {
-            try {
-                val obj = JSONObject(it)
-                val data = HashMap<String, String?>()
-                data[RTC_TOKEN_KEY] = obj.getString("token")
-                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
-                data[RTC_UID_KEY] = obj.getString("uid")
-                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-                try {
-                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
-                    obj.getString("group_name")
-                } catch (e: JSONException) {
-                    ""
-                }
-
-                if (obj.has("f")) {
-                    val id = obj.getInt("caller_uid")
-                    val caller =
-                        AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
-                    Thread.sleep(25)
-                    if (caller != null) {
-                        data[RTC_NAME] = caller.name
-                        data[RTC_CALLER_PHOTO] = caller.image
-                        data[RTC_IS_FAVORITE] = "true"
-                    }
-                }
-                WebRtcService.startOnNotificationIncomingCall(data)
-            } catch (t: Throwable) {
-                t.printStackTrace()
-            }
-        }
-    }
+//    private fun incomingCallNotificationAction(actionData: String?) {
+//        actionData?.let {
+//            try {
+//                val obj = JSONObject(it)
+//                val data = HashMap<String, String?>()
+//                data[RTC_TOKEN_KEY] = obj.getString("token")
+//                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+//                data[RTC_UID_KEY] = obj.getString("uid")
+//                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+//                try {
+//                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                }
+//                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
+//                    obj.getString("group_name")
+//                } catch (e: JSONException) {
+//                    ""
+//                }
+//
+//                if (obj.has("f")) {
+//                    val id = obj.getInt("caller_uid")
+//                    val caller =
+//                        AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
+//                    Thread.sleep(25)
+//                    if (caller != null) {
+//                        data[RTC_NAME] = caller.name
+//                        data[RTC_CALLER_PHOTO] = caller.image
+//                        data[RTC_IS_FAVORITE] = "true"
+//                    }
+//                }
+//                WebRtcService.startOnNotificationIncomingCall(data)
+//            } catch (t: Throwable) {
+//                t.printStackTrace()
+//            }
+//        }
+//    }
 
 //    private fun returnDefaultIntent(): Intent {
 //        return Intent(applicationContext, LauncherActivity::class.java).apply {
@@ -1422,6 +1422,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                     //if (User.getInstance().isVerified) {
+
                     incomingCallNotificationAction(notificationObject.actionData)
                     //}
                     null

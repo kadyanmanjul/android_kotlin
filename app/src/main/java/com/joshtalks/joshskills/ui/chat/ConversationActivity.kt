@@ -22,6 +22,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.Player
@@ -258,8 +259,16 @@ class ConversationActivity :
         initFreeTrialTimer()
         fetchMessage()
         readMessageDatabaseUpdate()
+        addIssuesToSharedPref()
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
+        }
+    }
+    private fun addIssuesToSharedPref(){
+        GlobalScope.launch(Dispatchers.IO){
+            PrefManager.putPrefObject("REPORT_ISSUE", AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT"))
+            PrefManager.putPrefObject("BLOCK_ISSUE", AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK"))
+
         }
     }
 

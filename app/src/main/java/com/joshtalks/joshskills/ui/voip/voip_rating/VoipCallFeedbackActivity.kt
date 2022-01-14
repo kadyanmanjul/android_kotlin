@@ -121,6 +121,10 @@ class VoipCallFeedbackActivity : BaseActivity() {
             val callTime = it.getLongExtra(ARG_CALL_TIME, 0L)
             val second: Int = (callTime / 1000 % 60).toInt()
             val minute: Int = (callTime / (1000 * 60) % 60).toInt()
+
+            if(minute<2 && !PrefManager.getBoolValue(IS_FREE_TRIAL) ){
+                showReportDialog("REPORT")
+            }
             if (minute > 0) {
                 mTime.append(minute).append(getMinuteString(minute))
             }
@@ -133,6 +137,20 @@ class VoipCallFeedbackActivity : BaseActivity() {
             addObserver()
             practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
         }
+    }
+
+    private fun showReportDialog(type:String) {
+        val reportDialogFragment = ReportDialogFragment()
+        val args: Bundle? = null
+        args?.putString("type", type);
+        reportDialogFragment.arguments = args
+        this.let {
+            reportDialogFragment.show(
+                it.supportFragmentManager,
+                "ReportDialogFragment"
+            )
+        }
+
     }
 
     private fun getMinuteString(min: Int): String {
@@ -168,6 +186,7 @@ class VoipCallFeedbackActivity : BaseActivity() {
                         //showToast("$callerName is now added to your Favorite Practice Partners.")
                     }
                     "NO" -> {
+                        showReportDialog("BLOCK")
                         //showToast("$callerName is now added to your Blocklist.")
                     }
                     "MAYBE" -> {
@@ -190,7 +209,7 @@ class VoipCallFeedbackActivity : BaseActivity() {
             yourAgoraId: Int?,
             dimBg: Boolean = false,
             activity: Activity,
-            flags: Array<Int> = arrayOf()
+            flags: Array<Int> = arrayOf(),
         ) {
 
             Intent(activity, VoipCallFeedbackActivity::class.java).apply {
