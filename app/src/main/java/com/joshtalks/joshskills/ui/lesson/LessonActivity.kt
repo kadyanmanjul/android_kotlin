@@ -1,9 +1,12 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.animation.ValueAnimator
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -140,7 +143,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             // InboxActivity.startInboxActivity(this)
             finish()
         }
-        viewModel.isFreeTrail = if (intent.hasExtra(IS_FREE_TRAIL)) intent.getBooleanExtra(IS_FREE_TRAIL, false) else false
+        viewModel.isFreeTrail = if (intent.hasExtra(IS_FREE_TRAIL)) intent.getBooleanExtra(
+            IS_FREE_TRAIL,
+            false
+        ) else false
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
@@ -233,8 +239,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     lessonNumber = it.lessonNo
                     lessonIsNewGrammar = it.isNewGrammar
                 }
-                viewModel.lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
-                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
+                viewModel.lessonIsConvoRoomActive =
+                    (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
+                            && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
                 //viewModel.lessonIsConvoRoomActive  = true
 
                 if (lessonIsNewGrammar) {
@@ -483,23 +490,32 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.VISIBLE
                 }
+
+                //Changing here
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    binding.overlayLayout.visibility = View.VISIBLE
+                    //   binding.overlayLayout.visibility = View.VISIBLE
                     binding.spotlightTabGrammar.visibility = View.INVISIBLE
                     binding.spotlightTabSpeaking.visibility = View.INVISIBLE
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
-                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(
-                        resources.getText(R.string.label_speaking_spotlight_2).toString()
-                    )
-                    binding.lessonSpotlightTooltip.post {
-                        slideInAnimation(binding.lessonSpotlightTooltip)
-                    }
-                    binding.spotlightStartGrammarTest.visibility = View.GONE
-                    binding.spotlightCallBtn.visibility = View.VISIBLE
-                    binding.spotlightCallBtnText.visibility = View.VISIBLE
-                    binding.arrowAnimation.visibility = View.VISIBLE
+
+
+
+                    showDialog()
+
+
+//                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+//                    binding.lessonSpotlightTooltip.setTooltipText(
+//                        resources.getText(R.string.label_speaking_spotlight_2).toString()
+//                    )
+
+//                    binding.lessonSpotlightTooltip.post {
+//                        slideInAnimation(binding.lessonSpotlightTooltip)
+//                    }
+//                    binding.spotlightStartGrammarTest.visibility = View.GONE
+//                    binding.spotlightCallBtn.visibility = View.VISIBLE
+//                    binding.spotlightCallBtnText.visibility = View.VISIBLE
+//                    binding.arrowAnimation.visibility = View.VISIBLE
                 }
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -535,6 +551,32 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         })
+    }
+
+
+    //....
+    private fun showDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.speaking_video_popup_view)
+
+        //    val videoViewDialog : VideoView = dialog.findViewById(R.id.video_view)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialog.show()
+
+
+        val cancelImg: ImageView = dialog.findViewById(R.id.imageView_close)
+
+
+        cancelImg.setOnClickListener {
+            dialog.dismiss()
+        }
+
+
     }
 
     private fun hideSpotlight() {
@@ -588,7 +630,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
                     if (lessonCompleted) {
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
-                        if (lesson.status != LESSON_STATUS.CO ){
+                        if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo)
                         }
                         lesson.status = LESSON_STATUS.CO
@@ -623,7 +665,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
 
                     if (lessonCompleted) {
-                        if (lesson.status != LESSON_STATUS.CO ){
+                        if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo)
                         }
                         lesson.status = LESSON_STATUS.CO
@@ -674,7 +716,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
                 when (tabPosition) {
                     GRAMMAR_POSITION -> {
-                        if (lesson.grammarStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                        if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logGrammarSectionCompleted()
                         }
                         lesson.grammarStatus = status
@@ -682,7 +724,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
                     SPEAKING_POSITION -> {
-                        if (lesson.speakingStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                        if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
                         }
                         lesson.speakingStatus = status
@@ -1060,7 +1102,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             testId: Int? = null,
             conversationId: String? = null,
             isNewGrammar: Boolean = false,
-            isFreeTrail : Boolean = false,
+            isFreeTrail: Boolean = false,
             isLessonCompleted: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             // TODO: Pass Free Trail Status
