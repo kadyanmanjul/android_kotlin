@@ -11,7 +11,9 @@ import com.joshtalks.joshskills.databinding.ActivityStartBinding
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ACTIVE
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment
+import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.IN_ACTIVE
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModel
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.CHOICE_FRAGMENT
@@ -97,6 +99,7 @@ class StartActivity : BaseQuizActivity() {
     override fun onPause() {
         super.onPause()
         AudioManagerQuiz.audioRecording.stopPlaying()
+        firebaseTemp.changeUserStatus(mentorId, IN_ACTIVE)
         vm.homeInactive()
     }
 
@@ -104,6 +107,7 @@ class StartActivity : BaseQuizActivity() {
         super.onRestart()
         playSound(R.raw.compress_background_util_quiz)
         vm.statusChange()
+        firebaseTemp.changeUserStatus(mentorId, ACTIVE)
     }
 
     fun playSound(sound: Int) {

@@ -58,6 +58,7 @@ class CustomDialogQuiz(var activity: Activity) {
             val animation = TranslateAnimation(0f, 0f, -100f, 0f)
             animation.duration = 700
             v.startAnimation(animation)
+            AudioManagerQuiz().notificationPlaying(activity)
             v.visibility = View.VISIBLE
         } catch (ex: Exception) { }
     }

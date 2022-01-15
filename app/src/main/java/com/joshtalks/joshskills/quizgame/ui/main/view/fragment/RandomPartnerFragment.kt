@@ -490,9 +490,11 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
             )
             activity?.let {
                 searchRandomViewModel?.clearRadius?.observe(it, Observer {
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openChoiceScreen()
-                    engine?.leaveChannel()
+                    if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_AND_RADIUS) {
+                        AudioManagerQuiz.audioRecording.stopPlaying()
+                        openChoiceScreen()
+                        engine?.leaveChannel()
+                    }
                 })
             }
         } else {

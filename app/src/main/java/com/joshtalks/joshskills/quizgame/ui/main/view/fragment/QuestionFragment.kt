@@ -364,8 +364,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     private fun setupViewModel() {
         try {
             factory = QuestionProviderFactory(requireActivity().application)
-            questionViewModel = ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
-            questionViewModel = factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
+            questionViewModel =
+                ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
+            questionViewModel =
+                factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
             questionViewModel?.getQuizQuestion(
                 QuestionRequest(
                     QUESTION_COUNT,
@@ -1011,14 +1013,19 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         try {
             if (isCorrect == TRUE) {
                 try {
+                    if (isUiShown)
+                        AudioManagerQuiz().rightAnswerPlaying(requireContext())
                     progressBar.secondaryProgress = marks
                     progressBar.progress = marks - 10
                     if (position != 0)
                         progressBar.progressTintList = ColorStateList.valueOf(getGreenColor())
+
                 } catch (ex: Exception) {
                 }
             } else {
                 try {
+                    if (isUiShown)
+                        AudioManagerQuiz().wrongAnswerPlaying(requireContext())
                     progressBar.progress = marks
                     progressBar.progressTintList = ColorStateList.valueOf(getBlue2Color())
                     val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
@@ -1051,15 +1058,28 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         binding.progress.pauseProgress()
         if (isCorrect == TRUE) {
             try {
+                if (isUiShown)
+                    AudioManagerQuiz().rightAnswerPlaying(requireContext())
                 binding.marks2.setTextColor(getGreenColor())
                 progressBar1.secondaryProgress = opponentTeamMarks
                 progressBar1.progress = opponentTeamMarks - 10
                 if (position != 0)
                     progressBar1.progressTintList = ColorStateList.valueOf(getGreenColor())
+
+                val animation = AnimationUtils.loadAnimation(activity, R.anim.abc_popup_exit)
+                binding.verticalProgressbar1.setBackgroundDrawable(getVerticalGreenDrawable())
+                binding.verticalProgressbar1.startAnimation(animation)
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    delay(500)
+                    binding.verticalProgressbar1.setBackgroundDrawable(getVerticalBlackDrawable())
+                }
             } catch (ex: Exception) {
             }
         } else {
             try {
+                if (isUiShown)
+                    AudioManagerQuiz().wrongAnswerPlaying(requireContext())
                 binding.marks2.setTextColor(getRedColor())
                 progressBar1.progress = opponentTeamMarks
                 progressBar1.progressTintList = ColorStateList.valueOf(getBlue2Color())
@@ -1108,21 +1128,26 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel?.saveCallDuration?.observe(it, {
-                        if (it.message == CALL_DURATION_RESPONSE) {
-                            val points = it.points
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                UtilsQuiz.showSnackBar(
-                                    binding.container,
-                                    Snackbar.LENGTH_SHORT,
-                                    "You earned +$points for speaking in English"
-                                )
+                    questionViewModel?.clearRadius?.observe(it, {
+                        if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_AND_RADIUS) {
+                            activity?.let {
+                                questionViewModel?.saveCallDuration?.observe(it, {
+                                    if (it.message == CALL_DURATION_RESPONSE) {
+                                        val points = it.points
+                                        lifecycleScope.launch(Dispatchers.Main) {
+                                            UtilsQuiz.showSnackBar(
+                                                binding.container,
+                                                Snackbar.LENGTH_SHORT,
+                                                "You earned +$points for speaking in English"
+                                            )
+                                        }
+                                        AudioManagerQuiz.audioRecording.stopPlaying()
+                                        engine?.leaveChannel()
+                                        openFavouritePartnerScreen()
+                                        binding.callTime.stop()
+                                    }
+                                })
                             }
-                            AudioManagerQuiz.audioRecording.stopPlaying()
-                            openFavouritePartnerScreen()
-                            //firebaseDatabase.deleteTimeChange(currentUserId ?: "")
-                            engine?.leaveChannel()
-                            binding.callTime.stop()
                         }
                     })
                 }
@@ -1139,20 +1164,25 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     )
                 )
                 activity?.let {
-                    questionViewModel?.saveCallDuration?.observe(it, {
-                        if (it.message == CALL_DURATION_RESPONSE) {
-                            val points = it.points
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                UtilsQuiz.showSnackBar(
-                                    binding.container,
-                                    Snackbar.LENGTH_SHORT,
-                                    "You earned +$points for speaking in English"
-                                )
+                    questionViewModel?.deleteData?.observe(it, {
+                        if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_FPP) {
+                            activity?.let {
+                                questionViewModel?.saveCallDuration?.observe(it, {
+                                    if (it.message == CALL_DURATION_RESPONSE) {
+                                        val points = it.points
+                                        lifecycleScope.launch(Dispatchers.Main) {
+                                            UtilsQuiz.showSnackBar(
+                                                binding.container,
+                                                Snackbar.LENGTH_SHORT,
+                                                "You earned +$points for speaking in English"
+                                            )
+                                        }
+                                        AudioManagerQuiz.audioRecording.stopPlaying()
+                                        engine?.leaveChannel()
+                                        openFavouritePartnerScreen()
+                                    }
+                                })
                             }
-                            AudioManagerQuiz.audioRecording.stopPlaying()
-                            openFavouritePartnerScreen()
-                            engine?.leaveChannel()
-                            binding.callTime.stop()
                         }
                     })
                 }
@@ -1465,6 +1495,13 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         return ContextCompat.getDrawable(
             AppObjectController.joshApplication,
             R.drawable.vertical_red
+        )
+    }
+
+    fun getVerticalGreenDrawable(): Drawable? {
+        return ContextCompat.getDrawable(
+            AppObjectController.joshApplication,
+            R.drawable.vertical_green
         )
     }
 

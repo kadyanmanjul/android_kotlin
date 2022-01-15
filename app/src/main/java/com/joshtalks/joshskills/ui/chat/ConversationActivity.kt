@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
@@ -546,6 +547,22 @@ class ConversationActivity :
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
                 GroupAnalytics.push(MAIN_GROUP_ICON)
+                startActivity(intent)
+            }
+        }
+
+        conversationBinding.imgGameBtn.setOnClickListener {
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(" ")
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(getString(R.string.feature_locked, firstName))
+            } else {
+                val intent = Intent(this, StartActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, getConversationId())
+                }
                 startActivity(intent)
             }
         }

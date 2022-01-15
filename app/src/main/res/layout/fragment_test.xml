@@ -596,7 +596,7 @@
                     android:layout_height="@dimen/_75sdp"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/vs"
-                    android:src="@drawable/gvygybgygby" />
+                    android:src="@drawable/left_to_right" />
 
                 <RelativeLayout
                     android:id="@+id/vs"

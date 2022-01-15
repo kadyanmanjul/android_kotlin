@@ -15,7 +15,6 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
@@ -292,20 +291,26 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
         )
 
         activity?.let {
-            randomTeamMateFoundViewModel?.saveCallDuration?.observe(it, Observer {
-                if (it.message == CALL_DURATION_RESPONSE) {
-                    val points = it.points
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        UtilsQuiz.showSnackBar(
-                            binding.container,
-                            Snackbar.LENGTH_LONG,
-                            "You earned +$points for speaking in English"
-                        )
+            randomTeamMateFoundViewModel?.clearRadius?.observe(it, {
+                if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_AND_RADIUS) {
+                    activity?.let {
+                        randomTeamMateFoundViewModel?.saveCallDuration?.observe(it, {
+                            if (it.message == CALL_DURATION_RESPONSE) {
+                                val points = it.points
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    UtilsQuiz.showSnackBar(
+                                        binding.container,
+                                        Snackbar.LENGTH_SHORT,
+                                        "You earned +$points for speaking in English"
+                                    )
+                                }
+                                AudioManagerQuiz.audioRecording.stopPlaying()
+                                engine?.leaveChannel()
+                                binding.callTime.stop()
+                                openChoiceScreen()
+                            }
+                        })
                     }
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openChoiceScreen()
-                    engine?.leaveChannel()
-                    binding.callTime.stop()
                 }
             })
         }

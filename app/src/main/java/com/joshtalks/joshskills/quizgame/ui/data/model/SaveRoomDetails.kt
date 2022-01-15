@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.quizgame.ui.data.model
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
 
 data class SaveRoomDetails (
     @SerializedName("room_id") var roomId:String? = null,

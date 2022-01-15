@@ -299,20 +299,26 @@ class BothTeamMateFound : Fragment(), P2pRtc.WebRtcEngineCallback {
             )
         )
         activity?.let {
-            bothTeamViewModel?.saveCallDuration?.observe(it, {
-                if (it.message == CALL_DURATION_RESPONSE) {
-                    val points = it.points
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        UtilsQuiz.showSnackBar(
-                            binding.container,
-                            Snackbar.LENGTH_SHORT,
-                            "You earned +$points for speaking in English"
-                        )
+            bothTeamViewModel?.deleteData?.observe(it, {
+                if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_FPP) {
+                    activity?.let {
+                        bothTeamViewModel?.saveCallDuration?.observe(it, {
+                            if (it.message == CALL_DURATION_RESPONSE) {
+                                val points = it.points
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    UtilsQuiz.showSnackBar(
+                                        binding.container,
+                                        Snackbar.LENGTH_SHORT,
+                                        "You earned +$points for speaking in English"
+                                    )
+                                }
+                                AudioManagerQuiz.audioRecording.stopPlaying()
+                                binding.callTime.stop()
+                                engine?.leaveChannel()
+                                openChoiceScreen()
+                            }
+                        })
                     }
-                    engine?.leaveChannel()
-                    binding.callTime.stop()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    openChoiceScreen()
                 }
             })
         }

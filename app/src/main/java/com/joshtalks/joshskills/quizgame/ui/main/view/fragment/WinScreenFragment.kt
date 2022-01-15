@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.quizgame.ui.main.view.fragment
 
-import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -48,6 +46,10 @@ const val TEAM_ID: String = "team_id"
 const val OPPONENT_WON: String = "Opponent Won!"
 const val ZERO: String = "0"
 const val FIVE: String = "5"
+const val DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_FPP: String =
+    "Data deleted successfully from firebase"
+const val DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_AND_RADIUS: String =
+    "Data deleted successfully from firebase and redis"
 
 class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     P2pRtc.WebRtcEngineCallback {
@@ -232,6 +234,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         }
 
         binding.btnAddPeople.setOnClickListener {
+            binding.btnAddPeople.isEnabled = false
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ADD_TO_FRIEND_LIST)
             AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
             firebaseDatabase.createFriendRequest(
@@ -240,6 +243,12 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 currentUserImage ?: "",
                 partnerId ?: ""
             )
+            lifecycleScope.launch(Dispatchers.Main) {
+                if (isUiActive) {
+                    delay(10000)
+                    binding.btnAddPeople.isEnabled = true
+                }
+            }
         }
 
         binding.btnPlayAgain.setOnClickListener {
@@ -306,8 +315,14 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
     fun setRoomUsersData() {
         factory = SaveRoomDataViewProviderFactory(requireActivity().application)
-        saveRoomDataViewModel = ViewModelProvider(this, factory!!).get(SaveRoomDataViewModel::class.java)
-        saveRoomDataViewModel?.getRoomUserDataTemp(RandomRoomData(roomId ?: "", currentUserId ?: ""))
+        saveRoomDataViewModel =
+            ViewModelProvider(this, factory!!).get(SaveRoomDataViewModel::class.java)
+        saveRoomDataViewModel?.getRoomUserDataTemp(
+            RandomRoomData(
+                roomId ?: "",
+                currentUserId ?: ""
+            )
+        )
     }
 
     fun showRoomUserData() {
@@ -552,19 +567,25 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel?.saveCallDuration?.observe(it, {
-                    if (it.message == CALL_DURATION_RESPONSE) {
-                        val points = it.points
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            UtilsQuiz.showSnackBar(
-                                binding.container,
-                                Snackbar.LENGTH_SHORT,
-                                "You earned +$points for speaking in English"
-                            )
+                saveRoomDataViewModel?.clearRadius?.observe(it, {
+                    if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_AND_RADIUS) {
+                        activity?.let {
+                            saveRoomDataViewModel?.saveCallDuration?.observe(it, {
+                                if (it.message == CALL_DURATION_RESPONSE) {
+                                    val points = it.points
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        UtilsQuiz.showSnackBar(
+                                            binding.container,
+                                            Snackbar.LENGTH_SHORT,
+                                            "You earned +$points for speaking in English"
+                                        )
+                                    }
+                                    AudioManagerQuiz.audioRecording.stopPlaying()
+                                    engine?.leaveChannel()
+                                    openFavouritePartnerScreen()
+                                }
+                            })
                         }
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        engine?.leaveChannel()
-                        openFavouritePartnerScreen()
                     }
                 })
             }
@@ -578,19 +599,25 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel?.saveCallDuration?.observe(it, {
-                    if (it.message == CALL_DURATION_RESPONSE) {
-                        val points = it.points
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            UtilsQuiz.showSnackBar(
-                                binding.container,
-                                Snackbar.LENGTH_SHORT,
-                                "You earned +$points for speaking in English"
-                            )
+                saveRoomDataViewModel?.deleteData?.observe(it, {
+                    if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_FPP) {
+                        activity?.let {
+                            saveRoomDataViewModel?.saveCallDuration?.observe(it, {
+                                if (it.message == CALL_DURATION_RESPONSE) {
+                                    val points = it.points
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        UtilsQuiz.showSnackBar(
+                                            binding.container,
+                                            Snackbar.LENGTH_SHORT,
+                                            "You earned +$points for speaking in English"
+                                        )
+                                    }
+                                    AudioManagerQuiz.audioRecording.stopPlaying()
+                                    engine?.leaveChannel()
+                                    openFavouritePartnerScreen()
+                                }
+                            })
                         }
-                        AudioManagerQuiz.audioRecording.stopPlaying()
-                        engine?.leaveChannel()
-                        openFavouritePartnerScreen()
                     }
                 })
             }
@@ -607,44 +634,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             ?.remove(this)
             ?.commit()
         fm?.popBackStack()
-    }
-
-    fun deleteData(dialog: Dialog) {
-        if (fromType == RANDOM) {
-            saveRoomDataViewModel?.getClearRadius(
-                SaveCallDurationRoomData(
-                    roomId ?: "",
-                    currentUserId ?: "",
-                    currentUserTeamId ?: "",
-                    callTimeCount ?: ""
-                )
-            )
-            activity?.let {
-                saveRoomDataViewModel?.clearRadius?.observe(it, {
-                    dialog.dismiss()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    engine?.leaveChannel()
-                    openFavouritePartnerScreen()
-                })
-            }
-        } else {
-            saveRoomDataViewModel?.deleteUserRoomData(
-                SaveCallDurationRoomData(
-                    roomId ?: "",
-                    currentUserId ?: "",
-                    currentUserTeamId ?: "",
-                    callTimeCount ?: ""
-                )
-            )
-            activity?.let {
-                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
-                    dialog.dismiss()
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    engine?.leaveChannel()
-                    openFavouritePartnerScreen()
-                })
-            }
-        }
     }
 
     fun makeNewTeam() {
@@ -707,7 +696,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     ) {
 
         try {
-            scaleAnimationForNotification(binding.notificationCard)
+            CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             //  binding.notificationCard.visibility = View.VISIBLE
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
@@ -819,7 +808,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     ) {
         if (mentorId == currentUserId) {
             firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
-            scaleAnimationForNotification1(binding.notificationPlayAgain)
+            if (isUiActive)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationPlayAgain)
             // binding.notificationPlayAgain.visibility = View.VISIBLE
             binding.userNameForNotPlay.text = userName
             binding.txtMsgPlayAgain.text = "Click on Play Again to play another game with $userName"
@@ -853,26 +843,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             } catch (ex: Exception) {
             }
 
-        }
-    }
-
-    private fun scaleAnimationForNotification(v: View) {
-        try {
-            val animation = TranslateAnimation(0f, 0f, -100f, 0f)
-            animation.duration = 700
-            v.startAnimation(animation)
-            v.visibility = View.VISIBLE
-        } catch (ex: Exception) {
-        }
-    }
-
-    private fun scaleAnimationForNotification1(v: View) {
-        try {
-            val animation = TranslateAnimation(0f, 0f, -100f, 0f)
-            animation.duration = 700
-            v.startAnimation(animation)
-            v.visibility = View.VISIBLE
-        } catch (ex: Exception) {
         }
     }
 

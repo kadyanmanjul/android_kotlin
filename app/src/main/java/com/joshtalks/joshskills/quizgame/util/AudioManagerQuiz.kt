@@ -3,8 +3,6 @@ package com.joshtalks.joshskills.quizgame.util
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.joshtalks.joshskills.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +48,58 @@ class AudioManagerQuiz() {
                 Timber.d(ex)
             }
     }
+
+    fun notificationPlaying(application:Context){
+        try {
+            val mediaPlayer: MediaPlayer = MediaPlayer.create(
+                application,
+                R.raw.notification_sound
+            )
+            mediaPlayer.setVolume(0.8f,0.8f)
+            mediaPlayer.setOnCompletionListener { mediaPlayer ->
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+            mediaPlayer.start()
+        } catch (ex: Exception) {
+            Timber.d(ex)
+        }
+    }
+
+
+    fun rightAnswerPlaying(application:Context){
+        try {
+            val mediaPlayer: MediaPlayer = MediaPlayer.create(
+                application,
+                R.raw.correct_2_l_1
+            )
+            mediaPlayer.setVolume(0.6f,0.6f)
+            mediaPlayer.setOnCompletionListener { mediaPlayer ->
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+            mediaPlayer.start()
+        } catch (ex: Exception) {
+            Timber.d(ex)
+        }
+    }
+    fun wrongAnswerPlaying(application:Context){
+        try {
+            val mediaPlayer: MediaPlayer = MediaPlayer.create(
+                application,
+                R.raw.wrong_answer_quiz
+            )
+            mediaPlayer.setVolume(0.6f,0.6f)
+            mediaPlayer.setOnCompletionListener { mediaPlayer ->
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+            mediaPlayer.start()
+        } catch (ex: Exception) {
+            Timber.d(ex)
+        }
+    }
+
 
     fun isPlaying(): Boolean {
         return mPlayer?.isPlaying ?: false
