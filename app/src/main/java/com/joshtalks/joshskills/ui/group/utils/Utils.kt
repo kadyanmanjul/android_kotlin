@@ -50,6 +50,16 @@ fun pushMetaMessage(msg: String, groupId: String) {
     chatService.sendMessage(groupId, message)
 }
 
+fun pushMetaRemoveMsg(msg: String, groupId: String, mentorId: String) {
+    val chatService: ChatService = PubNubService
+    val message = MessageItem(
+        msg = msg,
+        msgType = META_MESSAGE,
+        mentorId = mentorId
+    )
+    chatService.sendMessage(groupId, message)
+}
+
 fun getColorHexCode(str: String): String {
     val colorArray = arrayOf(
         "#f83a7e", "#2213fa", "#d5857a",

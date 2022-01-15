@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
+import com.joshtalks.joshskills.ui.group.utils.pushMetaRemoveMsg
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -179,7 +180,7 @@ class GroupChatViewModel : BaseViewModel() {
                 }
                 getGroupInfo()
                 GroupAnalytics.push(GroupAnalytics.Event.MEMBER_REMOVED_FROM_GROUP, groupId, mentorId)
-                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId)
+                pushMetaRemoveMsg("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId, mentorId)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     dismissProgressDialog()

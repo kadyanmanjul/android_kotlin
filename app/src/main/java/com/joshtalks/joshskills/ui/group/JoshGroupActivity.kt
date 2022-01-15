@@ -1,7 +1,10 @@
 package com.joshtalks.joshskills.ui.group
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 
 import androidx.databinding.DataBindingUtil
@@ -30,6 +33,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 import timber.log.Timber
 
@@ -65,6 +69,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
+                REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
                 REFRESH_GRP_LIST_HIDE_INFO -> {
                     setNewGroupVisibility(it.data)
                     vm.setGroupsCount()
@@ -243,9 +248,39 @@ class JoshGroupActivity : BaseGroupActivity() {
         )
     }
 
+    private fun removeGroupFromDb(groupId: String) {
+        while (supportFragmentManager.backStackEntryCount > 0)
+            onBackPressed()
+        CoroutineScope(Dispatchers.IO).launch {
+            val groupName = vm.repository.getGroupName(groupId)
+            vm.repository.leaveGroupFromLocal(groupId)
+            withContext(Dispatchers.Main) {
+                showRemovedAlert(groupName)
+            }
+        }
+    }
+
     override fun getConversationId(): String? {
         vm.conversationId = intent.getStringExtra(CONVERSATION_ID) ?: ""
         return vm.conversationId
+    }
+
+    fun showRemovedAlert(groupName: String) {
+        val builder = AlertDialog.Builder(this)
+        val dialog: AlertDialog = builder
+            .setMessage("You have been removed from \"$groupName\" group")
+            .setPositiveButton("Ok") { dialog, id ->
+                dialog.cancel()
+            }
+            .create()
+
+        dialog.setCancelable(false)
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#107BE5"))
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

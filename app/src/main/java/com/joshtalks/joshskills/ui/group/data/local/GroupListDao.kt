@@ -22,6 +22,9 @@ interface GroupListDao {
     @Query("SELECT * FROM group_list_table WHERE groupId = :id")
     suspend fun getGroupItem(id: String): GroupsItem
 
+    @Query("SELECT name FROM group_list_table WHERE groupId = :id")
+    suspend fun getGroupName(id: String): String
+
     @Query("SELECT count(groupId) FROM group_list_table")
     suspend fun getGroupsCount(): Int
 

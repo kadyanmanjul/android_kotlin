@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.repository
 
+import android.os.Message
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
@@ -7,6 +8,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.google.gson.Gson
 
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -16,8 +19,7 @@ import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
-import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
@@ -53,6 +55,7 @@ import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -102,13 +105,22 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                             messageId = "${pnMessageResult.timetoken}_${pnMessageResult.channel}_${messageItem.mentorId}"
                         )
                     )
-                    if (messageItem.getMessageType() == RECEIVE_META_MESSAGE_LOCAL && messageItem.msg.contains("changed")){
-                        val message = messageItem.msg
+                    val message = messageItem.msg
+                    if (messageItem.getMessageType() == RECEIVE_META_MESSAGE_LOCAL && message.contains("changed")) {
                         when (message.contains("changed the group icon")) {
                             true -> { TODO("UPDATE IMAGE ICON") }
                             false -> {
-                                val newGroupName = messageItem.msg.substring(messageItem.msg.lastIndexOf("the group name to ") + 18)
+                                val newGroupName = message.substring(message.lastIndexOf("the group name to ") + 18)
                                 database.groupListDao().updateGroupName(pnMessageResult.channel, newGroupName)
+                            }
+                        }
+                    } else if (messageItem.getMessageType() == SENT_META_MESSAGE_LOCAL && message.contains("removed")) {
+                        if (messageItem.mentorId == Mentor.getInstance().getId()) {
+                            withContext(Dispatchers.Main) {
+                                val messageObj = Message()
+                                messageObj.what = REMOVE_GROUP_AND_CLOSE
+                                messageObj.obj = pnMessageResult.channel
+                                EventLiveData.value = messageObj
                             }
                         }
                     }
@@ -328,12 +340,20 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     suspend fun leaveGroupFromServer(request: LeaveGroupRequest): Int? {
         val response = apiService.leaveGroup(request)
         if (response.isSuccessful) {
-            database.groupListDao().deleteGroupItem(request.groupId)
-            database.timeTokenDao().deleteTimeToken(request.groupId)
-            database.groupChatDao().deleteGroupMessages(request.groupId)
+            leaveGroupFromLocal(request.groupId)
             return database.groupListDao().getGroupsCount()
         }
         return null
+    }
+
+    suspend fun getGroupName(groupId: String) = database.groupListDao().getGroupName(groupId)
+
+    fun leaveGroupFromLocal(groupId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            database.groupListDao().deleteGroupItem(groupId)
+            database.timeTokenDao().deleteTimeToken(groupId)
+            database.groupChatDao().deleteGroupMessages(groupId)
+        }
     }
 
     suspend fun removeMemberFromGroup(request: LeaveGroupRequest): Boolean {

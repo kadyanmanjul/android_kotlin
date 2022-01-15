@@ -20,3 +20,4 @@ const val SEND_MSG = 18
 const val INIT_LIST_TOOLTIP = 19
 const val NEW_CHAT_ADDED = 20
 const val REFRESH_GRP_LIST_HIDE_INFO = 21
+const val REMOVE_GROUP_AND_CLOSE = 22
