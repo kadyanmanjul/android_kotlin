@@ -12,9 +12,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="@dimen/_5sdp"
-    android:layout_marginLeft="@dimen/_12sdp"
+    android:layout_marginLeft="@dimen/_10sdp"
     android:layout_gravity="center"
-    android:layout_marginRight="@dimen/_12sdp"
+    android:layout_marginRight="@dimen/_10sdp"
     app:cardBackgroundColor="@color/white"
     >
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -75,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:background="@drawable/white_button_round_enabled"
+        android:textColor="@color/white"
         android:text="Submit"
         android:onClick="@{() -> handler.submitReport() }"
         android:textAllCaps="false"
