@@ -58,7 +58,7 @@ interface P2PNetworkService {
 
     @JvmSuppressWildcards
     @POST("$DIR/voicecall/agora_call_feedback_submit/")
-    suspend fun sendP2pCallReportSubmit(@Body params: Map<String, Any>)
+    suspend fun sendP2pCallReportSubmit(@Body params: Map<String, Any>):Response<Unit>
 
     @GET("$DIR/voicecall/agora_call_feedback_options/{value}")
     suspend fun getP2pCallOptions(@Path("value") value: String): ReportModel

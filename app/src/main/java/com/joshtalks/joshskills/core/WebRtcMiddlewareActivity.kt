@@ -88,8 +88,10 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                         yourAgoraId = mBoundService?.getUserAgoraId(),
                         dimBg = true,
                         activity = this@WebRtcMiddlewareActivity,
-                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    )
+                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                        callerId = mBoundService?.getOppositeCallerId()!!,
+                        currentUserId=mBoundService?.getUserAgoraId()!!
+                        )
                     this@WebRtcMiddlewareActivity.finish()
                 }
                 mBoundService?.setOppositeUserInfo(null)

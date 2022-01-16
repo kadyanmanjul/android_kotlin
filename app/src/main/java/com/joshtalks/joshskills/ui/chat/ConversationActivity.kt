@@ -103,6 +103,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
@@ -266,8 +267,19 @@ class ConversationActivity :
     }
     private fun addIssuesToSharedPref(){
         GlobalScope.launch(Dispatchers.IO){
-            PrefManager.putPrefObject("REPORT_ISSUE", AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT"))
-            PrefManager.putPrefObject("BLOCK_ISSUE", AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK"))
+
+            try{
+                PrefManager.putPrefObject(REPORT_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT"))
+
+            }catch (e:java.lang.Exception){
+                Timber.tag("APIexception").d("$e")
+            }
+            try{
+                PrefManager.putPrefObject(BLOCK_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK"))
+
+            }catch (e:java.lang.Exception){
+                Timber.tag("APIexception").d("$e")
+            }
 
         }
     }

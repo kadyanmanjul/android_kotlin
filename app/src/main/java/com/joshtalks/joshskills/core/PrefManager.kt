@@ -103,8 +103,8 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
-public const val BLOCK_ISSUE = "block_issue_list"
-public  const val REPORT_ISSUE = "report_issue_list"
+const val BLOCK_ISSUE = "BLOCK_ISSUE"
+const val REPORT_ISSUE = "REPORT_ISSUE"
 
 
 object PrefManager {

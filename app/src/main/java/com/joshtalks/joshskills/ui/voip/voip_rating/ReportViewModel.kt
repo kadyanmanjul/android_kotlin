@@ -5,8 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BLOCK_ISSUE
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REPORT_ISSUE
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -18,16 +21,29 @@ class ReportViewModel : BaseViewModel() {
     lateinit var tittle:LiveData<String>
 
     fun getReportOptionsList(value: String) {
-        viewModelScope.launch(Dispatchers.IO){
-            reportResponseModel = AppObjectController.p2pNetworkService.getP2pCallOptions(value)
-            reportModel.postValue(reportResponseModel!!)
-            saveReportOptionsListToSharedPref(value)
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO){
+            try {
+                reportResponseModel = AppObjectController.p2pNetworkService.getP2pCallOptions(value)
+                reportModel.postValue(reportResponseModel!!)
+                saveReportOptionsListToSharedPref(value)
+            }catch (e:java.lang.Exception){
+                Timber.tag("APIexcpetion").d("$e")
+
+            }
+
         }
     }
 
     fun submitReportOption(map: HashMap<String, Any>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            AppObjectController.p2pNetworkService.sendP2pCallReportSubmit(map)
+        CoroutineScope(Dispatchers.IO).launch {
+
+            try{
+                AppObjectController.p2pNetworkService.sendP2pCallReportSubmit(map)
+
+            }catch(e:Exception){
+                Timber.tag("APIexcpetion").d("$e")
+            }
+
 
         }
     }
@@ -37,15 +53,15 @@ class ReportViewModel : BaseViewModel() {
 
        when(value){
            "REPORT"->{
-              if(PrefManager.getPrefObject("REPORT_ISSUE")!=null){
-                  reportModel.value= PrefManager.getPrefObject("REPORT_ISSUE")
+              if(PrefManager.getPrefObject(REPORT_ISSUE)!=null){
+                  reportModel.value= PrefManager.getPrefObject(REPORT_ISSUE)
               }else{
                   getReportOptionsList(value)
               }
            }
           "BLOCK"->{
-              if(PrefManager.getPrefObject("BLOCK_ISSUE")!=null){
-                  reportModel.value= PrefManager.getPrefObject("BLOCK_ISSUE")
+              if(PrefManager.getPrefObject(BLOCK_ISSUE)!=null){
+                  reportModel.value= PrefManager.getPrefObject(BLOCK_ISSUE)
               }
           }
        }
@@ -55,10 +71,10 @@ class ReportViewModel : BaseViewModel() {
 
         when(value){
             "REPORT"->{
-                reportModel.value?.let { PrefManager.putPrefObject("REPORT_ISSUE", it) }
+                reportModel.value?.let { PrefManager.putPrefObject(REPORT_ISSUE, it) }
             }
             "BLOCK"->{
-                reportModel.value?.let { PrefManager.putPrefObject("BLOCK_ISSUE", it) }
+                reportModel.value?.let { PrefManager.putPrefObject(BLOCK_ISSUE, it) }
             }
 
 
