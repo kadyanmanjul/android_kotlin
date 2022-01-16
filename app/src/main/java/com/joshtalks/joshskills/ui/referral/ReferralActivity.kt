@@ -325,9 +325,9 @@ class ReferralActivity : BaseActivity() {
             showToast(getString(R.string.whatsApp_not_installed))
         }
         if (packageString == WHATSAPP_PACKAGE_STRING) {
-            viewModel.saveReferralImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
+            viewModel.saveImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
         } else {
-            viewModel.saveReferralImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
+            viewModel.saveImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
         }
     }
 

@@ -305,7 +305,4 @@ interface CommonNetworkService {
 
     @POST("$DIR/link_attribution/deep_link/")
     suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
-
-    @POST("$DIR/impression/track_referral_impressions/")
-    suspend fun saveReferralImpression(@Body params: Map<String, String>): Response<Void>
 }

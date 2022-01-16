@@ -90,7 +90,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         iv_setting.visibility = View.VISIBLE
 
         iv_icon_referral.setOnClickListener {
-            refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
+            refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
         }
@@ -137,7 +137,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             popupMenu?.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
-                        refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
+                        refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
                         ReferralActivity.startReferralActivity(this@InboxActivity)
                         return@setOnMenuItemClickListener true
                     }

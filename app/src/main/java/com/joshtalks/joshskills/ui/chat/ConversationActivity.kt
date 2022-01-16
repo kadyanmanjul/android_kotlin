@@ -435,7 +435,7 @@ class ConversationActivity :
                 finish()
             }
             conversationBinding.ivIconReferral.setOnClickListener {
-                refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
+                refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
 
                 ReferralActivity.startReferralActivity(
                     this@ConversationActivity,
@@ -450,7 +450,7 @@ class ConversationActivity :
                 when (it.itemId) {
                     R.id.menu_referral -> {
 
-                        refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
+                        refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
 
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
