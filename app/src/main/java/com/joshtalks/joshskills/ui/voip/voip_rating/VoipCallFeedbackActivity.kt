@@ -45,7 +45,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
     private var yourName: String = EMPTY
     private var callerId:Int = -1
     private var currentId:Int= -1
-    private var type="REPORT"
 
 
 
@@ -209,7 +208,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
 
                     }
                     "NO" -> {
-                         type="BLOCK"
                         showReportDialog("BLOCK"){
                             closeActivity()
                         }
