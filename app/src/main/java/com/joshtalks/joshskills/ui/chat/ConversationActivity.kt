@@ -78,6 +78,7 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
@@ -183,6 +184,10 @@ class ConversationActivity :
             "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
             "आपके सहपाठी कौन हैं और उनके कितने पॉइंट्स हैं आप यहाँ से देख सकते हैं"
         )
+    }
+
+    private val refViewModel: ReferralViewModel by lazy {
+        ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -430,16 +435,7 @@ class ConversationActivity :
                 finish()
             }
             conversationBinding.ivIconReferral.setOnClickListener {
-
-                AppAnalytics
-                    .create(AnalyticsEvent.REFER_CONVERSATION_ICON_CLICKED.NAME)
-                    .addBasicParam()
-                    .addUserDetails()
-                    .addParam(
-                        AnalyticsEvent.REFERRAL_CODE.NAME,
-                        Mentor.getInstance().referralCode
-                    )
-                    .push()
+                refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
 
                 ReferralActivity.startReferralActivity(
                     this@ConversationActivity,
@@ -454,15 +450,7 @@ class ConversationActivity :
                 when (it.itemId) {
                     R.id.menu_referral -> {
 
-                        AppAnalytics
-                            .create(AnalyticsEvent.REFER_BUTTON_CONVERSATION_MENU.NAME)
-                            .addBasicParam()
-                            .addUserDetails()
-                            .addParam(
-                                AnalyticsEvent.REFERRAL_CODE.NAME,
-                                Mentor.getInstance().referralCode
-                            )
-                            .push()
+                        refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
 
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,

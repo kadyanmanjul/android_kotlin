@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.referral
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -25,7 +24,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.util.ApplicationSelectorReceiver
 import com.muddzdev.styleabletoast.StyleableToast
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
@@ -103,7 +101,6 @@ class ReferralActivity : BaseActivity() {
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
             .push()
-        viewModel.saveImpression(IMPRESSION_OPEN_REFERRAL_SCREEN)
     }
 
 
@@ -316,9 +313,6 @@ class ReferralActivity : BaseActivity() {
             }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
 
-
-
-
             startActivity(Intent.createChooser(waIntent, "Share with"))
             AppAnalytics
                 .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)
@@ -331,9 +325,9 @@ class ReferralActivity : BaseActivity() {
             showToast(getString(R.string.whatsApp_not_installed))
         }
         if (packageString == WHATSAPP_PACKAGE_STRING) {
-            viewModel.saveImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
+            viewModel.saveReferralImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
         } else {
-            viewModel.saveImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
+            viewModel.saveReferralImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
         }
     }
 

@@ -172,7 +172,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+           // buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
             //For Port
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9007\""
 

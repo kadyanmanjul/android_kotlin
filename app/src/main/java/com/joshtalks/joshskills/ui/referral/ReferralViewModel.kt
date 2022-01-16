@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ReferralViewModel(application: Application) : AndroidViewModel(application) {
-
+    //var isFromScreen:String?=null
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -29,21 +29,22 @@ class ReferralViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun saveReferralImpression(eventName: String, screenName: String){
-        viewModelScope.launch(Dispatchers.IO){
-            try{
+    fun saveReferralImpression(eventName: String) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("share_platform", eventName),
-                    Pair("screen_name", screenName)
+                    Pair("event_name", eventName)
                 )
-            }catch (ex: java.lang.Exception){
+                AppObjectController.commonNetworkService.saveReferralImpression(requestData)
+            } catch (ex: java.lang.Exception) {
                 Timber.e(ex)
             }
         }
     }
 
-    fun getDeepLink(deepLink:String,contentId:String) {
+    fun getDeepLink(deepLink: String, contentId: String) {
         viewModelScope.launch {
             try {
                 val requestData = LinkAttribution(

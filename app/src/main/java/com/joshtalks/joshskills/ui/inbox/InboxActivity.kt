@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
@@ -61,6 +62,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
 
+    private val refViewModel: ReferralViewModel by lazy {
+        ViewModelProvider(this).get(ReferralViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
@@ -85,16 +90,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         iv_setting.visibility = View.VISIBLE
 
         iv_icon_referral.setOnClickListener {
-
-            AppAnalytics
-                .create(AnalyticsEvent.REFER_INBOX_ICON_CLICKED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .addParam(
-                    AnalyticsEvent.REFERRAL_CODE.NAME,
-                    Mentor.getInstance().referralCode
-                )
-                .push()
+            refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
         }
@@ -134,10 +130,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
     }
 
-
-
-
-
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {
             popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
@@ -145,16 +137,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             popupMenu?.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
-                        AppAnalytics
-                            //.create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
-                            .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
-                            .addBasicParam()
-                            .addUserDetails()
-                            .addParam(
-                                AnalyticsEvent.REFERRAL_CODE.NAME,
-                                Mentor.getInstance().referralCode
-                            )
-                            .push()
+                        refViewModel.saveReferralImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
                         ReferralActivity.startReferralActivity(this@InboxActivity)
                         return@setOnMenuItemClickListener true
                     }
