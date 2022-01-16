@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.base.BaseViewModel
 import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
 import com.joshtalks.joshskills.quizgame.ui.data.model.AgoraToTokenResponse
@@ -19,7 +18,7 @@ class ChoiceViewModel(var application11: Application) : BaseViewModel(applicatio
     val homeInactiveResponse: MutableLiveData<Success> = MutableLiveData()
     val agoraToToken: MutableLiveData<AgoraToTokenResponse> = MutableLiveData()
 
-//    fun openFavouritePartnerScreen(){
+    //    fun openFavouritePartnerScreen(){
 //        message.what = OPEN_FAVOURITE_SCREEN
 //        singleLiveEvent.value = message
 //    }
@@ -39,7 +38,7 @@ class ChoiceViewModel(var application11: Application) : BaseViewModel(applicatio
                 }
             }
         } catch (ex: Throwable) {
-            showToast(ex.message?:"")
+
         }
     }
 
@@ -54,7 +53,7 @@ class ChoiceViewModel(var application11: Application) : BaseViewModel(applicatio
                 }
             }
         } catch (ex: Throwable) {
-            showToast(ex.message?:"")
+
         }
     }
 
@@ -69,7 +68,6 @@ class ChoiceViewModel(var application11: Application) : BaseViewModel(applicatio
                 }
             }
         } catch (ex: Throwable) {
-            showToast(ex.message?:"")
         }
     }
 

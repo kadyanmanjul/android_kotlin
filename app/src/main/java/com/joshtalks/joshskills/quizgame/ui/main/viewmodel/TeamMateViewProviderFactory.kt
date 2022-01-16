@@ -3,8 +3,6 @@ package com.joshtalks.joshskills.quizgame.ui.main.viewmodel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshskills.quizgame.ui.data.repository.FavouriteRepo
-import com.joshtalks.joshskills.quizgame.ui.data.repository.TeamMateFoundRepo
 
 class TeamMateViewProviderFactory(
     val app: Application

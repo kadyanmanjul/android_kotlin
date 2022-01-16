@@ -8,5 +8,7 @@ data class Favourite(
     @SerializedName("name")
     var name: String? = null,
     @SerializedName("image_url")
-    var image: String? = null
+    var image: String? = null,
+    @SerializedName("user_status")
+    var status: String?
 )

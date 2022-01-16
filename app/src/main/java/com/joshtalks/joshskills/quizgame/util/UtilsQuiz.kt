@@ -4,12 +4,8 @@ import android.app.Activity
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.TranslateAnimation
-import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 object UtilsQuiz {
        fun dipDown(targetView: View,activity: Activity) {

@@ -264,22 +264,6 @@ class FirebaseDatabase {
             }
     }
 
-    fun getRoomTime(roomId: String, onTimeChange: OnTimeChange) {
-        changeTime.addSnapshotListener { value, e ->
-            if (e != null) {
-                return@addSnapshotListener
-            }
-            for (doc in value!!) {
-                if (doc.exists()) {
-                    if (roomId == doc.id) {
-                        onTimeChange.onTimeChangeMethod(doc.data["time"] as Long)
-                    }
-                }
-            }
-        }
-    }
-
-
 //    fun deleteTimeChange(mentorId: String) {
 //        changeTime.document(mentorId).delete()
 //    }
@@ -432,27 +416,19 @@ class FirebaseDatabase {
             }
     }
 
-    fun updateTime(mentorId: String, time: Long) {
-        val channel: HashMap<String, Long> = HashMap()
-        channel["time"] = time
-        collectionCurrentUserRoomId.document(mentorId).set(channel)
-    }
-
-    fun getUpdatedTime(mentorId: String, onTimeUpdate: OnTimeUpdate) {
-        collectionCurrentUserRoomId
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mentorId == doc.id) {
-                            val time = doc.data["time"] as Long
-                            onTimeUpdate.onTimeUpdateMethod(time)
-                        }
+    fun getRoomTime(roomId: String, onTimeChange: OnTimeChange) {
+        changeTime.addSnapshotListener { value, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+            for (doc in value!!) {
+                if (doc.exists()) {
+                    if (roomId == doc.id) {
+                        onTimeChange.onTimeChangeMethod(doc.data["time"] as Long)
                     }
                 }
             }
+        }
     }
 
     fun deleteMuteUnmute(mentorId: String) {

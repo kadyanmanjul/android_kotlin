@@ -26,10 +26,7 @@ import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModel
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.CustomDialogQuiz
-import com.joshtalks.joshskills.quizgame.util.P2pRtc
-import com.joshtalks.joshskills.quizgame.util.UtilsQuiz
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -39,10 +36,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
-const val FOUR_USER_FOUND_MSG: String = "4 users found in Redis successfully"
-const val NO_OPPONENT_FOUND = "No Opponent Team Found Please Retry"
-const val USER_DELETED_SUCCESSFULLY = "User deleted successfully"
 
 class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
@@ -103,9 +96,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     private var engine: RtcEngine? = null
     private var timer: CountDownTimer? = null
 
-    // private var isUiActive: Boolean = false
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -132,7 +122,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE)
-        //  FirebaseDatabase().getRoomTime(currentUserId ?: "", this)
 
         try {
             engine = P2pRtc().getEngineObj()
@@ -167,7 +156,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         searchRandomViewModel = factory?.let {
             ViewModelProvider(this, it).get(SearchRandomUserViewModel::class.java)
         }
-        // searchRandomViewModel?.statusChange(currentUserId, ACTIVE)
     }
 
     fun setCurrentUserData() {
@@ -286,7 +274,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
 
 
         if (team1UserId1 == currentUserId || team1UserId2 == currentUserId) {
-            //yaha par ham jo current user hai usko niche set karte hai or uske partner ko bhi
 
             currentUserTeamId = team1Id
             if (team1UserId1 == currentUserId) {
@@ -374,7 +361,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         userRoomId = roomId
         try {
             if (userRoomId != null) {
-                // if (isUiActive){
                 searchRandomViewModel?.getRandomUserDataByRoom(
                     RandomRoomData(
                         userRoomId ?: "",
@@ -390,7 +376,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                         timer?.onFinish()
                     })
                 }
-                // }
             }
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -443,29 +428,6 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
                 ?.commit()
         }, 4000)
     }
-
-//    fun moveFragmentWhenRoomCreated(time: Long) {
-//        val android = ((System.currentTimeMillis() / 1000) % 60)
-//        val serverTime = (time) % 60
-//
-//        val countDown = serverTime - android
-//
-//        val handler = Handler(Looper.getMainLooper())
-//        handler.postDelayed({
-//            val fm = activity?.supportFragmentManager
-//            fm?.beginTransaction()
-//                ?.replace(
-//                    R.id.container,
-//                    RandomTeamMateFoundFragment.newInstance(
-//                        userRoomId ?: "",
-//                        opponentUserImage ?: "",
-//                        opponentUserName ?: "",
-//                        currentUserTeamId ?: ""
-//                    ), "RandomPartnerFragment"
-//                )
-//                ?.commit()
-//        }, (countDown - 15) * 1000)
-//    }
 
 
     fun onBackPress() {

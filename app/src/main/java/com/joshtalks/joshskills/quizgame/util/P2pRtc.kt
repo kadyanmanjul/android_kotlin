@@ -4,16 +4,10 @@ import android.app.Activity
 import android.app.Service
 import android.content.Context
 import android.media.AudioManager
-import androidx.core.content.ContextCompat.getSystemService
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.voip.WebRtcCallback
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import io.agora.rtc.Constants
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
-import timber.log.Timber
-import java.lang.ref.WeakReference
 
 class P2pRtc {
     companion object {

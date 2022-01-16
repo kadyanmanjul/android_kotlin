@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
@@ -37,19 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
-const val YOU_WON: String = "You Won!"
-const val WINNER: String = "Winner"
-const val TEAM_SCORE: String = "team_score"
-const val OPPONENT_TEAM_MARKS: String = "opponent_team_marks"
-const val TEAM_ID: String = "team_id"
-const val OPPONENT_WON: String = "Opponent Won!"
-const val ZERO: String = "0"
-const val FIVE: String = "5"
-const val DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_FPP: String =
-    "Data deleted successfully from firebase"
-const val DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_AND_RADIUS: String =
-    "Data deleted successfully from firebase and redis"
 
 class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     P2pRtc.WebRtcEngineCallback {
@@ -117,8 +102,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             callTimeCount = it.getString(CALL_TIME)
             fromType = it.getString(FROM_TYPE)
         }
-
-        Log.d("winscreen", "onCreate: ")
         setRoomUsersData()
     }
 
@@ -144,8 +127,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("winscreen", "onViewCreated: ")
-
         binding.container.setBackgroundColor(Color.WHITE)
         currentUserId = Mentor.getInstance().getId()
         currentUserName = Mentor.getInstance().getUser()?.firstName
@@ -155,7 +136,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             binding.team1User2Name.alpha = 0.5f
             binding.team1UserImage2Shadow.visibility = View.VISIBLE
         }
-
         showRoomUserData()
 
         try {
@@ -183,7 +163,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.conglutions.visibility = View.VISIBLE
                 binding.winImg11.visibility = View.VISIBLE
                 binding.conglutions.setImageResource(R.drawable.ic_congratulations)
-                //yaha congulation wala or won ka icon lagana hai
             }
             marks?.toInt() ?: 0 == opponentTeamMarks?.toInt() ?: 0 -> {
                 winnerTeamStatus = false
@@ -210,7 +189,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.winImg.visibility = View.VISIBLE
                 binding.txtWinner.visibility = View.VISIBLE
                 binding.conglutions.visibility = View.VISIBLE
-                //yaha opponent won wala or won ka icon lagana hai
             }
         }
         time = callTimeCount?.toInt()?.div(1000)
@@ -218,7 +196,15 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
         getFriendRequest()
         activity?.let {
             saveRoomDataViewModel?.saveRoomDetailsData?.observe(it, Observer {
-                Timber.d(it.message)
+                val points = it.points
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    UtilsQuiz.showSnackBar(
+                        binding.container,
+                        Snackbar.LENGTH_SHORT,
+                        "You earned +$points in this game"
+                    )
+                }
                 getPlayAgainDataFromFirebase()
             })
         }
@@ -379,7 +365,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
 
         if (team1UserId1 == currentUserId || team1UserId2 == currentUserId) {
-            //yaha par ham jo current user hai usko niche set karte hai or uske partner ko bhi
 
             if (team1UserId1 == currentUserId) {
                 partnerId = team1UserId2
@@ -398,7 +383,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
             if (currentUserId == team1UserId1) {
                 val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
-                //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
                     team1User1Name ?: "",
@@ -408,7 +392,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.team1User1Name.text = getSplitName(team1User1Name)
 
                 val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
-                //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
                     team1User2Name ?: "",
@@ -418,7 +401,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.team1User2Name.text = getSplitName(team1User2Name)
             } else {
                 val imageUrl2 = team1User1ImageUrl?.replace("\n", "")
-                // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
                     team1User2Name ?: "",
@@ -428,7 +410,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.team1User2Name.text = getSplitName(team1User1Name)
 
                 val imageUrl1 = team1User2ImageUrl?.replace("\n", "")
-                //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
                     team1User2Name ?: "",
@@ -438,7 +419,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.team1User1Name.text = getSplitName(team1User2Name)
             }
             val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-            //  ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
                 team2User1Name ?: "",
@@ -448,7 +428,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             binding.team2User1Name.text = getSplitName(team2User1Name)
 
             val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
-            //ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
                 team2User2Name ?: "",
@@ -476,7 +455,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
             if (team2UserId1 == currentUserId) {
                 val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
-                // ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
                     team2User1Name ?: "",
@@ -486,7 +464,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.team1User1Name.text = getSplitName(team2User1Name)
 
                 val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-                // ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
                     team2User2Name ?: "",
@@ -496,7 +473,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.team1User2Name.text = getSplitName(team2User2Name)
             } else {
                 val imageUrl1 = team2User2ImageUrl?.replace("\n", "")
-                //ImageAdapter.imageUrl(binding.team1UserImage1, imageUrl1)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
                     team2User2Name ?: "",
@@ -506,7 +482,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 binding.team1User1Name.text = getSplitName(team2User2Name)
 
                 val imageUrl2 = team2User1ImageUrl?.replace("\n", "")
-                //ImageAdapter.imageUrl(binding.team1UserImage2, imageUrl2)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
                     team2User1Name ?: "",
@@ -517,7 +492,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             }
 
             val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-            // ImageAdapter.imageUrl(binding.team2UserImage1, imageUrl3)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
                 team1User1Name ?: "",
@@ -527,7 +501,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             binding.team2User1Name.text = getSplitName(team1User1Name)
 
             val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-            // ImageAdapter.imageUrl(binding.team2UserImage2, imageUrl4)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
                 team1User2Name ?: "",
@@ -582,6 +555,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                                     }
                                     AudioManagerQuiz.audioRecording.stopPlaying()
                                     engine?.leaveChannel()
+                                    binding.callTime.stop()
                                     openFavouritePartnerScreen()
                                 }
                             })
@@ -614,6 +588,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                                     }
                                     AudioManagerQuiz.audioRecording.stopPlaying()
                                     engine?.leaveChannel()
+                                    binding.callTime.stop()
                                     openFavouritePartnerScreen()
                                 }
                             })
@@ -637,6 +612,14 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
     }
 
     fun makeNewTeam() {
+        val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
+        saveRoomDataViewModel?.saveCallDuration(
+            SaveCallDuration(
+                currentUserTeamId ?: "",
+                startTime.toInt().div(1000).toString(),
+                currentUserId ?: ""
+            )
+        )
         if (fromType == RANDOM) {
             saveRoomDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
@@ -648,9 +631,28 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             )
             activity?.let {
                 saveRoomDataViewModel?.clearRadius?.observe(it, {
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    engine?.leaveChannel()
-                    openFavouritePartnerScreen()
+                    if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_AND_RADIUS) {
+                        activity?.let {
+                            saveRoomDataViewModel?.saveCallDuration?.observe(it, {
+                                if (it.message == CALL_DURATION_RESPONSE) {
+                                    val points = it.points
+                                    if (points.toInt() >= 1){
+                                        lifecycleScope.launch(Dispatchers.Main) {
+                                            UtilsQuiz.showSnackBar(
+                                                binding.container,
+                                                Snackbar.LENGTH_SHORT,
+                                                "You earned +$points for speaking in English"
+                                            )
+                                        }
+                                    }
+                                    AudioManagerQuiz.audioRecording.stopPlaying()
+                                    engine?.leaveChannel()
+                                    binding.callTime.stop()
+                                    openFavouritePartnerScreen()
+                                }
+                            })
+                        }
+                    }
                 })
             }
         } else {
@@ -663,10 +665,29 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 )
             )
             activity?.let {
-                saveRoomDataViewModel?.deleteData?.observe(it, Observer {
-                    AudioManagerQuiz.audioRecording.stopPlaying()
-                    engine?.leaveChannel()
-                    openFavouritePartnerScreen()
+                saveRoomDataViewModel?.deleteData?.observe(it, {
+                    if (it.message == DATA_DELETED_SUCCESSFULLY_FROM_FIREBASE_FPP) {
+                        activity?.let {
+                            saveRoomDataViewModel?.saveCallDuration?.observe(it, {
+                                if (it.message == CALL_DURATION_RESPONSE) {
+                                    val points = it.points
+                                    if (points.toInt() >= 1){
+                                        lifecycleScope.launch(Dispatchers.Main) {
+                                            UtilsQuiz.showSnackBar(
+                                                binding.container,
+                                                Snackbar.LENGTH_SHORT,
+                                                "You earned +$points for speaking in English"
+                                            )
+                                        }
+                                    }
+                                    AudioManagerQuiz.audioRecording.stopPlaying()
+                                    engine?.leaveChannel()
+                                    binding.callTime.stop()
+                                    openFavouritePartnerScreen()
+                                }
+                            })
+                        }
+                    }
                 })
             }
         }
@@ -679,6 +700,8 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 PrefManager.put(USER_LEAVE_THE_GAME, false)
                 binding.btnPlayAgain.isEnabled = false
                 requireActivity().runOnUiThread {
+                    engine?.leaveChannel()
+                    binding.callTime.stop()
                     binding.team1User2Name.alpha = 0.5f
                     binding.team1UserImage2Shadow.visibility = View.VISIBLE
                 }
@@ -697,7 +720,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
 
         try {
             CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
-            //  binding.notificationCard.visibility = View.VISIBLE
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromImageUrl.replace("\n", "")
@@ -719,7 +741,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             handler.removeCallbacksAndMessages(null)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            //binding.notificationCard.visibility = View.INVISIBLE
             firebaseDatabase.deleteRequest(currentUserId ?: "")
         }
 
@@ -746,7 +767,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             handler.removeCallbacksAndMessages(null)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            //binding.notificationCard.visibility = View.INVISIBLE
             firebaseDatabase.deleteRequest(currentUserId ?: "")
         }
 
@@ -754,7 +774,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             handler.postDelayed({
                 if (isUiActive)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-                //  binding.notificationCard.visibility = View.INVISIBLE
                 firebaseDatabase.deleteRequest(currentUserId ?: "")
             }, 10000)
         } catch (ex: Exception) {
@@ -810,7 +829,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationPlayAgain)
-            // binding.notificationPlayAgain.visibility = View.VISIBLE
             binding.userNameForNotPlay.text = userName
             binding.txtMsgPlayAgain.text = "Click on Play Again to play another game with $userName"
             activity?.let {
@@ -827,7 +845,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                 handler.removeCallbacksAndMessages(null)
                 if (isUiActive)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationPlayAgain)
-                // binding.notificationPlayAgain.visibility = View.INVISIBLE
                 firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
             }
 
@@ -837,7 +854,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                             binding.notificationPlayAgain
                         )
-                    //  binding.notificationPlayAgain.visibility = View.INVISIBLE
                     firebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
                 }, 10000)
             } catch (ex: Exception) {
@@ -852,7 +868,6 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             isUiActive = false
             firebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
         } catch (ex: Exception) {
-            showToast(ex.message ?: "")
         }
     }
 

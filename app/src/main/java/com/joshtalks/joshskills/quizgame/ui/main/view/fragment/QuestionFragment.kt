@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.*
-import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -38,18 +37,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-const val BOTH_TEAM_SELECTED: String =
-    "Both teams selected answer before 7 seconds , show response and animations to all the users in room"
-const val CALL_TIME: String = "callTime"
-const val FROM_TYPE: String = "fromType"
-const val QUESTION_COUNT: String = "7"
-const val LAST_ROUND: String = "Last Round"
-const val ROUND_2X_BOUNCE: String = "2X BONUS!"
-const val RANDOM: String = "Random"
-
-
 class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
-    FirebaseDatabase.OnAnimationTrigger, FirebaseDatabase.OnTimeUpdate,
+    FirebaseDatabase.OnAnimationTrigger,
     P2pRtc.WebRtcEngineCallback {
     private lateinit var binding: FragmentQuestionBinding
     private var position: Int = 0
@@ -58,7 +47,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     private var timer: CountDownTimer? = null
     private var givenTeamId: String? = null
     private var currentUserId: String? = null
-    private var actualTime: Long = 15
 
     private var factory: QuestionProviderFactory? = null
     private var questionViewModel: QuestionViewModel? = null
@@ -110,10 +98,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     lateinit var progressBar1: ProgressBar
 
     val handlerForTimer = Handler(Looper.getMainLooper())
-
-    //val handlerForAnswerAnim = Handler(Looper.getMainLooper())
-    //val handlerOpponentTeamCutCard = Handler(Looper.getMainLooper())
     var isUiShown = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -181,7 +167,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
         }
 
-        //buttonEnableDisable()
         activity?.let {
             try {
                 questionViewModel?.questionData?.observe(it, Observer {
@@ -566,15 +551,14 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
 
 
         if (team1UserId1 == currentUserId || team1UserId2 == currentUserId) {
-            //yaha par ham jo current user hai usko niche set karte hai or uske partner ko bhi
 
             currentUserTeamId = team1Id
             opponentTeamId = team2Id
 
-            if (team1UserId1 == currentUserId) {
-                partnerId = team1UserId2
+            partnerId = if (team1UserId1 == currentUserId) {
+                team1UserId2
             } else {
-                partnerId = team1UserId1
+                team1UserId1
             }
 
             try {
@@ -628,10 +612,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             currentUserTeamId = team2Id
             opponentTeamId = team1Id
 
-            if (team2UserId1 == currentUserId) {
-                partnerId = team2UserId2
+            partnerId = if (team2UserId1 == currentUserId) {
+                team2UserId2
             } else {
-                partnerId = team2UserId1
+                team2UserId1
             }
 
             try {
@@ -775,7 +759,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         try {
             if (isUiShown) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    delay(2000)
+                    delay(1000)
                     binding.card1.visibility = View.VISIBLE
                     binding.card2.visibility = View.VISIBLE
                     binding.card3.visibility = View.VISIBLE
@@ -797,7 +781,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         roomId: String,
         pos: Int
     ) {
-        //yaha ham current user ki mentor id se match karege agar vo uski hai tu uski team ki id nikelege
         if (teamUserId == team1UserId1 || teamUserId == team1UserId2) {
             givenTeamId = teamId1
         } else if (teamUserId == team2UserId1 || teamUserId == team2UserId2) {
@@ -834,9 +817,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     choiceAnswer(choiceAnswer, isCorrect ?: "")
                     val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
                     if (it.message == BOTH_TEAM_SELECTED) {
-                        val time = (System.currentTimeMillis() / 1000) % 60
-
-                        firebaseDatabase.updateTime(currentUserId ?: "", time + actualTime)
                         firebaseDatabase.createOpponentTeamShowCutCard(
                             opponentTeamId ?: "",
                             isCorrect ?: "",
@@ -847,12 +827,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                             isCorrect ?: "",
                             firstTeamAnswer ?: ""
                         )
-
-                        //hame yaha partner ke liye call back likhna hoga jis se ham usko card ke dono side cut dikha sake
                     }
                 })
-                // partnerId = getPartnerId()
-
                 if (isCorrect == TRUE) {
                     marks += if (isLastQuestion) {
                         (seconds * 2)
@@ -870,7 +846,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         secondaryProgressStatus = marks
                         progressBar.secondaryProgress = secondaryProgressStatus
 
-                        //yaha ka code dekhna hai once
                         progressBar.progress = marks - (seconds)
                     } else {
                         progressBar.progress = marks
@@ -879,7 +854,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 } catch (ex: Exception) {
 
                 }
-                // yaha ham partner me uski id or answer bheje ge jis se usko vo answer dikha sake ki kya tick kiya hai
                 isCorrect?.let { it1 ->
                     onOptionSelect(
                         currentUserTeamId,
@@ -1134,17 +1108,19 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                                 questionViewModel?.saveCallDuration?.observe(it, {
                                     if (it.message == CALL_DURATION_RESPONSE) {
                                         val points = it.points
-                                        lifecycleScope.launch(Dispatchers.Main) {
-                                            UtilsQuiz.showSnackBar(
-                                                binding.container,
-                                                Snackbar.LENGTH_SHORT,
-                                                "You earned +$points for speaking in English"
-                                            )
+                                        if (points.toInt() >= 1) {
+                                            lifecycleScope.launch(Dispatchers.Main) {
+                                                UtilsQuiz.showSnackBar(
+                                                    binding.container,
+                                                    Snackbar.LENGTH_SHORT,
+                                                    "You earned +$points for speaking in English"
+                                                )
+                                            }
                                         }
                                         AudioManagerQuiz.audioRecording.stopPlaying()
                                         engine?.leaveChannel()
-                                        openFavouritePartnerScreen()
                                         binding.callTime.stop()
+                                        openFavouritePartnerScreen()
                                     }
                                 })
                             }
@@ -1170,15 +1146,18 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                                 questionViewModel?.saveCallDuration?.observe(it, {
                                     if (it.message == CALL_DURATION_RESPONSE) {
                                         val points = it.points
-                                        lifecycleScope.launch(Dispatchers.Main) {
-                                            UtilsQuiz.showSnackBar(
-                                                binding.container,
-                                                Snackbar.LENGTH_SHORT,
-                                                "You earned +$points for speaking in English"
-                                            )
+                                        if (points.toInt() >= 1) {
+                                            lifecycleScope.launch(Dispatchers.Main) {
+                                                UtilsQuiz.showSnackBar(
+                                                    binding.container,
+                                                    Snackbar.LENGTH_SHORT,
+                                                    "You earned +$points for speaking in English"
+                                                )
+                                            }
                                         }
                                         AudioManagerQuiz.audioRecording.stopPlaying()
                                         engine?.leaveChannel()
+                                        binding.callTime.stop()
                                         openFavouritePartnerScreen()
                                     }
                                 })
@@ -1263,45 +1242,18 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer1.text -> {
                     drawTriangleOnCard(binding.imageCardRight1)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        Log.d("number_call", "onOpponentPartnerCut: ")
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
                 binding.answer2.text -> {
                     drawTriangleOnCard(binding.imageCardRight2)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        Log.d("number_call", "onOpponentPartnerCut: ")
-
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
                 binding.answer3.text -> {
                     drawTriangleOnCard(binding.imageCardRight3)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        Log.d("number_call", "onOpponentPartnerCut: ")
-
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
                 binding.answer4.text -> {
                     drawTriangleOnCard(binding.imageCardRight4)
                     firebaseDatabase.deletePartnerCutCard(teamId)
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        Log.d("number_call", "onOpponentPartnerCut: ")
-
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
             }
         } catch (ex: Exception) {
@@ -1319,38 +1271,18 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                 binding.answer1.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight1)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
                 binding.answer2.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight2)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
                 binding.answer3.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight3)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
                 binding.answer4.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight4)
                     firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        delay(2000)
-                        timer?.cancel()
-                        timer?.onFinish()
-                    }
                 }
             }
         } catch (ex: Exception) {
@@ -1379,6 +1311,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     override fun onPartnerLeave() {
         super.onPartnerLeave()
         PrefManager.put(USER_LEAVE_THE_GAME, true)
+        binding.callTime.stop()
         showFadeImage()
     }
 
@@ -1446,7 +1379,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         R.drawable.ic_new_mic_off
                     )
                 )
-                //view.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic_off))
                 firebaseDatabase.createMicOnOff(partnerId ?: "", "true")
             } else {
                 flag = 1
@@ -1458,7 +1390,6 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         R.drawable.ic_new_mic
                     )
                 )
-                // view.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_new_mic))
                 firebaseDatabase.createMicOnOff(partnerId ?: "", "false")
             }
         } catch (ex: Exception) {
@@ -1515,9 +1446,4 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     fun getSplitName(name: String?): String {
         return name?.split(" ")?.get(0).toString()
     }
-
-    override fun onTimeUpdateMethod(time: Long) {
-        TODO()
-    }
-
 }

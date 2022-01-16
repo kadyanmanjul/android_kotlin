@@ -2,19 +2,13 @@ package com.joshtalks.joshskills.quizgame
 
 import android.content.IntentFilter
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.quizgame.base.EventLiveData
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 abstract class BaseQuizActivity : AppCompatActivity() {
     protected var event = EventLiveData
@@ -22,7 +16,6 @@ abstract class BaseQuizActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        PrefManager.put(USER_ACTIVE_IN_GAME, true)
         PrefManager.put(USER_LEAVE_THE_GAME, false)
         updateReceiver = UpdateReceiver()
 

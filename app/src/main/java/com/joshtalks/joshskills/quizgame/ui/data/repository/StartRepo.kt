@@ -3,8 +3,8 @@ package com.joshtalks.joshskills.quizgame.ui.data.repository
 import com.joshtalks.joshskills.quizgame.ui.data.model.AddUserDb
 import com.joshtalks.joshskills.quizgame.ui.data.model.Status
 import com.joshtalks.joshskills.quizgame.ui.data.network.RetrofitInstance
-import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ACTIVE
-import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.IN_ACTIVE
+import com.joshtalks.joshskills.quizgame.util.ACTIVE
+import com.joshtalks.joshskills.quizgame.util.IN_ACTIVE
 import com.joshtalks.joshskills.repository.local.model.Mentor
 
 class StartRepo {

@@ -1,14 +1,12 @@
 package com.joshtalks.joshskills.quizgame.ui.main.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.base.BaseViewModel
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.repository.SearchOpponentRepo
-import com.joshtalks.joshskills.quizgame.ui.data.repository.TeamMateFoundRepo
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

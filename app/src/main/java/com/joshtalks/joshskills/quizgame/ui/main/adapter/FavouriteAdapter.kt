@@ -7,23 +7,17 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieDrawable
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
-import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ACTIVE
-import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.IN_ACTIVE
+import com.joshtalks.joshskills.quizgame.util.ACTIVE
 import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
+import com.joshtalks.joshskills.quizgame.util.IN_ACTIVE
 import com.joshtalks.joshskills.quizgame.util.UtilsQuiz
 
 
@@ -89,7 +83,7 @@ class FavouriteAdapter(
 
             val upperString = capitalizeString(favouriteDemoData?.name)
             binding.userName.text = UtilsQuiz.getSplitName(upperString)
-            // binding.status.text = favouriteDemoData?.status
+            binding.status.text = favouriteDemoData?.status
             if (favouriteDemoData?.name?.toLowerCase()?.contains(search ?: "") == true) {
                 val startPos: Int? = favouriteDemoData.name?.toLowerCase()?.indexOf(search ?: "")
                 val endPos: Int? = startPos?.plus(search?.length ?: 0)
@@ -102,6 +96,34 @@ class FavouriteAdapter(
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 binding.userName.text = spanString
+            }
+
+            when (favouriteDemoData?.status) {
+                ACTIVE -> {
+                    binding.clickToken.setImageResource(R.drawable.ic_plus1)
+                    binding.clickToken.setOnClickListener(View.OnClickListener {
+                        AudioManagerQuiz.audioRecording.startPlaying(
+                            context,
+                            R.raw.tick_animation,
+                            false
+                        )
+                        binding.clickToken.speed = 1.5F // How fast does the animation play
+                        binding.clickToken.repeatCount = LottieDrawable.INFINITE
+                        binding.clickToken.setAnimation("lottie/hourglass_anim.json")
+                        binding.clickToken.playAnimation()
+                        binding.clickToken.isEnabled = false
+                        openCourseListener.onClickForGetToken(
+                            arrayList?.get(position),
+                            position.toString()
+                        )
+                    })
+                }
+                IN_ACTIVE -> {
+                    binding.clickToken.visibility = View.INVISIBLE
+                }
+                else -> {
+                    binding.clickToken.visibility = View.INVISIBLE
+                }
             }
         }
     }

@@ -14,7 +14,6 @@ import timber.log.Timber
 class AudioManagerQuiz() {
     private var recordingJob: CoroutineScope? = null
      var mPlayer: MediaPlayer?=null
-   // private var  speed = 1.2f
 
     fun startPlaying(application:Context, soundFile:Int,isLoop:Boolean){
         destroyCurrentScope()

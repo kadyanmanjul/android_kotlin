@@ -11,14 +11,9 @@ import com.joshtalks.joshskills.databinding.ActivityStartBinding
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
-import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ACTIVE
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment
-import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.IN_ACTIVE
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModel
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.CHOICE_FRAGMENT
-import com.joshtalks.joshskills.quizgame.util.ON_BACK_PRESSED
-import com.joshtalks.joshskills.quizgame.util.OPEN_CHOICE_SCREEN
+import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -54,6 +49,7 @@ class StartActivity : BaseQuizActivity() {
 
     override fun onCreated() {
         try {
+            PrefManager.put(USER_ACTIVE_IN_GAME, true)
             if (Utils.isInternetAvailable()){
                 vm.addUserToDB()
             }
@@ -99,6 +95,7 @@ class StartActivity : BaseQuizActivity() {
     override fun onPause() {
         super.onPause()
         AudioManagerQuiz.audioRecording.stopPlaying()
+        PrefManager.put(USER_ACTIVE_IN_GAME, false)
         firebaseTemp.changeUserStatus(mentorId, IN_ACTIVE)
         vm.homeInactive()
     }
@@ -107,6 +104,7 @@ class StartActivity : BaseQuizActivity() {
         super.onRestart()
         playSound(R.raw.compress_background_util_quiz)
         vm.statusChange()
+        PrefManager.put(USER_ACTIVE_IN_GAME, true)
         firebaseTemp.changeUserStatus(mentorId, ACTIVE)
     }
 
@@ -126,7 +124,6 @@ class StartActivity : BaseQuizActivity() {
         firebaseDatabase.deletePlayAgainNotification(mentorId)
     }
 
-    // TODO: Need to refactor
     private fun startQuizGame() {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             if (Utils.isInternetAvailable()) {

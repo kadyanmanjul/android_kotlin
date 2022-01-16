@@ -304,7 +304,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
-                    android:text="@string/who_said_if"
+                    android:text=""
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/white"

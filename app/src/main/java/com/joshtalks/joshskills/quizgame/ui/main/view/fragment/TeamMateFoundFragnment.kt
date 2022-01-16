@@ -17,10 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.USER_MUTE_OR_NOT
-import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
 import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
@@ -214,17 +211,19 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
                 if (it.message == CALL_DURATION_RESPONSE) {
                     firebaseTemp.changeUserStatus(currentUserId, ACTIVE)
                     val points = it.points
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        UtilsQuiz.showSnackBar(
-                            binding.container,
-                            Snackbar.LENGTH_SHORT,
-                            "You earned +$points for speaking in English"
-                        )
+                    if (points.toInt() >= 1){
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            UtilsQuiz.showSnackBar(
+                                binding.container,
+                                Snackbar.LENGTH_SHORT,
+                                "You earned +$points for speaking in English"
+                            )
+                        }
                     }
                     AudioManagerQuiz.audioRecording.stopPlaying()
-                    openChoiceScreen()
                     engine?.leaveChannel()
                     binding.callTime.stop()
+                    openChoiceScreen()
                 }
             })
         }
@@ -295,6 +294,7 @@ class TeamMateFoundFragnment : Fragment(), P2pRtc.WebRtcEngineCallback {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    binding.callTime.stop()
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName2.alpha = 0.5f
                     binding.shadowImg2.visibility = View.VISIBLE

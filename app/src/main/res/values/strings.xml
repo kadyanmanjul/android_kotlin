@@ -984,6 +984,8 @@
     <string name="make_new_te">Make New Team</string>
     <string name="play_again_">Play Again\nwith Opponent</string>
     <string name="has_invited">has invited you to play</string>
+    <string name="friend_request">Sent you friend request</string>
+
     <string name="can_t_play_">Can"'"t Play Right Now</string>
     <string name="alreadt_start">Already started the game</string>
     <string name="accept">Accept</string>

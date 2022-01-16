@@ -101,7 +101,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         activityInstance = activity
-        binding.container.setBackgroundColor(Color.WHITE);
+        binding.container.setBackgroundColor(Color.WHITE)
 
         PrefManager.put(USER_LEAVE_THE_GAME, false)
         playSound(R.raw.compress_background_util_quiz)
@@ -121,13 +121,9 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
 
         if (isAdded && activityInstance != null) {
             deleteData()
-        } else {
-            showToast("Crash")
         }
         if (isAdded && activityInstance != null) {
             getAcceptCall()
-        } else {
-            showToast("Crash")
         }
     }
 
@@ -253,7 +249,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         var i = 0
         handler5.removeCallbacksAndMessages(null)
         try {
-            // visibleView(binding.notificationCard)
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
@@ -271,7 +266,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             i = 1
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            // invisibleView(binding.notificationCard)
             vm.getChannelData(mentorId, channelName)
             activity?.let {
                 vm.agoraToToken.observe(it, {
@@ -315,13 +309,11 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             handler4.removeCallbacksAndMessages(null)
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCardAlready)
-            //invisibleView(binding.notificationCardAlready)
         }
         binding.butonDecline.setOnClickListener {
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
 
             tickSound()
-            // invisibleView(binding.notificationCard)
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler5.removeCallbacksAndMessages(null)
@@ -329,10 +321,9 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
         }
 
-        binding.eee.setOnClickListener {
+        binding.ignoreNotification.setOnClickListener {
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
             tickSound()
-            // invisibleView(binding.notificationCard)
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler5.removeCallbacksAndMessages(null)
@@ -354,7 +345,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                             binding.notificationCard
                         )
-                    //invisibleView(binding.notificationCard)
                     mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
                     firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
                 }, 10000)
@@ -371,7 +361,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     ) {
         handler9.removeCallbacksAndMessages(null)
         val image = userImageUrl.replace("\n", "")
-        //visibleView(binding.notificationCardNotPlay)
         if (isShowFrag)
             CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCardNotPlay)
         binding.userNameForNotPlay.text = userName
@@ -385,7 +374,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             tickSound()
             handler9.removeCallbacksAndMessages(null)
             firebaseDatabase.deleteDeclineData(mentorId)
-            // invisibleView(binding.notificationCardNotPlay)
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCardNotPlay)
         }
@@ -398,7 +386,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                             binding.notificationCardNotPlay
                         )
-                    //invisibleView(binding.notificationCardNotPlay)
                 }, 10000)
             }
         } catch (ex: Exception) {
@@ -434,7 +421,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             ?.replace(
                 R.id.container,
                 TeamMateFoundFragnment.newInstance(userId ?: "", channelName ?: ""),
-                "TeamMateFoundFragnment"
+                "TeamMateFoundFragment"
             )
             ?.remove(this)
             ?.commit()
@@ -448,9 +435,9 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     ) {
         try {
             handler2.removeCallbacksAndMessages(null)
-            //visibleView(binding.notificationCard)
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
+            binding.txtMsg2.text = getString(R.string.friend_request)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromImageUrl.replace("\n", "")
@@ -462,7 +449,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         binding.buttonAccept.setOnClickListener {
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
             tickSound()
-            //invisibleView(binding.notificationCard)
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
@@ -475,7 +461,15 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             tickSound()
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            // invisibleView(binding.notificationCard)
+            handler2.removeCallbacksAndMessages(null)
+            firebaseDatabase.deleteRequested(mentorId)
+        }
+
+        binding.ignoreNotification.setOnClickListener {
+            GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
+            tickSound()
+            if (isShowFrag)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
             firebaseDatabase.deleteRequested(mentorId)
         }
@@ -484,7 +478,6 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             handler2.postDelayed({
                 if (isShowFrag)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-                //invisibleView(binding.notificationCard)
                 firebaseDatabase.deleteRequested(mentorId)
             }, 10000)
         } catch (ex: Exception) {

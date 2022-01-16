@@ -22,7 +22,6 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
         if (Utils.isInternetAvailable()) {
             message.what = OPEN_CHOICE_SCREEN
             singleLiveEvent.value = message
-            //view.visibility = View.GONE
         }else{
             showToast("Seems like your Internet is too slow or not available.")
         }
@@ -50,7 +49,6 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
                 }
             }
         } catch (ex: Throwable) {
-            showToast(ex.message?:"")
         }
     }
 
@@ -65,7 +63,6 @@ class StartViewModel(var application11: Application) : BaseViewModel(application
                 }
             }
         } catch (ex: Throwable) {
-            showToast(ex.message?:"")
         }
     }
 

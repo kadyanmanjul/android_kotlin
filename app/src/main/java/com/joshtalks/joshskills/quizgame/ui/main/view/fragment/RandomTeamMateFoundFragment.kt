@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,14 +54,12 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentUserId = Mentor.getInstance().getId()
-        //FirebaseDatabase().getRoomTime(currentUserId ?: "", this)
-
         arguments?.let {
             roomId = it.getString("roomId")
             opponentUserImage = it.getString(OPPONENT_USER_IMAGE)
             opponentUserName = it.getString(OPPONENT_USER_NAME)
             currentUserTeamId = it.getString(CURRENT_USER_TEAM_ID)
-            time = it.getLong("Time")
+            time = it.getLong(TIME_DATA)
         }
     }
 
@@ -91,7 +88,6 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
         binding.container.setBackgroundColor(Color.WHITE)
         PrefManager.put(USER_MUTE_OR_NOT, false)
         setCurrentUserData()
-        // moveFragment()
         FirebaseDatabase().getRoomTime(roomId ?: "", this)
         setData()
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
@@ -110,7 +106,6 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
         }
 
         binding.imageSound.setOnClickListener {
-            //  engine?.setDefaultAudioRoutetoSpeakerphone(true)
             speakerOnOff()
         }
 
@@ -211,18 +206,13 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
                     putString(OPPONENT_USER_IMAGE, opponentUserImage)
                     putString(OPPONENT_USER_NAME, opponentUserName)
                     putString(CURRENT_USER_TEAM_ID, currentUserTeamId)
-                    putLong("Time", time)
+                    putLong(TIME_DATA, time)
                 }
             }
     }
 
     private fun moveFragment(time: Long) {
-//        val android = (System.currentTimeMillis() / 1000) % 60
-//        val serverTime = (time) % 60
-//        val countDown = serverTime - android
-        val cdt = (time - (System.currentTimeMillis() / 1000)) % 60
-
-        Log.d("android_time", "moveFragment: $time :::::: $cdt")
+        val cdt = (time - (System.currentTimeMillis() / 1000 % 60)) % 60
 
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
@@ -231,11 +221,11 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
             fm?.beginTransaction()
                 ?.replace(
                     R.id.container,
-                    QuestionFragment.newInstance(roomId, startTime, RANDOM), "SearchingOpponentTeam"
+                    QuestionFragment.newInstance(roomId, startTime, RANDOM),
+                    "SearchingOpponentTeam"
                 )
                 ?.commit()
         }, (cdt - 15) * 1000)
-        //(countDown - 14) * 1000)(cdt - 15) * 1000
     }
 
     fun onBackPress() {
@@ -297,12 +287,14 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
                         randomTeamMateFoundViewModel?.saveCallDuration?.observe(it, {
                             if (it.message == CALL_DURATION_RESPONSE) {
                                 val points = it.points
-                                lifecycleScope.launch(Dispatchers.Main) {
-                                    UtilsQuiz.showSnackBar(
-                                        binding.container,
-                                        Snackbar.LENGTH_SHORT,
-                                        "You earned +$points for speaking in English"
-                                    )
+                                if (points.toInt() >= 1){
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        UtilsQuiz.showSnackBar(
+                                            binding.container,
+                                            Snackbar.LENGTH_SHORT,
+                                            "You earned +$points for speaking in English"
+                                        )
+                                    }
                                 }
                                 AudioManagerQuiz.audioRecording.stopPlaying()
                                 engine?.leaveChannel()
@@ -333,6 +325,7 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    binding.callTime.stop()
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName2.alpha = 0.5f
                     binding.shadowImg2.visibility = View.VISIBLE
@@ -349,10 +342,6 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
             }
         }
     }
-
-//    override fun onTimeChangeMethod(time: Long) {
-//        moveFragment(time)
-//    }
 
     override fun onDestroy() {
         super.onDestroy()

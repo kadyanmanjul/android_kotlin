@@ -15,7 +15,7 @@ import timber.log.Timber
 class SaveRoomDataViewModel(var application11: Application) : BaseViewModel(application11) {
 
     val saveRoomRepo = SaveRoomRepo()
-    var saveRoomDetailsData: MutableLiveData<Success> = MutableLiveData()
+    var saveRoomDetailsData: MutableLiveData<SaveRoomDetailsResponse> = MutableLiveData()
     var roomUserDataTemp: MutableLiveData<RandomRoomResponse> = MutableLiveData()
     var clearRadius: MutableLiveData<Success> = MutableLiveData()
     var deleteData: MutableLiveData<Success> = MutableLiveData()
