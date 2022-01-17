@@ -518,11 +518,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                 if (!PrefManager.getBoolValue(
                         PREF_IS_CONVERSATION_ROOM_ACTIVE
-                    ) || !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
+                    ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                 ) {
                     incomingCallNotificationAction(notificationObject.actionData)
-                } else if (PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)) {
-                    callForceDisconnect()
                 }
                 return null
             }
@@ -1441,11 +1439,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                     if (!PrefManager.getBoolValue(
                             PREF_IS_CONVERSATION_ROOM_ACTIVE
-                        ) || !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
+                        ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                     ) {
                         incomingCallNotificationAction(notificationObject.actionData)
-                    } else if (PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)) {
-                        callForceDisconnect()
                     }
                     null
                 }
@@ -1507,7 +1503,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
 
                     if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null
-                        && User.getInstance().isVerified && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
+                        && User.getInstance().isVerified && PrefManager.getBoolValue(
+                            IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+                        )
                     ) {
                         val roomId = JSONObject(actionData).getString("room_id")
                         val topic = JSONObject(actionData).getString("topic") ?: EMPTY
@@ -1553,7 +1551,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     if (obj.has("group_url"))
                         data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
 
-                    WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
+                    WebRtcService.currentCallingGroupName =
+                        data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
                     WebRtcService.forceConnect(data)
                 } catch (t: Throwable) {
                     t.printStackTrace()
