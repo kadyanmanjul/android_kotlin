@@ -116,7 +116,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
             callerName = it.getStringExtra(ARG_CALLER_NAME) ?: EMPTY
             yourName = it.getStringExtra(ARG_YOUR_NAME) ?: EMPTY
             binding.txtMessage.text = msz.replaceFirst("#", callerName)
-            Timber.tag("naman3").d("$currentId  $callerId")
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
@@ -138,7 +137,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
             val second: Int = (callTime / 1000 % 60).toInt()
             val minute: Int = (callTime / (1000 * 60) % 60).toInt()
 
-            if(second<120 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
+            if(second<120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
                 showReportDialog("REPORT"){
                 }
             }
