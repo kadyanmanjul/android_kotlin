@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
@@ -58,6 +59,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SHOW_SIGN_UP_FRAGMENT
+import com.joshtalks.joshskills.ui.voip.*
 import com.joshtalks.joshskills.ui.voip.OPPOSITE_USER_UID
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
@@ -516,7 +518,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                 if (!PrefManager.getBoolValue(
                         PREF_IS_CONVERSATION_ROOM_ACTIVE
-                    )
+                    ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                 ) {
                     incomingCallNotificationAction(notificationObject.actionData)
                 }
@@ -1437,7 +1439,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                     if (!PrefManager.getBoolValue(
                             PREF_IS_CONVERSATION_ROOM_ACTIVE
-                        )
+                        ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                     ) {
                         incomingCallNotificationAction(notificationObject.actionData)
                     }
@@ -1501,7 +1503,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
 
                     if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null
-                        && User.getInstance().isVerified && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
+                        && User.getInstance().isVerified && PrefManager.getBoolValue(
+                            IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+                        )
                     ) {
                         val roomId = JSONObject(actionData).getString("room_id")
                         val topic = JSONObject(actionData).getString("topic") ?: EMPTY
@@ -1547,7 +1551,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     if (obj.has("group_url"))
                         data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
 
-                    WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
+                    WebRtcService.currentCallingGroupName =
+                        data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
                     WebRtcService.forceConnect(data)
                 } catch (t: Throwable) {
                     t.printStackTrace()

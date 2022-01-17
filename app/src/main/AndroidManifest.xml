@@ -81,6 +81,15 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".quizgame.ui.main.view.activity.FavouritePartnerFragnment"
+            android:exported="true" />
+        <activity
+            android:name=".quizgame.StartActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme"
+            />
+        <activity
             android:name=".ui.group.views.JoshVoipGroupActivity"
             android:exported="true" />
         <activity
@@ -96,13 +105,6 @@
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
             android:exported="true">
-
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
