@@ -25,9 +25,9 @@ import com.joshtalks.joshskills.databinding.FragmentChoiceFragnmentBinding
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelGame
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -42,10 +42,10 @@ import timber.log.Timber
 
 class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     P2pRtc.WebRtcEngineCallback,
-    FirebaseDatabase.OnMakeFriendTrigger {
+    GameFirebaseDatabase.OnMakeFriendTrigger {
 
     val vm by lazy {
-        ViewModelProvider(requireActivity())[ChoiceViewModel::class.java]
+        ViewModelProvider(requireActivity())[ChoiceViewModelGame::class.java]
     }
     private var factory: ChoiceViewModelProviderFactory? = null
 
@@ -63,7 +63,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     var userName: String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
     private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
-    private var mainFirebaseDatabase: FirebaseDatabase = FirebaseDatabase()
+    private var mainGameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
 
     private var engine: RtcEngine? = null
 
@@ -93,10 +93,10 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         firebaseDatabase.deleteRequested(mentorId)
         firebaseDatabase.deleteDeclineData(mentorId)
 
-        mainFirebaseDatabase.deleteMuteUnmute(mentorId)
-        mainFirebaseDatabase.deleteAllData(mentorId)
-        mainFirebaseDatabase.deleteRoomData(mentorId)
-        mainFirebaseDatabase.deleteAnimUser(mentorId)
+        mainGameFirebaseDatabase.deleteMuteUnmute(mentorId)
+        mainGameFirebaseDatabase.deleteAllData(mentorId)
+        mainGameFirebaseDatabase.deleteRoomData(mentorId)
+        mainGameFirebaseDatabase.deleteAnimUser(mentorId)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -420,7 +420,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                TeamMateFoundFragnment.newInstance(userId ?: "", channelName ?: ""),
+                TeamMateFoundFragmentFpp.newInstance(userId ?: "", channelName ?: ""),
                 "TeamMateFoundFragment"
             )
             ?.remove(this)
@@ -505,7 +505,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
             fm?.beginTransaction()
                 ?.replace(
                     R.id.container,
-                    FavouritePartnerFragment.newInstance(), FAVOURITE_FRAGMENT
+                    GameFavouritePartnerFragmentFpp.newInstance(), FAVOURITE_FRAGMENT
                 )
                 ?.remove(this)
                 ?.commit()

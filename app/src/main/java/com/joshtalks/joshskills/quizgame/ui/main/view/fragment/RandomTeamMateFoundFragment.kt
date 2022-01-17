@@ -22,8 +22,8 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.RandomFragmentTeamMateFoundFragnmentBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDurationRoomData
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateFoundViewModel
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateFoundViewModelGame
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.RandomTeamMateViewModelFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -37,10 +37,10 @@ const val OPPONENT_USER_IMAGE: String = "opponentUserImage"
 const val OPPONENT_USER_NAME: String = "opponentUserName"
 const val CURRENT_USER_TEAM_ID: String = "current_user_team_id"
 
-class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
+class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChange {
     private lateinit var binding: RandomFragmentTeamMateFoundFragnmentBinding
 
-    private var randomTeamMateFoundViewModel: RandomTeamMateFoundViewModel? = null
+    private var randomTeamMateFoundViewModel: RandomTeamMateFoundViewModelGame? = null
 
     private var roomId: String? = null
     private var currentUserId: String? = null
@@ -88,7 +88,7 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
         binding.container.setBackgroundColor(Color.WHITE)
         PrefManager.put(USER_MUTE_OR_NOT, false)
         setCurrentUserData()
-        FirebaseDatabase().getRoomTime(roomId ?: "", this)
+        GameFirebaseDatabase().getRoomTime(roomId ?: "", this)
         setData()
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             binding.userName2.alpha = 0.5f
@@ -126,7 +126,7 @@ class RandomTeamMateFoundFragment : Fragment(), FirebaseDatabase.OnTimeChange {
             ViewModelProvider(
                 this,
                 it
-            ).get(RandomTeamMateFoundViewModel::class.java)
+            ).get(RandomTeamMateFoundViewModelGame::class.java)
         }
     }
 

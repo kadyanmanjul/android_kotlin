@@ -8,8 +8,8 @@ class BothTeamViewProviderFactory(
     val app: Application
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(BothTeamViewModel::class.java)) {
-            return BothTeamViewModel(app) as T
+        if (modelClass.isAssignableFrom(BothTeamViewModelGame::class.java)) {
+            return BothTeamViewModelGame(app) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

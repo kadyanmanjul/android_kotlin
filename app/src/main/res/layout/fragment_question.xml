@@ -110,14 +110,14 @@
                     android:layout_marginTop="@dimen/_22sdp"
                     android:layout_centerHorizontal="true">
 
-                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.CircularProgressView
+                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.InnerProgressViewFirstClick
                         android:id="@+id/progress"
                         android:layout_width="@dimen/_55sdp"
                         android:layout_height="@dimen/_55sdp"
                         android:layout_centerInParent="true"
                         android:visibility="visible" />
 
-                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.CircularProgressView1
+                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.OuterProgressBarViewForSecondClick
                         android:id="@+id/progress1"
                         android:layout_width="@dimen/_55sdp"
                         android:layout_height="@dimen/_55sdp"

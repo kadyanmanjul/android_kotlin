@@ -9,10 +9,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityStartBinding
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.karumi.dexter.MultiplePermissionsReport
@@ -26,14 +26,14 @@ import kotlinx.coroutines.launch
 class StartActivity : BaseQuizActivity() {
 
     val vm by lazy {
-        ViewModelProvider(this)[StartViewModel::class.java]
+        ViewModelProvider(this)[StartViewModelGame::class.java]
     }
     val binding by lazy<ActivityStartBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_start)
     }
 
     private var firebaseTemp: FirebaseTemp = FirebaseTemp()
-    private var firebaseDatabase = FirebaseDatabase()
+    private var firebaseDatabase = GameFirebaseDatabase()
     private var mentorId: String = Mentor.getInstance().getId()
 
     init {

@@ -10,7 +10,7 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModel" />
+            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModelGame" />
     </data>
     <FrameLayout
         android:id="@+id/container"

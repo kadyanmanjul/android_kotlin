@@ -8,8 +8,8 @@ class SearchOpponentViewProviderFactory(
     val app: Application
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SearchOpponentTeamViewModel::class.java)) {
-            return SearchOpponentTeamViewModel(app) as T
+        if (modelClass.isAssignableFrom(SearchOpponentTeamViewModelGame::class.java)) {
+            return SearchOpponentTeamViewModelGame(app) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

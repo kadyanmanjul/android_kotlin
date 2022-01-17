@@ -7,11 +7,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.quizgame.base.EventLiveData
+import com.joshtalks.joshskills.quizgame.base.GameEventLiveData
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 
 abstract class BaseQuizActivity : AppCompatActivity() {
-    protected var event = EventLiveData
+    protected var event = GameEventLiveData
     private var updateReceiver: UpdateReceiver? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

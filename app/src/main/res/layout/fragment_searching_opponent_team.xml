@@ -6,7 +6,7 @@
     <data>
         <variable
             name="clickHandler"
-            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.SearchingOpponentTeamFragment" />
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.SearchingOpponentTeamFragmentFpp" />
     </data>
     <FrameLayout
         android:id="@+id/container"

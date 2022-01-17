@@ -9,8 +9,8 @@ class RandomTeamMateViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(RandomTeamMateFoundViewModel::class.java)) {
-            return RandomTeamMateFoundViewModel(app) as T
+        if (modelClass.isAssignableFrom(RandomTeamMateFoundViewModelGame::class.java)) {
+            return RandomTeamMateFoundViewModelGame(app) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

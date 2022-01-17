@@ -6,13 +6,13 @@
     <data>
         <variable
             name="clickHandler"
-            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.BothTeamMateFound" />
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.BothTeamMateFoundFpp" />
     </data>
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".quizgame.ui.main.view.fragment.BothTeamMateFound">
+        tools:context=".quizgame.ui.main.view.fragment.BothTeamMateFoundFpp">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

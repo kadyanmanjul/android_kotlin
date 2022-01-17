@@ -42,13 +42,9 @@ class FavouriteAdapter(
         arrayList?.addAll(newList)
     }
 
-    fun updateList(list: ArrayList<Favourite>, searchString: String) {
+    fun updateListAfterSearch(list: ArrayList<Favourite>, searchString: String) {
         arrayList = list
         search = searchString
-//            val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(FavouriteDiffCallback(list, arrayList))
-//            diffResult.dispatchUpdatesTo(this)
-//            arrayList?.clear()
-//            arrayList?.addAll(list)
         notifyDataSetChanged()
     }
 
@@ -84,8 +80,8 @@ class FavouriteAdapter(
             val upperString = capitalizeString(favouriteDemoData?.name)
             binding.userName.text = UtilsQuiz.getSplitName(upperString)
             binding.status.text = favouriteDemoData?.status
-            if (favouriteDemoData?.name?.toLowerCase()?.contains(search ?: "") == true) {
-                val startPos: Int? = favouriteDemoData.name?.toLowerCase()?.indexOf(search ?: "")
+            if (favouriteDemoData?.name?.lowercase()?.contains(search ?: "") == true) {
+                val startPos: Int? = favouriteDemoData.name?.lowercase()?.indexOf(search ?: "")
                 val endPos: Int? = startPos?.plus(search?.length ?: 0)
                 val spanString: Spannable =
                     Spannable.Factory.getInstance().newSpannable(binding.userName.text)

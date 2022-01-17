@@ -5,11 +5,11 @@
     <data>
         <variable
             name="clickHandler"
-            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.WinScreenFragment" />
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.GameDecisionFragment" />
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SaveRoomDataViewModel" />
+            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.DecisionDataViewModelGame" />
     </data>
 
 

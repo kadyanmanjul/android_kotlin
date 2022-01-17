@@ -2,11 +2,11 @@ package com.joshtalks.joshskills.quizgame.analytics
 
 import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsEntity
 import com.joshtalks.joshskills.quizgame.ui.data.network.GAME_ANALYTICS_EVENTS_API_KEY
 import com.joshtalks.joshskills.quizgame.ui.data.network.GAME_ANALYTICS_MENTOR_ID_API_KEY
-import com.joshtalks.joshskills.quizgame.ui.data.repository.AnalyticsRepo
+import com.joshtalks.joshskills.quizgame.ui.data.network.RetrofitInstance
+import com.joshtalks.joshskills.quizgame.ui.data.repository.GameAnalyticsRepo
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +21,7 @@ object GameAnalytics {
         AppDatabase.getDatabase(AppObjectController.joshApplication)
     }
     private val repository by lazy {
-        AnalyticsRepo()
+        GameAnalyticsRepo(RetrofitInstance.getRetrofitInstance())
     }
 
     private val mutex = Mutex()

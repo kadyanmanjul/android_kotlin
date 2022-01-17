@@ -8,8 +8,8 @@ class SearchRandomProviderFactory(
     val app: Application
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SearchRandomUserViewModel::class.java)) {
-            return SearchRandomUserViewModel(app) as T
+        if (modelClass.isAssignableFrom(SearchRandomUserViewModelGame::class.java)) {
+            return SearchRandomUserViewModelGame(app) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

@@ -23,9 +23,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentQuestionBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionProviderFactory
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.QuestionViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
@@ -37,8 +37,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
-    FirebaseDatabase.OnAnimationTrigger,
+class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
+    GameFirebaseDatabase.OnAnimationTrigger,
     P2pRtc.WebRtcEngineCallback {
     private lateinit var binding: FragmentQuestionBinding
     private var position: Int = 0
@@ -49,10 +49,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
     private var currentUserId: String? = null
 
     private var factory: QuestionProviderFactory? = null
-    private var questionViewModel: QuestionViewModel? = null
+    private var questionViewModel: QuestionViewModelGame? = null
     private var choiceValue: String? = null
 
-    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
+    private var gameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
 
     private var isCorrect: String? = null
 
@@ -273,7 +273,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         }
 
         try {
-            firebaseDatabase.getMuteOrUnMute(currentUserId ?: "", this)
+            gameFirebaseDatabase.getMuteOrUnMute(currentUserId ?: "", this)
         } catch (ex: Exception) {
         }
         buttonEnableDisable()
@@ -324,8 +324,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         marks: String,
         opponentTeamId: String?
     ) {
-        firebaseDatabase.createShowAnimForAnotherUser(partnerId, isCorrect, choiceAnswer, marks)
-        firebaseDatabase.createShowAnimForOpponentTeam(opponentTeamId ?: "", isCorrect, marks)
+        gameFirebaseDatabase.createShowAnimForAnotherUser(partnerId, isCorrect, choiceAnswer, marks)
+        gameFirebaseDatabase.createShowAnimForOpponentTeam(opponentTeamId ?: "", isCorrect, marks)
     }
 
     private fun getQuestions() {
@@ -350,9 +350,9 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         try {
             factory = QuestionProviderFactory(requireActivity().application)
             questionViewModel =
-                ViewModelProvider(this, factory!!).get(QuestionViewModel::class.java)
+                ViewModelProvider(this, factory!!).get(QuestionViewModelGame::class.java)
             questionViewModel =
-                factory.let { ViewModelProvider(this, it!!).get(QuestionViewModel::class.java) }
+                factory.let { ViewModelProvider(this, it!!).get(QuestionViewModelGame::class.java) }
             questionViewModel?.getQuizQuestion(
                 QuestionRequest(
                     QUESTION_COUNT,
@@ -498,8 +498,8 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
 
             makeAgainCardSquare()
-            firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-            firebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: "")
+            gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+            gameFirebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: "")
 
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(1500)
@@ -562,10 +562,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
 
             try {
-                firebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getPartnerCutCard(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getOpponentCutCard(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getPartnerCutCard(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getOpponentCutCard(currentUserTeamId ?: "", this@QuestionFragment)
             } catch (ex: Exception) {
                 Timber.d(ex)
             }
@@ -619,10 +619,10 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
 
             try {
-                firebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getPartnerCutCard(currentUserTeamId ?: "", this@QuestionFragment)
-                firebaseDatabase.getOpponentCutCard(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getPartnerCutCard(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getOpponentCutCard(currentUserTeamId ?: "", this@QuestionFragment)
             } catch (ex: Exception) {
                 Timber.d(ex)
             }
@@ -817,12 +817,12 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                     choiceAnswer(choiceAnswer, isCorrect ?: "")
                     val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
                     if (it.message == BOTH_TEAM_SELECTED) {
-                        firebaseDatabase.createOpponentTeamShowCutCard(
+                        gameFirebaseDatabase.createOpponentTeamShowCutCard(
                             opponentTeamId ?: "",
                             isCorrect ?: "",
                             choiceAnswer
                         )
-                        firebaseDatabase.createPartnerShowCutCard(
+                        gameFirebaseDatabase.createPartnerShowCutCard(
                             currentUserTeamId ?: "",
                             isCorrect ?: "",
                             firstTeamAnswer ?: ""
@@ -1019,7 +1019,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             }
         } catch (ex: Exception) {
         }
-        firebaseDatabase.deleteAnimUser(partnerUserId)
+        gameFirebaseDatabase.deleteAnimUser(partnerUserId)
     }
 
     override fun onOpponentShowAnim(
@@ -1068,7 +1068,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             } catch (ex: Exception) {
             }
         }
-        firebaseDatabase.deleteOpponentAnimTeam(opponentTeamId ?: "")
+        gameFirebaseDatabase.deleteOpponentAnimTeam(opponentTeamId ?: "")
     }
 
     fun onBackPress() {
@@ -1211,7 +1211,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                WinScreenFragment.newInstance(
+                GameDecisionFragment.newInstance(
                     marks.toString(),
                     opponentTeamMarks.toString(),
                     roomId,
@@ -1241,19 +1241,19 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             when (choiceAnswer) {
                 binding.answer1.text -> {
                     drawTriangleOnCard(binding.imageCardRight1)
-                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    gameFirebaseDatabase.deletePartnerCutCard(teamId)
                 }
                 binding.answer2.text -> {
                     drawTriangleOnCard(binding.imageCardRight2)
-                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    gameFirebaseDatabase.deletePartnerCutCard(teamId)
                 }
                 binding.answer3.text -> {
                     drawTriangleOnCard(binding.imageCardRight3)
-                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    gameFirebaseDatabase.deletePartnerCutCard(teamId)
                 }
                 binding.answer4.text -> {
                     drawTriangleOnCard(binding.imageCardRight4)
-                    firebaseDatabase.deletePartnerCutCard(teamId)
+                    gameFirebaseDatabase.deletePartnerCutCard(teamId)
                 }
             }
         } catch (ex: Exception) {
@@ -1270,19 +1270,19 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             when (choiceAnswer) {
                 binding.answer1.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight1)
-                    firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
                 }
                 binding.answer2.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight2)
-                    firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
                 }
                 binding.answer3.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight3)
-                    firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
                 }
                 binding.answer4.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight4)
-                    firebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
                 }
             }
         } catch (ex: Exception) {
@@ -1379,7 +1379,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         R.drawable.ic_new_mic_off
                     )
                 )
-                firebaseDatabase.createMicOnOff(partnerId ?: "", "true")
+                gameFirebaseDatabase.createMicOnOff(partnerId ?: "", "true")
             } else {
                 flag = 1
                 unMuteCall()
@@ -1390,7 +1390,7 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
                         R.drawable.ic_new_mic
                     )
                 )
-                firebaseDatabase.createMicOnOff(partnerId ?: "", "false")
+                gameFirebaseDatabase.createMicOnOff(partnerId ?: "", "false")
             }
         } catch (ex: Exception) {
 

@@ -22,10 +22,10 @@ import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseDatabase
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomProviderFactory
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModel
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
@@ -37,14 +37,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
+class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigger {
 
     lateinit var binding: FragmentRandomPartnerBinding
 
     var factory: SearchRandomProviderFactory? = null
-    var searchRandomViewModel: SearchRandomUserViewModel? = null
+    var searchRandomViewModel: SearchRandomUserViewModelGame? = null
     var currentUserId = Mentor.getInstance().getId()
-    var firebaseDatabase: FirebaseDatabase = FirebaseDatabase()
+    var gameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
     var firebasetemp: FirebaseTemp = FirebaseTemp()
 
     var userRoomId: String? = null
@@ -134,7 +134,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
         searchRandomUser(currentUserId)
         startTimer()
         try {
-            firebaseDatabase.getRandomUserId(currentUserId, this)
+            gameFirebaseDatabase.getRandomUserId(currentUserId, this)
         } catch (ex: Exception) {
 
         }
@@ -154,7 +154,7 @@ class RandomPartnerFragment : Fragment(), FirebaseDatabase.OnRandomUserTrigger {
     fun setUpViewModel() {
         factory = activity?.application?.let { SearchRandomProviderFactory(it) }
         searchRandomViewModel = factory?.let {
-            ViewModelProvider(this, it).get(SearchRandomUserViewModel::class.java)
+            ViewModelProvider(this, it).get(SearchRandomUserViewModelGame::class.java)
         }
     }
 

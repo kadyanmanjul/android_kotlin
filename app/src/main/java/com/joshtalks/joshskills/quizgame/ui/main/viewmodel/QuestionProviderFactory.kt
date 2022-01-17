@@ -8,8 +8,8 @@ class QuestionProviderFactory(
     val app: Application
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(QuestionViewModel::class.java)) {
-            return QuestionViewModel(app) as T
+        if (modelClass.isAssignableFrom(QuestionViewModelGame::class.java)) {
+            return QuestionViewModelGame(app) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }
