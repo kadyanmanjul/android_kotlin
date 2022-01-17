@@ -3,14 +3,11 @@ package com.joshtalks.joshskills.ui.group.data
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.flurry.sdk.it
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import java.lang.Exception
 
 private const val TAG = "GroupPagingNetworkSourc"
-class GroupPagingNetworkSource(val query: String = "", val isSearching : Boolean = false, val apiService: GroupApiService, val mentorId : String = "", val onDataLoaded : ((Boolean) -> Unit)? = null) : PagingSource<Int, GroupItemData>() {
+class GroupPagingNetworkSource(val query: String = "", val apiService: GroupApiService, val onDataLoaded : ((Boolean) -> Unit)? = null) : PagingSource<Int, GroupItemData>() {
     override fun getRefreshKey(state: PagingState<Int, GroupItemData>): Int? {
         Log.d(TAG, "getRefreshKey: ")
         return state.anchorPosition?.let { anchorPosition ->
@@ -21,13 +18,14 @@ class GroupPagingNetworkSource(val query: String = "", val isSearching : Boolean
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GroupItemData> {
         return try {
-            Log.d(TAG, "load: ${params.key}")
+
             val currentPageNo = params.key ?: 1
-            val responseData = if(isSearching) apiService.searchGroup(currentPageNo, query) else apiService.getGroupList(currentPageNo, mentorId)
+            val responseData = apiService.searchGroup(currentPageNo, query)
 
             val data = responseData.groups?.map {
                 it as GroupItemData
             }
+
             if(currentPageNo == 1 && data.isNullOrEmpty())
                 onDataLoaded?.invoke(false)
             else

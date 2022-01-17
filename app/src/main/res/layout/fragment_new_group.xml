@@ -1,44 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
+
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/lighter_grey"
         tools:context=".ui.group.NewGroupFragment">
 
+        <View
+            android:id="@+id/background_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_group_name_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+
         <FrameLayout
             android:id="@+id/loading"
-            android:visibility="@{vm.addingNewGroup ? View.VISIBLE : View.GONE}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/transparent_blue_alpha_75"
             android:clickable="false"
             android:elevation="@dimen/_8sdp"
-            tools:visibility="gone"
-            android:background="@color/transparent_blue_alpha_75"
+            android:visibility="@{vm.addingNewGroup ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
         </FrameLayout>
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"
-            android:elevation="@dimen/_1sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="@dimen/_1sdp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,25 +62,26 @@
 
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
+                groupHeader="@{vm.isFromGroupInfo ? `Edit Group` : `New group`}"
+                groupSubHeader="@{vm.isFromGroupInfo ? `` : `Add group name`}"
                 onBackPressed="@{vm::onBackPress}"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                groupSubHeader="@{`Add group name`}"
-                groupHeader="@{`New group`}"/>
+                android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_group"
+            defaultImage="@{DefaultImage.NO_IMAGE}"
+            groupImage="@{vm.isFromGroupInfo ? vm.groupImageUrl : ` `}"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:elevation="1dp"
-            android:onClick="@{vm::openImageChooser}"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:background="@drawable/white_button_round_enabled"
+            android:elevation="1dp"
             android:gravity="center_vertical|start"
-            android:src="@drawable/group_image"
+            android:onClick="@{vm::openImageChooser}"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout"
@@ -74,13 +91,14 @@
             android:id="@+id/et_group_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:elevation="1dp"
-            android:maxLength="25"
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:background="@color/transparent"
-            android:singleLine="true"
+            android:elevation="1dp"
             android:hint="Enter Group Name"
+            android:maxLength="25"
+            android:singleLine="true"
+            android:text="@{vm.isFromGroupInfo() ? vm.groupTitle : ``}"
             app:layout_constraintBottom_toBottomOf="@+id/img_group"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/img_group"
@@ -109,26 +127,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img_group" />
 
-        <View
-            android:id="@+id/background_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_group_name_hint"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
-
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab_add_group"
             style="@style/Widget.MaterialComponents.FloatingActionButton"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
-            android:padding="@dimen/_10sdp"
             android:backgroundTint="@color/blue33"
-            android:src="@drawable/add_groups"
-            android:scaleType="centerInside"
             android:onClick="@{vm::saveGroupInfo}"
+            android:scaleType="centerInside"
+            android:src="@drawable/add_groups"
             app:layout_constraintBottom_toBottomOf="@+id/background_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.96"

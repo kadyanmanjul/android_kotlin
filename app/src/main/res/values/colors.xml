@@ -62,13 +62,14 @@
 
     <!-- ______________New App Colors_______________-->
     <color name="button_color">#107BE5</color>
-    <color name="light_blue">#E1F3FB</color>
+    <color name="light_blue">#C5E5FE</color>
     <color name="lightest_blue">#EDF2F8</color>
     <color name="black">#172344</color>
     <color name="dark_grey">#596273</color>
     <color name="light_grey">#9098B1</color>
     <color name="lighter_grey">#E2E4E9</color>
     <color name="green">#20BA70</color>
+    <color name="green_quiz">#13B673</color>
     <color name="green_snackbar">#48A429</color>
     <color name="transparent">#00000000</color>
     <color name="artboard_color">#F1F2F4</color>
@@ -183,5 +184,39 @@
     <!--Colors for Groups-->
     <color name="group_coming_soon">#47555E</color>
     <color name="join_group">#25D366</color>
+    <color name="exit_group">#D12D30</color>
+    <color name="pitch_black">#000000</color>
+    <color name="unread_msg">#1FA856</color>
+    <color name="read_color">#777777</color>
+    <color name="group_notif_bg">#FFF62A</color>
+    <color name="group_notif_black_bg">#2F2F2F</color>
+
+    <color name="game_name_color">#FF8F06</color>
+    <color name="test_color">#FDFC01</color>
+
+
+    <color name="transparent_color_notification">#66E00022</color>
+    <color name="notification_timer">#35E00022</color>
+
+    <color name="light_blue_quiz">#C5E5FE</color>
+
+    <color name="blue">#126A96</color>
+
+
+    <color name="blue2">#BF00b5d9</color>
+    <color name="blue3">#6160C0D3</color>
+
+
+    <color name="gray_light">#dfe6f3</color>
+
+    <color name="gray_light_copy">#113239</color>
+    <color name="blue2_copy">#126A96</color>
+
+
+
+    <color name="black_quiz">#000000</color>
+    <color name="red_quiz">#FE5552</color>
+    <color name="shadow_progress_color_quiz">#055C39</color>
+    <color name="progess_color_quiz">#13B673</color>
 
 </resources>

@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelGame" />
+    </data>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@drawable/ic_game_back"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/notification_card_not_play"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_85sdp"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_70sdp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_marginLeft="@dimen/_11sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginRight="@dimen/_7sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:strokeColor="#fff"
+                    app:strokeWidth="@dimen/_2sdp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/notification_gradient">
+
+                        <RelativeLayout
+                            android:id="@+id/notificaton_rel111"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp">
+
+                            <RelativeLayout
+                                android:id="@+id/layout"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="@dimen/_8sdp"
+                                android:background="@drawable/border">
+
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/user_image_for_not_paly"
+                                    android:layout_width="@dimen/_40sdp"
+                                    android:layout_height="@dimen/_40sdp"
+                                    android:src="@drawable/josh_skill_bg" />
+                            </RelativeLayout>
+
+
+                            <TextView
+                                android:id="@+id/user_name_for_not_play"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_5sdp"
+                                android:layout_marginTop="@dimen/_7sdp"
+                                android:layout_toRightOf="@+id/layout"
+                                android:gravity="center_vertical"
+                                android:text="@string/user_name"
+                                android:textColor="@color/test_color"
+                                android:textSize="@dimen/_10ssp"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:id="@+id/divider1"
+                                android:layout_width="@dimen/_130sdp"
+                                android:layout_height="@dimen/_1sdp"
+                                android:layout_below="@+id/user_name_for_not_play"
+                                android:layout_marginLeft="@dimen/_5sdp"
+                                android:layout_marginTop="@dimen/_1sdp"
+                                android:layout_toRightOf="@+id/layout"
+                                android:background="#86AA99" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txt_msg_not_play"
+                                android:layout_width="@dimen/_240sdp"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/divider1"
+                                android:layout_marginLeft="@dimen/_5sdp"
+                                android:layout_marginTop="@dimen/_6sdp"
+                                android:layout_toRightOf="@+id/layout"
+                                android:gravity="center_vertical"
+                                android:text="@string/can_t_play_"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_9sdp"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+            </RelativeLayout>
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cancel_notification"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_marginRight="@dimen/_2sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_cross_quiz"
+                app:strokeColor="#fff"
+                app:strokeWidth="@dimen/_1sdp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/notification_card"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_85sdp"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_70sdp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_marginLeft="@dimen/_11sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginRight="@dimen/_7sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:strokeColor="#fff"
+                    app:strokeWidth="@dimen/_2sdp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/notification_gradient">
+
+                        <RelativeLayout
+                            android:id="@+id/notificaton_rel"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:background="@drawable/border">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/user_image"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                android:src="@drawable/josh_skill_bg" />
+
+
+                            <com.joshtalks.joshskills.quizgame.util.CircularProgressView
+                                android:id="@+id/progress"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"/>
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:gravity="center_vertical"
+                            android:text="@string/user_name"
+                            android:textColor="#FDFC01"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+id/divider2"
+                            android:layout_width="@dimen/_130sdp"
+                            android:layout_height="@dimen/_1sdp"
+                            android:layout_below="@+id/user_name"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_1sdp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:background="#86AA99" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txt_msg2"
+                            android:layout_width="@dimen/_200sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/divider2"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_6sdp"
+                            android:layout_toRightOf="@+id/notificaton_rel"
+                            android:gravity="center_vertical"
+                            android:text="@string/has_invited"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold" />
+
+
+                        <LinearLayout
+                            android:id="@+id/button_linear_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/buton_decline"
+                                android:layout_width="@dimen/_55sdp"
+                                android:layout_height="@dimen/_16sdp"
+                                android:layout_marginRight="@dimen/_12sdp"
+                                app:cardCornerRadius="@dimen/_4sdp"
+                                app:cardElevation="@dimen/_4sdp"
+                                app:strokeColor="#920203"
+                                app:strokeWidth="@dimen/_2sdp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/red_gradient">
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="@string/decline"
+                                        android:textColor="#fff"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/button_accept"
+                                android:layout_width="@dimen/_55sdp"
+                                android:layout_height="@dimen/_16sdp"
+                                android:layout_marginRight="@dimen/_12sdp"
+                                app:cardCornerRadius="@dimen/_4sdp"
+                                app:cardElevation="@dimen/_4sdp"
+                                app:strokeWidth="@dimen/_2sdp"
+                                app:strokeColor="#3AAC21"
+                                android:layout_marginTop="@dimen/_3sdp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/accept_button_gradient">
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="@string/accept"
+                                        android:textColor="#fff"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ignore_notification"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_marginRight="@dimen/_2sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_cross_quiz"
+                app:strokeColor="#fff"
+                app:strokeWidth="1dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/notification_card_already"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_85sdp"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_70sdp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_marginLeft="@dimen/_11sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginRight="@dimen/_7sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:strokeColor="#fff"
+                    app:strokeWidth="@dimen/_2sdp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/notification_gradient">
+
+                        <RelativeLayout
+                            android:id="@+id/layout1"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:background="@drawable/border">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/user_image_for_already"
+                                android:layout_width="@dimen/_40sdp"
+                                android:layout_height="@dimen/_40sdp"
+                                android:layout_centerInParent="true"
+                                android:src="@drawable/josh_skill_bg" />
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/user_name_for_already"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:layout_toRightOf="@+id/layout1"
+                            android:gravity="center_vertical"
+                            android:text="@string/user_name"
+                            android:textColor="@color/test_color"
+                            android:textSize="@dimen/_10ssp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+id/divider4"
+                            android:layout_width="@dimen/_130sdp"
+                            android:layout_height="@dimen/_1sdp"
+                            android:layout_below="@+id/user_name_for_already"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_1sdp"
+                            android:layout_toRightOf="@+id/layout1"
+                            android:background="#86AA99" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txt_msg_already"
+                            android:layout_width="@dimen/_240sdp"                                android:layout_height="wrap_content"
+                            android:layout_below="@+id/divider4"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_6sdp"
+                            android:layout_toRightOf="@+id/layout1"
+                            android:gravity="center_vertical"
+                            android:text="@string/alreadt_start"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_9sdp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </RelativeLayout>
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/already_notification"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_marginRight="@dimen/_2sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_cross_quiz"
+                app:strokeColor="#fff"
+                app:strokeWidth="@dimen/_1sdp" />
+
+
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/build_your_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/linear_layout"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/notification_card_already"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/build_your_team"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_75sdp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rectangle_9"
+                android:layout_width="@dimen/_130sdp"
+                android:layout_height="@dimen/_135sdp"
+                android:onClick="@{()->clickHandler.openFavouriteScreen()}"
+                app:strokeColor="#C3527E"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@color/transparent"
+                android:backgroundTint="@color/transparent"
+                app:cardCornerRadius="@dimen/_12sdp"
+                app:strokeWidth="@dimen/_2sdp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/favourite_gradient">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/play_with_favourite"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rectangle_10"
+                android:layout_width="@dimen/_130sdp"
+                android:layout_height="@dimen/_135sdp"
+                android:background="@color/transparent"
+                android:backgroundTint="@color/transparent"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:onClick="@{()->clickHandler.openRandomScreen()}"
+                app:cardCornerRadius="@dimen/_12sdp"
+                app:strokeColor="#0071E2"
+                app:strokeWidth="@dimen/_2sdp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/random_gradient">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/play_with_random"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </RelativeLayout>
+    </FrameLayout>
+</layout>
