@@ -249,7 +249,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         callVerificationService()
         disableMobileEditText()
     }
-//tc
+
     private fun callVerificationService() {
         (requireActivity() as SignUpActivity).createVerification(
             prefix,

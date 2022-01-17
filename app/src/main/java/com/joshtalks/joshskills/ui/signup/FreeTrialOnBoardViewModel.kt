@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
@@ -23,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.HashMap
+import java.util.*
 
 class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {
 
