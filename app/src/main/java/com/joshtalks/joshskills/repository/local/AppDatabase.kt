@@ -61,7 +61,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
-        GroupsItem::class, TimeTokenRequest::class, ChatItem::class , GameAnalyticsEntity::class
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class
     ],
     version = 43,
     exportSchema = true
@@ -494,21 +494,21 @@ abstract class AppDatabase : RoomDatabase() {
 
             }
         }
-        private val MIGRATION_40_41: Migration = object : Migration(40,41) {
+        private val MIGRATION_40_41: Migration = object : Migration(40, 41) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE lesson_question ADD COLUMN conversation_question_id INTEGER ")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `conversationStatus` TEXT")
 
             }
         }
-        private val MIGRATION_41_42: Migration = object : Migration(41,42) {
+        private val MIGRATION_41_42: Migration = object : Migration(41, 42) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN video_id INTEGER ")
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN is_sharable_video INTEGER NOT NULL DEFAULT 0 ")
             }
         }
 
-        private val MIGRATION_42_43: Migration = object : Migration(42,43) {
+        private val MIGRATION_42_43: Migration = object : Migration(42, 43) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `adminId` TEXT, `groupIcon` TEXT, `createdAt` INTEGER, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT NOT NULL, `timeToken` INTEGER NOT NULL)")

@@ -19,8 +19,8 @@ class RetrofitInstance {
         private const val CALL_TIMEOUT = 60L
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
-        var api: Api? = null
-        fun getRetrofitInstance(): Api? {
+        var api: GameApiService? = null
+        fun getRetrofitInstance(): GameApiService? {
             try {
                 val builder = OkHttpClient().newBuilder()
                     .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
@@ -48,9 +48,9 @@ class RetrofitInstance {
                     .client(builder.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
-                api = retrofit.create(Api::class.java)
+                api = retrofit.create(GameApiService::class.java)
             } catch (ex: Exception) {
-                Timber.d(ex)
+                Timber.e(ex)
             }
             return api
         }

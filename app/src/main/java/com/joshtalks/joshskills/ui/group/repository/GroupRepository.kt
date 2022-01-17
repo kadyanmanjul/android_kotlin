@@ -6,7 +6,6 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.google.gson.Gson
-
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -25,17 +24,9 @@ import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.*
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
-import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
-import com.joshtalks.joshskills.ui.group.model.PageInfo
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
-
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
@@ -48,8 +39,6 @@ import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import id.zelory.compressor.Compressor
-import java.io.File
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,6 +47,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONArray
+import java.io.File
 
 private const val TAG = "GroupRepository"
 
@@ -252,7 +242,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     suspend fun fetchUnreadMessage(startTime : Long, groupId: String) {
-        val messages = chatService.getUnreadMessagesAsync(
+        //TODO fix this @sai
+        /*val messages = chatService.getUnreadMessagesAsync(
             groupId,
             startTime = startTime
         ).await()
@@ -262,7 +253,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         else {
             val recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = groupId)
             recentMessageTime?.let { fetchUnreadMessage(recentMessageTime, groupId) }
-        }
+        }*/
     }
 
     suspend fun addGroupToServer(request: AddGroupRequest) {

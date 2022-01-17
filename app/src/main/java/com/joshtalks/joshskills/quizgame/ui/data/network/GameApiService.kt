@@ -11,7 +11,7 @@ const val DIR = "api/skill/v1"
 const val GAME_ANALYTICS_MENTOR_ID_API_KEY = "user_id"
 const val GAME_ANALYTICS_EVENTS_API_KEY = "game_event_name"
 
-interface Api {
+interface GameApiService {
     // FPP
     @GET("$DIR/fpp/favourite_practise_partner/")
     suspend fun getFavourite(@Query("mentor_id") mentorId: String, @Query("user_id") userId: String)
