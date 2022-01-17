@@ -865,7 +865,6 @@ class ConversationActivity :
                 null,
                 it,
                 conversationId = inboxEntity.conversation_id,
-                isFromConversationRoom = true
             )
         }
     }

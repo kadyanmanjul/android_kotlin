@@ -983,6 +983,21 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
+fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_previouspicplaceholder)
+        .error(R.drawable.ic_previouspicplaceholder)
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context)
+        .load(url)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
+}
 
 fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
     val font = Typeface.createFromAsset(

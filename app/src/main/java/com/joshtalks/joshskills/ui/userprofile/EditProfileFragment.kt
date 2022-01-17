@@ -70,6 +70,7 @@ class EditProfileFragment : DialogFragment() {
         )
         binding.lifecycleOwner = viewLifecycleOwner
         binding.handler = this
+
         return binding.root
     }
 
@@ -231,6 +232,12 @@ class EditProfileFragment : DialogFragment() {
             }
         }
         binding.editTxtHometown.setText(userData.hometown)
+        if (userData.hometown.isNullOrBlank()) {
+            if (binding.editTxtHometown.requestFocus()) {
+                getActivity()?.getWindow()
+                    ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            }
+        }
         binding.editTxtBatch.setText(userData.joinedOn)
     }
 

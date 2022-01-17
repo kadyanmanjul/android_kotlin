@@ -23,9 +23,6 @@ class AwardItemViewHolder(var award: Award,var dateText:String?,  var context: C
     @View(R.id.date)
     lateinit var date: AppCompatTextView
 
-//    @View(R.id.txt_count_award)
-//    lateinit var count: AppCompatTextView
-
     @View(R.id.image)
     lateinit var image: ImageView
 
@@ -45,11 +42,11 @@ class AwardItemViewHolder(var award: Award,var dateText:String?,  var context: C
         }
     }
 
-    @Click(R.id.root_view)
-    fun onClick() {
-        RxBus2.publish(
-            AwardItemClickedEventBus(award)
-        )
-    }
+//    @Click(R.id.root_view)
+//    fun onClick() {
+//        RxBus2.publish(
+//            AwardItemClickedEventBus(award)
+//        )
+//    }
 }
 

@@ -124,7 +124,6 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
             this,
             mentorId = fc.mentorId,
             conversationId = intent.getStringExtra(CONVERSATION_ID),
-            isFromConversationRoom = true
         )
     }
 

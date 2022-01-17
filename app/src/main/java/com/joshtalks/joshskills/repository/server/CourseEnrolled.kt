@@ -18,3 +18,11 @@ data class CourseEnrolled(
     @SerializedName("sort_order")
     val sortOrder: Int = 0,
 ) : Parcelable
+
+@Parcelize
+data class EnrolledCoursesList(
+    @SerializedName("label")
+    val label: String = EMPTY,
+    @SerializedName("courses")
+    val courses: List<CourseEnrolled> = listOf()
+) : Parcelable

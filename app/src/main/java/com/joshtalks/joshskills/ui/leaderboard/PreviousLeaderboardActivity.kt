@@ -216,7 +216,6 @@ class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
             intervalType,
             USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
             conversationId = intent.getStringExtra(CONVERSATION_ID),
-            isFromConversationRoom = true
         )
     }
 

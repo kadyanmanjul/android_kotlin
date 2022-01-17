@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.databinding.FragmentPreviousProfilePicsBinding
-import com.joshtalks.joshskills.repository.server.Picture
+import com.joshtalks.joshskills.repository.server.ProfilePicture
 import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 
@@ -113,7 +113,7 @@ class PreviousProfilePicsFragment : DialogFragment() {
     }
 
     private fun initView(previousProfilePics: PreviousProfilePictures?) {
-        previousProfilePics?.pictures?.sortedBy { it.timestamp?.time }
+        previousProfilePics?.profilePictures?.sortedBy { it.timestamp?.time }
             ?.let { picsList ->
                 val recyclerView: RecyclerView = binding.rvPreviousPics
                 val layoutManager = GridLayoutManager(context, 3)
@@ -122,8 +122,8 @@ class PreviousProfilePicsFragment : DialogFragment() {
                 recyclerView.adapter = PreviousPicsAdapter(
                     picsList,
                     object : PreviousPicsAdapter.OnPreviousPicClickListener {
-                        override fun onPreviousPicClick(picture: Picture) {
-                            ImageShowFragment.newInstance(picture.photoUrl, null, null)
+                        override fun onPreviousPicClick(profilePicture: ProfilePicture) {
+                            ImageShowFragment.newInstance(profilePicture.photoUrl, null, null)
                                 .show(activity!!.supportFragmentManager, "ImageShow")
                         }
                     })

@@ -5,10 +5,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.View.INVISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -214,7 +214,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 visibility = View.GONE
             }
         }
-        text_message_title.text = getString(R.string.profile)
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
                 .getId()
         ) {
@@ -389,7 +388,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         if (userData.previousProfilePictures != null) {
             binding.previousProfilePicLayout.visibility = View.VISIBLE
-            binding.labelPreviousDp.setText("Previous Profile Photos (${userData.previousProfilePictures.pictures.size})")
+            binding.labelPreviousDp.setText("Previous Profile Photos (${userData.previousProfilePictures.profilePictures.size})")
         } else {
             binding.previousProfilePicLayout.visibility = View.GONE
             binding.labelPreviousDp.text = userData.previousProfilePictures?.label
@@ -450,6 +449,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.streaksText.visibility = View.GONE
         if (userData.isSeniorStudent) {
             this.isSeniorStudent = true
+
             binding.awardsLayout.visibility = View.VISIBLE
             binding.multiLineLl.visibility = View.VISIBLE
             binding.multiLineLl.removeAllViews()
@@ -466,10 +466,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         if (userData.awardCategory.isNullOrEmpty()) {
             binding.labelViewMoreAwards.visibility = View.GONE
-            if (userData.isSeniorStudent == false) {
-                binding.awardsLayout.visibility = View.GONE
-                binding.multiLineLl.visibility = View.GONE
+
+            if(!userData.isSeniorStudent) {
+                binding.noAwardText.visibility = View.VISIBLE
+                binding.labelViewMoreAwards.visibility = View.GONE
+                if (mentorId == Mentor.getInstance().getId()) {
+                    binding.noAwardText.text =
+                        getString(R.string.no_awards_me, resp.trim().split(" ")[0])
+                } else {
+                    binding.noAwardText.text =
+                        getString(R.string.no_awards_others, resp.trim().split(" ")[0])
+                }
             }
+
         } else {
             this.awardCategory = userData.awardCategory
             binding.awardsLayout.visibility = View.VISIBLE
@@ -483,14 +492,16 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     }
                 }
             } else {
-                binding.noAwardText.visibility = View.VISIBLE
-                binding.labelViewMoreAwards.visibility = View.GONE
-                if (mentorId == Mentor.getInstance().getId()) {
-                    binding.noAwardText.text =
-                        getString(R.string.no_awards_me, resp.trim().split(" ")[0])
-                } else {
-                    binding.noAwardText.text =
-                        getString(R.string.no_awards_others, resp.trim().split(" ")[0])
+                if(!userData.isSeniorStudent) {
+                    binding.noAwardText.visibility = View.VISIBLE
+                    binding.labelViewMoreAwards.visibility = View.GONE
+                    if (mentorId == Mentor.getInstance().getId()) {
+                        binding.noAwardText.text =
+                            getString(R.string.no_awards_me, resp.trim().split(" ")[0])
+                    } else {
+                        binding.noAwardText.text =
+                            getString(R.string.no_awards_others, resp.trim().split(" ")[0])
+                    }
                 }
             }
         }
@@ -526,7 +537,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         date.visibility =  GONE
         title.visibility =  GONE
         count.visibility =  GONE
-        image.setImageResource(R.drawable.senior_student_badge)
+        image.setImageResource(R.drawable.senior_student_with_shadow)
     }
 
     private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
@@ -678,11 +689,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             else -> {
             }
         }
-        v?.setOnClickListener {
-            RxBus2.publish(
-                AwardItemClickedEventBus(award)
-            )
-        }
+//        v?.setOnClickListener {
+//            RxBus2.publish(
+//                AwardItemClickedEventBus(award)
+//            )
+//        }
     }
 
     private fun setViewToLayout(
@@ -803,7 +814,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             intervalType: String? = null,
             previousPage: String? = null,
             conversationId: String? = null,
-            isFromConversationRoom: Boolean,
+            isFromConversationRoom: Boolean=false,
 
             ) {
             Intent(activity, UserProfileActivity::class.java).apply {

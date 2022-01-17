@@ -35,18 +35,7 @@ import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -208,7 +197,7 @@ interface CommonNetworkService {
         @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
 
-    @GET("$DIR/user/user_profile_v3/{mentor_id}/")
+    @GET("$DIR/user/user_profile_v2/{mentor_id}/")
     suspend fun getUserProfileDataV3(
         @Path("mentor_id") id: String,
         @Query("interval_type") intervalType: String? = null,

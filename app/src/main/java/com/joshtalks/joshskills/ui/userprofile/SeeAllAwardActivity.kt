@@ -102,7 +102,7 @@ class SeeAllAwardActivity : BaseActivity() {
         date.visibility = View.GONE
         title.visibility = View.GONE
         count.visibility = View.GONE
-        image.setImageResource(R.drawable.senior_student_badge)
+        image.setImageResource(R.drawable.senior_student_with_shadow)
     }
 
     @SuppressLint("WrongViewCast")

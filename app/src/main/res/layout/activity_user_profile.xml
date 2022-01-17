@@ -270,6 +270,8 @@
                     android:textColor="@color/grey_7A"
                     app:layout_constraintStart_toEndOf="@id/txt_label_hometown"
                     app:layout_constraintTop_toTopOf="@id/txt_label_hometown"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     tools:text="Patiala" />
 
                 <androidx.appcompat.widget.AppCompatTextView

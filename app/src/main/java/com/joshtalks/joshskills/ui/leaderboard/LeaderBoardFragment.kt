@@ -458,7 +458,6 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                 intervalType,
                 USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
                 conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID),
-                isFromConversationRoom = true
             )
         }
     }
