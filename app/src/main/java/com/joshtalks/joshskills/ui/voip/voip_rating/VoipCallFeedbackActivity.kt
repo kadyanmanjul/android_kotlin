@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
+import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -115,6 +116,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
             callerName = it.getStringExtra(ARG_CALLER_NAME) ?: EMPTY
             yourName = it.getStringExtra(ARG_YOUR_NAME) ?: EMPTY
             binding.txtMessage.text = msz.replaceFirst("#", callerName)
+            Timber.tag("naman3").d("$currentId  $callerId")
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
@@ -135,7 +137,8 @@ class VoipCallFeedbackActivity : BaseActivity(){
             val callTime = it.getLongExtra(ARG_CALL_TIME, 0L)
             val second: Int = (callTime / 1000 % 60).toInt()
             val minute: Int = (callTime / (1000 * 60) % 60).toInt()
-            if(second<120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
+
+            if(second<120 && !PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
                 showReportDialog("REPORT"){
                 }
             }
@@ -155,20 +158,9 @@ class VoipCallFeedbackActivity : BaseActivity(){
 
     private fun showReportDialog(type:String,function: ()->Unit) {
 
-        val reportDialogFragment = ReportDialogFragment(function)
-        val args: Bundle? = null
-        args?.putString("type", type);
-        args?.putInt(ARG_CALLER_ID,callerId);
-        args?.putInt(ARG_CURRENT_ID,currentId);
-        args?.putString("activity", this.toString());
-        reportDialogFragment.arguments = args
-        this.let {
-            reportDialogFragment.show(
-                it.supportFragmentManager,
-                "ReportDialogFragment"
-            )
 
-        }
+        ReportDialogFragment.newInstance(callerId,currentId, type,function = function)
+            .show(supportFragmentManager, "Teacher Details")
 
     }
 

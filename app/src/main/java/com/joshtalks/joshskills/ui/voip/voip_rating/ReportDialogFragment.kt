@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip.voip_rating
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,24 +13,26 @@ import com.google.android.flexbox.JustifyContent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.databinding.LayoutReportDialogFragmentBinding
+import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
+import com.joshtalks.joshskills.ui.course_details.extra.TEACHER_DETAIL_SOURCE
+import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.ui.voip.voip_rating.adapter.ReportAdapter
-
-
+import timber.log.Timber
 
 
 class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
 
     lateinit var binding: LayoutReportDialogFragmentBinding
     private lateinit var manager: FlexboxLayoutManager
-    var type = "REPORT"
+    var type1 = "REPORT"
     var channelName = "460dfa4a-88e1-48e9-a7f0-d2fcaa95c377"
     var optionId = 0
     val CHANNEL_NAME="channel_name"
     val FEEDBACK_OPTIONS="feedback_option"
     val REPORTED_BY_ID="reported_by_id"
     val REPORTED_AGAINST_ID="reported_against_id"
-    var callerId=0
-    var currentId=0
+    var callerId1=1
+    var currentId1=1
     val ARG_CALLER_ID = "caller_id"
     val ARG_CURRENT_ID= "current_id"
 
@@ -50,14 +53,7 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (arguments != null) {
-            val mArgs = arguments
-            type = mArgs?.getString("type").toString()
-            callerId= mArgs?.getInt(ARG_CALLER_ID)!!
-            currentId= mArgs?.getInt(ARG_CURRENT_ID)!!
 
-
-        }
 
         initView()
         addObserver()
@@ -87,7 +83,14 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
 
     private fun initView() {
 
-        vm.getReportOptionsListFromSharedPref(type)
+
+        val mArgs = arguments
+        type1 = mArgs?.getString("type").toString()
+        callerId1= mArgs?.getInt(ARG_CALLER_ID)!!
+        currentId1= mArgs?.getInt(ARG_CURRENT_ID)
+        Timber.tag("naman2").d("$currentId1  $callerId1")
+
+        vm.getReportOptionsListFromSharedPref(type1)
 
         binding.crossBtn.setOnClickListener {
             closeDialog()
@@ -98,11 +101,13 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
     }
     private val myHandlersListener: ClickListenerHandler = object : ClickListenerHandler {
         override fun submitReport() {
+            Timber.tag("naman").d("$currentId1  $callerId1")
+
             val map: HashMap<String, Any> = HashMap<String, Any>()
             map[CHANNEL_NAME] = channelName
             map[FEEDBACK_OPTIONS] = optionId
-            map[REPORTED_BY_ID] = currentId
-            map[REPORTED_AGAINST_ID] = callerId
+            map[REPORTED_BY_ID] = currentId1
+            map[REPORTED_AGAINST_ID] = callerId1
             vm.submitReportOption(map)
             closeDialog()
             function.invoke()
@@ -115,5 +120,17 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
             super.dismiss()
     }
 
+   companion object {
+        @JvmStatic
+        fun newInstance(callerID:Int,currentID:Int,typ:String,function: () -> Unit) =
+            ReportDialogFragment(function).apply {
+                arguments = Bundle().apply {
+                    putString("type", typ);
+                    putInt(ARG_CALLER_ID,callerID);
+                    putInt(ARG_CURRENT_ID,currentID);                   }
+            }
 
+
+
+    }
 }
