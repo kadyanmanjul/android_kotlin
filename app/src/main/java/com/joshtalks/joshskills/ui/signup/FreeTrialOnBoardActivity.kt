@@ -15,16 +15,22 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.flurry.sdk.it
+import com.github.razir.progressbutton.DrawableButton
+import com.github.razir.progressbutton.hideProgress
+import com.github.razir.progressbutton.showProgress
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -34,6 +40,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -57,9 +64,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
-    private lateinit var auth: FirebaseAuth
-    private var verificationVia: VerificationVia = VerificationVia.SMS
-    private var verificationService: VerificationService = VerificationService.SMS_COUNTRY
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -70,15 +74,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         layout.handler = this
         layout.lifecycleOwner = this
         addViewModelObserver()
-        initLoginFeatures()
         initTrueCallerUI()
-
-        if (User.getInstance().isVerified ) {
-            openProfileDetailFragment(false)
-        } else {
-            openSignUpOptionsFragment()
-        }
-        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onStart() {
@@ -122,7 +118,14 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
-                openProfileDetailFragment()
+                //to check if the truecaller exist in the users phone
+                if (!Utils.isTrueCallerAppExist()) {
+                    openProfileDetailFragment()
+                }
+                else
+                {
+                    openTrueCaller()
+                }
                 alertDialog.dismiss()
             }
         }
@@ -133,6 +136,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
+    private fun openTrueCaller(){
+//        showProgressBar()
+        TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
+    }
+
     private fun openProfileDetailFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
@@ -140,17 +148,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             replace(
                 R.id.container,
                 SignUpProfileForFreeTrialFragment.newInstance(),
-                SignUpProfileForFreeTrialFragment::class.java.name
-            )
-        }
-    }
-    private fun openProfileDetailFragment(isRegistrationScreenFirstTime: Boolean) {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        supportFragmentManager.commit(true) {
-            addToBackStack(null)
-            replace(
-                R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(isRegistrationScreenFirstTime),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
@@ -169,7 +166,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         super.onBackPressed()
     }
     fun trueCaller() {
-//        showProgressBar()
+        showProgressBar()
         if (TruecallerSDK.getInstance().isUsable()) {
             TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
         } else { //else open the ji haan pop up
@@ -181,6 +178,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     fun initTrueCallerUI() {
         val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
             .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
+            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
             .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
             .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
             .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
@@ -193,6 +191,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
+    //check
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TruecallerSDK.SHARE_PROFILE_REQUEST_CODE) {
@@ -216,11 +215,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
 
         override fun onVerificationRequired(p0: TrueError?) {
+            showToast("verification required")
         }
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
+            showToast("on success")
             CoroutineScope(Dispatchers.IO).launch {
-                viewModel.verifyUserTrueCaller(trueProfile)
+                viewModel.verifyUserViaTrueCaller(trueProfile)
             }
         }
     }
@@ -228,25 +229,21 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
             hideProgressBar()
             when (it) {
-                SignUpStepStatus.RequestForOTP -> {
-                    openNumberVerificationFragment()
-                }
                 SignUpStepStatus.ProfileInCompleted -> {
-//                    binding.ivBack.visibility = View.GONE
                     lifecycleScope.launch(Dispatchers.IO) {
                         PrefManager.clearDatabase()
                         PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
                         PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
                     }
-                    openProfileDetailFragment(true)
+                    openProfileDetailFragment()
                 }
                 SignUpStepStatus.ProfileCompleted -> {
                     showStartTrialPopup()//ji haan
                 }
-                SignUpStepStatus.StartAfterPicUploaded, SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.SignUpCompleted -> {
-//                  startActivity(getSignUpProfileForFreeTrialFragmentIntent())
+                SignUpStepStatus.SignUpCompleted -> {
                     showStartTrialPopup()
                     this@FreeTrialOnBoardActivity.finishAffinity()
+                    finish()
                 }
                 else -> return@Observer
             }
@@ -255,20 +252,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             showProgressBar()
         })
     }
-    private fun openNumberVerificationFragment() {
-//        appAnalytics.addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
-        supportFragmentManager.commit(true) {
-            addToBackStack(SignUpVerificationFragment::class.java.name)
-            replace(
-                R.id.container,
-                SignUpVerificationFragment.newInstance(),
-                SignUpVerificationFragment::class.java.name
-            )
-        }
-    }
-    private fun initLoginFeatures() {
-        auth = FirebaseAuth.getInstance()
-    }
+
     private fun openSignUpOptionsFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
@@ -288,20 +272,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     ) {
 
         when (service) {
-            VerificationService.SINCH -> {
-                // verificationThroughSinch(countryCode, phoneNumber, verificationVia)
-            }
             VerificationService.TRUECALLER -> {
                 verificationThroughTrueCaller(phoneNumber)
-            }
-            else -> {
-                RxBus2.publish(
-                    LoginViaEventBus(
-                        LoginViaStatus.SMS_VERIFY,
-                        countryCode,
-                        phoneNumber
-                    )
-                )
             }
         }
     }
@@ -386,27 +358,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 }
             }).check()
     }
-//    private fun callVerificationService() {
-//        (requireActivity() as SignUpActivity).createVerification(
-//            prefix,
-//            layout.mobileEt.text!!.toString(),
-//            service = verificationService,
-//            verificationVia = verificationVia
-//        )
-//    }
-override fun onPause() {
-    super.onPause()
-//    compositeDisposable.clear()
-}
-    //tc
-    override fun onStop() {
-//        appAnalytics.push()
-        super.onStop()
-    }
-
-    //tc
     override fun onDestroy() {
-        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         TruecallerSDK.clear()
         super.onDestroy()
     }

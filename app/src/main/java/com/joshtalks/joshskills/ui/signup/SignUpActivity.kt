@@ -88,14 +88,12 @@ const val FLOW_FROM = "Flow"
 class SignUpActivity : BaseActivity() {
 
     private lateinit var appAnalytics: AppAnalytics
-    //tc
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
     private val viewModelForDpUpload: UserProfileViewModel by lazy {
         ViewModelProvider(this).get(UserProfileViewModel::class.java)
     }
-    //tc
     private lateinit var binding: ActivitySignUpV2Binding
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
@@ -127,7 +125,6 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
-        //tc
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
         //tc
@@ -410,16 +407,13 @@ class SignUpActivity : BaseActivity() {
         LoginManager.getInstance().logIn(this, listOf("public_profile", "email"))
     }
 
-    //tc
     private fun trueCallerLogin() {
         TruecallerSDK.getInstance().getUserProfile(this@SignUpActivity)
     }
-    //tc
     fun showPrivacyPolicyDialog() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         showWebViewDialog(url)
     }
-    //tc
     fun onSkipPressed() {
         logSkipEvent()
         viewModel.changeSignupStatusToProfilePicSkipped()

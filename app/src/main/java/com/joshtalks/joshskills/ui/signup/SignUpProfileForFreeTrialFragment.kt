@@ -22,12 +22,15 @@ import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
+import kotlinx.android.synthetic.main.instruction_top_view_holder.view.*
 import java.util.*
 
 class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     //    private var prefix: String = EMPTY
     private lateinit var viewModel: SignUpViewModel
+    private lateinit var viewModelFreeTrial: FreeTrialOnBoardViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
 //    private var datePicker: DatePickerDialog? = null
 //    private var gender: GENDER? = null
@@ -37,21 +40,12 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     companion object {
         fun newInstance() = SignUpProfileForFreeTrialFragment()
-        const val IS_REGISTRATION_SCREEEN_FIRST_TIME = "is_registration_screen_first_time"
-        fun newInstance(isRegistrationScreenFirstTime:Boolean) = SignUpProfileForFreeTrialFragment().apply {
-            arguments=Bundle().apply {
-                putBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME,isRegistrationScreenFirstTime)
-            }
-        }
     }
-    private var isRegistrationFirstTime: Boolean=true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            isRegistrationFirstTime =
-                it.getBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME,true)
-        }
-        viewModel = ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+        viewModelFreeTrial = ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -72,16 +66,8 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            when (it) {
-                SignUpStepStatus.ERROR -> {
-                    hideProgress()
-                }
-                else -> return@Observer
-            }
-        })
-        addObservers()
         initUI()
+        addObservers()
         binding.nameEditText.requestFocus()
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
@@ -90,6 +76,21 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         // initListener()
         // initCountryCodePicker()
     }
+
+     private fun initUI() {
+         val user = User.getInstance()
+
+         if (user.firstName.isNullOrEmpty().not()) {
+             binding.nameEditText.setText(user.firstName)
+             binding.nameEditText.isEnabled = true
+         }
+         val name = binding.nameEditText.text.toString()
+         if(name!=user.firstName)
+         {
+             user.firstName= name
+         }
+
+     }
 
     private fun addObservers() {
         binding.nameEditText.setOnEditorActionListener { v, actionId, event ->
@@ -101,7 +102,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 else -> false
             }
         }
-        viewModel.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModelFreeTrial.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it) {
                 SignUpStepStatus.ProfileCompleted -> {
                     viewModel.startFreeTrial(Mentor.getInstance().getId())
@@ -112,7 +113,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
-        viewModel.apiStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModelFreeTrial.apiStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                     hideProgress()
@@ -259,7 +260,6 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 //        if (mobNo.isNullOrBlank().not()) {
 //            requestMap["mobile"] = mobNo
 //        }
-        viewModel.completingProfile(requestMap)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
     }
 
@@ -277,18 +277,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         startActivity(intent)
     }
 
-    private fun initUI() {
-//        initCountryCodePicker()
-        val user = User.getInstance()
 
-        if (user.firstName.isNullOrEmpty().not()) {
-            binding.nameEditText.setText(user.firstName)
-            binding.nameEditText.isEnabled = false
-        }
-        if (user.phoneNumber.isNullOrEmpty().not()) {
-            val phoneNumber = user.phoneNumber ?: EMPTY
-        }
-    }
     private fun startProgress() {
         binding.btnLogin.showProgress {
             buttonTextRes = R.string.plz_wait
@@ -300,14 +289,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         }
         binding.btnLogin.isEnabled = false
     }
-//    private fun initCountryCodePicker() {
-//        binding.countryCodePicker.setAutoDetectedCountry(true)
-//        binding.countryCodePicker.setDetectCountryWithAreaCode(true)
-//        prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
-//        binding.countryCodePicker.setOnCountryChangeListener {
-//            prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
-//        }
-//    }
+
     private fun hideProgress() {
         binding.btnLogin.isEnabled = true
         binding.btnLogin.hideProgress(R.string.register)

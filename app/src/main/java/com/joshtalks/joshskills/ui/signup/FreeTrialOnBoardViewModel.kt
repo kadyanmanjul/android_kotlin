@@ -52,7 +52,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    suspend fun verifyUserTrueCaller(profile: TrueProfile) {
+    suspend fun verifyUserViaTrueCaller(profile: TrueProfile) {
         progressBarStatus.postValue(true)
         withContext(Dispatchers.IO) {
             try {
@@ -102,26 +102,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             fetchMentor()
             WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
-        }
-    }
-
-    fun completingProfile(map: MutableMap<String, String?>, isUserVerified: Boolean = true) {
-        progressBarStatus.postValue(true)
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        it.isVerified = isUserVerified
-                        User.getInstance().updateFromResponse(it)
-                        _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
-                    }
-                    return@launch
-                }
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-            _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -179,6 +159,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     User.update(it)
                 }
                 AppAnalytics.updateUser()
+                analyzeUserProfile()
                 return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
@@ -186,4 +167,12 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
+    private fun analyzeUserProfile() {
+        val user = User.getInstance()
+        if (user.phoneNumber.isNullOrEmpty() || user.firstName.isNullOrEmpty()) {
+            return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
+        }
+        _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+    }
+
 }
