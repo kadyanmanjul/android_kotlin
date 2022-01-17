@@ -5,7 +5,7 @@
     <data>
         <variable
             name="clickHandler"
-            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.WinScreenFragment" />
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.GameDecisionFragment" />
     </data>
     <FrameLayout
         android:layout_width="match_parent"
