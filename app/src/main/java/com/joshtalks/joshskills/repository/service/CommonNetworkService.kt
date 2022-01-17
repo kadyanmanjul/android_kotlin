@@ -75,6 +75,9 @@ interface CommonNetworkService {
     @POST("$DIR/payment/verify_v2/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
 
+    @GET("$DIR/payment/verify_razorpay_order/")
+    suspend fun verifyErrorPayment(@Body params:Map<String,String>): Any
+
     @POST("$DIR/course/certificate/generate/")
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
 

@@ -420,14 +420,14 @@ abstract class BaseActivity :
     }
 
     //after verification through truecaller this intent helps to go to another activity
-    fun getSignUpProfileForFreeTrialFragmentIntent(isFromOnBoardingFlow: Boolean = false): Intent {
-        return Intent(this, SignUpProfileForFreeTrialFragment::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            //putExtra(SHOW_OVERLAY, true)
-            //putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
-        }
-    }
+//    fun getSignUpProfileForFreeTrialFragmentIntent(isFromOnBoardingFlow: Boolean = false): Intent {
+//        return Intent(this, SignUpProfileForFreeTrialFragment::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            //putExtra(SHOW_OVERLAY, true)
+//            //putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
+//        }
+//    }
 
     protected fun openSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
