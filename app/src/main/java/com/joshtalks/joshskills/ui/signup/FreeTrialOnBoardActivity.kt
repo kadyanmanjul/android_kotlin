@@ -61,6 +61,12 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         layout.lifecycleOwner = this
         addViewModelObserver()
         initTrueCallerUI()
+//        if (intent.getBooleanExtra(SHOW_SIGN_UP_FRAGMENT, false) &&
+//            Mentor.getInstance().getId().isNotEmpty()
+//        ) {
+//            openProfileDetailFragment()
+//        }
+        PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
     }
 
     override fun onStart() {
@@ -122,11 +128,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    private fun openTrueCaller(){
-//        showProgressBar()
-        TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
-    }
-
     private fun openProfileDetailFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
@@ -151,16 +152,12 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         super.onBackPressed()
     }
-    //    fun trueCaller() {
-//        showProgressBar()
-//        if (TruecallerSDK.getInstance().isUsable()) {
-//            TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
-//        } else { //else open the ji haan pop up
-//            showStartTrialPopup()
-//        }
-////        TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
-////        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//    }
+
+    private fun openTrueCaller(){
+        showProgressBar()
+        TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
+    }
+
     fun initTrueCallerUI() {
         val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
             .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
@@ -169,7 +166,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
             .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
             .build()
-
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
             val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
@@ -177,7 +173,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    //check
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TruecallerSDK.SHARE_PROFILE_REQUEST_CODE) {
@@ -192,25 +187,21 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
-
         override fun onFailureProfileShared(trueError: TrueError) {
             hideProgressBar()
             if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
                 showToast(application.getString(R.string.internet_not_available_msz))
             }
         }
-
         override fun onVerificationRequired(p0: TrueError?) {
-            showToast("verification required")
         }
-
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-            showToast("on success")
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.verifyUserViaTrueCaller(trueProfile)
             }
         }
     }
+
     private fun addViewModelObserver() {
         viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
             hideProgressBar()
@@ -250,19 +241,20 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             )
         }
     }
+
     fun createVerification(
         countryCode: String,
         phoneNumber: String,
         service: VerificationService = VerificationService.SMS_COUNTRY,
         verificationVia: VerificationVia = VerificationVia.SMS,
     ) {
-
         when (service) {
             VerificationService.TRUECALLER -> {
                 verificationThroughTrueCaller(phoneNumber)
             }
         }
     }
+
     private fun verificationThroughTrueCaller(
         phoneNumber: String,
     ) {
@@ -284,23 +276,21 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     }
                     VerificationCallback.TYPE_OTP_RECEIVED -> {
                         viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
-
                     }
                     VerificationCallback.TYPE_VERIFICATION_COMPLETE -> {
                         viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
                     }
                 }
             }
-
             override fun onRequestFailure(requestCode: Int, @NonNull e: TrueException) {
                 viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
             }
         }
-
         flashCallVerificationPermissionCheck {
             TruecallerSDK.getInstance().requestVerification("IN", phoneNumber, apiCallback, this)
         }
     }
+
     private fun flashCallVerificationPermissionCheck(callback: () -> Unit = {}) {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             arrayListOf(
@@ -334,7 +324,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                         }
                     }
                 }
-
                 override fun onPermissionRationaleShouldBeShown(
                     p0: MutableList<PermissionRequest>?,
                     token: PermissionToken?,
@@ -344,10 +333,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 }
             }).check()
     }
+
     override fun onDestroy() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         TruecallerSDK.clear()
         super.onDestroy()
     }
-
 }

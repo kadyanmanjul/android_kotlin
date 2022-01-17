@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.NonNull
@@ -17,11 +16,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.GraphRequest
+import com.facebook.*
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -35,25 +30,11 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SignUpStepStatus
-import com.joshtalks.joshskills.core.USER_LOCALE
-import com.joshtalks.joshskills.core.VerificationService
-import com.joshtalks.joshskills.core.VerificationStatus
-import com.joshtalks.joshskills.core.VerificationVia
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.getFBProfilePicture
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
@@ -66,21 +47,16 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.truecaller.android.sdk.ITrueCallback
-import com.truecaller.android.sdk.TrueError
-import com.truecaller.android.sdk.TrueException
-import com.truecaller.android.sdk.TrueProfile
-import com.truecaller.android.sdk.TruecallerSDK
-import com.truecaller.android.sdk.TruecallerSdkScope
+import com.truecaller.android.sdk.*
 import com.truecaller.android.sdk.clients.VerificationCallback
 import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
-import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -125,9 +101,9 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
-        //tc
         addViewModelObserver()
         initLoginFeatures()
         setupTrueCaller()
@@ -138,7 +114,7 @@ class SignUpActivity : BaseActivity() {
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
-    //tc
+
     private fun addViewModelObserver() {
         viewModel.signUpStatus.observe(this, Observer {
             hideProgressBar()
@@ -265,7 +241,7 @@ class SignUpActivity : BaseActivity() {
                 }
             })
     }
-    //tc
+
     private fun setupTrueCaller() {
         val trueScope = TruecallerSdkScope.Builder(this, object : ITrueCallback {
             override fun onFailureProfileShared(trueError: TrueError) {
@@ -276,12 +252,11 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onVerificationRequired(p0: TrueError?) {
+
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.verifyUserViaTrueCaller(trueProfile)
-                }
+                viewModel.verifyUserViaTrueCaller(trueProfile)
             }
 
         })
@@ -296,7 +271,7 @@ class SignUpActivity : BaseActivity() {
             TruecallerSDK.getInstance().setLocale(locale)
         }
     }
-    //tc
+
     private fun openSignUpOptionsFragment() {
         binding.skip.visibility = View.GONE
         binding.ivHelp.visibility = View.GONE
@@ -310,7 +285,7 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
-    //tc taking us to next fragment
+
     private fun openProfileDetailFragment(isRegistrationScreenFirstTime: Boolean) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
@@ -322,6 +297,7 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
+
     private fun openProfilePicUpdateFragment() {
         binding.skip.visibility = View.VISIBLE
         binding.ivHelp.visibility = View.GONE
@@ -347,7 +323,7 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
-    //tc
+
     private fun openNumberVerificationFragment() {
         appAnalytics.addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
         supportFragmentManager.commit(true) {
@@ -359,12 +335,12 @@ class SignUpActivity : BaseActivity() {
             )
         }
     }
-    //tc
+
     override fun onResume() {
         super.onResume()
         addObserver()
     }
-    //tc
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val url = data?.data?.path ?: EMPTY
@@ -410,10 +386,12 @@ class SignUpActivity : BaseActivity() {
     private fun trueCallerLogin() {
         TruecallerSDK.getInstance().getUserProfile(this@SignUpActivity)
     }
+
     fun showPrivacyPolicyDialog() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         showWebViewDialog(url)
     }
+
     fun onSkipPressed() {
         logSkipEvent()
         viewModel.changeSignupStatusToProfilePicSkipped()
@@ -454,7 +432,7 @@ class SignUpActivity : BaseActivity() {
         request.parameters = parameters
         request.executeAsync()
     }
-    //tc
+
     private fun handleGoogleSignInResult(account: GoogleSignInAccount) {
         if (account.idToken.isNullOrEmpty().not()) {
             val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
@@ -475,7 +453,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun handleFirebaseAuth(
-        accountUser: FirebaseUser?,
+        accountUser: FirebaseUser?
     ) {
         if (accountUser != null) {
 
@@ -507,7 +485,6 @@ class SignUpActivity : BaseActivity() {
                             showProgressBar()
                             gmailLogin()
                         }
-                        //tc
                         LoginViaStatus.TRUECALLER -> {
                             showProgressBar()
                             trueCallerLogin()
@@ -532,12 +509,12 @@ class SignUpActivity : BaseActivity() {
             return
         }
     }
-    //tc
+
     fun createVerification(
         countryCode: String,
         phoneNumber: String,
         service: VerificationService = VerificationService.SMS_COUNTRY,
-        verificationVia: VerificationVia = VerificationVia.SMS,
+        verificationVia: VerificationVia = VerificationVia.SMS
     ) {
 
         when (service) {
@@ -686,16 +663,14 @@ class SignUpActivity : BaseActivity() {
     }*/
 
     //Use link = https://docs.truecaller.com/truecaller-sdk/android/integrating-with-your-app/verifying-non-truecaller-users
-    //to verify non trueCaller users
-    //tc
     private fun verificationThroughTrueCaller(
-        phoneNumber: String,
+        phoneNumber: String
     ) {
         val apiCallback: VerificationCallback = object : VerificationCallback {
             @SuppressLint("SwitchIntDef")
             override fun onRequestSuccess(
                 requestCode: Int,
-                @Nullable extras: VerificationDataBundle?,
+                @Nullable extras: VerificationDataBundle?
             ) {
                 when (requestCode) {
                     VerificationCallback.TYPE_MISSED_CALL_INITIATED -> {
@@ -726,7 +701,7 @@ class SignUpActivity : BaseActivity() {
             TruecallerSDK.getInstance().requestVerification("IN", phoneNumber, apiCallback, this)
         }
     }
-    //tc
+
     private fun flashCallVerificationPermissionCheck(callback: () -> Unit = {}) {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             arrayListOf(
@@ -763,25 +738,24 @@ class SignUpActivity : BaseActivity() {
 
                 override fun onPermissionRationaleShouldBeShown(
                     p0: MutableList<PermissionRequest>?,
-                    token: PermissionToken?,
+                    token: PermissionToken?
                 ) {
                     viewModel.verificationStatus.postValue(VerificationStatus.USER_DENY)
                     token?.continuePermissionRequest()
                 }
             }).check()
     }
-    //tc
+
     override fun onPause() {
         super.onPause()
         compositeDisposable.clear()
     }
-    //tc
+
     override fun onStop() {
         appAnalytics.push()
         super.onStop()
     }
 
-    //tc
     override fun onDestroy() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onDestroy()

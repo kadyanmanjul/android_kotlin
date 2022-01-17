@@ -120,9 +120,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    suspend fun verifyUserViaTrueCaller(profile: TrueProfile) {
+    fun verifyUserViaTrueCaller(profile: TrueProfile) {
         progressBarStatus.postValue(true)
-        withContext(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val trueCallerLoginRequest = TrueCallerLoginRequest(
                     profile.payload,
@@ -135,10 +135,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
-                            RegistrationMethods.TRUE_CALLER
+                            RegistrationMethods.MOBILE_NUMBER
                         )
                         updateFromLoginResponse(this)
                     }
+                    return@launch
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
