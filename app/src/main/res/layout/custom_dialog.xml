@@ -1,0 +1,160 @@
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="330dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center_horizontal"
+    android:background="@color/transparent"
+    android:backgroundTint="@color/transparent"
+    android:elevation="@dimen/_10sdp"
+    app:cardCornerRadius="@dimen/_10sdp"
+    app:cardBackgroundColor="@color/transparent"
+    android:layout_height="230dp">
+
+        <LinearLayout
+            android:layout_width="330dp"
+            android:layout_height="230dp"
+            android:background="@drawable/custom_dialog_layout_blue"
+            android:orientation="vertical"
+            android:padding="7dp"
+            android:weightSum="100">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/txt_file_path"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:singleLine="true"
+                        android:text="Confirm"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/btn_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="5dp"
+                        android:src="@drawable/close_btn_quiz" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/inside_dialog_box"
+                android:orientation="vertical"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:text="Do you really want to exit?"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_13sdp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="40"
+                    android:orientation="horizontal"
+                    android:weightSum="100">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="50"
+                        android:gravity="center|right">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/btn_no"
+                            android:layout_width="@dimen/_90sdp"
+                            android:layout_height="@dimen/_32sdp"
+                            app:cardCornerRadius="@dimen/_15sdp"
+                            android:background="@color/transparent"
+                            android:backgroundTint="@color/transparent"
+                            app:strokeWidth="2.5dp"
+                            app:strokeColor="#242B5C">
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/border_gradient">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:textSize="@dimen/_10sdp"
+                                    android:textColor="@color/white"
+                                    android:textStyle="bold"
+                                    android:text="No" />
+                            </RelativeLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="50"
+                        android:gravity="center|left">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/btn_yes"
+                            android:layout_width="@dimen/_90sdp"
+                            android:layout_height="@dimen/_32sdp"
+                            app:cardCornerRadius="@dimen/_15sdp"
+                            app:strokeWidth="2.5dp"
+                            android:background="@color/transparent"
+                            android:backgroundTint="@color/transparent"
+                            app:strokeColor="#242B5C">
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/border_gradient">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Yes"
+                                    android:layout_centerInParent="true"
+                                    android:textSize="@dimen/_10sdp"
+                                    android:textColor="@color/white"
+                                    android:textStyle="bold"/>
+                            </RelativeLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -91,6 +91,8 @@ const val HAS_SEEN_VOCAB_SPEAKING_ANIMATION = "joshskills_has_seen_vocab_speakin
 const val HAS_SEEN_VOCAB_HAND_TOOLTIP = "joshskills_has_seen_vocab_hand_tooltip"
 const val HAS_SEEN_READING_HAND_TOOLTIP = "joshskills_has_seen_reading_hand_tooltip"
 const val HAS_SEEN_READING_TOOLTIP = "joshskills_has_seen_reading_tooltip"
+const val HAS_SEEN_GROUP_TOOLTIP = "joshskills_has_seen_group_tooltip"
+const val HAS_SEEN_GROUP_CALL_TOOLTIP = "joshskills_has_seen_group_call_tooltip"
 const val HAS_SEEN_READING_PLAY_ANIMATION = "joshskills_has_seen_reading_play_animation"
 const val HAS_SEEN_SPEAKING_TOOLTIP = "joshskills_has_seen_speaking_tooltip"
 const val LESSON_COMPLETE_SNACKBAR_TEXT_STRING = "lesson_complete_snackbar_text_string"
@@ -106,6 +108,10 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
+
+const val USER_ACTIVE_IN_GAME = "game_active"
+const val USER_LEAVE_THE_GAME = "game_left"
+const val USER_MUTE_OR_NOT = "mute_un_mute"
 
 object PrefManager {
 
@@ -240,7 +246,7 @@ object PrefManager {
         WorkManagerAdmin.appStartWorker()
     }
 
-    fun clearDatabase(){
+    fun clearDatabase() {
         LastSyncPrefManager.clear()
         AppDatabase.clearDatabase()
     }
