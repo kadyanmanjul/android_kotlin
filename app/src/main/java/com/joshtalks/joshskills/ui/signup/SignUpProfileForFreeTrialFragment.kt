@@ -126,6 +126,8 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     fun submitForFreeTrial() {
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
+//        requestMap["date_of_birth"] = userDateOfBirth ?: EMPTY
+//        requestMap["gender"] = gender?.gValue ?: EMPTY
         requestMap["is_free_trial"] = "Y"
 
         viewModel.completingProfile(requestMap, isUserVerified)

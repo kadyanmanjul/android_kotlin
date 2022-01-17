@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.HashMap
 
 class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {
 
