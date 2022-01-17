@@ -137,6 +137,7 @@ class WinScreenFragment : Fragment(), FirebaseDatabase.OnMakeFriendTrigger,
             binding.team1UserImage2Shadow.visibility = View.VISIBLE
         }
         showRoomUserData()
+        GameAnalytics.push(GameAnalytics.Event.GAME_COMPLETED)
 
         try {
             engine = activity?.let { P2pRtc().initEngine(it) }

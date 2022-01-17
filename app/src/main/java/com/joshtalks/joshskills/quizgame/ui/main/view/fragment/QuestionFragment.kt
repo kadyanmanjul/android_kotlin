@@ -334,13 +334,13 @@ class QuestionFragment : Fragment(), FirebaseDatabase.OnNotificationTrigger,
             val allQuestionsAnswer: Question = question.que[position]
 
             binding.question.visibility = View.VISIBLE
-            binding.question.text = allQuestionsAnswer.question
+            binding.question.text = allQuestionsAnswer.question?.trim()
             answerAnim()
             choiceValue = getDisplayAnswerAfterQuesComplete()
-            binding.answer1.text = allQuestionsAnswer.choices?.get(0)?.choiceData
-            binding.answer2.text = allQuestionsAnswer.choices?.get(1)?.choiceData
-            binding.answer3.text = allQuestionsAnswer.choices?.get(2)?.choiceData
-            binding.answer4.text = allQuestionsAnswer.choices?.get(3)?.choiceData
+            binding.answer1.text = allQuestionsAnswer.choices?.get(0)?.choiceData?.trim()
+            binding.answer2.text = allQuestionsAnswer.choices?.get(1)?.choiceData?.trim()
+            binding.answer3.text = allQuestionsAnswer.choices?.get(2)?.choiceData?.trim()
+            binding.answer4.text = allQuestionsAnswer.choices?.get(3)?.choiceData?.trim()
         } else {
             openWinScreen()
         }

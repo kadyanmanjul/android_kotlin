@@ -50,6 +50,7 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.quizgame.StartActivity
+import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
@@ -560,9 +561,8 @@ class ConversationActivity :
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
-                val intent = Intent(this, StartActivity::class.java).apply {
-                    putExtra(CONVERSATION_ID, getConversationId())
-                }
+                val intent = Intent(this, StartActivity::class.java)
+                GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
                 startActivity(intent)
             }
         }
@@ -919,10 +919,14 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if(userProfileData.hasGroupAccess)
+                if(userProfileData.hasGroupAccess){
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
-                else
+                    conversationBinding.imgGameBtn.visibility = VISIBLE
+                }
+                else{
                     conversationBinding.imgGroupChatBtn.visibility = GONE
+                    conversationBinding.imgGameBtn.visibility = GONE
+                }
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)

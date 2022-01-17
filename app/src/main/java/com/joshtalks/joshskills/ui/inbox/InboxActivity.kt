@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
@@ -143,8 +142,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                     R.id.menu_settings ->
                         openSettingActivity()
-                    R.id.menu_quiz ->
-                        openQuizGameActivity()
                 }
                 return@setOnMenuItemClickListener false
             }
@@ -154,10 +151,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun openSettingActivity() {
         openSettingActivity.launch(SettingsActivity.getIntent(this))
-    }
-
-    private fun openQuizGameActivity() {
-        startActivity(Intent(this,StartActivity::class.java))
     }
 
     private fun workInBackground() {

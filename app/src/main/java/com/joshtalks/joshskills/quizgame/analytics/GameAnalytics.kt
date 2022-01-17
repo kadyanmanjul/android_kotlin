@@ -37,6 +37,8 @@ object GameAnalytics {
         CLICK_ON_INVITE("CLICK_ON_INVITE"),
         CLICK_ON_ADD_TO_FRIEND_LIST("CLICK_ON_ADD_TO_FRIEND_LIST"),
         CLICK_ON_EXIT("CLICK_ON_EXIT"),
+        CLICK_ON_MAIN_GAME_ICON("CLICK_ON_MAIN_GAME_ICON"),
+        GAME_COMPLETED("GAME_COMPLETED")
     }
 
     fun push(event: GamesEvent) {

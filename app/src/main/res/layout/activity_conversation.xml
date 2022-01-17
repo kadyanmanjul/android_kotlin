@@ -309,7 +309,7 @@
             android:adjustViewBounds="true"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="visible"
+            android:visibility="gone"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
