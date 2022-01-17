@@ -149,6 +149,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             val fragment = GroupSearchFragment().apply {
                 arguments = bundle
             }
+            vm.openedGroupId = null
             replace(R.id.group_fragment_container, fragment, SEARCH_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
@@ -210,7 +211,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openNewGroupFragment(/*view: View?*/) {
+    private fun openNewGroupFragment() {
         vm.addingNewGroup.set(false)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
@@ -220,6 +221,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             val fragment = NewGroupFragment()
             fragment.arguments = bundle
 
+            vm.openedGroupId = null
             replace(R.id.group_fragment_container, fragment, ADD_GROUP_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
@@ -249,8 +251,9 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun removeGroupFromDb(groupId: String) {
-        while (supportFragmentManager.backStackEntryCount > 0)
-            onBackPressed()
+        if (groupId == vm.openedGroupId)
+            while (supportFragmentManager.backStackEntryCount > 0)
+                onBackPressed()
         CoroutineScope(Dispatchers.IO).launch {
             val groupName = vm.repository.getGroupName(groupId)
             vm.repository.leaveGroupFromLocal(groupId)

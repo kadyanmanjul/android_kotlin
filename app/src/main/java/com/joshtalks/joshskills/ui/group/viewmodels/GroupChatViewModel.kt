@@ -178,9 +178,9 @@ class GroupChatViewModel : BaseViewModel() {
                     dismissProgressDialog()
                     return@launch
                 }
-                getGroupInfo()
-                GroupAnalytics.push(GroupAnalytics.Event.MEMBER_REMOVED_FROM_GROUP, groupId, mentorId)
                 pushMetaRemoveMsg("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId, mentorId)
+                getGroupInfo(false)
+                GroupAnalytics.push(GroupAnalytics.Event.MEMBER_REMOVED_FROM_GROUP, groupId, mentorId)
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     dismissProgressDialog()
@@ -296,15 +296,16 @@ class GroupChatViewModel : BaseViewModel() {
     @ExperimentalPagingApi
     fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
 
-    fun getGroupInfo() {
-        fetchingGrpInfo.set(true)
+    //TODO: Refactor loading code (if conditions)
+    fun getGroupInfo(showLoading: Boolean = true) {
+        if (showLoading) fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
             memberCount.set(memberResult?.memberCount)
             groupSubHeader.set("${memberCount.get()} members, ${memberResult?.onlineCount} online")
             withContext(Dispatchers.Main){
                 memberAdapter.addMembersToList(memberResult?.list!!)
-                fetchingGrpInfo.set(false)
+                if (showLoading) fetchingGrpInfo.set(false)
                 dismissProgressDialog()
             }
         }

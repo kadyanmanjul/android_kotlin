@@ -66,7 +66,7 @@ class NewGroupFragment : BaseFragment() {
                             groupName = groupName,
                             groupIcon = imagePath ?: ""
                         )
-                        vm.addGroup(request)
+                        vm.addGroup(requireContext(), request)
                     } else if (groupName.length > 25)
                         showToast("Group Name should be 25 character or less")
                     else
@@ -81,7 +81,7 @@ class NewGroupFragment : BaseFragment() {
                             groupIcon = imagePath ?: vm.groupImageUrl.get() ?: "",
                             isImageChanged = vm.isImageChanged
                         )
-                        vm.editGroup(request, groupName != vm.groupTitle.get())
+                        vm.editGroup(requireContext(), request, groupName != vm.groupTitle.get())
                     } else if (groupName.length > 25)
                         showToast("Group Name should be 25 character or less")
                     else if (groupName == vm.groupTitle.get() && !vm.isImageChanged)

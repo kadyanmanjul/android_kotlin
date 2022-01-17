@@ -157,6 +157,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     fun getGroupListResult(onGroupsLoaded: ((Int) -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
+            database.groupListDao().deleteAllGroupItems()
             fetchGroupListFromNetwork()
             onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
         }
@@ -452,11 +453,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 if (response.isSuccessful)
                     database.timeTokenDao().deleteTimeEntry(token.groupId, token.timeToken)
             } catch (e: Exception) {
-                Log.e(TAG, "An error has occurred")
                 e.printStackTrace()
+                if (response.code() == 501)
+                    database.timeTokenDao().deleteTimeToken(token.groupId)
             }
         }
-        database.timeTokenDao().deleteLeftGroups()
     }
 
     fun getRecentTimeToken(id: String) = database.timeTokenDao().getOpenedTime(id)?.times(10000)

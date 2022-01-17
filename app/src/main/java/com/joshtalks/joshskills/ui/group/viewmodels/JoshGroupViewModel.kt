@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -49,6 +50,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val isFromGroupInfo = ObservableBoolean(false)
     var isImageChanged = false
     var conversationId: String = ""
+    var openedGroupId: String? = null
     val groupListCount = ObservableField(0)
     var groupMemberCounts: Map<String, GroupMemberCount> = mapOf()
 
@@ -56,6 +58,7 @@ class JoshGroupViewModel : BaseViewModel() {
         message.what = OPEN_GROUP
         message.obj = it
         singleLiveEvent.value = message
+        openedGroupId = it.getUniqueId()
     }
 
     fun getGroupData(): Flow<PagingData<GroupsItem>> {
@@ -119,8 +122,8 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
-    fun addGroup(request: AddGroupRequest) {
-        addingNewGroup.set(true)
+    fun addGroup(context: Context, request: AddGroupRequest) {
+        showProgressDialog(context,"Creating a new group...")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.addGroupToServer(request)
@@ -130,7 +133,7 @@ class JoshGroupViewModel : BaseViewModel() {
                         putBoolean(SHOW_NEW_INFO, true)
                     }
                     singleLiveEvent.value = message
-                    addingNewGroup.set(false)
+                    dismissProgressDialog()
                     onBackPress()
                 }
             } catch (e: Exception) {
@@ -142,15 +145,15 @@ class JoshGroupViewModel : BaseViewModel() {
                             showToast("Error while adding group")
                     } else
                         showToast("Unknown Error Occurred")
-                    addingNewGroup.set(false)
+                    dismissProgressDialog()
                 }
                 e.printStackTrace()
             }
         }
     }
 
-    fun editGroup(request: EditGroupRequest, isNameChanged: Boolean) {
-        addingNewGroup.set(true)
+    fun editGroup(context: Context, request: EditGroupRequest, isNameChanged: Boolean) {
+        showProgressDialog(context, "Editing group information...")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val isSuccess = repository.editGroupInServer(request, isNameChanged)
@@ -161,7 +164,7 @@ class JoshGroupViewModel : BaseViewModel() {
                         onBackPress()
                         onBackPress()
                     }
-                    addingNewGroup.set(false)
+                    dismissProgressDialog()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -172,7 +175,7 @@ class JoshGroupViewModel : BaseViewModel() {
                             showToast("Error while adding group")
                     } else
                         showToast("Unknown Error Occurred")
-                    addingNewGroup.set(false)
+                    dismissProgressDialog()
                 }
                 e.printStackTrace()
             }

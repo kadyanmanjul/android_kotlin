@@ -15,7 +15,7 @@ open class BaseViewModel : ViewModel() {
 
     fun showProgressDialog(context: Context, msg: String) {
         progressDialog = ProgressDialog(context, R.style.AlertDialogStyle)
-        progressDialog?.setCancelable(true)
+        progressDialog?.setCancelable(false)
         progressDialog?.setMessage(msg)
         progressDialog?.show()
     }
