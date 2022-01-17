@@ -44,7 +44,7 @@ class RetrofitInstance {
                     builder.addNetworkInterceptor(getStethoInterceptor())
                 }
                 val retrofit = Retrofit.Builder()
-                    .baseUrl(Url.base_url)
+                    .baseUrl(BuildConfig.BASE_URL_GAME)
                     .client(builder.build())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()

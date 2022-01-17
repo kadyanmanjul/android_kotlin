@@ -173,6 +173,7 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             /*For Port
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9011\""
             */
@@ -186,6 +187,7 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-skills${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -196,6 +198,7 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}.apk"

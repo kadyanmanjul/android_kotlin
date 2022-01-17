@@ -462,7 +462,7 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
                     moveFragment()
                 } else {
                     try {
-                        Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_LONG).show()
                     } catch (ex: Exception) { }
                     deleteTeamData()
                 }

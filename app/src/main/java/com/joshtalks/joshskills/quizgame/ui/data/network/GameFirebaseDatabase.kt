@@ -435,6 +435,10 @@ class GameFirebaseDatabase {
         muteUnmute.document(mentorId).delete()
     }
 
+    fun deleteChange(mentorId: String) {
+        changeTime.document(mentorId).delete()
+    }
+
     interface OnNotificationTrigger {
         fun onGetRoomId(currentUserRoomID: String?, mentorId: String)
         fun onShowAnim(mentorId: String, isCorrect: String, choiceAnswer: String, marks: String)

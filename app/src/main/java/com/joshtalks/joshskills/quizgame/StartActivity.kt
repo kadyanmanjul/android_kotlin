@@ -122,6 +122,7 @@ class StartActivity : BaseQuizActivity() {
         firebaseDatabase.deleteAnimUser(mentorId)
         firebaseDatabase.deleteUserPlayAgainCollection(mentorId)
         firebaseDatabase.deletePlayAgainNotification(mentorId)
+        firebaseDatabase.deleteChange(mentorId)
     }
 
     private fun startQuizGame() {

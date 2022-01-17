@@ -194,7 +194,7 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
                     timer?.cancel()
                 } else {
                     try {
-                        Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, NO_OPPONENT_FOUND, Toast.LENGTH_LONG).show()
                     } catch (ex: Exception) {
                     }
                     searchRandomViewModel?.deleteUserRadiusData(DeleteUserData(currentUserId))

@@ -325,7 +325,7 @@
             android:clickable="true"
             android:focusable="true"
             android:visibility="gone"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
             app:srcCompat="@drawable/ic_game_icon"
