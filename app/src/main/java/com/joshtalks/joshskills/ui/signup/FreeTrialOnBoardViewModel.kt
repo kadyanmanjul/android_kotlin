@@ -34,8 +34,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
     val service = AppObjectController.signUpNetworkService
-    var fromVerificationScreen = MutableLiveData(false)
-    var loginViaStatus: LoginViaStatus? = null
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     fun saveImpression(eventName: String) {
@@ -102,6 +100,26 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             fetchMentor()
             WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
+        }
+    }
+
+    fun completingProfile(map: MutableMap<String, String?>, isUserVerified: Boolean = true) {
+        progressBarStatus.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        it.isVerified = isUserVerified
+                        User.getInstance().updateFromResponse(it)
+                        _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
+                    }
+                    return@launch
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -174,5 +192,4 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
         _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
     }
-
 }

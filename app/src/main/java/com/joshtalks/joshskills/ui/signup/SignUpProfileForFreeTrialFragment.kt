@@ -45,12 +45,11 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
-        viewModelFreeTrial = ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         binding =
             DataBindingUtil.inflate(
@@ -77,20 +76,19 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         // initCountryCodePicker()
     }
 
-     private fun initUI() {
-         val user = User.getInstance()
+    private fun initUI() {
+        val user = User.getInstance()
 
-         if (user.firstName.isNullOrEmpty().not()) {
-             binding.nameEditText.setText(user.firstName)
-             binding.nameEditText.isEnabled = true
-         }
-         val name = binding.nameEditText.text.toString()
-         if(name!=user.firstName)
-         {
-             user.firstName= name
-         }
+        if (user.firstName.isNullOrEmpty().not()) {
+            binding.nameEditText.setText(user.firstName)
+            binding.nameEditText.isEnabled = true
+        }
+        val name = binding.nameEditText.text.toString()
+        if (name != user.firstName) {
+            user.firstName = name
+        }
 
-     }
+    }
 
     private fun addObservers() {
         binding.nameEditText.setOnEditorActionListener { v, actionId, event ->
@@ -102,7 +100,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 else -> false
             }
         }
-        viewModelFreeTrial.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it) {
                 SignUpStepStatus.ProfileCompleted -> {
                     viewModel.startFreeTrial(Mentor.getInstance().getId())
@@ -113,7 +111,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
-        viewModelFreeTrial.apiStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.apiStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                     hideProgress()
@@ -230,36 +228,11 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
             showToast(getString(R.string.name_error_toast))
             return
         }
-
-//        if (binding.dobEditText.text.isNullOrEmpty()) {
-//            showToast(getString(R.string.dob_error_toast))
-//            return
-//        }
-
-//        if (binding.phoneNumberEt.text.isNullOrEmpty() || isValidFullNumber(
-//                prefix,
-//                binding.phoneNumberEt.text.toString()
-//            ).not()
-//        ) {
-//            showToast(getString(R.string.please_enter_valid_number))
-//            return
-//        }
-
-//        if (gender == null) {
-//            showToast(getString(R.string.select_gender))
-//            return
-//        }
-
         startProgress()
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
-//        requestMap["date_of_birth"] = userDateOfBirth ?: EMPTY
-//        requestMap["gender"] = gender?.gValue ?: EMPTY
         requestMap["is_free_trial"] = "Y"
-//        val mobNo = binding.phoneNumberEt.text!!.toString()
-//        if (mobNo.isNullOrBlank().not()) {
-//            requestMap["mobile"] = mobNo
-//        }
+        viewModel.completingProfile(requestMap, false)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
     }
 

@@ -8,26 +8,18 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
-import com.flurry.sdk.it
-import com.github.razir.progressbutton.DrawableButton
-import com.github.razir.progressbutton.hideProgress
-import com.github.razir.progressbutton.showProgress
 import com.google.android.material.textview.MaterialTextView
-import com.google.firebase.auth.FirebaseAuth
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils
@@ -35,12 +27,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -59,7 +46,6 @@ const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
-    private var prefix: String = "+91"
     lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
@@ -165,16 +151,16 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         super.onBackPressed()
     }
-    fun trueCaller() {
-        showProgressBar()
-        if (TruecallerSDK.getInstance().isUsable()) {
-            TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
-        } else { //else open the ji haan pop up
-            showStartTrialPopup()
-        }
-//        TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
-//        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
+    //    fun trueCaller() {
+//        showProgressBar()
+//        if (TruecallerSDK.getInstance().isUsable()) {
+//            TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
+//        } else { //else open the ji haan pop up
+//            showStartTrialPopup()
+//        }
+////        TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
+////        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//    }
     fun initTrueCallerUI() {
         val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
             .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
@@ -238,12 +224,12 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     openProfileDetailFragment()
                 }
                 SignUpStepStatus.ProfileCompleted -> {
-                    showStartTrialPopup()//ji haan
+                    showToast("profile complete")
+                    openProfileDetailFragment()
                 }
                 SignUpStepStatus.SignUpCompleted -> {
-                    showStartTrialPopup()
-                    this@FreeTrialOnBoardActivity.finishAffinity()
-                    finish()
+                    showToast("signup complete")
+                    openProfileDetailFragment()
                 }
                 else -> return@Observer
             }
@@ -359,6 +345,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             }).check()
     }
     override fun onDestroy() {
+        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         TruecallerSDK.clear()
         super.onDestroy()
     }
