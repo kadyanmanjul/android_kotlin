@@ -136,8 +136,9 @@ class VoipCallFeedbackActivity : BaseActivity(){
             val callTime = it.getLongExtra(ARG_CALL_TIME, 0L)
             val second: Int = (callTime / 1000 % 60).toInt()
             val minute: Int = (callTime / (1000 * 60) % 60).toInt()
+            val totalSecond:Int=((minute*60)+second)
 
-            if(second<120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
+            if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
                 showReportDialog("REPORT"){
                 }
             }

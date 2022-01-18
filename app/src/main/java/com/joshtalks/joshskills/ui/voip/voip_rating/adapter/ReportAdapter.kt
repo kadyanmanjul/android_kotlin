@@ -38,7 +38,6 @@ class ReportAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(optionList[position])
         holder.itemView.setOnClickListener {
-            Timber.tag("naman").d("$holder   $prevHolder")
             listener(optionList[position].id)
 
             holder.binding.issueItem.textColorSet(R.color.white)
