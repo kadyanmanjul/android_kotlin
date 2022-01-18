@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -381,11 +382,47 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
-    override fun onPaymentError(p0: Int, p1: String?) { //check if the payment is success (again)
+    override fun onPaymentError(p0: Int, p1: String?) {
         // isBackPressDisabled = true
-        uiHandler.post {
-            showPaymentFailedDialog()
+        //check if the error-payment is onsuccess payment or not
+        CoroutineScope(Dispatchers.IO).launch {
+            try{
+                val data = mapOf("razorpay_order_id" to razorpayOrderId)
+                val response = AppObjectController.commonNetworkService.verifyErrorPayment(data)
+                if(response==true)
+                {
+                    val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+                    if (testId == freeTrialTestId) {
+                        PrefManager.put(IS_COURSE_BOUGHT, true)
+                    }
+                    // isBackPressDisabled = true
+                    razorpayOrderId.verifyPayment()
+                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0))
+                    //viewModel.updateSubscriptionStatus()
+
+                    uiHandler.post {
+                        PrefManager.put(IS_PAYMENT_DONE, true)
+                        showPaymentProcessingFragment()
+                    }
+
+                    uiHandler.postDelayed({
+                        navigateToStartCourseActivity()
+                    }, 1000L * 5L)
+                }
+                else{
+                    uiHandler.post {
+                        showPaymentFailedDialog()
+                    }
+                }
+            }
+            catch (ex: HttpException) {
+                ex.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
+
     }
 
     @Synchronized
@@ -393,7 +430,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
         }
-        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig() //102 - 526
+        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)

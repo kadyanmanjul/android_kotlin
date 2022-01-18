@@ -26,14 +26,14 @@ import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 import kotlinx.android.synthetic.main.instruction_top_view_holder.view.*
 import java.util.*
 
-class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
+class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
-    private lateinit var viewModelFreeTrial: FreeTrialOnBoardViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
+    private var username = name
 
     companion object {
-        fun newInstance() = SignUpProfileForFreeTrialFragment()
+        fun newInstance(name: String) = SignUpProfileForFreeTrialFragment(name)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         binding =
             DataBindingUtil.inflate(
@@ -59,24 +59,24 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUI()
         addObservers()
         binding.nameEditText.requestFocus()
+        binding.nameEditText.setText(User.getInstance().firstName)
+        initUI()
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     private fun initUI() {
-        val user = User.getInstance()
 
-        if (user.firstName.isNullOrEmpty().not()) {
-            binding.nameEditText.setText(user.firstName)
-            binding.nameEditText.isEnabled = true
-        }
+        binding.nameEditText.setText(username)
+        binding.nameEditText.isEnabled = true
+
         val name = binding.nameEditText.text.toString()
-        if (name != user.firstName) {
-            user.firstName = name
+        if (name != username) {
+            viewModel.saveTrueCallerImpression(NAME_CHANGED)
+            username = name
         }
     }
 

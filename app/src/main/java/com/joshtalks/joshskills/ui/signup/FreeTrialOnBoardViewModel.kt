@@ -31,6 +31,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val service = AppObjectController.signUpNetworkService
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    var userName: String? = null
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -39,6 +40,20 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     Pair("event_name", eventName)
                 )
                 AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun saveTrueCallerImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
@@ -180,6 +195,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
+
     private fun analyzeUserProfile() {
         val user = User.getInstance()
         if (user.phoneNumber.isNullOrEmpty() || user.firstName.isNullOrEmpty()) {

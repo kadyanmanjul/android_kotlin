@@ -63,6 +63,8 @@
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
         tools:ignore="ProtectedPermissions" />
 
+    <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/> <!-- for API level below 22-->
+
     <application
         android:name=".core.JoshApplication"
         android:allowBackup="true"

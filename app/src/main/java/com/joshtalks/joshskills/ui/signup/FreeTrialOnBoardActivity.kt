@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -22,7 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.Utils.isTrueCallerAppExist
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -34,6 +35,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.truecaller.android.sdk.*
+import com.truecaller.android.sdk.Utils
 import com.truecaller.android.sdk.clients.VerificationCallback
 import com.truecaller.android.sdk.clients.VerificationDataBundle
 import kotlinx.coroutines.CoroutineScope
@@ -111,12 +113,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
                 //to check if the truecaller exist in the users phone
-                if (!Utils.isTrueCallerAppExist()) {
-                    openProfileDetailFragment()
-                }
-                else
-                {
+                if(TruecallerSDK.getInstance().isUsable) {
                     openTrueCaller()
+                }
+                else {
+                    openProfileDetailFragment()
                 }
                 alertDialog.dismiss()
             }
@@ -134,7 +135,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(),
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName?:""),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
@@ -155,6 +156,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun openTrueCaller(){
         showProgressBar()
+        viewModel.saveTrueCallerImpression(TRUECALLER_FT_LOGIN)
         TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
     }
 
@@ -197,6 +199,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             CoroutineScope(Dispatchers.IO).launch {
+                viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
             }
         }
@@ -215,11 +218,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     openProfileDetailFragment()
                 }
                 SignUpStepStatus.ProfileCompleted -> {
-                    showToast("profile complete")
                     openProfileDetailFragment()
                 }
                 SignUpStepStatus.SignUpCompleted -> {
-                    showToast("signup complete")
                     openProfileDetailFragment()
                 }
                 else -> return@Observer
@@ -230,109 +231,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         })
     }
 
-    private fun openSignUpOptionsFragment() {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        supportFragmentManager.commit(true) {
-            addToBackStack(null)
-            replace(
-                R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(),
-                SignUpProfileForFreeTrialFragment::class.java.name
-            )
-        }
-    }
-
-    fun createVerification(
-        countryCode: String,
-        phoneNumber: String,
-        service: VerificationService = VerificationService.SMS_COUNTRY,
-        verificationVia: VerificationVia = VerificationVia.SMS,
-    ) {
-        when (service) {
-            VerificationService.TRUECALLER -> {
-                verificationThroughTrueCaller(phoneNumber)
-            }
-        }
-    }
-
-    private fun verificationThroughTrueCaller(
-        phoneNumber: String,
-    ) {
-        val apiCallback: VerificationCallback = object : VerificationCallback {
-            @SuppressLint("SwitchIntDef")
-            override fun onRequestSuccess(
-                requestCode: Int,
-                @Nullable extras: VerificationDataBundle?,
-            ) {
-                when (requestCode) {
-                    VerificationCallback.TYPE_MISSED_CALL_INITIATED -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.INITIATED)
-                    }
-                    VerificationCallback.TYPE_MISSED_CALL_RECEIVED -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
-                    }
-                    VerificationCallback.TYPE_OTP_INITIATED -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.INITIATED)
-                    }
-                    VerificationCallback.TYPE_OTP_RECEIVED -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
-                    }
-                    VerificationCallback.TYPE_VERIFICATION_COMPLETE -> {
-                        viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
-                    }
-                }
-            }
-            override fun onRequestFailure(requestCode: Int, @NonNull e: TrueException) {
-                viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
-            }
-        }
-        flashCallVerificationPermissionCheck {
-            TruecallerSDK.getInstance().requestVerification("IN", phoneNumber, apiCallback, this)
-        }
-    }
-
-    private fun flashCallVerificationPermissionCheck(callback: () -> Unit = {}) {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            arrayListOf(
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_CALL_LOG,
-                Manifest.permission.ANSWER_PHONE_CALLS
-            )
-        } else {
-            arrayListOf(
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_CALL_LOG,
-                Manifest.permission.CALL_PHONE
-            )
-        }
-        Dexter.withContext(this)
-            .withPermissions(permission)
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            callback()
-                            return@let
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            viewModel.verificationStatus.postValue(VerificationStatus.USER_DENY)
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                this@FreeTrialOnBoardActivity,
-                                R.string.flash_call_verify_permission_message
-                            )
-                            return
-                        }
-                    }
-                }
-                override fun onPermissionRationaleShouldBeShown(
-                    p0: MutableList<PermissionRequest>?,
-                    token: PermissionToken?,
-                ) {
-                    viewModel.verificationStatus.postValue(VerificationStatus.USER_DENY)
-                    token?.continuePermissionRequest()
-                }
-            }).check()
-    }
 
     override fun onDestroy() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -53,6 +54,19 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var loginViaStatus: LoginViaStatus? = null
     val service = AppObjectController.signUpNetworkService
 
+    fun saveTrueCallerImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
         id: String,
