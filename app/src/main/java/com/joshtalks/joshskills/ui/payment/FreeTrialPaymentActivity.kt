@@ -158,7 +158,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                                downloadDigitalCopy(url)
+                            downloadDigitalCopy(url)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -375,25 +375,25 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     private fun showEnglishButtonTextAndCardDecoration(){
-            index = 0
-            binding.subscriptionCard.background =
-                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-            binding.englishCard.background =
-                ContextCompat.getDrawable(
-                    this,
-                    R.drawable.blue_rectangle_with_blue_bound_stroke
-                )
-            isEnglishCardTapped = true
-            if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
-                binding.materialTextView.text = getString(R.string.achieve_100_points_first)
-                binding.materialTextView.isEnabled = false
-                binding.materialTextView.alpha = .5f
-            }else{
-                binding.materialTextView.text = buttonText.get(index)
-                binding.materialTextView.isEnabled = true
-                binding.materialTextView.alpha = 1f
-            }
-            binding.txtLabelHeading.text = headingText.get(index)
+        index = 0
+        binding.subscriptionCard.background =
+            ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+        binding.englishCard.background =
+            ContextCompat.getDrawable(
+                this,
+                R.drawable.blue_rectangle_with_blue_bound_stroke
+            )
+        isEnglishCardTapped = true
+        if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
+            binding.materialTextView.text = getString(R.string.achieve_100_points_first)
+            binding.materialTextView.isEnabled = false
+            binding.materialTextView.alpha = .5f
+        }else{
+            binding.materialTextView.text = buttonText.get(index)
+            binding.materialTextView.isEnabled = true
+            binding.materialTextView.alpha = 1f
+        }
+        binding.txtLabelHeading.text = headingText.get(index)
     }
 
     override fun onStart() {
