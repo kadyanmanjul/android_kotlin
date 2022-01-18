@@ -35,7 +35,7 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
     var currentId1=1
     val ARG_CALLER_ID = "caller_id"
     val ARG_CURRENT_ID= "current_id"
-
+    val ARG_TYPE= "type"
 
 
     val vm by lazy {
@@ -85,10 +85,9 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
 
 
         val mArgs = arguments
-        type1 = mArgs?.getString("type").toString()
+        type1 = mArgs?.getString(ARG_TYPE).toString()
         callerId1= mArgs?.getInt(ARG_CALLER_ID)!!
         currentId1= mArgs?.getInt(ARG_CURRENT_ID)
-        Timber.tag("naman2").d("$currentId1  $callerId1")
 
         vm.getReportOptionsListFromSharedPref(type1)
 
@@ -101,8 +100,6 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
     }
     private val myHandlersListener: ClickListenerHandler = object : ClickListenerHandler {
         override fun submitReport() {
-            Timber.tag("naman").d("$currentId1  $callerId1")
-
             val map: HashMap<String, Any> = HashMap<String, Any>()
             map[CHANNEL_NAME] = channelName
             map[FEEDBACK_OPTIONS] = optionId
@@ -114,8 +111,6 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
         }
     }
 
-
-
     private fun closeDialog() {
             super.dismiss()
     }
@@ -125,7 +120,7 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
         fun newInstance(callerID:Int,currentID:Int,typ:String,function: () -> Unit) =
             ReportDialogFragment(function).apply {
                 arguments = Bundle().apply {
-                    putString("type", typ);
+                    putString(ARG_TYPE, typ);
                     putInt(ARG_CALLER_ID,callerID);
                     putInt(ARG_CURRENT_ID,currentID);                   }
             }

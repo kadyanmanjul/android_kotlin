@@ -266,19 +266,17 @@ class ConversationActivity :
         }
     }
     private fun addIssuesToSharedPref(){
-        GlobalScope.launch(Dispatchers.IO){
+        CoroutineScope(Dispatchers.IO).launch(){
 
             try{
                 PrefManager.putPrefObject(REPORT_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT"))
 
             }catch (e:java.lang.Exception){
-                Timber.tag("APIexception").d("$e")
             }
             try{
                 PrefManager.putPrefObject(BLOCK_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK"))
 
             }catch (e:java.lang.Exception){
-                Timber.tag("APIexception").d("$e")
             }
 
         }

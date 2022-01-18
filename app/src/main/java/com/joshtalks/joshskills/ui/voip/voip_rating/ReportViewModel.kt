@@ -27,7 +27,6 @@ class ReportViewModel : BaseViewModel() {
                 reportModel.postValue(reportResponseModel!!)
                 saveReportOptionsListToSharedPref(value)
             }catch (e:java.lang.Exception){
-                Timber.tag("APIexcpetion").d("$e")
 
             }
 
@@ -41,7 +40,6 @@ class ReportViewModel : BaseViewModel() {
                 AppObjectController.p2pNetworkService.sendP2pCallReportSubmit(map)
 
             }catch(e:Exception){
-                Timber.tag("APIexcpetion").d("$e")
             }
 
 
