@@ -29,7 +29,7 @@ import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
 import com.joshtalks.joshskills.quizgame.ui.data.model.ChannelData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FavouriteViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
@@ -45,7 +45,7 @@ import timber.log.Timber
 
 
 class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInterface,
-    FirebaseTemp.OnNotificationTriggerTemp,
+    GameNotificationFirebaseData.OnNotificationTriggerTemp,
     P2pRtc.WebRtcEngineCallback, GameFirebaseDatabase.OnMakeFriendTrigger,
     GameFirebaseDatabase.OnLiveStatus {
 
@@ -54,7 +54,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
     private val favouriteViewModel by lazy {
         ViewModelProvider(requireActivity())[FavouriteViewModelGame::class.java]
     }
-    private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
+    private var firebaseDatabase: GameNotificationFirebaseData = GameNotificationFirebaseData()
     private var channelName: String? = null
     private var fromTokenId: String? = null
     private var fromUserId: String? = null

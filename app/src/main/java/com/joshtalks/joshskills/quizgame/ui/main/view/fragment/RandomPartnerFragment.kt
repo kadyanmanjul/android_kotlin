@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomProviderFactory
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchRandomUserViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
@@ -45,7 +45,7 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
     var searchRandomViewModel: SearchRandomUserViewModelGame? = null
     var currentUserId = Mentor.getInstance().getId()
     var gameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
-    var firebasetemp: FirebaseTemp = FirebaseTemp()
+    var firebasetemp: GameNotificationFirebaseData = GameNotificationFirebaseData()
 
     var userRoomId: String? = null
 

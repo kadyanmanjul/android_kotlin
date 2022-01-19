@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentSearchingOpponentTeamBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentTeamViewModelGame
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.SearchOpponentViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
@@ -44,7 +44,7 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
 
     var searchOpponentTeamViewModel: SearchOpponentTeamViewModelGame? = null
 
-    var firebaseTemp = FirebaseTemp()
+    var firebaseTemp = GameNotificationFirebaseData()
     var userDetails: UserDetails? = null
     private var gameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
     var roomId: String? = null
@@ -347,7 +347,6 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
                     ), "BothTeamMateFound"
                 )
                 ?.commit()
-            fm?.popBackStack()
         }, 4000)
     }
 
@@ -446,7 +445,6 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
             )
             ?.remove(this)
             ?.commit()
-        fm?.popBackStack()
     }
 
     private fun startTimer() {

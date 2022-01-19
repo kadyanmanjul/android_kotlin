@@ -13,7 +13,7 @@ const val ACCEPT_REQUEST = "Accept_Request"
 const val FRIEND_REQUEST = "FriendRequest"
 
 
-class FirebaseTemp {
+class GameNotificationFirebaseData {
     private var database = FirebaseFirestore.getInstance()
 
     private var collectionReference: CollectionReference = database.collection(REQUEST_NOTIFICATION)
@@ -257,24 +257,25 @@ class FirebaseTemp {
     }
 
     fun deleteDataAcceptRequest(mentorId: String) {
-        var mId: String? = mentorId
-        val acceptRequestC: CollectionReference = database.collection(ACCEPT_REQUEST)
-        acceptRequestC
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mId == doc.id) {
-                            acceptRequestC.document(mentorId).delete().addOnCompleteListener(
-                                OnCompleteListener {
-                                    mId = null
-                                })
-                        }
-                    }
-                }
-            }
+        acceptRequestCollection.document(mentorId).delete()
+//        var mId: String? = mentorId
+//        val acceptRequestC: CollectionReference = database.collection(ACCEPT_REQUEST)
+//        acceptRequestC
+//            .addSnapshotListener { value, e ->
+//                if (e != null) {
+//                    return@addSnapshotListener
+//                }
+//                for (doc in value!!) {
+//                    if (doc.exists()) {
+//                        if (mId == doc.id) {
+//                            acceptRequestC.document(mentorId).delete().addOnCompleteListener(
+//                                OnCompleteListener {
+//                                    mId = null
+//                                })
+//                        }
+//                    }
+//                }
+//            }
     }
 
     fun getFriendRequests(

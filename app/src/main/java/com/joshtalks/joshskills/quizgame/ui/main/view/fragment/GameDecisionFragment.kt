@@ -609,7 +609,6 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             )
             ?.remove(this)
             ?.commit()
-        fm?.popBackStack()
     }
 
     fun makeNewTeam() {
@@ -798,7 +797,6 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                 )
                 ?.remove(this)
                 ?.commit()
-            fm?.popBackStack()
         }, 2000)
     }
 

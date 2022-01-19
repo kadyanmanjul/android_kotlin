@@ -10,7 +10,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityStartBinding
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
@@ -32,7 +32,7 @@ class StartActivity : BaseQuizActivity() {
         DataBindingUtil.setContentView(this, R.layout.activity_start)
     }
 
-    private var firebaseTemp: FirebaseTemp = FirebaseTemp()
+    private var firebaseTemp: GameNotificationFirebaseData = GameNotificationFirebaseData()
     private var firebaseDatabase = GameFirebaseDatabase()
     private var mentorId: String = Mentor.getInstance().getId()
 

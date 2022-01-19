@@ -255,7 +255,6 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
                     "SearchingOpponentTeam"
                 )
                 ?.commit()
-            fm?.popBackStack()
         }, (timeForDelay - 15) * 1000)
     }
 
@@ -323,7 +322,6 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
             )
             ?.remove(this)
             ?.commit()
-        fm?.popBackStack()
     }
 
     private var callback: P2pRtc.WebRtcEngineCallback = object : P2pRtc.WebRtcEngineCallback {

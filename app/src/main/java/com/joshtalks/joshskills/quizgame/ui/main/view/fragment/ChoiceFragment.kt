@@ -26,7 +26,7 @@ import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelGame
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
@@ -40,7 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
+class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTriggerTemp,
     P2pRtc.WebRtcEngineCallback,
     GameFirebaseDatabase.OnMakeFriendTrigger {
 
@@ -62,7 +62,7 @@ class ChoiceFragment : Fragment(), FirebaseTemp.OnNotificationTriggerTemp,
     private var activityInstance: FragmentActivity? = null
     var userName: String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
-    private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
+    private var firebaseDatabase: GameNotificationFirebaseData = GameNotificationFirebaseData()
     private var mainGameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
 
     private var engine: RtcEngine? = null
