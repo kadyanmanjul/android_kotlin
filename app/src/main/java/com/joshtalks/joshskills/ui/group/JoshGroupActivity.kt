@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 
 import com.karumi.dexter.MultiplePermissionsReport
@@ -70,6 +71,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
+                OPEN_PROFILE_PAGE -> openProfileActivity(it.obj as String)
                 REFRESH_GRP_LIST_HIDE_INFO -> {
                     setNewGroupVisibility(it.data)
                     vm.setGroupsCount()
@@ -266,6 +268,17 @@ class JoshGroupActivity : BaseGroupActivity() {
     override fun getConversationId(): String? {
         vm.conversationId = intent.getStringExtra(CONVERSATION_ID) ?: ""
         return vm.conversationId
+    }
+
+    fun openProfileActivity(mentorId: String) {
+        UserProfileActivity.startUserProfileActivity(
+            activity = this,
+            mentorId = mentorId,
+            flags = arrayOf(),
+            intervalType =  null,
+            previousPage = this.javaClass.name,
+            conversationId = null
+        )
     }
 
     fun showRemovedAlert(groupName: String) {

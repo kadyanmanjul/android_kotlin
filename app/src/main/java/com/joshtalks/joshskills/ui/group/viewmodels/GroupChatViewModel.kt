@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -41,6 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.concat
 
 private const val TAG = "GroupChatViewModel"
 
@@ -82,12 +84,17 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     val openMemberPopup: (GroupMember, View) -> Unit = { it, view ->
-        if (!it.isAdmin) {
+        if (it.mentorID != Mentor.getInstance().getId()) {
             val builder = AlertDialog.Builder(view.context)
-            val memberOptions = arrayOf("Remove ${it.memberName}")
+            var memberOptions = arrayOf("View Profile")
+
+            if (adminId == Mentor.getInstance().getId() && !it.isAdmin)
+                memberOptions = memberOptions.concat("Remove ${it.memberName}")
+
             builder.setAdapter(ArrayAdapter(view.context, android.R.layout.simple_list_item_1, memberOptions)) { _, item ->
-                when(item) {
-                    0 -> {
+                when (item) {
+                    0 -> openProfile(it.mentorID)
+                    1 -> {
                         val removeMsg = "Remove ${it.memberName} from \"${groupHeader.get()}\" group?"
                         showAlertDialog(view, removeMsg, "Ok", "Removing member") {
                             removeMemberFromGroup(it.mentorID, it.memberName)
@@ -234,6 +241,13 @@ class GroupChatViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
+    fun openProfile(mentorId: String) {
+        message.what = OPEN_PROFILE_PAGE
+        message.obj = mentorId
+        singleLiveEvent.value = message
+        GroupAnalytics.push(GroupAnalytics.Event.OPENED_PROFILE)
+    }
+
     fun leaveGroup() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -306,6 +320,7 @@ class GroupChatViewModel : BaseViewModel() {
             withContext(Dispatchers.Main){
                 memberAdapter.addMembersToList(memberResult?.list!!)
                 if (showLoading) fetchingGrpInfo.set(false)
+                else showToast("Removed member from the group", Toast.LENGTH_LONG)
                 dismissProgressDialog()
             }
         }
