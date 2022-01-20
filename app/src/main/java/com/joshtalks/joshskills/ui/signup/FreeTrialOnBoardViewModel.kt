@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.LanguageSelectionResponse
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -31,6 +32,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val service = AppObjectController.signUpNetworkService
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val languagesResponse: MutableLiveData<LanguageSelectionResponse> = MutableLiveData()
     var userName: String? = null
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -202,5 +204,15 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
         _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+    }
+
+    fun getAvailableLanguages() {
+        viewModelScope.launch {
+            try {
+                languagesResponse.postValue(LanguageSelectionResponse())
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+        }
     }
 }

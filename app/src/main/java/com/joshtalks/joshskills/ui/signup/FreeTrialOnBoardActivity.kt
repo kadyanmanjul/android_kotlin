@@ -1,20 +1,15 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
@@ -23,21 +18,12 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.Utils.isTrueCallerAppExist
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.truecaller.android.sdk.*
-import com.truecaller.android.sdk.Utils
-import com.truecaller.android.sdk.clients.VerificationCallback
-import com.truecaller.android.sdk.clients.VerificationDataBundle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,6 +55,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 //            openProfileDetailFragment()
 //        }
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
+        viewModel.getAvailableLanguages()
     }
 
     override fun onStart() {
@@ -91,6 +78,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun showStartTrialPopup() {
+        Log.i("ayushg", "showStartTrialPopup: loading dialog")
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         layout.btnStartTrial.pauseAnimation()
@@ -103,6 +91,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         val width = AppObjectController.screenWidth * .9
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         alertDialog.show()
+        Log.i("ayushg", "showStartTrialPopup: showing dialog")
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
@@ -236,5 +225,17 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         TruecallerSDK.clear()
         super.onDestroy()
+    }
+
+    fun openChooseLanguageFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                ChooseLanguageOnBoardFragment.newInstance(),
+                ChooseLanguageOnBoardFragment::class.java.name
+            )
+        }
     }
 }
