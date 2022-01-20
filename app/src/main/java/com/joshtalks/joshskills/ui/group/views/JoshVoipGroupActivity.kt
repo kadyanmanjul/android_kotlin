@@ -1,46 +1,35 @@
 package com.joshtalks.joshskills.ui.group.views
 
 import android.os.Bundle
+
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+
 import com.afollestad.materialdialogs.MaterialDialog
+
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_GROUP
-import com.joshtalks.joshskills.constants.SEARCH_GROUP
 import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
+import com.joshtalks.joshskills.constants.SEARCH_GROUP
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.group.BaseGroupActivity
-import com.joshtalks.joshskills.ui.group.CHAT_FRAGMENT
-import com.joshtalks.joshskills.ui.group.GROUPS_CHAT_SUB_TITLE
-import com.joshtalks.joshskills.ui.group.GROUPS_CREATED_TIME
-import com.joshtalks.joshskills.ui.group.GROUPS_CREATOR
-import com.joshtalks.joshskills.ui.group.GROUPS_ID
-import com.joshtalks.joshskills.ui.group.GROUPS_IMAGE
-import com.joshtalks.joshskills.ui.group.GROUPS_STACK
-import com.joshtalks.joshskills.ui.group.GROUPS_TITLE
-import com.joshtalks.joshskills.ui.group.GroupChatFragment
-import com.joshtalks.joshskills.ui.group.GroupListFragment
-import com.joshtalks.joshskills.ui.group.GroupSearchFragment
-import com.joshtalks.joshskills.ui.group.HAS_JOINED_GROUP
-import com.joshtalks.joshskills.ui.group.IS_FROM_VOIP
-import com.joshtalks.joshskills.ui.group.LIST_FRAGMENT
-import com.joshtalks.joshskills.ui.group.SEARCH_FRAGMENT
+import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 private const val TAG = "JoshVoipGroupActivity"
+
 class JoshVoipGroupActivity : BaseGroupActivity() {
 
     val vm by lazy {
@@ -51,8 +40,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         DataBindingUtil.setContentView(this, R.layout.activity_josh_voip_groupctivity)
     }
 
-    override fun setIntentExtras() {
-    }
+    override fun setIntentExtras() {}
 
     override fun initViewBinding() {
         binding.vm = vm
@@ -66,10 +54,10 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
 
     override fun initViewState() {
         event.observe(this) {
-            when(it.what) {
+            when (it.what) {
                 ON_BACK_PRESSED -> onBackPressed()
                 OPEN_GROUP -> {
-                    if(supportFragmentManager.backStackEntryCount == 0)
+                    if (supportFragmentManager.backStackEntryCount == 0)
                         startGroupCall(it.obj as? GroupItemData)
                     else
                         openGroupChat(it.obj as? GroupItemData)
@@ -87,7 +75,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun startGroupCall(groupItemData : GroupItemData?) {
+    private fun startGroupCall(groupItemData: GroupItemData?) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             openCallingActivity(groupItemData)
             return
@@ -131,18 +119,18 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         return vm.conversationId
     }
 
-    fun openCallingActivity(groupItemData : GroupItemData?) {
+    fun openCallingActivity(groupItemData: GroupItemData?) {
         // TODO: Might need to refactor
         val memberText = groupItemData?.getSubTitle() ?: "0"
         val memberCount = getMemberCount(memberText)
-        if( memberCount == 0) {
+        if (memberCount == 0) {
             com.joshtalks.joshskills.core.showToast("Unknown Error Occurred")
             return
-        } else if(memberCount == 1) {
+        } else if (memberCount == 1) {
             com.joshtalks.joshskills.core.showToast("You are the only member, Can't Initiate a Call")
             return
         }
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER)
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER, groupItemData?.getUniqueId() ?: "")
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -167,12 +155,12 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
             val fragment = GroupSearchFragment().apply {
                 arguments = bundle
             }
-            replace(R.id.group_fragment_container, fragment , SEARCH_FRAGMENT)
+            replace(R.id.group_fragment_container, fragment, SEARCH_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }
 
-    private fun openGroupChat(data : GroupItemData?) {
+    private fun openGroupChat(data: GroupItemData?) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {

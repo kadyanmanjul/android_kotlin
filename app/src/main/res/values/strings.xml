@@ -12,6 +12,8 @@
     <string name="downloading_complete">Downloading complete</string>
     <string name="not_now">Not Now</string>
     <string name="settings">Settings</string>
+    <string name="quiz_game">Quiz Game</string>
+    <string name="build_your_team">Build your team</string>
     <string name="header_congratulation">Congratulations</string>
 
     <string name="name">Name</string>
@@ -28,7 +30,7 @@
     <string name="record_permission_message">To record a Voice Message, allow Josh Skills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
     <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
 
-    <string name="type_message_hint">Type a Message</string>
+    <string name="type_message_hint">Type a message</string>
 
     <string name="splash_sub_string_english">Zindagi mein aage badho,\nJosh ke saath! </string>
 
@@ -514,6 +516,7 @@
     <string name="answer">Answer</string>
     <string name="call_back">CALL BACK</string>
     <string name="finding_practise_partner">Finding a Practice Partner</string>
+    <string name="finding_conversation_partner">Finding Conversation Partners</string>
     <string name="found_practise_partner">Practice Partner found Connecting Call</string>
     <string name="rating">Rating</string>
     <string name="rate_your_practise_partner">Rate Your  Practice Partner</string>
@@ -530,6 +533,7 @@
     <string name="pp_calling">Calling Favorite Practice Partner</string>
     <string name="pp_connected">Favorite Practice Partner</string>
     <string name="pp_favorite_incoming">Favorite Practice Partner Calling</string>
+    <string name="pp_group_incoming">Incoming Call from group </string>
 
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
     <string name="spoke_with">Spoke for %s minutes with  %s</string>
@@ -689,6 +693,7 @@
     <string name="preview">Preview</string>
     <string name="password">Password</string>
     <string name="join">Join</string>
+    <string name="join_conversation">Join Conversation</string>
     <string name="joining">Joining</string>
     <string name="incorrect">Incorrect</string>
     <string name="scale_type_not_supported">ScaleType %1$s not supported.</string>
@@ -847,12 +852,16 @@
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
+    <string name="group_p2p_title">Call From Group</string>
+    <string name="convo_notification_title">%1s has started a conversation about %1s</string>
+    <string name="room_title">Join Conversation Room</string>
     <string name="p2p_subtitle">Speaking Practice</string>
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
     <string name="hold_call">Call On Hold</string>
     <string name="call_start_permission_message_rational">To start speaking practice, please allow permissions for location, making calls, storage and microphone.</string>
     <string name="call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
+    <string name="convo_room_start_permission_message">To enter/start room practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
     <string name="demo_call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Phone on.</string>
     <string name="spoke_for_minute">Spoke for %1$s </string>
     <string name="block">Block</string>
@@ -886,8 +895,31 @@
     <string name="fname_error_toast">Father name cannot be empty!</string>
     <string name="certificate_download_success">Congratulations, your certificate has been downloaded</string>
     <string name="my_batch">My Batch</string>
+    <string name="end_room">End Room</string>
+    <string name="leave_room">Leave quietly</string>
+    <string name="conversation_room">Conversation room</string>
+    <string name="unmute">UnMute</string>
+    <string name="raised">Raised</string>
+    <string name="unraised">UnRaised</string>
+    <string name="hallway">Hallway</string>
+    <string name="e_g_motivation_career_advice">आप किसी भी टॉपिक पर कन्वर्सेशन शुरू कर सकते है जैसे की,\n UPSC Aspirants Discussion  </string>
+    <string name="add_a_topic">Add a topic</string>
+    <string name="select_conversation_partners">Select Conversation Partners</string>
+    <string name="let_s_go">Let’s Go</string>
+    <string name="set_topic">Set Topic</string>
+    <string name="start_a_room">Start a room</string>
+    <string name="start_a_conversation">Start a conversation</string>
+    <string name="view_full_profile">View full profile</string>
+    <string name="move_to_audience">Move to audience</string>
+    <string name="move_to_speaker">Move to speaker</string>
+    <string name="alert_end_room_title">Are you sure, you want to end this room for everyone</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_label">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
+    <string name="raised_hand">Raised hands</string>
+    <string name="open_to_everyone">Open to Everyone</string>
+    <string name="no_raised_hand_text">No one has their hand raised yet</string>
+    <string name="audience">Audience</string>
+    <string name="speakers">Speakers</string>
 
     <string name="grammar_btn_text_check">चेक करें</string>
     <string name="grammar_btn_text_continue">जारी रखें</string>
@@ -908,6 +940,7 @@
 
     <!--    Lesson Spotlight-->
     <string name="label_lesson_spotlight">हर Lesson में चार भाग होते है</string>
+    <string name="label_convo_room_spotlight">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है </string>
     <string name="label_grammar_spotlight">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
     <string name="label_speaking_spotlight">एस भाग में आपको एक प्रैक्टिस पार्टनर के साथ 2 मिनट के लिए अंग्रेजी में बात करनी है</string>
     <string name="label_speaking_spotlight_2"> To complete this section you have to speak to a practice partner for 2 minutes</string>
@@ -924,8 +957,13 @@
     <string name="free_trial_end_in">Free Trial ends in %s</string>
     <string name="feature_locked">%s आपका free trial खतम हो गया है. Please course में admission लें.</string>
     <string name="my_day_review_title">"My day in review"</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Convo room strings -->
+    <string name="no_room_text">👋 Hi there! \n \n Start a new room to get a conversation going!</string>
+    <string name="no_room_text_tooltip">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है</string>
+    <string name="convo_room_minutes_spoken">%1$d/%2$d minutes</string>
+    <string name="convo_room_dialog_desc_favt">Start a conversation with my favorite practice partners</string>
+    <string name="convo_room_dialog_desc">Start a conversation with practice partners</string>
+
     <string name="title_activity_voip_group">VoipGroupActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -934,5 +972,56 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="ignore_ui_msg">Element only for UI purpose</string>
+
+    <string name="game_name">QuizGrad</string>
+
+    <string name="play_with_favourite">Play with\nFavourite\nPractice \nPartner</string>
+    <string name="play_with_random">Play with\nRandom\nPlayer</string>
+    <string name="favourite_practice_partner">Favourite Practice Partners</string>
+
+    <string name="your_team_mate">Harsh is your team mate</string>
+    <string name="make_new_te">Make New Team</string>
+    <string name="play_again_">Play Again\nwith Opponent</string>
+    <string name="has_invited">has invited you to play</string>
+    <string name="friend_request">Sent you friend request</string>
+
+    <string name="can_t_play_">Can"'"t Play Right Now</string>
+    <string name="alreadt_start">Already started the game</string>
+    <string name="accept">Accept</string>
+
+
+    <string name="match_bonus">Winning \Bonus </string>
+    <string name="opponent_wo">Opponent Won!</string>
+
+    <string name="round_1">ROUND</string>
+    <string name="get_ready_">Get Ready!</string>
+    <string name="who_said_if">Who said: "``"If there is an attack, I give you permission to use any counter or curse that might occur to you "``"? </string>
+
+    <string name="cornelius_f">Cornelius uygurytg fuygvuirycv fhjvbuo</string>
+    <string name="arthur_weas">Arthur Weasely</string>
+    <string name="professor_m">Professor\nMcGonagall</string>
+    <string name="albus_dumbl">Albus Dumbledore</string>
+    <string name="user_name">Sagar</string>
+    <string name="fiften">15</string>
+    <string name="zero">0</string>
+    <string name="play">Play!</string>
+
+    <string name="lets_play_again">Click on Play Again to play another game with</string>
+    <string name="winner">Winner!</string>
+    <string name="team_2">Team 2</string>
+    <string name="team_1">Team 1</string>
+    <string name="match_score">Match\n Score</string>
+    <string name="score_text">110</string>
+    <string name="bonus_marks">5</string>
+    <string name="total">Total</string>
+    <string name="points_earn_quiz_from_quiz">You earned </string>
+    <string name="total_students_enrolled">%s students enrolled</string>
+    <string name="edit_profile">Edit Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="no_awards_others">%s has not won any awards yet.\n\nIf you ever connect with him motivate him and let him know he can do it</string>
+    <string name="no_awards_me">%s you have not won any awards yet. But you can do it.\n\nThe entire josh family believes in you.</string>
+    <string name="previous_dp">Previous Profile Photos (0)</string>
+    <string name="hometown_error_toast">Please enter your Hometown</string>
 
 </resources>

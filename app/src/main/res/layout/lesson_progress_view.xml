@@ -110,8 +110,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/view1"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_4sdp"
@@ -126,8 +126,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/view2"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_3sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv"
@@ -140,8 +140,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/view3"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_3sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv"
@@ -154,8 +154,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/view4"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_16sdp"
             android:visibility="gone"
@@ -164,6 +164,22 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/view3"
+            app:layout_constraintTop_toTopOf="@+id/continue_lesson_tv"
+            app:srcCompat="@drawable/ic_lesson_disabled_tick"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/view5"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_3sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv"
+            app:layout_constraintEnd_toStartOf="@id/continue_lesson_tv"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/view4"
             app:layout_constraintTop_toTopOf="@+id/continue_lesson_tv"
             app:srcCompat="@drawable/ic_lesson_disabled_tick"
             tools:visibility="visible" />

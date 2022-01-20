@@ -488,12 +488,8 @@
     </entry>
 
     <entry>
-        <key>referral_text_video</key>
-        <value>"https://www.youtube.com/watch?v=CMZohcIMQfc \n Mai Bharat 🇮🇳 ke best teachers se
-            Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru
-            karo 💪. Ye lo meri taraf se tumhe ₹50 OFF: Use my code 6756D. Download the app by
-            clicking on the link \n https://joshskill.page.link/U7fE"
-        </value>
+        <key>REFERRAL_SHARE_TEXT_SHARABLE_VIDEO</key>
+        <value>Download the Josh Skills App using the link -</value>
     </entry>
 
     <entry>
@@ -568,6 +564,10 @@
         <value>Speaking</value>
     </entry>
     <entry>
+        <key>ROOM_TITLE</key>
+        <value>Conversation</value>
+    </entry>
+    <entry>
         <key>TODAYS_QUIZ_TITLE</key>
         <value>Today's Quiz</value>
     </entry>
@@ -618,6 +618,11 @@
         <key>COURSE_PROGRESS_TOOLTIP_VISIBILITY</key>
         <value>false
         </value>
+    </entry>
+
+    <entry>
+        <key>IS_CONVERSATION_ROOM_ACTIVE</key>
+        <value>true</value>
     </entry>
 
     <entry>
@@ -705,6 +710,21 @@
     <entry>
         <key>SHOW_LOCAL_NOTIFICATIONS</key>
         <value>true</value>
+    </entry>
+
+    <entry>
+        <key>SENTRY_SAMPLING_RATE</key>
+        <value>0.6</value>
+    </entry>
+
+    <entry>
+        <key>SENTRY_ANR_TIME_OUT</key>
+        <value>4000</value>
+    </entry>
+
+    <entry>
+        <key>SENTRY_SESSION_TIMEOUT</key>
+        <value>30000</value>
     </entry>
 
 </defaultsMap>

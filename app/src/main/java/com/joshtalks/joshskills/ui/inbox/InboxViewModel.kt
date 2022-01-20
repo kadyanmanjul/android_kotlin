@@ -96,6 +96,10 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         IS_PROFILE_FEATURE_ACTIVE,
                         response.body()?.isPointsActive ?: false
                     )
+                    PrefManager.put(
+                        IS_CONVERSATION_ROOM_ACTIVE_FOR_USER,
+                        response.body()?.isConvRoomActive ?: false
+                    )
                     return@launch
                 } else if (response.errorBody() != null
                     && response.errorBody()!!.string().contains("mentor_id is not valid")

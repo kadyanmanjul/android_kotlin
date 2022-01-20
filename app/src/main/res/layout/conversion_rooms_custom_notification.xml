@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="130dip"
+    android:background="@color/notification_orange_color"
+    android:orientation="vertical"
+    tools:ignore="RtlHardcoded">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="24dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center|start"
+        android:maxLines="2"
+        android:text="Harsh Gupta has started a conversation about UPSC aspirants"
+        android:textColor="#FFF"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_14sdp"
+        android:background="@color/notification_orange_color"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/decline_btn"
+            android:layout_width="0dip"
+            android:layout_height="36dp"
+            android:layout_marginStart="@dimen/_18ssp"
+            android:layout_weight="1"
+            android:background="@drawable/default_scroll_handle"
+            android:backgroundTint="#ECAF88">
+
+            <TextView
+                android:id="@+id/decline_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="@string/dismiss"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16dip" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/answer_btn"
+            android:layout_width="0dip"
+            android:layout_height="36dp"
+            android:layout_marginStart="@dimen/_14ssp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_weight="1"
+            android:background="@drawable/default_scroll_handle"
+            android:backgroundTint="@color/white">
+
+            <TextView
+                android:id="@+id/answer_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="@string/join_conversation"
+                android:textAllCaps="false"
+                android:textColor="@color/notification_orange_color"
+                android:textSize="16dip" />
+
+        </FrameLayout>
+    </LinearLayout>
+</RelativeLayout>

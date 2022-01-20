@@ -9,42 +9,25 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.GestureDetector
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.dynamiclinks.ShortDynamicLink
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.dynamiclinks.ktx.googleAnalyticsParameters
-import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
-import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_REFERRAL_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_REFERRAL_CODE_COPIED
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_OTHER_CLICKED
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_WHATSAPP_CLICKED
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.muddzdev.styleabletoast.StyleableToast
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Defines
+import io.branch.referral.util.LinkProperties
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -52,7 +35,7 @@ import java.io.IOException
 
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT"
-const val REFERRAL_SHARE_TEXT_KEY2 = "referral_text_video"
+const val REFERRAL_SHARE_TEXT_SHARABLE_VIDEO = "REFERRAL_SHARE_TEXT_SHARABLE_VIDEO"
 const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
 const val VIDEO_URL = "https://www.youtube.com/watch?v=CMZohcIMQfc "
 const val SHARE_DOMAIN = "SHARE_DOMAIN"
@@ -80,7 +63,8 @@ class ReferralActivity : BaseActivity() {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
     private var userReferralCode: String = EMPTY
-    private var userReferralURL: String = EMPTY
+
+    //    private var userReferralURL: String = EMPTY
     var flowFrom: String? = null
 
     @ExperimentalUnsignedTypes
@@ -97,47 +81,16 @@ class ReferralActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
+
+
+
         activityReferralBinding = DataBindingUtil.setContentView(this, R.layout.activity_referral)
         activityReferralBinding.lifecycleOwner = this
         activityReferralBinding.handler = this
         userReferralCode = Mentor.getInstance().referralCode
         activityReferralBinding.tvReferralCode.text = userReferralCode
         initView()
-        val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
 
-        if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
-            userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-
-        }
-        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-            link = Uri.parse("https://joshskill.app.link")
-            domainUriPrefix = domain
-            androidParameters(BuildConfig.APPLICATION_ID) {
-                minimumVersion = 69
-            }
-            googleAnalyticsParameters {
-                source = userReferralCode
-                medium = "Mobile"
-                campaign = "user_referer"
-            }
-
-        }.addOnSuccessListener { result ->
-            result.shortLink?.let {
-                try {
-                    if (it.toString().isNotEmpty()) {
-                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                        userReferralURL = it.toString()
-
-                    }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-            .addOnFailureListener {
-                it.printStackTrace()
-
-            }
         if (intent.hasExtra(FROM_CLASS)) {
             flowFrom = intent.getStringExtra(FROM_CLASS)
         }
@@ -148,7 +101,6 @@ class ReferralActivity : BaseActivity() {
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
             .push()
-        viewModel.saveImpression(IMPRESSION_OPEN_REFERRAL_SCREEN)
     }
 
 
@@ -158,7 +110,6 @@ class ReferralActivity : BaseActivity() {
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()
-
 
         val referralScreenVersion =
             AppObjectController.getFirebaseRemoteConfig().getString("referral_screen_page")
@@ -242,10 +193,104 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteOnlyWhatsapp() {
-        inviteFriends(WHATSAPP_PACKAGE_STRING)
+        getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
     }
 
-    fun inviteFriends(packageString: String? = null) {
+    fun getDeepLinkAndInviteFriends(packageString: String? = null) {
+        val branchUniversalObject = BranchUniversalObject()
+            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setTitle("Invite Friend")
+            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+        val lp = LinkProperties()
+            .setChannel(userReferralCode)
+            .setFeature("sharing")
+            .setCampaign("referral")
+            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
+            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
+            .addControlParameter(
+                Defines.Jsonkey.UTMMedium.key,
+                userReferralCode.plus(System.currentTimeMillis())
+            )
+
+        branchUniversalObject
+            .generateShortUrl(this, lp) { url, error ->
+                if (error == null)
+                    inviteFriends(
+                        packageString = packageString,
+                        dynamicLink = url
+                    )
+                else
+                    inviteFriends(
+                        packageString = packageString,
+                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                        else
+                            getAppShareUrl()
+                    )
+            }
+        /* val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+             domainUriPrefix = domain
+             link = Uri.parse("https://joshskill.app.link")
+ //            link =
+ //                Uri.parse(
+ //                    "https://joshskill.app.link/" +
+ //                            "?apn=${application.packageName}" +
+ //                            "&link=https://joshskill.app.link/" +
+ //                            "&source=$userReferralCode" +
+ //                            "&medium=${
+ //                                userReferralCode.plus(
+ //                                    System.currentTimeMillis()
+ //                                )
+ //                            }&campaign=referral"
+ //                )
+             androidParameters(BuildConfig.APPLICATION_ID) {
+                 minimumVersion = 69
+             }
+             googleAnalyticsParameters {
+                 source = userReferralCode.plus(System.currentTimeMillis())
+                 medium = "Mobile"
+                 campaign = "user_referer"
+             }
+
+         }.addOnSuccessListener { result ->
+             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.shortLink}")
+             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.previewLink}")
+             result.warnings.forEach {
+                 Log.w(TAG, "getDeepLinkAndInviteFriends: Warning${it.message}")
+             }
+             result.shortLink?.let {
+                 try {
+                     if (it.toString().isNotEmpty()) {
+                         if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
+                             PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                         inviteFriends(packageString = packageString, dynamicLink = it.toString())
+                     } else
+                         inviteFriends(
+                             packageString = packageString,
+                             dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                                 PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                             else
+                                 getAppShareUrl()
+                         )
+                 } catch (ex: Exception) {
+                     ex.printStackTrace()
+                 }
+             }
+         }.addOnFailureListener {
+             it.printStackTrace()
+             inviteFriends(
+                 packageString = packageString,
+                 dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                     PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                 else
+                     getAppShareUrl()
+             )
+         }*/
+    }
+
+    fun inviteFriends(packageString: String? = null, dynamicLink: String) {
         var referralText = VIDEO_URL.plus("\n").plus(
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         )
@@ -255,12 +300,11 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.replace(REPLACE_HOLDER, userReferralCode)
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
 
-        referralText = if (userReferralURL.isEmpty()) {
-            referralText.plus("\n").plus(getAppShareUrl())
-        } else {
-            referralText.plus("\n").plus(userReferralURL)
-        }
-
+        referralText = referralText.plus("\n").plus(dynamicLink)
+        viewModel.getDeepLink(
+            dynamicLink,
+            userReferralCode.plus(System.currentTimeMillis())
+        )
         try {
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"
@@ -268,6 +312,7 @@ class ReferralActivity : BaseActivity() {
                 waIntent.setPackage(packageString)
             }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
+
             startActivity(Intent.createChooser(waIntent, "Share with"))
             AppAnalytics
                 .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)

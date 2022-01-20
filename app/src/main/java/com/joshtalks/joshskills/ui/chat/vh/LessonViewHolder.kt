@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.view.View
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -27,17 +29,20 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
     }
 
     private fun setupUI(lesson: LessonModel) {
-        if (lesson.status == LESSON_STATUS.CO) {
+        val isLessonCompleted= lesson.status == LESSON_STATUS.CO
+
+        if (isLessonCompleted) {
             lessonInProgressStub.get().visibility = View.GONE
             lessonCompleteStub.resolved().let {
                 lessonCompleteStub.get().visibility = View.VISIBLE
-                lessonCompleteStub.get().setup(lesson)
+                lessonCompleteStub.get().setup(lesson,
+                    PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
             }
         } else {
             lessonCompleteStub.get().visibility = View.GONE
             lessonInProgressStub.resolved().let {
                 lessonInProgressStub.get().visibility = View.VISIBLE
-                lessonInProgressStub.get().setup(lesson)
+                lessonInProgressStub.get().setup(lesson,PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
             }
         }
     }

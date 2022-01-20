@@ -53,7 +53,12 @@ class BestPerformerRaceViewHolder(view: View, userId: String) : BaseViewHolder(v
         message?.run {
             val urlList = this.url?.split('$')
             if (urlList.isNullOrEmpty().not()) {
-                RxBus2.publish(OpenBestPerformerRaceEventBus(this,urlList?.get(0) ?: EMPTY,false))
+                RxBus2.publish(OpenBestPerformerRaceEventBus(
+                    chatObj = this,
+                    videoUrl = urlList?.get(0) ?: EMPTY,
+                    isSharable = false,
+                    sharedItem = "RACE_FOR_SOD"
+                ))
             }
         }
     }

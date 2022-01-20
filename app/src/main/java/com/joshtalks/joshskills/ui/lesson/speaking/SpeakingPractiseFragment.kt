@@ -32,8 +32,6 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.ui.group.JoshGroupActivity
-import com.joshtalks.joshskills.ui.group.views.GroupBottomSheet
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
@@ -98,6 +96,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             DataBindingUtil.inflate(inflater, R.layout.speaking_practise_fragment, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         addObservers()
         // showTooltip()

@@ -1,5 +1,8 @@
 package com.joshtalks.joshskills.core
 
+//import com.bugsee.library.Bugsee
+//import com.bugsee.library.data.VideoMode
+//import com.uxcam.UXCam
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -9,8 +12,6 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.airbnb.lottie.L
-//import com.bugsee.library.Bugsee
-//import com.bugsee.library.data.VideoMode
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -25,15 +26,11 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
+import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -42,15 +39,10 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.service.ChatNetworkService
-import com.joshtalks.joshskills.repository.service.CommonNetworkService
-import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
-import com.joshtalks.joshskills.repository.service.P2PNetworkService
-import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.repository.service.*
 import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
-//import com.smartlook.sdk.smartlook.Smartlook
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -58,16 +50,26 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.userexperior.UserExperior
-//import com.uxcam.UXCam
 import com.yariksoffice.lingver.Lingver
-import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
-import io.agora.rtc.RtcEngineConfig
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
+import io.sentry.Sentry
+import io.sentry.SentryLevel
+import io.sentry.android.core.SentryAndroid
+import io.sentry.android.fragment.FragmentLifecycleIntegration
+import io.sentry.android.okhttp.SentryOkHttpInterceptor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -75,27 +77,8 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
 import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Collections
-import java.util.Date
+import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.Cache
-import okhttp3.CacheControl
-import okhttp3.CertificatePinner
-import okhttp3.CipherSuite
-import okhttp3.ConnectionSpec
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.TlsVersion
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -165,6 +148,10 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var mediaDUNetworkService: MediaDUNetworkService
+            private set
+
+        @JvmStatic
+        lateinit var conversationRoomsNetworkService: ConversationRoomsNetworkService
             private set
 
 
@@ -271,6 +258,7 @@ class AppObjectController {
                     // .retryOnConnectionFailure(true)
                     .followSslRedirects(true)
                     .addInterceptor(StatusCodeInterceptor())
+                    .addInterceptor(SentryOkHttpInterceptor())
                     //   .addInterceptor(NewRelicHttpMetricsLogger())
                     //.addNetworkInterceptor(SmartlookOkHttpInterceptor())
                     .addInterceptor(HeaderInterceptor())
@@ -323,6 +311,8 @@ class AppObjectController {
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)
                 voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
                 seniorStudentService = retrofit.create(SeniorStudentService::class.java)
+                conversationRoomsNetworkService =
+                    retrofit.create(ConversationRoomsNetworkService::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
@@ -330,7 +320,9 @@ class AppObjectController {
                         builder.connectTimeout(5L, TimeUnit.SECONDS)
                             .writeTimeout(5L, TimeUnit.SECONDS)
                             .readTimeout(5L, TimeUnit.SECONDS)
-                            .callTimeout(5L, TimeUnit.SECONDS).build()
+                            .callTimeout(5L, TimeUnit.SECONDS)
+                            .addInterceptor(SentryOkHttpInterceptor())
+                            .build()
                     )
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
@@ -351,6 +343,7 @@ class AppObjectController {
                 //initUXCam()
                 //initBugsee()
                 //initSmartLookCam()
+                initSentry(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
                 initRtcEngine(joshApplication)
@@ -361,9 +354,68 @@ class AppObjectController {
             }
         }
 
+        /*
+
+
+        <meta-data
+        android:name="io.sentry.auto-init"
+        android:value="true" />
+        <meta-data
+        android:name="io.sentry.session-tracking.enable"
+        android:value="true" />
+
+        <meta-data
+        android:name="io.sentry.ndk.enable"
+        android:value="false" />
+        <meta-data
+        android:name="io.sentry.anr.enable"
+        android:value="false" />
+        <meta-data
+        android:name="io.sentry.anr.timeout-interval-mills"
+        android:value="10000" />*/
+
+        private fun initSentry(context: Context) {
+            SentryAndroid.init(context) { options ->
+                options.dsn =
+                    "https://4eb261d477d3450fba42d8c35d5fa188@o526914.ingest.sentry.io/6109802"
+                var rate = getFirebaseRemoteConfig().getDouble(FirebaseRemoteConfigKey.SENTRY_SAMPLING_RATE) ?: 0.6
+                if (rate <= 0.0 || rate > 1.0){
+                    rate = 0.6
+                }
+                options.sampleRate =  rate
+                options.environment = BuildConfig.FLAVOR.plus(BuildConfig.BUILD_TYPE)
+                options.serverName = BuildConfig.FLAVOR
+                options.isEnableAutoSessionTracking = true
+                options.isAnrEnabled = true
+                options.anrTimeoutIntervalMillis = getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_ANR_TIME_OUT)
+                options.sessionTrackingIntervalMillis = getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_SESSION_TIMEOUT)
+                options.addIntegration(
+                    FragmentLifecycleIntegration(
+                        joshApplication,
+                        enableFragmentLifecycleBreadcrumbs = true, // enabled by default
+                        enableAutoFragmentLifecycleTracing = true  // disabled by default
+                    )
+                )
+                /*options.addIntegration(
+                    SentryTimberIntegration(
+                        minEventLevel = SentryLevel.ERROR,
+                        minBreadcrumbLevel = SentryLevel.INFO
+                    )
+                )*/
+            }
+            if (BuildConfig.DEBUG) {
+                Sentry.setLevel(SentryLevel.ERROR)
+            }
+        }
+
         private fun initRtcEngine(context: Context): RtcEngine? {
             try {
-                mRtcEngine = RtcEngine.create(RtcEngineConfig().apply {
+
+                mRtcEngine = RtcEngine.create(
+                    context,
+                    BuildConfig.AGORA_API_KEY,
+                    object : IRtcEngineEventHandler() {})
+                /*mRtcEngine = RtcEngine.create(RtcEngineConfig().apply {
                     mAppId = BuildConfig.AGORA_API_KEY
                     mContext = context
                     mAreaCode = RtcEngineConfig.AreaCode.AREA_CODE_IN
@@ -379,7 +431,7 @@ class AppObjectController {
                             fileSize = 2048     // Set the log file size to 2 MB
                         }
                     }
-                })
+                })*/
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -387,6 +439,7 @@ class AppObjectController {
         }
 
         fun getRtcEngine(context: Context): RtcEngine? {
+            Log.d("ABC", "getRtcEngine() called with: context = $context")
             initRtcEngine(context)
             return mRtcEngine
         }
@@ -600,7 +653,10 @@ class AppObjectController {
         }*/
 
         private fun initUserExperionCam() {
-            UserExperior.startRecording(Companion.joshApplication, "942a0473-e1ca-40e5-af83-034cb7f57ee9")
+            UserExperior.startRecording(
+                Companion.joshApplication,
+                "942a0473-e1ca-40e5-af83-034cb7f57ee9"
+            )
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
         }
 
@@ -657,6 +713,7 @@ class AppObjectController {
         }
 
         private fun initObjectInThread(context: Context) {
+            Log.i(TAG, "initObjectInThread: ")
             Thread {
                 val mediaOkhttpBuilder = OkHttpClient().newBuilder()
                 mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
@@ -695,6 +752,7 @@ class AppObjectController {
 
                 DateTimeUtils.setTimeZone("UTC")
                 videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
+                Log.e("AppObjectController", "initObjectInThread: referrer")
                 InstallReferralUtil.installReferrer(context)
             }.start()
         }

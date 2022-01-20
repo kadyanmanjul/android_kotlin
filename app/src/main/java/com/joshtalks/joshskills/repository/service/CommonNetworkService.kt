@@ -6,23 +6,7 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.repository.server.BaseResponse
-import com.joshtalks.joshskills.repository.server.CertificateDetail
-import com.joshtalks.joshskills.repository.server.ComplaintResponse
-import com.joshtalks.joshskills.repository.server.FAQ
-import com.joshtalks.joshskills.repository.server.FAQCategory
-import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
-import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardMentor
-import com.joshtalks.joshskills.repository.server.LeaderboardResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardType
-import com.joshtalks.joshskills.repository.server.NPSByUserRequest
-import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
-import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
-import com.joshtalks.joshskills.repository.server.RequestComplaint
-import com.joshtalks.joshskills.repository.server.SuccessResponse
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
@@ -51,18 +35,7 @@ import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -224,6 +197,14 @@ interface CommonNetworkService {
         @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
 
+    @GET("$DIR/user/user_profile_v2/{mentor_id}/")
+    suspend fun getUserProfileDataV3(
+        @Path("mentor_id") id: String,
+        @Query("interval_type") intervalType: String? = null,
+        @Query("previous_page") previousPage: String? = null
+    ): Response<UserProfileResponse>
+
+
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
         @Query("mentor_id") id: String
@@ -329,4 +310,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_impressions/")
     suspend fun saveImpression(@Body params: Map<String, String>): Response<Void>
+
+    @POST("$DIR/link_attribution/deep_link/")
+    suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
 }

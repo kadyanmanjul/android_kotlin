@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.content.Context
 import android.os.RemoteException
 import android.text.TextUtils
+import android.util.Log
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -10,12 +11,15 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import io.branch.referral.PrefHelper
-import java.net.URLDecoder
-import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.net.URLDecoder
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.set
+import kotlin.collections.toTypedArray
 
 object InstallReferralUtil {
 
@@ -38,7 +42,11 @@ object InstallReferralUtil {
                                         val response = referrerClient.installReferrer
                                         val rawReferrerString =
                                             URLDecoder.decode(response.installReferrer, "UTF-8")
-                                        val referrerMap = HashMap<String, String>()
+                                        Log.d(
+                                            TAG,
+                                            "onInstallReferrerSetupFinished: $rawReferrerString"
+                                        )
+                                        val  referrerMap = HashMap<String, String>()
                                         val referralParams =
                                             rawReferrerString.split("&").toTypedArray()
                                         for (referrerParam in referralParams) {
@@ -86,6 +94,14 @@ object InstallReferralUtil {
                                                 installReferrerModel.utmSource
                                             )
                                         }
+                                        if (referrerMap["utm_campaign"].isNullOrEmpty().not()) {
+                                            installReferrerModel.utmTerm =
+                                                referrerMap["utm_campaign"]
+                                            appAnalytics.addParam(
+                                                AnalyticsEvent.SOURCE.NAME,
+                                                installReferrerModel.utmTerm
+                                            )
+                                        }
 //                                    if (response.installBeginTimestampSeconds > 0) {
 //                                        val instant =
 //                                            Instant.ofEpochSecond(response.installBeginTimestampSeconds)
@@ -98,6 +114,7 @@ object InstallReferralUtil {
                                             installReferrerModel.installOn = (Date().time / 1000)
                                         }
                                         InstallReferrerModel.update(installReferrerModel)
+                                        Log.i(TAG, "onInstallReferrerSetupFinished: $installReferrerModel")
                                         appAnalytics.push()
                                     } catch (ex: Exception) {
                                         ex.printStackTrace()

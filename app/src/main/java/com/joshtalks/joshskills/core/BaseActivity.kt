@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -88,13 +89,15 @@ import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
+import io.branch.referral.Defines
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Type
-import java.util.*
-import kotlin.random.Random
+import io.sentry.Sentry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
+import java.lang.ref.WeakReference
+import java.lang.reflect.Type
+import java.util.*
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -150,6 +153,7 @@ abstract class BaseActivity :
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
+            processBranchDynamicLinks()
             processFirebaseDynamicLinks()
             //addScreenRecording()
         }
@@ -200,7 +204,7 @@ abstract class BaseActivity :
             .getDynamicLink(intent)
             .addOnSuccessListener {
                 try {
-                    val referralCode = it.utmParameters.getString("utm_source", EMPTY) ?: EMPTY
+                    val referralCode = it?.utmParameters?.getString("utm_source", EMPTY) ?: EMPTY
                     //it.
                     val installReferrerModel =
                         InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
@@ -219,6 +223,37 @@ abstract class BaseActivity :
             }
     }
 
+    private fun processBranchDynamicLinks() {
+        Branch.sessionBuilder(WeakReference(this@BaseActivity).get())
+            .withCallback { referringParams, error ->
+                try {
+                    val jsonParams =
+                        referringParams ?: (Branch.getInstance().firstReferringParams
+                            ?: Branch.getInstance().latestReferringParams)
+                    val installReferrerModel =
+                            InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
+                    jsonParams?.let {
+                        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                        if (it.has(Defines.Jsonkey.ReferralCode.key))
+                            installReferrerModel.utmSource = it.getString(Defines.Jsonkey.ReferralCode.key)
+                        if (it.has(Defines.Jsonkey.UTMMedium.key))
+                            installReferrerModel.utmMedium = it.getString(Defines.Jsonkey.UTMMedium.key)
+                        if (it.has(Defines.Jsonkey.UTMCampaign.key))
+                            installReferrerModel.utmTerm = it.getString(Defines.Jsonkey.UTMCampaign.key)
+                    }
+                    if (isFinishing.not()) {
+                        Log.i(TAG, "processBranchDynamicLinks: $installReferrerModel")
+                        InstallReferrerModel.update(installReferrerModel)
+                    }
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
+                    LogException.catchException(ex)
+                }
+            }.withData(this@BaseActivity.intent.data).init()
+    }
+
+
+
     private fun initIdentifierForTools() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
@@ -229,6 +264,7 @@ abstract class BaseActivity :
                 }
                 initNewRelic()
                 initFlurry()
+                setupSentryUser()
                 //UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
                 // UXCam.setUserProperty(String propertyName , String value)
 
@@ -441,6 +477,19 @@ abstract class BaseActivity :
                 LogException.catchException(ex)
             }
         }
+    }
+
+    private fun setupSentryUser() {
+        try {
+            val user = io.sentry.protocol.User()
+            user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
+            user.username = User.getInstance().username
+            user.email = User.getInstance().email
+            Sentry.setUser(user)
+        } catch (ex:Exception){
+            ex.printStackTrace()
+        }
+
     }
 
     private fun initNewRelic() {
@@ -783,13 +832,13 @@ abstract class BaseActivity :
         overridePendingTransition(0, 0)
     }
 
-    protected fun showProgressBar() {
+    fun showProgressBar() {
         lifecycleScope.launch(Dispatchers.Main) {
             FullScreenProgressDialog.showProgressBar(this@BaseActivity)
         }
     }
 
-    protected fun hideProgressBar() {
+    fun hideProgressBar() {
         lifecycleScope.launch(Dispatchers.Main) {
             FullScreenProgressDialog.hideProgressBar(this@BaseActivity)
         }

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_14sdp"
+        android:paddingVertical="@dimen/_2sdp">
+
+        <FrameLayout
+            android:id="@+id/user_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/golden_ring_27dp_border"
+            android:padding="@dimen/_4sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/user_image_iv"
+                android:layout_width="@dimen/_56sdp"
+                android:layout_height="@dimen/_56sdp"
+                android:layout_gravity="center"
+                android:background="@color/conversation_room_gray"
+                android:scaleType="fitXY"
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView_26dp" />
+
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/volume_icon"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_margin="@dimen/_4sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_3sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/user_image"
+            app:layout_constraintEnd_toEndOf="@id/user_image"
+            app:srcCompat="@drawable/ic_mic_off"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/raised_hands"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_margin="@dimen/_4sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_3sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/user_image"
+            app:layout_constraintEnd_toEndOf="@id/user_image"
+            app:srcCompat="@drawable/ic_hand_raised_icon"
+            tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:padding="@dimen/_2sdp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="@id/user_image"
+            app:layout_constraintStart_toStartOf="@id/user_image"
+            app:layout_constraintTop_toBottomOf="@id/user_image">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/speaker_badge"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:background="@drawable/circle2"
+                android:backgroundTint="#27AE61"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/name"
+                app:layout_constraintEnd_toStartOf="@id/name"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/name"
+                app:srcCompat="@drawable/ic_star"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="@dimen/_48sdp"
+                android:ellipsize="end"
+                android:maxLength="8"
+                android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
+                android:textColor="@color/pure_black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/speaker_badge"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Rohaneeee a" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

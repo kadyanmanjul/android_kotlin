@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep class io.chirp.connect.** { *; }
+-keep class io.agora.**{ *; }
+-keep class chirpconnect.** { *; }
+-keep class javax.annotation.** { *; }
+-dontwarn javax.annotation.**
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement

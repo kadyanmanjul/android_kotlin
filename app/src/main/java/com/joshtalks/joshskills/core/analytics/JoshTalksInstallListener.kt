@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
+import android.util.Log
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.net.URLDecoder
 import java.util.*
 
@@ -40,7 +42,7 @@ class JoshTalksInstallListener : BroadcastReceiver() {
                     }
                 }
                 val obj = InstallReferrerModel()
-                obj.otherInfo = referrerMap
+//                obj.otherInfo = referrerMap
 
                 if (referrerMap["utm_medium"].isNullOrEmpty().not()) {
                     obj.utmMedium = referrerMap["utm_medium"]

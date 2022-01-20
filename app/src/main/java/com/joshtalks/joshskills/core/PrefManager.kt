@@ -71,6 +71,9 @@ const val LEADER_BOARD_OPEN_COUNT = "leader_board_open_count"
 const val P2P_LAST_CALL = "has_p2p_last_call"
 const val SEARCH_HINT_SHOW = "search_hint_show"
 const val ONLINE_HINT_SHOW = "online_hint_show"
+const val PREF_IS_CONVERSATION_ROOM_ACTIVE = "is_conversation_room_active"
+const val IS_CONVERSATION_ROOM_ACTIVE_FOR_USER = "is_conversation_room_active_for_user"
+
 const val LAST_FIRESTORE_NOTIFICATION_TIME = "last_firestore_notification_time"
 const val ONLINE_TEST_COMPLETED = "online_test_completed"
 const val ONLINE_TEST_LAST_LESSON_COMPLETED = "online_test_last_lesson_completed"
@@ -90,12 +93,16 @@ const val HAS_SEEN_VOCAB_SPEAKING_ANIMATION = "joshskills_has_seen_vocab_speakin
 const val HAS_SEEN_VOCAB_HAND_TOOLTIP = "joshskills_has_seen_vocab_hand_tooltip"
 const val HAS_SEEN_READING_HAND_TOOLTIP = "joshskills_has_seen_reading_hand_tooltip"
 const val HAS_SEEN_READING_TOOLTIP = "joshskills_has_seen_reading_tooltip"
+const val HAS_SEEN_GROUP_TOOLTIP = "joshskills_has_seen_group_tooltip"
+const val HAS_SEEN_GROUP_CALL_TOOLTIP = "joshskills_has_seen_group_call_tooltip"
 const val HAS_SEEN_READING_PLAY_ANIMATION = "joshskills_has_seen_reading_play_animation"
 const val HAS_SEEN_SPEAKING_TOOLTIP = "joshskills_has_seen_speaking_tooltip"
 const val LESSON_COMPLETE_SNACKBAR_TEXT_STRING = "lesson_complete_snackbar_text_string"
 const val HAS_SEEN_LEADERBOARD_ANIMATION = "joshskills_has_seen_leaderboard_animation"
 const val HAS_SEEN_LESSON_SPOTLIGHT = "joshskills_has_seen_lesson_spotlight"
 const val HAS_SEEN_SPEAKING_SPOTLIGHT = "joshskills_has_seen_speaking_spotlight"
+const val HAS_SEEN_CONVO_ROOM_SPOTLIGHT = "joshskills_has_seen_convo_room_spotlight"
+const val HAS_SEEN_CONVO_ROOM_POINTS = "joshskills_has_seen_convo_room_points"
 const val HAS_SEEN_LOCAL_NOTIFICATION = "has_seen_local_notification"
 const val LOCAL_NOTIFICATION_INDEX = "local_notification_index"
 const val CHAT_OPENED_FOR_NOTIFICATION = "chat_opened_for_notification"
@@ -106,6 +113,10 @@ const val ONBOARDING_STAGE = "onboarding_stage"
 const val BLOCK_ISSUE = "BLOCK_ISSUE"
 const val REPORT_ISSUE = "REPORT_ISSUE"
 
+
+const val USER_ACTIVE_IN_GAME = "game_active"
+const val USER_LEAVE_THE_GAME = "game_left"
+const val USER_MUTE_OR_NOT = "mute_un_mute"
 
 object PrefManager {
 
@@ -251,7 +262,7 @@ object PrefManager {
         WorkManagerAdmin.appStartWorker()
     }
 
-    fun clearDatabase(){
+    fun clearDatabase() {
         LastSyncPrefManager.clear()
         AppDatabase.clearDatabase()
     }

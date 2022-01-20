@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core.interfaces
 
 import android.net.Uri
 import android.view.View
+import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.CertificateDetail
@@ -45,6 +46,14 @@ interface CertificationExamListener {
 
 interface OnOpenCourseListener {
     fun onClick(inboxEntity: InboxEntity)
+}
+
+interface ConversationRoomListAction {
+    fun onRoomClick(item: RoomListResponseItem)
+}
+
+interface ConversationLiveRoomSpeakerClickAction {
+
 }
 
 interface RecyclerViewItemClickListener {

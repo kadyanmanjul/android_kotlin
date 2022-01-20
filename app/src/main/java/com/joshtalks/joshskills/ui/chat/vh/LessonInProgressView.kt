@@ -18,10 +18,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
-import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
-import com.joshtalks.joshskills.ui.lesson.READING_POSITION
-import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
-import com.joshtalks.joshskills.ui.lesson.VOCAB_POSITION
+import com.joshtalks.joshskills.ui.lesson.*
 
 class LessonInProgressView : FrameLayout {
     private lateinit var rootView: FrameLayout
@@ -36,6 +33,7 @@ class LessonInProgressView : FrameLayout {
     private lateinit var vocabStatus: ImageView
     private lateinit var readingStatus: ImageView
     private lateinit var speakingStatus: ImageView
+    private lateinit var roomStatus: ImageView
 
     private val drawableAttempted: Drawable? by lazy {
         ResourcesCompat.getDrawable(
@@ -90,6 +88,7 @@ class LessonInProgressView : FrameLayout {
             1 -> findViewById(R.id.view2)
             2 -> findViewById(R.id.view3)
             3 -> findViewById(R.id.view4)
+            4 -> findViewById(R.id.view5)
             else -> findViewById(R.id.view1)
         }
         vocabStatus = when (VOCAB_POSITION) {
@@ -97,6 +96,7 @@ class LessonInProgressView : FrameLayout {
             1 -> findViewById(R.id.view2)
             2 -> findViewById(R.id.view3)
             3 -> findViewById(R.id.view4)
+            4 -> findViewById(R.id.view5)
             else -> findViewById(R.id.view2)
         }
         readingStatus = when (READING_POSITION) {
@@ -104,6 +104,7 @@ class LessonInProgressView : FrameLayout {
             1 -> findViewById(R.id.view2)
             2 -> findViewById(R.id.view3)
             3 -> findViewById(R.id.view4)
+            4 -> findViewById(R.id.view5)
             else -> findViewById(R.id.view3)
         }
         speakingStatus = when (SPEAKING_POSITION) {
@@ -111,11 +112,20 @@ class LessonInProgressView : FrameLayout {
             1 -> findViewById(R.id.view2)
             2 -> findViewById(R.id.view3)
             3 -> findViewById(R.id.view4)
+            4 -> findViewById(R.id.view5)
+            else -> findViewById(R.id.view4)
+        }
+        roomStatus = when (ROOM_POSITION) {
+            0 -> findViewById(R.id.view1)
+            1 -> findViewById(R.id.view2)
+            2 -> findViewById(R.id.view3)
+            3 -> findViewById(R.id.view4)
+            4 -> findViewById(R.id.view5)
             else -> findViewById(R.id.view4)
         }
     }
 
-    fun setup(lesson: LessonModel) {
+    fun setup(lesson: LessonModel, isConversationRoomActive: Boolean) {
         this.lessonModel = lesson
         lessonNameTv.text = context.getString(
             R.string.lesson_name,
@@ -123,10 +133,11 @@ class LessonInProgressView : FrameLayout {
             lesson.lessonName
         )
         imageView.setImageInLessonView(lesson.thumbnailUrl)
-        setupUI(lesson)
+        setupUI(lesson,isConversationRoomActive)
+
     }
 
-    private fun setupUI(lesson: LessonModel) {
+    private fun setupUI(lesson: LessonModel,isConversationRoomActive: Boolean) {
         if (lesson.status == LESSON_STATUS.AT) {
             startLessonTv.visibility = GONE
             startLessonTvShimmer.visibility = GONE
@@ -135,6 +146,8 @@ class LessonInProgressView : FrameLayout {
             vocabStatus.visibility = View.VISIBLE
             readingStatus.visibility = View.VISIBLE
             speakingStatus.visibility = View.VISIBLE
+            roomStatus.visibility = if (isConversationRoomActive) View.VISIBLE else View.INVISIBLE
+
 
             if (lesson.grammarStatus == LESSON_STATUS.CO) {
                 grammarStatus.setImageDrawable(drawableAttempted)
@@ -156,11 +169,17 @@ class LessonInProgressView : FrameLayout {
             } else {
                 speakingStatus.setImageDrawable(drawableUnattempted)
             }
+            if (lesson.conversationStatus == LESSON_STATUS.CO) {
+                roomStatus.setImageDrawable(drawableAttempted)
+            } else {
+                roomStatus.setImageDrawable(drawableUnattempted)
+            }
         } else {
             grammarStatus.visibility = GONE
             vocabStatus.visibility = GONE
             readingStatus.visibility = GONE
             speakingStatus.visibility = GONE
+            roomStatus.visibility = GONE
             startLessonTv.visibility = View.VISIBLE
             startLessonTvShimmer.visibility = View.VISIBLE
             continueLessonTv.visibility = GONE

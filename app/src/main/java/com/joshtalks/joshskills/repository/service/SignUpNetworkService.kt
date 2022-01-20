@@ -13,7 +13,17 @@ import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpReq
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 const val DIR = "api/skill/v1"
 
@@ -148,5 +158,8 @@ interface SignUpNetworkService {
 
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
+
+    @GET("$DIR/user/profile_pictures//")
+    suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
 
 }

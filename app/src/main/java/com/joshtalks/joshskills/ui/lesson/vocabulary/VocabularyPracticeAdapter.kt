@@ -36,16 +36,16 @@ import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 
-private const val TAG = "VocabularyPracticeAdapter"
+private const val TAG = "VocaPracticeAdapter"
 const val PAUSE_AUDIO = "PAUSE_AUDIO"
 
 class VocabularyPracticeAdapter(

@@ -178,6 +178,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("OPEN_FREE_TRIAL_SCREEN")
     ACTION_OPEN_FREE_TRIAL_SCREEN("OPEN_FREE_TRIAL_SCREEN"),
 
+    @SerializedName("JOIN_CONVERSATION_ROOM")
+    JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM")
+
 }
 
 enum class NotificationChannelNames(val type: String) {

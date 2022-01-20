@@ -10,9 +10,9 @@ if (!project.hasProperty("devBuild")) {
 }
 //-PdevBuild command
 //-PdevBuild --warning-mode=all --stacktrace
-def majorVersion = 4
-def minorVersion = 1
-def patchVersion = 47
+def majorVersion = 5
+def minorVersion = 0
+def patchVersion = 6
 
 android {
     compileSdkVersion 30
@@ -36,6 +36,9 @@ android {
         //buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         //buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
         buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
+        buildConfigField "String", "PUBNUB_PUB_API_KEY", "\"pub-c-e78a680c-fdd0-4cd2-87fa-8955f935dca8\""
+        buildConfigField "String", "PUBNUB_SUB_API_KEY", "\"sub-c-8e7c9054-437f-11ec-96b3-4a48f5067549\""
+        buildConfigField "String", "PUBNUB_SECRET_API_KEY", "\"sec-c-Mjg3NTUyYTUtODVkZC00ZjEzLWExZTAtOGIzZGJjZjRjNWVk\""
         //buildConfigField "String", "BUGSEE_API_KEY", "\"fd4b6776-752e-44ce-a975-ce4d2e428bc3\""
         //buildConfigField "String", "SMARTLOOK_API_KEY", "\"62418dde1661c1a8190b2c76f25de26a843629a7\""
 
@@ -170,6 +173,10 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
+            /*For Port
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9011\""
+            */
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -180,6 +187,7 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-skills${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -190,6 +198,7 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -213,6 +222,12 @@ android {
     }
     kapt {
         generateStubs = true
+    }
+
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
     }
 }
 
@@ -255,7 +270,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
-    def room_version = "2.3.0"
+    def room_version = "2.3.0-alpha02"
 
     implementation "androidx.room:room-runtime:$room_version"
     kapt "org.xerial:sqlite-jdbc:3.34.0"
@@ -281,9 +296,9 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-workmanager:2.11.7'
 
 
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
     implementation 'com.google.firebase:firebase-appindexing:20.0.0'
-    implementation 'com.google.firebase:firebase-analytics:19.0.1'
+    implementation 'com.google.firebase:firebase-analytics-ktx:20.0.0'
     implementation 'com.google.firebase:firebase-core:19.0.1'
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
     implementation 'com.google.firebase:firebase-perf:20.0.2'
@@ -294,6 +309,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-installations:17.0.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:23.0.3'
+    implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
 
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
@@ -364,7 +380,7 @@ dependencies {
     implementation 'com.flurry.android:analytics:12.3.0@aar'
 
     //Payment Razor pay
-    implementation 'com.razorpay:checkout:1.5.16'
+    implementation 'com.razorpay:checkout:1.6.15'
     implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.github.vipulasri:timelineview:1.1.5'
@@ -392,7 +408,7 @@ dependencies {
         exclude group: 'com.sinch', module: 'android-rtc'
     })*/
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'io.agora.rtc:voice-sdk:3.3.2'
+    implementation files("libs/agora-rtc-sdk.jar")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
@@ -413,11 +429,24 @@ dependencies {
     implementation 'com.nex3z:flow-layout:1.2.2'
     implementation 'com.userexperior:userexperior-android:6.0.6'
 
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'
     //Dagger 2
     implementation 'com.google.dagger:dagger:2.39.1'
     kapt 'com.google.dagger:dagger-compiler:2.35.1'
 
     // Paging3
     implementation "androidx.paging:paging-runtime-ktx:3.0.1"
+
+    //keyboard
+    implementation "com.vanniktech:emoji-ios:0.8.0"
+    implementation "com.vanniktech:emoji-material:0.8.0"
+
+    //Sentry
+    implementation 'io.sentry:sentry-android:5.5.0'
+    implementation 'io.sentry:sentry-android-okhttp:5.5.1'
+    implementation 'io.sentry:sentry-android-fragment:5.5.1'
+/*
+    implementation 'io.sentry:sentry-android-timber:5.5.1'
+*/
 
 }

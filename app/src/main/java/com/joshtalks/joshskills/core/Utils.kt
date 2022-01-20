@@ -116,11 +116,16 @@ const val IMPRESSION_OPEN_SPEAKING_SCREEN = "OPEN_SPEAKING_SCREEN"
 const val IMPRESSION_SEARCHING_SCREEN_BACK_PRESS = "SEARCHING_SCREEN_BACK_PRESS"
 const val IMPRESSION_OPEN_GRAMMAR_SCREEN = "OPEN_GRAMMAR_SCREEN"
 const val IMPRESSION_OPEN_READING_SCREEN = "OPEN_READING_SCREEN"
+const val IMPRESSION_OPEN_ROOM_SCREEN = "OPEN_ROOM_SCREEN"
 const val IMPRESSION_OPEN_VOCABULARY_SCREEN = "OPEN_VOCABULARY_SCREEN"
 const val IMPRESSION_OPEN_REFERRAL_SCREEN = "OPEN_REFERRAL_SCREEN"
 const val IMPRESSION_REFERRAL_CODE_COPIED = "REFERRAL_CODE_COPIED"
 const val IMPRESSION_REFER_VIA_WHATSAPP_CLICKED = "REFER_VIA_WHATSAPP_CLICKED"
 const val IMPRESSION_REFER_VIA_OTHER_CLICKED = "REFER_VIA_OTHER_CLICKED"
+const val IMPRESSION_REFER_VIA_INBOX_ICON = "REFER_VIA_INBOX_ICON"
+const val IMPRESSION_REFER_VIA_INBOX_MENU = "REFER_VIA_INBOX_MENU"
+const val IMPRESSION_REFER_VIA_CONVERSATION_ICON = "REFER_VIA_CONVERSATION_ICON"
+const val IMPRESSION_REFER_VIA_CONVERSATION_MENU = "REFER_VIA_CONVERSATION_MENU"
 
 object Utils {
 
@@ -181,7 +186,7 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true): String {
+    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
@@ -194,7 +199,7 @@ object Utils {
                 "Yesterday"
             }
             else -> {
-                DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
+                DateTimeUtils.formatWithStyle(date, style)
             }
         }
     }
@@ -863,6 +868,20 @@ fun hideKeyboard(activity: Activity, view: View) {
     inputManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
+fun hideKeyboard(context: Context) {
+    if (context is Activity) {
+        val activity = context
+        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+}
+
 fun alphaAnimation(view: View) {
     val animation = AlphaAnimation(0f, 1f)
     animation.duration = 850
@@ -968,6 +987,21 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
+fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_previouspicplaceholder)
+        .error(R.drawable.ic_previouspicplaceholder)
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context)
+        .load(url)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
+}
 
 fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
     val font = Typeface.createFromAsset(
@@ -984,6 +1018,33 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
         .buildRound(
             getUserNameInShort(userName),
             ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color)
+        )
+    this.background = drawable
+    this.setImageDrawable(drawable)
+}
+
+fun ImageView.setUserInitialInRect(
+    userName: String,
+    dpToPx: Int = 16,
+    radius: Int = 16,
+    textColor: Int = R.color.white,
+    bgColor: Int = R.color.button_color
+) {
+    val font = Typeface.createFromAsset(
+        AppObjectController.joshApplication.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable: TextDrawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
+        .useFont(font)
+        .fontSize(Utils.dpToPx(dpToPx))
+        .toUpperCase()
+        .endConfig()
+        .buildRoundRect(
+            getUserNameInShort(userName),
+            ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
+            radius
         )
     this.background = drawable
     this.setImageDrawable(drawable)
@@ -1016,6 +1077,22 @@ fun ImageView.setUserImageOrInitials(
         } else {
             this.setImage(url)
         }
+    }
+}
+
+fun ImageView.setUserImageRectOrInitials(
+    url: String?,
+    userName: String,
+    dpToPx: Int = 16,
+    isRound: Boolean = false,
+    radius: Int = 16,
+    textColor: Int = R.color.white,
+    bgColor: Int = R.color.button_color
+) {
+    if (url.isNullOrEmpty()) {
+        setUserInitialInRect(userName, dpToPx, radius, textColor, bgColor)
+    } else {
+        this.setImage(url)
     }
 }
 

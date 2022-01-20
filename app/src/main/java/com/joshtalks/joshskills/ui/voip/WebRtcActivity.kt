@@ -56,12 +56,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_ACCEPT = "web_rtc_call_accept"
@@ -367,6 +367,16 @@ class WebRtcActivity : AppCompatActivity() {
         return (isSetAsFavourite == true || isFavouriteIntent)
     }
 
+    private fun isCallGroupPP(): Boolean {
+        val isSetAsGroup = mBoundService?.isGroupCall()
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        val isGroupCallIntent = map != null && map.containsKey(RTC_IS_GROUP_CALL)
+        if (isSetAsGroup == false && isGroupCallIntent) {
+            mBoundService?.setAsGroupCall()
+        }
+        return (isSetAsGroup == true || isGroupCallIntent)
+    }
+
     private fun isNewUserCall(): Boolean {
         val isSetAsNewUserCall = mBoundService?.isNewUserCall()
         val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
@@ -498,7 +508,7 @@ class WebRtcActivity : AppCompatActivity() {
                 val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
                 binding.topicHeader.visibility = View.VISIBLE
                 binding.topicName.text = it["topic_name"]
-                Log.d(TAG, "updateStatusLabel: -#@- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
+                Log.d(TAG, "updateStatusLabel: addObserver -#@- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
                 if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
@@ -596,14 +606,14 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun updateStatusLabel() {
-        Log.d(TAG, "updateStatusLabel: ")
         lifecycleScope.launchWhenCreated {
             binding.tvGroupName.visibility = View.GONE
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-            Log.d(TAG, "updateStatusLabel: ${map}")
             val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
+            Log.d(TAG, "updateStatusLabel: ${map} : $isCallFromGroup")
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+            Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -620,13 +630,18 @@ class WebRtcActivity : AppCompatActivity() {
                     } else if (callConnected.not() && isCallFavoritePP()) {
                         binding.callStatus.text = getText(R.string.pp_favorite_incoming)
                         return@run
+                    } else if (callConnected.not() && isCallGroupPP()) {
+                        binding.callStatus.text = getText(R.string.pp_group_incoming)
+                        binding.callerName.text = "${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}"
+                        setImageInIV(map?.get(RTC_WEB_GROUP_PHOTO))
+                        return@run
                     } else if (callConnected.not() && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Incoming Call from"
                         binding.callerName.text = "Practice Partner"
                         return@run
                     } else if (callConnected && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Practice with Partner"
-                        Log.d(TAG, "updateStatusLabel: -#- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
+                        Log.d(TAG, "updateStatusLabel:  P2P -#- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
                         if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                             binding.tvGroupName.visibility = View.VISIBLE
                             binding.tvGroupName.text =
@@ -801,12 +816,12 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun acceptCallForDemo(callAcceptApi: Boolean = true) {
-        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionEnabled(this)) {
             answerCall(callAcceptApi)
             return
         }
 
-        PermissionUtils.demoCallingFeaturePermission(
+        PermissionUtils.callingFeaturePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {

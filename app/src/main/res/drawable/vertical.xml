@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/secondaryProgress">
+        <clip android:clipOrientation="vertical" android:gravity="bottom">
+            <shape>
+                <corners android:radius="8dip" />
+                <gradient
+                    android:startColor="@color/shadow_progress_color_quiz"
+                    android:centerColor="@color/shadow_progress_color_quiz"
+                    android:endColor="@color/shadow_progress_color_quiz"
+                    android:centerY="0.75"
+                    android:angle="90"
+                    />
+            </shape>
+        </clip>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip android:clipOrientation="vertical" android:gravity="bottom">
+            <shape>
+                <corners android:radius="8dip" />
+                <gradient
+                    android:startColor="@color/progess_color_quiz"
+                    android:centerColor="@color/progess_color_quiz"
+                    android:endColor="@color/progess_color_quiz"
+                    android:centerY="0.75"
+                    android:angle="90"/>
+            </shape>
+        </clip>
+    </item>
+</layer-list>

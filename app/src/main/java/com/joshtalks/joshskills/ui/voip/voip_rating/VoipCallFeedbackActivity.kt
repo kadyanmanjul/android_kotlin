@@ -107,7 +107,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
         val msz = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOIP_FEEDBACK_MESSAGE_NEW)
 
-
         arguments?.let {
             callerId=it.getIntExtra(ARG_CALLER_ID,-1)
             currentId=it.getIntExtra(ARG_CURRENT_ID,-1)
@@ -129,8 +128,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
             } else {
                 binding.cImage.setRoundImage(image)
             }
-
-
 
             val mTime = StringBuilder()
             val callTime = it.getLongExtra(ARG_CALL_TIME, 0L)
@@ -221,6 +218,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
      fun closeActivity(){
         finishAndRemoveTask()
     }
+
     companion object {
 
         fun startPtoPFeedbackActivity(
@@ -257,5 +255,4 @@ class VoipCallFeedbackActivity : BaseActivity(){
             }
         }
     }
-
 }
