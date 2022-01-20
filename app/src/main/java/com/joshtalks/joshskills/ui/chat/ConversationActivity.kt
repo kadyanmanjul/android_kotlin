@@ -937,10 +937,23 @@ class ConversationActivity :
                 this@ConversationActivity.userProfileData = userProfileData
                 if(userProfileData.hasGroupAccess){
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
-                    conversationBinding.imgGameBtn.visibility = VISIBLE
                 }
                 else{
                     conversationBinding.imgGroupChatBtn.visibility = GONE
+                }
+                initScoreCardView(userProfileData)
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                    profileFeatureActiveView(true)
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            utilConversationViewModel.userData.collectLatest { userProfileData ->
+                this@ConversationActivity.userProfileData = userProfileData
+                if(userProfileData.isGameActive){
+                    conversationBinding.imgGameBtn.visibility = VISIBLE
+                }
+                else{
                     conversationBinding.imgGameBtn.visibility = GONE
                 }
                 initScoreCardView(userProfileData)

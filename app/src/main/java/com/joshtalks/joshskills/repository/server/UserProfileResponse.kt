@@ -67,7 +67,9 @@ data class UserProfileResponse(
     @SerializedName("profile_pictures")
     val previousProfilePictures: PreviousProfilePictures? = null,
     @SerializedName("course_enrolled")
-    val enrolledCoursesList: EnrolledCoursesList? = null
+    val enrolledCoursesList: EnrolledCoursesList? = null,
+    @SerializedName("is_game_active")
+    val isGameActive: Boolean = false
 )
 
 data class GroupInfo(
