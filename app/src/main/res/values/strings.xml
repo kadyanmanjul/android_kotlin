@@ -1037,4 +1037,11 @@
     <string name="see_course_list">See course list</string>
 
     <string name="partnerKey">P31uP46c15762366b41fdba957b16b9a7c620</string>
+
+    <string name="my_formatted_text">
+        <font color="@android:color/black">I want to</font>
+        <font color="#107BE5">speak english confidently</font>
+        <font color ="@android:color/black">from ...</font>
+    </string>
+
 </resources>
