@@ -167,4 +167,7 @@ interface SignUpNetworkService {
 
     @GET("$DIR/course/course_syllabus/")
     suspend fun getD2pSyllabusPdf() : Response<Map<String, String?>>
+
+    @GET("$DIR/course/language/")
+    suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>
 }
