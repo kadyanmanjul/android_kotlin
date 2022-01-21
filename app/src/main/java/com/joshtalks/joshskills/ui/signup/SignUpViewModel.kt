@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -32,11 +33,13 @@ import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
+    val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
     var resendAttempt: Int = 1
     var incorrectAttempt: Int = 0
     var currentTime: Long = 0
@@ -290,6 +293,19 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         return EMPTY
     }
 
+    fun checkMentorIdPaid() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
+                val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
+                mentorPaymentStatus.postValue(response["payment"] as Boolean)
+                Log.e("Ayaaz", "$response")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun completingProfile(map: MutableMap<String, String?>, isUserVerified: Boolean = true) {
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
@@ -421,4 +437,17 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun saveTrueCallerImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 }

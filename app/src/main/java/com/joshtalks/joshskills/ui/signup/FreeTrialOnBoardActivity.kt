@@ -15,23 +15,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
-import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
-import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.truecaller.android.sdk.*
+import kotlinx.coroutines.CoroutineScope
 import java.math.BigDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
@@ -56,12 +51,37 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         ) {
             openProfileDetailFragment()
         }
+        addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
     }
 
     override fun onStart() {
         super.onStart()
+        initTrueCallerUI()
         viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
+    }
+
+    private fun addViewModelObservers() {
+        viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
+            hideProgressBar()
+            when (it) {
+                SignUpStepStatus.ProfileInCompleted -> {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        PrefManager.clearDatabase()
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
+                    }
+                    openProfileDetailFragment()
+                }
+                SignUpStepStatus.SignUpCompleted, SignUpStepStatus.ERROR -> {
+                    openProfileDetailFragment()
+                }
+                else -> return@Observer
+            }
+        })
+        viewModel.progressBarStatus.observe(this, androidx.lifecycle.Observer {
+            showProgressBar()
+        })
     }
 
     fun signUp() {
@@ -100,7 +120,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
-                openProfileDetailFragment()
+                if (TruecallerSDK.getInstance().isUsable)
+                    openTrueCallerBottomSheet()
+                else
+                    openProfileDetailFragment()
                 alertDialog.dismiss()
             }
         }
@@ -111,7 +134,49 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    private fun openProfileDetailFragment() {
+    fun initTrueCallerUI() {
+        val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
+            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
+            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
+            .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
+            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
+            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
+            .build()
+        TruecallerSDK.init(trueScope)
+        if (TruecallerSDK.getInstance().isUsable) {
+            val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
+            TruecallerSDK.getInstance().setLocale(locale)
+        }
+    }
+
+    private fun openTrueCallerBottomSheet() {
+        showProgressBar()
+        viewModel.saveTrueCallerImpression(TRUECALLER_FT_LOGIN)
+        TruecallerSDK.getInstance().getUserProfile(this)
+    }
+
+    private val sdkCallback: ITrueCallback = object : ITrueCallback {
+        override fun onFailureProfileShared(trueError: TrueError) {
+            openProfileDetailFragment()
+            hideProgressBar()
+            if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
+                showToast(application.getString(R.string.internet_not_available_msz))
+            }
+        }
+
+        override fun onVerificationRequired(p0: TrueError?) {
+            openProfileDetailFragment()
+        }
+
+        override fun onSuccessProfileShared(trueProfile: TrueProfile) {
+            CoroutineScope(Dispatchers.IO).launch {
+                openProfileDetailFragment(trueProfile.firstName)
+                viewModel.verifyUserViaTrueCaller(trueProfile)
+            }
+        }
+    }
+
+    private fun openProfileDetailFragment(trueProfileName: String = EMPTY) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
@@ -121,6 +186,15 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance().onActivityResultObtained(this, resultCode, data)
+            return
+        }
+        hideProgressBar()
     }
 
     fun showPrivacyPolicyDialog() {
@@ -135,5 +209,4 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         super.onBackPressed()
     }
-
 }
