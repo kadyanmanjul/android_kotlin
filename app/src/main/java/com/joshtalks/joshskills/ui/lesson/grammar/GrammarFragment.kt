@@ -518,6 +518,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { mediaProgressEvent ->
+                        Log.d("media", "test")
                         if (mediaProgressEvent.progress > 3000 && question.status != QUESTION_STATUS.AT) {
                             question.status = QUESTION_STATUS.AT
                             question.isVideoWatchTimeSend = true
@@ -534,6 +535,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                                 binding.videoPlayer.player?.duration!!
                             ).toInt()
 
+
+                        Log.e("sakshi_grammar_test", videoPercent.toString() + "  ...." +percentVideoWatched.toString())
                         if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && question.isVideoWatchTimeSend) {
                             updateVideoQuestionStatus(question, true)
                             question.isVideoWatchTimeSend = false

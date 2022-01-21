@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
+import com.joshtalks.joshskills.ui.lesson.D2pSendImpression
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -305,4 +306,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/link_attribution/deep_link/")
     suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
+
+    @POST("$DIR/course/introduction_analytics/")
+    suspend fun saveD2pImpression(@Body params: D2pSendImpression): Response<Any>
 }

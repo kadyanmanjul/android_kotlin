@@ -4,14 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
@@ -100,6 +103,39 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
+
+        viewModel.lessonLiveData.observe(viewLifecycleOwner, {
+            if(it.lessonNo == 1){
+                binding.btnCallDemo.visibility = View.GONE
+                binding.txtHowToSpeak.visibility = View.VISIBLE
+                binding.txtHowToSpeak.setOnClickListener {
+                    viewModel.howToSpeak(true)
+                    binding.btnCallDemo.visibility = View.VISIBLE
+                    viewModel.saveD2pImpression(howToSpeak = true, startedPlayingVideo = true)
+                }
+
+
+                viewModel.call_btn_hide_show.observe(viewLifecycleOwner, {
+                    if(it == 1){
+                        binding.nestedScrollView.visibility = View.INVISIBLE
+                        binding.btnCallDemo.visibility = View.VISIBLE
+                    }
+                    if(it == 2){
+                        binding.nestedScrollView.visibility = View.VISIBLE
+                        binding.btnCallDemo.visibility = View.GONE
+                    }
+                })
+            }else{
+                binding.btnCallDemo.visibility = View.GONE
+            }
+        })
+
+        viewModel.intro_video_complete.observe(viewLifecycleOwner, {
+            if(it == true){
+                binding.btnCallDemo.visibility = View.GONE
+            }
+        })
+
         addObservers()
         // showTooltip()
         return binding.rootView

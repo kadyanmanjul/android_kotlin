@@ -172,7 +172,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://34.93.235.14:9006\""
             /*For Port
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9004\""
             */
@@ -438,6 +438,10 @@ dependencies {
     implementation 'io.sentry:sentry-android:5.5.0'
     implementation 'io.sentry:sentry-android-okhttp:5.5.1'
     implementation 'io.sentry:sentry-android-fragment:5.5.1'
+
+
+
+
 /*
     implementation 'io.sentry:sentry-android-timber:5.5.1'
 */
