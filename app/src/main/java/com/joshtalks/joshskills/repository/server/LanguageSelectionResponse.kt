@@ -1,14 +1,11 @@
 package com.joshtalks.joshskills.repository.server
 
-data class LanguageSelectionResponse(
-    var availableLanguages: List<ChooseLanguages> = listOf(
-        ChooseLanguages("111", "Hindi (Hindi)", "111"),
-        ChooseLanguages("111", "Bangla (Bangla)", "111"),
-    )
-)
+import com.google.gson.annotations.SerializedName
 
 data class ChooseLanguages(
-    var testId: String = "",
-    var languageName: String = "",
-    var languageCode: String = "",
+    @SerializedName("test_id")
+    val testId: String = "",
+
+    @SerializedName("language")
+    val languageName: String = "",
 )

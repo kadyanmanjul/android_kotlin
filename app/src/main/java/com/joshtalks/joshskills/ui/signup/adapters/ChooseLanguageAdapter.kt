@@ -8,33 +8,10 @@ import com.joshtalks.joshskills.databinding.LiLanguageItemBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 
 class ChooseLanguageAdapter(
-    var languageSelectionList: List<ChooseLanguages>,
-    val chooseLanguage: OnChooseLanguage
-): RecyclerView.Adapter<ChooseLanguageAdapter.ChooseLanguageItemViewHolder>()
-/*,
-    ListAdapter<ChooseLanguages, ChooseLanguageAdapter.ChooseLanguageItemViewHolder>(
-        object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int {
-                TODO("Not yet implemented")
-            }
+    val chooseLanguage: OnChooseLanguage,
+): RecyclerView.Adapter<ChooseLanguageAdapter.ChooseLanguageItemViewHolder>() {
 
-            override fun getNewListSize(): Int {
-                TODO("Not yet implemented")
-            }
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                TODO("Not yet implemented")
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                TODO("Not yet implemented")
-            }
-
-        }
-    ) */{
-
-//    private lateinit var languageSelectionList: List<ChooseLanguages>
-
+    private val languageSelectionList = ArrayList<ChooseLanguages>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseLanguageItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = LiLanguageItemBinding.inflate(inflater, parent, false)
@@ -48,7 +25,8 @@ class ChooseLanguageAdapter(
     override fun getItemCount(): Int = languageSelectionList.size
 
     fun setData(updatedLanguageList: List<ChooseLanguages>) {
-        languageSelectionList = updatedLanguageList
+        languageSelectionList.clear()
+        languageSelectionList.addAll(updatedLanguageList)
         notifyDataSetChanged()
     }
 
@@ -58,11 +36,15 @@ class ChooseLanguageAdapter(
         fun bind(selectedLanguage: ChooseLanguages) {
             with(binding) {
                 tvLanguage.text = selectedLanguage.languageName
-                root.setOnClickListener {
+
+                container.setOnClickListener {
+                    chooseLanguage.selectLanguageOnBoard(selectedLanguage)
+                }
+
+                tvLanguage.setOnClickListener {
                     chooseLanguage.selectLanguageOnBoard(selectedLanguage)
                 }
             }
-
         }
     }
 }
