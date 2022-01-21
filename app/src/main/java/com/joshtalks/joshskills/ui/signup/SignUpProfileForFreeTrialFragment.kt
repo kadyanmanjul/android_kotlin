@@ -29,7 +29,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
-    //private var username
+    private var username: String? = null
 
     companion object {
         fun newInstance() = SignUpProfileForFreeTrialFragment()
@@ -68,9 +68,10 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     }
 
     private fun initUI() {
+        username = User.getInstance().firstName
         binding.nameEditText.requestFocus()
         binding.nameEditText.setText(User.getInstance().firstName)
-        //Log.e("Ayaaz2", "$username")
+        binding.nameEditText.isEnabled = true
     }
 
     private fun addObservers() {
@@ -124,8 +125,8 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
-        //if (username != EMPTY && username != name)
-          //  viewModel.saveTrueCallerImpression(NAME_CHANGED)
+        if (username.isNullOrEmpty() && username != name)
+            viewModel.saveTrueCallerImpression(NAME_CHANGED)
     }
 
     fun submitForFreeTrial() {

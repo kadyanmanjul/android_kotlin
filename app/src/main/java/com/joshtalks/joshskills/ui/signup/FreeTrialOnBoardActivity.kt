@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.truecaller.android.sdk.*
 import kotlinx.coroutines.CoroutineScope
-import java.math.BigDecimal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -170,13 +169,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             CoroutineScope(Dispatchers.IO).launch {
-                openProfileDetailFragment(trueProfile.firstName)
+                openProfileDetailFragment()
                 viewModel.verifyUserViaTrueCaller(trueProfile)
             }
         }
     }
 
-    private fun openProfileDetailFragment(trueProfileName: String = EMPTY) {
+    private fun openProfileDetailFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
@@ -191,7 +190,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().onActivityResultObtained(this, resultCode, data)
+            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
+            hideProgressBar()
             return
         }
         hideProgressBar()
