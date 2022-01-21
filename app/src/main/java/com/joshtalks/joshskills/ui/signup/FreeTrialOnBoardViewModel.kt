@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.LanguageSelectionResponse
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -32,7 +32,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val service = AppObjectController.signUpNetworkService
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val languagesResponse: MutableLiveData<LanguageSelectionResponse> = MutableLiveData()
+    val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
     var userName: String? = null
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -209,7 +209,9 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     fun getAvailableLanguages() {
         viewModelScope.launch {
             try {
-                languagesResponse.postValue(LanguageSelectionResponse())
+                val response = service.getAvailableLanguageCourses()
+                if (response.isSuccessful && response.code() in 200..203)
+                    availableLanguages.value = response.body()
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }

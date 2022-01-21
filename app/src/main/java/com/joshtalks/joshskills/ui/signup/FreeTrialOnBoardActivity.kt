@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -55,7 +54,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 //            openProfileDetailFragment()
 //        }
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
-        viewModel.getAvailableLanguages()
     }
 
     override fun onStart() {
@@ -78,7 +76,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun showStartTrialPopup() {
-        Log.i("ayushg", "showStartTrialPopup: loading dialog")
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         layout.btnStartTrial.pauseAnimation()
@@ -91,7 +88,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         val width = AppObjectController.screenWidth * .9
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         alertDialog.show()
-        Log.i("ayushg", "showStartTrialPopup: showing dialog")
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 

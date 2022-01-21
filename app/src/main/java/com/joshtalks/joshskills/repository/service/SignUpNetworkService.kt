@@ -149,4 +149,6 @@ interface SignUpNetworkService {
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
 
+    @GET("$DIR/course/language/")
+    suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>
 }
