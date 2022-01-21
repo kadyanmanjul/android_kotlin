@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
-import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
+import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.databinding.ActivityOnlineTestActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
@@ -71,7 +71,7 @@ class OnlineTestActivity : WebRtcMiddlewareActivity() {
                         val toLocation = IntArray(2)
                         event.customWord.getLocationOnScreen(toLocation)
                         toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
-                        this.transaltionAnimationNew(
+                        this.translationAnimationNew(
                             toLocation,
                             event.customWord,
                             event.optionLayout

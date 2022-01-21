@@ -12,11 +12,7 @@ import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
-import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
-import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
-import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
+import com.joshtalks.joshskills.repository.server.assessment.*
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,9 +36,9 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                 if (response.isSuccessful) {
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {
-                        response.body()?.let {
-                            grammarAssessmentLiveData.postValue(it)
-                        }
+                        if (it.totalQuestions == it.totalAnswered)
+                            it.totalAnswered = 0
+                        grammarAssessmentLiveData.postValue(it)
                     }
                 }
             } catch (ex: Throwable) {
@@ -111,23 +107,39 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
     }
 
 
-    fun insertChoicesToDB(choiceList: List<Choice>, questionWithRelations: AssessmentQuestionWithRelations?) {
+    fun insertChoicesToDB(
+        choiceList: List<Choice>,
+        questionWithRelations: AssessmentQuestionWithRelations?
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             questionWithRelations?.let {
 
                 AppObjectController.appDatabase.assessmentDao().insertAssessmentWithoutRelation(
-                    Assessment(-1,10,null,null,null,null,
-                        EMPTY,null,null,null,AssessmentType.QUIZ_V2,AssessmentStatus.NOT_STARTED)
+                    Assessment(
+                        -1,
+                        10,
+                        null,
+                        null,
+                        null,
+                        null,
+                        EMPTY,
+                        null,
+                        null,
+                        null,
+                        AssessmentType.QUIZ_V2,
+                        AssessmentStatus.NOT_STARTED
+                    )
                 )
 
-                AppObjectController.appDatabase.assessmentDao().insertAssessmentQuestionWithoutRelation(
-                    it.question)
+                AppObjectController.appDatabase.assessmentDao()
+                    .insertAssessmentQuestionWithoutRelation(
+                        it.question
+                    )
             }
             choiceList.forEach { choice ->
-                choice.questionId=questionWithRelations?.question?.remoteId?:-1
+                choice.questionId = questionWithRelations?.question?.remoteId ?: -1
                 AppObjectController.appDatabase.assessmentDao().insertAssessmentChoice(choice)
             }
         }
     }
-
 }

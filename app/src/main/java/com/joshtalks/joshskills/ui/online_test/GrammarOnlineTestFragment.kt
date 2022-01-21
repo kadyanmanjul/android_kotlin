@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
@@ -31,6 +32,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.*
 
 private const val TAG = "GrammarOnlineTest"
+
 class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineTestInterface {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
     private var lessonActivityListener: LessonActivityListener? = null
@@ -42,7 +44,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private var pointsList: String? = null
 
     private var currentTooltipIndex = 0
-    private var grammarAnimationListener : GrammarAnimation? = null
+    private var grammarAnimationListener: GrammarAnimation? = null
 
     private val lessonTooltipList by lazy {
         listOf(
@@ -176,19 +178,31 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 binding.startTestContainer.visibility = View.VISIBLE
                 binding.testCompletedContainer.visibility = View.GONE
                 binding.testScoreContainer.visibility = View.GONE
-                binding.startBtn.isEnabled = false
-                binding.startBtn.isClickable = false
-                binding.startBtn.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.light_shade_of_gray
+                if (BuildConfig.DEBUG && BuildConfig.VERSION_CODE == 50006) {
+                    binding.startBtn.isEnabled = true
+                    binding.startBtn.isClickable = true
+                    binding.description.text =
+                        "This will work in debug version. You will have to complete lesson ${
+                            PrefManager.getIntValue(
+                                ONLINE_TEST_LAST_LESSON_COMPLETED
+                            ).plus(1)
+                        } in the prod version before you can attempt this lesson"
+                } else {
+                    binding.startBtn.isEnabled = false
+                    binding.startBtn.isClickable = false
+                    binding.startBtn.backgroundTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.light_shade_of_gray
+                        )
                     )
-                )
-                binding.description.text = getString(
-                    R.string.grammar_lock_text, PrefManager.getIntValue(
-                        ONLINE_TEST_LAST_LESSON_COMPLETED
-                    ).plus(1)
-                )
+                    binding.description.text = getString(
+                        R.string.grammar_lock_text, PrefManager.getIntValue(
+                            ONLINE_TEST_LAST_LESSON_COMPLETED
+                        ).plus(1)
+                    )
+                }
+                binding.description.visibility = View.VISIBLE
             }
         }
 
@@ -208,7 +222,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
 
     override fun onResume() {
         super.onResume()
-        if(!PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION))
+        if (!PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION))
             showGrammarAnimation()
     }
 
@@ -236,7 +250,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     fun showGrammarAnimation() {
         try {
             animationJob?.cancel()
-        } catch (e : Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
@@ -247,7 +261,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 overlayButtonItem?.let {
                     grammarAnimationListener?.showGrammarAnimation(it)
                 }
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -379,7 +393,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         const val CURRENT_LESSON_NUMBER = "current_lesson_number"
         const val POINTS_LIST = "points_list"
         const val SCORE_TEXT = "score_text"
-        private var animationJob : Job? = null
+        private var animationJob: Job? = null
 
         @JvmStatic
         fun getInstance(
@@ -491,5 +505,5 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
 }
 
 interface GrammarAnimation {
-    fun showGrammarAnimation(overlayItem : ItemOverlay)
+    fun showGrammarAnimation(overlayItem: ItemOverlay)
 }
