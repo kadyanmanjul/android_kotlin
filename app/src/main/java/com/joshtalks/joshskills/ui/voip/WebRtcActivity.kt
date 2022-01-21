@@ -568,7 +568,9 @@ class WebRtcActivity : AppCompatActivity() {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
-                    acceptCall(callAcceptApi)
+                    if(isCallOnGoing.value!=true) {
+                        acceptCall(callAcceptApi)
+                    }
                     if (isCallFavoritePP()) {
                         callDisViewEnable()
                         startCallTimer()
