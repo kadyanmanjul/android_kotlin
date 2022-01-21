@@ -4,8 +4,6 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
-import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.Rect
 import android.net.Uri
@@ -22,7 +20,6 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -39,19 +36,15 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
-import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEventForLessonQuestion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
-import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
@@ -69,10 +62,6 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -80,7 +69,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 
 const val GRAMMAR_POSITION = 0
@@ -1268,6 +1256,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.GONE
         binding.videoView.onStop()
+        binding.videoView.seekToStart()
         viewModel.saveD2pImpression(videoDuration = d2pVideoWatchedDurationPercent)
     }
 
