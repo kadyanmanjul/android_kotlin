@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PointsListRespo
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
@@ -28,6 +30,7 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -70,6 +73,34 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val eventLiveData: MutableLiveData<Event<Unit>> = MutableLiveData()
     var lessonIsConvoRoomActive: Boolean = false
     var isFreeTrail = false
+
+    val speaking_video_data: MutableLiveData<VideoPopupItem> = MutableLiveData()
+    val call_btn_hide_show: MutableLiveData<Int> = MutableLiveData()
+    val how_to_speak: MutableLiveData<Boolean> = MutableLiveData()
+    val intro_video_complete: MutableLiveData<Boolean> = MutableLiveData()
+    val d2pCallDuration: MutableLiveData<Long> = MutableLiveData()
+
+    fun callDurationD2P(time: Long) = d2pCallDuration.postValue(time)
+
+    fun isVideoComplete(event: Boolean) = intro_video_complete.postValue(event)
+
+    fun howToSpeak(event: Boolean) = how_to_speak.postValue(event)
+
+    fun showHideSpeakingFragmentCallBtn(event: Int) = call_btn_hide_show.postValue(event)
+
+    fun getVideoData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.chatNetworkService.getIntroSpeakingVideo()
+                if (response?.isSuccessful == true && response.body() != null) {
+                    speaking_video_data.postValue(response.body())
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e(TAG, "${ex.message}")
+            }
+        }
+    }
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -296,7 +327,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             when (tabPosition) {
                 GRAMMAR_POSITION -> {
-                    if (lessonLiveData.value?.grammarStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                    if (lessonLiveData.value?.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logGrammarSectionCompleted()
                     }
                     appDatabase.lessonDao().updateGrammarSectionStatus(lessonId, status)
@@ -323,7 +354,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 }
                 SPEAKING_POSITION -> {
-                    if (lessonLiveData.value?.speakingStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                    if (lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logSpeakingSectionCompleted()
                     }
                     appDatabase.lessonDao().updateSpeakingSectionStatus(lessonId, status)
@@ -733,4 +764,28 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun saveD2pImpression(
+        speakingTabClicked: Boolean? = null, startedPlayingVideo: Boolean? = null,
+        videoDuration: Long? = null, callBtnClicked: Boolean? = null, callDuration: Int? = null,
+        howToSpeak: Boolean? = null
+    ) {
+        viewModelScope.launch {
+            try {
+                val requestData = D2pSendImpression(
+                    mentorId = Mentor.getInstance().getId(),
+                    speakingTabClicked = speakingTabClicked,
+                    startedPlayingVideo = startedPlayingVideo,
+                    videoTimeDuration = videoDuration,
+                    callBtnClicked = callBtnClicked,
+                    timeSpentOnCall = callDuration,
+                    howToSpeakClicked = howToSpeak
+
+                )
+                val res = AppObjectController.commonNetworkService.saveD2pImpression(requestData)
+                Timber.i(res.body().toString())
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 }

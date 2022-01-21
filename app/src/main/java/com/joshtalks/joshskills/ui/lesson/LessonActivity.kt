@@ -1,12 +1,11 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.animation.ValueAnimator
-import android.app.Dialog
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +13,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.Window
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
@@ -40,11 +40,9 @@ import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirectio
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -59,9 +57,11 @@ import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -87,6 +87,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
 
+    var flag = true
+    var d2pVideoWatchedDurationPercent = 0L
     lateinit var titleView: TextView
     private var isDemo = false
     private var isNewGrammar = false
@@ -111,6 +113,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             arrayFragment,
             viewModel.lessonIsConvoRoomActive
         )
+    }
+
+    var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+   ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getLongExtra(
+               CURRENT_VIDEO_PROGRESS_POSITION,
+                0
+            )?.let { progress ->
+                binding.videoView.setProgress(progress)
+                binding.videoView.onResume()
+            }
+        }
     }
 
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
@@ -185,6 +201,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.buyCourseLl.visibility = View.VISIBLE
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
+
+        viewModel.how_to_speak.observe(this, {
+            if (it == true) {
+                showIntroVideoUi()
+            }
+        })
+        setUpVideoProgressListener()
     }
 
     override fun onResume() {
@@ -491,31 +514,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.arrowAnimation.visibility = View.VISIBLE
                 }
 
-                //Changing here
-                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    //   binding.overlayLayout.visibility = View.VISIBLE
-                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
-                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
-                    binding.spotlightTabVocab.visibility = View.INVISIBLE
-                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 ->{
+                    viewModel.lessonLiveData.observe(this, {
+                        if (it.lessonNo == 1 && flag == true) {
+                            flag = false
+                            viewModel.saveD2pImpression(true, startedPlayingVideo = true)
+                            viewModel.showHideSpeakingFragmentCallBtn(1)
+                            showIntroVideoUi()
+                        }
+                    })
 
-
-
-                    showDialog()
-
-
-//                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-//                    binding.lessonSpotlightTooltip.setTooltipText(
-//                        resources.getText(R.string.label_speaking_spotlight_2).toString()
-//                    )
-
-//                    binding.lessonSpotlightTooltip.post {
-//                        slideInAnimation(binding.lessonSpotlightTooltip)
-//                    }
-//                    binding.spotlightStartGrammarTest.visibility = View.GONE
-//                    binding.spotlightCallBtn.visibility = View.VISIBLE
-//                    binding.spotlightCallBtnText.visibility = View.VISIBLE
-//                    binding.arrowAnimation.visibility = View.VISIBLE
                 }
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
                     binding.overlayLayout.visibility = View.VISIBLE
@@ -553,32 +561,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         })
     }
 
-
-    //....
-    private fun showDialog() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.speaking_video_popup_view)
-
-        //    val videoViewDialog : VideoView = dialog.findViewById(R.id.video_view)
-
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        dialog.show()
-
-
-        val cancelImg: ImageView = dialog.findViewById(R.id.imageView_close)
-
-
-        cancelImg.setOnClickListener {
-            dialog.dismiss()
-        }
-
-
-    }
-
     private fun hideSpotlight() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
     }
@@ -596,6 +578,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     fun callPracticePartner() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
+        viewModel.d2pCallDuration.observe(this, {
+            viewModel.saveD2pImpression(callDuration = it.toInt())
+        })
+        closeIntroVideoPopUpUi()
+
     }
 
     private fun setUpNewGrammarLayouts(
@@ -1057,12 +1044,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
+
+    override fun onPause() {
+        binding.videoView.onPause()
+        super.onPause()
+    }
+
     override fun onBackPressed() {
         if (binding.overlayLayout.visibility == View.VISIBLE) {
             hideSpotlight()
         } else if (binding.itemOverlay.visibility == View.VISIBLE)
             binding.itemOverlay.visibility = View.INVISIBLE
-        else {
+        else if (binding.videoPopup.visibility == View.VISIBLE) {
+            closeIntroVideoPopUpUi()
+        } else {
             val resultIntent = Intent()
             viewModel.lessonLiveData.value?.let {
                 resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
@@ -1194,4 +1189,113 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
         }
     }
+
+
+
+    private fun showIntroVideoUi() {
+        binding.overlayLayout.visibility = View.GONE
+        binding.overlayLayoutSpeaking.visibility = View.VISIBLE
+        viewModel.showHideSpeakingFragmentCallBtn(1)
+        binding.videoPopup.visibility = View.VISIBLE
+        binding.videoView.seekToStart()
+        binding.spotlightTabGrammar.visibility = View.INVISIBLE
+        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+        binding.spotlightTabVocab.visibility = View.INVISIBLE
+        binding.spotlightTabReading.visibility = View.INVISIBLE
+        binding.spotlightCallBtn.visibility = View.GONE
+        binding.spotlightCallBtnText.visibility = View.GONE
+
+        viewModel.getVideoData()
+        viewModel.speaking_video_data.observe(this, {
+            binding.videoView.setUrl(it.videoLink)
+            binding.videoView.onStart()
+            binding.videoView.setPlayListener {
+                val currentVideoProgressPosition = binding.videoView.getProgress()
+                    openVideoPlayerActivity.launch(
+                       VideoPlayerActivity.getActivityIntent(
+                           this,
+                            "",
+                            null,
+                            it.videoLink,
+                           currentVideoProgressPosition,
+                            conversationId = getConversationId()
+                        )
+                    )
+            }
+
+            lifecycleScope.launchWhenStarted {
+                binding.videoView.downloadStreamPlay()
+            }
+        })
+
+        binding.imageViewClose.setOnClickListener {
+            closeIntroVideoPopUpUi()
+        }
+
+        binding.videoView.setOutlineProvider(object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, 15f)
+            }
+        })
+        binding.videoView.setClipToOutline(true)
+
+        binding.videoCallBtn.setOnClickListener {
+            viewModel.saveD2pImpression(callBtnClicked = true)
+            callPracticePartner()
+        }
+    }
+
+    private fun closeIntroVideoPopUpUi() {
+        binding.videoPopup.visibility = View.GONE
+        binding.spotlightCallBtn.visibility = View.GONE
+        binding.spotlightCallBtnText.visibility = View.GONE
+        binding.videoCallBtn.visibility = View.INVISIBLE
+        binding.videoCallBtnText.visibility = View.INVISIBLE
+        viewModel.showHideSpeakingFragmentCallBtn(2)
+        binding.arrowAnimationnVideo.visibility = View.INVISIBLE
+        binding.overlayLayout.visibility = View.GONE
+        binding.overlayLayoutSpeaking.visibility = View.GONE
+        binding.videoView.onStop()
+        binding.videoView.seekToStart()
+        viewModel.saveD2pImpression(videoDuration = d2pVideoWatchedDurationPercent)
+    }
+
+    private fun setUpVideoProgressListener() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { mediaProgressEvent ->
+                        val videoPercent =
+                            binding.videoView.player?.duration?.let {
+                                mediaProgressEvent.progress.div(
+                                    it
+                                ).times(100).toInt()
+                            } ?: -1
+                        val percentVideoWatched =
+                            mediaProgressEvent.watchTime.times(100).div(
+                                binding.videoView.player?.duration!!
+                            ).toInt()
+
+
+                        if (percentVideoWatched != 0 ) {
+                            d2pVideoWatchedDurationPercent = mediaProgressEvent.watchTime
+                        }
+
+                        if (videoPercent != 0 && videoPercent >= 80) {
+                                binding.videoCallBtn.visibility = View.VISIBLE
+                                binding.videoCallBtnText.visibility = View.VISIBLE
+                                binding.arrowAnimationnVideo.visibility = View.VISIBLE
+                            viewModel.isVideoComplete(true)
+                        }
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
+        )
+    }
+
+
 }
