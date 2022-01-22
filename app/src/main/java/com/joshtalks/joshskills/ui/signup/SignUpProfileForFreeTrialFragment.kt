@@ -130,7 +130,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
-        if (username.isNullOrEmpty() && username != name)
+        if (username!="" && username != name)
             viewModel.saveTrueCallerImpression(NAME_CHANGED)
     }
 

@@ -26,6 +26,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
+    val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getPaymentDetails(testId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -96,6 +97,18 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                 }
             }
             isProcessing.postValue(false)
+        }
+    }
+
+    fun checkMentorIdPaid() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
+                val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
+                mentorPaymentStatus.postValue(response["payment"] as Boolean)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
