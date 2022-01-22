@@ -271,6 +271,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
                 vm.agoraToToken.observe(it, {
                     when {
                         it?.message.equals(TEAM_CREATED) -> {
+                            firebaseDatabase.deleteDataAcceptRequest(mentorId)
                             firebaseDatabase.deleteRequested(mentorId)
                             firebaseDatabase.acceptRequest(
                                 fromUserId,
@@ -318,7 +319,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler5.removeCallbacksAndMessages(null)
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
-            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1) }
         }
 
         binding.ignoreNotification.setOnClickListener {
@@ -328,7 +329,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler5.removeCallbacksAndMessages(null)
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
-            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1) }
         }
 
 //        try {
@@ -345,7 +346,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                             binding.notificationCard
                         )
-                    mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+                    mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1) }
                     firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
                 }, 10000)
             }
@@ -462,7 +463,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
-            firebaseDatabase.deleteRequested(mentorId)
+            firebaseDatabase.deleteRequest(mentorId)
         }
 
         binding.ignoreNotification.setOnClickListener {
@@ -471,7 +472,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
-            firebaseDatabase.deleteRequested(mentorId)
+            firebaseDatabase.deleteRequest(mentorId)
         }
 
         try {
