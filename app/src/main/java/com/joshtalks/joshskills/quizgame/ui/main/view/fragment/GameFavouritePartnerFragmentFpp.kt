@@ -485,9 +485,11 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
             holder.binding.status.text = status
             when (status) {
                 IN_ACTIVE -> {
+                    arrayList?.get(pos)?.status = IN_ACTIVE
                     holder.binding.clickToken.visibility = View.INVISIBLE
                 }
                 ACTIVE -> {
+                    arrayList?.get(pos)?.status = ACTIVE
                     holder.binding.clickToken.visibility = View.VISIBLE
                     holder.binding.clickToken.setImageResource(R.drawable.ic_plus1)
                     holder.binding.clickToken.setOnClickListener {
@@ -507,9 +509,11 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                     holder.binding.clickToken.isEnabled = true
                 }
                 IN_GAME -> {
+                    arrayList?.get(pos)?.status = IN_GAME
                     holder.binding.clickToken.visibility = View.INVISIBLE
                 }
                 SEARCHING -> {
+                    arrayList?.get(pos)?.status = SEARCHING
                     holder.binding.clickToken.visibility = View.INVISIBLE
                 }
             }

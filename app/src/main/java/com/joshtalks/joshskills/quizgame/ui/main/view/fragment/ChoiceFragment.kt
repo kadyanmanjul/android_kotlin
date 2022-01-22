@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelGame
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelProviderFactory
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FavouriteViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
@@ -44,10 +45,8 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
     P2pRtc.WebRtcEngineCallback,
     GameFirebaseDatabase.OnMakeFriendTrigger {
 
-    val vm by lazy {
-        ViewModelProvider(requireActivity())[ChoiceViewModelGame::class.java]
-    }
     private var factory: ChoiceViewModelProviderFactory? = null
+    private var choiceViewModel: ChoiceViewModelGame? = null
 
     var isShowFrag = false
     private lateinit var binding: FragmentChoiceFragnmentBinding
@@ -83,7 +82,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
                 container,
                 false
             )
-        binding.vm = vm
+        binding.vm = choiceViewModel
         binding.clickHandler = this
         binding.executePendingBindings()
         return binding.root
@@ -179,9 +178,9 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
     }
 
     fun positiveBtnAction() {
-        vm.homeInactive(mentorId, IN_ACTIVE)
+        choiceViewModel?.homeInactive(mentorId, IN_ACTIVE)
         try {
-            vm.homeInactiveResponse.observe(this, {
+            choiceViewModel?.homeInactiveResponse?.observe(this, {
                 if (it.message == CHANGE_USER_STATUS) {
                     requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     AudioManagerQuiz.audioRecording.stopPlaying()
@@ -199,7 +198,8 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
     fun setUpViewModel() {
         try {
             factory = activity?.application?.let { ChoiceViewModelProviderFactory(it) }
-            vm.statusChange(mentorId, ACTIVE)
+            choiceViewModel = ViewModelProvider(this, factory!!).get(ChoiceViewModelGame::class.java)
+            choiceViewModel?.statusChange(mentorId, ACTIVE)
         } catch (ex: Exception) {
 
         }
@@ -247,7 +247,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         fromUserImage: String
     ) {
         var i = 0
-        handler5.removeCallbacksAndMessages(null)
+        //handler5.removeCallbacksAndMessages(null)
         try {
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
@@ -260,19 +260,20 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         }
 
         binding.buttonAccept.setOnClickListener {
+            firebaseDatabase.deleteUserData(mentorId)
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
             tickSound()
             handler5.removeCallbacksAndMessages(null)
             i = 1
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            vm.getChannelData(mentorId, channelName)
+            choiceViewModel?.getChannelData(mentorId, channelName)
             activity?.let {
-                vm.agoraToToken.observe(it, {
+                choiceViewModel?.agoraToToken?.observe(it, {
                     when {
                         it?.message.equals(TEAM_CREATED) -> {
-                            firebaseDatabase.deleteDataAcceptRequest(mentorId)
                             firebaseDatabase.deleteRequested(mentorId)
+                            firebaseDatabase.deleteDataAcceptRequest(mentorId)
                             firebaseDatabase.acceptRequest(
                                 fromUserId,
                                 TRUE,
@@ -453,7 +454,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
-            vm.addFavouritePracticePartner(AddFavouritePartner(fromMentorId, mentorId))
+            choiceViewModel?.addFavouritePracticePartner(AddFavouritePartner(fromMentorId, mentorId))
             firebaseDatabase.deleteRequest(mentorId)
         }
 

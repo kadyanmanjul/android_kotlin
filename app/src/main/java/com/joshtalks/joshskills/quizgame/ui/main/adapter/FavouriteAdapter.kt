@@ -78,6 +78,7 @@ class FavouriteAdapter(
             when (favouriteDemoData?.status) {
                 ACTIVE -> {
                     binding.clickToken.setImageResource(R.drawable.ic_plus1)
+                    binding.clickToken.visibility = View.VISIBLE
                     binding.clickToken.setOnClickListener(View.OnClickListener {
                         AudioManagerQuiz.audioRecording.startPlaying(
                             context,
