@@ -81,8 +81,9 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
-            android:name=".quizgame.ui.main.view.activity.FavouritePartnerFragnment"
-            android:exported="true" />
+            android:name=".ui.voip.share_call.ShareWithFriendsActivity"
+            android:exported="false" />
+
         <activity
             android:name=".quizgame.StartActivity"
             android:exported="true"
@@ -96,16 +97,17 @@
             android:name=".ui.group.JoshGroupActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
-            <!--<intent-filter>
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
             android:alwaysRetainTaskState="true"
@@ -123,9 +125,9 @@
         <activity
             android:name=".conversationRoom.liveRooms.ConversationLiveRoomActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:screenOrientation="portrait" />
+            android:showWhenLocked="true" />
         <activity
             android:name=".ui.introduction.IntroductionActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -163,7 +165,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -602,8 +603,9 @@
         <meta-data
             android:name="FCM_SENDER_ID"
             android:value="id:359106841538" />
-
-        <meta-data android:name="io.sentry.auto-init" android:value="false" />
+        <meta-data
+            android:name="io.sentry.auto-init"
+            android:value="false" />
 
         <receiver
             android:name=".core.chrome.BrowserActionsReceiver"
@@ -800,6 +802,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
         <service
             android:name=".core.notification.HeadsUpNotificationService"
             android:enabled="true"
@@ -807,9 +810,6 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
-
-
-
     </application>
 
 </manifest>

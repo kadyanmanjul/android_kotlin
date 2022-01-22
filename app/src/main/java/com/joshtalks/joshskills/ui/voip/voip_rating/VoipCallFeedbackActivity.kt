@@ -16,10 +16,13 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
+import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import retrofit2.Response
 import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
@@ -29,6 +32,8 @@ const val ARG_CALL_TIME = "call_time"
 const val ARG_YOUR_NAME = "your_name"
 const val ARG_YOUR_AGORA_ID = "your_agora_id"
 const val ARG_DIM_BACKGROUND = "dim_bg"
+const val SHARE_SCREEN_MINUTES_THRESHOLD = "SHARE_SCREEN_MINUTES_THRESHOLD"
+
 
 class VoipCallFeedbackActivity : BaseActivity() {
 
@@ -39,6 +44,8 @@ class VoipCallFeedbackActivity : BaseActivity() {
     private var dimBg = false
     private var callerName: String = EMPTY
     private var yourName: String = EMPTY
+    private var minute = 0
+    private var callerImage: String = EMPTY
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -106,6 +113,7 @@ class VoipCallFeedbackActivity : BaseActivity() {
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
+            callerImage = image!!
             if (image.isNullOrEmpty()) {
                 binding.cImage.setImageBitmap(
                     callerName.textDrawableBitmap(
@@ -120,7 +128,7 @@ class VoipCallFeedbackActivity : BaseActivity() {
             val mTime = StringBuilder()
             val callTime = it.getLongExtra(ARG_CALL_TIME, 0L)
             val second: Int = (callTime / 1000 % 60).toInt()
-            val minute: Int = (callTime / (1000 * 60) % 60).toInt()
+            minute = (callTime / (1000 * 60) % 60).toInt()
             if (minute > 0) {
                 mTime.append(minute).append(getMinuteString(minute))
             }
@@ -157,14 +165,63 @@ class VoipCallFeedbackActivity : BaseActivity() {
                     requestParams["channel_name"] = channelName
                     requestParams["agora_mentor_id"] = yourAgoraId.toString()
                     requestParams["response"] = response
-                    AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
+
+                    val apiResponse =
+                        AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
+                    startShareActivity(apiResponse)
                     WorkManagerAdmin.syncFavoriteCaller()
                     delay(250)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                 }
+
+                when (response) {
+                    "YES" -> {
+                        //showToast("$callerName is now added to your Favorite Practice Partners.")
+                    }
+                    "NO" -> {
+                        //showToast("$callerName is now added to your Blocklist.")
+                    }
+                    "MAYBE" -> {
+                        //showToast("Thank you for submitting the feedback.")
+                    }
+                }
                 finishAndRemoveTask()
             }
+        }
+    }
+
+    private fun startShareActivity(apiResponse: Response<KFactor>) {
+        if (apiResponse.isSuccessful &&
+            apiResponse.code() in 201..203 && apiResponse.body()!!.duration_filter) {
+            val body = apiResponse.body()!!
+
+            val cState: String?
+            val cCity: String?
+            val rState: String?
+            val rCity: String?
+
+            if (yourAgoraId == body.caller.agora_mentor_id) {
+                cState = body.caller.state
+                cCity = body.caller.city
+                rState = body.receiver.state
+                rCity = body.receiver.city
+            } else {
+                cState = body.receiver.state
+                cCity = body.receiver.city
+                rState = body.caller.state
+                rCity = body.caller.city
+            }
+            ShareWithFriendsActivity.startShareWithFriendsActivity(
+                activity = this@VoipCallFeedbackActivity,
+                receiverName = callerName,
+                receiverImage = callerImage,
+                minutesTalked = minute,
+                callerState = cState,
+                callerCity = cCity,
+                receiverState = rState,
+                receiverCity = rCity,
+            )
         }
     }
 

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
+import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import java.util.HashMap
@@ -35,7 +36,7 @@ interface P2PNetworkService {
     suspend fun uploadUserLocationAgora(@Body params: RequestUserLocation): Response<Void>
 
     @POST("$DIR/voicecall/agora_call_feedback/")
-    suspend fun p2pCallFeedbackV2(@Body params: Map<String, String?>): Response<Void>//FeedbackVoipResponse
+    suspend fun p2pCallFeedbackV2(@Body params: Map<String, String?>): Response<KFactor>//FeedbackVoipResponse
 
     @GET("$DIR/voicecall/favourites/{mentorId}/")
     suspend fun getFavoriteCallerList(@Path("mentorId") mentorId: String): List<FavoriteCaller>

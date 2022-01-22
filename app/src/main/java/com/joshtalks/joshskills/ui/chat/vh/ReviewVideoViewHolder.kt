@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
 
-class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
+class ReviewVideoViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 
     private val subRootView: MaterialCardView = view.findViewById(R.id.root_view_fl)
     private val tvTitle: AppCompatTextView = view.findViewById(R.id.date)
