@@ -25,14 +25,14 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 
-class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
+class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
-    private var username: String? = null
+    private var username = name
 
     companion object {
-        fun newInstance() = SignUpProfileForFreeTrialFragment()
+        fun newInstance(name: String) = SignUpProfileForFreeTrialFragment(name)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,18 +60,23 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         addObservers()
+        binding.nameEditText.requestFocus()
+//        binding.nameEditText.setText(User.getInstance().firstName)
         initUI()
-
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
     }
 
     private fun initUI() {
-        username = User.getInstance().firstName
-        binding.nameEditText.requestFocus()
-        binding.nameEditText.setText(User.getInstance().firstName)
+        binding.nameEditText.setText(username)
         binding.nameEditText.isEnabled = true
+
+//        val name = binding.nameEditText.text.toString()
+//        if (name != username) {
+//            viewModel.saveTrueCallerImpression(NAME_CHANGED)
+//            username = name
+//        }
     }
 
     private fun addObservers() {

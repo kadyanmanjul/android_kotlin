@@ -149,7 +149,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private fun openTrueCallerBottomSheet() {
-        showProgressBar()
+//        showProgressBar()
         viewModel.saveTrueCallerImpression(TRUECALLER_FT_LOGIN)
         TruecallerSDK.getInstance().getUserProfile(this)
     }
@@ -169,7 +169,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             CoroutineScope(Dispatchers.IO).launch {
-                openProfileDetailFragment()
+                viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
             }
         }
@@ -181,7 +181,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(),
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName?:""),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
@@ -190,7 +190,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
+            TruecallerSDK.getInstance().onActivityResultObtained(this, resultCode, data)
             hideProgressBar()
             return
         }
