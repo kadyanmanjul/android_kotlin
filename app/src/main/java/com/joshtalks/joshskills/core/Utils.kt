@@ -50,6 +50,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.text.toSpannable
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -73,6 +74,7 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.muddzdev.styleabletoast.StyleableToast
+import de.hdodenhof.circleimageview.CircleImageView
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
 import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
@@ -987,9 +989,9 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
-fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication) {
-    val requestOptions = RequestOptions().placeholder(R.drawable.ic_previouspicplaceholder)
-        .error(R.drawable.ic_previouspicplaceholder)
+fun CircleImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.group_default_icon)
+        .error(R.drawable.group_default_icon)
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     Glide.with(context)
@@ -1001,6 +1003,39 @@ fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectC
         .apply(requestOptions)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
+}
+fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication,loader: LottieAnimationView) {
+    val requestOptions = RequestOptions()
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context)
+        .load(url)
+        .addListener(imageLoadingListener(loader))
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
+}
+fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Drawable?>? {
+    return object : RequestListener<Drawable?> {
+        override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+            return false
+        }
+        override fun onResourceReady(
+            resource: Drawable?,
+            model: Any?,
+            target: com.bumptech.glide.request.target.Target<Drawable?>?,
+            dataSource: DataSource?,
+            isFirstResource: Boolean
+        ): Boolean {
+            pendingImage.pauseAnimation()
+            pendingImage.visibility = View.GONE
+            return false
+        }
+    }
 }
 
 fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {

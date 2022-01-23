@@ -167,6 +167,44 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
+    fun updateProfilePicFromPreviousProfile(imageId : String){
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiCallStatus.postValue(ApiCallStatus.START)
+                val response =
+                    AppObjectController.signUpNetworkService.updateProfilePicFromPreviousProfile(imageId)
+                if (response.isSuccessful) {
+                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                    return@launch
+                } else {
+                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiCallStatus.postValue(ApiCallStatus.FAILED)
+            }
+        }
+    }
+    fun deletePreviousProfilePic(imageId : String){
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiCallStatus.postValue(ApiCallStatus.START)
+                val response =
+                    AppObjectController.signUpNetworkService.deletePreviousProfilePic(imageId)
+                if (response.isSuccessful) {
+                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                    return@launch
+                } else {
+                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiCallStatus.postValue(ApiCallStatus.FAILED)
+            }
+        }
+    }
 
     private suspend fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,

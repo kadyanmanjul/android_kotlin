@@ -1023,5 +1023,9 @@
     <string name="no_awards_me">%s you have not won any awards yet. But you can do it.\n\nThe entire josh family believes in you.</string>
     <string name="previous_dp">Previous Profile Photos (0)</string>
     <string name="hometown_error_toast">Please enter your Hometown</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_popup">This photo will be deleted from your previous profile photos</string>
+
 
 </resources>
