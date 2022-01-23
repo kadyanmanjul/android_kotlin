@@ -782,7 +782,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
                 )
                 val res = AppObjectController.commonNetworkService.saveD2pImpression(requestData)
-                Timber.i(res.body().toString())
             } catch (ex: Exception) {
                 Timber.e(ex)
             }

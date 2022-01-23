@@ -4,11 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
@@ -18,6 +22,8 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -29,6 +35,7 @@ import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +60,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     var buttonText = mutableListOf<String>()
     var headingText = mutableListOf<String>()
     private var countdownTimerBack: CountdownTimerBack? = null
+
+    lateinit var connectivityManager : ConnectivityManager
+    lateinit var networkInfo : NetworkInfo
+    var pdfQuestion: LessonQuestion?= null
+    val d2pSyllabusPdfResponseLessonType: MutableLiveData<LessonQuestion> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +94,42 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
         logNewPaymentPageOpened()
-    }
+
+//        viewModel.getD2pSyllabusPdfData()
+//        viewModel.d2pSyllabusPdfResponse.observe(this, {
+//            pdfQuestion = LessonQuestion(pdfList = listOf(PdfType(url = it.SyllabusPdfLink)))
+//         //   pdfQuestion!!.pdfList?.get(0)?.let { it1 -> showToast(it1.url) }
+//            d2pSyllabusPdfResponseLessonType.postValue(LessonQuestion(pdfList = listOf(PdfType(url = it.SyllabusPdfLink))))
+//        })
+//
+//        d2pSyllabusPdfResponseLessonType.observe(this, {
+//            it.pdfList?.get(0)?.url?.let { it1 -> Log.e("sakshi_hjjjj", it1) }
+//        })
+
+
+        viewModel.getD2pSyllabusPdfData()
+            viewModel.d2pSyllabusPdfResponse.observe(this,{
+                var str = it.SyllabusPdfLink
+                var splitted = str.split(".pdf")
+                var first = splitted[0]
+                Log.e("sakshi_pdf", first.toString())
+                binding.syllabusPdfCard.setOnClickListener {
+//                    networkInfo = connectivityManager.activeNetworkInfo!!
+//                    if(networkInfo == null){
+//                        Toast.makeText(this, "No Connection", Toast.LENGTH_SHORT).show()
+//                    }else{
+                        var intent: Intent = Intent(applicationContext, WebActivity::class.java)
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("pdf_url", first + ".pdf")
+                        startActivity(intent)
+                  //  }
+                }
+            })
+
+
+
+
+}
 
     private fun forceDisconnectCall() {
         val serviceIntent = Intent(
@@ -492,6 +539,20 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
+    }
+    fun openD2pSyllabusPdf(){
+//        viewModel.getD2pSyllabusPdfData()
+//        viewModel.d2pSyllabusPdfResponse.observe(this,{
+//            var str = it.SyllabusPdfLink
+//            var splitted = str.split(".pdf")
+//            var first = splitted[0]
+//            Log.e("sihiya", first + ".pdf")
+//        })
+//        showProgressBar()
+//        var intent : Intent = Intent(applicationContext, WebActivity::class.java)
+//        intent.putExtra("pdf_url", "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/media/ULTIMATE_SPOKEN_ENGLISH_COURSE_SYLLABUS_V2.pdf")
+//        startActivity(intent)
+//       // hideProgressBar()
     }
 
 }

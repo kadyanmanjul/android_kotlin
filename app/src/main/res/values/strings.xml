@@ -1,4 +1,14 @@
 <resources>
+    <array name="privacySettings">
+        <item>Everybody</item>
+        <item>Only Friends</item>
+    </array>
+    <array name="groupType">
+        <item>Public Group</item>
+        <item>Private Group</item>
+        <item>Password Protected Group</item>
+    </array>
+
     <string name="app_name">Josh Skills</string>
     <string name="inbox_header">Josh Skills</string>
 
@@ -19,7 +29,6 @@
 
     <string name="gallery">Gallery</string>
     <string name="audio">Audio</string>
-
     <string name="camera">Camera</string>
 
     <string name="short_seconds">sec</string>
@@ -29,9 +38,7 @@
     <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
 
     <string name="type_message_hint">Type a Message</string>
-
     <string name="splash_sub_string_english">Zindagi mein aage badho,\nJosh ke saath! </string>
-
     <string name="open">OPEN</string>
     <string name="submit">Submit</string>
     <string name="track_number">Track</string>
@@ -39,7 +46,6 @@
     <string name="continue_label">Continue</string>
     <string name="continue_label_with_arrow">Continue          -></string>
     <string name="message_size_limit">Message size limit exceeded</string>
-
     <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage. can you download it?</string>
     <string name="pdf_desc" formatted="false">%s Page \u2022 PDF</string>
     <string name="restart">Restart</string>
@@ -49,9 +55,7 @@
     <string name="update_download_success_message">An update has just been downloaded.</string>
 
     <string name="slide_to_cancel">Slide To Cancel</string>
-
     <string name="explore_new">Course Dekhein</string>
-
     <string name="explorer_courses">Explore Courses</string>
     <string name="select_courses">Select Courses</string>
     <string name="start_course">Start Course</string>
@@ -65,13 +69,10 @@
     <string name="course_started_label">Course Started</string>
     <string name="in_progress_label">In Progress</string>
     <string name="payment_process_info">It usually takes 2&#8211;3 minutes to complete your admission process and start our classes.</string>
-
-
     <string name="find_more_courses">Find More Courses</string>
     <string name="buy_english_course">Buy English Course</string>
     <string name="add_more_courses">Add More Courses</string>
     <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
-
     <string name="plz_wait">Please wait&#8230;</string>
     <string name="plz_wait_feedback">Please be patient \n Your feedback will be available in a few minutes.</string>
     <string name="your_mobile_number">Your Mobile Number </string>
@@ -82,17 +83,12 @@
     <string name="join_social_text">Join through your social accounts</string>
     <string name="confirm_number">Confirm your number</string>
     <string name="send_otp">Send OTP</string>
-
-
     <string name="or">OR</string>
-
     <string name="no_new_message_arrive">No new classes</string>
     <string name="new_message_arrive">New classes downloaded</string>
     <string name="something_went_wrong">Oops! Something Went Wrong</string>
     <string name="click_to_start_course">Click to start course</string>
     <string name="thank_you">Thank you!</string>
-
-
     <string name="time_ago_now">few moments ago</string>
     <string name="time_ago_full_seconds">%1$d seconds ago</string>
     <string name="time_ago_full_minute">%1$d minute ago</string>
@@ -102,7 +98,6 @@
     <string name="time_ago_full_days">%1$d days ago</string>
     <string name="time_ago_full_month">%1$d month ago</string>
     <string name="time_ago_full_months">%1$d months ago</string>
-
     <string name="time_ago_seconds">%1$d sec ago</string>
     <string name="time_ago_minute">%1$d min ago</string>
     <string name="time_ago_minutes">%1$d min ago</string>
@@ -113,32 +108,24 @@
     <string name="time_ago_month">%1$d m ago</string>
     <string name="time_ago_months">%1$d m ago</string>
 
-    <!-- Help Screen  -->
-    <string name="email_address">Email Address</string>
-
-    <string name="attach_image">Attach an image</string>
-
 
     <!-- Payment process-->
+    <string name="email_address">Email Address</string>
+    <string name="attach_image">Attach an image</string>
     <string name="amount">Amount</string>
     <string name="status">Status</string>
     <string name="practice">Practice</string>
-
     <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
     <string name="payment_process_success">Your payment has been processed successfully!</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">Submit Answer</string>
     <string name="improve_answer">Improve Answer</string>
-
-    <!-- Help Screen  -->
     <string name="today_practise">Today\'s Practice</string>
-
     <string name="hold_to_record_msz">Press and hold to record</string>
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Recording</string>
     <string name="your_feedback">Your Feedback</string>
     <string name="your_submitted_answer">Your Submitted Recording</string>
-
     <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
     <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
     <string name="login_signup">Login\/Signup</string>
@@ -150,16 +137,12 @@
 
     <string name="bill_detail_header">Bill Details</string>
     <string name="network_type">Network Type</string>
-
     <string name="answer_not_submitted">Answer not submitted</string>
     <string name="answer_submitted">Practice Successfully Submitted</string>
     <string name="use_tip">Use Tip</string>
-
     <string name="record_answer_label">Record your answer</string>
     <string name="type_answer_label">Type your answer</string>
     <string name="upload_answer_label">Upload your answer</string>
-
-
     <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
@@ -171,14 +154,9 @@
     <string name="share_more_text">Share More, Earn More</string>
     <string name="go_to_course">Go To Course</string>
     <string name="video_url_not_exist">Something went wrong! Video does not exist</string>
-
-
     <string name="volume">Volume: %1$d</string>
     <string name="brightness">Brightness: %1$d</string>
     <string name="seconds">%1$d seconds</string>
-
-
-    <!-- course progress layout-->
     <string name="course_progress_detail">You have completed %s of the course</string>
     <string name="course_duration_day" formatted="false">Day %s %s</string>
     <string name="unlock_progress_header">To unlock &amp; download certificate, you need to complete at least %s of the course</string>
@@ -195,14 +173,10 @@
     <string name="feedback_sub_practise">Please Rate This Practice</string>
     <string name="feedback_sub_video">Please Rate This Video</string>
     <string name="feedback_hint">Please share your detailed feedback</string>
-
-    <!--    Custom Permission Dialog-->
     <string name="cancel_button">Cancel Button</string>
     <string name="permission_dialog_description">Rojana class time par paane ke liye abhi notification on kare</string>
     <string name="allow">Allow</string>
     <string name="do_not_ask_again">Dobara na pooche</string>
-
-    <!--    Payment Failed Dialog-->
     <string name="try_again">Try again</string>
     <string name="chat_option">Chat &amp; Pay</string>
     <string name="title">Oops! Payment failed.</string>
@@ -227,15 +201,10 @@
     <string name="be_calm">Be Calm</string>
     <string name="dont_close">&amp; don\'t close this window</string>
     <string name="processing">We are processing your payment.\n This may take some time</string>
-
-
     <string name="bilkul_nahi">No</string>
     <string name="abhi_shuru_karein">Yes</string>
     <string name="hint_apni_baat">Apni baat yahan likhe</string>
     <string name="npr_thank_you">Thank you \n for your feedback</string>
-
-
-    <!-- Signup V2 Screen  -->
     <string name="otp_verify_label">Apna OTP verify kare</string>
     <string name="otp_received_message" formatted="false">Enter the OTP you received on \n  %s </string>
     <string name="edit_number">Edit number</string>
@@ -250,7 +219,6 @@
     <string name="name_error_toast">Name cannot be empty!</string>
     <string name="please_enter_valid_number">Please enter valid mobile number </string>
     <string name="enter_valid_email_toast">Please enter valid Email Id</string>
-
     <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
     <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
     <string name="missed_call_label">Missed Call Verification </string>
@@ -260,8 +228,6 @@
     <string name="registration">Registration</string>
     <string name="verification_failed">Verification Failed</string>
     <string name="gender">Gender</string>
-
-    <!--Referral Activity-->
     <string name="have_a_referral_code">Have a referral code?</string>
     <string name="enter_referral_code">Enter a referral code</string>
     <string name="enter_promo_code">Enter a promo code</string>
@@ -269,8 +235,6 @@
     <string name="referral_success_info">You have been referred by your friend\n%s</string>
     <string name="referral_success_info2">&amp; you get ₹ 50 off on your first course.</string>
     <string name="back_button_desc">Back Button</string>
-
-    <!--End-->
     <string name="page_number" formatted="false">Page %s / %s</string>
     <string name="help">Help</string>
     <string name="close">Close</string>
@@ -286,10 +250,9 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="gmail_login_error_message">An error occurred, please try again!</string>
-    <!--landing flow-->
+
     <string name="read_more">Read More</string>
     <string name="read_less">Read Less</string>
-
     <string name="downloading_start">Downloading Syllabus&#8230;</string>
     <string name="downloaded_syllabus">Syllabus PDF downloaded successfully! </string>
     <string name="download_syllabus">Download Syllabus</string>
@@ -311,11 +274,9 @@
     <string name="practise_intro_sub">How to complete this practice?</string>
     <string name="select_partner">Select your partner first</string>
     <string name="finish">Finish</string>
-
     <string name="start_quiz">START QUIZ</string>
     <string name="conversational_practise">Conversational Practice</string>
     <string name="tap_to_continue">Tap to continue</string>
-
     <string name="back_to_course">Back To Course</string>
     <string name="back_to_question">Back To Question</string>
     <string name="well_done">Well Done</string>
@@ -340,7 +301,6 @@
     <string name="submit_record_msz">Do you want to submit this recording?</string>
     <string name="courses_in_other_languages">Courses in other languages:</string>
     <string name="select_character">Select your character first</string>
-
     <string name="unlock_class_text">Unlock Next Class</string>
     <string name="loading_new_classess">Loading new classes…</string>
     <string name="start_now">Start Now</string>
@@ -398,14 +358,12 @@
     <string name="start_your_7_day_trial">Start Your 7 Day Free Trial</string>
     <string name="more_courses_coming_soon">More Courses Coming Soon</string>
     <string name="tab_tak_practice_karte_rahen">tab tak practice karte rahe</string>
-
     <string name="stop">Stop</string>
     <string name="practice_with_partner">Practice With Partner</string>
     <string name="rules_promise">I promise to follow the above rules</string>
     <string name="searching_user_title"> Aapke sath ke 70% students ek din mei 25 minute se zyada English mei baat karte hai</string>
     <string name="mediator_screen_title">Seekhne ke liye sabse zaruri hai Shuru Karna.</string>
     <string name="find_pp_label">Hum aapke liye aapka Practice Partner dhund rahe hai</string>
-
     <string name="topic_for_pp">Apne Partner se aap iss topic par baat kar sakte hai</string>
 
     <string name="call_permission_message">To answer this call from %s , allow Josh Skills access to your microphone.</string>
@@ -413,8 +371,6 @@
 
     <string name="call_request_permission_message">To use practise with partner , allow Josh Skills access to your microphone.</string>
     <string name="call_request_permission_permanent_message">To use practise with partner , allow Josh Skills access to your microphone . Tap Settings > Permissions, and turn Microphone on .</string>
-
-
     <string name="clear_all_media">Clear All Media</string>
     <string name="download_quality">Download Quality</string>
     <string name="select_language">Select Language</string>
@@ -435,7 +391,6 @@
     <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
     <string name="start_course_free">Start my Courses For Free</string>
     <string name="buy_pass">Buy All Course Access Pass</string>
-
     <string name="hint_text_btn"><u>OK got it </u></string>
     <string name="free_trial_completed">\"Free trial completed! \"</string>
     <string name="rate_us">Rate Us</string>
@@ -467,7 +422,6 @@
     <string name="referral_desc2"><![CDATA[\Your friend also gets <br/> <strong>₹%1$s OFF</strong> on their first course\]]></string>
     <string name="earn_upto">\Earn upto ₹10,000 \</string>
     <string name="no_conditions_apply">No Conditions Apply</string>
-
     <string name="c_practise_tab_1">Listen</string>
     <string name="c_practise_tab_2">Quiz</string>
     <string name="c_practise_tab_3">Practice</string>
@@ -534,9 +488,7 @@
 
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
     <string name="spoke_with">Spoke for %s minutes with  %s</string>
-
     <string name="today_reading_practise">Today\'s Reading Practice</string>
-
     <string name="redo_quiz">Redo Quiz</string>
     <string name="quiz_completed">Quiz Completed!!</string>
     <string name="marks_text">You got %1$d/%2$d correct</string>
@@ -584,14 +536,10 @@
     <string name="minutes_history">Minutes Spoken History</string>
     <string name="group_chat">Group Chat</string>
     <string name="go_to_profile">Go to Profile</string>
-
-    <!-- _______________________CometChat Strings________________________-->
     <string name="rectangle">Rectangle</string>
     <string name="online">Online</string>
     <string name="users">users</string>
     <string name="group">group</string>
-    <string name="search">Search</string>
-    <string name="user_avatar">User Avatar</string>
 
     <!-- Preference Titles -->
 
@@ -608,11 +556,6 @@
     <string name="create_group">Create Group</string>
     <string name="kindly_enter_group_details_to_proceed">Kindly, enter group details to proceed</string>
     <string name="enter_group_name">Enter Group Name</string>
-    <array name="privacySettings">
-        <item>Everybody</item>
-        <item>Only Friends</item>
-    </array>
-
     <string name="loremIpsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
         Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer
         took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
@@ -743,7 +686,6 @@
     <string name="ban_member_of_group">Banned Members of %1$s</string>
     <string name="member_unbanned_success">%1$s unbanned from %2$s</string>
     <string name="unban_error">Unable to unban %1$s</string>
-
     <string name="enter_group_desc">Enter Group Description</string>
     <string name="enter_group_pwd">Enter Group Password</string>
     <string name="enter_group_cnf_pwd">Confirm Password</string>
@@ -779,8 +721,8 @@
     <string name="view">View</string>
     <string name="sentiment_alert">Sentiment Alert</string>
     <string name="sentiment_alert_message">Would you like to view this message it may contains sensitive content.</string>
-    <string name="reply_message">Reply a message</string>
-    <string name="reply_thread">Start a Thread</string>K
+    <string name="reply_message">Reply a message</string>K
+    <string name="reply_thread">Start a Thread</string>
     <string name="ban">Ban</string>
     <string name="thread">Thread</string>
     <string name="thread_in_name">Thread in %1$s</string>
@@ -826,11 +768,6 @@
     <string name="exam_info">%1$d Questions - %2$d Minutes - %3$d Marks</string>
     <string name="you_can_only_attempt_the_certification_exam">You can only attempt the Certification exam after %1$d lessons</string>
     <string name="exam_title">%s Certification Exam</string>
-    <array name="groupType">
-        <item>Public Group</item>
-        <item>Private Group</item>
-        <item>Password Protected Group</item>
-    </array>
     <string name="did_not_answer_message">We did not find any user, please retry.</string>
     <string name="group_chat_tagline">Practice with other users and Improve your skill here</string>
     <string name="max_unread_count">99+</string>

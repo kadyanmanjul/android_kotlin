@@ -87,6 +87,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
 
+    var result = 0L
     var flag = true
     var d2pVideoWatchedDurationPercent = 0L
     lateinit var titleView: TextView
@@ -1256,8 +1257,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.GONE
         binding.videoView.onStop()
-        binding.videoView.seekToStart()
-        viewModel.saveD2pImpression(videoDuration = d2pVideoWatchedDurationPercent)
+//        binding.videoView.seekToStart()
+        if(result > d2pVideoWatchedDurationPercent){
+            result = 0
+        }
+        viewModel.saveD2pImpression(videoDuration = d2pVideoWatchedDurationPercent-result)
+        result = d2pVideoWatchedDurationPercent
     }
 
     private fun setUpVideoProgressListener() {

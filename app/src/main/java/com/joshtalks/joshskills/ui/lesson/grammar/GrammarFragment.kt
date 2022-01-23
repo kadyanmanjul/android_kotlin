@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -535,8 +536,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                                 binding.videoPlayer.player?.duration!!
                             ).toInt()
 
-
-                        Log.e("sakshi_grammar_test", videoPercent.toString() + "  ...." +percentVideoWatched.toString())
                         if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && question.isVideoWatchTimeSend) {
                             updateVideoQuestionStatus(question, true)
                             question.isVideoWatchTimeSend = false

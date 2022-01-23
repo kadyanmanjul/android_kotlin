@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
+import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -148,5 +149,8 @@ interface SignUpNetworkService {
 
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
+
+    @GET("$DIR/course/course_syllabus/")
+    suspend fun getD2pSyllabusPdf() : Response<D2pSyllabusPdfResponse>
 
 }

@@ -316,7 +316,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/syllabus_card"
+                    android:id="@+id/syllabus__pdf_card"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_70sdp"
                     android:clickable="true"
@@ -403,7 +403,7 @@
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/syllabus_card">
+                    app:layout_constraintTop_toBottomOf="@id/syllabus__pdf_card">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/title_1"
@@ -755,3 +755,5 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
+
+<!--    android:onClick="@{()->handler.openD2pSyllabusPdf()}"-->

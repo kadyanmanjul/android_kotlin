@@ -1,16 +1,17 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.D2pSyllabusPdfResponse
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,21 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
+    val d2pSyllabusPdfResponse: MutableLiveData<D2pSyllabusPdfResponse> = MutableLiveData()
+
+    fun getD2pSyllabusPdfData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.signUpNetworkService.getD2pSyllabusPdf()
+                if (response?.isSuccessful == true && response.body() != null) {
+                    d2pSyllabusPdfResponse.postValue(response.body())
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Log.e(TAG, "${ex.message}")
+            }
+        }
+    }
 
     fun getPaymentDetails(testId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
