@@ -299,7 +299,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
                 val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
                 mentorPaymentStatus.postValue(response["payment"] as Boolean)
-                Log.e("Ayaaz", "$response")
             } catch (e: Exception) {
                 e.printStackTrace()
             }

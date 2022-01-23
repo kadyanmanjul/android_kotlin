@@ -150,7 +150,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun openTrueCallerBottomSheet() {
 //        showProgressBar()
-        viewModel.saveTrueCallerImpression(TRUECALLER_FT_LOGIN)
         TruecallerSDK.getInstance().getUserProfile(this)
     }
 
@@ -169,10 +168,21 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             CoroutineScope(Dispatchers.IO).launch {
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
+            hideProgressBar()
+            return
+        }
+        hideProgressBar()
     }
 
     private fun openProfileDetailFragment() {
@@ -187,16 +197,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
-            hideProgressBar()
-            return
-        }
-        hideProgressBar()
-    }
-
     fun showPrivacyPolicyDialog() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         showWebViewDialog(url)
@@ -209,4 +209,5 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         super.onBackPressed()
     }
+
 }

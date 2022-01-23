@@ -58,25 +58,18 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         addObservers()
         binding.nameEditText.requestFocus()
 //        binding.nameEditText.setText(User.getInstance().firstName)
         initUI()
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     private fun initUI() {
         binding.nameEditText.setText(username)
         binding.nameEditText.isEnabled = true
-
-//        val name = binding.nameEditText.text.toString()
-//        if (name != username) {
-//            viewModel.saveTrueCallerImpression(NAME_CHANGED)
-//            username = name
-//        }
     }
 
     private fun addObservers() {
@@ -131,7 +124,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
         val name = binding.nameEditText.text.toString()
         if (username!="" && username != name)
-            viewModel.saveTrueCallerImpression(NAME_CHANGED)
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
     }
 
     fun submitForFreeTrial() {
@@ -156,6 +149,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         }
         startActivity(intent)
     }
+
 
     private fun startProgress() {
         binding.btnLogin.showProgress {

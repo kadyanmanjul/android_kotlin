@@ -392,6 +392,7 @@ class SignUpActivity : BaseActivity() {
             return
         }
         hideProgressBar()
+
     }
 
     private fun gmailLogin() {
