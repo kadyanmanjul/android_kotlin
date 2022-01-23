@@ -28,12 +28,13 @@ import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import com.nex3z.flowlayout.FlowLayout
-import java.util.Locale
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
 
@@ -46,6 +47,8 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var callback: EnableDisableGrammarButtonCallback? = null
     var audioManager: ExoAudioPlayer2? = null
+    private var unselectMultiple = 0
+    private var trackUndoImpressionCallback: TrackUndoImpression? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -266,6 +269,15 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
             if (!customLayout.isEmpty()) {
                 val customWord = view as CustomWord
                 playAudio(customWord.choice.audioUrl, customWord.choice.localAudioUrl)
+                trackUndoImpressionCallback?.let {
+                    if ((customWord.parent is CustomLayout).not()) {
+                        if (++unselectMultiple > 2) {
+                            it.trackUndoImpression()
+                            trackUndoImpressionCallback = null
+                        }
+                    } else
+                        unselectMultiple = 0
+                }
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {
                     callback?.enableGrammarButton()
@@ -278,6 +290,10 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
 
     fun addCallback(callback: EnableDisableGrammarButtonCallback) {
         this.callback = callback
+    }
+
+    fun addImpressionCallback(trackUndoImpression: TrackUndoImpression) {
+        this.trackUndoImpressionCallback = trackUndoImpression
     }
 
     fun addDummyLineView(numberOfLines: Int) {
@@ -325,4 +341,8 @@ interface EnableDisableGrammarButtonCallback {
     fun disableGrammarButton()
     fun enableGrammarButton()
     fun alreadyAttempted(isCorrectAnswer: Boolean)
+}
+
+interface TrackUndoImpression {
+    fun trackUndoImpression()
 }

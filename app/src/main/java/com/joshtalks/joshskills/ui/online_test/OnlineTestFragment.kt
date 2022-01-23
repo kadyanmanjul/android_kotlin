@@ -251,6 +251,11 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 atsChoiceView?.resolved().let {
                     atsChoiceView?.get()?.visibility = View.VISIBLE
                     atsChoiceView!!.get().setup(assessmentQuestions)
+                    atsChoiceView!!.get().addImpressionCallback(object : TrackUndoImpression {
+                        override fun trackUndoImpression() {
+                            viewModel.saveImpression(IMPRESSION_UNDO_ATS_OPTION)
+                        }
+                    })
                     atsChoiceView!!.get()
                         .addCallback(object : EnableDisableGrammarButtonCallback {
                             override fun disableGrammarButton() {

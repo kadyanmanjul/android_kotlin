@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -139,6 +140,20 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
             choiceList.forEach { choice ->
                 choice.questionId = questionWithRelations?.question?.remoteId ?: -1
                 AppObjectController.appDatabase.assessmentDao().insertAssessmentChoice(choice)
+            }
+        }
+    }
+
+    fun saveImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
             }
         }
     }
