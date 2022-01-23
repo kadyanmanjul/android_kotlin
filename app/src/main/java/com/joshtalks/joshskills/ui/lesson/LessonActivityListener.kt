@@ -21,6 +21,6 @@ interface LessonActivityListener {
         shouldShow: Boolean,
         wrongAnswerHeading: String? = null,
         wrongAnswerText: String? = null,
-        videoClickListener: View.OnClickListener? = null
+        videoClickListener: (() -> Unit)? = null
     )
 }

@@ -366,12 +366,11 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         ).not() && isClicked.not()
                     ) {
                         lessonActivityListener?.showVideoToolTip(
-                            true,
-                            wrongAnswerHeading,
-                            wrongAnswerText
-                        ) { buttonView!!.get().viewVideo() }
-                    } else {
-                        lessonActivityListener?.showVideoToolTip(false)
+                            shouldShow = true,
+                            wrongAnswerHeading = wrongAnswerHeading,
+                            wrongAnswerText = wrongAnswerText,
+                            videoClickListener = { buttonView!!.get().viewVideo() }
+                        )
                     }
                 }
             })

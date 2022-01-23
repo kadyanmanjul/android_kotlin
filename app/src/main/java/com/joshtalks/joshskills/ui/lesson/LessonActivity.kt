@@ -180,18 +180,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.buyCourseLl.visibility = View.VISIBLE
         }
         if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_TOOLTIP).not()) {
-            binding.tooltipFrame.setOnClickListener {
-                showVideoToolTip(false)
-                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
-            }
-            binding.overlayTooltipLayout.setOnClickListener {
-                showVideoToolTip(false)
-                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
-            }
-            binding.tooltipTv.setOnClickListener {
-                showVideoToolTip(false)
-                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
-            }
+            binding.tooltipFrame.setOnClickListener { showVideoToolTip(false) }
+            binding.overlayTooltipLayout.setOnClickListener { showVideoToolTip(false) }
+            binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
@@ -721,14 +712,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         shouldShow: Boolean,
         wrongAnswerHeading: String?,
         wrongAnswerText: String?,
-        videoClickListener: View.OnClickListener?
+        videoClickListener: (() -> Unit)?
     ) {
+        if (shouldShow.not()) PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
         with(binding)
         {
             tooltipFrame.isVisible = shouldShow
             videoBtnTooltip.isVisible = shouldShow
             overlayTooltipLayout.isVisible = shouldShow
-            videoIvBtn.setOnClickListener(videoClickListener)
+            videoIvBtn.setOnClickListener {
+                showVideoToolTip(false)
+                if (videoClickListener != null) {
+                    videoClickListener()
+                }
+            }
             wrongAnswerTitle.text = wrongAnswerHeading
             wrongAnswerDesc.text = wrongAnswerText
         }
