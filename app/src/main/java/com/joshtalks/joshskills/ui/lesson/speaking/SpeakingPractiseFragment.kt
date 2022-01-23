@@ -16,15 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SPEAKING_POINTS
-import com.joshtalks.joshskills.core.isCallOngoing
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -161,10 +153,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnStart.setOnClickListener {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
         }
 
         binding.btnGroupCall.setOnClickListener {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if(isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
@@ -274,6 +268,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (haveAnyFavCaller) {
                 startPractise(favoriteUserCall = true)
             } else {

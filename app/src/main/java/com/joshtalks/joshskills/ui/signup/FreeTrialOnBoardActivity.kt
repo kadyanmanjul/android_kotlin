@@ -171,6 +171,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
+                hideProgressBar()
+                openProfileDetailFragment()
             }
         }
     }
@@ -178,7 +180,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
+            TruecallerSDK.getInstance()
+                .onActivityResultObtained(this, requestCode, resultCode, data)
             hideProgressBar()
             return
         }
@@ -191,7 +194,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName?:""),
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: ""),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }

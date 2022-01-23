@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.signup
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 
@@ -42,7 +40,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         binding =
             DataBindingUtil.inflate(
@@ -60,7 +58,6 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         binding.nameEditText.requestFocus()
-//        binding.nameEditText.setText(User.getInstance().firstName)
         initUI()
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
@@ -105,7 +102,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
             }
         })
         viewModel.mentorPaymentStatus.observe(viewLifecycleOwner, {
-            when(it) {
+            when (it) {
                 true -> moveToInboxScreen()
                 false -> submitForFreeTrial()
             }
@@ -123,7 +120,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
-        if (username!="" && username != name)
+        if (username != "" && username != name)
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
     }
 
