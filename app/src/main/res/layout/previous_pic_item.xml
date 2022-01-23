@@ -16,13 +16,12 @@
             android:id="@+id/previous_p"
             android:layout_width="@dimen/_82sdp"
             android:layout_height="@dimen/_82sdp"
-            android:src="@drawable/ic_previouspicplaceholder"
             android:scaleType="centerCrop" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/previous_pic_shimmer_layout"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_90sdp"
+            android:layout_width="@dimen/_82sdp"
+            android:layout_height="@dimen/_82sdp"
             android:layout_alignStart="@id/previous_p"
             android:layout_alignTop="@id/previous_p"
             android:layout_alignEnd="@id/previous_p"
