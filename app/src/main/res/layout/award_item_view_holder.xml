@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
-    android:layout_width="@dimen/_92sdp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginEnd="@dimen/_28sdp"
@@ -27,8 +27,8 @@
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="@dimen/_86sdp"
-        android:layout_height="@dimen/_100sdp"
+        android:layout_width="@dimen/_88sdp"
+        android:layout_height="@dimen/_97sdp"
         android:layout_marginHorizontal="@dimen/_6sdp"
         android:layout_marginTop="@dimen/_4sdp"
         android:scaleType="fitXY"
