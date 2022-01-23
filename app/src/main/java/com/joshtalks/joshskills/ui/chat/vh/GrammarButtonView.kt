@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textview.MaterialTextView
@@ -239,7 +240,7 @@ class GrammarButtonView : FrameLayout {
             } else {
                 wrongAnswerTitle.visibility = View.VISIBLE
                 wrongAnswerTitle.text = this.wrongAnswerHeading
-                //wrongAnswerTitle.text = getFormattedText(this.wrongAnswerHeading)
+//                wrongAnswerTitle.text = getFormattedText(this.wrongAnswerHeading)
             }
 
             if (this.wrongAnswerText.isNullOrBlank()) {
@@ -321,10 +322,17 @@ class GrammarButtonView : FrameLayout {
             videoIv.visibility = GONE
         } else {
             videoIv.visibility = VISIBLE
-            if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON))
+//            if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON))
+            if (PrefManager.isInSet(
+                    key = LAST_SEEN_VIDEO_ID,
+                    value = reviseVideoObject?.id ?: EMPTY,
+                    isConsistent = false,
+                )
+            ) {
                 videoIv.setImageResource(R.drawable.ic_video_seen)
-            else
+            } else {
                 videoIv.setImageResource(R.drawable.ic_video_clip)
+            }
             updateImageTint(videoIv, R.color.grammar_green_color)
         }
         textContainer.slideUpAnimation(context)
@@ -379,21 +387,19 @@ class GrammarButtonView : FrameLayout {
 //        updateImageTint(flagIv, R.color.grammar_red_color_dark)
         if (reviseVideoObject?.video_url.isNullOrBlank()) {
             videoIv.visibility = GONE
+            animatedVideoIv.visibility = GONE
             Log.e(TAG, "setWrongView: Null Video Link")
         } else {
-            if (PrefManager.getBoolValue(
-                    HAS_SEEN_QUIZ_VIDEO_BUTTON,
+            if (PrefManager.isInSet(
+                    key = LAST_SEEN_VIDEO_ID,
+                    value = reviseVideoObject?.id ?: EMPTY,
                     isConsistent = false,
-                    defValue = false
                 )
             ) {
                 Log.e(TAG, "setWrongView: seenVideo")
-                animatedVideoIv.visibility = INVISIBLE
+                animatedVideoIv.visibility = GONE
                 videoIv.visibility = VISIBLE
-                if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_BUTTON))
-                    videoIv.setImageResource(R.drawable.ic_video_seen)
-                else
-                    videoIv.setImageResource(R.drawable.ic_video_clip)
+                videoIv.setImageResource(R.drawable.ic_video_seen)
             } else {
                 Log.e(TAG, "setWrongView: did not see Video")
                 videoIv.visibility = INVISIBLE

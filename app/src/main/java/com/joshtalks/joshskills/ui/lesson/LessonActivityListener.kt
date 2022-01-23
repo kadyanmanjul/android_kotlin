@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.view.View
-import com.joshtalks.joshskills.core.interfaces.ClickListener
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 
 interface LessonActivityListener {
@@ -18,7 +17,7 @@ interface LessonActivityListener {
     fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean)
 
     fun onLessonUpdate()
-    fun setOverlayVisibility(
+    fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String? = null,
         wrongAnswerText: String? = null,

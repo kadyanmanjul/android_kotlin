@@ -34,8 +34,6 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.extension.transaltionAnimation
-import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -180,6 +178,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
+        }
+        if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_TOOLTIP).not()) {
+            binding.tooltipFrame.setOnClickListener {
+                showVideoToolTip(false)
+                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
+            }
+            binding.overlayTooltipLayout.setOnClickListener {
+                showVideoToolTip(false)
+                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
+            }
+            binding.tooltipTv.setOnClickListener {
+                showVideoToolTip(false)
+                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
+            }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
@@ -705,27 +717,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
-    override fun setOverlayVisibility(
+    override fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String?,
         wrongAnswerText: String?,
         videoClickListener: View.OnClickListener?
     ) {
-        if (shouldShow) {
-            Log.d(
-                "Manjul",
-                "setOverlayVisibility() called with: shouldShow = $shouldShow, wrongAnswerHeading = $wrongAnswerHeading, wrongAnswerText = $wrongAnswerText"
-            )
-            /*binding.wrongAnswerTitle.text = wrongAnswerHeading
-            binding.wrongAnswerDesc.text = wrongAnswerText
-            binding.tooltipFrame.visibility = View.VISIBLE
-            binding.videoBtnTooltip.visibility = View.VISIBLE
-            binding.overlayTooltipLayout.visibility = View.VISIBLE
-            binding.videoIvBtn.setOnClickListener(videoClickListener)
-        } else {
-            binding.tooltipFrame.visibility = View.GONE
-            binding.videoBtnTooltip.visibility = View.GONE
-            binding.overlayTooltipLayout.visibility = View.GONE*/
+        with(binding)
+        {
+            tooltipFrame.isVisible = shouldShow
+            videoBtnTooltip.isVisible = shouldShow
+            overlayTooltipLayout.isVisible = shouldShow
+            videoIvBtn.setOnClickListener(videoClickListener)
+            wrongAnswerTitle.text = wrongAnswerHeading
+            wrongAnswerDesc.text = wrongAnswerText
         }
     }
 
@@ -1077,24 +1082,22 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     override fun onBackPressed() {
-        if (binding.overlayLayout.isVisible) {
-            setOverlayVisibility(false)
-        } else if (isVideoVisible.value == true)
-            isVideoVisible.value = false
-        else if (binding.overlayLayout.visibility == View.VISIBLE) {
-            hideSpotlight()
-        } else if (binding.itemOverlay.visibility == View.VISIBLE) {
-            binding.itemOverlay.visibility = View.INVISIBLE
-        } else {
-            val resultIntent = Intent()
-            viewModel.lessonLiveData.value?.let {
-                resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
-                resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
-                resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
-                resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+        when {
+            binding.itemOverlay.isVisible -> binding.itemOverlay.isVisible = false
+            binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
+            isVideoVisible.value == true -> isVideoVisible.value = false
+            binding.overlayLayout.isVisible -> hideSpotlight()
+            else -> {
+                val resultIntent = Intent()
+                viewModel.lessonLiveData.value?.let {
+                    resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                    resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
+                    resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
+                    resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+                }
+                setResult(RESULT_OK, resultIntent)
+                this@LessonActivity.finish()
             }
-            setResult(RESULT_OK, resultIntent)
-            this@LessonActivity.finish()
         }
     }
 

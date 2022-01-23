@@ -365,13 +365,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                             HAS_SEEN_QUIZ_VIDEO_TOOLTIP,
                         ).not() && isClicked.not()
                     ) {
-                        lessonActivityListener?.setOverlayVisibility(
+                        lessonActivityListener?.showVideoToolTip(
                             true,
                             wrongAnswerHeading,
                             wrongAnswerText
                         ) { buttonView!!.get().viewVideo() }
                     } else {
-                        lessonActivityListener?.setOverlayVisibility(false, null, null)
+                        lessonActivityListener?.showVideoToolTip(false)
                     }
                 }
             })
@@ -595,7 +595,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         setPlayerEventCallback { event, _ ->
                             if (event == ExoPlayer.STATE_ENDED) {
                                 LessonActivity.isVideoVisible.value = false
-                                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, true)
+//                                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, true)
+                                it.videoId?.let { videoId ->
+                                    PrefManager.appendToSet(
+                                        LAST_SEEN_VIDEO_ID,
+                                        videoId, false
+                                    )
+                                }
                             }
                         }
                         setPlayListener(object :

@@ -44,25 +44,25 @@
                 app:layout_constraintEnd_toStartOf="@id/flag_iv"
                 app:layout_constraintTop_toTopOf="@id/flag_iv"
                 app:srcCompat="@drawable/ic_video_clip"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animated_video_iv"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintTop_toTopOf="@id/video_iv"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@id/video_iv"
-                app:layout_constraintStart_toStartOf="@id/video_iv"
                 app:layout_constraintEnd_toEndOf="@id/video_iv"
+                app:layout_constraintStart_toStartOf="@id/video_iv"
+                app:layout_constraintTop_toTopOf="@id/video_iv"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="lottie/video_animation.json"
                 app:lottie_imageAssetsFolder="lottie"
                 app:lottie_loop="true"
                 app:lottie_repeatMode="restart"
-                android:visibility="visible"
                 app:lottie_scale="1"
                 app:lottie_speed="1"
-                tools:visibility="gone"/>
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/correct_answer_title"
@@ -107,7 +107,7 @@
                 android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_red_color_dark"
-                android:textSize="@dimen/_18ssp"
+                android:textSize="@dimen/_24ssp"
                 app:layout_constraintEnd_toStartOf="@id/video_iv"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -118,17 +118,20 @@
                 android:id="@+id/wrong_answer_desc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_9sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/grammar_red_color_light"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/wrong_answer_title"
-                tools:text="You could have died." />
+                app:layout_goneMarginTop="0dp"
+                tools:text="You could have died."
+                tools:visibility="gone" />
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/flag_barrier"
@@ -142,7 +145,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_red_color_dark"
@@ -160,8 +163,8 @@
                 android:id="@+id/explanation_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_9sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
