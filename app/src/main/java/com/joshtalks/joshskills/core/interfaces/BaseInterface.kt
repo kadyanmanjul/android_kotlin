@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.core.interfaces
 
 import android.net.Uri
 import android.view.View
-import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.CertificateDetail

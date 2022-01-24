@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#F2F0E4"
-        tools:context=".conversationRoom.liveRooms.ConversationLiveRoomActivity">
+        tools:context=".ui.lesson.conversationRoom.liveRooms.ConversationLiveRoomActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toolbar"
@@ -255,7 +255,7 @@
                 tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.joshtalks.joshskills.conversationRoom.notification.NotificationView
+        <com.joshtalks.joshskills.ui.lesson.conversationRoom.notification.NotificationView
             android:id="@+id/notification_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

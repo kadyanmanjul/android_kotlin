@@ -26,8 +26,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.liveRooms.ConversationLiveRoomActivity
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
