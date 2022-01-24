@@ -2,16 +2,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.assessment.AssessmentActivity">
+    tools:context=".ui.voip.SearchingUserActivity">
 
     <data>
-        <import type="com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT"/>
+
+        <import type="com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT" />
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.voip.SearchingUserActivity" />
 
     </data>
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -34,38 +35,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.1" />
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/arrow_animation"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:elevation="@dimen/_6sdp"
-            android:padding="@dimen/_32sdp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/btn_action"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="lottie/searching_user.json"
-            app:lottie_imageAssetsFolder="lottie"
-            app:lottie_loop="true"
-            app:lottie_repeatMode="reverse"
-            app:lottie_scale="1"
-            app:lottie_speed="1"
-            tools:visibility="visible" />
-
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_view_ph"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/btn_action"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3"
             app:srcCompat="@drawable/have_a_referral" />
-
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -73,7 +52,6 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/_6sdp"
             android:layout_gravity="bottom"
-            android:visibility="gone"
             android:layout_marginTop="@dimen/_24sdp"
             android:progressDrawable="@drawable/progress_background"
             android:progressTint="@color/button_color"

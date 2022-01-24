@@ -72,6 +72,8 @@ class JoshGroupActivity : BaseGroupActivity() {
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
                 OPEN_PROFILE_PAGE -> openProfileActivity(it.obj as String)
+                SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
+                DISMISS_PROGRESS_BAR -> dismissProgressDialog()
                 REFRESH_GRP_LIST_HIDE_INFO -> {
                     setNewGroupVisibility(it.data)
                     vm.setGroupsCount()

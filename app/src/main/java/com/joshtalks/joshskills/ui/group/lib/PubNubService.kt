@@ -30,8 +30,8 @@ private const val TAG = "PubNub_Service"
 object PubNubService : ChatService {
 
     private val pubnub by lazy {
-        config.publishKey = "pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1"
-        config.subscribeKey = "sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82"
+        config.publishKey = "pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d"
+        config.subscribeKey = "sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed"
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }

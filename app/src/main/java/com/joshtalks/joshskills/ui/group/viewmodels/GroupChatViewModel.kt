@@ -135,7 +135,7 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
-        showProgressDialog(view.context, "Joining Group...")
+        showProgressDialog("Joining Group...")
         viewModelScope.launch {
             try {
                 val response = repository.joinGroup(groupId)
@@ -248,6 +248,17 @@ class GroupChatViewModel : BaseViewModel() {
         GroupAnalytics.push(GroupAnalytics.Event.OPENED_PROFILE)
     }
 
+    fun showProgressDialog(msg: String) {
+        message.what = SHOW_PROGRESS_BAR
+        message.obj = msg
+        singleLiveEvent.value = message
+    }
+
+    fun dismissProgressDialog() {
+        message.what = DISMISS_PROGRESS_BAR
+        singleLiveEvent.value = message
+    }
+
     fun leaveGroup() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -262,6 +273,7 @@ class GroupChatViewModel : BaseViewModel() {
                     return@launch
                 }
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has left the group", groupId)
+                GroupAnalytics.push(GroupAnalytics.Event.EXIT_GROUP, groupId)
                 withContext(Dispatchers.Main) {
                     message.what = REFRESH_GRP_LIST_HIDE_INFO
                     message.data = Bundle().apply {
@@ -287,7 +299,7 @@ class GroupChatViewModel : BaseViewModel() {
         val builder = AlertDialog.Builder(view.context)
         val dialog: AlertDialog = builder.setMessage(dialogMessage)
             .setPositiveButton(positiveBtnText) { dialog, id ->
-                showProgressDialog(view.context, "$loadMsg...")
+                showProgressDialog("$loadMsg...")
                 function.invoke()
             }
             .setNegativeButton("Cancel") { dialog, id ->
@@ -356,6 +368,8 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = CLEAR_CHAT_TEXT
         singleLiveEvent.value = message
     }
+
+
 
     private fun getNotification(msg: String) : Map<String, Any?> {
         val pushPayloadHelper = PushPayloadHelper()
