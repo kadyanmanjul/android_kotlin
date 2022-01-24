@@ -1,18 +1,22 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Paint
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.os.Environment
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
@@ -22,8 +26,6 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -33,6 +35,10 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
@@ -63,8 +69,19 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     lateinit var connectivityManager : ConnectivityManager
     lateinit var networkInfo : NetworkInfo
-    var pdfQuestion: LessonQuestion?= null
-    val d2pSyllabusPdfResponseLessonType: MutableLiveData<LessonQuestion> = MutableLiveData()
+    lateinit var pdfUrl : String
+    private var downloadID: Long = -1
+    private var isEnglishCardTapped = false
+
+    private var onDownloadCompleteListener = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (downloadID == id) {
+                showToast(getString(R.string.downloaded_syllabus))
+            }
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,41 +112,90 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         viewModel.getPaymentDetails(testId.toInt())
         logNewPaymentPageOpened()
 
-//        viewModel.getD2pSyllabusPdfData()
-//        viewModel.d2pSyllabusPdfResponse.observe(this, {
-//            pdfQuestion = LessonQuestion(pdfList = listOf(PdfType(url = it.SyllabusPdfLink)))
-//         //   pdfQuestion!!.pdfList?.get(0)?.let { it1 -> showToast(it1.url) }
-//            d2pSyllabusPdfResponseLessonType.postValue(LessonQuestion(pdfList = listOf(PdfType(url = it.SyllabusPdfLink))))
-//        })
-//
-//        d2pSyllabusPdfResponseLessonType.observe(this, {
-//            it.pdfList?.get(0)?.url?.let { it1 -> Log.e("sakshi_hjjjj", it1) }
-//        })
-
-
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         viewModel.getD2pSyllabusPdfData()
-            viewModel.d2pSyllabusPdfResponse.observe(this,{
-                var str = it.SyllabusPdfLink
-                var splitted = str.split(".pdf")
-                var first = splitted[0]
-                Log.e("sakshi_pdf", first.toString())
-                binding.syllabusPdfCard.setOnClickListener {
-//                    networkInfo = connectivityManager.activeNetworkInfo!!
-//                    if(networkInfo == null){
-//                        Toast.makeText(this, "No Connection", Toast.LENGTH_SHORT).show()
-//                    }else{
-                        var intent: Intent = Intent(applicationContext, WebActivity::class.java)
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        intent.putExtra("pdf_url", first + ".pdf")
-                        startActivity(intent)
-                  //  }
+        viewModel.d2pSyllabusPdfResponse.observe(this,{
+            var str = it.SyllabusPdfLink
+            var splitted = str.split(".pdf")
+            var first = splitted[0]
+            pdfUrl = first + ".pdf"
+        })
+
+        binding.syllabusPdfCard.setOnClickListener {
+            networkInfo = connectivityManager.activeNetworkInfo!!
+            if(networkInfo == null){
+                Toast.makeText(this, "No Connection", Toast.LENGTH_SHORT).show()
+            }else{
+                getPermissionAndDownloadSyllabus(pdfUrl)
+            }
+            viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
+        }
+        viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
+    }
+
+
+    private fun getPermissionAndDownloadSyllabus(url: String) {
+        PermissionUtils.storageReadAndWritePermission(this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            var intent: Intent = Intent(applicationContext, WebActivity::class.java)
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            intent.putExtra("pdf_url", pdfUrl)
+                            startActivity(intent)
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                downloadDigitalCopy(url)
+                            }
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(this@FreeTrialPaymentActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
                 }
             })
+    }
 
+    private fun downloadDigitalCopy(url: String) {
+        registerDownloadReceiver()
+        var fileName = Utils.getFileNameFromURL(url)
+        val request: DownloadManager.Request =
+            DownloadManager.Request(Uri.parse(url))
+                .setTitle(getString(R.string.app_name))
+                .setDescription("Downloading syllabus")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            request.setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+        }
 
+        val downloadManager =
+            AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
+        downloadID = downloadManager.enqueue(request)
+        showToast(getString(R.string.downloading_start))
+    }
 
-}
+    private fun registerDownloadReceiver() {
+        AppObjectController.joshApplication.registerReceiver(
+            onDownloadCompleteListener,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        )
+    }
 
     private fun forceDisconnectCall() {
         val serviceIntent = Intent(
@@ -156,6 +222,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         this,
                         R.drawable.blue_rectangle_with_blue_bound_stroke
                     )
+                isEnglishCardTapped = true
                 binding.materialTextView.text = buttonText.get(index)
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.GONE
@@ -177,6 +244,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.materialTextView.text = buttonText.get(index)
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.VISIBLE
+                isEnglishCardTapped = false
                 scrollToBottom()
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -444,6 +512,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
+            if(isEnglishCardTapped){
+                viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
+            }
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
@@ -502,6 +573,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     override fun onDestroy() {
+        try {
+            this.unregisterReceiver(onDownloadCompleteListener)
+        } catch (ex: Exception) {
+        }
         super.onDestroy()
         countdownTimerBack?.stop()
     }
@@ -520,7 +595,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
-                activity.overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
+                activity.overridePendingTransition(
+                    R.anim.slide_up_dialog,
+                    R.anim.slide_out_top
+                )
             }
         }
 
@@ -539,20 +617,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
-    }
-    fun openD2pSyllabusPdf(){
-//        viewModel.getD2pSyllabusPdfData()
-//        viewModel.d2pSyllabusPdfResponse.observe(this,{
-//            var str = it.SyllabusPdfLink
-//            var splitted = str.split(".pdf")
-//            var first = splitted[0]
-//            Log.e("sihiya", first + ".pdf")
-//        })
-//        showProgressBar()
-//        var intent : Intent = Intent(applicationContext, WebActivity::class.java)
-//        intent.putExtra("pdf_url", "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/media/ULTIMATE_SPOKEN_ENGLISH_COURSE_SYLLABUS_V2.pdf")
-//        startActivity(intent)
-//       // hideProgressBar()
     }
 
 }

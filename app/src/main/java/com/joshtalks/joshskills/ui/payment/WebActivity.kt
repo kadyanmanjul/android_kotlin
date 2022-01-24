@@ -1,20 +1,9 @@
 package com.joshtalks.joshskills.ui.payment
 
-import android.app.Activity
-import android.app.ProgressDialog
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import com.joshtalks.joshskills.R
@@ -39,7 +28,6 @@ class WebActivity : AppCompatActivity() {
         webView.getSettings().setSupportZoom(true)
         webView.getSettings().setJavaScriptEnabled(true)
         webView.webViewClient = WebViewClient()
-            Log.e("web_sakshii", url)
         webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + url)
 
     }
@@ -57,7 +45,6 @@ class WebActivity : AppCompatActivity() {
 
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
-          //  view.loadUrl(url)
             FullScreenProgressDialog.hideProgressBar(this@WebActivity)
         }
 
