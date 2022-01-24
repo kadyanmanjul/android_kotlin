@@ -14,12 +14,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.liveRooms.ConversationLiveRoomActivity
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.ui.voip.ConversationRoomJoin
 import com.joshtalks.joshskills.ui.voip.InitLibrary
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
@@ -57,7 +57,7 @@ class ConvoWebRtcService : Service() {
     protected var joshAudioManager: WebRtcAudioManager? = null
     protected var mNotificationManager: NotificationManager? = null
 
-    private val TAG = "ABCService"
+    private val TAG = "Convo WebRTC"
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()

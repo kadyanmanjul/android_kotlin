@@ -61,6 +61,7 @@ import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
+private const val TAG = "Convo Live Room"
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
     NotificationView.NotificationViewAction, RaisedHandsBottomSheet.HandRaiseSheetListener {
 
@@ -142,7 +143,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         })
 
         vm.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
-            Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
+            Log.d(TAG, "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 HIDE_PROGRESSBAR -> {
                     hideProgressBar()
@@ -271,7 +272,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun endRoom() {
-        Timber.tag("ABC2").e("endRoom() called")
+        Timber.tag(TAG).e("endRoom() called")
         timer?.cancel()
         timer = null
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
@@ -298,7 +299,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun addPubNubEventObserver() {
         Log.d(
-            "ABC2",
+            TAG,
             "addPubNubEventObserver() called  isPubNubObserverAdded: ${isPubNubUsersFetched} "
         )
         //compositeDisposable.remove(getReplayDisposable())
@@ -425,7 +426,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun callWebRtcService() {
         Log.d(
-            "ABC2",
+            TAG,
             "conversationRoomJoin() called with: token = $token, channelName = $channelName, uid = ${vm.getAgoraUid()}, moderatorId = ${vm.getModeratorId()}, channelTopic = $channelTopic, roomId = $roomId, roomQuestionId = $roomQuestionId"
         )
         ConvoWebRtcService.conversationRoomJoin(
@@ -551,7 +552,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         channelName = intent?.getStringExtra(CHANNEL_NAME)
         vm.setAgoraUid(intent?.getIntExtra(UID, 0))
         vm.setModeratorId(intent?.getIntExtra(MODERATOR_UID, 0))
-        Log.d("ABC2", "getIntentExtras() MODERATOR_UID called ${intent?.getIntExtra(MODERATOR_UID, 0)}")
+        Log.d(TAG, "getIntentExtras() MODERATOR_UID called ${intent?.getIntExtra(MODERATOR_UID, 0)}")
         token = intent?.getStringExtra(TOKEN)
         roomId = intent?.getIntExtra(ROOM_ID, 0)
         channelTopic = intent?.getStringExtra(TOPIC_NAME)
@@ -859,7 +860,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun showRoomEndNotification(roomId: Int?) {
-        Log.d("ABC2", "showRoomEndNotification() called with: roomId = $roomId")
+        Log.d(TAG, "showRoomEndNotification() called with: roomId = $roomId")
         if (this.roomId == roomId) {
             binding.notificationBar.apply {
                 visibility = View.VISIBLE
@@ -882,7 +883,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 return@addSnapshotListener
             }
             if (value?.exists() == false) {
-                Log.d("ABC2", "switchRoles() called with: value = $value, error = $error")
+                Log.d(TAG, "switchRoles() called with: value = $value, error = $error")
                 finish()
             }
             if (value != null) {
@@ -983,7 +984,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
-                    Log.d("ABC2", "observeNetwork() called with: connectivity = $connectivity")
+                    Log.d(TAG, "observeNetwork() called with: connectivity = $connectivity")
                     internetAvailableFlag =
                         connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
                     if (internetAvailableFlag) {
@@ -1193,7 +1194,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
-            Log.d("ABC2", "activity showEndRoomPopup() called")
+            Log.d(TAG, "activity showEndRoomPopup() called")
             if (!internetAvailableFlag) {
                 //viewModel.unSubscribePubNub()
                 finish()

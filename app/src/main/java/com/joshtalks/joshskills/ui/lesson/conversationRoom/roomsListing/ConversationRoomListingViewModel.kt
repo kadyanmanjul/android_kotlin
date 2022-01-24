@@ -6,19 +6,20 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.*
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+private const val TAG = "Convo F ViewModel"
 class ConversationRoomListingViewModel (application: Application) : AndroidViewModel(application) {
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
     val roomDetailsLivedata = MutableLiveData<ConversationRoomDetailsResponse>()
@@ -168,7 +169,7 @@ class ConversationRoomListingViewModel (application: Application) : AndroidViewM
                 val response =
                     AppObjectController.conversationRoomsNetworkService.getRoomList()
                 if (response.isSuccessful && response.body()!=null){
-                    Log.d("ABCF", "getListRooms() called")
+                    Log.d(TAG, "getListRooms() called")
                     roomListLiveData.postValue(response.body())
                 }
 

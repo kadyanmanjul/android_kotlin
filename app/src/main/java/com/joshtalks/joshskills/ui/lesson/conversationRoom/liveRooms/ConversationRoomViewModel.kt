@@ -13,10 +13,6 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.notification.NotificationView
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.DEFAULT_NAME
 import com.joshtalks.joshskills.core.EMPTY
@@ -24,6 +20,10 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationRoomPubNubEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.*
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.notification.NotificationView
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
@@ -55,6 +55,7 @@ const val NOTIFICATION_NAME = "notification_name"
 const val NOTIFICATION_TYPE = "notification_type"
 const val NOTIFICATION_USER = "notification_type"
 
+private const val TAG = "Convo Room VM"
 class ConversationRoomViewModel(application: Application) : AndroidViewModel(application) {
 
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
@@ -249,7 +250,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             ?.channel(channelName)
             ?.includeCustom(true)
             ?.async { result, status ->
-                Log.d("ABC2", "getLatestUserList() called with: result = $result, status = $status")
+                Log.d(TAG, "getLatestUserList() called with: result = $result, status = $status")
                 val tempSpeakerList = ArraySet<LiveRoomUser>()
                 val tempAudienceList = ArraySet<LiveRoomUser>()
                 result?.data?.forEach {
@@ -272,12 +273,12 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             return null
         }
         //val user = getAllUsersData(state)
-        Log.d("ABC2", "refreshUsersList() called with: state = $state")
+        Log.d(TAG, "refreshUsersList() called with: state = $state")
 
         if (state is JsonElement) {
             val user = getAllUsersData(state)
             user.id = uid.toInt()
-            Log.d("ABC2", "refreshUsersList() called with: user = $user")
+            Log.d(TAG, "refreshUsersList() called with: user = $user")
 
             if (user.isModerator) {
                 if (moderatorUid == null || moderatorUid == 0) {
@@ -345,7 +346,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                     override fun onResponse(result: PNPublishResult?, status: PNStatus) {
                         if (status.isError.not()) {
                             Log.d(
-                                "ABC2",
+                                TAG,
                                 "onResponse() called with: state = $state, channelName = $channelName result = $result"
                             )
                         }
@@ -373,7 +374,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.d(
-                    "ABC2",
+                    TAG,
                     "inside disposable called ${it.action.name} ${it.data}  isPubNubObserverAdded: ${isPubNubUsersFetched}"
                 )
                 when (it.action) {
@@ -429,7 +430,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     fun removeUser(msg: JsonObject) {
         val data: JsonObject? = msg["data"].asJsonObject
         data?.let {
-            Log.d("ABC2", "removeUser() called ${data.get("id")}")
+            Log.d(TAG, "removeUser() called ${data.get("id")}")
             val matType = object : TypeToken<LiveRoomUser>() {}.type
             if (data == null) {
                 return
@@ -536,7 +537,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     }
 
     private fun changeMicStatus(eventObject: JsonObject) {
-        Log.d("ABC2", "presence() called mic_status_changes")
+        Log.d(TAG, "presence() called mic_status_changes")
         val isMicOn = eventObject.get("is_mic_on").asBoolean
 
         message.what = CHANGE_MIC_STATUS
