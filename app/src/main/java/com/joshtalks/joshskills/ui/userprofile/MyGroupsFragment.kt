@@ -63,9 +63,12 @@ class MyGroupsFragment : DialogFragment() {
 
     private fun addObservers() {
         viewModel.userData.observe(
-            this, {
+            this, { userProfileResponse ->
                 hideProgressBar()
-                initView(it?.myGroupsList)
+                userProfileResponse?.myGroupsList?.let{
+                    initView(it)
+                }
+
             })
 
         viewModel.apiCallStatusLiveData.observe(this) {
@@ -88,12 +91,20 @@ class MyGroupsFragment : DialogFragment() {
         }
 
         viewModel.apiCallStatus.observe(this) {
-            if (it == ApiCallStatus.SUCCESS) {
-                hideProgressBar()
-            } else if (it == ApiCallStatus.FAILED) {
-                hideProgressBar()
-            } else if (it == ApiCallStatus.START) {
-                showProgressBar()
+            when (it) {
+                ApiCallStatus.SUCCESS -> {
+                    hideProgressBar()
+                }
+                ApiCallStatus.FAILED -> {
+                    hideProgressBar()
+                }
+                ApiCallStatus.START -> {
+                    showProgressBar()
+                }
+                else -> {
+                    hideProgressBar()
+
+                }
             }
         }
 
@@ -105,14 +116,13 @@ class MyGroupsFragment : DialogFragment() {
         }
     }
 
-    private fun initView(myGroupsList: List<GroupInfo>?) {
-        myGroupsList?.let {
-            val recyclerView: RecyclerView = binding.rvGroups
+    private fun initView(myGroupsList: List<GroupInfo>) {
+        val recyclerView: RecyclerView = binding.rvGroups
             recyclerView.setHasFixedSize(true)
             recyclerView.apply {
                 this.layoutManager = LinearLayoutManager(context)
-                this.adapter = MyGroupsListAdapter(it)
-            }
+                this.adapter = MyGroupsListAdapter( myGroupsList)
+
         }
     }
 

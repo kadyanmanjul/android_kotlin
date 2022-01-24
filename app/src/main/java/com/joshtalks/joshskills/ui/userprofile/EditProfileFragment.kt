@@ -167,9 +167,7 @@ class EditProfileFragment : DialogFragment() {
 
     private fun addListeners() {
         binding.ivBack.setOnClickListener {
-            val imm: InputMethodManager =
-                requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(it.windowToken, 0)
+            hideKeyboard(requireActivity(),binding.editTxtHometown)
             dismiss()
         }
 

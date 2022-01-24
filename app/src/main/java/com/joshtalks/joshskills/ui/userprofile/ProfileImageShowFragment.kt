@@ -11,8 +11,8 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -86,9 +86,7 @@ class ProfileImageShowFragment : DialogFragment() {
         }else{
             view.findViewById<LinearLayout>(R.id.parent_layout).visibility = View.GONE
         }
-        Glide.with(this)
-            .load(imagePath)
-            .into(big_image_view)
+        Utils.setImage(big_image_view,imagePath)
         courseName?.run {
             view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
 
