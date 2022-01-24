@@ -23,14 +23,15 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 
-class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
+class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
     private var username = name
+    private var isUserVerified = isVerified
 
     companion object {
-        fun newInstance(name: String) = SignUpProfileForFreeTrialFragment(name)
+        fun newInstance(name: String,isVerified:Boolean = false) = SignUpProfileForFreeTrialFragment(name,isVerified)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,7 +130,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
         requestMap["is_free_trial"] = "Y"
 
-        viewModel.completingProfile(requestMap, false)
+        viewModel.completingProfile(requestMap, isUserVerified)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
     }
 
