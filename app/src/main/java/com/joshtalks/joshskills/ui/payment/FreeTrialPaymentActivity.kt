@@ -7,8 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Paint
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -28,9 +26,11 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
@@ -47,7 +47,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.io.File
 import java.math.BigDecimal
+import java.util.*
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
@@ -67,17 +69,29 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     var headingText = mutableListOf<String>()
     private var countdownTimerBack: CountdownTimerBack? = null
 
-    lateinit var connectivityManager : ConnectivityManager
-    lateinit var networkInfo : NetworkInfo
     lateinit var pdfUrl : String
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
+    lateinit var fileName : String
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
                 showToast(getString(R.string.downloaded_syllabus))
+
+                showToast(Environment.DIRECTORY_DOWNLOADS + Utils.getFileNameFromURL(pdfUrl))
+
+                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath
+                val destination = fileDir + File.separator + fileName
+
+                PdfViewerActivity.startPdfActivity(
+                    context = this@FreeTrialPaymentActivity,
+                    pdfId = "788900765",
+                    courseName = "Course Syllabus",
+                    pdfPath = destination,
+                    conversationId = this@FreeTrialPaymentActivity.intent.getStringExtra(CONVERSATION_ID)
+                )
             }
         }
     }
@@ -112,7 +126,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         viewModel.getPaymentDetails(testId.toInt())
         logNewPaymentPageOpened()
 
-        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         viewModel.getD2pSyllabusPdfData()
         viewModel.d2pSyllabusPdfResponse.observe(this,{
             var str = it.SyllabusPdfLink
@@ -122,12 +135,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         })
 
         binding.syllabusPdfCard.setOnClickListener {
-            networkInfo = connectivityManager.activeNetworkInfo!!
-            if(networkInfo == null){
-                Toast.makeText(this, "No Connection", Toast.LENGTH_SHORT).show()
-            }else{
-                getPermissionAndDownloadSyllabus(pdfUrl)
-            }
+            getPermissionAndDownloadSyllabus(pdfUrl)
             viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
         }
         viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
@@ -140,14 +148,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            var intent: Intent = Intent(applicationContext, WebActivity::class.java)
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            intent.putExtra("pdf_url", pdfUrl)
-                            startActivity(intent)
-
-                            CoroutineScope(Dispatchers.IO).launch {
                                 downloadDigitalCopy(url)
-                            }
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -168,7 +169,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     private fun downloadDigitalCopy(url: String) {
         registerDownloadReceiver()
-        var fileName = Utils.getFileNameFromURL(url)
+        fileName = Utils.getFileNameFromURL(url)
+
         val request: DownloadManager.Request =
             DownloadManager.Request(Uri.parse(url))
                 .setTitle(getString(R.string.app_name))
@@ -618,5 +620,4 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
     }
-
 }

@@ -21,10 +21,6 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
-            android:name=".ui.payment.WebActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".ui.group.views.JoshVoipGroupActivity"
             android:exported="true" />
         <activity
