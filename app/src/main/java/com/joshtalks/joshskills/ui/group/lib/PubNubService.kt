@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.util.Log
 
 import com.google.gson.Gson
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -30,8 +31,8 @@ private const val TAG = "PubNub_Service"
 object PubNubService : ChatService {
 
     private val pubnub by lazy {
-        config.publishKey = "pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d"
-        config.subscribeKey = "sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed"
+        config.publishKey = BuildConfig.PUBNUB_PUB_GROUPS_KEY
+        config.subscribeKey = BuildConfig.PUBNUB_SUB_GROUPS_KEY
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }
