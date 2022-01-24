@@ -1149,7 +1149,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         UserProfileActivity.startUserProfileActivity(
             this@ConversationLiveRoomActivity,
             mentorId,
-            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), isFromConversationRoom = true
+          flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         )
     }
 

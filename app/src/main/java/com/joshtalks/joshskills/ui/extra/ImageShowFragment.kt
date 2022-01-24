@@ -63,7 +63,7 @@ class ImageShowFragment : DialogFragment() {
         Glide.with(this)
             .load(imagePath)
             .into(big_image_view)
-        big_image_view.doubleTapToZoom = true
+//        big_image_view.doubleTapToZoom = true
         courseName?.run {
             view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
 
@@ -77,9 +77,9 @@ class ImageShowFragment : DialogFragment() {
         if (imageId.isNullOrEmpty().not()) {
             EngagementNetworkHelper.engageImageApi(ImageEngage(imageId!!))
         }
-        big_image_view.setGestureDetectorInterface {
-            dismissAllowingStateLoss()
-        }
+//        big_image_view.setGestureDetectorInterface {
+//            dismissAllowingStateLoss()
+//        }
     }
 
     companion object {

@@ -197,6 +197,14 @@ interface CommonNetworkService {
         @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
 
+    @GET("$DIR/user/user_profile_v2/{mentor_id}/")
+    suspend fun getUserProfileDataV3(
+        @Path("mentor_id") id: String,
+        @Query("interval_type") intervalType: String? = null,
+        @Query("previous_page") previousPage: String? = null
+    ): Response<UserProfileResponse>
+
+
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
         @Query("mentor_id") id: String

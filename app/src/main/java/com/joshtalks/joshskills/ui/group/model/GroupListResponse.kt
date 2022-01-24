@@ -1,54 +1,76 @@
 package com.joshtalks.joshskills.ui.group.model
 
-import android.os.Parcelable
-import com.bumptech.glide.util.Util
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.Utils
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
 data class GroupListResponse(
 
-	@field:SerializedName("groups")
-	val groups: List<GroupsItem?>? = null
-) : Parcelable
+    @field:SerializedName("groups")
+    val groups: List<GroupsItem?>? = null
+)
 
-@Parcelize
+@Entity(tableName = "group_list_table")
 data class GroupsItem(
 
-	@field:SerializedName("group_icon")
-	val groupIcon: String? = null,
+    @field:SerializedName("group_icon")
+    val groupIcon: String? = null,
 
-	@field:SerializedName("group_id")
-	val groupId: String? = null,
+    @PrimaryKey
+    @field:SerializedName("group_id")
+    val groupId: String,
 
-	@field:SerializedName("created_at")
-	val createdAt: Long? = null,
+    @field:SerializedName("created_at")
+    val createdAt: Long? = null,
 
-	@field:SerializedName("members")
-	val members: String? = null,
+    var lastMessage: String? = null,
 
-	@field:SerializedName("name")
-	val name: String? = null,
+    var lastMsgTime: Long = 0,
 
-	@field:SerializedName("created_by")
-	val createdBy: String? = null,
+    var unreadCount: String? = null,
 
-	@field:SerializedName("total_calls")
-	val totalCalls: String? = null
+    @field:SerializedName("name")
+    val name: String? = null,
 
-) : Parcelable, GroupItemData {
-	override fun getTitle() = name ?: ""
+    @field:SerializedName("created_by")
+    val createdBy: String? = null,
 
-	override fun getSubTitle() = members ?: "$totalCalls"//"$totalCalls practise partner calls in last 24 hours"
+    @field:SerializedName("total_calls")
+    val totalCalls: String? = null,
 
-	override fun getUniqueId() = groupId ?: ""
+    val adminId: String? = null
 
-	override fun getImageUrl() = groupIcon ?: ""
+) : GroupItemData {
 
-	override fun getCreatedTime() = if(createdAt == null) "" else Utils.getMessageTime(createdAt * 1000L, timeNeeded = false)
+    override fun getTitle() = name ?: ""
 
-	override fun getCreator() = createdBy ?: ""
+    override fun getSubTitle() =
+        lastMessage ?: "$totalCalls"//"$totalCalls practise partner calls in last 24 hours"
 
-	override fun hasJoined() = members != null
+    override fun getUniqueId() = groupId
+
+    override fun getImageUrl() = groupIcon ?: ""
+
+    override fun getCreatedTime() =
+        if (createdAt == null) "" else Utils.getMessageTime(createdAt * 1000L, timeNeeded = false)
+
+    override fun getCreator() = createdBy ?: ""
+
+    override fun getCreatorId() = adminId ?: ""
+
+    override fun hasJoined() = lastMessage != null
+
+    override fun getLastMessageTime(): String {
+        val time = if (lastMsgTime == 0L)
+            Utils.getMessageTime(createdAt?.times(1000)!!)
+        else
+            Utils.getMessageTime(lastMsgTime / 10000)
+
+        return if (time[0] == '0') time.substring(1) else time
+    }
+
+    override fun getUnreadMsgCount() =
+        unreadCount ?: "0"
 }

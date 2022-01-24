@@ -1,24 +1,21 @@
 package com.joshtalks.joshskills.ui.group
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
+
 import com.afollestad.materialdialogs.MaterialDialog
-import com.flurry.sdk.it
 import com.github.dhaval2404.imagepicker.ImagePicker
+
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
-import com.joshtalks.joshskills.constants.OPEN_CALLING_ACTIVITY
-import com.joshtalks.joshskills.constants.OPEN_GROUP
-import com.joshtalks.joshskills.constants.OPEN_IMAGE_CHOOSER
-import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
-import com.joshtalks.joshskills.constants.SEARCH_GROUP
-import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
+import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
@@ -28,14 +25,20 @@ import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 import timber.log.Timber
 
 private const val TAG = "JoshGroupActivity"
+
 class JoshGroupActivity : BaseGroupActivity() {
     val vm by lazy {
         ViewModelProvider(this)[JoshGroupViewModel::class.java]
@@ -56,20 +59,27 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     override fun initViewState() {
         event.observe(this) {
-            when(it.what) {
+            when (it.what) {
                 ON_BACK_PRESSED -> popBackStack()
                 OPEN_GROUP -> openGroupChat(it.obj as? GroupItemData)
                 OPEN_NEW_GROUP -> openNewGroupFragment()
+                OPEN_GROUP_INFO -> openGroupInfoFragment()
+                EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
                 SEARCH_GROUP -> openGroupSearchFragment()
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
+                REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
+                REFRESH_GRP_LIST_HIDE_INFO -> {
+                    setNewGroupVisibility(it.data)
+                    vm.setGroupsCount()
+                }
             }
         }
     }
 
     // TODO: Need to refactor
-    private fun startGroupCall(data : Bundle) {
+    private fun startGroupCall(data: Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             openCallingActivity(data)
             return
@@ -109,7 +119,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP)
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -139,12 +149,13 @@ class JoshGroupActivity : BaseGroupActivity() {
             val fragment = GroupSearchFragment().apply {
                 arguments = bundle
             }
+            vm.openedGroupId = null
             replace(R.id.group_fragment_container, fragment, SEARCH_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }
 
-    private fun openGroupChat(data : GroupItemData?) {
+    private fun openGroupChat(data: GroupItemData?) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
@@ -155,8 +166,17 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
                 putString(GROUPS_ID, data?.getUniqueId())
                 putString(CONVERSATION_ID, vm.conversationId)
-                data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
+                putString(ADMIN_ID, data?.getCreatorId())
+                data?.hasJoined()?.let {
+                    if (it) {
+                        putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
+                        putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
+                        GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
+                    }
+                    putBoolean(HAS_JOINED_GROUP, it)
+                }
             }
+
             val fragment = GroupChatFragment()
             fragment.arguments = bundle
             replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
@@ -164,18 +184,58 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openNewGroupFragment(/*view: View?*/) {
+    private fun openGroupInfoFragment() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = GroupInfoFragment()
+            add(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openEditGroupInfo(data: Bundle?) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val bundle = Bundle().apply {
+                putBoolean(IS_FROM_GROUP_INFO, true)
+                putString(GROUPS_TITLE, data?.getString(GROUPS_TITLE))
+                putString(GROUPS_IMAGE, data?.getString(GROUPS_IMAGE))
+                putString(GROUPS_ID, data?.getString(GROUPS_ID))
+            }
+            val fragment = NewGroupFragment()
+            fragment.arguments = bundle
+
+            replace(R.id.group_fragment_container, fragment, EDIT_GROUP_INFO_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openNewGroupFragment() {
         vm.addingNewGroup.set(false)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id.group_fragment_container, NewGroupFragment(), ADD_GROUP_FRAGMENT)
+            val bundle = Bundle().apply {
+                putBoolean(IS_FROM_GROUP_INFO, false)
+            }
+            val fragment = NewGroupFragment()
+            fragment.arguments = bundle
+
+            vm.openedGroupId = null
+            replace(R.id.group_fragment_container, fragment, ADD_GROUP_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
     }
 
+    private fun setNewGroupVisibility(data: Bundle) {
+        vm.hasGroupData.set(data.getBoolean(SHOW_NEW_INFO))
+        vm.hasGroupData.notifyChange()
+        vm.shouldRefreshGroupList = true
+    }
+
     private fun popBackStack() {
-        if(supportFragmentManager.backStackEntryCount > 1) {
+        if (supportFragmentManager.backStackEntryCount > 1) {
             supportFragmentManager.popBackStack()
         } else
             onBackPressed()
@@ -190,9 +250,40 @@ class JoshGroupActivity : BaseGroupActivity() {
         )
     }
 
+    private fun removeGroupFromDb(groupId: String) {
+        if (groupId == vm.openedGroupId)
+            while (supportFragmentManager.backStackEntryCount > 0)
+                onBackPressed()
+        CoroutineScope(Dispatchers.IO).launch {
+            val groupName = vm.repository.getGroupName(groupId)
+            vm.repository.leaveGroupFromLocal(groupId)
+            withContext(Dispatchers.Main) {
+                showRemovedAlert(groupName)
+            }
+        }
+    }
+
     override fun getConversationId(): String? {
         vm.conversationId = intent.getStringExtra(CONVERSATION_ID) ?: ""
         return vm.conversationId
+    }
+
+    fun showRemovedAlert(groupName: String) {
+        val builder = AlertDialog.Builder(this)
+        val dialog: AlertDialog = builder
+            .setMessage("You have been removed from \"$groupName\" group")
+            .setPositiveButton("Ok") { dialog, id ->
+                dialog.cancel()
+            }
+            .create()
+
+        dialog.setCancelable(false)
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#107BE5"))
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -209,4 +300,11 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun setIntentExtras() {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CoroutineScope(Dispatchers.IO).launch {
+            vm.deleteExtraMessages()
+        }
+    }
 }

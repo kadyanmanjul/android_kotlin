@@ -122,6 +122,10 @@ const val IMPRESSION_OPEN_REFERRAL_SCREEN = "OPEN_REFERRAL_SCREEN"
 const val IMPRESSION_REFERRAL_CODE_COPIED = "REFERRAL_CODE_COPIED"
 const val IMPRESSION_REFER_VIA_WHATSAPP_CLICKED = "REFER_VIA_WHATSAPP_CLICKED"
 const val IMPRESSION_REFER_VIA_OTHER_CLICKED = "REFER_VIA_OTHER_CLICKED"
+const val IMPRESSION_REFER_VIA_INBOX_ICON = "REFER_VIA_INBOX_ICON"
+const val IMPRESSION_REFER_VIA_INBOX_MENU = "REFER_VIA_INBOX_MENU"
+const val IMPRESSION_REFER_VIA_CONVERSATION_ICON = "REFER_VIA_CONVERSATION_ICON"
+const val IMPRESSION_REFER_VIA_CONVERSATION_MENU = "REFER_VIA_CONVERSATION_MENU"
 const val IMPRESSION_UNDO_ATS_OPTION = "UNDO_ATS_OPTIONS"
 
 object Utils {
@@ -183,7 +187,7 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true): String {
+    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
@@ -196,7 +200,7 @@ object Utils {
                 "Yesterday"
             }
             else -> {
-                DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
+                DateTimeUtils.formatWithStyle(date, style)
             }
         }
     }
@@ -972,6 +976,21 @@ fun loadJSONFromAsset(fileName: String): String? {
 fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
     val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
         .error(R.drawable.ic_call_placeholder)
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context)
+        .load(url)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
+}
+fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_previouspicplaceholder)
+        .error(R.drawable.ic_previouspicplaceholder)
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     Glide.with(context)

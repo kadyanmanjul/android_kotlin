@@ -18,18 +18,26 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.getGoogleAdId
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import kotlinx.android.synthetic.main.activity_launcher.*
+import java.lang.ref.WeakReference
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.android.synthetic.main.activity_launcher.progress_bar
+import kotlinx.android.synthetic.main.activity_launcher.retry
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
-import java.lang.ref.WeakReference
-import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TAG = "LauncherActivity"
 
@@ -43,6 +51,7 @@ class LauncherActivity : CoreJoshActivity() {
         setContentView(R.layout.activity_launcher)
         animatedProgressBar()
         initAppInFirstTime()
+        handleGroupTimeTokens()
         handleIntent()
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         AppObjectController.uiHandler.postDelayed({
@@ -61,7 +70,6 @@ class LauncherActivity : CoreJoshActivity() {
                 PrefManager.put(IS_FREE_TRIAL, true, false)
             }
         }
-
     }
 
     private fun animatedProgressBar() {
@@ -91,6 +99,12 @@ class LauncherActivity : CoreJoshActivity() {
                     getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
                 }
             }
+        }
+    }
+
+    private fun handleGroupTimeTokens() {
+        CoroutineScope(Dispatchers.IO).launch {
+            GroupRepository().fireTimeTokenAPI()
         }
     }
 

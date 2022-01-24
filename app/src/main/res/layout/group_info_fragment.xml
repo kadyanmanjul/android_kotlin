@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <import type="com.joshtalks.joshskills.repository.local.model.Mentor" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_shade_of_gray"
+        tools:context=".ui.group.GroupInfoFragment">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/_1sdp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
+                android:id="@+id/group_info_app_bar"
+                groupHeader="@{vm.groupHeader}"
+                groupImage="@{vm.imageUrl}"
+                groupSubHeader="@{`Created by ` + vm.groupCreator}"
+                onBackPressed="@{vm::onBackPress}"
+                onSecondIconPressed="@{vm::editGroupInfo}"
+                secondIcon="@{vm.adminId.equals(Mentor.getInstance().getId()) ? R.drawable.ic_pen_edit : 0, default = 0}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:text="Members"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/_32sdp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    groupMemberAdapter="@{vm.memberAdapter}"
+                    onMemberItemClick="@{vm.adminId.equals(Mentor.getInstance().getId()) ? vm.openMemberPopup : null}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="@dimen/_2sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="6"
+                    tools:listitem="@layout/group_member_item" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/expand_members_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center_vertical"
+                    android:onClick="@{vm::expandGroupList}"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="@{vm.memberCount > 6 ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_22sdp"
+                        android:src="@drawable/arrow_down"
+                        app:tint="#6F6F6F" />
+
+                    <TextView
+                        android:id="@+id/member_count_expand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_22sdp"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@{vm.memberCount - 6 + ` more`}"
+                        android:textSize="@dimen/_10ssp"
+                        tools:text="23 more" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/exit_join_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="@color/white"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center_vertical"
+                    android:onClick="@{vm::showExitDialog}"
+                    android:orientation="horizontal"
+                    android:visibility="@{vm.adminId.equals(Mentor.getInstance().getId()) ? View.GONE : View.VISIBLE, default=gone}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/expand_members_list">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/ignore_ui_msg"
+                        android:paddingStart="@dimen/_24sdp"
+                        android:paddingEnd="@dimen/_18sdp"
+                        android:src="@drawable/ic_exit_group" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center"
+                        android:text="Exit Group"
+                        android:textColor="@color/exit_group"
+                        android:textSize="@dimen/_14ssp"
+                        android:textStyle="bold" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <FrameLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_blue_alpha_75"
+            android:clickable="false"
+            android:elevation="@dimen/_8sdp"
+            android:visibility="@{vm.fetchingGrpInfo ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

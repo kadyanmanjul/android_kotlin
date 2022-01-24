@@ -81,6 +81,9 @@ class ReferralActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
+
+
+
         activityReferralBinding = DataBindingUtil.setContentView(this, R.layout.activity_referral)
         activityReferralBinding.lifecycleOwner = this
         activityReferralBinding.handler = this
@@ -98,7 +101,6 @@ class ReferralActivity : BaseActivity() {
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
             .push()
-        viewModel.saveImpression(IMPRESSION_OPEN_REFERRAL_SCREEN)
     }
 
 
@@ -310,6 +312,7 @@ class ReferralActivity : BaseActivity() {
                 waIntent.setPackage(packageString)
             }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
+
             startActivity(Intent.createChooser(waIntent, "Share with"))
             AppAnalytics
                 .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)

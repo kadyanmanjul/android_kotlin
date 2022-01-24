@@ -42,17 +42,25 @@
                 tools:text="Spoken English Course" />
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <com.joshtalks.joshskills.core.custom_ui.ZoomageView
-            android:id="@+id/big_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:zoomage_animateOnReset="true"
-            tools:src="@drawable/josh_skill"
-            app:zoomage_autoCenter="true"
-            app:zoomage_autoResetMode="UNDER"
-            app:zoomage_maxScale="8"
-            app:zoomage_minScale="0.6"
-            app:zoomage_restrictBounds="false"
-            app:zoomage_translatable="true"
-            app:zoomage_zoomable="true" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/big_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:src="@drawable/josh_skill"
+        />
+
+<!--    <com.joshtalks.joshskills.core.custom_ui.ZoomageView-->
+<!--            android:id="@+id/big_image_view"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:zoomage_animateOnReset="true"-->
+<!--            tools:src="@drawable/josh_skill"-->
+<!--            app:zoomage_autoCenter="true"-->
+<!--            app:zoomage_autoResetMode="UNDER"-->
+<!--            app:zoomage_maxScale="8"-->
+<!--            app:zoomage_minScale="0.6"-->
+<!--            app:zoomage_restrictBounds="false"-->
+<!--            app:zoomage_translatable="true"-->
+<!--            app:zoomage_zoomable="true" />-->
 </LinearLayout>

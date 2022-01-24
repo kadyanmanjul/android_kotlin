@@ -1,16 +1,14 @@
 package com.joshtalks.joshskills.ui.group.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
-import androidx.paging.PagingState
 import androidx.recyclerview.widget.RecyclerView
+
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.databinding.GroupItemBinding
 import com.joshtalks.joshskills.databinding.GroupsLoadingBinding
 
 class GroupStateAdapter : LoadStateAdapter<GroupStateAdapter.GroupStateViewHolder>() {

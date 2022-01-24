@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
@@ -14,11 +15,14 @@ import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.AwardCategory
+import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
@@ -42,6 +46,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userProfileUrl: MutableLiveData<String?> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val animatedLeaderBoardData: MutableLiveData<AnimatedLeaderBoardResponse> = MutableLiveData()
+    val previousProfilePics: MutableLiveData<PreviousProfilePictures> = MutableLiveData()
 
     var context: JoshApplication = getApplication()
 
@@ -78,7 +83,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         jobs.forEach {
             try {
                 it.cancel()
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -105,7 +110,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    completingProfile(url)
+                    saveProfileInfo(url)
                 } else {
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
@@ -117,19 +122,37 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun completingProfile(map: String?) {
+    fun saveProfileInfo(
+        profilePicUrl: String?,
+        newName: String = EMPTY,
+        dobStr: String = EMPTY,
+        homeTown: String = EMPTY,
+        isSaveBtnClicked: Boolean = false
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                apiCallStatus.postValue(ApiCallStatus.START)
                 val requestMap = mutableMapOf<String, String?>()
-                requestMap["photo_url"] = map
-                userProfileUrl.postValue(map)
+                requestMap["photo_url"] = profilePicUrl
+                if (newName.isNotEmpty()) {
+                    requestMap["first_name"] = newName
+                }
+                if (dobStr.isNotEmpty()) {
+                    requestMap["date_of_birth"] = dobStr
+                }
+                if (homeTown.isNotEmpty()) {
+                    requestMap["hometown"] = homeTown
+                }
                 val response =
                     AppObjectController.signUpNetworkService.updateUserProfile(
                         Mentor.getInstance().getUserId(), requestMap
                     )
                 if (response.isSuccessful) {
                     response.body()?.let {
-
+                        userProfileUrl.postValue(profilePicUrl)
+                        if (isSaveBtnClicked) {
+                            RxBus2.publish(SaveProfileClickedEvent(true))
+                        }
                         it.isVerified = User.getInstance().isVerified
                         User.getInstance().updateFromResponse(it)
                     }
@@ -137,7 +160,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     return@launch
                 } else {
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
-
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
@@ -190,7 +212,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getUserProfileData(
+                val response = AppObjectController.commonNetworkService.getUserProfileDataV3(
                     mentorId,
                     intervalType,
                     previousPage
@@ -260,4 +282,27 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
+
+    fun getPreviousProfilePics() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiCallStatus.postValue(ApiCallStatus.START)
+                val response =
+                    AppObjectController.signUpNetworkService.getPreviousProfilePics()
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        previousProfilePics.postValue(it)
+                    }
+                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                    return@launch
+                } else {
+                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiCallStatus.postValue(ApiCallStatus.FAILED)
+            }
+        }
+    }
+
 }
