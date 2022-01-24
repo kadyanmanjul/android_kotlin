@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="clickHandler"
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.BothTeamMateFoundFpp" />
     </data>
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -17,8 +19,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@drawable/ic_game_back"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_game_back">
 
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -27,50 +29,50 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_30sdp"
-                app:srcCompat="@drawable/ic_game_logo_grad"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_80sdp"
-            android:layout_marginTop="@dimen/_60sdp"
-            android:id="@+id/card1"
-            app:layout_constraintBottom_toTopOf="@+id/rel1"
-            app:layout_constraintTop_toTopOf="@+id/txtquiz">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/_20sdp"
-                android:layout_marginRight="@dimen/_20sdp"
-                app:cardCornerRadius="@dimen/_8sdp"
-                app:cardElevation="@dimen/_35sdp"
-                app:cardMaxElevation="@dimen/_15sdp"
-                android:background="@drawable/new_card_border"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="#8785FB"
-                app:strokeWidth="@dimen/_1sdp">
+                app:srcCompat="@drawable/ic_game_logo_grad" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/card1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_60sdp"
+                app:layout_constraintBottom_toTopOf="@+id/rel1"
+                app:layout_constraintTop_toTopOf="@+id/txtquiz">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:background="@drawable/new_card_border"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    app:cardElevation="@dimen/_35sdp"
+                    app:cardMaxElevation="@dimen/_15sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="#8785FB"
+                    app:strokeWidth="@dimen/_1sdp">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
-                        android:text="Team Found"
-                        android:gravity="center"
                         android:background="@drawable/new_card_border"
+                        android:gravity="center"
+                        android:text="Team Found"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
 
-            </com.google.android.material.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <RelativeLayout
                 android:id="@+id/rel1"
@@ -95,11 +97,17 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name1"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image1"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -122,19 +130,25 @@
                         app:civ_border_width="@dimen/_4sdp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:visibility="gone"
                         android:id="@+id/user_image_shadow2"
                         android:layout_width="@dimen/_70sdp"
                         android:layout_height="@dimen/_70sdp"
-                        android:src="@drawable/ic_offline_shadow_img" />
+                        android:src="@drawable/ic_offline_shadow_img"
+                        android:visibility="gone" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image2"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -145,8 +159,8 @@
                     android:id="@+id/globe"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_80sdp"
-                    android:layout_centerInParent="true"
-                    android:layout_below="@id/relative_layout_2">
+                    android:layout_below="@id/relative_layout_2"
+                    android:layout_centerInParent="true">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="match_parent"
@@ -221,11 +235,17 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name4"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image4"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -248,11 +268,17 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/user_name3"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_image3"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />

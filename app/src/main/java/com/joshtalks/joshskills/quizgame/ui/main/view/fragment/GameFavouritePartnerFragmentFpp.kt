@@ -538,10 +538,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
         fromUserName: String,
         fromUserImage: String
     ) {
-        var i = 0
-        //handler.removeCallbacksAndMessages(null)
         try {
-            //visibleView(binding.notificationCard)
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
@@ -557,7 +554,6 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
             tickSound()
             handler.removeCallbacksAndMessages(null)
-            i = 1
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             favouriteViewModel?.getChannelData(mentorId, channelName)
@@ -585,7 +581,6 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                                 isRound = true
                             )
                             binding.userNameForAlready.text = fromUserName
-                            //visibleView(binding.notificationCardAlready)
                             if (isActiveFrag)
                                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(
                                     binding.notificationCardAlready

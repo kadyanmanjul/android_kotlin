@@ -173,7 +173,7 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
-            buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
             /*For Port
