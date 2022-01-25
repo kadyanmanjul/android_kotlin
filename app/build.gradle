@@ -438,7 +438,6 @@ dependencies {
     implementation 'io.sentry:sentry-android:5.5.0'
     implementation 'io.sentry:sentry-android-okhttp:5.5.1'
     implementation 'io.sentry:sentry-android-fragment:5.5.1'
-
 /*
     implementation 'io.sentry:sentry-android-timber:5.5.1'
 */
