@@ -66,6 +66,7 @@ class ReferralActivity : BaseActivity() {
 
     //    private var userReferralURL: String = EMPTY
     var flowFrom: String? = null
+    var referralTimestamp: Long? = null
 
     @ExperimentalUnsignedTypes
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -197,8 +198,9 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
+        referralTimestamp = System.currentTimeMillis()
         val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
             .setTitle("Invite Friend")
             .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
             .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
@@ -210,7 +212,7 @@ class ReferralActivity : BaseActivity() {
             .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
             .addControlParameter(
                 Defines.Jsonkey.UTMMedium.key,
-                userReferralCode.plus(System.currentTimeMillis())
+                userReferralCode.plus(referralTimestamp)
             )
 
         branchUniversalObject
@@ -303,7 +305,7 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.plus("\n").plus(dynamicLink)
         viewModel.getDeepLink(
             dynamicLink,
-            userReferralCode.plus(System.currentTimeMillis())
+            userReferralCode.plus(referralTimestamp ?: System.currentTimeMillis())
         )
         try {
             val waIntent = Intent(Intent.ACTION_SEND)
