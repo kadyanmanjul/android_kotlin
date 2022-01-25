@@ -4,17 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
@@ -35,8 +32,6 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.ui.group.JoshGroupActivity
-import com.joshtalks.joshskills.ui.group.views.GroupBottomSheet
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
@@ -109,13 +104,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 binding.btnCallDemo.visibility = View.GONE
                 binding.txtHowToSpeak.visibility = View.VISIBLE
                 binding.txtHowToSpeak.setOnClickListener {
-                    viewModel.howToSpeak(true)
+                    viewModel.isHowToSpeakClicked(true)
                     binding.btnCallDemo.visibility = View.VISIBLE
                     viewModel.saveD2pImpression(howToSpeak = true, startedPlayingVideo = true)
                 }
 
 
-                viewModel.call_btn_hide_show.observe(viewLifecycleOwner, {
+                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
                     if(it == 1){
                         binding.nestedScrollView.visibility = View.INVISIBLE
                         binding.btnCallDemo.visibility = View.VISIBLE
@@ -130,7 +125,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         })
 
-        viewModel.intro_video_complete.observe(viewLifecycleOwner, {
+        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
             if(it == true){
                 binding.btnCallDemo.visibility = View.GONE
             }
