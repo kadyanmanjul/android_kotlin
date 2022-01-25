@@ -60,10 +60,10 @@ import com.truecaller.android.sdk.TrueProfile
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
+const val TEST_ID = "TEST_ID"
 
 class FreeTrialOnBoardActivity : ABTestActivity() {
 
@@ -271,7 +271,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         hideProgressBar()
     }
 
-    private fun openProfileDetailFragment(testId: String = TEST_ID) {
+    private fun openProfileDetailFragment(testId: String = EMPTY) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)

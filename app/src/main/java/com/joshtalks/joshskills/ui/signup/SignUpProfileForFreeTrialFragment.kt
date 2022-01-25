@@ -29,6 +29,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
     private var username = name
     private var isUserVerified = isVerified
+    private var testId = EMPTY
 
     companion object {
         fun newInstance(name: String,isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name,isVerified)
@@ -37,6 +38,10 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+        testId = if (requireArguments().getString(TEST_ID, EMPTY) == EMPTY)
+                    "784"
+                 else
+                    requireArguments().getString(TEST_ID, EMPTY)
     }
 
     override fun onCreateView(
@@ -59,6 +64,8 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         binding.nameEditText.requestFocus()
+        binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FREE_TRIAL_ENTER_NAME_TEXT + testId)
         initUI()
     }
 
