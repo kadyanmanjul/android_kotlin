@@ -26,6 +26,8 @@ import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 import kotlinx.android.synthetic.main.instruction_top_view_holder.view.*
 import java.util.*
 
+
+const val FREE_TRIAL_ENTER_NAME_TEXT = "FREE_TRIAL_ENTER_NAME_TEXT_"
 class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
@@ -62,6 +64,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         addObservers()
         binding.nameEditText.requestFocus()
         binding.nameEditText.setText(User.getInstance().firstName)
+
         initUI()
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
@@ -70,6 +73,8 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     private fun initUI() {
 
+        binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FREE_TRIAL_ENTER_NAME_TEXT + requireArguments().getString(TEST_ID, TEST_ID))
         binding.nameEditText.setText(username)
         binding.nameEditText.isEnabled = true
 
