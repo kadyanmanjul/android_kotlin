@@ -19,6 +19,7 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.enums.PNPushType
+import com.pubnub.api.models.consumer.history.PNHistoryResult
 import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadata
@@ -136,14 +137,20 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun getMessageHistory(groupId: String, startTime : Long?): List<ChatItem> {
-        val history = pubnub.history()
-            .channel(groupId)
-            .includeMeta(true)
-            .includeTimetoken(true)
-            .start(startTime ?: System.currentTimeMillis() * 10_000L)
-            .count(20)
-            .sync()
+    override fun getMessageHistory(groupId: String, startTime: Long?): List<ChatItem> {
+        var history: PNHistoryResult? = null
+        try {
+            history = pubnub.history()
+                .channel(groupId)
+                .includeMeta(true)
+                .includeTimetoken(true)
+                .start(startTime ?: System.currentTimeMillis() * 10_000L)
+                .count(20)
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         val messages = mutableListOf<ChatItem>()
 
         history?.messages?.map {
@@ -158,7 +165,7 @@ object PubNubService : ChatService {
                     messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
                 )
                 messages.add(message)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -166,14 +173,19 @@ object PubNubService : ChatService {
     }
 
     override fun getUnreadMessages(groupId: String, startTime: Long): List<ChatItem> {
-        val history = pubnub.history()
-            .channel(groupId)
-            .includeMeta(true)
-            .includeTimetoken(true)
-            .start(startTime)
-            .end(System.currentTimeMillis() * 10_000L)
-            .count(20)
-            .sync()
+        var history: PNHistoryResult? = null
+        try {
+            history = pubnub.history()
+                .channel(groupId)
+                .includeMeta(true)
+                .includeTimetoken(true)
+                .start(startTime)
+                .end(System.currentTimeMillis() * 10_000L)
+                .count(20)
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         val messages = mutableListOf<ChatItem>()
 
         history?.messages?.map {
