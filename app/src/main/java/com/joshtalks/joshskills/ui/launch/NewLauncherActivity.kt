@@ -141,7 +141,6 @@ class NewLauncherActivity : CoreJoshActivity() {
 
     override fun onDestroy() {
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-        AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME).endSession()
         super.onDestroy()
     }
 
@@ -180,7 +179,7 @@ class NewLauncherActivity : CoreJoshActivity() {
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, networkOperatorName)
-            .push(true)
+            .push()
 
 
     private fun getNetworkOperatorName() =

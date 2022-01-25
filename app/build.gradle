@@ -104,7 +104,6 @@ android {
             resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
-            buildConfigField "String", "FLURRY_API_KEY", "\"2MHQRXWJ93XX7BWRHXWS\""
             crunchPngs false
             ext.enableCrashlytics = true
         }
@@ -112,7 +111,6 @@ android {
             resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
             resValue("bool", "branch_test", "false")
             resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
-            buildConfigField "String", "FLURRY_API_KEY", "\"466BRVHZTGCMRRQW67KX\""
             debuggable false
             minifyEnabled false
             shrinkResources false
@@ -380,7 +378,6 @@ dependencies {
 
     implementation 'io.branch.sdk.android:library:5.0.3'
     implementation 'com.clevertap.android:clevertap-android-sdk:4.0.4'
-    implementation 'com.flurry.android:analytics:12.3.0@aar'
 
     //Payment Razor pay
     implementation 'com.razorpay:checkout:1.6.15'
