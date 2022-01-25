@@ -1,30 +1,33 @@
 package com.joshtalks.joshskills.ui.group.lib
 
 import android.util.Log
-
 import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.model.*
+import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.ui.group.model.GroupMember
+import com.joshtalks.joshskills.ui.group.model.MemberResult
+import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
-
-import com.pubnub.api.PubNub
 import com.pubnub.api.PNConfiguration
+import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
-
-import org.jetbrains.annotations.NotNull
-
 import com.pubnub.api.enums.PNPushType
+import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadata
 import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
-import kotlinx.coroutines.*
 import java.util.stream.Collectors
-import kotlin.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.jetbrains.annotations.NotNull
 
 private const val TAG = "PubNub_Service"
 
@@ -194,25 +197,33 @@ object PubNubService : ChatService {
 
     override fun sendMessage(groupName: String, messageItem: MessageItem) {
         CoroutineScope(Dispatchers.IO).launch {
-            pubnub.publish()
-                .channel(groupName)
-                .message(messageItem)
-                .meta("${Mentor.getInstance().getUser()?.firstName}")
-                .shouldStore(true)
-                .ttl(0)
-                .usePOST(true)
-                .sync()
+            try {
+                pubnub.publish()
+                    .channel(groupName)
+                    .message(messageItem)
+                    .meta("${Mentor.getInstance().getUser()?.firstName}")
+                    .shouldStore(true)
+                    .ttl(0)
+                    .usePOST(true)
+                    .sync()
+            } catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 
     override fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>) {
         CoroutineScope(Dispatchers.IO).launch {
-            pubnub.publish()
-                .channel(groupId)
-                .shouldStore(false)
-                .message(messageItem)
-                .usePOST(true)
-                .sync()
+            try {
+                pubnub.publish()
+                    .channel(groupId)
+                    .shouldStore(false)
+                    .message(messageItem)
+                    .usePOST(true)
+                    .sync()
+            } catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 
@@ -231,13 +242,18 @@ object PubNubService : ChatService {
             e.printStackTrace()
         }
 
-        val memberResult = pubnub.channelMembers
-            .channel(groupId)
-            .limit(512)
-            .includeTotalCount(true)
-            .filter("uuid.id != '$adminId'")
-            .includeUUID(Include.PNUUIDDetailsLevel.UUID)
-            .sync()
+        var memberResult: PNGetChannelMembersResult? = null
+        try {
+            memberResult = pubnub.channelMembers
+                .channel(groupId)
+                .limit(512)
+                .includeTotalCount(true)
+                .filter("uuid.id != '$adminId'")
+                .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+                .sync()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
 
         val memberList = mutableListOf<GroupMember>()
         memberResult?.data?.map {
