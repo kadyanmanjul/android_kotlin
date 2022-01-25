@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -32,7 +31,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.signUpNetworkService.getD2pSyllabusPdf()
-                if (response?.isSuccessful == true && response.body() != null) {
+                if (response.isSuccessful) {
                     d2pSyllabusPdfResponse.postValue(response.body())
                 }
             } catch (ex: Exception) {
@@ -113,7 +112,6 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -127,5 +125,4 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
-
 }

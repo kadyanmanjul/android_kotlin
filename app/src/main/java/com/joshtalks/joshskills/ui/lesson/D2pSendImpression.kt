@@ -7,24 +7,24 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class D2pSendImpression(
     @SerializedName("mentor_id")
-    val mentorId : String,
+    val mentorId: String,
 
     @SerializedName("open_speak_fragment")
-    val speakingTabClicked: Boolean ?= null,
+    val speakingTabClicked: Boolean? = null,
 
     @SerializedName("continue_video_button")
-    val startedPlayingVideo: Boolean ?= null,
+    val startedPlayingVideo: Boolean? = null,
 
     @SerializedName("time_spent_video")
-    val videoTimeDuration: Long ?= null,
+    val videoTimeDuration: Long? = null,
 
     @SerializedName("call_clicked")
-    val callBtnClicked: Boolean ?= null,
+    val callBtnClicked: Boolean? = null,
 
     @SerializedName("time_spent_call")
-    val timeSpentOnCall: Int ?= null,
+    val timeSpentOnCall: Int? = null,
 
     @SerializedName("second_section_clicked")
-    val howToSpeakClicked: Boolean ?= null
+    val howToSpeakClicked: Boolean? = null
 
-    ): Parcelable
+) : Parcelable

@@ -80,18 +80,15 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) = practicePartnerCallDurationLiveData.postValue(time)
-
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
-
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
-
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
 
     fun getVideoData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.chatNetworkService.getIntroSpeakingVideo()
-                if (response?.isSuccessful == true && response.body() != null) {
+                if (response.isSuccessful) {
                     introVideoLiveDataForSpeakingSection.postValue(response.body())
                 }
             } catch (ex: Exception) {
@@ -778,7 +775,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     callBtnClicked = callBtnClicked,
                     timeSpentOnCall = callDuration,
                     howToSpeakClicked = howToSpeak
-
                 )
                 AppObjectController.commonNetworkService.saveD2pImpression(requestData)
             } catch (ex: Exception) {

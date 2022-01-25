@@ -87,6 +87,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
 
+    lateinit var introVideoUrl: String
     var result = 0L
     var flag = true
     var d2pVideoWatchedDurationPercent = 0L
@@ -202,13 +203,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.buyCourseLl.visibility = View.VISIBLE
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
-
-        viewModel.howToSpeakLiveData.observe(this, {
-            if (it == true) {
-                showIntroVideoUi()
-            }
-        })
         setUpVideoProgressListener()
+        viewModel.getVideoData()
     }
 
     override fun onResume() {
@@ -560,6 +556,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         })
+
+        viewModel.introVideoLiveDataForSpeakingSection.observe(this, {
+            introVideoUrl = it.videoLink
+        })
+
+        viewModel.howToSpeakLiveData.observe(this, {
+            if (it == true) {
+                showIntroVideoUi()
+            }
+        })
     }
 
     private fun hideSpotlight() {
@@ -579,11 +585,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     fun callPracticePartner() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
-        viewModel.practicePartnerCallDurationLiveData.observe(this, {
-            viewModel.saveD2pImpression(callDuration = it.toInt())
-        })
         closeIntroVideoPopUpUi()
-
     }
 
     private fun setUpNewGrammarLayouts(
@@ -1045,7 +1047,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
-
     override fun onPause() {
         binding.videoView.onPause()
         super.onPause()
@@ -1191,8 +1192,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
-
-
     private fun showIntroVideoUi() {
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.VISIBLE
@@ -1206,28 +1205,25 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.spotlightCallBtn.visibility = View.GONE
         binding.spotlightCallBtnText.visibility = View.GONE
 
-        viewModel.getVideoData()
-        viewModel.introVideoLiveDataForSpeakingSection.observe(this, {
-            binding.videoView.setUrl(it.videoLink)
-            binding.videoView.onStart()
-            binding.videoView.setPlayListener {
-                val currentVideoProgressPosition = binding.videoView.getProgress()
-                    openVideoPlayerActivity.launch(
-                       VideoPlayerActivity.getActivityIntent(
-                           this,
-                            "",
-                            null,
-                            it.videoLink,
-                           currentVideoProgressPosition,
-                            conversationId = getConversationId()
-                        )
-                    )
-            }
+        binding.videoView.setUrl(introVideoUrl)
+        binding.videoView.onStart()
+        binding.videoView.setPlayListener {
+            val currentVideoProgressPosition = binding.videoView.getProgress()
+            openVideoPlayerActivity.launch(
+                VideoPlayerActivity.getActivityIntent(
+                    this,
+                    "",
+                    null,
+                    introVideoUrl,
+                    currentVideoProgressPosition,
+                    conversationId = getConversationId()
+                )
+            )
+        }
 
-            lifecycleScope.launchWhenStarted {
-                binding.videoView.downloadStreamPlay()
-            }
-        })
+        lifecycleScope.launchWhenStarted {
+            binding.videoView.downloadStreamPlay()
+        }
 
         binding.imageViewClose.setOnClickListener {
             closeIntroVideoPopUpUi()
