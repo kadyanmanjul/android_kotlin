@@ -1257,7 +1257,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.GONE
         binding.videoView.onStop()
-//        binding.videoView.seekToStart()
         if(result > d2pVideoWatchedDurationPercent){
             result = 0
         }
