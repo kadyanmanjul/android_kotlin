@@ -8,11 +8,9 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.widget.Chronometer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
@@ -25,10 +23,6 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
     private val TAG = "WebRtcMiddlewareActivit"
-
-    private val viewModel: LessonViewModel by lazy {
-        ViewModelProvider(this).get(LessonViewModel::class.java)
-    }
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
 
@@ -81,7 +75,6 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
             super.onDisconnect(callId, channelName, time)
-            viewModel.callDurationD2P(time)
             Log.d(TAG, "${this.javaClass.simpleName} onDisconnect: ")
             lifecycleScope.launchWhenResumed {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
