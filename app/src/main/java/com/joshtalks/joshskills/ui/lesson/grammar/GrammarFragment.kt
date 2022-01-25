@@ -519,7 +519,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { mediaProgressEvent ->
-                        Log.d("media", "test")
                         if (mediaProgressEvent.progress > 3000 && question.status != QUESTION_STATUS.AT) {
                             question.status = QUESTION_STATUS.AT
                             question.isVideoWatchTimeSend = true
