@@ -7,5 +7,5 @@ data class D2pSyllabusPdfResponse(
     val name: String,
 
     @field:SerializedName("syllabus")
-    val SyllabusPdfLink: String
+    val syllabusPdfLink: String
 )
