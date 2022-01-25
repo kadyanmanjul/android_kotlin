@@ -80,14 +80,13 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             if (downloadID == id) {
                 showToast(getString(R.string.downloaded_syllabus))
 
-                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath
-                val destination = fileDir + File.separator + fileName
+                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + fileName
 
                 PdfViewerActivity.startPdfActivity(
                     context = this@FreeTrialPaymentActivity,
                     pdfId = "788900765",
                     courseName = "Course Syllabus",
-                    pdfPath = destination,
+                    pdfPath = fileDir,
                     conversationId = this@FreeTrialPaymentActivity.intent.getStringExtra(CONVERSATION_ID)
                 )
                 viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
