@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PointsListRespo
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
-import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
@@ -74,26 +73,26 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     var lessonIsConvoRoomActive: Boolean = false
     var isFreeTrail = false
 
-    val speaking_video_data: MutableLiveData<VideoPopupItem> = MutableLiveData()
-    val call_btn_hide_show: MutableLiveData<Int> = MutableLiveData()
-    val how_to_speak: MutableLiveData<Boolean> = MutableLiveData()
-    val intro_video_complete: MutableLiveData<Boolean> = MutableLiveData()
-    val d2pCallDuration: MutableLiveData<Long> = MutableLiveData()
+    val introVideoLiveDataForSpeakingSection: MutableLiveData<VideoPopupItem> = MutableLiveData()
+    val callBtnHideShowLiveData: MutableLiveData<Int> = MutableLiveData()
+    val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
 
-    fun callDurationD2P(time: Long) = d2pCallDuration.postValue(time)
+    fun practicePartnerCallDurationFromNewScreen(time: Long) = practicePartnerCallDurationLiveData.postValue(time)
 
-    fun isVideoComplete(event: Boolean) = intro_video_complete.postValue(event)
+    fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
 
-    fun howToSpeak(event: Boolean) = how_to_speak.postValue(event)
+    fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
 
-    fun showHideSpeakingFragmentCallBtn(event: Int) = call_btn_hide_show.postValue(event)
+    fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
 
     fun getVideoData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.chatNetworkService.getIntroSpeakingVideo()
                 if (response?.isSuccessful == true && response.body() != null) {
-                    speaking_video_data.postValue(response.body())
+                    introVideoLiveDataForSpeakingSection.postValue(response.body())
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -781,7 +780,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     howToSpeakClicked = howToSpeak
 
                 )
-                val res = AppObjectController.commonNetworkService.saveD2pImpression(requestData)
+                AppObjectController.commonNetworkService.saveD2pImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
