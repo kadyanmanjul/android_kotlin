@@ -29,12 +29,12 @@ import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import java.math.BigDecimal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
@@ -66,7 +66,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
 
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
-            testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)!!
+            testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)?:FREE_TRIAL_PAYMENT_TEST_ID
         }
         if (intent.hasExtra(EXPIRED_TIME)) {
             expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)

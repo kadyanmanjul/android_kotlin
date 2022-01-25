@@ -153,8 +153,12 @@ abstract class BaseActivity :
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
-            processBranchDynamicLinks()
-            processFirebaseDynamicLinks()
+            try {
+                processBranchDynamicLinks()
+                processFirebaseDynamicLinks()
+            } catch (ex:Exception){
+                ex.printStackTrace()
+            }
             //addScreenRecording()
         }
     }

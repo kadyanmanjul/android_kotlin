@@ -137,12 +137,12 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                 userPicView.getLocationOnScreen(userPosition)
                 nameView.getLocationOnScreen(namePosition)
                 arrowPosition = (userPosition[0] + userPicView.width + (namePosition[0] - (userPosition[0] + userPicView.width))/2.0).toFloat()
+                getOverlayItemFromView(view)?.let {
+                    listener?.onViewBitmap(it, type, arrowPosition)
+                }
             } catch (e : Exception) {
                 arrowPosition = null
                 e.printStackTrace()
-            }
-            getOverlayItemFromView(view)?.let {
-                listener?.onViewBitmap(it, type, arrowPosition)
             }
         }
     }
