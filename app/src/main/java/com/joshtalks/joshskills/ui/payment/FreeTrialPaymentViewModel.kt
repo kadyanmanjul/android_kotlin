@@ -37,7 +37,6 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                Log.e(TAG, "${ex.message}")
             }
         }
     }
