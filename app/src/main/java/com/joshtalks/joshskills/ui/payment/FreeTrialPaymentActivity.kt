@@ -80,8 +80,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             if (downloadID == id) {
                 showToast(getString(R.string.downloaded_syllabus))
 
-                showToast(Environment.DIRECTORY_DOWNLOADS + Utils.getFileNameFromURL(pdfUrl))
-
                 val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath
                 val destination = fileDir + File.separator + fileName
 
@@ -92,6 +90,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     pdfPath = destination,
                     conversationId = this@FreeTrialPaymentActivity.intent.getStringExtra(CONVERSATION_ID)
                 )
+                viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
             }
         }
     }
@@ -128,7 +127,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         viewModel.getD2pSyllabusPdfData()
         viewModel.d2pSyllabusPdfResponse.observe(this,{
-            var str = it.SyllabusPdfLink
+            var str = it.syllabusPdfLink
             var splitted = str.split(".pdf")
             var first = splitted[0]
             pdfUrl = first + ".pdf"
@@ -136,7 +135,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         binding.syllabusPdfCard.setOnClickListener {
             getPermissionAndDownloadSyllabus(pdfUrl)
-            viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
         }
         viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
     }
