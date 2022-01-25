@@ -203,7 +203,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
 
-        viewModel.how_to_speak.observe(this, {
+        viewModel.howToSpeakLiveData.observe(this, {
             if (it == true) {
                 showIntroVideoUi()
             }
@@ -520,7 +520,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         if (it.lessonNo == 1 && flag == true) {
                             flag = false
                             viewModel.saveD2pImpression(true, startedPlayingVideo = true)
-                            viewModel.showHideSpeakingFragmentCallBtn(1)
+                            viewModel.showHideSpeakingFragmentCallButtons(1)
                             showIntroVideoUi()
                         }
                     })
@@ -579,7 +579,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     fun callPracticePartner() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
-        viewModel.d2pCallDuration.observe(this, {
+        viewModel.practicePartnerCallDurationLiveData.observe(this, {
             viewModel.saveD2pImpression(callDuration = it.toInt())
         })
         closeIntroVideoPopUpUi()
@@ -1196,7 +1196,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private fun showIntroVideoUi() {
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.VISIBLE
-        viewModel.showHideSpeakingFragmentCallBtn(1)
+        viewModel.showHideSpeakingFragmentCallButtons(1)
         binding.videoPopup.visibility = View.VISIBLE
         binding.videoView.seekToStart()
         binding.spotlightTabGrammar.visibility = View.INVISIBLE
@@ -1207,7 +1207,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.spotlightCallBtnText.visibility = View.GONE
 
         viewModel.getVideoData()
-        viewModel.speaking_video_data.observe(this, {
+        viewModel.introVideoLiveDataForSpeakingSection.observe(this, {
             binding.videoView.setUrl(it.videoLink)
             binding.videoView.onStart()
             binding.videoView.setPlayListener {
@@ -1252,7 +1252,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.spotlightCallBtnText.visibility = View.GONE
         binding.videoCallBtn.visibility = View.INVISIBLE
         binding.videoCallBtnText.visibility = View.INVISIBLE
-        viewModel.showHideSpeakingFragmentCallBtn(2)
+        viewModel.showHideSpeakingFragmentCallButtons(2)
         binding.arrowAnimationnVideo.visibility = View.INVISIBLE
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.GONE
@@ -1292,7 +1292,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                                 binding.videoCallBtn.visibility = View.VISIBLE
                                 binding.videoCallBtnText.visibility = View.VISIBLE
                                 binding.arrowAnimationnVideo.visibility = View.VISIBLE
-                            viewModel.isVideoComplete(true)
+                            viewModel.isD2pIntroVideoComplete(true)
                         }
                     },
                     {
