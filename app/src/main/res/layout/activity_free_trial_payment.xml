@@ -324,9 +324,9 @@
                     android:foreground="?android:attr/selectableItemBackground"
                     android:outlineSpotShadowColor="@color/gray_e6"
                     android:layout_marginStart="@dimen/_26sdp"
-                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     app:cardCornerRadius="@dimen/_10sdp"
-                    app:cardBackgroundColor="#F0F0F0"
+                    app:cardBackgroundColor="@color/gray_94"
                     android:layout_marginEnd="@dimen/_26sdp"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat2">
 
@@ -338,9 +338,9 @@
                             android:id="@+id/img_syllabus"
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_60sdp"
-                            android:layout_marginStart="7dp"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginBottom="16dp"
+                            android:layout_marginStart="@dimen/_7sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:layout_marginBottom="@dimen/_16sdp"
                             android:src="@drawable/pdf_img"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -354,10 +354,10 @@
                             android:textSize="@dimen/_13sdp"
                             android:text="@string/the_ultimate_spoken_english_n_course_syllabus"
                             android:textStyle="normal"
-                            android:layout_marginTop="6dp"
-                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="@dimen/_3sdp"
+                            android:layout_marginLeft="@dimen/_14sdp"
                             android:fontFamily="sans-serif-black"
-                            android:textColor="#000000"
+                            android:textColor="@color/black"
                             app:layout_constraintTop_toTopOf="@+id/img_syllabus"
                             app:layout_constraintStart_toEndOf="@+id/img_syllabus"
                             />
@@ -367,8 +367,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_img_download"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginLeft="@dimen/_14sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
                             app:layout_constraintTop_toBottomOf="@+id/text_header_syllabus"
                             app:layout_constraintStart_toEndOf="@+id/img_syllabus"/>
 
@@ -378,9 +378,9 @@
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/_10sdp"
                             android:textStyle="normal"
-                            android:textColor="#484848"
+                            android:textColor="@color/gray_48"
                             android:gravity="center_horizontal"
-                            android:layout_marginLeft="2dp"
+                            android:layout_marginLeft="@dimen/_2sdp"
                             android:fontFamily="sans-serif-medium"
                             app:layout_constraintBottom_toBottomOf="@+id/img_download_syllabus"
                             app:layout_constraintTop_toTopOf="@+id/img_download_syllabus"
@@ -755,5 +755,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
-
-<!--    android:onClick="@{()->handler.openD2pSyllabusPdf()}"-->
