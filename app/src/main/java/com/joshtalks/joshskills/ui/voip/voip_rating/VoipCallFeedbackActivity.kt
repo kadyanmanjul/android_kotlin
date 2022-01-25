@@ -154,7 +154,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
     }
 
     private fun showReportDialog(type:String,function: ()->Unit) {
-        ReportDialogFragment.newInstance(callerId,currentId, type,function = function)
+        ReportDialogFragment.newInstance(callerId,currentId, type,channelName,function = function)
             .show(supportFragmentManager, "ReportDialogFragment")
 
     }
