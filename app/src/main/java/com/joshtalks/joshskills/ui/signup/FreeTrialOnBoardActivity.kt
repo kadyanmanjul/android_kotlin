@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.truecaller.android.sdk.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +31,7 @@ import java.util.*
 
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
+const val TEST_ID = "TEST_ID"
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
@@ -75,7 +77,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun showStartTrialPopup() {
+    fun showStartTrialPopup(language: ChooseLanguages) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         layout.btnStartTrial.pauseAnimation()
@@ -102,7 +104,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     openTrueCaller()
                 }
                 else {
-                    openProfileDetailFragment()
+                    openProfileDetailFragment(language.testId)
                 }
                 alertDialog.dismiss()
             }
@@ -114,13 +116,17 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    private fun openProfileDetailFragment() {
+    private fun openProfileDetailFragment(testId: String = EMPTY) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName?:""),
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName?:"").apply {
+                    val bundle = Bundle()
+                    bundle.putString(TEST_ID, testId)
+                    arguments = bundle
+                },
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }

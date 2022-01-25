@@ -26,11 +26,14 @@ import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 import kotlinx.android.synthetic.main.instruction_top_view_holder.view.*
 import java.util.*
 
+
+const val FREE_TRIAL_ENTER_NAME_TEXT = "FREE_TRIAL_ENTER_NAME_TEXT_"
 class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
     private var username = name
+    private var testId = EMPTY
 
     companion object {
         fun newInstance(name: String) = SignUpProfileForFreeTrialFragment(name)
@@ -39,6 +42,10 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+        testId = if (requireArguments().getString(TEST_ID, EMPTY) == EMPTY)
+                    "784"
+                 else
+                    requireArguments().getString(TEST_ID, EMPTY)
     }
 
     override fun onCreateView(
@@ -62,6 +69,8 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         addObservers()
         binding.nameEditText.requestFocus()
         binding.nameEditText.setText(User.getInstance().firstName)
+        binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FREE_TRIAL_ENTER_NAME_TEXT + testId)
         initUI()
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
