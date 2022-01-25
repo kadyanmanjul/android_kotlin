@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 
+const val FREE_TRIAL_ENTER_NAME_TEXT = "FREE_TRIAL_ENTER_NAME_TEXT_"
 class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
@@ -62,6 +63,9 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     }
 
     private fun initUI() {
+
+        binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FREE_TRIAL_ENTER_NAME_TEXT + requireArguments().getString(TEST_ID, TEST_ID))
         binding.nameEditText.setText(username)
         binding.nameEditText.isEnabled = true
     }

@@ -57,6 +57,7 @@ import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
@@ -146,7 +147,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         }
     }
 
-    fun showStartTrialPopup() {
+    fun showStartTrialPopup(language: ChooseLanguages) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         layout.btnStartTrial.pauseAnimation()
@@ -176,7 +177,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
                 if (TruecallerSDK.getInstance().isUsable)
                     openTrueCallerBottomSheet()
                 else
-                    openProfileDetailFragment()
+                    openProfileDetailFragment(language.testId)
                 alertDialog.dismiss()
             }
         }
@@ -270,14 +271,18 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         hideProgressBar()
     }
 
-    private fun openProfileDetailFragment() {
+    private fun openProfileDetailFragment(testId: String = TEST_ID) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
                 SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY,
-                    viewModel.isVerified),
+                    viewModel.isVerified).apply {
+                    val bundle = Bundle()
+                    bundle.putString(TEST_ID, testId)
+                    arguments = bundle
+                },
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }

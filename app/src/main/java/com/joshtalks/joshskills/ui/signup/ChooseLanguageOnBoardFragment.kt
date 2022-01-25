@@ -77,7 +77,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
     }
 
     override fun selectLanguageOnBoard(language: ChooseLanguages) {
-        (activity as FreeTrialOnBoardActivity).showStartTrialPopup()
+        (activity as FreeTrialOnBoardActivity).showStartTrialPopup(language)
     }
 
     fun onBackPressed() {
