@@ -78,10 +78,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
-                showToast(getString(R.string.downloaded_syllabus))
-
                 val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + fileName
-
                 PdfViewerActivity.startPdfActivity(
                     context = this@FreeTrialPaymentActivity,
                     pdfId = "788900765",
@@ -89,6 +86,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     pdfPath = fileDir,
                     conversationId = this@FreeTrialPaymentActivity.intent.getStringExtra(CONVERSATION_ID)
                 )
+                showToast(getString(R.string.downloaded_syllabus))
                 viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
             }
         }
@@ -125,13 +123,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         logNewPaymentPageOpened()
 
         viewModel.getD2pSyllabusPdfData()
-        viewModel.d2pSyllabusPdfResponse.observe(this,{
-            var str = it.syllabusPdfLink
-            var splitted = str.split(".pdf")
-            var first = splitted[0]
-            pdfUrl = first + ".pdf"
-        })
-
         binding.syllabusPdfCard.setOnClickListener {
             getPermissionAndDownloadSyllabus(pdfUrl)
         }
@@ -424,6 +415,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.progressBar.visibility = View.GONE
             }
         }
+
+        viewModel.d2pSyllabusPdfResponse.observe(this,{
+            pdfUrl = it.syllabusPdfLink.split(".pdf")[0]+".pdf"
+        })
     }
 
     private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
