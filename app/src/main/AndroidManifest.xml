@@ -82,7 +82,8 @@
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
             android:name=".ui.voip.share_call.ShareWithFriendsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".quizgame.StartActivity"

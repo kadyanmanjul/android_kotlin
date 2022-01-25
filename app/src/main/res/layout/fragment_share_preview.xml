@@ -2,9 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/share_screen"
@@ -27,7 +24,7 @@
             android:id="@+id/tvEnglishMinutes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/open_sans"
+            android:fontFamily="@font/open_sans_semibold"
             android:gravity="center"
             android:text="@string/share_screen_heading"
             android:textColor="@color/pure_black"
@@ -59,9 +56,10 @@
             android:shadowColor="@color/a3a3a3"
             android:shadowRadius="10"
             android:text="@string/caller_details"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
             android:textColor="@color/pure_black"
             android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/callerImageContainer"
             app:layout_constraintStart_toStartOf="@+id/callerImageContainer"
@@ -76,9 +74,10 @@
             android:shadowColor="@color/a3a3a3"
             android:shadowRadius="10"
             android:text="@string/caller_details"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
             android:textColor="@color/pure_black"
             android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/receiverImageContainer"
             app:layout_constraintStart_toStartOf="@+id/receiverImageContainer"
@@ -100,9 +99,9 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/open_sans_semibold"
             android:gravity="center"
             android:text="@string/share_screen_tagline"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
             android:textColor="@color/pure_black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/appCompatTextView2"
@@ -130,6 +129,8 @@
             android:id="@+id/callerImageContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/image_shadow_background"
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -154,6 +155,8 @@
             android:id="@+id/receiverImageContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/image_shadow_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

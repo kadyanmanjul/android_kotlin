@@ -465,7 +465,7 @@
     <string name="video">Video</string>
     <string name="conversation">Video %1$s</string>
     <string name="unlock_class_demo">Unlock Class Demo For now</string>
-    <string name="refferal_desc1"><![CDATA[\Earn <strong><u>₹%1$s</u></strong> in your account <br/>for every friend who <br/> joins a course!\]]></string>
+    <string name="refferal_desc1"><![CDATA[\Earn <strong><u>₹%1$s</u></strong> in your account for <br/> every friend who joins a <br/> course!\]]></string>
     <string name="referral_desc2"><![CDATA[\Your friend also gets <br/> <strong>₹%1$s OFF</strong> on their first course\]]></string>
     <string name="earn_upto">\Earn upto ₹10,000 \</string>
     <string name="no_conditions_apply">No Conditions Apply</string>
@@ -1028,7 +1028,7 @@
     <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new new persons <b>के साथ</b>
 </string>
     <string name="share_screen_line">If I can do it, You can do it</string>
-    <string name="share_screen_heading"><![CDATA[\I Spoke in <strong>English</strong> for <br/> <strong>%1$s minutes</strong>\]]></string>
+    <string name="share_screen_heading"><![CDATA[\I Spoke in <b>English</b> for <br/> <b>%1$s minutes</b>\]]></string>
     <string name="caller_details">%1$s\n%2$s\n%3$s</string>
     <string name="you_practiced_in_english_prompt">You practiced in English for\n%1$s minutes</string>
     <string name="mehnat_prompt">Aise hi mehnat krte raho</string>
