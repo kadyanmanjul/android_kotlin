@@ -73,7 +73,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
     lateinit var fileName : String
-    var isEnglishSyllabusPdfOpened = false
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -87,9 +86,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     pdfPath = fileDir,
                     conversationId = this@FreeTrialPaymentActivity.intent.getStringExtra(CONVERSATION_ID)
                 )
-                isEnglishSyllabusPdfOpened = true
                 showToast(getString(R.string.downloaded_syllabus))
                 viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
+                PrefManager.put(IS_ENGLISH_SYLLABUS_PDF_OPENED, value = true)
             }
         }
     }
@@ -506,7 +505,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
-            if(isEnglishCardTapped && isEnglishSyllabusPdfOpened){
+            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
             }
         }

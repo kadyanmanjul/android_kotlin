@@ -106,6 +106,7 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
+const val IS_ENGLISH_SYLLABUS_PDF_OPENED = "is_english_syllabus_pdf_opened"
 
 object PrefManager {
 
