@@ -943,22 +943,26 @@ class WebRtcActivity : AppCompatActivity() {
         val channelName2 =
             if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
         if (time > 0 && channelName2.isNullOrEmpty().not()) {
-            val currentId =mBoundService?.getUserAgoraId()
-            val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
             runOnUiThread {
-                binding.placeholderBg.visibility = View.VISIBLE
-                VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                    channelName = channelName2,
-                    callTime = time,
-                    callerName = userDetailLiveData.value?.get("name"),
-                    callerImage = userDetailLiveData.value?.get("profile_pic"),
-                    yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                    yourAgoraId = mBoundService?.getUserAgoraId(),
-                    activity = this,
-                    flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                    callerId = callerId!!,
-                    currentUserId = currentId!!
-                )
+                try {
+                    val currentId =mBoundService?.getUserAgoraId()
+                    val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
+                    binding.placeholderBg.visibility = View.VISIBLE
+                    VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                        channelName = channelName2,
+                        callTime = time,
+                        callerName = userDetailLiveData.value?.get("name"),
+                        callerImage = userDetailLiveData.value?.get("profile_pic"),
+                        yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                        yourAgoraId = mBoundService?.getUserAgoraId(),
+                        activity = this,
+                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                        callerId = callerId!!,
+                        currentUserId = currentId!!
+                    )
+                } catch (ex:Exception){
+                    ex.printStackTrace()
+                }
                 this.finish()
             }
             mBoundService?.setOppositeUserInfo(null)
