@@ -102,7 +102,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
-//    private var customView: CustomWord? = null
+    //    private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
@@ -223,28 +223,28 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     private fun subscribeRxBus() {
         compositeDisposable.add(
-             RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
-                 .subscribeOn(Schedulers.io())
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe { event ->
+            RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { event ->
                     CustomWord(this, event.customWord.choice).apply {
                         binding.rootView.addView(this)
-                         this.text = event.customWord.choice.text
-                         this.x = event.fromLocation[0].toFloat()
-                         this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
-                         val toLocation = IntArray(2)
-                         event.customWord.getLocationOnScreen(toLocation)
+                        this.text = event.customWord.choice.text
+                        this.x = event.fromLocation[0].toFloat()
+                        this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
+                        val toLocation = IntArray(2)
+                        event.customWord.getLocationOnScreen(toLocation)
                         toLocation[1] = toLocation[1] - getStatusBarHeight()
                         this.translationAnimationNew(
-                             toLocation,
-                             event.customWord,
+                            toLocation,
+                            event.customWord,
                             event.optionLayout,
                             doOnAnimationEnd = {
                                 binding.rootView.removeView(this)
                             }
-                         )
-                     }
-                 }
+                        )
+                    }
+                }
         )
     }
 
@@ -513,11 +513,24 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    if (introVideoUrl.isNullOrBlank().not()) {
-                        viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
-                        viewModel.showHideSpeakingFragmentCallButtons(1)
-                        showIntroVideoUi()
+                    binding.overlayLayout.visibility = View.VISIBLE
+                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                    binding.spotlightTabVocab.visibility = View.INVISIBLE
+                    binding.spotlightTabReading.visibility = View.INVISIBLE
+                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                    binding.lessonSpotlightTooltip.setTooltipText(
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(TOOLTIP_SPEAKING_SCREEN + courseId)
+
+                    )
+                    binding.lessonSpotlightTooltip.post {
+                        slideInAnimation(binding.lessonSpotlightTooltip)
                     }
+                    binding.spotlightStartGrammarTest.visibility = View.GONE
+                    binding.spotlightCallBtn.visibility = View.VISIBLE
+                    binding.spotlightCallBtnText.visibility = View.VISIBLE
+                    binding.arrowAnimation.visibility = View.VISIBLE
                 }
 
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
