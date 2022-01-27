@@ -1,21 +1,27 @@
 package com.joshtalks.joshskills.repository.local.model
 
+import com.google.gson.annotations.SerializedName
+
 data class KFactor(
-    var duration_filter: Boolean,
-    var caller: PersonOnTheCall,
-    var receiver: PersonOnTheCall
 
-)
+    @SerializedName("duration_filter")
+    val duration_filter: Boolean,
 
-data class Caller(
-    var photo_url: String = "",
-    var name: String,
-    var district: String,
-    var state: String
+    @SerializedName("caller")
+    val caller: PersonOnTheCall,
+
+    @SerializedName("receiver")
+    val receiver: PersonOnTheCall
 )
 
 data class PersonOnTheCall(
-    var agora_mentor_id: Int,
-    var city: String?,
-    var state: String?
+
+    @SerializedName("agora_mentor_id")
+    val agora_mentor_id: Int,
+
+    @SerializedName("city")
+    val city: String?,
+
+    @SerializedName("state")
+    val state: String?
 )

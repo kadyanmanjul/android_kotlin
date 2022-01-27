@@ -297,16 +297,10 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view.tag = BEST_PERFORMER_EXAM_MESSAGE
                 BestStudentPerformerViewHolder(view, userId)
             }
-            FIRST_DAY_ACHIEVEMENT -> {
+            FIRST_DAY_ACHIEVEMENT, FIRST_WEEK_ACHIEVEMENT -> {
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.layout_first_day_achievement_item, parent, false)
-                view.tag = FIRST_DAY_ACHIEVEMENT
-                ReviewVideoViewHolder(view, userId)
-            }
-            FIRST_WEEK_ACHIEVEMENT -> {
-                view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.layout_first_day_achievement_item, parent, false)
-                view.tag = FIRST_WEEK_ACHIEVEMENT
+                view.tag = viewType
                 ReviewVideoViewHolder(view, userId)
             }
             BEST_PERFORMER_RACE -> {

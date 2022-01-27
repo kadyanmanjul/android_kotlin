@@ -21,14 +21,12 @@ const val BUNDLE_ARG_RECEIVER_DETAILS = "BUNDLE_ARG_RECEIVER_DETAILS"
 
 class ShareScreenFragment: Fragment() {
 
-//    private lateinit var binding: FragmentShareScreenBinding
     private lateinit var binding: FragmentSharePreviewBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_share_screen, container, false)
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_share_preview, container, false)
         return binding.root
     }
@@ -58,7 +56,6 @@ class ShareScreenFragment: Fragment() {
 
     override fun onStart() {
         super.onStart()
-//        populateTopAndBottomFragments()
     }
 
     fun getShareScreen() = binding.root
