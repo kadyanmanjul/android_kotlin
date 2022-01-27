@@ -88,9 +88,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     lateinit var introVideoUrl: String
-    var result = 0L
-    var flag = true
-    var d2pVideoWatchedDurationPercent = 0L
+    var lastVideoWatchedDuration = 0L
+    var d2pIntroVideoWatchedDuration = 0L
     lateinit var titleView: TextView
     private var isDemo = false
     private var isNewGrammar = false
@@ -512,16 +511,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 ->{
-                    viewModel.lessonLiveData.observe(this, {
-                        if (it.lessonNo == 1 && flag == true) {
-                            flag = false
-                            viewModel.saveD2pImpression(true, startedPlayingVideo = true)
-                            viewModel.showHideSpeakingFragmentCallButtons(1)
-                            showIntroVideoUi()
-                        }
-                    })
-
+                    viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
+                    viewModel.showHideSpeakingFragmentCallButtons(1)
+                    showIntroVideoUi()
                 }
+
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
                     binding.overlayLayout.visibility = View.VISIBLE
                     binding.spotlightTabGrammar.visibility = View.INVISIBLE
@@ -990,8 +984,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun showSpeakingSpotlight() {
-        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+        if(lessonNumber == 1) {
+            viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+            PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+        }
     }
 
     private fun showConvoRoomSpotlight() {
@@ -1207,6 +1203,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
         binding.videoView.setUrl(introVideoUrl)
         binding.videoView.onStart()
+        viewModel.saveIntroVideoFlowImpression(INTRO_VIDEO_STARTED_PLAYING)
         binding.videoView.setPlayListener {
             val currentVideoProgressPosition = binding.videoView.getProgress()
             openVideoPlayerActivity.launch(
@@ -1237,7 +1234,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.videoView.setClipToOutline(true)
 
         binding.videoCallBtn.setOnClickListener {
-            viewModel.saveD2pImpression(callBtnClicked = true)
+            viewModel.saveIntroVideoFlowImpression(CALL_BUTTON_CLICKED_FROM_NEW_SCREEN)
             callPracticePartner()
         }
     }
@@ -1253,11 +1250,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.GONE
         binding.videoView.onStop()
-        if(result > d2pVideoWatchedDurationPercent){
-            result = 0
+        if(lastVideoWatchedDuration > d2pIntroVideoWatchedDuration){
+             lastVideoWatchedDuration = 0
         }
-        viewModel.saveD2pImpression(videoDuration = d2pVideoWatchedDurationPercent-result)
-        result = d2pVideoWatchedDurationPercent
+        viewModel.saveIntroVideoFlowImpression(TIME_SPENT_ON_INTRO_VIDEO, (d2pIntroVideoWatchedDuration - lastVideoWatchedDuration))
+        lastVideoWatchedDuration = d2pIntroVideoWatchedDuration
     }
 
     private fun setUpVideoProgressListener() {
@@ -1280,7 +1277,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
 
                         if (percentVideoWatched != 0 ) {
-                            d2pVideoWatchedDurationPercent = mediaProgressEvent.watchTime
+                            d2pIntroVideoWatchedDuration = mediaProgressEvent.watchTime
                         }
 
                         if (videoPercent != 0 && videoPercent >= 80) {

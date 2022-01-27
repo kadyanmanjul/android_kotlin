@@ -760,23 +760,15 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun saveD2pImpression(
-        speakingTabClicked: Boolean? = null, startedPlayingVideo: Boolean? = null,
-        videoDuration: Long? = null, callBtnClicked: Boolean? = null, callDuration: Int? = null,
-        howToSpeak: Boolean? = null
-    ) {
-        viewModelScope.launch {
+    fun saveIntroVideoFlowImpression(eventName : String, eventDuration : Long = 0L) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val requestData = D2pSendImpression(
-                    mentorId = Mentor.getInstance().getId(),
-                    speakingTabClicked = speakingTabClicked,
-                    startedPlayingVideo = startedPlayingVideo,
-                    videoTimeDuration = videoDuration,
-                    callBtnClicked = callBtnClicked,
-                    timeSpentOnCall = callDuration,
-                    howToSpeakClicked = howToSpeak
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName),
+                    Pair("duration", eventDuration)
                 )
-                AppObjectController.commonNetworkService.saveD2pImpression(requestData)
+                AppObjectController.commonNetworkService.saveIntroVideoFlowImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
