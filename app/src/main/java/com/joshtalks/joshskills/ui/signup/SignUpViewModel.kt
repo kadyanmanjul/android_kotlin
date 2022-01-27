@@ -424,7 +424,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                             "is_verified" to User.getInstance().isVerified.toString(),
                             "mentor_id" to mentorId,
                             "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
-                            "event_name" to IMPRESSION_REGISTER_FREE_TRIAL
+                            "event_name" to IMPRESSION_REGISTER_FREE_TRIAL,
+                            "test_id" to PrefManager.getStringValue(TEST_ID, false, DEFAULT_COURSE_ID)
                         )
                     )
 
