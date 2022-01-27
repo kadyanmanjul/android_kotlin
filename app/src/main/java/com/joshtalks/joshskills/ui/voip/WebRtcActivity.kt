@@ -940,12 +940,11 @@ class WebRtcActivity : AppCompatActivity() {
         if (time <= 0) {
             time = callTime
         }
-        val currentId =mBoundService?.getUserAgoraId()
-        val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
-        Timber.tag("naman").d("$currentId  $callerId  ${mBoundService?.getOppositeUserInfo()}")
         val channelName2 =
             if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
         if (time > 0 && channelName2.isNullOrEmpty().not()) {
+            val currentId =mBoundService?.getUserAgoraId()
+            val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
             runOnUiThread {
                 binding.placeholderBg.visibility = View.VISIBLE
                 VoipCallFeedbackActivity.startPtoPFeedbackActivity(
