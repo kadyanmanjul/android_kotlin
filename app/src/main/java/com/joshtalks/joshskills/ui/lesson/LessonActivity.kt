@@ -84,10 +84,12 @@ const val READING_POSITION = 3
 const val ROOM_POSITION = 4
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 private const val TAG = "LessonActivity"
+const val TOOLTIP_LESSON_GRAMMAR = "TOOLTIP_LESSON_GRAMMAR_"
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
 
     private lateinit var binding: LessonActivityBinding
+    private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(this).get(LessonViewModel::class.java)
@@ -1244,7 +1246,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.itemOverlay.visibility = View.VISIBLE
             arrowView.visibility = View.VISIBLE
             itemImageView.visibility = View.VISIBLE
-            tooltipView.setTooltipText("आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे")
+            tooltipView.setTooltipText(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(TOOLTIP_LESSON_GRAMMAR + courseId)
+
+            )
             slideInAnimation(tooltipView)
             PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
         }

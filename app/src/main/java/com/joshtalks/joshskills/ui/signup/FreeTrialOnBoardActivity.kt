@@ -271,7 +271,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         hideProgressBar()
     }
 
-    private fun openProfileDetailFragment(testId: String = EMPTY) {
+    private fun openProfileDetailFragment(testId: String = DEFAULT_TEST_ID) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
