@@ -719,7 +719,7 @@
             android:gravity="center"
             android:padding="@dimen/_18sdp"
             android:visibility="gone"
-            app:tooltipText="आपके सहपाठी कौन है आप यहाँ से देख सकते है"
+            app:tooltipText="@{handler.getConversationTooltip()}"
             tools:visibility="gone" />
 
 

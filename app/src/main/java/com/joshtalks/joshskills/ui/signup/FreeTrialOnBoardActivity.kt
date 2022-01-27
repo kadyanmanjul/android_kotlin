@@ -115,7 +115,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    private fun openProfileDetailFragment(testId: String = TEST_ID) {
+    private fun openProfileDetailFragment(testId: String = DEFAULT_TEST_ID) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)

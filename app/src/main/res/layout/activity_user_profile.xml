@@ -118,7 +118,7 @@
                         android:gravity="center"
                         android:padding="@dimen/_18sdp"
                         android:visibility="gone"
-                        app:tooltipText="हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै"
+                        app:tooltipText="@{handler.getUserProfileTooltip()}"
                         tools:visibility="visible" />
 
                     <androidx.appcompat.widget.AppCompatTextView

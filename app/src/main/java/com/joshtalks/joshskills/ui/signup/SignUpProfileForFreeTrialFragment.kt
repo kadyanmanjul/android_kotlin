@@ -74,7 +74,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
     private fun initUI() {
 
         binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FREE_TRIAL_ENTER_NAME_TEXT + requireArguments().getString(TEST_ID, TEST_ID))
+            .getString(FREE_TRIAL_ENTER_NAME_TEXT + requireArguments().getString(TEST_ID, DEFAULT_TEST_ID))
         binding.nameEditText.setText(username)
         binding.nameEditText.isEnabled = true
 

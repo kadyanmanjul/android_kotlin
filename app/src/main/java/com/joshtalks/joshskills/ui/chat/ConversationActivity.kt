@@ -122,6 +122,7 @@ const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
 const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
+const val TOOLTIP_CONVERSAITON = "TOOLTIP_CONVERSAITON_"
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -2153,4 +2154,11 @@ class ConversationActivity :
         Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
+
+    fun getConversationTooltip() : String {
+        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        return AppObjectController
+            .getFirebaseRemoteConfig().getString(TOOLTIP_CONVERSAITON + courseId)
+    }
+
 }

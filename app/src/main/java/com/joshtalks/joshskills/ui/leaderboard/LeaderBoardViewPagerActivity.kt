@@ -9,9 +9,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.Window
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
@@ -42,15 +40,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_BATCH_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_ITEM_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_LEADERBOARD_LIFETIME_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_MONTHS_WINNER_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TODAYS_WINNER_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_WEEKS_WINNER_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.NEED_VIEW_BITMAP
-import com.joshtalks.joshskills.ui.leaderboard.constants.PROFILE_ITEM_CLICKED
-import com.joshtalks.joshskills.ui.leaderboard.constants.SCROLL_TO_TOP
+import com.joshtalks.joshskills.ui.leaderboard.constants.*
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -61,15 +51,16 @@ import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import java.util.*
+
+const val TOOLTIP_OPEN_PROFILE = "TOOLTIP_OPEN_PROFILE_"
+const val TOOLTIP_SEARCH_ANYONE = "TOOLTIP_SEARCH_ANYONE_"
+const val TOOLTIP_LEADERBOARD_SOTD = "TOOLTIP_LEADERBOARD_SOTD_"
+const val TOOLTIP_LEADERBOARD_SOTW = "TOOLTIP_LEADERBOARD_SOTW_"
+const val TOOLTIP_LEADERBOARD_SOTM = "TOOLTIP_LEADERBOARD_SOTM_"
+const val TOOLTIP_LEADERBOARD_LIFETIME = "TOOLTIP_LEADERBOARD_LIFETIME_"
 
 
 class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
@@ -110,6 +101,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         initToolbar()
         initViewPager()
         addObserver()
+        addLeaderboardTooltips()
         /*PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, false)
         PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, false)
         PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, false)
@@ -117,6 +109,19 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         PrefManager.put(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, false)*/
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
+
+    private fun addLeaderboardTooltips() {
+
+
+
+        tooltipTextList[0] =
+            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTD + getCourseId())
+        tooltipTextList[1] =
+            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTW + getCourseId())
+        tooltipTextList[2] =
+            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTM + getCourseId())
+    }
+
 
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
@@ -264,7 +269,10 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         val isLastCall = PrefManager.getBoolValue(P2P_LAST_CALL)
         if (lbOpenCount >= 4 || isLastCall) {
             val balloon = Balloon.Builder(this)
-                .setText(getString(R.string.search_tooltip))
+                .setText(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(TOOLTIP_SEARCH_ANYONE + getCourseId())
+                )
                 .setTextSize(15F)
                 .setTextColor(ContextCompat.getColor(this, R.color.black))
                 .setArrowOrientation(ArrowOrientation.TOP)
@@ -937,7 +945,13 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         binding.itemTabOverlay.visibility = VISIBLE
         arrowView.visibility = VISIBLE
         itemImageView.visibility = VISIBLE
-        tooltipView.setTooltipText("आप किसी की भी Profile खोल सकते हैं")
+
+        //show open profile tooltip
+        tooltipView.setTooltipText(
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(TOOLTIP_OPEN_PROFILE + getCourseId())
+        )
+
         slideInAnimation(tooltipView)
         CoroutineScope(Dispatchers.IO).launch {
             showTapToDismiss(tapToDismissView, arrowView, tooltipView)

@@ -38,12 +38,10 @@ import com.skydoves.balloon.*
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import java.util.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+
+const val TOOLTIP_ONLINE_STATUS = "TOOLTIP_ONLINE_STATUS_"
 
 class LeaderBoardFragment : Fragment(), ViewInflated {
     private val TAG = "LeaderBoardFragment"
@@ -483,7 +481,10 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                         val item =
                             binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
                         val balloon = Balloon.Builder(requireContext())
-                            .setText(getString(R.string.online_tooltip))
+                            .setText(
+                                AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(TOOLTIP_ONLINE_STATUS + (requireActivity() as LeaderBoardViewPagerActivity).getCourseId())
+                            )
                             .setTextSize(15F)
                             .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                             .setDismissWhenTouchOutside(true)
