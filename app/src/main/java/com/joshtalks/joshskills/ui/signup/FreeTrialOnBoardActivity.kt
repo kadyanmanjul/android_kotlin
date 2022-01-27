@@ -150,6 +150,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
     fun showStartTrialPopup(language: ChooseLanguages) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
+        PrefManager.put(TEST_ID, language.testId)
         layout.btnStartTrial.pauseAnimation()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
@@ -272,7 +273,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
     }
 
     private fun openProfileDetailFragment(testId: String = DEFAULT_TEST_ID) {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+//        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
