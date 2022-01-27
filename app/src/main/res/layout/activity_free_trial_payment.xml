@@ -351,38 +351,31 @@
                             android:id="@+id/text_header_syllabus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/_13sdp"
-                            android:text="@string/the_ultimate_spoken_english_n_course_syllabus"
-                            android:textStyle="normal"
-                            android:layout_marginTop="@dimen/_3sdp"
                             android:layout_marginLeft="@dimen/_14sdp"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:fontFamily="sans-serif-black"
+                            android:layout_marginTop="@dimen/_3sdp"
+                            android:text="@string/the_ultimate_spoken_english_n_course_syllabus"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                             android:textColor="@color/black"
-                            app:layout_constraintTop_toTopOf="@+id/img_syllabus"
                             app:layout_constraintStart_toEndOf="@+id/img_syllabus"
-                            />
+                            app:layout_constraintTop_toTopOf="@+id/img_syllabus" />
 
                         <ImageView
                             android:id="@+id/img_download_syllabus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_img_download"
                             android:layout_marginLeft="@dimen/_14sdp"
-                            android:layout_marginTop="@dimen/_4sdp"
-                            app:layout_constraintTop_toBottomOf="@+id/text_header_syllabus"
-                            app:layout_constraintStart_toEndOf="@+id/img_syllabus"/>
-
+                            android:layout_marginTop="@dimen/_3sdp"
+                            android:src="@drawable/ic_img_download"
+                            app:layout_constraintStart_toEndOf="@+id/img_syllabus"
+                            app:layout_constraintTop_toBottomOf="@+id/text_header_syllabus" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/_10sdp"
-                            android:textStyle="normal"
-                            android:textColor="#484848"
                             android:gravity="center_horizontal"
                             android:layout_marginLeft="@dimen/_5sdp"
-                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/gray_48"
+                            android:textAppearance="@style/TabLayoutStyleReport"
                             app:layout_constraintBottom_toBottomOf="@+id/img_download_syllabus"
                             app:layout_constraintTop_toTopOf="@+id/img_download_syllabus"
                             app:layout_constraintStart_toEndOf="@+id/img_download_syllabus"
