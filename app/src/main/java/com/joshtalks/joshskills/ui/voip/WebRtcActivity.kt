@@ -1130,7 +1130,9 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
         if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
 //            face is near to sensor
-            turnScreenOff()
+            if (mBoundService?.getSpeaker() == false) {
+                turnScreenOff()
+            }
         } else {
 //            face is away from sensor
             turnScreenOn()
@@ -1138,13 +1140,12 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun turnScreenOff() {
-        if(!lock.isHeld) lock.acquire(10*60*1000L /*10 minutes*/)
+        if (!lock.isHeld) lock.acquire(10 * 60 * 1000L /*10 minutes*/)
     }
 
     private fun turnScreenOn() {
-        if(lock.isHeld) lock.release()
+        if (lock.isHeld) lock.release()
     }
-
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
