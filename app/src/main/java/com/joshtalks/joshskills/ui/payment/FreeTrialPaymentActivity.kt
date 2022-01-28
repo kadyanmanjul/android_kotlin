@@ -69,7 +69,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     var headingText = mutableListOf<String>()
     private var countdownTimerBack: CountdownTimerBack? = null
 
-    lateinit var pdfUrl : String
+    var pdfUrl : String?= null
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
     lateinit var fileName : String
@@ -124,7 +124,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         viewModel.getD2pSyllabusPdfData()
         binding.syllabusPdfCard.setOnClickListener {
-            getPermissionAndDownloadSyllabus(pdfUrl)
+            if(pdfUrl.isNullOrBlank().not()) {
+                getPermissionAndDownloadSyllabus(pdfUrl!!)
+            }else{
+                showToast("Something Went wrong")
+            }
         }
         viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
     }
