@@ -415,6 +415,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val resp =
                     AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
                         mapOf(
+                            "is_verified" to User.getInstance().isVerified.toString(),
                             "mentor_id" to mentorId,
                             "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                             "event_name" to IMPRESSION_REGISTER_FREE_TRIAL

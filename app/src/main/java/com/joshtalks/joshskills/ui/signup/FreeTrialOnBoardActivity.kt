@@ -172,7 +172,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 hideProgressBar()
-                openProfileDetailFragment(true)
+                viewModel.isVerified = true
+                openProfileDetailFragment()
             }
         }
     }
@@ -188,13 +189,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         hideProgressBar()
     }
 
-    private fun openProfileDetailFragment(isVerified:Boolean = false ) {
+    private fun openProfileDetailFragment() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: "",isVerified),
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: "",viewModel.isVerified),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }

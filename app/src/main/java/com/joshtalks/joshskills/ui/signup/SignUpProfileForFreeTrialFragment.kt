@@ -31,7 +31,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     private var isUserVerified = isVerified
 
     companion object {
-        fun newInstance(name: String,isVerified:Boolean = false) = SignUpProfileForFreeTrialFragment(name,isVerified)
+        fun newInstance(name: String,isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name,isVerified)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

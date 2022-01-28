@@ -28,6 +28,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
     val service = AppObjectController.signUpNetworkService
     var userName: String? = null
+    var isVerified: Boolean = false
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
