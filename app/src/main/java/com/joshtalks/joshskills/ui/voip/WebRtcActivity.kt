@@ -92,6 +92,8 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
     private var isAnimationCancled = false
     private var callType: CallType? = null
+    private var callieId:String=""
+    private var callerId:String=""
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -633,6 +635,8 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
+            callerId= map?.get("caller_uid").toString()
+            callieId =CurrentCallDetails.callieUid
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -962,8 +966,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (time > 0 && channelName2.isNullOrEmpty().not()) {
             runOnUiThread {
                 try {
-                    val currentId =mBoundService?.getUserAgoraId()
-                    val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
                     binding.placeholderBg.visibility = View.VISIBLE
                     VoipCallFeedbackActivity.startPtoPFeedbackActivity(
                         channelName = channelName2,
@@ -974,8 +976,8 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         yourAgoraId = mBoundService?.getUserAgoraId(),
                         activity = this,
                         flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                        callerId = callerId!!,
-                        currentUserId = currentId!!
+                        callerId = Integer.parseInt(callerId),
+                        currentUserId =Integer.parseInt(callieId)
                     )
                 } catch (ex:Exception){
                     ex.printStackTrace()
