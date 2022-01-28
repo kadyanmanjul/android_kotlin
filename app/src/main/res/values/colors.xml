@@ -11,6 +11,7 @@
     <color name="checkmark_blue">#34B7F1</color>
 
     <color name="gray_53">#535664</color>
+    <color name="gray_94">#F0F0F0</color>
 
     <color name="button_activated">@color/colorAccent</color>
     <color name="gray_79">#797979</color>
@@ -120,6 +121,8 @@
     <color name="call_action_color">#5ee067</color>
     <color name="call_decline_color">#ef5050</color>
     <color name="brown">#511615</color>
+    <color name="report_black">#343434</color>
+
 
     <!-- Here you can add color of your choice  -->
     <color name="ucrop_color_toolbar">@color/colorPrimary</color>
@@ -190,33 +193,21 @@
     <color name="read_color">#777777</color>
     <color name="group_notif_bg">#FFF62A</color>
     <color name="group_notif_black_bg">#2F2F2F</color>
-
     <color name="game_name_color">#FF8F06</color>
     <color name="test_color">#FDFC01</color>
-
-
     <color name="transparent_color_notification">#66E00022</color>
     <color name="notification_timer">#35E00022</color>
-
     <color name="light_blue_quiz">#C5E5FE</color>
-
     <color name="blue">#126A96</color>
-
-
     <color name="blue2">#BF00b5d9</color>
     <color name="blue3">#6160C0D3</color>
-
-
     <color name="gray_light">#dfe6f3</color>
-
     <color name="gray_light_copy">#113239</color>
     <color name="blue2_copy">#126A96</color>
-
-
-
     <color name="black_quiz">#000000</color>
     <color name="red_quiz">#FE5552</color>
     <color name="shadow_progress_color_quiz">#055C39</color>
     <color name="progess_color_quiz">#13B673</color>
+    <color name="report_white">#F5F5F5</color>
 
 </resources>

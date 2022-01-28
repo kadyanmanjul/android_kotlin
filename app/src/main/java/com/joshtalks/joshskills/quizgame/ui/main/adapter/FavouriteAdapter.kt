@@ -1,9 +1,6 @@
 package com.joshtalks.joshskills.quizgame.ui.main.adapter
 
 import android.content.Context
-import android.graphics.Color
-import android.text.Spannable
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,17 +11,14 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
-import com.joshtalks.joshskills.quizgame.util.ACTIVE
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.IN_ACTIVE
-import com.joshtalks.joshskills.quizgame.util.UtilsQuiz
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
+import com.joshtalks.joshskills.quizgame.util.*
 
 
 class FavouriteAdapter(
     var context: Context, var arrayList: ArrayList<Favourite>?,
     private val openCourseListener: QuizBaseInterface,
-    var firebaseDatabase: FirebaseTemp
+    var firebaseDatabase: GameNotificationFirebaseData
 ) :
     RecyclerView.Adapter<FavouriteAdapter.FavViewHolder>() {
 
@@ -80,23 +74,11 @@ class FavouriteAdapter(
             val upperString = capitalizeString(favouriteDemoData?.name)
             binding.userName.text = UtilsQuiz.getSplitName(upperString)
             binding.status.text = favouriteDemoData?.status
-            if (favouriteDemoData?.name?.lowercase()?.contains(search ?: "") == true) {
-                val startPos: Int? = favouriteDemoData.name?.lowercase()?.indexOf(search ?: "")
-                val endPos: Int? = startPos?.plus(search?.length ?: 0)
-                val spanString: Spannable =
-                    Spannable.Factory.getInstance().newSpannable(binding.userName.text)
-                spanString.setSpan(
-                    ForegroundColorSpan(Color.RED),
-                    startPos ?: 0,
-                    endPos ?: 0,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                binding.userName.text = spanString
-            }
 
             when (favouriteDemoData?.status) {
                 ACTIVE -> {
                     binding.clickToken.setImageResource(R.drawable.ic_plus1)
+                    binding.clickToken.visibility = View.VISIBLE
                     binding.clickToken.setOnClickListener(View.OnClickListener {
                         AudioManagerQuiz.audioRecording.startPlaying(
                             context,
@@ -117,7 +99,10 @@ class FavouriteAdapter(
                 IN_ACTIVE -> {
                     binding.clickToken.visibility = View.INVISIBLE
                 }
-                else -> {
+                SEARCHING -> {
+                    binding.clickToken.visibility = View.INVISIBLE
+                }
+                IN_GAME -> {
                     binding.clickToken.visibility = View.INVISIBLE
                 }
             }
@@ -136,7 +121,7 @@ class FavouriteAdapter(
     fun capitalizeString(str: String?): String {
         var retStr = str
         try {
-            retStr = str?.substring(0, 1)?.toUpperCase() + str?.substring(1)
+            retStr = str?.substring(0, 1)?.uppercase() + str?.substring(1)
         } catch (e: Exception) {
         }
         return retStr ?: ""

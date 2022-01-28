@@ -13,7 +13,7 @@ const val ACCEPT_REQUEST = "Accept_Request"
 const val FRIEND_REQUEST = "FriendRequest"
 
 
-class FirebaseTemp {
+class GameNotificationFirebaseData {
     private var database = FirebaseFirestore.getInstance()
 
     private var collectionReference: CollectionReference = database.collection(REQUEST_NOTIFICATION)
@@ -25,6 +25,7 @@ class FirebaseTemp {
     var userName: String? = Mentor.getInstance().getUser()?.firstName
     var imageUrl: String? = Mentor.getInstance().getUser()?.photo
 
+    var onNotificationTriggerTemp:OnNotificationTriggerTemp?=null
     fun createRequest(favUserId: String?, channelName: String?, mentorId: String) {
         val channel: HashMap<String, Any> = HashMap()
         channel["fromUserId"] = mentorId
@@ -38,11 +39,11 @@ class FirebaseTemp {
 
     fun getUserDataFromFirestore(
         mentorId: String,
-        onNotificationTrigger1: OnNotificationTriggerTemp
+        onNotificationTrigger: OnNotificationTriggerTemp
     ) {
+        this.onNotificationTriggerTemp = onNotificationTrigger
         try {
-            val cr: CollectionReference = database.collection(REQUEST_NOTIFICATION)
-            cr.addSnapshotListener { value, e ->
+            collectionReference.addSnapshotListener { value, e ->
                 if (e != null) {
                     return@addSnapshotListener
                 }
@@ -53,7 +54,7 @@ class FirebaseTemp {
                             val fromUserId = doc.data["fromUserId"].toString()
                             val fromUserName = doc.data["fromUserName"].toString()
                             val fromImageUrl = doc.data["fromImageUrl"]?.toString()
-                            onNotificationTrigger1.onNotificationForInvitePartnerTemp(
+                            onNotificationTriggerTemp?.onNotificationForInvitePartnerTemp(
                                 channelName,
                                 fromUserId,
                                 fromUserName,
@@ -68,48 +69,19 @@ class FirebaseTemp {
         }
     }
 
-    fun deleteUserData(mentorId: String, fromUserMentorId: String) {
-        var mId: String? = mentorId
-        var fUMId: String? = fromUserMentorId
-        collectionReference.addSnapshotListener { value, e ->
-            if (e != null) {
-                return@addSnapshotListener
-            }
-            for (doc in value!!) {
-                if (doc.exists()) {
-                    if (mId == doc.id) {
-                        var fromUserId: String? = doc.data["fromUserId"].toString()
-                        if (fromUserId == fUMId) {
-                            try {
-                                collectionReference.document(mId ?: "").delete()
-                                    .addOnCompleteListener(
-                                        OnCompleteListener {
-                                            //createRequestDecline(fromUserId ?: "", userName, imageUrl,mId?:"")
-                                            fromUserId = ""
-                                            fUMId = ""
-                                            mId = ""
-                                        })
-                            } catch (ex: Exception) {
-
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    fun deleteUserData(mentorId: String) {
+        collectionReference.document(mentorId).delete()
     }
 
     fun getAcceptCall(mentorId: String, onNotificationTrigger123: OnNotificationTriggerTemp) {
-        val acceptRequestC: CollectionReference = database.collection(ACCEPT_REQUEST)
-        val mID: String = mentorId
-        acceptRequestC
+        acceptRequestCollection
             .addSnapshotListener { value, e ->
                 if (e != null) {
                     return@addSnapshotListener
                 }
                 for (doc in value!!) {
                     if (doc.exists()) {
-                        if (mID == doc.id) {
+                        if (mentorId == doc.id) {
                             val channelName = doc.data["channelName"].toString()
                             val timestamp = doc.data["timestamp"].toString()
                             val isAccept = doc.data["isAccept"].toString()
@@ -257,24 +229,7 @@ class FirebaseTemp {
     }
 
     fun deleteDataAcceptRequest(mentorId: String) {
-        var mId: String? = mentorId
-        val acceptRequestC: CollectionReference = database.collection(ACCEPT_REQUEST)
-        acceptRequestC
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mId == doc.id) {
-                            acceptRequestC.document(mentorId).delete().addOnCompleteListener(
-                                OnCompleteListener {
-                                    mId = null
-                                })
-                        }
-                    }
-                }
-            }
+        acceptRequestCollection.document(mentorId).delete()
     }
 
     fun getFriendRequests(

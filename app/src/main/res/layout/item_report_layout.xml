@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="issue"
+            type="com.joshtalks.joshskills.ui.voip.voip_rating.model.OptionModel" />
+    </data>
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/issueItem"
+    android:text="@{issue.option}"
+    android:layout_margin="@dimen/_5sdp"
+    android:textColor="@color/report_black"
+    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+    android:background="@drawable/white_button_round_enabled"
+    android:paddingTop="@dimen/_10sdp"
+    android:paddingBottom="@dimen/_10sdp"
+    android:paddingLeft="@dimen/_12sdp"
+    android:paddingRight="@dimen/_12sdp" />
+</layout>

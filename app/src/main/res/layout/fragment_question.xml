@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="clickHandler"
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.QuestionFragment" />
     </data>
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/img_5">
 
             <RelativeLayout
-                android:visibility="visible"
                 android:id="@+id/images_team1"
                 android:layout_width="@dimen/_80sdp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_18sdp"
-                android:layout_height="wrap_content">
+                android:visibility="visible">
 
 
                 <RelativeLayout
@@ -105,93 +108,99 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:layout_width="@dimen/_55sdp"
+                android:layout_height="@dimen/_55sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_22sdp">
+
+                <com.joshtalks.joshskills.quizgame.ui.main.view.customview.InnerProgressViewFirstClick
+                    android:id="@+id/progress"
                     android:layout_width="@dimen/_55sdp"
                     android:layout_height="@dimen/_55sdp"
-                    android:layout_marginTop="@dimen/_22sdp"
-                    android:layout_centerHorizontal="true">
+                    android:layout_centerInParent="true"
+                    android:visibility="visible" />
 
-                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.InnerProgressViewFirstClick
-                        android:id="@+id/progress"
-                        android:layout_width="@dimen/_55sdp"
-                        android:layout_height="@dimen/_55sdp"
-                        android:layout_centerInParent="true"
-                        android:visibility="visible" />
+                <com.joshtalks.joshskills.quizgame.ui.main.view.customview.OuterProgressBarViewForSecondClick
+                    android:id="@+id/progress1"
+                    android:layout_width="@dimen/_55sdp"
+                    android:layout_height="@dimen/_55sdp"
+                    android:layout_centerInParent="true"
+                    android:visibility="visible" />
 
-                    <com.joshtalks.joshskills.quizgame.ui.main.view.customview.OuterProgressBarViewForSecondClick
-                        android:id="@+id/progress1"
-                        android:layout_width="@dimen/_55sdp"
-                        android:layout_height="@dimen/_55sdp"
-                        android:layout_centerInParent="true"
-                        android:visibility="visible" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
 
-                   <RelativeLayout
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_centerInParent="true">
-
-                       <androidx.appcompat.widget.AppCompatTextView
-                           android:id="@+id/count"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:layout_marginRight="1dp"
-                           android:text="@string/fiften"
-                           android:textColor="#00b5d9"
-                           android:textStyle="bold" />
-                   </RelativeLayout>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="1dp"
+                        android:text="@string/fiften"
+                        android:textColor="#00b5d9"
+                        android:textStyle="bold" />
                 </RelativeLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/txt_layout1"
-                android:visibility="visible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_28sdp"
                 android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_28sdp"
                 android:layout_toRightOf="@+id/images_team1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team1_user1_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_45sdp"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:ellipsize="end"
                     android:gravity="start"
-                    android:text="@string/user_name"
                     android:maxLength="8"
-                    android:textColor="#fff"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold" />
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:text="@string/user_name"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textColor="#fff" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team1_user2_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_45sdp"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:ellipsize="end"
                     android:gravity="start"
-                    android:text="@string/user_name"
                     android:maxLength="8"
-                    android:textColor="#fff"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold" />
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:text="@string/user_name"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textColor="#fff" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/marks1"
                     android:layout_width="@dimen/_42sdp"
                     android:layout_height="0dp"
-                    android:gravity="start"
                     android:layout_weight="1"
+                    android:gravity="start"
                     android:text="@string/zero"
-                    android:textColor="#fff"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textColor="#fff" />
 
             </LinearLayout>
 
             <RelativeLayout
-                android:visibility="visible"
                 android:id="@+id/images_team2"
                 android:layout_width="@dimen/_80sdp"
-                android:layout_marginTop="@dimen/_18sdp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/_18sdp"
                 android:layout_marginRight="@dimen/_4sdp"
-                android:layout_height="wrap_content">
+                android:visibility="visible">
 
 
                 <RelativeLayout
@@ -219,15 +228,15 @@
                 <RelativeLayout
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="@dimen/_72sdp"
-                    android:layout_marginRight="@dimen/_3sdp"
-                    android:layout_alignParentRight="true">
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/_3sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/team2_user_image2"
                         android:layout_width="@dimen/_47sdp"
                         android:layout_height="@dimen/_47sdp"
-                        android:src="@drawable/josh_skill"
                         android:layout_alignParentRight="true"
+                        android:src="@drawable/josh_skill"
                         app:civ_border_color="@color/light_blue"
                         app:civ_border_width="@dimen/_2sdp" />
 
@@ -253,25 +262,29 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team2_user1_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_40sdp"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="@string/user_name"
+                    android:ellipsize="end"
                     android:gravity="end"
-                    android:layout_gravity="end"
                     android:maxLength="8"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:text="@string/user_name"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="#fff" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/team2_user2_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_40sdp"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="@string/user_name"
-                    android:maxLength="8"
+                    android:ellipsize="end"
                     android:gravity="end"
-                    android:layout_gravity="end"
+                    android:maxLength="8"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:text="@string/user_name"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="#fff" />
 
@@ -280,8 +293,8 @@
                     android:layout_width="@dimen/_42sdp"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="@string/zero"
                     android:gravity="end"
+                    android:text="@string/zero"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="#fff" />
@@ -291,11 +304,11 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/images_team1"
+                android:layout_centerHorizontal="true"
                 android:layout_marginLeft="@dimen/_23sdp"
-                android:layout_marginRight="@dimen/_23sdp"
-                android:layout_marginTop="@dimen/_20sdp">
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_23sdp">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/question"
@@ -316,37 +329,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:visibility="invisible"
                 android:layout_centerHorizontal="true"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="invisible">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/round_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/round_1"
-                    android:visibility="visible"
-                    android:textStyle="bold"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
                     android:layout_gravity="center_horizontal"
-                    android:textSize="@dimen/_25sdp"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:text="@string/round_1"
+                    android:textAlignment="center"
                     android:textColor="@color/white"
-                    android:includeFontPadding = "false">
-                </androidx.appcompat.widget.AppCompatTextView>
+                    android:textSize="@dimen/_25sdp"
+                    android:textStyle="bold"
+                    android:visibility="visible"></androidx.appcompat.widget.AppCompatTextView>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/get_ready_"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="invisible"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/get_ready_"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/_15sdp"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:gravity="center_horizontal|top"
+                    android:text="@string/get_ready_"
                     android:textColor="@color/white"
-                    android:gravity="center_horizontal|top" />
+                    android:textSize="@dimen/_15sdp"
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
             </LinearLayout>
 
 
@@ -363,32 +375,32 @@
                 android:visibility="invisible">
 
                 <RelativeLayout
-                        android:id="@+id/card1"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_70sdp"
-                        android:layout_marginTop="@dimen/_6sdp"
-                        android:background="@drawable/custom_layout">
+                    android:id="@+id/card1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/custom_layout">
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:visibility="invisible"
-                            android:id="@+id/image_card_left1"
-                            android:layout_width="@dimen/_18sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:layout_marginLeft="-13dp"
-                            android:scaleType="fitXY"
-                            android:layout_centerVertical="true"
-                            app:srcCompat="@drawable/ic_left_cut_card_icon" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/image_card_left1"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="-13dp"
+                        android:scaleType="fitXY"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:visibility="invisible"
-                            android:id="@+id/image_card_right1"
-                            android:layout_width="@dimen/_18sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginRight="-13dp"
-                            android:scaleType="fitXY"
-                            android:layout_centerVertical="true"
-                            app:srcCompat="@drawable/ic_right_cut_card" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/image_card_right1"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="-13dp"
+                        android:scaleType="fitXY"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/ic_right_cut_card" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer1"
@@ -401,7 +413,7 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                         android:textColor="#151415"
                         android:textStyle="bold" />
-                    </RelativeLayout>
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/card2"
@@ -409,25 +421,26 @@
                     android:layout_height="@dimen/_70sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
+
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:visibility="invisible"
                         android:id="@+id/image_card_left2"
                         android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
-                        android:layout_centerVertical="true"
+                        android:visibility="invisible"
                         app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:visibility="invisible"
                         android:id="@+id/image_card_right2"
                         android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginRight="-13dp"
                         android:scaleType="fitXY"
-                        android:layout_centerVertical="true"
+                        android:visibility="invisible"
                         app:srcCompat="@drawable/ic_right_cut_card" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -449,25 +462,26 @@
                     android:layout_height="@dimen/_70sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
+
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:visibility="invisible"
                         android:id="@+id/image_card_left3"
                         android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
-                        android:layout_centerVertical="true"
+                        android:visibility="invisible"
                         app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:visibility="invisible"
                         android:id="@+id/image_card_right3"
                         android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginRight="-13dp"
                         android:scaleType="fitXY"
-                        android:layout_centerVertical="true"
+                        android:visibility="invisible"
                         app:srcCompat="@drawable/ic_right_cut_card" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -489,26 +503,28 @@
                     android:layout_height="@dimen/_70sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/custom_layout">
+
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:visibility="invisible"
                         android:id="@+id/image_card_left4"
                         android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="-13dp"
                         android:scaleType="fitXY"
-                        android:layout_centerVertical="true"
+                        android:visibility="invisible"
                         app:srcCompat="@drawable/ic_left_cut_card_icon" />
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:visibility="invisible"
                         android:id="@+id/image_card_right4"
                         android:layout_width="@dimen/_18sdp"
                         android:layout_height="@dimen/_24sdp"
                         android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginRight="-13dp"
                         android:scaleType="fitXY"
-                        android:layout_centerVertical="true"
+                        android:visibility="invisible"
                         app:srcCompat="@drawable/ic_right_cut_card" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/answer4"
                         android:layout_width="wrap_content"
@@ -534,19 +550,18 @@
                 android:layout_marginBottom="@dimen/_23sdp"
                 android:background="@drawable/vertical_black"
                 android:progress="0"
-                android:secondaryProgress="0"
-                />
+                android:secondaryProgress="0" />
 
             <ProgressBar
                 android:id="@+id/vertical_progressbar1"
-                android:layout_width="@dimen/_10sdp"
                 style="@style/Widget.ProgressBar.Vertical"
+                android:layout_width="@dimen/_10sdp"
                 android:layout_height="@dimen/_300sdp"
-                android:background="@drawable/vertical_black"
-                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/_23sdp"
                 android:layout_alignParentBottom="true"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_23sdp"
+                android:background="@drawable/vertical_black"
                 android:progress="0"
                 android:secondaryProgress="0" />
 

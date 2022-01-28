@@ -5,20 +5,21 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import com.clevertap.android.sdk.CleverTapAPI;
-import com.flurry.android.Constants;
-import com.flurry.android.FlurryAgent;
 import com.freshchat.consumer.sdk.FreshchatUser;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.JoshSkillExecutors;
 import com.joshtalks.joshskills.core.PrefManager;
+import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
+import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
+import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
+import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,10 +29,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import timber.log.Timber;
-import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
-import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
-import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
-import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
 
 public class AppAnalytics {
 
@@ -66,7 +63,6 @@ public class AppAnalytics {
     public static void updateUser() {
         init();
         updateCleverTapUser();
-        updateFlurryUser();
         updateFreshchatSdkUser();
         updateFreshchatSdkUserProperties();
         updateFirebaseSdkUser();
@@ -141,24 +137,6 @@ public class AppAnalytics {
         profileUpdate.put("User Type", user.getUserType());
         profileUpdate.put("Gender", user.getGender());
         cleverTapAnalytics.pushProfile(profileUpdate);
-    }
-
-    private static void updateFlurryUser() {
-        Timber.tag("Flurry").d("updateFlurryUser() called");
-        User user = User.getInstance();
-        FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false, EMPTY));
-        FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
-        FlurryAgent.setAge(getAge(user.getDateOfBirth()));
-        user.getGender();
-        if (user.getGender() != null) {
-            FlurryAgent.setGender((user.getGender().equals("M") ? Constants.MALE : Constants.FEMALE));
-        }
-        //User Properties
-        List<String> list = new ArrayList<>();
-        list.add(user.getUserType());
-        list.add(user.getGender());
-        list.add("Age " + getAge(user.getDateOfBirth()));
-        FlurryAgent.UserProperties.set("JoshSkills.User", list);
     }
 
     private static void updateFirebaseSdkUser() {
@@ -331,23 +309,11 @@ public class AppAnalytics {
                 formatParameters();
                 pushToCleverTap();
                 pushToFirebase();
-                pushToFlurry(false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-    }
-
-    public void push(boolean trackSession) {
-        Timber.v(this.toString());
-        if (BuildConfig.DEBUG) {
-            return;
-        }
-        formatParameters();
-        pushToFirebase();
-        pushToCleverTap();
-        pushToFlurry(trackSession);
     }
 
     private void formatParameters() {
@@ -375,13 +341,6 @@ public class AppAnalytics {
                 "Event Name='" + event + '\'' +
                 ", Parameters=" + parameters +
                 '}';
-    }
-
-    private void pushToFlurry(boolean trackSession) {
-        if (trackSession)
-            FlurryAgent.logEvent(event, typeCastMap(parameters), true);
-        else
-            FlurryAgent.logEvent(event, typeCastMap(parameters));
     }
 
     private Bundle convertMapToBundle(HashMap<String, Object> properties) {
@@ -414,9 +373,5 @@ public class AppAnalytics {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    public void endSession() {
-        FlurryAgent.endTimedEvent(event);
     }
 }

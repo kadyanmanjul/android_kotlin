@@ -10,20 +10,11 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
+import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Multipart
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 const val DIR = "api/skill/v1"
 
@@ -70,6 +61,12 @@ interface SignUpNetworkService {
         @Path("id") userId: String,
         @FieldMap params: Map<String, String?>
     ): Response<User>
+
+    @PATCH("$DIR/user/profile_picture/{id}/")
+    suspend fun updateProfilePicFromPreviousProfile(@Path("id") imageId: String): Response<Any>
+
+    @DELETE("$DIR/user/profile_picture/{id}/")
+    suspend fun deletePreviousProfilePic(@Path("id") imageId: String): Response<Any>
 
     @PATCH("$DIR/mentor/{id}/")
     suspend fun updateUserAddressAsync(
@@ -161,5 +158,8 @@ interface SignUpNetworkService {
 
     @GET("$DIR/user/profile_pictures//")
     suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
+
+    @GET("$DIR/course/course_syllabus/")
+    suspend fun getD2pSyllabusPdf() : Response<D2pSyllabusPdfResponse>
 
 }

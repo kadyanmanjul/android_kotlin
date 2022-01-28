@@ -22,7 +22,7 @@ import com.joshtalks.joshskills.databinding.FragmentTeamMateFoundFragnmentBindin
 import com.joshtalks.joshskills.quizgame.ui.data.model.SaveCallDuration
 import com.joshtalks.joshskills.quizgame.ui.data.model.TeamDataDelete
 import com.joshtalks.joshskills.quizgame.ui.data.model.UserDetails
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.TeamMateFoundViewModelGame
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.TeamMateViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
@@ -44,7 +44,7 @@ class TeamMateFoundFragmentFpp : Fragment(), P2pRtc.WebRtcEngineCallback {
 
     private var teamMateFoundViewModel: TeamMateFoundViewModelGame? = null
 
-    private var firebaseTemp = FirebaseTemp()
+    private var firebaseTemp = GameNotificationFirebaseData()
     private var engine: RtcEngine? = null
     private var currentUserId = Mentor.getInstance().getId()
     private var flag = 1
@@ -176,7 +176,6 @@ class TeamMateFoundFragmentFpp : Fragment(), P2pRtc.WebRtcEngineCallback {
                 )
                 ?.remove(this)
                 ?.commit()
-            fm?.popBackStack()
         }, 4000)
     }
 

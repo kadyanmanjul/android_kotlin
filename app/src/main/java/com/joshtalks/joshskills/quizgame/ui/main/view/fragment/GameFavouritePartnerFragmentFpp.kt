@@ -29,9 +29,10 @@ import com.joshtalks.joshskills.quizgame.ui.data.model.AddFavouritePartner
 import com.joshtalks.joshskills.quizgame.ui.data.model.ChannelData
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
-import com.joshtalks.joshskills.quizgame.ui.data.network.FirebaseTemp
+import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteAdapter
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FavouriteViewModelGame
+import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FppListViewProviderFactory
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
@@ -45,16 +46,16 @@ import timber.log.Timber
 
 
 class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInterface,
-    FirebaseTemp.OnNotificationTriggerTemp,
+    GameNotificationFirebaseData.OnNotificationTriggerTemp,
     P2pRtc.WebRtcEngineCallback, GameFirebaseDatabase.OnMakeFriendTrigger,
     GameFirebaseDatabase.OnLiveStatus {
 
     private lateinit var binding: FragmentFavouritePracticeBinding
     private var favouriteAdapter: FavouriteAdapter? = null
-    private val favouriteViewModel by lazy {
-        ViewModelProvider(requireActivity())[FavouriteViewModelGame::class.java]
-    }
-    private var firebaseDatabase: FirebaseTemp = FirebaseTemp()
+
+    private var factory: FppListViewProviderFactory? = null
+    private var favouriteViewModel: FavouriteViewModelGame? = null
+    private var firebaseDatabase: GameNotificationFirebaseData = GameNotificationFirebaseData()
     private var channelName: String? = null
     private var fromTokenId: String? = null
     private var fromUserId: String? = null
@@ -158,7 +159,10 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
 
     private fun setupViewModel() {
         try {
-            favouriteViewModel.fetchFav(mentorId)
+            factory = FppListViewProviderFactory(requireActivity().application)
+            favouriteViewModel = ViewModelProvider(this, factory!!).get(FavouriteViewModelGame::class.java)
+
+            favouriteViewModel?.fetchFav(mentorId)
         } catch (ex: Exception) {
         }
     }
@@ -281,18 +285,18 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
     private fun getFavouritePracticePartner() {
         activity?.let {
             try {
-                favouriteViewModel.favData.observe(it, {
+                favouriteViewModel?.favData?.observe(it, {
                     if (it.data != null) {
                         if (it.data?.size!! > 0) {
                             initRV(it.data)
-                        } else {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                UtilsQuiz.showSnackBar(
-                                    binding.container,
-                                    Snackbar.LENGTH_SHORT,
-                                    NO_FPP_FOUND
-                                )
-                            }
+                        }
+                    }else{
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            UtilsQuiz.showSnackBar(
+                                binding.container,
+                                Snackbar.LENGTH_LONG,
+                                NO_FPP_FOUND
+                            )
                         }
                     }
                 })
@@ -305,7 +309,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
     private fun getFromAgoraToken() {
         activity?.let {
             try {
-                favouriteViewModel.fromTokenData.observe(it, {
+                favouriteViewModel?.fromTokenData?.observe(it, {
                     fromAgoraToken(it)
                 })
             } catch (ex: Exception) {
@@ -378,7 +382,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
             tickSound()
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            favouriteViewModel.addFavouritePracticePartner(
+            favouriteViewModel?.addFavouritePracticePartner(
                 AddFavouritePartner(
                     fromMentorId,
                     mentorId,
@@ -386,7 +390,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                 )
             )
             activity?.let {
-                favouriteViewModel.fppData.observe(it, {
+                favouriteViewModel?.fppData?.observe(it, {
                     firebaseDatabase.deleteRequest(mentorId)
                 })
             }
@@ -398,13 +402,13 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler2.removeCallbacksAndMessages(null)
-            firebaseDatabase.deleteRequested(mentorId)
+            firebaseDatabase.deleteRequest(mentorId)
         }
         try {
             handler2.postDelayed({
                 if (isActiveFrag)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-                firebaseDatabase.deleteRequested(mentorId)
+                firebaseDatabase.deleteRequest(mentorId)
             }, 10000)
         } catch (ex: Exception) {
         }
@@ -446,7 +450,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
     }
 
     fun filter(text: String) {
-        val prefixString = text.toLowerCase()
+        val prefixString = text.lowercase()
         val temp: ArrayList<Favourite> = ArrayList()
 
         if (prefixString.isEmpty()) {
@@ -454,7 +458,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
         } else {
             if (arrayList != null) {
                 for (wp in arrayList!!) {
-                    if (wp.name?.toLowerCase()?.contains(prefixString) == true) {
+                    if (wp.name?.lowercase()?.contains(prefixString) == true) {
                         temp.add(wp)
                     }
                 }
@@ -481,9 +485,11 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
             holder.binding.status.text = status
             when (status) {
                 IN_ACTIVE -> {
+                    arrayList?.get(pos)?.status = IN_ACTIVE
                     holder.binding.clickToken.visibility = View.INVISIBLE
                 }
                 ACTIVE -> {
+                    arrayList?.get(pos)?.status = ACTIVE
                     holder.binding.clickToken.visibility = View.VISIBLE
                     holder.binding.clickToken.setImageResource(R.drawable.ic_plus1)
                     holder.binding.clickToken.setOnClickListener {
@@ -503,9 +509,11 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                     holder.binding.clickToken.isEnabled = true
                 }
                 IN_GAME -> {
+                    arrayList?.get(pos)?.status = IN_GAME
                     holder.binding.clickToken.visibility = View.INVISIBLE
                 }
                 SEARCHING -> {
+                    arrayList?.get(pos)?.status = SEARCHING
                     holder.binding.clickToken.visibility = View.INVISIBLE
                 }
             }
@@ -530,10 +538,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
         fromUserName: String,
         fromUserImage: String
     ) {
-        var i = 0
-        handler.removeCallbacksAndMessages(null)
         try {
-            //visibleView(binding.notificationCard)
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
@@ -545,19 +550,19 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
         }
 
         binding.buttonAccept.setOnClickListener {
+            firebaseDatabase.deleteUserData(mentorId)
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
-
             tickSound()
             handler.removeCallbacksAndMessages(null)
-            i = 1
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            favouriteViewModel.getChannelData(mentorId, channelName)
+            favouriteViewModel?.getChannelData(mentorId, channelName)
             activity?.let {
-                favouriteViewModel.agoraToToken.observe(it, {
+                favouriteViewModel?.agoraToToken?.observe(it, {
                     when {
                         it?.message.equals(TEAM_CREATED) -> {
                             firebaseDatabase.deleteRequested(mentorId)
+                            firebaseDatabase.deleteDataAcceptRequest(mentorId)
                             firebaseDatabase.acceptRequest(
                                 fromUserId,
                                 TRUE,
@@ -576,7 +581,6 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                                 isRound = true
                             )
                             binding.userNameForAlready.text = fromUserName
-                            //visibleView(binding.notificationCardAlready)
                             if (isActiveFrag)
                                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(
                                     binding.notificationCardAlready
@@ -602,7 +606,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
             handler.removeCallbacksAndMessages(null)
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1) }
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
         }
 
@@ -611,7 +615,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
             if (isActiveFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             handler.removeCallbacksAndMessages(null)
-            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+            mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1) }
             firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
         }
 //        try {
@@ -628,7 +632,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                             binding.notificationCard
                         )
-                    mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1, fromUserId) }
+                    mentorId.let { it1 -> firebaseDatabase.deleteUserData(it1) }
                     firebaseDatabase.createRequestDecline(fromUserId, userName, imageUrl, mentorId)
                 }, 10000)
             }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="clickHandler"
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.GameFavouritePartnerFragmentFpp" />
@@ -78,8 +79,8 @@
                                     android:layout_marginTop="@dimen/_6sdp"
                                     android:layout_toRightOf="@+id/layout"
                                     android:gravity="center_vertical"
-                                    android:text="@string/user_name"
                                     android:letterSpacing="0.01"
+                                    android:text="@string/user_name"
                                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                     android:textColor="@color/test_color"
                                     android:textStyle="bold" />
@@ -173,7 +174,7 @@
                                 <com.joshtalks.joshskills.quizgame.util.CircularProgressView
                                     android:id="@+id/progress"
                                     android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"/>
+                                    android:layout_height="@dimen/_40sdp" />
 
                             </RelativeLayout>
 
@@ -185,10 +186,10 @@
                                 android:layout_marginTop="@dimen/_6sdp"
                                 android:layout_toRightOf="@+id/notificaton_rel"
                                 android:gravity="center_vertical"
-                                android:text="@string/user_name"
-                                android:textColor="#FDFC01"
                                 android:letterSpacing="0.01"
+                                android:text="@string/user_name"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                                android:textColor="#FDFC01"
                                 android:textStyle="bold" />
 
                             <View
@@ -210,11 +211,10 @@
                                 android:layout_marginTop="@dimen/_3sdp"
                                 android:layout_toRightOf="@+id/notificaton_rel"
                                 android:gravity="center_vertical"
-                                android:text="@string/has_invited"
-                                android:textColor="@color/white"
                                 android:letterSpacing="0.01"
+                                android:text="@string/has_invited"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-                                />
+                                android:textColor="@color/white" />
 
 
                             <LinearLayout
@@ -244,12 +244,11 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_centerInParent="true"
-                                            android:text="@string/decline"
-                                            android:textColor="#fff"
                                             android:letterSpacing="0.01"
+                                            android:text="@string/decline"
                                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-                                            android:textStyle="bold"
-                                            />
+                                            android:textColor="#fff"
+                                            android:textStyle="bold" />
                                     </RelativeLayout>
 
                                 </com.google.android.material.card.MaterialCardView>
@@ -258,12 +257,12 @@
                                     android:id="@+id/button_accept"
                                     android:layout_width="@dimen/_55sdp"
                                     android:layout_height="@dimen/_16sdp"
+                                    android:layout_marginTop="@dimen/_3sdp"
                                     android:layout_marginRight="@dimen/_12sdp"
                                     app:cardCornerRadius="@dimen/_4sdp"
                                     app:cardElevation="@dimen/_4sdp"
-                                    app:strokeWidth="@dimen/_2sdp"
                                     app:strokeColor="#3AAC21"
-                                    android:layout_marginTop="@dimen/_3sdp">
+                                    app:strokeWidth="@dimen/_2sdp">
 
                                     <RelativeLayout
                                         android:layout_width="match_parent"
@@ -274,11 +273,11 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_centerInParent="true"
-                                            android:text="@string/accept"
-                                            android:textColor="#fff"
-                                            android:textStyle="bold"
                                             android:letterSpacing="0.01"
-                                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8" />
+                                            android:text="@string/accept"
+                                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+                                            android:textColor="#fff"
+                                            android:textStyle="bold" />
                                     </RelativeLayout>
                                 </com.google.android.material.card.MaterialCardView>
                             </LinearLayout>
@@ -350,12 +349,11 @@
                                 android:layout_marginTop="@dimen/_6sdp"
                                 android:layout_toRightOf="@+id/layout1"
                                 android:gravity="center_vertical"
-                                android:text="@string/user_name"
-                                android:textColor="@color/test_color"
                                 android:letterSpacing="0.01"
+                                android:text="@string/user_name"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                                android:textStyle="bold"
-                                />
+                                android:textColor="@color/test_color"
+                                android:textStyle="bold" />
 
                             <View
                                 android:id="@+id/divider4"
@@ -376,11 +374,10 @@
                                 android:layout_marginTop="@dimen/_3sdp"
                                 android:layout_toRightOf="@+id/layout1"
                                 android:gravity="center_vertical"
-                                android:text="@string/alreadt_start"
-                                android:textColor="@color/white"
                                 android:letterSpacing="0.01"
+                                android:text="@string/alreadt_start"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-                                />
+                                android:textColor="@color/white" />
 
                         </RelativeLayout>
 
@@ -426,31 +423,31 @@
                 android:textColor="@color/white"
                 android:textStyle="bold" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/inputSearch"
-                    android:background="@drawable/rectangle"
-                    android:layout_width="match_parent"
-                    android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:layout_marginEnd="@dimen/_16sdp"
-                    android:layout_marginBottom="@dimen/_15sdp"
-                    android:layout_height="@dimen/_40sdp"
-                    android:autofillHints="Search"
-                    android:layout_below="@+id/txt"
-                    android:drawableStart="@drawable/ic_search_quiz"
-                    android:drawablePadding="@dimen/_8sdp"
-                    android:hint="@string/search"
-                    android:imeOptions="actionDone"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:minHeight="@dimen/_20sdp"
-                    android:paddingHorizontal="@dimen/_12sdp"
-                    android:paddingVertical="@dimen/_4sdp"
-                    android:paddingStart="@dimen/_8sdp"
-                    android:textColor="#ffffff"
-                    android:textColorHint="#B5B5B5"
-                    android:textSize="@dimen/_15sdp"
-                    android:transitionName="group_search_appbar" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/inputSearch"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_below="@+id/txt"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                android:autofillHints="Search"
+                android:background="@drawable/rectangle"
+                android:drawableStart="@drawable/ic_search_quiz"
+                android:drawablePadding="@dimen/_8sdp"
+                android:hint="@string/search"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                android:minHeight="@dimen/_20sdp"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:paddingStart="@dimen/_8sdp"
+                android:textColor="#ffffff"
+                android:textColorHint="#B5B5B5"
+                android:textSize="@dimen/_15sdp"
+                android:transitionName="group_search_appbar" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycle_view"

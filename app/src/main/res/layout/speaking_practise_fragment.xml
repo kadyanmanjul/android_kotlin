@@ -116,6 +116,28 @@
                     app:layout_constraintTop_toTopOf="@id/progress_bar"
                     tools:text="5 / 10 \n min" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_how_to_speak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_24sdp"
+                    android:layout_marginBottom="@dimen/_24sdp"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/_4sdp"
+                    android:gravity="center"
+                    android:text="@string/how_to_speak"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16.90sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/info_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/progress_bar"
+                    tools:visibility="visible" />
+
+
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/info_container"
                     android:layout_width="0dp"
@@ -129,7 +151,7 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/progress_bar"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_how_to_speak"
                     tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -302,7 +324,7 @@
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.7"
                         app:rippleColor="@color/white"
-                        tools:visibility="visible" />
+                        tools:visibility="invisible" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_favorite"
@@ -514,6 +536,8 @@
 
                 </FrameLayout>
 
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
@@ -528,6 +552,38 @@
             app:matProg_linearProgress="false"
             app:matProg_progressIndeterminate="true"
             tools:visibility="gone" />
+   <androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+       android:layout_gravity="bottom"
+       android:layout_marginBottom="@dimen/_16sdp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_call_demo"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:visibility="gone"
+            android:paddingVertical="@dimen/_14sdp"
+            android:text="Call Practice Partner"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.7"
+            app:rippleColor="@color/white"
+            tools:visibility="gone" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </FrameLayout>
 

@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
@@ -59,14 +58,13 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SHOW_SIGN_UP_FRAGMENT
-import com.joshtalks.joshskills.ui.voip.*
 import com.joshtalks.joshskills.ui.voip.OPPOSITE_USER_UID
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_CALL_ID
 import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
-import com.joshtalks.joshskills.ui.voip.RTC_IS_GROUP_CALL
 import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
+import com.joshtalks.joshskills.ui.voip.RTC_IS_GROUP_CALL
 import com.joshtalks.joshskills.ui.voip.RTC_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
@@ -75,7 +73,6 @@ import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
 import kotlinx.coroutines.*
-import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.IOException
@@ -645,6 +642,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
         }
     }
+/*
 
     private fun callForceConnect(actionData: String?) {
         actionData?.let {
@@ -684,6 +682,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     private fun callDisconnectNotificationAction() {
         WebRtcService.disconnectCallFromCallie()
     }
+*/
 
     private fun declineCallWhenInConversationRoom(actionData: String?) {
         actionData?.let {
@@ -704,7 +703,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
 
     }
-
+/*
     private fun incomingCallNotificationAction(actionData: String?) {
         actionData?.let {
             try {
@@ -745,7 +744,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 t.printStackTrace()
             }
         }
-    }
+    }*/
 
 //    private fun returnDefaultIntent(): Intent {
 //        return Intent(applicationContext, LauncherActivity::class.java).apply {

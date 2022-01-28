@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="clickHandler"
             type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.RandomPartnerFragment" />
@@ -25,10 +26,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_30sdp"
-                app:srcCompat="@drawable/ic_game_logo_grad"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_game_logo_grad" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/card1"
@@ -43,25 +44,25 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/_20sdp"
                     android:layout_marginRight="@dimen/_20sdp"
-                    app:cardCornerRadius="@dimen/_8sdp"
                     android:background="@color/transparent"
                     android:backgroundTint="@color/transparent"
+                    app:cardCornerRadius="@dimen/_8sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:background="@drawable/card_border"
-                            android:text="Searching for opponent team..."
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_14sdp"
-                            android:textStyle="bold"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/card_border"
+                        android:gravity="center"
+                        android:text="Searching for opponent team..."
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14sdp"
+                        android:textStyle="bold" />
 
 
                 </com.google.android.material.card.MaterialCardView>
@@ -100,11 +101,17 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team2_user1_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela1"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -138,11 +145,17 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team2_user2_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela2"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -153,8 +166,8 @@
                     android:id="@+id/globe"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_85sdp"
-                    android:layout_centerInParent="true"
-                    android:layout_below="@+id/relative_layout_sec">
+                    android:layout_below="@+id/relative_layout_sec"
+                    android:layout_centerInParent="true">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="match_parent"
@@ -229,11 +242,17 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team1_user2_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela4"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
@@ -250,6 +269,7 @@
                         android:id="@+id/rela3"
                         android:layout_width="@dimen/_70sdp"
                         android:layout_height="@dimen/_70sdp"
+                        android:layout_centerHorizontal="true"
                         android:background="@drawable/image_border">
 
                         <de.hdodenhof.circleimageview.CircleImageView
@@ -261,11 +281,17 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/team1_user1_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/_70sdp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/rela3"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
                         android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />

@@ -84,13 +84,11 @@
             android:name=".ui.voip.share_call.ShareWithFriendsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".quizgame.StartActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            />
+            android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.group.views.JoshVoipGroupActivity"
             android:exported="true" />
@@ -98,17 +96,11 @@
             android:name=".ui.group.JoshGroupActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
-            android:exported="true" />
+            android:exported="true">
+        </activity>
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
             android:alwaysRetainTaskState="true"
