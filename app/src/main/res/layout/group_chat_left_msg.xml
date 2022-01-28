@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/cell_left_end_padding"
+        android:rotation="180">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/parent_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/balloon_incoming_normal"
+            android:gravity="start"
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingEnd="@dimen/_8sdp">
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/text_title"
+                textColor="@{itemData.colorFromId}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center_vertical|start"
+                android:paddingEnd="@dimen/_16sdp"
+                android:text="@{itemData.sender}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Lesson 0 - Course Introduction" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/text_message_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:gravity="center_vertical|start"
+                android:text="@{itemData.message}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/text_message_time"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_title"
+                tools:text="Hello! Apne courses ki shuruat BASICS se karte hai. Yaad rakhna, ye English bhasha ke basics hai, toh in par humein bahut dhyaan dena hai, aap saath mein notes bhi le sakte hai." />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_message_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingEnd="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:text="@{itemData.messageTime}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textColor="@color/gray_9E"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="00:00 AM" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>

@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.33"
             app:lottie_autoPlay="false"
-            app:lottie_fileName="lottie/tick_animation.json"
+            app:lottie_rawRes="@raw/tick_animation"
             app:lottie_imageAssetsFolder="lottie"
             app:lottie_loop="false"/>
 

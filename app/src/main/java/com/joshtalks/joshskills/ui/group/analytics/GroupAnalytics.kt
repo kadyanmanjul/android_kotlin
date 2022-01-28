@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_EVENTS_API_KEY
+import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_GROUP_ID_API_KEY
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_MENTOR_ID_API_KEY
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.CoroutineScope
@@ -15,6 +16,7 @@ import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 private const val TAG = "GroupsAnalytics"
+
 object GroupAnalytics {
     // TODO: Inject using Dagger2
     private val database by lazy {
@@ -33,14 +35,24 @@ object GroupAnalytics {
         OPEN_GROUP_FROM_SEARCH("OPEN_GROUP_SEARCH"),
         OPEN_GROUP_FROM_RECOMMENDATION("OPEN_GROUP_REC"),
         FIND_GROUPS_TO_JOIN("FIND_GROUPS_TO_JOIN"),
-        MAIN_GROUP_ICON("MAIN_GROUP_ICON")
+        MAIN_GROUP_ICON("MAIN_GROUP_ICON"),
+        OPEN_GROUP("OPEN_GROUP"),
+        MESSAGE_SENT("MESSAGE_SENT"),
+        EXIT_GROUP("EXIT_GROUP"),
+        MEMBER_REMOVED_FROM_GROUP("MEMBER_REMOVED_FROM_GROUP"),
+        OPENED_PROFILE("OPENED_PROFILE")
     }
 
-    fun push(event: GroupsEvent) {
+    fun push(
+        event: GroupsEvent,
+        groupId: String = "",
+        mentorId: String = Mentor.getInstance().getId()
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             val analyticsData = GroupsAnalyticsEntity(
                 event.value,
-                Mentor.getInstance().getId()
+                mentorId,
+                groupId
             )
             database?.groupsAnalyticsDao()?.saveAnalytics(analyticsData)
             pushToServer()
@@ -67,12 +79,19 @@ object GroupAnalytics {
     }
 
     private fun getApiRequest(analyticsData: GroupsAnalyticsEntity): Map<String, Any?> {
-        val request = mutableMapOf<String, String>().apply {
+        return mutableMapOf<String, String>().apply {
             this[GROUPS_ANALYTICS_EVENTS_API_KEY] = analyticsData.event
             this[GROUPS_ANALYTICS_MENTOR_ID_API_KEY] = analyticsData.mentorId
+            this[GROUPS_ANALYTICS_GROUP_ID_API_KEY] = analyticsData.groupId ?: ""
         }
+    }
 
-        return request
+    fun checkMsgTime(event: GroupsEvent, groupId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val msgSentInDay = repository.getLastSentMsgTime(groupId)
+            if (msgSentInDay)
+                push(event, groupId)
+        }
     }
 
     @JvmSuppressWildcards
@@ -81,5 +100,5 @@ object GroupAnalytics {
 }
 
 interface GroupsEvent {
-    val value : String
+    val value: String
 }

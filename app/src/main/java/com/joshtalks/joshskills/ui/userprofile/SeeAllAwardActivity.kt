@@ -7,7 +7,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import com.joshtalks.joshskills.R
@@ -30,12 +32,15 @@ import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 class SeeAllAwardActivity : BaseActivity() {
     private lateinit var binding: FragmentSeeAllAwardBinding
     private lateinit var awardCategory: List<AwardCategory>
+    private var isSeniorStudent: Boolean = false
     private val compositeDisposable = CompositeDisposable()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        awardCategory = intent.getParcelableArrayListExtra<AwardCategory>(AWARD_CATEGORY) as List<AwardCategory>
+        awardCategory =
+            intent.getParcelableArrayListExtra<AwardCategory>(AWARD_CATEGORY) as List<AwardCategory>
+        isSeniorStudent = intent.extras!!.getBoolean(IS_SENIOR)
         binding = DataBindingUtil.setContentView(this, R.layout.fragment_see_all_award)
         binding.lifecycleOwner = this
         binding.fragment = this
@@ -64,9 +69,20 @@ class SeeAllAwardActivity : BaseActivity() {
     }
 
     private fun initRecyclerView() {
+        if (isSeniorStudent) {
+            val layoutInflater =
+                AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
+            val title = view.findViewById(R.id.title) as AppCompatTextView
+            title.text = "Senior Student"
+            setSeniorStudentAwardView(view!!)
+            if (view != null) {
+                binding.multiLineLl.addView(view)
+            }
+        }
 
-        awardCategory.forEach { awardCategory ->
-            val view = addLinerLayout(awardCategory)
+        awardCategory.first().awards?.forEach {
+            val view = addLinerLayout(it)
             if (view != null) {
                 binding.multiLineLl.addView(view)
             } else {
@@ -75,26 +91,43 @@ class SeeAllAwardActivity : BaseActivity() {
         }
     }
 
+    private fun setSeniorStudentAwardView(view: View) {
+        var v: View? = view.findViewById<ConstraintLayout>(R.id.award1)
+        v?.visibility = View.VISIBLE
+        var image: ImageView = view.findViewById(R.id.image_award1)
+        var title: AppCompatTextView = view.findViewById(R.id.title_award1)
+        var date: AppCompatTextView = view.findViewById(R.id.date_award1)
+        var count: AppCompatTextView = view.findViewById(R.id.txt_count_award1)
+        date.visibility = View.GONE
+        title.visibility = View.GONE
+        count.visibility = View.GONE
+        image.setImageResource(R.drawable.senior_student_with_shadow)
+    }
+
     @SuppressLint("WrongViewCast")
-    private fun addLinerLayout(awardCategory: AwardCategory): View? {
+    private fun addLinerLayout(award: Award): View? {
         val layoutInflater =
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
         val title = view.findViewById(R.id.title) as AppCompatTextView
-        val viewDivider = view.findViewById(R.id.view) as View
-        viewDivider.visibility = View.VISIBLE
+//        val viewDivider = view.findViewById(R.id.view) as View
+//        viewDivider.visibility = View.VISIBLE
         val recyclerView = view.findViewById(R.id.rv) as PlaceHolderView
         recyclerView.visibility = View.VISIBLE
-        title.text = awardCategory.label
+//        title.text = awardCategory.label
         val linearLayoutManager = GridLayoutManager(
             this, 3
         )
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView.builder.setLayoutManager(linearLayoutManager)
-        awardCategory.awards?.forEach {
-            recyclerView.addView(AwardItemViewHolder(it, this))
+        var localAward: Award = award
+        title.setText(award.awardText)
+        award.dateList?.forEach {
+
+            recyclerView.addView(AwardItemViewHolder(localAward, it, this))
         }
-        recyclerView.isNestedScrollingEnabled=true
+        recyclerView.isNestedScrollingEnabled = true
+
         return view
     }
 
@@ -128,21 +161,24 @@ class SeeAllAwardActivity : BaseActivity() {
     }
 
     private fun openAwardPopUp(award: Award) {
-        showAward(listOf(award), true)
+//        showAward(listOf(award), true)
     }
 
     companion object {
         const val AWARD_CATEGORY = "award_category"
+        const val IS_SENIOR = "IsSenior"
 
         fun startSeeAllAwardActivity(
             activity: Activity,
             awardCategory: List<AwardCategory>,
+            isSeniorStudent: Boolean,
             conversationId: String? = null,
             flags: Array<Int> = arrayOf(),
         ) {
             Intent(activity, SeeAllAwardActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
                 putParcelableArrayListExtra(AWARD_CATEGORY, ArrayList(awardCategory))
+                putExtra(IS_SENIOR, isSeniorStudent)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ReferralViewModel(application: Application) : AndroidViewModel(application) {
-
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -29,7 +28,7 @@ class ReferralViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getDeepLink(deepLink:String,contentId:String) {
+    fun getDeepLink(deepLink: String, contentId: String) {
         viewModelScope.launch {
             try {
                 val requestData = LinkAttribution(

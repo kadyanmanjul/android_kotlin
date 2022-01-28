@@ -2,16 +2,17 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.assessment.AssessmentActivity">
+    tools:context=".ui.voip.SearchingUserActivity">
 
     <data>
-        <import type="com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT"/>
+
+        <import type="com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT" />
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.voip.SearchingUserActivity" />
 
     </data>
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -34,7 +35,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.1" />
 
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_view_ph"
             android:layout_width="wrap_content"
@@ -45,7 +45,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.3"
             app:srcCompat="@drawable/have_a_referral" />
-
 
         <ProgressBar
             android:id="@+id/progress_bar"

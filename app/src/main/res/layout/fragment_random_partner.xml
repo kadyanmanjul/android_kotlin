@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.RandomPartnerFragment" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_game_back">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/txtquiz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_30sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_game_logo_grad" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/card1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_60sdp"
+                app:layout_constraintBottom_toTopOf="@+id/relativeLayout6"
+                app:layout_constraintTop_toTopOf="@+id/txtquiz">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:background="@color/transparent"
+                    android:backgroundTint="@color/transparent"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/card_border"
+                        android:gravity="center"
+                        android:text="Searching for opponent team..."
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14sdp"
+                        android:textStyle="bold" />
+
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout6"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_305sdp"
+                android:layout_below="@id/card1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card1">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_23sdp">
+
+                    <RelativeLayout
+                        android:id="@+id/rela1"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:background="@drawable/image_border">
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/team2_user_image1"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
+                            android:layout_centerInParent="true"
+                            app:lottie_autoPlay="true"
+                            app:lottie_fileName="lottie/faceanim.json"
+                            app:lottie_loop="true" />
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/team2_user1_name"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/rela1"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:text=""
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relative_layout_sec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/_23sdp">
+
+                    <RelativeLayout
+                        android:id="@+id/rela2"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:background="@drawable/image_border">
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/team2_user_image2"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
+                            android:layout_centerInParent="true"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginBottom="0dp"
+                            app:lottie_autoPlay="true"
+                            app:lottie_fileName="lottie/faceanim.json"
+                            app:lottie_loop="true" />
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/team2_user2_name"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/rela2"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:text=""
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/globe"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_85sdp"
+                    android:layout_below="@+id/relative_layout_sec"
+                    android:layout_centerInParent="true">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/vs"
+                        app:srcCompat="@drawable/left_to_right" />
+
+
+                    <RelativeLayout
+                        android:id="@+id/vs1"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_centerInParent="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/ic_ellipse_79" />
+
+                    <RelativeLayout
+                        android:id="@+id/vs"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/back_vs">
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/image9"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:layout_centerInParent="true"
+                            app:lottie_autoPlay="true"
+                            app:lottie_fileName="lottie/globeanim.json"
+                            app:lottie_loop="true"
+                            app:lottie_speed="1"
+                            tools:ignore="ImageContrastCheck" />
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_85sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/vs"
+                        app:srcCompat="@drawable/right_toleft_wave" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/globe"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp">
+
+                    <RelativeLayout
+                        android:id="@+id/rela4"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:background="@drawable/image_border">
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/team1_user_image2"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
+                            android:layout_centerInParent="true"
+                            app:lottie_autoPlay="true"
+                            app:lottie_fileName="lottie/faceanim.json"
+                            app:lottie_loop="true" />
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/team1_user2_name"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/rela4"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:text=""
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relative4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/globe"
+                    android:layout_marginLeft="30dp">
+
+                    <RelativeLayout
+                        android:id="@+id/rela3"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/image_border">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/team1_user_image1"
+                            android:layout_width="@dimen/_63sdp"
+                            android:layout_height="@dimen/_63sdp"
+                            android:layout_centerInParent="true" />
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/team1_user1_name"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/rela3"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLength="9"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:text="@string/user_name"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

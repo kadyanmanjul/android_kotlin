@@ -27,7 +27,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
-import com.flurry.android.FlurryAgent
 import com.google.android.gms.location.LocationRequest
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -104,15 +103,15 @@ const val COURSE_EXPLORER_NEW = 2008
 const val REQUEST_SHOW_SETTINGS = 123
 
 abstract class BaseActivity :
-    TrackActivity(),
-    LifecycleObserver,
-    FirebaseInAppMessagingImpressionListener,
-    FirebaseInAppMessagingClickListener {
+        TrackActivity(),
+        LifecycleObserver,
+        FirebaseInAppMessagingImpressionListener,
+        FirebaseInAppMessagingClickListener {
 
     private lateinit var referrerClient: InstallReferrerClient
     private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
     private var versionResponse: VersionResponse? = null
-    var videoChatObject:ChatModel? = null
+    var videoChatObject: ChatModel? = null
 
     enum class ActivityEnum {
         Conversation,
@@ -130,7 +129,7 @@ abstract class BaseActivity :
     }
 
     var openSettingActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+            ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (AppObjectController.isSettingUpdate) {
             reCreateActivity()
@@ -153,8 +152,12 @@ abstract class BaseActivity :
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
-            processBranchDynamicLinks()
-            processFirebaseDynamicLinks()
+            try {
+                processBranchDynamicLinks()
+                processFirebaseDynamicLinks()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
             //addScreenRecording()
         }
     }
@@ -201,57 +204,57 @@ abstract class BaseActivity :
 
     private fun processFirebaseDynamicLinks() {
         FirebaseDynamicLinks.getInstance()
-            .getDynamicLink(intent)
-            .addOnSuccessListener {
-                try {
-                    val referralCode = it?.utmParameters?.getString("utm_source", EMPTY) ?: EMPTY
-                    //it.
-                    val installReferrerModel =
-                        InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                    if (referralCode != EMPTY) {
-                        installReferrerModel.utmSource = referralCode
+                .getDynamicLink(intent)
+                .addOnSuccessListener {
+                    try {
+                        val referralCode = it?.utmParameters?.getString("utm_source", EMPTY)
+                                ?: EMPTY
+                        //it.
+                        val installReferrerModel =
+                                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
+                        if (referralCode != EMPTY) {
+                            installReferrerModel.utmSource = referralCode
+                        }
+                        InstallReferrerModel.update(installReferrerModel)
+                        Timber.d("DeepLink : $referralCode")
+                        Timber.d("installReferrerModel : $installReferrerModel")
+                    } catch (ex: java.lang.Exception) {
+                        Timber.e(ex)
                     }
-                    InstallReferrerModel.update(installReferrerModel)
-                    Timber.d("DeepLink : $referralCode")
-                    Timber.d("installReferrerModel : $installReferrerModel")
-                } catch (ex: java.lang.Exception) {
-                    Timber.e(ex)
                 }
-            }
-            .addOnFailureListener {
-                Timber.w("getDynamicLink:onFailure : $it")
-            }
+                .addOnFailureListener {
+                    Timber.w("getDynamicLink:onFailure : $it")
+                }
     }
 
     private fun processBranchDynamicLinks() {
         Branch.sessionBuilder(WeakReference(this@BaseActivity).get())
-            .withCallback { referringParams, error ->
-                try {
-                    val jsonParams =
-                        referringParams ?: (Branch.getInstance().firstReferringParams
-                            ?: Branch.getInstance().latestReferringParams)
-                    val installReferrerModel =
-                            InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                    jsonParams?.let {
-                        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                        if (it.has(Defines.Jsonkey.ReferralCode.key))
-                            installReferrerModel.utmSource = it.getString(Defines.Jsonkey.ReferralCode.key)
-                        if (it.has(Defines.Jsonkey.UTMMedium.key))
-                            installReferrerModel.utmMedium = it.getString(Defines.Jsonkey.UTMMedium.key)
-                        if (it.has(Defines.Jsonkey.UTMCampaign.key))
-                            installReferrerModel.utmTerm = it.getString(Defines.Jsonkey.UTMCampaign.key)
+                .withCallback { referringParams, error ->
+                    try {
+                        val jsonParams =
+                                referringParams ?: (Branch.getInstance().firstReferringParams
+                                        ?: Branch.getInstance().latestReferringParams)
+                        val installReferrerModel =
+                                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
+                        jsonParams?.let {
+                            AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                            if (it.has(Defines.Jsonkey.ReferralCode.key))
+                                installReferrerModel.utmSource = it.getString(Defines.Jsonkey.ReferralCode.key)
+                            if (it.has(Defines.Jsonkey.UTMMedium.key))
+                                installReferrerModel.utmMedium = it.getString(Defines.Jsonkey.UTMMedium.key)
+                            if (it.has(Defines.Jsonkey.UTMCampaign.key))
+                                installReferrerModel.utmTerm = it.getString(Defines.Jsonkey.UTMCampaign.key)
+                        }
+                        if (isFinishing.not()) {
+                            Log.i(TAG, "processBranchDynamicLinks: $installReferrerModel")
+                            InstallReferrerModel.update(installReferrerModel)
+                        }
+                    } catch (ex: Throwable) {
+                        ex.printStackTrace()
+                        LogException.catchException(ex)
                     }
-                    if (isFinishing.not()) {
-                        Log.i(TAG, "processBranchDynamicLinks: $installReferrerModel")
-                        InstallReferrerModel.update(installReferrerModel)
-                    }
-                } catch (ex: Throwable) {
-                    ex.printStackTrace()
-                    LogException.catchException(ex)
-                }
-            }.withData(this@BaseActivity.intent.data).init()
+                }.withData(this@BaseActivity.intent.data).init()
     }
-
 
 
     private fun initIdentifierForTools() {
@@ -263,7 +266,6 @@ abstract class BaseActivity :
                     ex.printStackTrace()
                 }
                 initNewRelic()
-                initFlurry()
                 setupSentryUser()
                 //UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
                 // UXCam.setUserProperty(String propertyName , String value)
@@ -302,9 +304,9 @@ abstract class BaseActivity :
 
     fun openGifActivity(conversationId: String?) {
         startActivity(
-            Intent(this, GIFActivity::class.java).apply {
-                putExtra(CONVERSATION_ID, conversationId)
-            }
+                Intent(this, GIFActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, conversationId)
+                }
         )
     }
 
@@ -428,13 +430,13 @@ abstract class BaseActivity :
         try {
             lifecycleScope.launch(Dispatchers.IO) {
                 if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) &&
-                    mIntent.hasExtra(NOTIFICATION_ID) &&
-                    mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
+                        mIntent.hasExtra(NOTIFICATION_ID) &&
+                        mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
                 ) {
                     EngagementNetworkHelper.clickNotification(
-                        mIntent.getStringExtra(
-                            NOTIFICATION_ID
-                        )
+                            mIntent.getStringExtra(
+                                    NOTIFICATION_ID
+                            )
                     )
                 }
             }
@@ -460,18 +462,18 @@ abstract class BaseActivity :
                 firebaseCrashlytics.setCustomKey("username", user.username)
                 firebaseCrashlytics.setCustomKey("user_type", user.userType)
                 firebaseCrashlytics.setCustomKey(
-                    "age",
-                    AppAnalytics.getAge(user.dateOfBirth).toString() + ""
+                        "age",
+                        AppAnalytics.getAge(user.dateOfBirth).toString() + ""
                 )
                 user.dateOfBirth?.let { firebaseCrashlytics.setCustomKey("date_of_birth", it) }
                 firebaseCrashlytics.setCustomKey(
-                    "gender",
-                    if (user.gender == "M") "MALE" else "FEMALE"
+                        "gender",
+                        if (user.gender == "M") "MALE" else "FEMALE"
                 )
                 FirebaseCrashlytics.getInstance().setUserId(
-                    PrefManager.getStringValue(
-                        USER_UNIQUE_ID
-                    )
+                        PrefManager.getStringValue(
+                                USER_UNIQUE_ID
+                        )
                 )
             } catch (ex: Throwable) {
                 LogException.catchException(ex)
@@ -486,7 +488,7 @@ abstract class BaseActivity :
             user.username = User.getInstance().username
             user.email = User.getInstance().email
             Sentry.setUser(user)
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
 
@@ -496,18 +498,12 @@ abstract class BaseActivity :
         //   NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
 
-    private fun initFlurry() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            FlurryAgent.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
-        }
-    }
-
     fun callHelpLine() {
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
             Utils.call(
-                this@BaseActivity,
-                AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
+                    this@BaseActivity,
+                    AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
             )
         }
     }
@@ -526,16 +522,16 @@ abstract class BaseActivity :
         return lifecycleScope.async(Dispatchers.IO) {
             val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
             val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
-                .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
+                    .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
             val totalCountToday =
-                AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
+                    AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
             if (totalCountToday >= minNpsInADay) {
                 return@async false
             }
             val npsEventModel =
-                NPSEventModel.getAllNpaList()?.filter { it.enable }
-                    ?.find { it.event == currentState }
-                    ?: return@async false
+                    NPSEventModel.getAllNpaList()?.filter { it.enable }
+                            ?.find { it.event == currentState }
+                            ?: return@async false
             npsEventModel.eventId = id
             getQuestionForNPS(npsEventModel)
             return@async true
@@ -551,7 +547,7 @@ abstract class BaseActivity :
     }
 
     private fun getQuestionForNPS(
-        eventModel: NPSEventModel
+            eventModel: NPSEventModel
     ) {
         lifecycleScope.launch(Dispatchers.IO) {
             val observer = Observer<WorkInfo> { workInfo ->
@@ -563,13 +559,13 @@ abstract class BaseActivity :
                             if (output.isNullOrEmpty().not()) {
                                 NPSEventModel.removeCurrentNPA()
                                 val questionList =
-                                    NPSQuestionModel.getNPSQuestionModelList(output!!)
+                                        NPSQuestionModel.getNPSQuestionModelList(output!!)
                                 if (questionList.isNullOrEmpty().not()) {
                                     lifecycleScope.launch(Dispatchers.Main) {
                                         showNPSFragment(eventModel, questionList!!)
                                     }
                                     AppObjectController.appDatabase.npsEventModelDao()
-                                        .insertNPSEvent(eventModel)
+                                            .insertNPSEvent(eventModel)
                                 }
                             }
                         }
@@ -578,25 +574,25 @@ abstract class BaseActivity :
                     }
 
                     WorkManager.getInstance(applicationContext)
-                        .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
-                        .removeObservers(this@BaseActivity)
+                            .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
+                            .removeObservers(this@BaseActivity)
                 }
             }
             WorkManager.getInstance(applicationContext)
-                .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
-                .observe(this@BaseActivity, observer)
+                    .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
+                    .observe(this@BaseActivity, observer)
         }
     }
 
     private fun showNPSFragment(
-        npsModel: NPSEventModel,
-        questionList: List<NPSQuestionModel>
+            npsModel: NPSEventModel,
+            questionList: List<NPSQuestionModel>
     ) {
         if (isFinishing) {
             return
         }
         val prev =
-            supportFragmentManager.findFragmentByTag(NetPromoterScoreFragment::class.java.name)
+                supportFragmentManager.findFragmentByTag(NetPromoterScoreFragment::class.java.name)
         if (prev != null) {
             return
         }
@@ -606,7 +602,7 @@ abstract class BaseActivity :
 
     fun showSignUpDialog() {
         if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
+                        .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
         )
             SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
@@ -617,10 +613,10 @@ abstract class BaseActivity :
                 var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
                 if (oemIntent == null) {
                     oemIntent = Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse(
-                            "package:$packageName"
-                        )
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse(
+                                    "package:$packageName"
+                            )
                     )
                     oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
                     oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -628,8 +624,8 @@ abstract class BaseActivity :
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     CustomPermissionDialogFragment.showCustomPermissionDialog(
-                        oemIntent,
-                        supportFragmentManager
+                            oemIntent,
+                            supportFragmentManager
                     )
                 }
             }
@@ -640,7 +636,7 @@ abstract class BaseActivity :
         val oemIntent = PowerManagers.getIntentForOEM(this)
         val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
         return NotificationManagerCompat.from(this).areNotificationsEnabled()
-            .not() && oemIntent != null && performedAction == EMPTY
+                .not() && oemIntent != null && performedAction == EMPTY
     }
 
     fun isUserProfileComplete(): Boolean {
@@ -659,17 +655,17 @@ abstract class BaseActivity :
     }
 
     fun replaceFragment(
-        containerId: Int,
-        fragment: Fragment,
-        newFragmentTag: String,
-        currentFragmentTag: String? = null
+            containerId: Int,
+            fragment: Fragment,
+            newFragmentTag: String,
+            currentFragmentTag: String? = null
     ) {
         if (currentFragmentTag == null) {
             supportFragmentManager.beginTransaction().replace(containerId, fragment, newFragmentTag)
-                .commit()
+                    .commit()
         } else {
             supportFragmentManager.beginTransaction().replace(containerId, fragment, newFragmentTag)
-                .addToBackStack(currentFragmentTag).commit()
+                    .addToBackStack(currentFragmentTag).commit()
         }
     }
 
@@ -677,7 +673,7 @@ abstract class BaseActivity :
         if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)) {
             return true
         } else if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)
-                .not()
+                        .not()
         ) {
             return false
         }
@@ -687,13 +683,13 @@ abstract class BaseActivity :
     fun logout() {
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-                .addUserDetails()
-                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
+                    .addUserDetails()
+                    .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
             val intent =
-                Intent(
-                    AppObjectController.joshApplication,
-                    SignUpActivity::class.java
-                )
+                    Intent(
+                            AppObjectController.joshApplication,
+                            SignUpActivity::class.java
+                    )
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -729,9 +725,9 @@ abstract class BaseActivity :
                     this == getString(R.string.conversation_open_dlink) -> {
                         val courseId = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         AppObjectController.appDatabase.courseDao().getCourseAccordingId(courseId)
-                            ?.let {
-                                ConversationActivity.startConversionActivity(this@BaseActivity, it)
-                            }
+                                ?.let {
+                                    ConversationActivity.startConversionActivity(this@BaseActivity, it)
+                                }
                     }
                     this == getString(R.string.setting_dlink) -> {
                         openSettingActivity.launch(SettingsActivity.getIntent(this@BaseActivity))
@@ -748,9 +744,9 @@ abstract class BaseActivity :
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
                             AssessmentActivity.startAssessmentActivity(
-                                this@BaseActivity,
-                                10001,
-                                id.toInt()
+                                    this@BaseActivity,
+                                    10001,
+                                    id.toInt()
                             )
                         }
                     }
@@ -758,8 +754,8 @@ abstract class BaseActivity :
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
                             CourseDetailsActivity.startCourseDetailsActivity(
-                                this@BaseActivity, id.toInt(),
-                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                                    this@BaseActivity, id.toInt(),
+                                    flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                             )
                         }
                     }
@@ -767,7 +763,7 @@ abstract class BaseActivity :
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
                             PaymentSummaryActivity.startPaymentSummaryActivity(
-                                this@BaseActivity, id
+                                    this@BaseActivity, id
                             )
                         }
                     }
@@ -787,10 +783,10 @@ abstract class BaseActivity :
                     }
                     this == getString(R.string.course_explore_dlink) -> {
                         CourseExploreActivity.startCourseExploreActivity(
-                            this@BaseActivity,
-                            COURSE_EXPLORER_CODE,
-                            null,
-                            state = ActivityEnum.DeepLink
+                                this@BaseActivity,
+                                COURSE_EXPLORER_CODE,
+                                null,
+                                state = ActivityEnum.DeepLink
                         )
                     }
                     else -> {
@@ -802,10 +798,10 @@ abstract class BaseActivity :
     }
 
     fun requestWorkerForChangeLanguage(
-        lCode: String,
-        successCallback: (() -> Unit)? = null,
-        errorCallback: (() -> Unit)? = null,
-        canCreateActivity: Boolean = true
+            lCode: String,
+            successCallback: (() -> Unit)? = null,
+            errorCallback: (() -> Unit)? = null,
+            canCreateActivity: Boolean = true
     ) {
         val uuid = WorkManagerAdmin.getLanguageChangeWorker(lCode)
         val observer = Observer<WorkInfo> { workInfo ->
@@ -821,8 +817,8 @@ abstract class BaseActivity :
             }
         }
         WorkManager.getInstance(applicationContext)
-            .getWorkInfoByIdLiveData(uuid)
-            .observe(this, observer)
+                .getWorkInfoByIdLiveData(uuid)
+                .observe(this, observer)
     }
 
     protected fun reCreateActivity() {
@@ -862,9 +858,9 @@ abstract class BaseActivity :
             // TODO add when awards functionality is over
             // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAwardFragment.showDialog(
-                supportFragmentManager,
-                awarList,
-                isFromUserProfile
+                    supportFragmentManager,
+                    awarList,
+                    isFromUserProfile
             )
         }
     }
@@ -874,16 +870,16 @@ abstract class BaseActivity :
     }
 
     fun showLeaderboardAchievement(
-        outrankData: OutrankedDataResponse,
-        lessonInterval: Int,
-        chatId: String,
-        lessonNo: Int
+            outrankData: OutrankedDataResponse,
+            lessonInterval: Int,
+            chatId: String,
+            lessonNo: Int
     ) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
-                supportFragmentManager,
-                outrankData, lessonInterval, chatId, lessonNo
+                    supportFragmentManager,
+                    outrankData, lessonInterval, chatId, lessonNo
             )
         }
     }
@@ -905,8 +901,8 @@ abstract class BaseActivity :
     }
     private val locationRequest: LocationRequest by lazy {
         LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(5000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000)
     }
 
     @SuppressLint("MissingPermission")
@@ -953,15 +949,15 @@ abstract class BaseActivity :
         try {
             val request = UpdateUserLocality()
             request.locality =
-                SearchLocality(location.latitude, location.longitude)
+                    SearchLocality(location.latitude, location.longitude)
             AppAnalytics.setLocation(
-                location.latitude,
-                location.longitude
+                    location.latitude,
+                    location.longitude
             )
             val response: ProfileResponse =
-                AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                    Mentor.getInstance().getId(), request
-                )
+                    AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                            Mentor.getInstance().getId(), request
+                    )
             Mentor.getInstance().setLocality(response.locality).update()
         } catch (e: Exception) {
             e.printStackTrace()
