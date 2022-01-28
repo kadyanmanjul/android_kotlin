@@ -367,6 +367,16 @@ class WebRtcActivity : AppCompatActivity() {
         return (isSetAsFavourite == true || isFavouriteIntent)
     }
 
+    private fun isCallGroupPP(): Boolean {
+        val isSetAsGroup = mBoundService?.isGroupCall()
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        val isGroupCallIntent = map != null && map.containsKey(RTC_IS_GROUP_CALL)
+        if (isSetAsGroup == false && isGroupCallIntent) {
+            mBoundService?.setAsGroupCall()
+        }
+        return (isSetAsGroup == true || isGroupCallIntent)
+    }
+
     private fun isNewUserCall(): Boolean {
         val isSetAsNewUserCall = mBoundService?.isNewUserCall()
         val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
@@ -558,7 +568,9 @@ class WebRtcActivity : AppCompatActivity() {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
-                    acceptCall(callAcceptApi)
+                    if(isCallOnGoing.value!=true) {
+                        acceptCall(callAcceptApi)
+                    }
                     if (isCallFavoritePP()) {
                         callDisViewEnable()
                         startCallTimer()
@@ -600,6 +612,7 @@ class WebRtcActivity : AppCompatActivity() {
             binding.tvGroupName.visibility = View.GONE
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
+            Log.d(TAG, "updateStatusLabel: ${map} : $isCallFromGroup")
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
@@ -618,6 +631,11 @@ class WebRtcActivity : AppCompatActivity() {
                         return@run
                     } else if (callConnected.not() && isCallFavoritePP()) {
                         binding.callStatus.text = getText(R.string.pp_favorite_incoming)
+                        return@run
+                    } else if (callConnected.not() && isCallGroupPP()) {
+                        binding.callStatus.text = getText(R.string.pp_group_incoming)
+                        binding.callerName.text = "${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}"
+                        setImageInIV(map?.get(RTC_WEB_GROUP_PHOTO))
                         return@run
                     } else if (callConnected.not() && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Incoming Call from"
@@ -926,17 +944,25 @@ class WebRtcActivity : AppCompatActivity() {
             if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
         if (time > 0 && channelName2.isNullOrEmpty().not()) {
             runOnUiThread {
-                binding.placeholderBg.visibility = View.VISIBLE
-                VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                    channelName = channelName2,
-                    callTime = time,
-                    callerName = userDetailLiveData.value?.get("name"),
-                    callerImage = userDetailLiveData.value?.get("profile_pic"),
-                    yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                    yourAgoraId = mBoundService?.getUserAgoraId(),
-                    activity = this,
-                    flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                )
+                try {
+                    val currentId =mBoundService?.getUserAgoraId()
+                    val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
+                    binding.placeholderBg.visibility = View.VISIBLE
+                    VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                        channelName = channelName2,
+                        callTime = time,
+                        callerName = userDetailLiveData.value?.get("name"),
+                        callerImage = userDetailLiveData.value?.get("profile_pic"),
+                        yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                        yourAgoraId = mBoundService?.getUserAgoraId(),
+                        activity = this,
+                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                        callerId = callerId!!,
+                        currentUserId = currentId!!
+                    )
+                } catch (ex:Exception){
+                    ex.printStackTrace()
+                }
                 this.finish()
             }
             mBoundService?.setOppositeUserInfo(null)

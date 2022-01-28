@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.group.model.ChatItem" />
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:background="#59FFFFFF"
+        android:visibility="@{itemData.message.startsWith(`0`) ? View.GONE : View.VISIBLE, default=gone}">
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_4sdp"
+            android:background="@drawable/rounded_grey_button_bg"
+            android:backgroundTint="@color/white"
+            android:paddingHorizontal="@dimen/_15sdp"
+            android:paddingVertical="@dimen/_4sdp"
+            android:rotation="180"
+            android:text="@{itemData.message}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
+            android:textColor="@color/black"
+            tools:text="20 Unread Messages" />
+
+    </FrameLayout>
+</layout>

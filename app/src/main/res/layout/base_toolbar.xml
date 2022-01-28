@@ -102,6 +102,24 @@
                 tools:src="@drawable/ic_search"
                 tools:visibility="visible" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/iv_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/iv_setting"
+                android:gravity="center"
+                android:padding="@dimen/_4sdp"
+                android:text="Edit"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/iv_setting"
+                app:layout_constraintEnd_toStartOf="@id/iv_setting"
+                app:layout_constraintTop_toTopOf="@id/iv_setting"
+                tools:visibility="gone" />
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_help"
                 android:layout_width="wrap_content"
@@ -115,7 +133,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/iv_setting"
                 app:layout_constraintEnd_toStartOf="@id/iv_setting"
                 app:layout_constraintTop_toTopOf="@id/iv_setting"
-                app:srcCompat="@drawable/ic_help_outline" />
+                app:srcCompat="@drawable/ic_help_outline"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_setting"

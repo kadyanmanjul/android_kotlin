@@ -12,6 +12,8 @@
     <string name="downloading_complete">Downloading complete</string>
     <string name="not_now">Not Now</string>
     <string name="settings">Settings</string>
+    <string name="quiz_game">Quiz Game</string>
+    <string name="build_your_team">Build your team</string>
     <string name="header_congratulation">Congratulations</string>
 
     <string name="name">Name</string>
@@ -28,7 +30,7 @@
     <string name="record_permission_message">To record a Voice Message, allow Josh Skills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
     <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
 
-    <string name="type_message_hint">Type a Message</string>
+    <string name="type_message_hint">Type a message</string>
 
     <string name="splash_sub_string_english">Zindagi mein aage badho,\nJosh ke saath! </string>
 
@@ -167,8 +169,8 @@
     <string name="course_overview">Course Overview</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
     <string name="generic_message_for_error">An error occurred, please try again!</string>
-    <string name="referral_header" formatted="false">Give %s, Get %s</string>
-    <string name="share_more_text">Share More, Earn More</string>
+    <string name="referral_header" formatted="false">Do you want your friends to grow too?</string>
+    <string name="share_more_text"><b>Share Knowledge, Earn Love</b></string>
     <string name="go_to_course">Go To Course</string>
     <string name="video_url_not_exist">Something went wrong! Video does not exist</string>
 
@@ -463,7 +465,7 @@
     <string name="video">Video</string>
     <string name="conversation">Video %1$s</string>
     <string name="unlock_class_demo">Unlock Class Demo For now</string>
-    <string name="refferal_desc1"><![CDATA[\Earn <strong><u>₹%1$s</u></strong> in your account <br/>for every friend who <br/> joins a course!\]]></string>
+    <string name="refferal_desc1"><![CDATA[\Earn <strong><u>₹%1$s</u></strong> in your account for <br/> every friend who joins a <br/> course!\]]></string>
     <string name="referral_desc2"><![CDATA[\Your friend also gets <br/> <strong>₹%1$s OFF</strong> on their first course\]]></string>
     <string name="earn_upto">\Earn upto ₹10,000 \</string>
     <string name="no_conditions_apply">No Conditions Apply</string>
@@ -531,6 +533,7 @@
     <string name="pp_calling">Calling Favorite Practice Partner</string>
     <string name="pp_connected">Favorite Practice Partner</string>
     <string name="pp_favorite_incoming">Favorite Practice Partner Calling</string>
+    <string name="pp_group_incoming">Incoming Call from group </string>
 
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
     <string name="spoke_with">Spoke for %s minutes with  %s</string>
@@ -849,6 +852,7 @@
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
+    <string name="group_p2p_title">Call From Group</string>
     <string name="convo_notification_title">%1s has started a conversation about %1s</string>
     <string name="room_title">Join Conversation Room</string>
     <string name="p2p_subtitle">Speaking Practice</string>
@@ -960,15 +964,70 @@
     <string name="convo_room_dialog_desc_favt">Start a conversation with my favorite practice partners</string>
     <string name="convo_room_dialog_desc">Start a conversation with practice partners</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_voip_group">VoipGroupActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="previous">Previous</string>
+    <string name="ignore_ui_msg">Element only for UI purpose</string>
+    <string name="game_name">QuizGrad</string>
+    <string name="play_with_favourite">Play with\nFavourite\nPractice \nPartner</string>
+    <string name="play_with_random">Play with\nRandom\nPlayer</string>
+    <string name="favourite_practice_partner">Favourite Practice Partners</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="your_team_mate">Harsh is your team mate</string>
+    <string name="make_new_te">Make New Team</string>
+    <string name="play_again_">Play Again\nwith Opponent</string>
+    <string name="has_invited">has invited you to play</string>
+    <string name="friend_request">Sent you friend request</string>
+
+    <string name="can_t_play_">Can"'"t Play Right Now</string>
+    <string name="alreadt_start">Already started the game</string>
+    <string name="accept">Accept</string>
+
+    <string name="match_bonus">Winning \Bonus </string>
+    <string name="opponent_wo">Opponent Won!</string>
+
+    <string name="round_1">ROUND</string>
+    <string name="get_ready_">Get Ready!</string>
+    <string name="who_said_if">Who said: "``"If there is an attack, I give you permission to use any counter or curse that might occur to you "``"? </string>
+
+    <string name="cornelius_f">Cornelius uygurytg fuygvuirycv fhjvbuo</string>
+    <string name="arthur_weas">Arthur Weasely</string>
+    <string name="professor_m">Professor\nMcGonagall</string>
+    <string name="albus_dumbl">Albus Dumbledore</string>
+    <string name="user_name">Sagar</string>
+    <string name="fiften">15</string>
+    <string name="zero">0</string>
+    <string name="play">Play!</string>
+
+    <string name="lets_play_again">Click on Play Again to play another game with</string>
+    <string name="winner">Winner!</string>
+    <string name="team_2">Team 2</string>
+    <string name="team_1">Team 1</string>
+    <string name="match_score">Match\n Score</string>
+    <string name="score_text">110</string>
+    <string name="bonus_marks">5</string>
+    <string name="total">Total</string>
+    <string name="points_earn_quiz_from_quiz">You earned </string>
+    <string name="total_students_enrolled">%s students enrolled</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="no_awards_others">%s has not won any awards yet.\n\nIf you ever connect with him motivate him and let him know he can do it</string>
+    <string name="no_awards_me">%s you have not won any awards yet. But you can do it.\n\nThe entire josh family believes in you.</string>
+    <string name="previous_dp">Previous Profile Photos (0)</string>
+    <string name="hometown_error_toast">Please enter your Hometown</string>
+    <string name="delete_popup">This photo will be deleted from your previous profile photos</string>
+
+    <string name="how_to_speak"><u>How To Speak?</u></string>
+    <string name="download_syllabus_23_pages">Download Syllabus<b> • </b>15 pages</string>
+    <string name="the_ultimate_spoken_english_n_course_syllabus">The Ultimate Spoken English \nCourse Syllabus</string>
+
+    <!-- p2p image share strings -->
+    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new new persons <b>के साथ</b>
+</string>
+    <string name="share_screen_line">If I can do it, You can do it</string>
+    <string name="share_screen_heading"><![CDATA[\I Spoke in <b>English</b> for <br/> <b>%1$s minutes</b>\]]></string>
+    <string name="caller_details">%1$s\n%2$s\n%3$s</string>
+    <string name="you_practiced_in_english_prompt">You practiced in English for\n%1$s minutes</string>
+    <string name="mehnat_prompt">Aise hi mehnat krte raho</string>
+    <string name="josh_fam">You are a valuable member of the Josh\nfamily</string>
+    <string name="share_with_friends">Share with friends</string>
+    <string name="great_job">Great Job %1$s!</string>
 
 </resources>

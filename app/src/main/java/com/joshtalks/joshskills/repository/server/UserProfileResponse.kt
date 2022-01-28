@@ -13,7 +13,7 @@ data class UserProfileResponse(
     @SerializedName("createdAt")
     val createdAt: Int?,
     @SerializedName("date_of_birth")
-    val dateOfBirth: Int?,
+    val dateOfBirth: String?,
     @SerializedName("joined_on")
     val joinedOn: String?,
     @SerializedName("lastActiveAt")
@@ -50,8 +50,8 @@ data class UserProfileResponse(
     var awardCategory: List<AwardCategory>?,
     @SerializedName("certificates")
     val certificates: List<Certificate>?,
-    @SerializedName("group_info")
-    val groupInfo: List<GroupInfo>?,
+    @SerializedName("groups")
+    val myGroupsList: List<GroupInfo>?,
     @SerializedName("is_senior_student")
     val isSeniorStudent: Boolean = false,
     @SerializedName("is_course_bought")
@@ -61,20 +61,27 @@ data class UserProfileResponse(
     @SerializedName("expire_date")
     val expiryDate: Date? = null,
     @SerializedName("is_conv_room_active")
-    val isConvRoomActive: Boolean
+    val isConvRoomActive: Boolean,
+    @SerializedName("hometown")
+    val hometown: String? = EMPTY,
+    @SerializedName("profile_pictures")
+    val previousProfilePictures: PreviousProfilePictures? = null,
+    @SerializedName("course_enrolled")
+    val enrolledCoursesList: EnrolledCoursesList? = null,
+    @SerializedName("is_game_active")
+    val isGameActive: Boolean = false
 )
 
 data class GroupInfo(
-    @SerializedName("group_id")
-    val groupId: String?,
-    @SerializedName("group_name")
+    @SerializedName("text")
+    val textToShow: String?,
+    @SerializedName("minutes")
+    val minutesSpoken: Int?,
+    @SerializedName("name")
     val groupName: String?,
-    @SerializedName("total_audio_messages")
-    val totalAudioMessages: Int?,
-    @SerializedName("total_duration")
-    val totalDuration: Int?,
-    @SerializedName("total_messages")
-    val totalMessages: Int?
+    @SerializedName("icon")
+    val groupIcon: String?,
+
 )
 
 data class Certificate(
@@ -117,7 +124,7 @@ data class Award(
     @SerializedName("sort_order")
     val sortOrder: Int?,
     @SerializedName("date_text")
-    val dateText: String?,
+    var dateText:String?,
     @SerializedName("image_url")
     val imageUrl: String?,
     @SerializedName("award_description")
@@ -125,5 +132,17 @@ data class Award(
     @SerializedName("is_achieved")
     val is_achieved: Boolean = false,
     @SerializedName("is_seen")
-    val isSeen: Boolean?
+    val isSeen: Boolean?,
+    @SerializedName("count")
+    val count: Int = 0,
+    @SerializedName("date_list")
+    val dateList: List<String?>?,
+
+    var recentDate:String?
+
+
 ) : Parcelable
+
+
+
+

@@ -64,14 +64,15 @@ import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_CALL_ID
 import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
+import com.joshtalks.joshskills.ui.voip.RTC_IS_GROUP_CALL
 import com.joshtalks.joshskills.ui.voip.RTC_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
+import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
 import kotlinx.coroutines.*
-import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.IOException
@@ -514,7 +515,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                 if (!PrefManager.getBoolValue(
                         PREF_IS_CONVERSATION_ROOM_ACTIVE
-                    )
+                    ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                 ) {
                     incomingCallNotificationAction(notificationObject.actionData)
                 }
@@ -641,6 +642,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
         }
     }
+/*
 
     private fun callForceConnect(actionData: String?) {
         actionData?.let {
@@ -656,11 +658,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
-                    obj.getString("group_name")
-                } catch (e: JSONException) {
-                    ""
-                }
+                if (obj.has("group_name"))
+                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = obj.getString("group_name")
+
+                if (obj.has("is_group_call"))
+                    data[RTC_IS_GROUP_CALL] = obj.getString("is_group_call")
+
+                if (obj.has("group_url"))
+                    data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
+
                 WebRtcService.currentCallingGroupName = data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
                 WebRtcService.forceConnect(data)
             } catch (t: Throwable) {
@@ -676,6 +682,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     private fun callDisconnectNotificationAction() {
         WebRtcService.disconnectCallFromCallie()
     }
+*/
 
     private fun declineCallWhenInConversationRoom(actionData: String?) {
         actionData?.let {
@@ -696,7 +703,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
 
     }
-
+/*
     private fun incomingCallNotificationAction(actionData: String?) {
         actionData?.let {
             try {
@@ -711,11 +718,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
-                    obj.getString("group_name")
-                } catch (e: JSONException) {
-                    ""
-                }
+
+                if (obj.has("group_name"))
+                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = obj.getString("group_name")
+
+                if (obj.has("is_group_call"))
+                    data[RTC_IS_GROUP_CALL] = obj.getString("is_group_call")
+
+                if (obj.has("group_url"))
+                    data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
 
                 if (obj.has("f")) {
                     val id = obj.getInt("caller_uid")
@@ -733,7 +744,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 t.printStackTrace()
             }
         }
-    }
+    }*/
 
 //    private fun returnDefaultIntent(): Intent {
 //        return Intent(applicationContext, LauncherActivity::class.java).apply {
@@ -1427,7 +1438,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                     if (!PrefManager.getBoolValue(
                             PREF_IS_CONVERSATION_ROOM_ACTIVE
-                        )
+                        ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                     ) {
                         incomingCallNotificationAction(notificationObject.actionData)
                     }
@@ -1491,7 +1502,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 NotificationAction.JOIN_CONVERSATION_ROOM -> {
 
                     if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && actionData != null
-                        && User.getInstance().isVerified && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
+                        && User.getInstance().isVerified && PrefManager.getBoolValue(
+                            IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+                        )
                     ) {
                         val roomId = JSONObject(actionData).getString("room_id")
                         val topic = JSONObject(actionData).getString("topic") ?: EMPTY
@@ -1528,11 +1541,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
-                        obj.getString("group_name")
-                    } catch (e: JSONException) {
-                        ""
-                    }
+                    if (obj.has("group_name"))
+                        data[RTC_WEB_GROUP_CALL_GROUP_NAME] = obj.getString("group_name")
+
+                    if (obj.has("is_group_call"))
+                        data[RTC_IS_GROUP_CALL] = obj.getString("is_group_call")
+
+                    if (obj.has("group_url"))
+                        data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
+
                     WebRtcService.currentCallingGroupName =
                         data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
                     WebRtcService.forceConnect(data)
@@ -1560,11 +1577,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = try {
-                        obj.getString("group_name")
-                    } catch (e: JSONException) {
-                        ""
-                    }
+                    if (obj.has("group_name"))
+                        data[RTC_WEB_GROUP_CALL_GROUP_NAME] = obj.getString("group_name")
+
+                    if (obj.has("is_group_call"))
+                        data[RTC_IS_GROUP_CALL] = obj.getString("is_group_call")
+
+                    if (obj.has("group_url"))
+                        data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
 
                     if (obj.has("f")) {
                         val id = obj.getInt("caller_uid")

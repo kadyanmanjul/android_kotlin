@@ -169,7 +169,7 @@ class ShowAwardFragment : DialogFragment() {
             binding.image.setImage(it)
         }
         binding.text.text = HtmlCompat.fromHtml(
-            award?.get(0)?.awardDescription.toString(),
+            award?.get(0)?.awardDescription.toString() + " " + award?.get(position)?.dateText,
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
 

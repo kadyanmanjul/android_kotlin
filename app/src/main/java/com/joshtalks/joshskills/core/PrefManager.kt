@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 
 const val USER_UNIQUE_ID = "user_unique_id"
 const val GID_SET_FOR_USER = "gid_set_for_user"
@@ -91,6 +93,8 @@ const val HAS_SEEN_VOCAB_SPEAKING_ANIMATION = "joshskills_has_seen_vocab_speakin
 const val HAS_SEEN_VOCAB_HAND_TOOLTIP = "joshskills_has_seen_vocab_hand_tooltip"
 const val HAS_SEEN_READING_HAND_TOOLTIP = "joshskills_has_seen_reading_hand_tooltip"
 const val HAS_SEEN_READING_TOOLTIP = "joshskills_has_seen_reading_tooltip"
+const val HAS_SEEN_GROUP_TOOLTIP = "joshskills_has_seen_group_tooltip"
+const val HAS_SEEN_GROUP_CALL_TOOLTIP = "joshskills_has_seen_group_call_tooltip"
 const val HAS_SEEN_READING_PLAY_ANIMATION = "joshskills_has_seen_reading_play_animation"
 const val HAS_SEEN_SPEAKING_TOOLTIP = "joshskills_has_seen_speaking_tooltip"
 const val LESSON_COMPLETE_SNACKBAR_TEXT_STRING = "lesson_complete_snackbar_text_string"
@@ -106,6 +110,12 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
+const val IS_ENGLISH_SYLLABUS_PDF_OPENED = "is_english_syllabus_pdf_opened"
+const val BLOCK_ISSUE = "BLOCK_ISSUE"
+const val REPORT_ISSUE = "REPORT_ISSUE"
+const val USER_ACTIVE_IN_GAME = "game_active"
+const val USER_LEAVE_THE_GAME = "game_left"
+const val USER_MUTE_OR_NOT = "mute_un_mute"
 const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
 const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
 
@@ -247,6 +257,17 @@ object PrefManager {
         else prefManagerCommon.edit().putStringSet(key, value).apply()
     }
 
+    fun putPrefObject(key: String, objects: Any){
+        val gson = Gson()
+        val jsonString = gson.toJson(objects)
+        put(key = key, value=jsonString)
+    }
+    fun getPrefObject(key: String):ReportModel?{
+        val gson = Gson()
+        val json: String = getStringValue(key=key, defaultValue = "") as String
+        return gson.fromJson(json, ReportModel::class.java)
+    }
+
 
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN
@@ -269,7 +290,7 @@ object PrefManager {
         WorkManagerAdmin.appStartWorker()
     }
 
-    fun clearDatabase(){
+    fun clearDatabase() {
         LastSyncPrefManager.clear()
         AppDatabase.clearDatabase()
     }

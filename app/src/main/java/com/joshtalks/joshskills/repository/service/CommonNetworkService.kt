@@ -197,6 +197,14 @@ interface CommonNetworkService {
         @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
 
+    @GET("$DIR/user/user_profile_v2/{mentor_id}/")
+    suspend fun getUserProfileDataV3(
+        @Path("mentor_id") id: String,
+        @Query("interval_type") intervalType: String? = null,
+        @Query("previous_page") previousPage: String? = null
+    ): Response<UserProfileResponse>
+
+
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
         @Query("mentor_id") id: String
@@ -305,4 +313,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/link_attribution/deep_link/")
     suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
+
+    @POST("$DIR/impression/track_course_impressions/")
+    suspend fun saveIntroVideoFlowImpression(@Body params: Map<String, Any?>): Response<Any>
 }

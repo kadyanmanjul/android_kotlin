@@ -9,6 +9,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
@@ -16,10 +17,15 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
+import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
+import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import timber.log.Timber
+import retrofit2.Response
 import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
@@ -29,8 +35,11 @@ const val ARG_CALL_TIME = "call_time"
 const val ARG_YOUR_NAME = "your_name"
 const val ARG_YOUR_AGORA_ID = "your_agora_id"
 const val ARG_DIM_BACKGROUND = "dim_bg"
+const val ARG_CALLER_ID = "caller_id"
+const val ARG_CURRENT_ID= "current_id"
+const val SHARE_SCREEN_MINUTES_THRESHOLD = "SHARE_SCREEN_MINUTES_THRESHOLD"
 
-class VoipCallFeedbackActivity : BaseActivity() {
+class VoipCallFeedbackActivity : BaseActivity(){
 
     private lateinit var binding: VoipCallFeedbackViewBinding
     private var channelName: String = EMPTY
@@ -39,6 +48,10 @@ class VoipCallFeedbackActivity : BaseActivity() {
     private var dimBg = false
     private var callerName: String = EMPTY
     private var yourName: String = EMPTY
+    private var callerId:Int = -1
+    private var currentId:Int= -1
+    private var minute = 0
+    private var callerImage: String = EMPTY
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -98,6 +111,8 @@ class VoipCallFeedbackActivity : BaseActivity() {
             .getString(FirebaseRemoteConfigKey.VOIP_FEEDBACK_MESSAGE_NEW)
 
         arguments?.let {
+            callerId=it.getIntExtra(ARG_CALLER_ID,-1)
+            currentId=it.getIntExtra(ARG_CURRENT_ID,-1)
             channelName = it.getStringExtra(ARG_CHANNEL_NAME) ?: EMPTY
             yourAgoraId = it.getIntExtra(ARG_YOUR_AGORA_ID, 0)
             callerName = it.getStringExtra(ARG_CALLER_NAME) ?: EMPTY
@@ -106,6 +121,7 @@ class VoipCallFeedbackActivity : BaseActivity() {
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
+            callerImage = image!!
             if (image.isNullOrEmpty()) {
                 binding.cImage.setImageBitmap(
                     callerName.textDrawableBitmap(
@@ -120,7 +136,13 @@ class VoipCallFeedbackActivity : BaseActivity() {
             val mTime = StringBuilder()
             val callTime = it.getLongExtra(ARG_CALL_TIME, 0L)
             val second: Int = (callTime / 1000 % 60).toInt()
-            val minute: Int = (callTime / (1000 * 60) % 60).toInt()
+            minute = (callTime / (1000 * 60) % 60).toInt()
+            val totalSecond:Int=((minute*60)+second)
+
+            if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
+                showReportDialog("REPORT"){
+                }
+            }
             if (minute > 0) {
                 mTime.append(minute).append(getMinuteString(minute))
             }
@@ -133,6 +155,12 @@ class VoipCallFeedbackActivity : BaseActivity() {
             addObserver()
             practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
         }
+    }
+
+    private fun showReportDialog(type:String,function: ()->Unit) {
+        ReportDialogFragment.newInstance(callerId,currentId, type,channelName,function = function)
+            .show(supportFragmentManager, "ReportDialogFragment")
+
     }
 
     private fun getMinuteString(min: Int): String {
@@ -157,14 +185,77 @@ class VoipCallFeedbackActivity : BaseActivity() {
                     requestParams["channel_name"] = channelName
                     requestParams["agora_mentor_id"] = yourAgoraId.toString()
                     requestParams["response"] = response
-                    AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
+                    val apiResponse =
+                        AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
+                    startShareActivity(apiResponse)
                     WorkManagerAdmin.syncFavoriteCaller()
                     delay(250)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                 }
-                finishAndRemoveTask()
+                when (response) {
+                    "YES" -> {
+                        //showToast("$callerName is now added to your Favorite Practice Partners.")
+                        closeActivity()
+
+
+                    }
+                    "NO" -> {
+                        showReportDialog("BLOCK"){
+                            closeActivity()
+                        }
+
+                        //showToast("$callerName is now added to your Blocklist.")
+                    }
+                    "MAYBE" -> {
+                        //showToast("Thank you for submitting the feedback.")
+                        closeActivity()
+
+                    }
+                    "CLOSED"-> {
+                        closeActivity()
+                    }
+                    }
+                }
+
+        }
+    }
+
+     fun closeActivity(){
+        finishAndRemoveTask()
+    }
+
+    private fun startShareActivity(apiResponse: Response<KFactor>) {
+        if (apiResponse.isSuccessful &&
+            apiResponse.code() in 201..203 && apiResponse.body()!!.duration_filter) {
+            val body = apiResponse.body()!!
+
+            val cState: String?
+            val cCity: String?
+            val rState: String?
+            val rCity: String?
+
+            if (yourAgoraId == body.caller.agora_mentor_id) {
+                cState = body.caller.state
+                cCity = body.caller.city
+                rState = body.receiver.state
+                rCity = body.receiver.city
+            } else {
+                cState = body.receiver.state
+                cCity = body.receiver.city
+                rState = body.caller.state
+                rCity = body.caller.city
             }
+            ShareWithFriendsActivity.startShareWithFriendsActivity(
+                activity = this@VoipCallFeedbackActivity,
+                receiverName = callerName,
+                receiverImage = callerImage,
+                minutesTalked = minute,
+                callerState = cState,
+                callerCity = cCity,
+                receiverState = rState,
+                receiverCity = rCity,
+            )
         }
     }
 
@@ -179,7 +270,9 @@ class VoipCallFeedbackActivity : BaseActivity() {
             yourAgoraId: Int?,
             dimBg: Boolean = false,
             activity: Activity,
-            flags: Array<Int> = arrayOf()
+            flags: Array<Int> = arrayOf(),
+            callerId:Int,
+            currentUserId:Int
         ) {
 
             Intent(activity, VoipCallFeedbackActivity::class.java).apply {
@@ -190,6 +283,8 @@ class VoipCallFeedbackActivity : BaseActivity() {
                 putExtra(ARG_YOUR_NAME, yourName)
                 putExtra(ARG_YOUR_AGORA_ID, yourAgoraId ?: -1)
                 putExtra(ARG_DIM_BACKGROUND, dimBg)
+                putExtra(ARG_CALLER_ID, callerId)
+                putExtra(ARG_CURRENT_ID, currentUserId)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

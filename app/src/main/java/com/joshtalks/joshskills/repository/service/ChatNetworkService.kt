@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionSta
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
+import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -158,6 +159,9 @@ interface ChatNetworkService {
     )
     @GET("$DIR/course/demo_onboarding_data/")
     suspend fun getDemoOnBoardingData(): Response<DemoOnboardingData>
+
+    @GET("$DIR/course/introduction_data/")
+    suspend fun getIntroSpeakingVideo(): Response<VideoPopupItem>
 
     @GET("$DIR/assessment/test_v4/")
     suspend fun getOnlineTestQuestion(@QueryMap params: Map<String, Int>): Response<OnlineTestResponse>

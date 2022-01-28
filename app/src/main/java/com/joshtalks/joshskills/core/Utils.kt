@@ -50,6 +50,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.text.toSpannable
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -73,6 +74,7 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.muddzdev.styleabletoast.StyleableToast
+import de.hdodenhof.circleimageview.CircleImageView
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
 import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
@@ -122,6 +124,20 @@ const val IMPRESSION_OPEN_REFERRAL_SCREEN = "OPEN_REFERRAL_SCREEN"
 const val IMPRESSION_REFERRAL_CODE_COPIED = "REFERRAL_CODE_COPIED"
 const val IMPRESSION_REFER_VIA_WHATSAPP_CLICKED = "REFER_VIA_WHATSAPP_CLICKED"
 const val IMPRESSION_REFER_VIA_OTHER_CLICKED = "REFER_VIA_OTHER_CLICKED"
+const val IMPRESSION_REFER_VIA_INBOX_ICON = "REFER_VIA_INBOX_ICON"
+const val IMPRESSION_REFER_VIA_INBOX_MENU = "REFER_VIA_INBOX_MENU"
+const val IMPRESSION_REFER_VIA_CONVERSATION_ICON = "REFER_VIA_CONVERSATION_ICON"
+const val IMPRESSION_REFER_VIA_CONVERSATION_MENU = "REFER_VIA_CONVERSATION_MENU"
+
+const val BUY_ENGLISH_COURSE_BUTTON_CLICKED = "BUY_ENGLISH_COURSE_BUTTON_CLICKED"
+const val D2P_COURSE_SYLLABUS_OPENED = "D2P_COURSE_SYLLABUS_OPENED"
+const val SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT = "SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT"
+
+const val SPEAKING_TAB_CLICKED_FOR_FIRST_TIME = "SPEAKING_TAB_CLICKED_FOR_FIRST_TIME"
+const val INTRO_VIDEO_STARTED_PLAYING = "INTRO_VIDEO_STARTED_PLAYING"
+const val TIME_SPENT_ON_INTRO_VIDEO = "TIME_SPENT_ON_INTRO_VIDEO"
+const val CALL_BUTTON_CLICKED_FROM_NEW_SCREEN = "CALL_BUTTON_CLICKED_FROM_NEW_SCREEN"
+const val HOW_TO_SPEAK_TEXT_CLICKED = "HOW_TO_SPEAK_TEXT_CLICKED"
 const val IMPRESSION_UNDO_ATS_OPTION = "UNDO_ATS_OPTIONS"
 
 object Utils {
@@ -183,7 +199,7 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true): String {
+    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
@@ -196,7 +212,7 @@ object Utils {
                 "Yesterday"
             }
             else -> {
-                DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
+                DateTimeUtils.formatWithStyle(date, style)
             }
         }
     }
@@ -983,6 +999,56 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .apply(requestOptions)
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
+}
+
+fun CircleImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.group_default_icon)
+        .error(R.drawable.group_default_icon)
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context)
+        .load(url)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
+}
+
+fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication,loader: LottieAnimationView) {
+    val requestOptions = RequestOptions()
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context)
+        .load(url)
+        .addListener(imageLoadingListener(loader))
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
+}
+fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Drawable?>? {
+    return object : RequestListener<Drawable?> {
+        override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+            return false
+        }
+        override fun onResourceReady(
+            resource: Drawable?,
+            model: Any?,
+            target: com.bumptech.glide.request.target.Target<Drawable?>?,
+            dataSource: DataSource?,
+            isFirstResource: Boolean
+        ): Boolean {
+            pendingImage.pauseAnimation()
+            pendingImage.visibility = View.GONE
+            return false
+        }
+    }
 }
 
 fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
