@@ -160,6 +160,7 @@ class EditProfileFragment : DialogFragment() {
             RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { showToast("Something Went Wrong") }
                 .subscribe {
                     dismiss()
                 })
