@@ -25,4 +25,7 @@ class DecisionRepo(val api: GameApiService?) {
     suspend fun saveDurationOfCall(saveCallDuration: SaveCallDuration) =
         api?.saveCallDuration(saveCallDuration)
 
+    suspend fun checkAlreadyFppOrNot(checkAlreadyFpp: CheckAlreadyFpp) =
+        api?.checkUserAlreadyFppOrNot(checkAlreadyFpp)
+
 }

@@ -14,6 +14,7 @@ class GameFirebaseDatabase {
     private var partnerShowCutCard: CollectionReference = database.collection("PartnerShowCut")
     private var opponentShowCutCard: CollectionReference = database.collection("OpponentShowCut")
     private var sentFriendRequest: CollectionReference = database.collection(FRIEND_REQUEST)
+    private var acceptFriendRequest : CollectionReference = database.collection("AcceptFppRequest")
     private var userPlayAgain: CollectionReference = database.collection("UserPlay")
     private var playAgainNotification: CollectionReference = database.collection("PlayAgain")
     private var muteUnmute: CollectionReference = database.collection("MuteUnmute")
@@ -312,6 +313,35 @@ class GameFirebaseDatabase {
         sentFriendRequest.document(mentorId).delete()
     }
 
+    fun createAcceptFriendRequest(acceptedUserId:String, userName:String,userImage: String,fromMentorId: String,isAccept: String){
+        val channel: HashMap<String, Any> = HashMap()
+        channel["acceptUserId"] = acceptedUserId
+        channel["acceptUserName"] = userName
+        channel["acceptUserImage"] = userImage
+        channel["isAccept"] = isAccept
+        acceptFriendRequest.document(fromMentorId).set(channel)
+    }
+
+    fun getAcceptFriendRequest(mentorId: String,onMakeFriendTrigger: OnMakeFriendTrigger){
+        acceptFriendRequest
+            .addSnapshotListener { value, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                for (doc in value!!) {
+                    if (doc.exists()) {
+                        if (mentorId == doc.id) {
+                            val acceptUserId = doc.data["acceptUserId"].toString()
+                            val acceptUserName = doc.data["acceptUserName"].toString()
+                            val acceptImage = doc.data["acceptUserImage"].toString()
+                            val isAccept = doc.data["isAccept"].toString()
+                            onMakeFriendTrigger.onPartnerAcceptFriendRequest(acceptUserName,acceptImage,isAccept)
+                        }
+                    }
+                }
+            }
+    }
+
     fun getLiveStatus(mentorId: String): String {
         var status: String? = null
         sentFriendRequest
@@ -386,6 +416,10 @@ class GameFirebaseDatabase {
 
     fun deletePlayAgainNotification(mentorId: String) {
         playAgainNotification.document(mentorId).delete()
+    }
+
+    fun deleteAcceptFppRequestNotification(mentorId: String) {
+        acceptFriendRequest.document(mentorId).delete()
     }
 
     fun deleteAllData(mentorId: String) {
@@ -465,6 +499,7 @@ class GameFirebaseDatabase {
 
         fun onPlayAgainNotificationFromApi(userName: String, userImage: String)
         fun onPartnerPlayAgainNotification(userName: String, userImage: String, mentorId: String)
+        fun onPartnerAcceptFriendRequest(userName: String,userImage: String,isAccept: String)
     }
 
     interface OnLiveStatus {

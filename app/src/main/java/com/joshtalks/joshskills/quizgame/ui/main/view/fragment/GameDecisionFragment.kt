@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,8 @@ import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_question.*
+import kotlinx.android.synthetic.main.fragment_question.team2_user_image2_shadow
+import kotlinx.android.synthetic.main.fragment_test.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,7 +49,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
 
     private var factory: DecisionDataViewProviderFactory? = null
     private var decisionDataViewModel: DecisionDataViewModelGame? = null
-    private var currentUserId: String? = null
+    private var currentUserId: String = Mentor.getInstance().getId()
     private var opponentTeamMarks: String? = null
     private var isUiActive = false
 
@@ -85,8 +88,8 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     private var partnerId: String? = null
     private var partnerName: String? = null
     private var partnerImage: String? = null
-    private var currentUserName: String? = null
-    private var currentUserImage: String? = null
+    private var currentUserName: String = Mentor.getInstance().getUser()?.firstName ?: ""
+    private var currentUserImage: String = Mentor.getInstance().getUser()?.photo ?: ""
     var time: Int? = 0
 
     val handler = Handler(Looper.getMainLooper())
@@ -128,9 +131,6 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE)
-        currentUserId = Mentor.getInstance().getId()
-        currentUserName = Mentor.getInstance().getUser()?.firstName
-        currentUserImage = Mentor.getInstance().getUser()?.photo
 
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             binding.team1User2Name.alpha = 0.5f
@@ -216,10 +216,6 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             makeNewTeam()
         }
 
-        if (fromType == RANDOM) {
-            binding.btnAddPeople.visibility = View.VISIBLE
-        }
-
         binding.btnAddPeople.setOnClickListener {
             binding.btnAddPeople.isEnabled = false
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ADD_TO_FRIEND_LIST)
@@ -260,6 +256,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     }
 
     fun getFriendRequest() {
+        gameFirebaseDatabase.getAcceptFriendRequest(currentUserId ?: "", this)
         gameFirebaseDatabase.getFriendRequests(currentUserId ?: "", this)
     }
 
@@ -307,12 +304,27 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         decisionDataViewModel?.getRoomUserDataTemp(
             RandomRoomData(
                 roomId ?: "",
-                currentUserId ?: ""
+                currentUserId
+            )
+        )
+        decisionDataViewModel?.checkUserAlreadyFppOrNot(
+            CheckAlreadyFpp(
+                currentUserId,
+                teamId ?: ""
             )
         )
     }
 
     fun showRoomUserData() {
+        activity?.let {
+            decisionDataViewModel?.checkAlreadyFppLiveData?.observe(it, Observer {
+                if (it.alreadyFpp == "false") {
+                    binding.btnAddPeople.visibility = View.VISIBLE
+                } else {
+                    binding.btnAddPeople.visibility = View.INVISIBLE
+                }
+            })
+        }
         activity?.let {
             decisionDataViewModel?.roomUserDataTemp?.observe(it, Observer {
                 initializeUsersTeamsData(it.teamData)
@@ -636,7 +648,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                             decisionDataViewModel?.saveCallDuration?.observe(it, {
                                 if (it.message == CALL_DURATION_RESPONSE) {
                                     val points = it.points
-                                    if (points.toInt() >= 1){
+                                    if (points.toInt() >= 1) {
                                         lifecycleScope.launch(Dispatchers.Main) {
                                             UtilsQuiz.showSnackBar(
                                                 binding.container,
@@ -671,7 +683,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                             decisionDataViewModel?.saveCallDuration?.observe(it, {
                                 if (it.message == CALL_DURATION_RESPONSE) {
                                     val points = it.points
-                                    if (points.toInt() >= 1){
+                                    if (points.toInt() >= 1) {
                                         lifecycleScope.launch(Dispatchers.Main) {
                                             UtilsQuiz.showSnackBar(
                                                 binding.container,
@@ -719,7 +731,9 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     ) {
 
         try {
-            CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
+            binding.btnAddPeople.visibility = View.INVISIBLE
+            if (isUiActive)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
             val imageUrl = fromImageUrl.replace("\n", "")
@@ -738,16 +752,25 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         }
 
         binding.eee.setOnClickListener {
+            binding.btnAddPeople.visibility = View.VISIBLE
+            gameFirebaseDatabase.createAcceptFriendRequest(
+                currentUserId,
+                currentUserName,
+                currentUserImage,
+                fromMentorId,
+                "false"
+            )
             handler.removeCallbacksAndMessages(null)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+            gameFirebaseDatabase.deleteRequest(currentUserId)
         }
 
         binding.buttonAccept.setOnClickListener {
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
             handler.removeCallbacksAndMessages(null)
             binding.notificationCard.visibility = View.INVISIBLE
+            binding.btnAddPeople.visibility = View.INVISIBLE
             decisionDataViewModel?.addFavouritePracticePartner(
                 AddFavouritePartner(
                     fromMentorId,
@@ -757,17 +780,34 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             )
             activity?.let {
                 decisionDataViewModel?.fppData?.observe(it, Observer {
-                    gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+                    if (it.message == "done") {
+                        gameFirebaseDatabase.deleteRequest(currentUserId)
+                        gameFirebaseDatabase.createAcceptFriendRequest(
+                            currentUserId,
+                            currentUserName,
+                            currentUserImage,
+                            fromMentorId,
+                            "true"
+                        )
+                    }
                 })
             }
         }
 
         binding.butonDecline.setOnClickListener {
+            binding.btnAddPeople.visibility = View.VISIBLE
+            gameFirebaseDatabase.createAcceptFriendRequest(
+                currentUserId,
+                currentUserName,
+                currentUserImage,
+                fromMentorId,
+                "false"
+            )
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
             handler.removeCallbacksAndMessages(null)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+            gameFirebaseDatabase.deleteRequest(currentUserId)
         }
 
         try {
@@ -775,6 +815,14 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                 if (isUiActive)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
                 gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+                gameFirebaseDatabase.createAcceptFriendRequest(
+                    currentUserId,
+                    currentUserName,
+                    currentUserImage,
+                    fromMentorId,
+                    "false"
+                )
+                binding.btnAddPeople.visibility = View.VISIBLE
             }, 10000)
         } catch (ex: Exception) {
         }
@@ -859,6 +907,62 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             }
 
         }
+    }
+
+    override fun onPartnerAcceptFriendRequest(
+        userName: String,
+        userImage: String,
+        isAccept: String
+    ) {
+        binding.btnAddPeople.visibility = View.INVISIBLE
+        if (isUiActive) {
+            binding.buttonLinearLayout.visibility = View.INVISIBLE
+            CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
+        }
+        if (isAccept == "true") {
+            binding.txtMsg2.text = "Accept your friend request"
+            binding.userName.text = userName
+            activity?.let {
+                Glide.with(it)
+                    .load(userImage)
+                    .apply(
+                        RequestOptions.placeholderOf(R.drawable.ic_josh_course)
+                            .error(R.drawable.ic_josh_course)
+                    )
+                    .into(binding.userImage)
+            }
+        } else {
+            binding.txtMsg2.text = "Decline your friend request"
+            binding.userName.text = userName
+            activity?.let {
+                Glide.with(it)
+                    .load(userImage)
+                    .apply(
+                        RequestOptions.placeholderOf(R.drawable.ic_josh_course)
+                            .error(R.drawable.ic_josh_course)
+                    )
+                    .into(binding.userImage)
+            }
+        }
+
+        binding.eee.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
+            if (isUiActive)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId ?: "")
+        }
+
+        try {
+            handler.postDelayed({
+                if (isUiActive)
+                    CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
+                        binding.notificationCard
+                    )
+                gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId ?: "")
+            }, 10000)
+        } catch (ex: Exception) {
+        }
+
     }
 
     override fun onDestroy() {

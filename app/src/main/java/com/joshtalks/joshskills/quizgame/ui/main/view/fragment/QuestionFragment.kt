@@ -55,6 +55,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private var gameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
 
     private var isCorrect: String? = null
+    private var secondTeamAns :String?=null
 
     private var roomId: String? = null
 
@@ -349,8 +350,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private fun setupViewModel() {
         try {
             factory = QuestionProviderFactory(requireActivity().application)
-            questionViewModel =
-                factory.let { ViewModelProvider(this, it!!).get(QuestionViewModelGame::class.java) }
+            questionViewModel = ViewModelProvider(this,factory!!).get(QuestionViewModelGame::class.java)
             questionViewModel?.getQuizQuestion(
                 QuestionRequest(
                     QUESTION_COUNT,
@@ -365,6 +365,8 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                         currentUserId ?: ""
                     )
                 )
+
+                createAnim()
             } catch (e: Exception) {
 
             }
@@ -825,25 +827,10 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private fun getSelectOptionWithAnim(choiceAnswer: String, pos: Int) {
         disableCardClick()
         try {
-
-            activity?.let {
                 isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
-                questionViewModel?.selectOption?.observe(it, {
-                    choiceAnswer(choiceAnswer, isCorrect ?: "")
-                    val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
-                    if (it.message == BOTH_TEAM_SELECTED) {
-                        gameFirebaseDatabase.createOpponentTeamShowCutCard(
-                            opponentTeamId ?: "",
-                            isCorrect ?: "",
-                            choiceAnswer
-                        )
-                        gameFirebaseDatabase.createPartnerShowCutCard(
-                            currentUserTeamId ?: "",
-                            isCorrect ?: "",
-                            firstTeamAnswer ?: ""
-                        )
-                    }
-                })
+                choiceAnswer(choiceAnswer, isCorrect ?: "")
+                secondTeamAns = choiceAnswer
+
                 if (isCorrect == TRUE) {
                     marks += if (isLastQuestion) {
                         (seconds * 2)
@@ -878,9 +865,27 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                         opponentTeamId
                     )
                 }
-
-            }
         } catch (ex: Exception) {
+        }
+    }
+
+    fun createAnim(){
+        activity?.let {
+            questionViewModel?.selectOption?.observe(it, {
+                val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
+                if (it.message == BOTH_TEAM_SELECTED) {
+                    gameFirebaseDatabase.createOpponentTeamShowCutCard(
+                        opponentTeamId ?: "",
+                        isCorrect ?: "",
+                        secondTeamAns?:""
+                    )
+                    gameFirebaseDatabase.createPartnerShowCutCard(
+                        currentUserTeamId ?: "",
+                        isCorrect ?: "",
+                        firstTeamAnswer ?: ""
+                    )
+                }
+            })
         }
     }
 

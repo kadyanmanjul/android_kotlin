@@ -90,6 +90,8 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
 
     init {
         firebaseDatabase.deleteRequested(mentorId)
+        firebaseDatabase.deleteDataAcceptRequest(mentorId)
+        mainGameFirebaseDatabase.deleteAcceptFppRequestNotification(mentorId)
         firebaseDatabase.deleteDeclineData(mentorId)
 
         mainGameFirebaseDatabase.deleteMuteUnmute(mentorId)
@@ -497,6 +499,10 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         userImage: String,
         mentorId: String
     ) {
+    }
+
+    override fun onPartnerAcceptFriendRequest(userName: String, userImage: String,isAccept: String) {
+        TODO("Not yet implemented")
     }
 
     fun openFavouriteScreen() {

@@ -144,7 +144,7 @@
             app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
             app:layout_constraintStart_toStartOf="parent">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/chat_emoji_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -153,7 +153,7 @@
                 android:onClick="@{() -> vm.openEmojiKeyboard(false)}"
                 android:paddingStart="@dimen/_6sdp"
                 android:paddingEnd="@dimen/_6sdp"
-                android:src="@drawable/ic_chat_emoji" />
+                app:srcCompat="@drawable/ic_chat_emoji" />
 
             <com.vanniktech.emoji.EmojiEditText
                 android:id="@+id/group_chat_send_msg"
@@ -173,7 +173,7 @@
                 android:textColorHint="@color/gray_9E" />
         </LinearLayout>
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/floatingActionButton"
             android:layout_width="@dimen/_34sdp"
             android:layout_height="@dimen/_34sdp"
@@ -187,7 +187,7 @@
             android:paddingTop="@dimen/_8sdp"
             android:paddingEnd="@dimen/_5sdp"
             android:paddingBottom="@dimen/_8sdp"
-            android:src="@drawable/ic_send"
+            app:srcCompat="@drawable/ic_send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

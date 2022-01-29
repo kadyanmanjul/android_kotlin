@@ -431,6 +431,10 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
 
     }
 
+    override fun onPartnerAcceptFriendRequest(userName: String, userImage: String,isAccept: String) {
+        TODO("Not yet implemented")
+    }
+
     fun searchFavouritePartner() {
         binding.inputSearch.setRawInputType(InputType.TYPE_CLASS_TEXT)
         binding.inputSearch.setTextIsSelectable(true)

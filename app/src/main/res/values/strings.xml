@@ -976,6 +976,8 @@
     <string name="play_again_">Play Again\nwith Opponent</string>
     <string name="has_invited">has invited you to play</string>
     <string name="friend_request">Sent you friend request</string>
+    <string name="accept_fpp_request">Accept your friend request</string>
+    <string name="decline_fpp_request">Decline your friend request</string>
 
     <string name="can_t_play_">Can"'"t Play Right Now</string>
     <string name="alreadt_start">Already started the game</string>
