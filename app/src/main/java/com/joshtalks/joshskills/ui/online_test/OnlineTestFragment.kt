@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -550,27 +551,20 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private fun addObserver() {
         LessonActivity.isVideoVisible.observe(viewLifecycleOwner, { isVideoVisible ->
             if (!isVideoVisible) {
-                Log.i(TAG, "addObserver: video not visible")
                 binding.videoPlayer.onPause()
-                binding.videoContainer.visibility = View.GONE
-/*binding.videoContainer.startAnimation(
-                    AnimationUtils.loadAnimation(
-                        requireContext(),
-                        android.R.anim.fade_out
-                    )
-                )*/
-                binding.videoContainer
-                    .animate()
-                    .alpha(0.0f)
-                    .setDuration(500)
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
-                            super.onAnimationEnd(animation)
-                            binding.videoContainer.visibility = View.GONE
-                        }
-                    })
-            } else {
-                Log.i(TAG, "addObserver: video visible")
+                if (binding.videoContainer.isVisible)
+                    binding.videoContainer
+                        .animate()
+                        .alpha(0.0f)
+                        .setDuration(200)
+                        .setListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator?) {
+                                super.onAnimationEnd(animation)
+                                binding.videoContainer.visibility = View.GONE
+                            }
+                        })
+                        .start()
+            } else if (binding.videoContainer.isVisible.not()) {
                 binding.videoContainer
                     .animate()
                     .alpha(1.0f)
@@ -579,8 +573,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
                             binding.videoContainer.visibility = View.VISIBLE
+                            binding.progressContainer.isVisible = false
                         }
                     })
+                    .start()
             }
         })
         compositeDisposable.add(
@@ -589,12 +585,14 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     LessonActivity.isVideoVisible.value = true
-                    binding.progressContainer.isVisible = false
-                    Log.i(TAG, "addObserver: video Start")
                     binding.videoPlayer.apply {
                         setUrl(it.videoUrl)
                         setVideoId(it.videoId)
                         fitToScreen()
+                        if (it.videoHeight != 0 && it.videoWidth != 0) {
+                            (binding.videoPlayer.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
+                                (it.videoWidth.toDouble() / it.videoHeight).toString()
+                        }
                         downloadStreamPlay()
                         setPlayerEventCallback { event, _ ->
                             if (event == ExoPlayer.STATE_ENDED) {
