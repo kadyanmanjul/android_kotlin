@@ -159,7 +159,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             database.groupListDao().deleteAllGroupItems()
             fetchGroupListFromNetwork()
-            onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
+            withContext(Dispatchers.Main) {
+                onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
+            }
         }
         return Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
             database.groupListDao().getPagedGroupList()

@@ -217,7 +217,6 @@ class LauncherActivity : CoreJoshActivity() {
 
     override fun onDestroy() {
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-        AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME).endSession()
         super.onDestroy()
     }
 
@@ -261,7 +260,7 @@ class LauncherActivity : CoreJoshActivity() {
                 .addBasicParam()
                 .addUserDetails()
                 .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, networkOperatorName)
-                .push(true)
+                .push()
         }
     }
 

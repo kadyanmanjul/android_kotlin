@@ -269,8 +269,11 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(R.layout.fragment_cam
 
     @Suppress("NON_EXHAUSTIVE_WHEN")
     fun takePicture(imageCapture: ImageCapture) = lifecycleScope.launch(Dispatchers.Main) {
-
-        captureImage(imageCapture)
+        try {
+            captureImage(imageCapture)
+        } catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     private fun captureImage(imageCapture: ImageCapture) {

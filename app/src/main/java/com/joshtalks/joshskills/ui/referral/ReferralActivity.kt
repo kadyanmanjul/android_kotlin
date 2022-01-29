@@ -117,7 +117,7 @@ class ReferralActivity : BaseActivity() {
 
         if (referralScreenVersion == "version_1") {
             activityReferralBinding.tvHeader.text =
-                getString(R.string.referral_header, refAmount, refAmount)
+                getString(R.string.referral_header)
             activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
                 getString(R.string.refferal_desc1, refAmount),
                 HtmlCompat.FROM_HTML_MODE_LEGACY

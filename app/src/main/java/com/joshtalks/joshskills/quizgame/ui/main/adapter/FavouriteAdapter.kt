@@ -12,10 +12,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
-import com.joshtalks.joshskills.quizgame.util.ACTIVE
-import com.joshtalks.joshskills.quizgame.util.AudioManagerQuiz
-import com.joshtalks.joshskills.quizgame.util.IN_ACTIVE
-import com.joshtalks.joshskills.quizgame.util.UtilsQuiz
+import com.joshtalks.joshskills.quizgame.util.*
 
 
 class FavouriteAdapter(
@@ -81,6 +78,7 @@ class FavouriteAdapter(
             when (favouriteDemoData?.status) {
                 ACTIVE -> {
                     binding.clickToken.setImageResource(R.drawable.ic_plus1)
+                    binding.clickToken.visibility = View.VISIBLE
                     binding.clickToken.setOnClickListener(View.OnClickListener {
                         AudioManagerQuiz.audioRecording.startPlaying(
                             context,
@@ -101,7 +99,10 @@ class FavouriteAdapter(
                 IN_ACTIVE -> {
                     binding.clickToken.visibility = View.INVISIBLE
                 }
-                else -> {
+                SEARCHING -> {
+                    binding.clickToken.visibility = View.INVISIBLE
+                }
+                IN_GAME -> {
                     binding.clickToken.visibility = View.INVISIBLE
                 }
             }

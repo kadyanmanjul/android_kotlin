@@ -110,15 +110,14 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
-const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
-const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
+const val IS_ENGLISH_SYLLABUS_PDF_OPENED = "is_english_syllabus_pdf_opened"
 const val BLOCK_ISSUE = "BLOCK_ISSUE"
 const val REPORT_ISSUE = "REPORT_ISSUE"
-
-
 const val USER_ACTIVE_IN_GAME = "game_active"
 const val USER_LEAVE_THE_GAME = "game_left"
 const val USER_MUTE_OR_NOT = "mute_un_mute"
+const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
+const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
 
 object PrefManager {
 
@@ -253,6 +252,11 @@ object PrefManager {
         else prefManagerCommon.edit().putBoolean(key, value).apply()
     }
 
+    fun put(key: String, value: Set<String>, isConsistent: Boolean = false) {
+        if (isConsistent) prefManagerConsistent.edit().putStringSet(key, value).apply()
+        else prefManagerCommon.edit().putStringSet(key, value).apply()
+    }
+
     fun putPrefObject(key: String, objects: Any){
         val gson = Gson()
         val jsonString = gson.toJson(objects)
@@ -263,12 +267,6 @@ object PrefManager {
         val json: String = getStringValue(key=key, defaultValue = "") as String
         return gson.fromJson(json, ReportModel::class.java)
     }
-
-    fun put(key: String, value: Set<String>, isConsistent: Boolean = false) {
-        if (isConsistent) prefManagerConsistent.edit().putStringSet(key, value).apply()
-        else prefManagerCommon.edit().putStringSet(key, value).apply()
-    }
-
 
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN

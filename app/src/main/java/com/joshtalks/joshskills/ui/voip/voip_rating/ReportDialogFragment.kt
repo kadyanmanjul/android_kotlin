@@ -12,6 +12,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.LayoutReportDialogFragmentBinding
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.joshtalks.joshskills.ui.course_details.extra.TEACHER_DETAIL_SOURCE
@@ -25,7 +26,7 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
     lateinit var binding: LayoutReportDialogFragmentBinding
     private lateinit var manager: FlexboxLayoutManager
     var type1 = "REPORT"
-    var channelName = "460dfa4a-88e1-48e9-a7f0-d2fcaa95c377"
+    var channelName = EMPTY
     var optionId = 0
     val CHANNEL_NAME="channel_name"
     val FEEDBACK_OPTIONS="feedback_option"
@@ -88,6 +89,7 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
         type1 = mArgs?.getString(ARG_TYPE).toString()
         callerId1= mArgs?.getInt(ARG_CALLER_ID)!!
         currentId1= mArgs?.getInt(ARG_CURRENT_ID)
+        channelName= mArgs?.getString(CHANNEL_NAME).toString()
 
         vm.getReportOptionsListFromSharedPref(type1)
 
@@ -117,12 +119,14 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
 
    companion object {
         @JvmStatic
-        fun newInstance(callerID:Int,currentID:Int,typ:String,function: () -> Unit) =
+        fun newInstance(callerID:Int,currentID:Int,typ:String,channelName:String,function: () -> Unit) =
             ReportDialogFragment(function).apply {
                 arguments = Bundle().apply {
-                    putString(ARG_TYPE, typ);
-                    putInt(ARG_CALLER_ID,callerID);
-                    putInt(ARG_CURRENT_ID,currentID);                   }
+                    putString(ARG_TYPE, typ)
+                    putInt(ARG_CALLER_ID,callerID)
+                    putInt(ARG_CURRENT_ID,currentID)
+                    putString(CHANNEL_NAME,channelName)
+                }
             }
 
 

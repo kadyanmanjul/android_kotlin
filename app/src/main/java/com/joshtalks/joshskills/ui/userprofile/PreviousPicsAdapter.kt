@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setPreviousProfileImage
 import com.joshtalks.joshskills.repository.server.ProfilePicture
@@ -29,11 +30,11 @@ class PreviousPicsAdapter(
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         var imgPreviousPic: AppCompatImageView = view.findViewById(R.id.previous_p)
+        var previousPicShimmer: LottieAnimationView =view.findViewById<LottieAnimationView>(R.id.previous_pic_shimmer_layout)
         var profilePicture: ProfilePicture? = null
-
         fun bind(profilePicture: ProfilePicture) {
             this.profilePicture = profilePicture
-            imgPreviousPic.setPreviousProfileImage(profilePicture.photoUrl, view.context)
+            imgPreviousPic.setPreviousProfileImage(profilePicture.photoUrl, view.context,previousPicShimmer)
             view.setOnClickListener { onPreviousPicClickListener.onPreviousPicClick(profilePicture) }
         }
 

@@ -313,4 +313,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/link_attribution/deep_link/")
     suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
+
+    @POST("$DIR/impression/track_course_impressions/")
+    suspend fun saveIntroVideoFlowImpression(@Body params: Map<String, Any?>): Response<Any>
 }
