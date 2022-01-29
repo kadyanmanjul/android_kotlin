@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 5
 def minorVersion = 0
-def patchVersion = 15
+def patchVersion = 20
 
 android {
     compileSdkVersion 30
@@ -157,7 +157,10 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Local"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"https://058d3bbf86e1.ngrok.io/\""
+            buildConfigField "String", "BASE_URL", "\"http://34.93.235.14:9001/\""
+            buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
+            buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
+            buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-local${majorVersion}.${minorVersion}.${patchVersion}.apk"
