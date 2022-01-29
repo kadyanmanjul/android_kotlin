@@ -103,8 +103,11 @@ class QuestionView : FrameLayout {
 
     private fun setUpUI() {
         assessmentQuestion?.let { it ->
-            questionTV.text =
-                HtmlCompat.fromHtml(it.question.text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            if (it.question.text != null)
+                questionTV.text =
+                    HtmlCompat.fromHtml(it.question.text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            else
+                questionTV.visibility = GONE
             when (it.question.mediaType) {
                 AssessmentMediaType.IMAGE -> {
                     imageViewStub?.run {
