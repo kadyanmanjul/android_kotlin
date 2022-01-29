@@ -77,6 +77,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
+        if (testId.isBlank()){
+            testId = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+        }
 
         setObservers()
         setListeners()

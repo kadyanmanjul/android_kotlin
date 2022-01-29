@@ -427,7 +427,7 @@ dependencies {
 
     //Flow Layout
     implementation 'com.nex3z:flow-layout:1.2.2'
-    implementation 'com.userexperior:userexperior-android:6.0.6'
+    implementation 'com.userexperior:userexperior-android:7.0.5'
 
     implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'
     //Dagger 2
