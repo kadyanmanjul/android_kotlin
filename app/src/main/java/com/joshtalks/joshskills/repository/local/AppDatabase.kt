@@ -63,7 +63,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class
     ],
-    version = 43,
+    version = 44,
     exportSchema = true
 )
 @TypeConverters(
@@ -152,7 +152,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_39_40,
                                 MIGRATION_40_41,
                                 MIGRATION_41_42,
-                                MIGRATION_42_43
+                                MIGRATION_42_43,
+                                MIGRATION_43_44,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -516,6 +517,17 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_analytics` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastSentMsgTime` INTEGER NOT NULL)")
                 database.execSQL("ALTER TABLE `groups_analytics` ADD COLUMN `groupId` TEXT")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `game_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+            }
+        }
+
+        private val MIGRATION_43_44:Migration = object : Migration(43, 44) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_questions_tmp` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE)")
+                database.execSQL("INSERT INTO `assessment_questions_tmp` (`localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status`) SELECT `localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status` FROM `assessment_questions`")
+                database.execSQL("DROP TABLE `assessment_questions`")
+                database.execSQL("ALTER TABLE `assessment_questions_tmp` RENAME TO `assessment_questions`")
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_questions_assessmentId` ON `assessment_questions` (`assessmentId`)")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)");
             }
         }
 

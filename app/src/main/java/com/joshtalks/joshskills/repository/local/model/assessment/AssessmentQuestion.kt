@@ -49,7 +49,7 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("text")
-    val text: String,
+    val text: String?,
 
     @ColumnInfo
     @SerializedName("sub_text")
