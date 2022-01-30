@@ -221,9 +221,9 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ADD_TO_FRIEND_LIST)
             AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
             gameFirebaseDatabase.createFriendRequest(
-                currentUserId ?: "",
-                currentUserName ?: "",
-                currentUserImage ?: "",
+                currentUserId,
+                currentUserName,
+                currentUserImage,
                 partnerId ?: ""
             )
             lifecycleScope.launch(Dispatchers.Main) {
@@ -240,10 +240,10 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             binding.btnPlayAgain.isEnabled = false
             gameFirebaseDatabase.createPlayAgainNotification(
                 partnerId ?: "",
-                currentUserName ?: "",
-                currentUserImage ?: ""
+                currentUserName,
+                currentUserImage
             )
-            playAgainApiCall(PlayAgain(currentUserTeamId ?: "", currentUserId ?: ""))
+            playAgainApiCall(PlayAgain(currentUserTeamId ?: "", currentUserId))
             lifecycleScope.launch(Dispatchers.Main) {
                 if (isUiActive) {
                     delay(10000)
@@ -252,12 +252,12 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             }
         }
 
-        gameFirebaseDatabase.getPartnerPlayAgainNotification(currentUserId ?: "", this)
+        gameFirebaseDatabase.getPartnerPlayAgainNotification(currentUserId, this)
     }
 
     fun getFriendRequest() {
-        gameFirebaseDatabase.getAcceptFriendRequest(currentUserId ?: "", this)
-        gameFirebaseDatabase.getFriendRequests(currentUserId ?: "", this)
+        gameFirebaseDatabase.getAcceptFriendRequest(currentUserId, this)
+        gameFirebaseDatabase.getFriendRequests(currentUserId, this)
     }
 
     override fun onStart() {
@@ -338,7 +338,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                         currentUserId
                     )
                 )
-                deleteAllFromFirestore(currentUserId ?: "")
+                deleteAllFromFirestore(currentUserId)
             })
         }
     }
@@ -540,14 +540,14 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId
             )
         )
         if (fromType == RANDOM) {
             decisionDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
                     roomId ?: "",
-                    currentUserId ?: "",
+                    currentUserId,
                     currentUserTeamId ?: "",
                     callTimeCount ?: ""
                 )
@@ -580,7 +580,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             decisionDataViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
                     roomId ?: "",
-                    currentUserId ?: "",
+                    currentUserId,
                     currentUserTeamId ?: "",
                     callTimeCount ?: ""
                 )
@@ -629,14 +629,14 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             SaveCallDuration(
                 currentUserTeamId ?: "",
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId
             )
         )
         if (fromType == RANDOM) {
             decisionDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
                     roomId ?: "",
-                    currentUserId ?: "",
+                    currentUserId,
                     currentUserTeamId ?: "",
                     callTimeCount ?: ""
                 )
@@ -671,7 +671,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             decisionDataViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
                     roomId ?: "",
-                    currentUserId ?: "",
+                    currentUserId,
                     currentUserTeamId ?: "",
                     callTimeCount ?: ""
                 )
@@ -814,7 +814,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             handler.postDelayed({
                 if (isUiActive)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-                gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+                gameFirebaseDatabase.deleteRequest(currentUserId)
                 gameFirebaseDatabase.createAcceptFriendRequest(
                     currentUserId,
                     currentUserName,
@@ -830,7 +830,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     }
 
     private fun againPlayGame() {
-        gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
+        gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId)
 
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
@@ -849,7 +849,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     }
 
     private fun getPlayAgainDataFromFirebase() {
-        gameFirebaseDatabase.getPlayAgainAPiData(currentUserId ?: "", this@GameDecisionFragment)
+        gameFirebaseDatabase.getPlayAgainAPiData(currentUserId, this@GameDecisionFragment)
     }
 
     private fun playAgainApiCall(playAgain: PlayAgain) {
@@ -873,7 +873,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         mentorId: String
     ) {
         if (mentorId == currentUserId) {
-            gameFirebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+            gameFirebaseDatabase.deletePlayAgainNotification(currentUserId)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationPlayAgain)
             binding.userNameForNotPlay.text = userName
@@ -892,7 +892,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                 handler.removeCallbacksAndMessages(null)
                 if (isUiActive)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationPlayAgain)
-                gameFirebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+                gameFirebaseDatabase.deletePlayAgainNotification(currentUserId)
             }
 
             try {
@@ -901,7 +901,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                             binding.notificationPlayAgain
                         )
-                    gameFirebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+                    gameFirebaseDatabase.deletePlayAgainNotification(currentUserId)
                 }, 10000)
             } catch (ex: Exception) {
             }
@@ -920,6 +920,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
         }
         if (isAccept == "true") {
+            handler.removeCallbacksAndMessages(null)
             binding.txtMsg2.text = "Accept your friend request"
             binding.userName.text = userName
             activity?.let {
@@ -932,6 +933,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                     .into(binding.userImage)
             }
         } else {
+            handler.removeCallbacksAndMessages(null)
             binding.txtMsg2.text = "Decline your friend request"
             binding.userName.text = userName
             activity?.let {
@@ -949,7 +951,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             handler.removeCallbacksAndMessages(null)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId ?: "")
+            gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId)
         }
 
         try {
@@ -958,7 +960,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                         binding.notificationCard
                     )
-                gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId ?: "")
+                gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId)
             }, 10000)
         } catch (ex: Exception) {
         }
@@ -969,7 +971,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         super.onDestroy()
         try {
             isUiActive = false
-            gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
+            gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId)
         } catch (ex: Exception) {
         }
     }
