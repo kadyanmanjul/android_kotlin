@@ -303,11 +303,11 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
 
         referralText = referralText.plus("\n").plus(dynamicLink)
-        viewModel.getDeepLink(
-            dynamicLink,
-            userReferralCode.plus(referralTimestamp ?: System.currentTimeMillis())
-        )
         try {
+            viewModel.getDeepLink(
+                dynamicLink,
+                userReferralCode.plus(referralTimestamp ?: System.currentTimeMillis())
+            )
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"
             if (packageString.isNullOrEmpty().not()) {
