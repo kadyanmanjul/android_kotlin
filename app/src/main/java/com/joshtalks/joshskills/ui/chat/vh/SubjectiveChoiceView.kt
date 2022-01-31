@@ -104,10 +104,10 @@ class SubjectiveChoiceView : FrameLayout {
             unlockViews()
             return false
         } else {
-            val inputText = answerText.text.toString().lowercase(Locale.getDefault())
+            val inputText = answerText.text.toString().lowercase(Locale.getDefault()).trim()
 //            return inputText.equals(assessmentQuestion?.choiceList?.get(0)?.text.toString().toLowerCase(Locale.getDefault()))
             assessmentQuestion?.choiceList?.filter {
-                it.text.toString().lowercase(Locale.getDefault()).equals(inputText, true)
+                it.text.toString().trim().lowercase(Locale.getDefault()).equals(inputText, true)
             }.also {
                 return it?.isNotEmpty() ?: false
             }
