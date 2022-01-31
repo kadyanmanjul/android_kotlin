@@ -17,10 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
@@ -161,10 +158,10 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
 
     fun setCurrentUserData() {
         binding.team1User1Name.text = Mentor.getInstance().getUser()?.firstName
-        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", "")
+        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", EMPTY)
         binding.team1UserImage1.setUserImageOrInitials(
             imageUrl,
-            Mentor.getInstance().getUser()?.firstName ?: "",
+            Mentor.getInstance().getUser()?.firstName ?: EMPTY,
             30,
             isRound = true
         )
@@ -285,10 +282,10 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
                 opponentUserName = team1User1Name
             }
 
-            val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
+            val imageUrl2 = team1User2ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
-                team1User2Name ?: "",
+                team1User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -296,19 +293,19 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
 
             callConnectUser1AndUser2(team1User1ChannelName)
 
-            val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team2User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team2User1Name ?: "",
+                team2User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = UtilsQuiz.getSplitName(team2User1Name)
 
-            val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team2User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team2User2Name ?: "",
+                team2User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -325,10 +322,10 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
                 opponentUserName = team2User1Name
             }
 
-            val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
+            val imageUrl2 = team2User2ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
-                team2User2Name ?: "",
+                team2User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -336,19 +333,19 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
 
             callConnectUser1AndUser2(team2User1ChannelName)
 
-            val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team1User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team1User1Name ?: "",
+                team1User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = UtilsQuiz.getSplitName(team1User1Name)
 
-            val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team1User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team1User2Name ?: "",
+                team1User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -364,7 +361,7 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
             if (userRoomId != null) {
                 searchRandomViewModel?.getRandomUserDataByRoom(
                     RandomRoomData(
-                        userRoomId ?: "",
+                        userRoomId ?: EMPTY,
                         currentUserId
                     )
                 )
@@ -385,7 +382,7 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
 
     fun callConnectUser1AndUser2(channelName: String?) {
         CoroutineScope(Dispatchers.IO).launch {
-            joinChannel(channelName ?: "")
+            joinChannel(channelName ?: EMPTY)
         }
     }
 
@@ -394,7 +391,7 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         var accessToken: String? =
             "006569a477f372a454b8101fc89ec6161e6IADYmZ3FSiuZkvYIVERzwHjKvcLGDMAC5LxQ8lh7CxFfjhQWp0e379yDIgAkhwQAweFmYQQAAQBB4YpjAgBB4YpjAwBB4YpjBABB4Ypj"
-        if (TextUtils.equals(accessToken, "") || TextUtils.equals(
+        if (TextUtils.equals(accessToken, EMPTY) || TextUtils.equals(
                 accessToken,
                 "006569a477f372a454b8101fc89ec6161e6IADYmZ3FSiuZkvYIVERzwHjKvcLGDMAC5LxQ8lh7CxFfjhQWp0e379yDIgAkhwQAweFmYQQAAQBB4YpjAgBB4YpjAwBB4YpjBABB4Ypj"
             )
@@ -419,10 +416,10 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
                 ?.replace(
                     R.id.container,
                     RandomTeamMateFoundFragment.newInstance(
-                        userRoomId ?: "",
-                        opponentUserImage ?: "",
-                        opponentUserName ?: "",
-                        currentUserTeamId ?: "",
+                        userRoomId ?: EMPTY,
+                        opponentUserImage ?: EMPTY,
+                        opponentUserName ?: EMPTY,
+                        currentUserTeamId ?: EMPTY,
                         0
                     ), "RandomPartnerFragment"
                 )
@@ -445,10 +442,10 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
         if (userRoomId != null) {
             searchRandomViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
-                    userRoomId ?: "",
+                    userRoomId ?: EMPTY,
                     currentUserId,
-                    currentUserTeamId ?: "",
-                    ""
+                    currentUserTeamId ?: EMPTY,
+                    EMPTY
                 )
             )
             activity?.let {
@@ -490,7 +487,6 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
-                    showToast("Your Partner Left")
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                 }
             } catch (ex: Exception) {

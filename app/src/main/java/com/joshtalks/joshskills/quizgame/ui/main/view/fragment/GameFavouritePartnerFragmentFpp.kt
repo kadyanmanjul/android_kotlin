@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.lottie.LottieDrawable
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentFavouritePracticeBinding
@@ -65,8 +66,8 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
     private var activityInstance: FragmentActivity? = null
 
     private var mentorId: String = Mentor.getInstance().getId()
-    private var userName: String? = Mentor.getInstance().getUser()?.firstName
-    private var imageUrl: String? = Mentor.getInstance().getUser()?.photo
+    private var userName: String? = Mentor.getInstance().getUser()?.firstName?: EMPTY
+    private var imageUrl: String? = Mentor.getInstance().getUser()?.photo?: EMPTY
     private val handler = Handler(Looper.getMainLooper())
     private val handler1 = Handler(Looper.getMainLooper())
     private val handler2 = Handler(Looper.getMainLooper())
@@ -209,7 +210,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
         favouriteAdapter = activity?.let { FavouriteAdapter(it, arrayList, this, firebaseDatabase) }
         binding.recycleView.adapter = favouriteAdapter
         for (v in 0 until arrayList?.size!!) {
-            firebaseDatabase.statusLive(arrayList?.get(v)?.uuid ?: "", this)
+            firebaseDatabase.statusLive(arrayList?.get(v)?.uuid ?: EMPTY, this)
         }
     }
 
@@ -245,7 +246,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         var accessToken: String? =
             "006569a477f372a454b8101fc89ec6161e6IADYmZ3FSiuZkvYIVERzwHjKvcLGDMAC5LxQ8lh7CxFfjhQWp0e379yDIgAkhwQAweFmYQQAAQBB4YpjAgBB4YpjAwBB4YpjBABB4Ypj"
-        if (TextUtils.equals(accessToken, "") || TextUtils.equals(
+        if (TextUtils.equals(accessToken, EMPTY) || TextUtils.equals(
                 accessToken,
                 "006569a477f372a454b8101fc89ec6161e6IADYmZ3FSiuZkvYIVERzwHjKvcLGDMAC5LxQ8lh7CxFfjhQWp0e379yDIgAkhwQAweFmYQQAAQBB4YpjAgBB4YpjAwBB4YpjBABB4Ypj"
             )
@@ -323,7 +324,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                TeamMateFoundFragmentFpp.newInstance(userId ?: "", channelName ?: ""),
+                TeamMateFoundFragmentFpp.newInstance(userId ?: EMPTY, channelName ?: EMPTY),
                 "FavouritePartnerFragment"
             )
             ?.remove(this)
@@ -370,7 +371,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
-            val imageUrl = fromImageUrl.replace("\n", "")
+            val imageUrl = fromImageUrl.replace("\n", EMPTY)
             binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
 
         } catch (ex: Exception) {
@@ -432,7 +433,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
     }
 
     override fun onPartnerAcceptFriendRequest(userName: String, userImage: String,isAccept: String) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     fun searchFavouritePartner() {
@@ -547,7 +548,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
-            val imageUrl = fromUserImage.replace("\n", "")
+            val imageUrl = fromUserImage.replace("\n", EMPTY)
             binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -661,13 +662,13 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                 try {
                     holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
                     holder.binding.clickToken.isEnabled = true
-                    val image = userImageUrl.replace("\n", "")
+                    val image = userImageUrl.replace("\n", EMPTY)
                     if (isActiveFrag)
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCardNotPlay)
                     binding.userNameForNotPlay.text = userName
                     binding.userImageForNotPaly.setUserImageOrInitials(
                         image,
-                        userName ?: "",
+                        userName ?: EMPTY,
                         30,
                         isRound = true
                     )

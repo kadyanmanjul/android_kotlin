@@ -15,10 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
@@ -112,7 +109,7 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
             binding.userImage4Shadow.visibility = View.VISIBLE
         }
         getRoomData()
-        GameFirebaseDatabase().getRoomTime(roomId ?: "", this)
+        GameFirebaseDatabase().getRoomTime(roomId ?: EMPTY, this)
 
         try {
             engine = P2pRtc().initEngine(requireActivity())
@@ -157,7 +154,7 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
     }
 
     private fun getRoomData() {
-        bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId ?: "", currentUserId))
+        bothTeamViewModel?.getRoomUserData(RandomRoomData(roomId ?: EMPTY, currentUserId))
         activity?.let {
             bothTeamViewModel?.roomUserData?.observe(it, {
                 binding.image9.pauseAnimation()
@@ -204,40 +201,40 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
 
             currentUserTeamId = team1Id
 
-            val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
-            binding.userImage3.setUserImageOrInitials(imageUrl1, team1User1Name ?: "", 30, true)
+            val imageUrl1 = team1User1ImageUrl?.replace("\n", EMPTY)
+            binding.userImage3.setUserImageOrInitials(imageUrl1, team1User1Name ?: EMPTY, 30, true)
             binding.userName3.text = UtilsQuiz.getSplitName(team1User1Name)
 
-            val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
-            binding.userImage4.setUserImageOrInitials(imageUrl2, team1User2Name ?: "", 30, true)
+            val imageUrl2 = team1User2ImageUrl?.replace("\n", EMPTY)
+            binding.userImage4.setUserImageOrInitials(imageUrl2, team1User2Name ?: EMPTY, 30, true)
             binding.userName4.text = UtilsQuiz.getSplitName(team1User2Name)
 
-            val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
-            binding.userImage1.setUserImageOrInitials(imageUrl3, team2User1Name ?: "", 30, true)
+            val imageUrl3 = team2User1ImageUrl?.replace("\n", EMPTY)
+            binding.userImage1.setUserImageOrInitials(imageUrl3, team2User1Name ?: EMPTY, 30, true)
             binding.userName1.text = UtilsQuiz.getSplitName(team2User1Name)
 
-            val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
-            binding.userImage2.setUserImageOrInitials(imageUrl4, team2User2Name ?: "", 30, true)
+            val imageUrl4 = team2User2ImageUrl?.replace("\n", EMPTY)
+            binding.userImage2.setUserImageOrInitials(imageUrl4, team2User2Name ?: EMPTY, 30, true)
             binding.userName2.text = UtilsQuiz.getSplitName(team2User2Name)
 
         } else if (team2UserId1 == currentUserId || team2UserId2 == currentUserId) {
 
             currentUserTeamId = team2Id
 
-            val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
-            binding.userImage3.setUserImageOrInitials(imageUrl1, team2User1Name ?: "", 30, true)
+            val imageUrl1 = team2User1ImageUrl?.replace("\n", EMPTY)
+            binding.userImage3.setUserImageOrInitials(imageUrl1, team2User1Name ?: EMPTY, 30, true)
             binding.userName3.text = UtilsQuiz.getSplitName(team2User1Name)
 
-            val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
-            binding.userImage4.setUserImageOrInitials(imageUrl2, team2User2Name ?: "", 30, true)
+            val imageUrl2 = team2User2ImageUrl?.replace("\n", EMPTY)
+            binding.userImage4.setUserImageOrInitials(imageUrl2, team2User2Name ?: EMPTY, 30, true)
             binding.userName4.text = UtilsQuiz.getSplitName(team2User2Name)
 
-            val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
-            binding.userImage1.setUserImageOrInitials(imageUrl3, team1User1Name ?: "", 30, true)
+            val imageUrl3 = team1User1ImageUrl?.replace("\n", EMPTY)
+            binding.userImage1.setUserImageOrInitials(imageUrl3, team1User1Name ?: EMPTY, 30, true)
             binding.userName1.text = UtilsQuiz.getSplitName(team1User1Name)
 
-            val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
-            binding.userImage2.setUserImageOrInitials(imageUrl4, team1User2Name ?: "", 30, true)
+            val imageUrl4 = team1User2ImageUrl?.replace("\n", EMPTY)
+            binding.userImage2.setUserImageOrInitials(imageUrl4, team1User2Name ?: EMPTY, 30, true)
             binding.userName2.text = UtilsQuiz.getSplitName(team1User2Name)
         }
     }
@@ -273,15 +270,15 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         bothTeamViewModel?.deleteUserRoomData(
             SaveCallDurationRoomData(
-                roomId ?: "",
+                roomId ?: EMPTY,
                 currentUserId,
-                currentUserTeamId ?: "",
+                currentUserTeamId ?: EMPTY,
                 startTime
             )
         )
         bothTeamViewModel?.saveCallDuration(
             SaveCallDuration(
-                channelName ?: "",
+                channelName ?: EMPTY,
                 startTime.toInt().div(1000).toString(),
                 currentUserId
             )
@@ -330,7 +327,6 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
-                    showToast("Your Partner Left")
                     binding.callTime.stop()
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName4.alpha = 0.5f

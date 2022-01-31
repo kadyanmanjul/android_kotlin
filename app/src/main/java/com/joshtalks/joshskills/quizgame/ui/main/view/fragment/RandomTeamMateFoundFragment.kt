@@ -88,7 +88,7 @@ class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChang
         binding.container.setBackgroundColor(Color.WHITE)
         PrefManager.put(USER_MUTE_OR_NOT, false)
         setCurrentUserData()
-        GameFirebaseDatabase().getRoomTime(roomId ?: "", this)
+        GameFirebaseDatabase().getRoomTime(roomId ?: EMPTY, this)
         setData()
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             binding.userName2.alpha = 0.5f
@@ -174,10 +174,10 @@ class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChang
 
     private fun setCurrentUserData() {
         binding.userName1.text = Mentor.getInstance().getUser()?.firstName
-        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", "")
+        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", EMPTY)
         binding.image.setUserImageOrInitials(
             imageUrl,
-            Mentor.getInstance().getUser()?.firstName ?: "",
+            Mentor.getInstance().getUser()?.firstName ?: EMPTY,
             30,
             isRound = true
         )
@@ -185,8 +185,8 @@ class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChang
 
     private fun setData() {
         binding.txtQuiz1.text = UtilsQuiz.getSplitName(opponentUserName) + " is your team mate"
-        val imageUrl = opponentUserImage?.replace("\n", "")
-        binding.image2.setUserImageOrInitials(imageUrl, opponentUserName ?: "", 30, isRound = true)
+        val imageUrl = opponentUserImage?.replace("\n", EMPTY)
+        binding.image2.setUserImageOrInitials(imageUrl, opponentUserName ?: EMPTY, 30, isRound = true)
 
         binding.userName2.text = UtilsQuiz.getSplitName(opponentUserName)
     }
@@ -265,17 +265,17 @@ class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChang
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         randomTeamMateFoundViewModel?.saveCallDuration(
             SaveCallDuration(
-                currentUserTeamId ?: "",
+                currentUserTeamId ?: EMPTY,
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId ?: EMPTY
             )
         )
 
         randomTeamMateFoundViewModel?.getClearRadius(
             SaveCallDurationRoomData(
-                roomId ?: "",
-                currentUserId ?: "",
-                currentUserTeamId ?: "",
+                roomId ?: EMPTY,
+                currentUserId ?: EMPTY,
+                currentUserTeamId ?: EMPTY,
                 startTime.toInt().div(1000).toString()
             )
         )
@@ -325,7 +325,6 @@ class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChang
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
-                    showToast("Your Partner Left")
                     binding.callTime.stop()
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName2.alpha = 0.5f

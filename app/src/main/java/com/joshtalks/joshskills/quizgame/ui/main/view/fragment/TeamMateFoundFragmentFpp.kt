@@ -117,10 +117,10 @@ class TeamMateFoundFragmentFpp : Fragment(), P2pRtc.WebRtcEngineCallback {
 
     private fun setCurrentUserData() {
         binding.userName1.text = Mentor.getInstance().getUser()?.firstName
-        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", "")
+        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", EMPTY)
         binding.image.setUserImageOrInitials(
             imageUrl,
-            Mentor.getInstance().getUser()?.firstName ?: "",
+            Mentor.getInstance().getUser()?.firstName ?: EMPTY,
             30,
             isRound = true
         )
@@ -145,8 +145,8 @@ class TeamMateFoundFragmentFpp : Fragment(), P2pRtc.WebRtcEngineCallback {
     private fun setData(userDetails: UserDetails?) {
         this.userDetails = userDetails
         binding.txtQuiz1.text = UtilsQuiz.getSplitName(userDetails?.name) + " is your team mate"
-        val imageUrl = userDetails?.imageUrl?.replace("\n", "")
-        binding.image2.setUserImageOrInitials(imageUrl, userDetails?.name ?: "", 30, isRound = true)
+        val imageUrl = userDetails?.imageUrl?.replace("\n", EMPTY)
+        binding.image2.setUserImageOrInitials(imageUrl, userDetails?.name ?: EMPTY, 30, isRound = true)
 
         binding.userName2.text = UtilsQuiz.getSplitName(userDetails?.name)
     }
@@ -194,14 +194,14 @@ class TeamMateFoundFragmentFpp : Fragment(), P2pRtc.WebRtcEngineCallback {
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         teamMateFoundViewModel?.saveCallDuration(
             SaveCallDuration(
-                channelName ?: "",
+                channelName ?: EMPTY,
                 startTime.toInt().div(1000).toString(),
                 currentUserId
             )
         )
         teamMateFoundViewModel?.deleteUserRadiusData(
             TeamDataDelete(
-                channelName ?: "",
+                channelName ?: EMPTY,
                 currentUserId
             )
         )
@@ -293,7 +293,6 @@ class TeamMateFoundFragmentFpp : Fragment(), P2pRtc.WebRtcEngineCallback {
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
-                    showToast("Your Partner Left")
                     binding.callTime.stop()
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName2.alpha = 0.5f
