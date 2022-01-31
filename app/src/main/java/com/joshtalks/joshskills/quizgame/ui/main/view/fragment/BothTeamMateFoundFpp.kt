@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentBothTeamMateFoundBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
@@ -329,6 +330,7 @@ class BothTeamMateFoundFpp : Fragment(), P2pRtc.WebRtcEngineCallback, GameFireba
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    showToast("Your Partner Left")
                     binding.callTime.stop()
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName4.alpha = 0.5f

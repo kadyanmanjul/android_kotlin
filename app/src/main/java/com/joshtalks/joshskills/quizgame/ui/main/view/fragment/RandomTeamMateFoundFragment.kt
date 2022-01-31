@@ -325,6 +325,7 @@ class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChang
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    showToast("Your Partner Left")
                     binding.callTime.stop()
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                     binding.userName2.alpha = 0.5f

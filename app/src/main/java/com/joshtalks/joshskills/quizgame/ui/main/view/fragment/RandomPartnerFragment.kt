@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentRandomPartnerBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
@@ -489,6 +490,7 @@ class RandomPartnerFragment : Fragment(), GameFirebaseDatabase.OnRandomUserTrigg
             super.onPartnerLeave()
             try {
                 requireActivity().runOnUiThread {
+                    showToast("Your Partner Left")
                     PrefManager.put(USER_LEAVE_THE_GAME, true)
                 }
             } catch (ex: Exception) {

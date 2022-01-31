@@ -1340,6 +1340,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             team1UserId1 == currentUserId -> {
                 try {
                     requireActivity().runOnUiThread {
+                        showToast("Your Partner Left")
                         binding.team1User2Name.alpha = 0.5f
                         binding.team1UserImage2Shadow.visibility = View.VISIBLE
                     }
@@ -1350,6 +1351,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             team1UserId2 == currentUserId -> {
                 try {
                     requireActivity().runOnUiThread {
+                        showToast("Your Partner Left")
                         binding.team1User1Name.alpha = 0.5f
                         binding.team1UserImage1Shadow.visibility = View.VISIBLE
                     }
@@ -1360,6 +1362,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             team2UserId1 == currentUserId -> {
                 try {
                     requireActivity().runOnUiThread {
+                        showToast("Your Partner Left")
                         binding.team2User2Name.alpha = 0.5f
                         binding.team2UserImage2Shadow.visibility = View.VISIBLE
                     }
@@ -1370,6 +1373,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             team2UserId2 == currentUserId -> {
                 try {
                     requireActivity().runOnUiThread {
+                        showToast("Your Partner Left")
                         binding.team2User1Name.alpha = 0.5f
                         binding.team2UserImage1Shadow.visibility = View.VISIBLE
                     }

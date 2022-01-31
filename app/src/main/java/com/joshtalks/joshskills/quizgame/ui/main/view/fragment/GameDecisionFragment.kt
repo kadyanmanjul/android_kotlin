@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
 import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
@@ -712,6 +713,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                 PrefManager.put(USER_LEAVE_THE_GAME, false)
                 binding.btnPlayAgain.isEnabled = false
                 requireActivity().runOnUiThread {
+                    showToast("Your Partner Left")
                     engine?.leaveChannel()
                     binding.callTime.stop()
                     binding.team1User2Name.alpha = 0.5f
