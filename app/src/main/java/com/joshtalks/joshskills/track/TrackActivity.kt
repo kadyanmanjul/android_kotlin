@@ -21,10 +21,14 @@ abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
         lifecycleScope.launch(Dispatchers.IO) {
             if (getConversationId().isNullOrEmpty().not()) {
                 getConversationId()?.let {
-                    CourseUsageService.startTimeConversation(
-                        this@TrackActivity,
-                        it, this@TrackActivity.javaClass.simpleName
-                    )
+                    try {
+                        CourseUsageService.startTimeConversation(
+                            this@TrackActivity,
+                            it, this@TrackActivity.javaClass.simpleName
+                        )
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
         }
@@ -35,7 +39,11 @@ abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
         lifecycleScope.launch(Dispatchers.IO) {
             if (getConversationId().isNullOrEmpty().not()) {
                 getConversationId()?.let {
-                    CourseUsageService.endTimeConversation(this@TrackActivity, it)
+                    try {
+                        CourseUsageService.endTimeConversation(this@TrackActivity, it)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
         }

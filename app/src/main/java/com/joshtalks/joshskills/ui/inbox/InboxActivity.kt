@@ -258,6 +258,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         Runtime.getRuntime().gc()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
+        viewModel.handleGroupTimeTokens()
     }
 
     override fun onPause() {
