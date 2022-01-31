@@ -118,6 +118,7 @@ const val USER_LEAVE_THE_GAME = "game_left"
 const val USER_MUTE_OR_NOT = "mute_un_mute"
 const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
 const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
+const val IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN = "is_call_btn_clicked_from_new_screen"
 
 object PrefManager {
 

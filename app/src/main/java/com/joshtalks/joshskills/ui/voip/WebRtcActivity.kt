@@ -940,6 +940,10 @@ class WebRtcActivity : AppCompatActivity() {
         if (time <= 0) {
             time = callTime
         }
+        if(PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)){
+            viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+            PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
+        }
         val channelName2 =
             if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
         if (time > 0 && channelName2.isNullOrEmpty().not()) {

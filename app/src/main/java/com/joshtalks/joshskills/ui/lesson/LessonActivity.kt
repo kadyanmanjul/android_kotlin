@@ -1302,6 +1302,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.videoView.setClipToOutline(true)
 
         binding.videoCallBtn.setOnClickListener {
+            PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, true)
             viewModel.saveIntroVideoFlowImpression(CALL_BUTTON_CLICKED_FROM_NEW_SCREEN)
             callPracticePartner()
         }
