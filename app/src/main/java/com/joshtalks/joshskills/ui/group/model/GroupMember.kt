@@ -10,4 +10,4 @@ data class GroupMember(
     fun getMemberURL() = if (memberIcon == "None") "" else memberIcon
 }
 
-class MemberResult(val list: MutableList<GroupMember>, val memberCount: Int?, val onlineCount: Int?)
+class MemberResult(val list: List<GroupMember>, val memberCount: Int?, val onlineCount: Int?)

@@ -7,11 +7,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.GroupMember
-import com.joshtalks.joshskills.ui.group.model.MemberResult
 import com.joshtalks.joshskills.ui.group.model.MessageItem
-import com.joshtalks.joshskills.ui.group.model.PageInfo
-import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
@@ -22,7 +18,6 @@ import com.pubnub.api.enums.PNPushType
 import com.pubnub.api.models.consumer.history.PNHistoryResult
 import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
-import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadata
 import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
 import java.util.stream.Collectors
 import kotlinx.coroutines.CoroutineScope
@@ -78,10 +73,34 @@ object PubNubService : ChatService {
                     .limit(10)
                     .page(pageInfo.pubNubNext ?: pageInfo.pubNubPrevious)
                     .sync()
-        } catch (e: Exception){
+        } catch (e: Exception) {
             return null
         }
         return if (data == null) null else PubNubNetworkData(data)
+    }
+
+    override fun getGroupMemberList(groupId: String, pageInfo: PageInfo?): MemberNetworkData? {
+        val memberResult: PNGetChannelMembersResult?
+        try {
+            memberResult = if (pageInfo == null) {
+                pubnub.channelMembers
+                    .channel(groupId)
+                    .limit(100)
+                    .includeTotalCount(true)
+                    .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+                    .sync()
+            } else {
+                pubnub.channelMembers
+                    .channel(groupId)
+                    .limit(100)
+                    .page(pageInfo.pubNubNext ?: pageInfo.pubNubPrevious)
+                    .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+                    .sync()
+            }
+        } catch (e: Exception) {
+            return null
+        }
+        return if (memberResult == null) null else PubNubMemberData(memberResult)
     }
 
     override fun getUnreadMessageCount(groupId: String, lastSeenTimestamp: Long): Long {
@@ -200,7 +219,7 @@ object PubNubService : ChatService {
                     messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
                 )
                 messages.add(message)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -218,7 +237,7 @@ object PubNubService : ChatService {
                     .ttl(0)
                     .usePOST(true)
                     .sync()
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -233,13 +252,13 @@ object PubNubService : ChatService {
                     .message(messageItem)
                     .usePOST(true)
                     .sync()
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
     }
 
-    override fun getChannelMembers(groupId: String, adminId: String): MemberResult? {
+    /*override fun getChannelMembers(groupId: String, adminId: String): MemberResult? {
         val memberStatus = getOnlineMembers(groupId) ?: listOf()
 
         var adminMember: PNUUIDMetadata? = null
@@ -282,7 +301,7 @@ object PubNubService : ChatService {
             memberList.add(0, GroupMember(adminMember.id, adminMember.name, adminMember.profileUrl, true, memberStatus.contains(adminMember.id)))
         }
         return MemberResult(memberList, memberList.size, memberStatus.size)
-    }
+    }*/
 
     private fun getOnlineMembers(groupId: String) = try {
         pubnub.hereNow()
@@ -290,7 +309,7 @@ object PubNubService : ChatService {
             .sync()?.channels?.get(groupId)?.occupants
             ?.stream()?.map(PNHereNowOccupantData::getUuid)
             ?.collect(Collectors.toList())
-    } catch (e: Exception){
+    } catch (e: Exception) {
         null
     }
 }

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.group.lib
 
 import com.joshtalks.joshskills.ui.group.model.*
-import kotlinx.coroutines.Deferred
 
 interface ChatService {
     fun initializeChatService()
@@ -15,11 +14,17 @@ interface ChatService {
     fun getLastMessageDetail(groupId: String) : Pair<String, Long>
     fun getMessageHistory(groupId: String, startTime : Long? = null) : List<ChatItem>
     fun getUnreadMessages(groupId: String, startTime : Long) : List<ChatItem>
-    fun getChannelMembers(groupId: String, adminId: String): MemberResult?
+    fun getGroupMemberList(groupId: String, pageInfo: PageInfo? = null): MemberNetworkData?
+    //fun getChannelMembers(groupId: String, adminId: String): MemberResult?
 }
 
 interface NetworkData {
     fun getData() : GroupListResponse
+    fun getPageInfo() : PageInfo
+}
+
+interface MemberNetworkData {
+    fun getMemberData() : MemberResult?
     fun getPageInfo() : PageInfo
 }
 

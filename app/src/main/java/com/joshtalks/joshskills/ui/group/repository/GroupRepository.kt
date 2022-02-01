@@ -34,7 +34,7 @@ import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.MemberResult
 import com.joshtalks.joshskills.ui.group.model.MessageItem
-import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.joshtalks.joshskills.ui.group.lib.PageInfo
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
@@ -225,6 +225,17 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
+    //TODO: Changes to be done and refactoring
+    fun getGroupMemberList(groupId: String, pageInfo: PageInfo? = null): MemberResult? {
+        Log.d(TAG, "getGroupMemberList: $pageInfo")
+        val pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
+        val memberList = pubnubResponse?.getMemberData()?.list ?: listOf()
+        if (memberList.isEmpty())
+            return pubnubResponse?.getMemberData()
+        val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
+        return getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
+    }
+
     suspend fun joinGroup(groupId: String): Boolean {
         Log.e(TAG, "Joining group : ${groupId}")
         val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
@@ -368,9 +379,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         analyticsService.groupImpressionDetails(request)
-
-    fun getGroupMemberList(groupId: String, admin: String): MemberResult? =
-        chatService.getChannelMembers(groupId = groupId, adminId = admin)
 
     private fun getCompressImage(path: String): String {
         return try {
