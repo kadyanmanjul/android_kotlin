@@ -10,13 +10,15 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.extension.setImageFromUrl
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
 
-class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
+class ReviewVideoViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 
     private val subRootView: MaterialCardView = view.findViewById(R.id.root_view_fl)
     private val tvTitle: AppCompatTextView = view.findViewById(R.id.date)
+    private val tvDay: AppCompatTextView = view.findViewById(R.id.first_day_text)
     private val thumbnailImage: AppCompatImageView = view.findViewById(R.id.thumbnail_image)
     private val playImage: AppCompatImageView = view.findViewById(R.id.play_icon)
     private val badge: LottieAnimationView = view.findViewById(R.id.badge)
@@ -32,6 +34,12 @@ class FirstDayAchievementViewHolder(view: View, userId: String) : BaseViewHolder
 
     override fun bind(message: ChatModel, previousSender: ChatModel?) {
         this.message = message
+
+        if (message.type == BASE_MESSAGE_TYPE.FIRST_DAY_ACHIEVEMENT) {
+            tvDay.text = "मेरा पहला दिन"
+        } else if (message.type == BASE_MESSAGE_TYPE.FIRST_WEEK_ACHIEVEMENT) {
+            tvDay.text = "मेरा पहला हफ्ता"
+        }
 
         message?.let { message ->
             tvTitle.text =

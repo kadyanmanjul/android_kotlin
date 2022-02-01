@@ -116,6 +116,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
+        if (testId.isBlank()){
+            testId = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+        }
 
         setObservers()
         setListeners()
@@ -495,9 +499,39 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     override fun onPaymentError(p0: Int, p1: String?) {
         // isBackPressDisabled = true
-        uiHandler.post {
-            showPaymentFailedDialog()
-        }
+        viewModel.mentorPaymentStatus.observe(this, {
+            when(it) {
+                true ->{
+                    if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+                        PrefManager.put(IS_DEMO_P2P, false)
+                    }
+                    val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+                    if (testId == freeTrialTestId) {
+                        PrefManager.put(IS_COURSE_BOUGHT, true)
+                    }
+                    // isBackPressDisabled = true
+                    razorpayOrderId.verifyPayment()
+                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0))
+                    //viewModel.updateSubscriptionStatus()
+
+                    uiHandler.post {
+                        PrefManager.put(IS_PAYMENT_DONE, true)
+                        showPaymentProcessingFragment()
+                    }
+
+                    uiHandler.postDelayed({
+                        navigateToStartCourseActivity()
+                    }, 1000L * 5L)
+                }
+                false -> {
+                    uiHandler.post {
+                        showPaymentFailedDialog()
+                    }
+                }
+            }
+        })
+
     }
 
     @Synchronized

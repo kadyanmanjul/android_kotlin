@@ -128,6 +128,9 @@ const val IMPRESSION_REFER_VIA_INBOX_ICON = "REFER_VIA_INBOX_ICON"
 const val IMPRESSION_REFER_VIA_INBOX_MENU = "REFER_VIA_INBOX_MENU"
 const val IMPRESSION_REFER_VIA_CONVERSATION_ICON = "REFER_VIA_CONVERSATION_ICON"
 const val IMPRESSION_REFER_VIA_CONVERSATION_MENU = "REFER_VIA_CONVERSATION_MENU"
+const val IMPRESSION_TRUECALLER_FREETRIAL_LOGIN = "TRUECALLER_FT_LOGIN"
+const val IMPRESSION_TRUECALLER_NAMECHANGED = "NAME_CHANGED"
+const val IMPRESSION_TRUECALLER_P2P = "TC_P2P_CALL"
 
 const val BUY_ENGLISH_COURSE_BUTTON_CLICKED = "BUY_ENGLISH_COURSE_BUTTON_CLICKED"
 const val D2P_COURSE_SYLLABUS_OPENED = "D2P_COURSE_SYLLABUS_OPENED"
@@ -138,6 +141,7 @@ const val INTRO_VIDEO_STARTED_PLAYING = "INTRO_VIDEO_STARTED_PLAYING"
 const val TIME_SPENT_ON_INTRO_VIDEO = "TIME_SPENT_ON_INTRO_VIDEO"
 const val CALL_BUTTON_CLICKED_FROM_NEW_SCREEN = "CALL_BUTTON_CLICKED_FROM_NEW_SCREEN"
 const val HOW_TO_SPEAK_TEXT_CLICKED = "HOW_TO_SPEAK_TEXT_CLICKED"
+const val IMPRESSION_UNDO_ATS_OPTION = "UNDO_ATS_OPTIONS"
 
 object Utils {
 
@@ -999,6 +1003,7 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
+
 fun CircleImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
     val requestOptions = RequestOptions().placeholder(R.drawable.group_default_icon)
         .error(R.drawable.group_default_icon)
@@ -1014,6 +1019,7 @@ fun CircleImageView.setImage(url: String, context: Context = AppObjectController
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
+
 fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication,loader: LottieAnimationView) {
     val requestOptions = RequestOptions()
         .format(DecodeFormat.PREFER_RGB_565)

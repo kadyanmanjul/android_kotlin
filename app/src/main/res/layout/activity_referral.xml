@@ -1,124 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:ignore="MissingPrefix">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.referral.ReferralActivity" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.referral.ReferralActivity" />
 
         <variable
-                name="packageVal"
-                type="String" />
+            name="packageVal"
+            type="String" />
 
     </data>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:weightSum="1">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <com.joshtalks.arclayout.ArcLayout
-                android:id="@+id/diagonalLayout"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".75"
-                android:elevation="@dimen/_8sdp"
-                app:arc_cropDirection="cropInside"
-                app:arc_height="@dimen/_32sdp"
-                app:arc_position="bottom">
+            android:id="@+id/diagonalLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".75"
+            android:elevation="@dimen/_8sdp"
+            app:arc_cropDirection="cropInside"
+            app:arc_height="@dimen/_32sdp"
+            app:arc_position="bottom">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#25d366">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#25d366">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingStart="@dimen/_8sdp"
-                        android:paddingTop="@dimen/_16sdp"
-                        android:paddingEnd="@dimen/_8sdp"
-                        android:paddingBottom="@dimen/_8sdp"
-                        android:tint="@color/white"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_baseline_arrow_back_ios" />
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingTop="@dimen/_16sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:tint="@color/white"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_baseline_arrow_back_ios" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:gravity="center"
-                        android:paddingStart="@dimen/_8sdp"
-                        android:paddingTop="@dimen/_12sdp"
-                        android:paddingEnd="@dimen/_8sdp"
-                        android:paddingBottom="@dimen/_4sdp"
-                        android:singleLine="true"
-                        android:text="@string/paise_kamao"
-                        android:textColor="@color/white"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/tv_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_25sdp"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingTop="@dimen/_12sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_4sdp"
+                    android:singleLine="false"
+                    android:text="@string/paise_kamao"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                    android:textColor="@color/white"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_header2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="176dp"
+                    android:layout_marginEnd="177dp"
+                    android:text="Share Knowledge, Earn Love"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_header" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/image_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_50sdp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/ic_refer_a_friend"
                     app:layout_constraintHeight_default="percent"
                     app:layout_constraintHeight_percent="0.4"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_header" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_header"
+                    app:srcCompat="@drawable/ic_refer_a_friend" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_view_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_16sdp"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/image_view"
-                        tools:text="Earn 50 in your account\nfor every friend who\njoins the course." />
+                    android:id="@+id/text_view_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_24sdp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/image_view"
+                    tools:text="Earn 50 in your account for\nevery friend who joins the\ncourse." />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_view_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginTop="18dp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_view_1"
                     tools:text="Your friend also gets\n50 OFF on their course." />
 
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.joshtalks.arclayout.ArcLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".25"
-                android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".25"
+            android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_view_3"
@@ -128,7 +145,7 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="@string/share_more_text"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -142,7 +159,6 @@
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/rect_with_bound"
                 android:clickable="true"
-                app:drawableEndCompat="@drawable/ic_content_copy"
                 android:drawablePadding="@dimen/_18sdp"
                 android:drawableTint="@color/black"
                 android:focusable="true"
@@ -151,9 +167,10 @@
                 android:paddingTop="@dimen/_8sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_8sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:textColor="@color/black"
                 android:textIsSelectable="true"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                app:drawableEndCompat="@drawable/ic_content_copy"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_view_3"
@@ -162,45 +179,45 @@
                 tools:text="5CFFD" />
 
             <com.google.android.material.button.MaterialButton
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_46sdp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:backgroundTint="#7ED957"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
-                    android:text="Whatsapp"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    app:cornerRadius="@dimen/_4sdp"
-                    app:icon="@drawable/ic_whatsapp_share"
-                    app:iconGravity="textStart"
-                    app:iconPadding="@dimen/_3sdp"
-                    app:iconSize="@dimen/_20sdp"
-                    app:iconTint="#FFFFFF"
-                    app:iconTintMode="multiply"
-                    app:layout_constraintStart_toStartOf="@+id/tv_referral_code"
-                    app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.45"
-                    app:rippleColor="@color/white" />
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_46sdp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:backgroundTint="#7ED957"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
+                android:text="Whatsapp"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                android:textColor="@android:color/white"
+                app:cornerRadius="@dimen/_4sdp"
+                app:icon="@drawable/ic_whatsapp_share"
+                app:iconGravity="textStart"
+                app:iconPadding="@dimen/_3sdp"
+                app:iconSize="@dimen/_20sdp"
+                app:iconTint="#FFFFFF"
+                app:iconTintMode="multiply"
+                app:layout_constraintStart_toStartOf="@+id/tv_referral_code"
+                app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.45"
+                app:rippleColor="@color/white" />
 
             <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_other_share"
+                android:id="@+id/btn_other_share"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_44sdp"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:backgroundTint="@color/pdf_bg_color"
                 android:clickable="true"
                 android:focusable="true"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:gravity="center"
                 android:onClick="@{()->handler.getDeepLinkAndInviteFriends(packageVal)}"
                 android:text="\u00b7\u00b7\u00b7"
                 android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/black"
                 app:cornerRadius="@dimen/_4sdp"
                 app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"

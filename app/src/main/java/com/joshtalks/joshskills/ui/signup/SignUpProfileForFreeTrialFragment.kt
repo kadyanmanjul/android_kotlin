@@ -23,19 +23,15 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 
-class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
+class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
-    //    private var prefix: String = EMPTY
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
-//    private var datePicker: DatePickerDialog? = null
-//    private var gender: GENDER? = null
-//    private var genderIdArray: Array<Int> =
-//        arrayOf(R.id.tv_male_gender, R.id.tv_female_gender, R.id.tv_other_gender)
-//    private var userDateOfBirth: String? = null
+    private var username = name
+    private var isUserVerified = isVerified
 
     companion object {
-        fun newInstance() = SignUpProfileForFreeTrialFragment()
+        fun newInstance(name: String,isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name,isVerified)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,12 +59,15 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         binding.nameEditText.requestFocus()
+        initUI()
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        // initDOBPicker()
-        // initListener()
-        // initCountryCodePicker()
+    }
+
+    private fun initUI() {
+        binding.nameEditText.setText(username)
+        binding.nameEditText.isEnabled = true
     }
 
     private fun addObservers() {
@@ -92,7 +91,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
-        viewModel.apiStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.apiStatus.observe(viewLifecycleOwner, {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                     hideProgress()
@@ -103,105 +102,13 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
+        viewModel.mentorPaymentStatus.observe(viewLifecycleOwner, {
+            when (it) {
+                true -> moveToInboxScreen()
+                false -> submitForFreeTrial()
+            }
+        })
     }
-
-//    private fun initDOBPicker() {
-//        val now = Calendar.getInstance()
-//        val minYear = now.get(Calendar.YEAR) - 99
-//        val maxYear = now.get(Calendar.YEAR) - MAX_YEAR
-//        datePicker = SpinnerDatePickerDialogBuilder()
-//            .context(requireActivity())
-//            .callback { _, year, monthOfYear, dayOfMonth ->
-//                val calendar = Calendar.getInstance()
-//                calendar.set(year, monthOfYear, dayOfMonth)
-//                binding.dobEditText.setText(DATE_FORMATTER_2.format(calendar.time))
-//                userDateOfBirth = DATE_FORMATTER.format(calendar.time)
-//            }
-//            .spinnerTheme(R.style.DatePickerStyle)
-//            .showTitle(true)
-//            .showDaySpinner(true)
-//            .defaultDate(
-//                maxYear,
-//                now.get(Calendar.MONTH),
-//                now.get(Calendar.DAY_OF_MONTH)
-//            )
-//            .minDate(
-//                minYear,
-//                now.get(Calendar.MONTH),
-//                now.get(Calendar.DAY_OF_MONTH)
-//            )
-//            .maxDate(
-//                maxYear,
-//                now.get(Calendar.MONTH),
-//                now.get(Calendar.DAY_OF_MONTH)
-//            )
-//            .build()
-//    }
-
-//    private fun initCountryCodePicker() {
-//        binding.countryCodePicker.setAutoDetectedCountry(true)
-//        binding.countryCodePicker.setDetectCountryWithAreaCode(true)
-//        prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
-//        binding.countryCodePicker.setOnCountryChangeListener {
-//            prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
-//        }
-//    }
-
-//    private fun initListener() {
-//
-//        val toggleListener = View.OnClickListener {
-//            disableAllGenderView()
-//            enableSelectedGenderView(it)
-//            gender = when (it.id) {
-//                R.id.tv_male_gender -> {
-//                    GENDER.MALE
-//                }
-//                R.id.tv_female_gender -> {
-//                    GENDER.FEMALE
-//                }
-//                else -> {
-//                    GENDER.OTHER
-//                }
-//            }
-//        }
-//        binding.tvMaleGender.setOnClickListener(toggleListener)
-//        binding.tvFemaleGender.setOnClickListener(toggleListener)
-//        binding.tvOtherGender.setOnClickListener(toggleListener)
-//    }
-
-//    private fun disableAllGenderView() {
-//        var textView: MaterialTextView?
-//        genderIdArray.forEach {
-//            textView = binding.root.findViewById(it) as MaterialTextView
-//            textView?.backgroundTintList = null
-//            textView?.setTextColor(
-//                ContextCompat.getColor(
-//                    requireContext(),
-//                    R.color.text_90
-//                )
-//            )
-//            textView?.setBackgroundResource(R.drawable.mobile_no_bg)
-//        }
-//    }
-
-//    private fun enableSelectedGenderView(view: View) {
-//        val textView: MaterialTextView = view as MaterialTextView
-//        textView.backgroundTintList = ColorStateList.valueOf(
-//            ContextCompat.getColor(
-//                requireContext(),
-//                R.color.text_color_10
-//            )
-//        )
-//        textView.setTextColor(
-//            ContextCompat.getColor(
-//                requireContext(), R.color.white
-//            )
-//        )
-//    }
-
-//    fun selectDateOfBirth() {
-//        datePicker?.show()
-//    }
 
     fun submitProfile() {
         activity?.let { hideKeyboard(it, binding.nameEditText) }
@@ -210,36 +117,20 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
             return
         }
 
-//        if (binding.dobEditText.text.isNullOrEmpty()) {
-//            showToast(getString(R.string.dob_error_toast))
-//            return
-//        }
-
-//        if (binding.phoneNumberEt.text.isNullOrEmpty() || isValidFullNumber(
-//                prefix,
-//                binding.phoneNumberEt.text.toString()
-//            ).not()
-//        ) {
-//            showToast(getString(R.string.please_enter_valid_number))
-//            return
-//        }
-
-//        if (gender == null) {
-//            showToast(getString(R.string.select_gender))
-//            return
-//        }
-
         startProgress()
+        viewModel.checkMentorIdPaid()
+
+        val name = binding.nameEditText.text.toString()
+        if (!username.isNullOrEmpty() && username != name)
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
+    }
+
+    fun submitForFreeTrial() {
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
-//        requestMap["date_of_birth"] = userDateOfBirth ?: EMPTY
-//        requestMap["gender"] = gender?.gValue ?: EMPTY
         requestMap["is_free_trial"] = "Y"
-//        val mobNo = binding.phoneNumberEt.text!!.toString()
-//        if (mobNo.isNullOrBlank().not()) {
-//            requestMap["mobile"] = mobNo
-//        }
-        viewModel.completingProfile(requestMap, false)
+
+        viewModel.completingProfile(requestMap, isUserVerified)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
     }
 

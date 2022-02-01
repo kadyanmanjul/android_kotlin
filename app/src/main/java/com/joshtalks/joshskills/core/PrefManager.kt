@@ -116,6 +116,8 @@ const val REPORT_ISSUE = "REPORT_ISSUE"
 const val USER_ACTIVE_IN_GAME = "game_active"
 const val USER_LEAVE_THE_GAME = "game_left"
 const val USER_MUTE_OR_NOT = "mute_un_mute"
+const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
+const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
 
 object PrefManager {
 
@@ -184,8 +186,30 @@ object PrefManager {
     fun getIntValue(key: String, isConsistent: Boolean = false, defValue: Int): Int {
         return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
         else prefManagerCommon.getInt(key, defValue)
-
     }
+
+    fun getSetValue(key: String, isConsistent: Boolean = false, defValue: Set<String> = setOf()): Set<String> {
+        return if (isConsistent) prefManagerConsistent.getStringSet(key, defValue) ?: defValue
+        else prefManagerCommon.getStringSet(key, defValue) ?: defValue
+    }
+
+    fun appendToSet(
+        key: String,
+        value: String,
+        isConsistent: Boolean = false,
+    ) {
+        getSetValue(key, isConsistent).toMutableSet().also {
+            it.add(value)
+            put(key, it, isConsistent)
+        }
+    }
+
+
+    fun isInSet(
+        key: String,
+        value: String,
+        isConsistent: Boolean = false
+    ): Boolean = getSetValue(key, isConsistent).contains(value)
 
     fun getLongValue(key: String, isConsistent: Boolean = false): Long {
         return if (isConsistent) prefManagerConsistent.getLong(key, 0)
@@ -226,6 +250,11 @@ object PrefManager {
     fun put(key: String, value: Boolean, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putBoolean(key, value).apply()
         else prefManagerCommon.edit().putBoolean(key, value).apply()
+    }
+
+    fun put(key: String, value: Set<String>, isConsistent: Boolean = false) {
+        if (isConsistent) prefManagerConsistent.edit().putStringSet(key, value).apply()
+        else prefManagerCommon.edit().putStringSet(key, value).apply()
     }
 
     fun putPrefObject(key: String, objects: Any){
