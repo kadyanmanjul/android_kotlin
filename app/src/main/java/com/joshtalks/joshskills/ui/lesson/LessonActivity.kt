@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Outline
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +13,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.Window
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
@@ -20,8 +23,10 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
@@ -32,7 +37,6 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -42,6 +46,7 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -56,17 +61,19 @@ import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -84,6 +91,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
 
+    lateinit var introVideoUrl: String
+    var lastVideoWatchedDuration = 0L
+    var d2pIntroVideoWatchedDuration = 0L
     lateinit var titleView: TextView
     private var isDemo = false
     private var isNewGrammar = false
@@ -108,6 +118,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             arrayFragment,
             viewModel.lessonIsConvoRoomActive
         )
+    }
+
+    var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+   ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getLongExtra(
+               CURRENT_VIDEO_PROGRESS_POSITION,
+                0
+            )?.let { progress ->
+                binding.videoView.setProgress(progress)
+                binding.videoView.onResume()
+            }
+        }
     }
 
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
@@ -140,7 +164,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             // InboxActivity.startInboxActivity(this)
             finish()
         }
-        viewModel.isFreeTrail = if (intent.hasExtra(IS_FREE_TRAIL)) intent.getBooleanExtra(IS_FREE_TRAIL, false) else false
+        viewModel.isFreeTrail = if (intent.hasExtra(IS_FREE_TRAIL)) intent.getBooleanExtra(
+            IS_FREE_TRAIL,
+            false
+        ) else false
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
@@ -178,7 +205,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
+        if (PrefManager.getBoolValue(HAS_SEEN_QUIZ_VIDEO_TOOLTIP).not()) {
+            binding.tooltipFrame.setOnClickListener { showVideoToolTip(false) }
+            binding.overlayTooltipLayout.setOnClickListener { showVideoToolTip(false) }
+            binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
+        }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
+        setUpVideoProgressListener()
+        viewModel.getVideoData()
     }
 
     override fun onResume() {
@@ -187,34 +221,67 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun subscribeRxBus() {
-        compositeDisposable.add(
-            RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { event ->
-                    if (customView == null) {
-                        customView = CustomWord(this, event.customWord.choice)
-                    } else {
-                        binding.rootView.removeView(customView)
-                        customView?.updateChoice(event.customWord.choice)
-                        //customView?.choice = event.customWord.choice
-                    }
-                    customView?.apply {
-                        binding.rootView.addView(this)
-                        this.text = event.customWord.choice.text
-                        this.x = event.fromLocation[0].toFloat()
-                        this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
-                        val toLocation = IntArray(2)
-                        event.customWord.getLocationOnScreen(toLocation)
-                        toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
-                        this.transaltionAnimationNew(
-                            toLocation,
-                            event.customWord,
-                            event.optionLayout
-                        )
-                    }
+/*
+        animateAtsOptionViewEvent.observe(this, { event ->
+            event?.let {
+                if (customView == null) {
+                    customView = CustomWord(this, it.customWord.choice)
+                } else {
+                    binding.rootView.removeView(customView)
+                    customView?.updateChoice(it.customWord.choice)
+                    //customView?.choice = event.customWord.choice
                 }
-        )
+                customView?.apply {
+                    binding.rootView.addView(this)
+                    this.text = it.customWord.choice.text
+                    this.x = it.fromLocation[0].toFloat()
+                    this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
+                    val toLocation = IntArray(2)
+                    it.customWord.getLocationOnScreen(toLocation)
+//                    toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
+                    Log.d(
+                        "Yash",
+                        "subscribeRxBus() returned: (${it.fromLocation[0]},${it.fromLocation[1]})=>(${toLocation[0]},${toLocation[1]})"
+                    )
+                    this.translationAnimationNew(
+                        toLocation,
+                        it.customWord,
+                        it.optionLayout
+                    )
+                    animateAtsOptionViewEvent.postValue(null)
+                }
+            }
+        })
+*/
+        /* compositeDisposable.add(
+             RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
+                 .subscribeOn(Schedulers.io())
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe { event ->
+                     Log.d(TAG, "subscribeRxBus() returned: $event")
+                     if (customView == null) {
+                         customView = CustomWord(this, event.customWord.choice)
+                     } else {
+ //                        binding.rootView.removeView(customView)
+                         customView?.updateChoice(event.customWord.choice)
+                         //customView?.choice = event.customWord.choice
+                     }
+                     customView?.apply {
+ //                        binding.rootView.addView(this)
+                         this.text = event.customWord.choice.text
+                         this.x = event.fromLocation[0].toFloat()
+                         this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
+                         val toLocation = IntArray(2)
+                         event.customWord.getLocationOnScreen(toLocation)
+                         toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
+                         this.transaltionAnimationNew(
+                             toLocation,
+                             event.customWord,
+                             event.optionLayout
+                         )
+                     }
+                 }
+         )*/
     }
 
     override fun getConversationId(): String? {
@@ -233,8 +300,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     lessonNumber = it.lessonNo
                     lessonIsNewGrammar = it.isNewGrammar
                 }
-                viewModel.lessonIsConvoRoomActive = (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
-                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
+                viewModel.lessonIsConvoRoomActive =
+                    (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
+                            && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
                 //viewModel.lessonIsConvoRoomActive  = true
 
                 if (lessonIsNewGrammar) {
@@ -483,24 +551,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightCallBtnText.visibility = View.GONE
                     binding.arrowAnimation.visibility = View.VISIBLE
                 }
-                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    binding.overlayLayout.visibility = View.VISIBLE
-                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
-                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
-                    binding.spotlightTabVocab.visibility = View.INVISIBLE
-                    binding.spotlightTabReading.visibility = View.INVISIBLE
-                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.setTooltipText(
-                        resources.getText(R.string.label_speaking_spotlight_2).toString()
-                    )
-                    binding.lessonSpotlightTooltip.post {
-                        slideInAnimation(binding.lessonSpotlightTooltip)
-                    }
-                    binding.spotlightStartGrammarTest.visibility = View.GONE
-                    binding.spotlightCallBtn.visibility = View.VISIBLE
-                    binding.spotlightCallBtnText.visibility = View.VISIBLE
-                    binding.arrowAnimation.visibility = View.VISIBLE
+
+                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 ->{
+                    viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
+                    viewModel.showHideSpeakingFragmentCallButtons(1)
+                    showIntroVideoUi()
                 }
+
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
                     binding.overlayLayout.visibility = View.VISIBLE
                     binding.spotlightTabGrammar.visibility = View.INVISIBLE
@@ -535,6 +592,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         })
+
+        viewModel.introVideoLiveDataForSpeakingSection.observe(this, {
+            introVideoUrl = it.videoLink
+        })
+
+        viewModel.howToSpeakLiveData.observe(this, {
+            if (it == true) {
+                showIntroVideoUi()
+            }
+        })
     }
 
     private fun hideSpotlight() {
@@ -554,6 +621,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     fun callPracticePartner() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
+        closeIntroVideoPopUpUi()
     }
 
     private fun setUpNewGrammarLayouts(
@@ -588,7 +656,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
                     if (lessonCompleted) {
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
-                        if (lesson.status != LESSON_STATUS.CO ){
+                        if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo)
                         }
                         lesson.status = LESSON_STATUS.CO
@@ -623,7 +691,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
 
                     if (lessonCompleted) {
-                        if (lesson.status != LESSON_STATUS.CO ){
+                        if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo)
                         }
                         lesson.status = LESSON_STATUS.CO
@@ -668,13 +736,36 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
+    override fun showVideoToolTip(
+        shouldShow: Boolean,
+        wrongAnswerHeading: String?,
+        wrongAnswerText: String?,
+        videoClickListener: (() -> Unit)?
+    ) {
+        if (shouldShow.not()) PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
+        with(binding)
+        {
+            tooltipFrame.isVisible = shouldShow
+            videoBtnTooltip.isVisible = shouldShow
+            overlayTooltipLayout.isVisible = shouldShow
+            videoIvBtn.setOnClickListener {
+                showVideoToolTip(false)
+                if (videoClickListener != null) {
+                    videoClickListener()
+                }
+            }
+            wrongAnswerTitle.text = wrongAnswerHeading
+            wrongAnswerDesc.text = wrongAnswerText
+        }
+    }
+
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.lessonLiveData.value?.let { lesson ->
                 val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
                 when (tabPosition) {
                     GRAMMAR_POSITION -> {
-                        if (lesson.grammarStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                        if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logGrammarSectionCompleted()
                         }
                         lesson.grammarStatus = status
@@ -682,7 +773,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
                     SPEAKING_POSITION -> {
-                        if (lesson.speakingStatus!=LESSON_STATUS.CO && status ==LESSON_STATUS.CO){
+                        if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
                         }
                         lesson.speakingStatus = status
@@ -958,8 +1049,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun showSpeakingSpotlight() {
-        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
-        PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+        if(lessonNumber == 1) {
+            viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2)
+            PrefManager.put(HAS_SEEN_SPEAKING_SPOTLIGHT, true)
+        }
     }
 
     private fun showConvoRoomSpotlight() {
@@ -1015,21 +1108,29 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
+    override fun onPause() {
+        binding.videoView.onPause()
+        super.onPause()
+    }
+
     override fun onBackPressed() {
-        if (binding.overlayLayout.visibility == View.VISIBLE) {
-            hideSpotlight()
-        } else if (binding.itemOverlay.visibility == View.VISIBLE)
-            binding.itemOverlay.visibility = View.INVISIBLE
-        else {
-            val resultIntent = Intent()
-            viewModel.lessonLiveData.value?.let {
-                resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
-                resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
-                resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
-                resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+        when {
+            binding.itemOverlay.isVisible -> binding.itemOverlay.isVisible = false
+            binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
+            binding.videoPopup.isVisible -> closeIntroVideoPopUpUi()
+            isVideoVisible.value == true -> isVideoVisible.value = false
+            binding.overlayLayout.isVisible -> hideSpotlight()
+            else -> {
+                val resultIntent = Intent()
+                viewModel.lessonLiveData.value?.let {
+                    resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
+                    resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
+                    resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
+                    resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+                }
+                setResult(RESULT_OK, resultIntent)
+                this@LessonActivity.finish()
             }
-            setResult(RESULT_OK, resultIntent)
-            this@LessonActivity.finish()
         }
     }
 
@@ -1051,6 +1152,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
         const val LESSON_SECTION = "lesson_section"
+        val isVideoVisible = MutableLiveData(false)
+        val animateAtsOptionViewEvent = MutableLiveData<AnimateAtsOtionViewEvent?>(null)
 
         fun getActivityIntent(
             context: Context,
@@ -1060,7 +1163,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             testId: Int? = null,
             conversationId: String? = null,
             isNewGrammar: Boolean = false,
-            isFreeTrail : Boolean = false,
+            isFreeTrail: Boolean = false,
             isLessonCompleted: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             // TODO: Pass Free Trail Status
@@ -1152,4 +1255,112 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)
         }
     }
+
+    private fun showIntroVideoUi() {
+        binding.overlayLayout.visibility = View.GONE
+        binding.overlayLayoutSpeaking.visibility = View.VISIBLE
+        viewModel.showHideSpeakingFragmentCallButtons(1)
+        binding.videoPopup.visibility = View.VISIBLE
+        binding.videoView.seekToStart()
+        binding.spotlightTabGrammar.visibility = View.INVISIBLE
+        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+        binding.spotlightTabVocab.visibility = View.INVISIBLE
+        binding.spotlightTabReading.visibility = View.INVISIBLE
+        binding.spotlightCallBtn.visibility = View.GONE
+        binding.spotlightCallBtnText.visibility = View.GONE
+
+        binding.videoView.setUrl(introVideoUrl)
+        binding.videoView.onStart()
+        viewModel.saveIntroVideoFlowImpression(INTRO_VIDEO_STARTED_PLAYING)
+        binding.videoView.setPlayListener {
+            val currentVideoProgressPosition = binding.videoView.getProgress()
+            openVideoPlayerActivity.launch(
+                VideoPlayerActivity.getActivityIntent(
+                    this,
+                    "",
+                    null,
+                    introVideoUrl,
+                    currentVideoProgressPosition,
+                    conversationId = getConversationId()
+                )
+            )
+        }
+
+        lifecycleScope.launchWhenStarted {
+            binding.videoView.downloadStreamPlay()
+        }
+
+        binding.imageViewClose.setOnClickListener {
+            closeIntroVideoPopUpUi()
+        }
+
+        binding.videoView.setOutlineProvider(object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, 15f)
+            }
+        })
+        binding.videoView.setClipToOutline(true)
+
+        binding.videoCallBtn.setOnClickListener {
+            viewModel.saveIntroVideoFlowImpression(CALL_BUTTON_CLICKED_FROM_NEW_SCREEN)
+            callPracticePartner()
+        }
+    }
+
+    private fun closeIntroVideoPopUpUi() {
+        binding.videoPopup.visibility = View.GONE
+        binding.spotlightCallBtn.visibility = View.GONE
+        binding.spotlightCallBtnText.visibility = View.GONE
+        binding.videoCallBtn.visibility = View.INVISIBLE
+        binding.videoCallBtnText.visibility = View.INVISIBLE
+        viewModel.showHideSpeakingFragmentCallButtons(2)
+        binding.arrowAnimationnVideo.visibility = View.INVISIBLE
+        binding.overlayLayout.visibility = View.GONE
+        binding.overlayLayoutSpeaking.visibility = View.GONE
+        binding.videoView.onStop()
+        if(lastVideoWatchedDuration > d2pIntroVideoWatchedDuration){
+             lastVideoWatchedDuration = 0
+        }
+        viewModel.saveIntroVideoFlowImpression(TIME_SPENT_ON_INTRO_VIDEO, (d2pIntroVideoWatchedDuration - lastVideoWatchedDuration))
+        lastVideoWatchedDuration = d2pIntroVideoWatchedDuration
+    }
+
+    private fun setUpVideoProgressListener() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { mediaProgressEvent ->
+                        val videoPercent =
+                            binding.videoView.player?.duration?.let {
+                                mediaProgressEvent.progress.div(
+                                    it
+                                ).times(100).toInt()
+                            } ?: -1
+                        val percentVideoWatched =
+                            mediaProgressEvent.watchTime.times(100).div(
+                                binding.videoView.player?.duration!!
+                            ).toInt()
+
+
+                        if (percentVideoWatched != 0 ) {
+                            d2pIntroVideoWatchedDuration = mediaProgressEvent.watchTime
+                        }
+
+                        if (videoPercent != 0 && videoPercent >= 80) {
+                                binding.videoCallBtn.visibility = View.VISIBLE
+                                binding.videoCallBtnText.visibility = View.VISIBLE
+                                binding.arrowAnimationnVideo.visibility = View.VISIBLE
+                            viewModel.isD2pIntroVideoComplete(true)
+                        }
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
+        )
+    }
+
+
 }

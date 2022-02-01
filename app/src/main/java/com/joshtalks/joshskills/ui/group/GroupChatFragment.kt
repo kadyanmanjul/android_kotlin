@@ -63,10 +63,6 @@ class GroupChatFragment : BaseFragment() {
                 withContext(Dispatchers.Main) { vm.chatAdapter.submitData(it) }
             }
         }
-        if (vm.hasJoinedGroup.get()) {
-            vm.getGroupInfo()
-            initTooltip()
-        }
     }
 
     private fun initTooltip() {
@@ -139,6 +135,10 @@ class GroupChatFragment : BaseFragment() {
                 if (it != 0) {
                     vm.setUnreadLabel(it)
                 }
+            }
+            if (vm.hasJoinedGroup.get()) {
+                vm.getGroupInfo()
+                initTooltip()
             }
         }
     }

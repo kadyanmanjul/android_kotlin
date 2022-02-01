@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="model"
             type="com.joshtalks.joshskills.quizgame.ui.data.FavouriteDemoData" />
@@ -11,11 +13,12 @@
             type="com.joshtalks.joshskills.quizgame.ui.main.adapter.FavouriteAdapter" />
 
     </data>
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        app:cardCornerRadius="0dp"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="@android:color/transparent"
-        android:layout_height="wrap_content">
+        app:cardCornerRadius="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -31,16 +34,19 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/user_image"
-                android:layout_height="wrap_content">
+                android:layout_toRightOf="@+id/user_image">
 
                 <TextView
                     android:id="@+id/user_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_150sdp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_10sdp"
-                    android:text="Shobhit"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:text="@string/user_name"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
@@ -58,24 +64,24 @@
             </RelativeLayout>
 
 
-                <RelativeLayout
-                    android:layout_width="@dimen/_23sdp"
-                    android:layout_height="@dimen/_23sdp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/_25sdp">
+            <RelativeLayout
+                android:layout_width="@dimen/_23sdp"
+                android:layout_height="@dimen/_23sdp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/_25sdp">
 
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:visibility="invisible"
-                        android:id="@+id/click_token"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_plus1"
-                        app:lottie_autoPlay="false"
-                        app:lottie_loop="true"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/click_token"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_plus1"
+                    android:visibility="invisible"
+                    app:lottie_autoPlay="false"
+                    app:lottie_loop="true"
 
-                        />
-                </RelativeLayout>
+                    />
+            </RelativeLayout>
 
         </RelativeLayout>
 

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/share_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/soundwave_background" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvEnglishMinutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans_semibold"
+            android:gravity="center"
+            android:text="@string/share_screen_heading"
+            android:textColor="@color/pure_black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0870943396" />
+
+        <ImageView
+            android:id="@+id/appCompatImageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEnglishMinutes"
+            app:layout_constraintVertical_bias="0.1487325129"
+            app:srcCompat="@drawable/ic_baseline_phone_pick"
+            app:tint="#107BE5" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCallerDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:shadowColor="@color/a3a3a3"
+            android:shadowRadius="10"
+            android:text="@string/caller_details"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+            android:textColor="@color/pure_black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/callerImageContainer"
+            app:layout_constraintStart_toStartOf="@+id/callerImageContainer"
+            app:layout_constraintTop_toBottomOf="@+id/callerImageContainer"
+            app:layout_constraintVertical_bias="0.015" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvReceiverDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:shadowColor="@color/a3a3a3"
+            android:shadowRadius="10"
+            android:text="@string/caller_details"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+            android:textColor="@color/pure_black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/receiverImageContainer"
+            app:layout_constraintStart_toStartOf="@+id/receiverImageContainer"
+            app:layout_constraintTop_toBottomOf="@+id/receiverImageContainer"
+            app:layout_constraintVertical_bias="0.015" />
+
+        <ImageView
+            android:id="@+id/appCompatImageView3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9736415094"
+            app:srcCompat="@drawable/share_bottom" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/share_screen_tagline"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+            android:textColor="@color/pure_black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/appCompatTextView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.95" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans"
+            android:gravity="center"
+            android:text="@string/share_screen_line"
+            android:textColor="@color/pure_black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/appCompatImageView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.955935718" />
+
+        <FrameLayout
+            android:id="@+id/callerImageContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/image_shadow_background"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/appCompatImageView2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEnglishMinutes"
+            app:layout_constraintVertical_bias="0.031">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/callerImage"
+                android:layout_width="@dimen/image_icon_size"
+                android:layout_height="@dimen/image_icon_size"
+                android:src="@drawable/ic_call_placeholder"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/appCompatImageView2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvEnglishMinutes"
+                app:layout_constraintVertical_bias="0.0476360605" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/receiverImageContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/image_shadow_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/appCompatImageView2"
+            app:layout_constraintTop_toBottomOf="@+id/tvEnglishMinutes"
+            app:layout_constraintVertical_bias="0.031">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/receiverImage"
+                android:layout_width="@dimen/image_icon_size"
+                android:layout_height="@dimen/image_icon_size"
+                android:src="@drawable/ic_call_placeholder"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/appCompatImageView2"
+                app:layout_constraintTop_toBottomOf="@+id/tvEnglishMinutes"
+                app:layout_constraintVertical_bias="0.0476360605" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

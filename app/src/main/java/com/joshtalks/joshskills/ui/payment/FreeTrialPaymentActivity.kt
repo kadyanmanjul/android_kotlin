@@ -1,10 +1,16 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Paint
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -20,21 +26,30 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.io.File
 import java.math.BigDecimal
+import java.util.*
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
@@ -54,6 +69,30 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     var headingText = mutableListOf<String>()
     private var countdownTimerBack: CountdownTimerBack? = null
 
+    lateinit var pdfUrl : String
+    private var downloadID: Long = -1
+    private var isEnglishCardTapped = false
+    lateinit var fileName : String
+
+    private var onDownloadCompleteListener = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (downloadID == id) {
+                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + fileName
+                PdfViewerActivity.startPdfActivity(
+                    context = this@FreeTrialPaymentActivity,
+                    pdfId = "788900765",
+                    courseName = "Course Syllabus",
+                    pdfPath = fileDir,
+                    conversationId = this@FreeTrialPaymentActivity.intent.getStringExtra(CONVERSATION_ID)
+                )
+                showToast(getString(R.string.downloaded_syllabus))
+                viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
+                PrefManager.put(IS_ENGLISH_SYLLABUS_PDF_OPENED, value = true)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -66,7 +105,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
 
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
-            testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)!!
+            testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)?:FREE_TRIAL_PAYMENT_TEST_ID
         }
         if (intent.hasExtra(EXPIRED_TIME)) {
             expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)
@@ -77,11 +116,78 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
+        if (testId.isBlank()){
+            testId = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+        }
 
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
         logNewPaymentPageOpened()
+
+        viewModel.getD2pSyllabusPdfData()
+        binding.syllabusPdfCard.setOnClickListener {
+            getPermissionAndDownloadSyllabus(pdfUrl)
+        }
+        viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
+    }
+
+    private fun getPermissionAndDownloadSyllabus(url: String) {
+        PermissionUtils.storageReadAndWritePermission(this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                                downloadDigitalCopy(url)
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(this@FreeTrialPaymentActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+    }
+
+    private fun downloadDigitalCopy(url: String) {
+        registerDownloadReceiver()
+        fileName = Utils.getFileNameFromURL(url)
+
+        val request: DownloadManager.Request =
+            DownloadManager.Request(Uri.parse(url))
+                .setTitle(getString(R.string.app_name))
+                .setDescription("Downloading syllabus")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            request.setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+        }
+
+        val downloadManager =
+            AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
+        downloadID = downloadManager.enqueue(request)
+        showToast(getString(R.string.downloading_start))
+    }
+
+    private fun registerDownloadReceiver() {
+        AppObjectController.joshApplication.registerReceiver(
+            onDownloadCompleteListener,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        )
     }
 
     private fun forceDisconnectCall() {
@@ -109,6 +215,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         this,
                         R.drawable.blue_rectangle_with_blue_bound_stroke
                     )
+                isEnglishCardTapped = true
                 binding.materialTextView.text = buttonText.get(index)
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.GONE
@@ -130,6 +237,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.materialTextView.text = buttonText.get(index)
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.VISIBLE
+                isEnglishCardTapped = false
                 scrollToBottom()
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -310,6 +418,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.progressBar.visibility = View.GONE
             }
         }
+
+        viewModel.d2pSyllabusPdfResponse.observe(this,{
+            pdfUrl = it.syllabusPdfLink
+        })
     }
 
     private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
@@ -427,6 +539,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
+            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
+                viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
+            }
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
@@ -485,6 +600,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     override fun onDestroy() {
+        try {
+            this.unregisterReceiver(onDownloadCompleteListener)
+        } catch (ex: Exception) {
+        }
         super.onDestroy()
         countdownTimerBack?.stop()
     }
@@ -503,7 +622,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
-                activity.overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
+                activity.overridePendingTransition(
+                    R.anim.slide_up_dialog,
+                    R.anim.slide_out_top
+                )
             }
         }
 
@@ -523,5 +645,4 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
     }
-
 }

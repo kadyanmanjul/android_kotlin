@@ -26,23 +26,22 @@ data class OnlineTestResponse(
     val ruleAssessmentId: Int? = null,
 
     @SerializedName("video")
-    var videoObject : VideoModel,
+    var videoObject: VideoModel,
 
     @SerializedName("rule_type")
-    var questiontype : OnlineTestType,
+    var questiontype: OnlineTestType,
 
     @SerializedName("score_text")
-    var scoreText : Int?,
+    var scoreText: Int?,
 
     @SerializedName("points_list")
     val pointsList: List<String>?,
 
     @SerializedName("total_questions")
-    val totalQuestions: Int?=null,
+    var totalQuestions: Int? = null,
 
     @SerializedName("total_answered")
-    val totalAnswered: Int?=null
-
+    var totalAnswered: Int? = null,
 
 ) : Parcelable
 

@@ -22,7 +22,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.Player
@@ -103,14 +102,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -563,6 +561,9 @@ class ConversationActivity :
     private fun initView() {
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
+        }
+        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse ){
+            PrefManager.put(IS_COURSE_BOUGHT, true)
         }
 
 //        conversationBinding.imgGroupChat.setOnClickListener {

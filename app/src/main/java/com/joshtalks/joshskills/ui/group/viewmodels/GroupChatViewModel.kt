@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -41,6 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.concat
 
 private const val TAG = "GroupChatViewModel"
 
@@ -82,12 +84,17 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     val openMemberPopup: (GroupMember, View) -> Unit = { it, view ->
-        if (!it.isAdmin) {
+        if (it.mentorID != Mentor.getInstance().getId()) {
             val builder = AlertDialog.Builder(view.context)
-            val memberOptions = arrayOf("Remove ${it.memberName}")
+            var memberOptions = arrayOf("View Profile")
+
+            if (adminId == Mentor.getInstance().getId() && !it.isAdmin)
+                memberOptions = memberOptions.concat("Remove ${it.memberName}")
+
             builder.setAdapter(ArrayAdapter(view.context, android.R.layout.simple_list_item_1, memberOptions)) { _, item ->
-                when(item) {
-                    0 -> {
+                when (item) {
+                    0 -> openProfile(it.mentorID)
+                    1 -> {
                         val removeMsg = "Remove ${it.memberName} from \"${groupHeader.get()}\" group?"
                         showAlertDialog(view, removeMsg, "Ok", "Removing member") {
                             removeMemberFromGroup(it.mentorID, it.memberName)
@@ -128,7 +135,7 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
-        showProgressDialog(view.context, "Joining Group...")
+        showProgressDialog("Joining Group...")
         viewModelScope.launch {
             try {
                 val response = repository.joinGroup(groupId)
@@ -234,6 +241,24 @@ class GroupChatViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
+    fun openProfile(mentorId: String) {
+        message.what = OPEN_PROFILE_PAGE
+        message.obj = mentorId
+        singleLiveEvent.value = message
+        GroupAnalytics.push(GroupAnalytics.Event.OPENED_PROFILE)
+    }
+
+    fun showProgressDialog(msg: String) {
+        message.what = SHOW_PROGRESS_BAR
+        message.obj = msg
+        singleLiveEvent.value = message
+    }
+
+    fun dismissProgressDialog() {
+        message.what = DISMISS_PROGRESS_BAR
+        singleLiveEvent.value = message
+    }
+
     fun leaveGroup() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -248,6 +273,7 @@ class GroupChatViewModel : BaseViewModel() {
                     return@launch
                 }
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has left the group", groupId)
+                GroupAnalytics.push(GroupAnalytics.Event.EXIT_GROUP, groupId)
                 withContext(Dispatchers.Main) {
                     message.what = REFRESH_GRP_LIST_HIDE_INFO
                     message.data = Bundle().apply {
@@ -273,7 +299,7 @@ class GroupChatViewModel : BaseViewModel() {
         val builder = AlertDialog.Builder(view.context)
         val dialog: AlertDialog = builder.setMessage(dialogMessage)
             .setPositiveButton(positiveBtnText) { dialog, id ->
-                showProgressDialog(view.context, "$loadMsg...")
+                showProgressDialog("$loadMsg...")
                 function.invoke()
             }
             .setNegativeButton("Cancel") { dialog, id ->
@@ -306,6 +332,7 @@ class GroupChatViewModel : BaseViewModel() {
             withContext(Dispatchers.Main){
                 memberAdapter.addMembersToList(memberResult?.list!!)
                 if (showLoading) fetchingGrpInfo.set(false)
+                else showToast("Removed member from the group", Toast.LENGTH_LONG)
                 dismissProgressDialog()
             }
         }
@@ -341,6 +368,8 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = CLEAR_CHAT_TEXT
         singleLiveEvent.value = message
     }
+
+
 
     private fun getNotification(msg: String) : Map<String, Any?> {
         val pushPayloadHelper = PushPayloadHelper()

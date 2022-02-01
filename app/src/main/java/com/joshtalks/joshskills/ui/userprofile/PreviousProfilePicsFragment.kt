@@ -16,12 +16,12 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.databinding.FragmentPreviousProfilePicsBinding
 import com.joshtalks.joshskills.repository.server.ProfilePicture
 import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
-import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 
 class PreviousProfilePicsFragment : DialogFragment() {
     lateinit var binding: FragmentPreviousProfilePicsBinding
+    lateinit var mentorId:String
     private val viewModel by lazy {
-        ViewModelProvider(activity as UserProfileActivity).get(
+        ViewModelProvider(requireActivity()).get(
             UserProfileViewModel::class.java
         )
     }
@@ -29,8 +29,12 @@ class PreviousProfilePicsFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialogBlank)
+        arguments?.let {
+            it.getString(MENTOR_ID)?.let {
+                mentorId = it
+            }
+        }
         changeDialogConfiguration()
-        // viewModel.getPreviousProfilePics()
     }
 
     private fun changeDialogConfiguration() {
@@ -68,6 +72,9 @@ class PreviousProfilePicsFragment : DialogFragment() {
         viewModel.userData.observe(
             this, {
                 hideProgressBar()
+                if(it.previousProfilePictures==null||it.previousProfilePictures.profilePictures.isNullOrEmpty()){
+                    dismiss()
+                }
                 initView(it?.previousProfilePictures)
             })
 
@@ -101,6 +108,9 @@ class PreviousProfilePicsFragment : DialogFragment() {
         }
 
         viewModel.previousProfilePics.observe(this) {
+            if(it==null||it.profilePictures.isNullOrEmpty()){
+                dismiss()
+            }
             initView(it)
         }
 
@@ -119,11 +129,17 @@ class PreviousProfilePicsFragment : DialogFragment() {
                 val layoutManager = GridLayoutManager(context, 3)
                 recyclerView.layoutManager = layoutManager
                 recyclerView.setHasFixedSize(true)
-                recyclerView.adapter = PreviousPicsAdapter(
+                    recyclerView.adapter = PreviousPicsAdapter(
                     picsList,
                     object : PreviousPicsAdapter.OnPreviousPicClickListener {
                         override fun onPreviousPicClick(profilePicture: ProfilePicture) {
-                            ImageShowFragment.newInstance(profilePicture.photoUrl, null, null)
+                            ProfileImageShowFragment.newInstance(
+                                profilePicture.photoUrl,
+                                null,
+                                profilePicture.id.toString(),
+                                mentorId,
+                                true
+                            )
                                 .show(activity!!.supportFragmentManager, "ImageShow")
                         }
                     })
@@ -140,6 +156,11 @@ class PreviousProfilePicsFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = PreviousProfilePicsFragment()
+        fun newInstance(mentorId: String) = PreviousProfilePicsFragment().apply {
+            arguments =Bundle().apply {
+                putString(MENTOR_ID,mentorId)
+            }
+        }
     }
+
 }

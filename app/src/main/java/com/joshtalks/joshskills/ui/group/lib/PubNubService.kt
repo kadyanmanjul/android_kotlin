@@ -1,37 +1,42 @@
 package com.joshtalks.joshskills.ui.group.lib
 
 import android.util.Log
-
 import com.google.gson.Gson
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.model.*
+import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.ui.group.model.GroupMember
+import com.joshtalks.joshskills.ui.group.model.MemberResult
+import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.joshtalks.joshskills.ui.group.model.PageInfo
+import com.joshtalks.joshskills.ui.group.model.PubNubNetworkData
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
-
-import com.pubnub.api.PubNub
 import com.pubnub.api.PNConfiguration
+import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
-
-import org.jetbrains.annotations.NotNull
-
 import com.pubnub.api.enums.PNPushType
+import com.pubnub.api.models.consumer.history.PNHistoryResult
+import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadata
 import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
-import kotlinx.coroutines.*
 import java.util.stream.Collectors
-import kotlin.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.jetbrains.annotations.NotNull
 
 private const val TAG = "PubNub_Service"
 
 object PubNubService : ChatService {
 
     private val pubnub by lazy {
-        config.publishKey = "pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1"
-        config.subscribeKey = "sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82"
+        config.publishKey = BuildConfig.PUBNUB_PUB_GROUPS_KEY
+        config.subscribeKey = BuildConfig.PUBNUB_SUB_GROUPS_KEY
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }
@@ -132,14 +137,20 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun getMessageHistory(groupId: String, startTime : Long?): List<ChatItem> {
-        val history = pubnub.history()
-            .channel(groupId)
-            .includeMeta(true)
-            .includeTimetoken(true)
-            .start(startTime ?: System.currentTimeMillis() * 10_000L)
-            .count(20)
-            .sync()
+    override fun getMessageHistory(groupId: String, startTime: Long?): List<ChatItem> {
+        var history: PNHistoryResult? = null
+        try {
+            history = pubnub.history()
+                .channel(groupId)
+                .includeMeta(true)
+                .includeTimetoken(true)
+                .start(startTime ?: System.currentTimeMillis() * 10_000L)
+                .count(20)
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         val messages = mutableListOf<ChatItem>()
 
         history?.messages?.map {
@@ -154,7 +165,7 @@ object PubNubService : ChatService {
                     messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
                 )
                 messages.add(message)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -162,14 +173,19 @@ object PubNubService : ChatService {
     }
 
     override fun getUnreadMessages(groupId: String, startTime: Long): List<ChatItem> {
-        val history = pubnub.history()
-            .channel(groupId)
-            .includeMeta(true)
-            .includeTimetoken(true)
-            .start(startTime)
-            .end(System.currentTimeMillis() * 10_000L)
-            .count(20)
-            .sync()
+        var history: PNHistoryResult? = null
+        try {
+            history = pubnub.history()
+                .channel(groupId)
+                .includeMeta(true)
+                .includeTimetoken(true)
+                .start(startTime)
+                .end(System.currentTimeMillis() * 10_000L)
+                .count(20)
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         val messages = mutableListOf<ChatItem>()
 
         history?.messages?.map {
@@ -193,25 +209,33 @@ object PubNubService : ChatService {
 
     override fun sendMessage(groupName: String, messageItem: MessageItem) {
         CoroutineScope(Dispatchers.IO).launch {
-            pubnub.publish()
-                .channel(groupName)
-                .message(messageItem)
-                .meta("${Mentor.getInstance().getUser()?.firstName}")
-                .shouldStore(true)
-                .ttl(0)
-                .usePOST(true)
-                .sync()
+            try {
+                pubnub.publish()
+                    .channel(groupName)
+                    .message(messageItem)
+                    .meta("${Mentor.getInstance().getUser()?.firstName}")
+                    .shouldStore(true)
+                    .ttl(0)
+                    .usePOST(true)
+                    .sync()
+            } catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 
     override fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>) {
         CoroutineScope(Dispatchers.IO).launch {
-            pubnub.publish()
-                .channel(groupId)
-                .shouldStore(false)
-                .message(messageItem)
-                .usePOST(true)
-                .sync()
+            try {
+                pubnub.publish()
+                    .channel(groupId)
+                    .shouldStore(false)
+                    .message(messageItem)
+                    .usePOST(true)
+                    .sync()
+            } catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 
@@ -230,13 +254,18 @@ object PubNubService : ChatService {
             e.printStackTrace()
         }
 
-        val memberResult = pubnub.channelMembers
-            .channel(groupId)
-            .limit(512)
-            .includeTotalCount(true)
-            .filter("uuid.id != '$adminId'")
-            .includeUUID(Include.PNUUIDDetailsLevel.UUID)
-            .sync()
+        var memberResult: PNGetChannelMembersResult? = null
+        try {
+            memberResult = pubnub.channelMembers
+                .channel(groupId)
+                .limit(512)
+                .includeTotalCount(true)
+                .filter("uuid.id != '$adminId'")
+                .includeUUID(Include.PNUUIDDetailsLevel.UUID)
+                .sync()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
 
         val memberList = mutableListOf<GroupMember>()
         memberResult?.data?.map {

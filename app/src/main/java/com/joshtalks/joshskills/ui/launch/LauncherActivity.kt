@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
@@ -33,7 +32,6 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import kotlinx.android.synthetic.main.activity_launcher.retry
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -51,7 +49,6 @@ class LauncherActivity : CoreJoshActivity() {
         setContentView(R.layout.activity_launcher)
         animatedProgressBar()
         initAppInFirstTime()
-        handleGroupTimeTokens()
         handleIntent()
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         AppObjectController.uiHandler.postDelayed({
@@ -99,12 +96,6 @@ class LauncherActivity : CoreJoshActivity() {
                     getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
                 }
             }
-        }
-    }
-
-    private fun handleGroupTimeTokens() {
-        CoroutineScope(Dispatchers.IO).launch {
-            GroupRepository().fireTimeTokenAPI()
         }
     }
 
@@ -217,7 +208,6 @@ class LauncherActivity : CoreJoshActivity() {
 
     override fun onDestroy() {
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-        AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME).endSession()
         super.onDestroy()
     }
 
@@ -261,7 +251,7 @@ class LauncherActivity : CoreJoshActivity() {
                 .addBasicParam()
                 .addUserDetails()
                 .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, networkOperatorName)
-                .push(true)
+                .push()
         }
     }
 

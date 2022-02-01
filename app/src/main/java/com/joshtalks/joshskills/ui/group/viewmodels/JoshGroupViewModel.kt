@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -62,6 +61,7 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun getGroupData(): Flow<PagingData<GroupsItem>> {
+        showProgressDialog("Loading your groups...")
         return repository.getGroupListResult(::groupDataLoaded).flow.cachedIn(viewModelScope)
     }
 
@@ -77,6 +77,7 @@ class JoshGroupViewModel : BaseViewModel() {
         hasGroupData.notifyChange()
         repository.subscribeNotifications()
         repository.startChatEventListener()
+        dismissProgressDialog()
     }
 
     fun showImageThumb(imagePath: String) {
@@ -122,8 +123,19 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
-    fun addGroup(context: Context, request: AddGroupRequest) {
-        showProgressDialog(context,"Creating a new group...")
+    fun showProgressDialog(loadingMsg: String) {
+        message.what = SHOW_PROGRESS_BAR
+        message.obj = loadingMsg
+        singleLiveEvent.value = message
+    }
+
+    fun dismissProgressDialog() {
+        message.what = DISMISS_PROGRESS_BAR
+        singleLiveEvent.value = message
+    }
+
+    fun addGroup(request: AddGroupRequest) {
+        showProgressDialog("Creating a new group...")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.addGroupToServer(request)
@@ -152,8 +164,8 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
-    fun editGroup(context: Context, request: EditGroupRequest, isNameChanged: Boolean) {
-        showProgressDialog(context, "Editing group information...")
+    fun editGroup(request: EditGroupRequest, isNameChanged: Boolean) {
+        showProgressDialog("Editing group information...")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val isSuccess = repository.editGroupInServer(request, isNameChanged)

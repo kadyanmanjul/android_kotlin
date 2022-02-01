@@ -50,8 +50,8 @@ data class UserProfileResponse(
     var awardCategory: List<AwardCategory>?,
     @SerializedName("certificates")
     val certificates: List<Certificate>?,
-    @SerializedName("group_info")
-    val groupInfo: List<GroupInfo>?,
+    @SerializedName("groups")
+    val myGroupsList: List<GroupInfo>?,
     @SerializedName("is_senior_student")
     val isSeniorStudent: Boolean = false,
     @SerializedName("is_course_bought")
@@ -73,16 +73,15 @@ data class UserProfileResponse(
 )
 
 data class GroupInfo(
-    @SerializedName("group_id")
-    val groupId: String?,
-    @SerializedName("group_name")
+    @SerializedName("text")
+    val textToShow: String?,
+    @SerializedName("minutes")
+    val minutesSpoken: Int?,
+    @SerializedName("name")
     val groupName: String?,
-    @SerializedName("total_audio_messages")
-    val totalAudioMessages: Int?,
-    @SerializedName("total_duration")
-    val totalDuration: Int?,
-    @SerializedName("total_messages")
-    val totalMessages: Int?
+    @SerializedName("icon")
+    val groupIcon: String?,
+
 )
 
 data class Certificate(

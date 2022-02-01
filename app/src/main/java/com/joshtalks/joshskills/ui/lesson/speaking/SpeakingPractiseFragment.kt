@@ -296,6 +296,37 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
+
+        viewModel.lessonLiveData.observe(viewLifecycleOwner, {
+            if(it.lessonNo == 1){
+                binding.btnCallDemo.visibility = View.GONE
+                binding.txtHowToSpeak.visibility = View.VISIBLE
+                binding.txtHowToSpeak.setOnClickListener {
+                    viewModel.isHowToSpeakClicked(true)
+                    binding.btnCallDemo.visibility = View.VISIBLE
+                    viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
+                }
+
+                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                    if(it == 1){
+                        binding.nestedScrollView.visibility = View.INVISIBLE
+                        binding.btnCallDemo.visibility = View.VISIBLE
+                    }
+                    if(it == 2){
+                        binding.nestedScrollView.visibility = View.VISIBLE
+                        binding.btnCallDemo.visibility = View.GONE
+                    }
+                })
+            }else{
+                binding.btnCallDemo.visibility = View.GONE
+            }
+        })
+
+        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
+            if(it == true){
+                binding.btnCallDemo.visibility = View.GONE
+            }
+        })
     }
 
     private fun showTooltip() {

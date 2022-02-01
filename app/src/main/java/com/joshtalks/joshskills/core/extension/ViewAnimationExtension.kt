@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.*
@@ -181,31 +182,46 @@ fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
     this.startAnimation(animSet)
 }
 
-fun View.transaltionAnimationNew(
+fun View.translationAnimationNew(
     toLocation: IntArray,
     customWord: CustomWord,
     optionLayout: CustomLayout?
 ) {
-    this@transaltionAnimationNew.visibility = View.VISIBLE
     customWord.visibility = View.INVISIBLE
+    val finalLocation = IntArray(2)
+    customWord.getLocationOnScreen(finalLocation)
+    Log.i("Yash", "translationAnimationNew:toLocation (${toLocation[0]},${toLocation[1]})")
+    Log.i("Yash", "translationAnimationNew:finalLocation (${finalLocation[0]},${finalLocation[1]})")
+    this@translationAnimationNew.visibility = View.VISIBLE
     val slideAnim = AnimatorSet()
     slideAnim.playTogether(
         ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
         ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
     )
-
     val slideSet = AnimatorSet()
     slideSet.play(slideAnim)
     val interpolator = DecelerateInterpolator()
     slideSet.interpolator = interpolator
-    slideSet.duration = 300
+    slideSet.duration = 1000
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
+            Log.i("Yash", "onAnimationEnd:")
             optionLayout?.let {
-                optionLayout.addViewAt(customWord,customWord.choice.sortOrder-1)
+                optionLayout.addViewAt(customWord, customWord.choice.sortOrder - 1)
             }
-            this@transaltionAnimationNew.setVisibility(View.INVISIBLE)
-            customWord.visibility=View.VISIBLE
+            this@translationAnimationNew.visibility = View.INVISIBLE
+            customWord.visibility = View.VISIBLE
+
+            val finalLocation = IntArray(2)
+            customWord.getLocationOnScreen(finalLocation)
+            Log.d(
+                "Yash",
+                "onAnimationEnd() returned: toLocation (${toLocation[0]},${toLocation[1]})"
+            )
+            Log.d(
+                "Yash",
+                "onAnimationEnd() returned: finalLocation (${finalLocation[0]},${finalLocation[1]})"
+            )
         }
     })
     slideSet.start()

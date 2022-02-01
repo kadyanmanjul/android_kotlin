@@ -350,8 +350,6 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
         try {
             factory = QuestionProviderFactory(requireActivity().application)
             questionViewModel =
-                ViewModelProvider(this, factory!!).get(QuestionViewModelGame::class.java)
-            questionViewModel =
                 factory.let { ViewModelProvider(this, it!!).get(QuestionViewModelGame::class.java) }
             questionViewModel?.getQuizQuestion(
                 QuestionRequest(
@@ -497,10 +495,9 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             } catch (ex: Exception) {
             }
 
-            makeAgainCardSquare()
             gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
             gameFirebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: "")
-
+            makeAgainCardSquare()
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(1500)
                 getQuestions()
@@ -562,10 +559,19 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             }
 
             try {
-                gameFirebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getOpponentShowAnim(
+                    currentUserTeamId ?: "",
+                    this@QuestionFragment
+                )
                 gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
-                gameFirebaseDatabase.getPartnerCutCard(currentUserTeamId ?: "", this@QuestionFragment)
-                gameFirebaseDatabase.getOpponentCutCard(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getPartnerCutCard(
+                    currentUserTeamId ?: "",
+                    this@QuestionFragment
+                )
+                gameFirebaseDatabase.getOpponentCutCard(
+                    currentUserTeamId ?: "",
+                    this@QuestionFragment
+                )
             } catch (ex: Exception) {
                 Timber.d(ex)
             }
@@ -619,10 +625,19 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             }
 
             try {
-                gameFirebaseDatabase.getOpponentShowAnim(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getOpponentShowAnim(
+                    currentUserTeamId ?: "",
+                    this@QuestionFragment
+                )
                 gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
-                gameFirebaseDatabase.getPartnerCutCard(currentUserTeamId ?: "", this@QuestionFragment)
-                gameFirebaseDatabase.getOpponentCutCard(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getPartnerCutCard(
+                    currentUserTeamId ?: "",
+                    this@QuestionFragment
+                )
+                gameFirebaseDatabase.getOpponentCutCard(
+                    currentUserTeamId ?: "",
+                    this@QuestionFragment
+                )
             } catch (ex: Exception) {
                 Timber.d(ex)
             }

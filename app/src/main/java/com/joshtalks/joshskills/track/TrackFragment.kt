@@ -21,10 +21,14 @@ abstract class TrackFragment : Fragment(), LifecycleObserver {
         lifecycleScope.launch(Dispatchers.IO) {
             if (getConversationId().isNullOrEmpty().not()) {
                 getConversationId()?.let {
-                    CourseUsageService.startTimeConversation(
-                        requireContext(),
-                        it, this@TrackFragment.javaClass.simpleName
-                    )
+                    try {
+                        CourseUsageService.startTimeConversation(
+                            requireContext(),
+                            it, this@TrackFragment.javaClass.simpleName
+                        )
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
         }
@@ -35,7 +39,11 @@ abstract class TrackFragment : Fragment(), LifecycleObserver {
         lifecycleScope.launch(Dispatchers.IO) {
             if (getConversationId().isNullOrEmpty().not()) {
                 getConversationId()?.let {
-                    CourseUsageService.endTimeConversation(requireContext(), it)
+                    try {
+                        CourseUsageService.endTimeConversation(requireContext(), it)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
         }
