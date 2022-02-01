@@ -1,8 +1,5 @@
 package com.joshtalks.joshskills.core
 
-//import com.bugsee.library.Bugsee
-//import com.bugsee.library.data.VideoMode
-//import com.uxcam.UXCam
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -47,6 +44,8 @@ import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
+import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.analytics.data.network.VoipAnalyticsService
@@ -171,6 +170,13 @@ class AppObjectController {
         lateinit var conversationRoomsNetworkService: ConversationRoomsNetworkService
             private set
 
+        @JvmStatic
+        lateinit var groupsNetworkService: GroupApiService
+            private set
+
+        @JvmStatic
+        lateinit var groupsAnalyticsNetworkService: GroupsAnalyticsService
+            private set
 
         @JvmStatic
         private var fetch: Fetch? = null
@@ -330,6 +336,9 @@ class AppObjectController {
                 conversationRoomsNetworkService =
                     retrofit.create(ConversationRoomsNetworkService::class.java)
 
+                groupsNetworkService = retrofit.create(GroupApiService::class.java)
+                groupsAnalyticsNetworkService = retrofit.create(GroupsAnalyticsService::class.java)
+
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
                     .client(
@@ -370,26 +379,6 @@ class AppObjectController {
             }
         }
 
-        /*
-
-
-        <meta-data
-        android:name="io.sentry.auto-init"
-        android:value="true" />
-        <meta-data
-        android:name="io.sentry.session-tracking.enable"
-        android:value="true" />
-
-        <meta-data
-        android:name="io.sentry.ndk.enable"
-        android:value="false" />
-        <meta-data
-        android:name="io.sentry.anr.enable"
-        android:value="false" />
-        <meta-data
-        android:name="io.sentry.anr.timeout-interval-mills"
-        android:value="10000" />*/
-
         private fun initSentry(context: Context) {
             SentryAndroid.init(context) { options ->
                 options.dsn =
@@ -412,12 +401,6 @@ class AppObjectController {
                         enableAutoFragmentLifecycleTracing = true  // disabled by default
                     )
                 )
-                /*options.addIntegration(
-                    SentryTimberIntegration(
-                        minEventLevel = SentryLevel.ERROR,
-                        minBreadcrumbLevel = SentryLevel.INFO
-                    )
-                )*/
             }
             if (BuildConfig.DEBUG) {
                 Sentry.setLevel(SentryLevel.ERROR)
@@ -431,23 +414,6 @@ class AppObjectController {
                     context,
                     BuildConfig.AGORA_API_KEY,
                     object : IRtcEngineEventHandler() {})
-                /*mRtcEngine = RtcEngine.create(RtcEngineConfig().apply {
-                    mAppId = BuildConfig.AGORA_API_KEY
-                    mContext = context
-                    mAreaCode = RtcEngineConfig.AreaCode.AREA_CODE_IN
-                    mEventHandler = object : IRtcEngineEventHandler() {
-                    }
-                    if (BuildConfig.DEBUG) {
-                        mLogConfig = RtcEngineConfig.LogConfig().apply {
-                            // Set the log filter to INFO
-                            level = Constants.LogLevel.getValue(Constants.LogLevel.LOG_LEVEL_INFO)
-                            // Get the current timestamp to separate log files
-                            val ts = SimpleDateFormat("yyyyMMdd").format(Date())
-                            filePath = "/sdcard/$ts.log"        // Set the log file path
-                            fileSize = 2048     // Set the log file size to 2 MB
-                        }
-                    }
-                })*/
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -455,31 +421,9 @@ class AppObjectController {
         }
 
         fun getRtcEngine(context: Context): RtcEngine? {
-            Log.d("ABC", "getRtcEngine() called with: context = $context")
             initRtcEngine(context)
             return mRtcEngine
         }
-
-        /*private fun initUXCam() {
-            if (BuildConfig.DEBUG.not()) {
-                UXCam.setAutomaticScreenNameTagging(true)
-            }
-        }
-
-        private fun initBugsee() {
-            val options : HashMap<String, Any> = hashMapOf(
-                Bugsee.Option.NotificationBarTrigger to false,
-                Bugsee.Option.VideoEnabled to true,
-                Bugsee.Option.ScreenshotEnabled to true,
-                Bugsee.Option.VideoMode to VideoMode.V3,
-                Bugsee.Option.ShakeToTrigger to false
-            )
-            if (BuildConfig.DEBUG.not()) {
-                Bugsee.launch(joshApplication, BuildConfig.BUGSEE_API_KEY,options)
-            } else {
-                Bugsee.launch(joshApplication, BuildConfig.BUGSEE_API_KEY,options)
-            }
-        }*/
 
         @SuppressLint("RestrictedApi")
         private fun initDebugService() {
@@ -548,24 +492,6 @@ class AppObjectController {
             val aURL = URL(BuildConfig.BASE_URL)
             return aURL.host
         }
-
-        /*  private fun initNewRelic(context: Context) {
-              NewRelic.enableFeature(FeatureFlag.CrashReporting)
-              NewRelic.enableFeature(FeatureFlag.DefaultInteractions)
-              NewRelic.enableFeature(FeatureFlag.DistributedTracing)
-              NewRelic.enableFeature(FeatureFlag.GestureInstrumentation)
-              NewRelic.enableFeature(FeatureFlag.HttpResponseBodyCapture)
-              NewRelic.enableFeature(FeatureFlag.HandledExceptions)
-              NewRelic.enableFeature(FeatureFlag.NetworkErrorRequests)
-              NewRelic.enableFeature(FeatureFlag.NetworkRequests)
-              NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
-              NewRelic.withApplicationToken(BuildConfig.NEW_RELIC_TOKEN)
-                  .withLocationServiceEnabled(true)
-                  // .withLogLevel(AgentLog.AUDIT)
-                  .start(
-                      context
-                  )
-          }*/
 
         private fun initFirebaseRemoteConfig() {
             CoroutineScope(Dispatchers.IO).launch {
@@ -641,20 +567,6 @@ class AppObjectController {
         fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
             return FirebaseRemoteConfig.getInstance()
         }
-
-        /*private fun initSmartLookCam() {
-            val builder = Smartlook.SetupOptionsBuilder((BuildConfig.SMARTLOOK_API_KEY))
-                .setExperimental(true)
-
-            //.setFps(fps: Int)
-            //  .useAdaptiveFramerate(enabled: Boolean)
-            //.setActivity(@NonNull activity: Activity)
-            //    .setRenderingMode(RenderingMode.)
-            //  .setRenderingMode(renderingModeOption: RenderingModeOption)
-            //.setEventTrackingModes(eventTrackingModes: List<EventTrackingMode>)
-            Smartlook.setupAndStartRecording(builder.build())
-
-        }*/
 
         private fun initUserExperionCam() {
             UserExperior.startRecording(
@@ -831,40 +743,6 @@ class StatusCodeInterceptor : Interceptor {
         return response
     }
 }
-/*
-
-class NewRelicHttpMetricsLogger : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request: Request = chain.request()
-        val start = System.nanoTime()
-
-        try {
-            val requestSize =
-                if (null == request.body) 0 else request.body!!.contentLength()
-            val response: Response = chain.proceed(request)
-            val end = System.nanoTime()
-
-            val responseSize =
-                if (null == response.body) 0 else response.body!!.contentLength()
-            NewRelic.noticeHttpTransaction(
-                request.url.toString(),
-                request.method,
-                response.code,
-                start,
-                end,
-                requestSize,
-                responseSize
-            )
-            return response
-        } catch (ex: HttpException) {
-            LogException.catchException(ex)
-            val end = System.nanoTime()
-            NewRelic.noticeNetworkFailure(request.url.toString(), request.method, start, end, ex)
-            return chain.proceed(request)
-        }
-    }
-}
-*/
 
 fun initStethoLibrary(context: Context) {
     val cls = Class.forName("com.facebook.stetho.Stetho")

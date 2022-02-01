@@ -91,7 +91,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
 
-    lateinit var introVideoUrl: String
+    var introVideoUrl: String?= null
     var lastVideoWatchedDuration = 0L
     var d2pIntroVideoWatchedDuration = 0L
     lateinit var titleView: TextView
@@ -553,9 +553,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 ->{
-                    viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
-                    viewModel.showHideSpeakingFragmentCallButtons(1)
-                    showIntroVideoUi()
+                    if(introVideoUrl.isNullOrBlank().not()){
+                        viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
+                        viewModel.showHideSpeakingFragmentCallButtons(1)
+                        showIntroVideoUi()
+                    }
                 }
 
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
@@ -595,11 +597,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
         viewModel.introVideoLiveDataForSpeakingSection.observe(this, {
             introVideoUrl = it.videoLink
+            if(introVideoUrl.isNullOrBlank()){
+                showToast("Something went wrong")
+            }
         })
 
         viewModel.howToSpeakLiveData.observe(this, {
             if (it == true) {
-                showIntroVideoUi()
+                if(introVideoUrl.isNullOrBlank().not()){
+                    showIntroVideoUi()
+                }else{
+                    showToast("Something went wrong")
+                }
             }
         })
     }
