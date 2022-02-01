@@ -198,6 +198,8 @@ android {
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
+            buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1\""
+            buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
