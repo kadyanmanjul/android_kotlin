@@ -17,10 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentChoiceFragnmentBinding
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
@@ -29,7 +26,6 @@ import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameNotificationFirebaseData
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelGame
 import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.ChoiceViewModelProviderFactory
-import com.joshtalks.joshskills.quizgame.ui.main.viewmodel.FavouriteViewModelGame
 import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.Constants
@@ -59,8 +55,8 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
 
 
     private var activityInstance: FragmentActivity? = null
-    var userName: String? = Mentor.getInstance().getUser()?.firstName
-    var imageUrl: String? = Mentor.getInstance().getUser()?.photo
+    var userName: String? = Mentor.getInstance().getUser()?.firstName?: EMPTY
+    var imageUrl: String? = Mentor.getInstance().getUser()?.photo?: EMPTY
     private var firebaseDatabase: GameNotificationFirebaseData = GameNotificationFirebaseData()
     private var mainGameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
 
@@ -90,6 +86,8 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
 
     init {
         firebaseDatabase.deleteRequested(mentorId)
+        firebaseDatabase.deleteDataAcceptRequest(mentorId)
+        mainGameFirebaseDatabase.deleteAcceptFppRequestNotification(mentorId)
         firebaseDatabase.deleteDeclineData(mentorId)
 
         mainGameFirebaseDatabase.deleteMuteUnmute(mentorId)
@@ -223,7 +221,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         var accessToken: String? =
             "006569a477f372a454b8101fc89ec6161e6IADYmZ3FSiuZkvYIVERzwHjKvcLGDMAC5LxQ8lh7CxFfjhQWp0e379yDIgAkhwQAweFmYQQAAQBB4YpjAgBB4YpjAwBB4YpjBABB4Ypj"
-        if (TextUtils.equals(accessToken, "") || TextUtils.equals(
+        if (TextUtils.equals(accessToken, EMPTY) || TextUtils.equals(
                 accessToken,
                 "006569a477f372a454b8101fc89ec6161e6IADYmZ3FSiuZkvYIVERzwHjKvcLGDMAC5LxQ8lh7CxFfjhQWp0e379yDIgAkhwQAweFmYQQAAQBB4YpjAgBB4YpjAwBB4YpjBABB4Ypj"
             )
@@ -246,14 +244,13 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         fromUserName: String,
         fromUserImage: String
     ) {
-        var i = 0
         //handler5.removeCallbacksAndMessages(null)
         try {
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
-            val imageUrl = fromUserImage.replace("\n", "")
+            val imageUrl = fromUserImage.replace("\n", EMPTY)
             binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -264,7 +261,6 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
             tickSound()
             handler5.removeCallbacksAndMessages(null)
-            i = 1
             if (isShowFrag)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
             choiceViewModel?.getChannelData(mentorId, channelName)
@@ -362,13 +358,13 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         declinedUserId: String
     ) {
         handler9.removeCallbacksAndMessages(null)
-        val image = userImageUrl.replace("\n", "")
+        val image = userImageUrl.replace("\n", EMPTY)
         if (isShowFrag)
             CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCardNotPlay)
         binding.userNameForNotPlay.text = userName
         binding.userImageForNotPaly.setUserImageOrInitials(
             image,
-            userName ?: "",
+            userName ?: EMPTY,
             30,
             isRound = true
         )
@@ -422,7 +418,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         fm?.beginTransaction()
             ?.replace(
                 R.id.container,
-                TeamMateFoundFragmentFpp.newInstance(userId ?: "", channelName ?: ""),
+                TeamMateFoundFragmentFpp.newInstance(userId ?: EMPTY, channelName ?: EMPTY),
                 "TeamMateFoundFragment"
             )
             ?.remove(this)
@@ -442,7 +438,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
             binding.txtMsg2.text = getString(R.string.friend_request)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
-            val imageUrl = fromImageUrl.replace("\n", "")
+            val imageUrl = fromImageUrl.replace("\n", EMPTY)
             binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -497,6 +493,10 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         userImage: String,
         mentorId: String
     ) {
+    }
+
+    override fun onPartnerAcceptFriendRequest(userName: String, userImage: String,isAccept: String) {
+       // TODO("Not yet implemented")
     }
 
     fun openFavouriteScreen() {

@@ -14,9 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentSearchingOpponentTeamBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
 import com.joshtalks.joshskills.quizgame.ui.data.network.GameFirebaseDatabase
@@ -163,10 +161,10 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
 
     private fun setCurrentUserData() {
         binding.team1User1Name.text = Mentor.getInstance().getUser()?.firstName
-        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", "")
+        val imageUrl = Mentor.getInstance().getUser()?.photo?.replace("\n", EMPTY)
         binding.team1UserImage1.setUserImageOrInitials(
             imageUrl,
-            Mentor.getInstance().getUser()?.firstName ?: "",
+            Mentor.getInstance().getUser()?.firstName ?: EMPTY,
             30,
             isRound = true
         )
@@ -175,10 +173,10 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
 
     private fun setTeamMateData(userDetails: UserDetails?) {
         binding.team1User2Name.text = UtilsQuiz.getSplitName(userDetails?.name)
-        val imageUrl = userDetails?.imageUrl?.replace("\n", "")
+        val imageUrl = userDetails?.imageUrl?.replace("\n", EMPTY)
         binding.team1UserImage2.setUserImageOrInitials(
             imageUrl,
-            userDetails?.name ?: "",
+            userDetails?.name ?: EMPTY,
             30,
             isRound = true
         )
@@ -266,28 +264,28 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
             currentUserTeamId = team1Id
             opponentTeamId = team2Id
 
-            val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
+            val imageUrl2 = team1User2ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
-                team1User2Name ?: "",
+                team1User2Name ?: EMPTY,
                 30,
                 true
             )
             binding.team1User2Name.text = UtilsQuiz.getSplitName(team1User2Name)
 
-            val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team2User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team2User1Name ?: "",
+                team2User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = UtilsQuiz.getSplitName(team2User1Name)
 
-            val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team2User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team2User2Name ?: "",
+                team2User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -298,28 +296,28 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
             currentUserTeamId = team2Id
             opponentTeamId = team1Id
 
-            val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
+            val imageUrl2 = team2User2ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
-                team2User2Name ?: "",
+                team2User2Name ?: EMPTY,
                 30,
                 true
             )
             binding.team1User2Name.text = UtilsQuiz.getSplitName(team2User2Name)
 
-            val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team1User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team1User1Name ?: "",
+                team1User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = UtilsQuiz.getSplitName(team1User1Name)
 
-            val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team1User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team1User2Name ?: "",
+                team1User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -341,9 +339,9 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
                     R.id.container,
                     BothTeamMateFoundFpp.newInstance(
                         startTime,
-                        roomId ?: "",
+                        roomId ?: EMPTY,
                         userDetails,
-                        channelName ?: ""
+                        channelName ?: EMPTY
                     ), "BothTeamMateFound"
                 )
                 ?.commit()
@@ -364,7 +362,7 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         searchOpponentTeamViewModel?.saveCallDuration(
             SaveCallDuration(
-                currentUserTeamId ?: "",
+                currentUserTeamId ?: EMPTY,
                 startTime.toInt().div(1000).toString(),
                 currentUserId
             )
@@ -372,9 +370,9 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
         if (roomId != null) {
             searchOpponentTeamViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
-                    roomId ?: "",
+                    roomId ?: EMPTY,
                     currentUserId,
-                    currentUserTeamId ?: "",
+                    currentUserTeamId ?: EMPTY,
                     startTime
                 )
             )
@@ -408,7 +406,7 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
         } else {
             searchOpponentTeamViewModel?.deleteUserAndTeamData(
                 TeamDataDelete(
-                    currentUserTeamId ?: "", currentUserId
+                    currentUserTeamId ?: EMPTY, currentUserId
                 )
             )
             activity?.let {
@@ -471,7 +469,7 @@ class SearchingOpponentTeamFragmentFpp : Fragment(), GameFirebaseDatabase.OnNoti
     private fun deleteTeamData() {
         searchOpponentTeamViewModel?.deleteUserAndTeamData(
             TeamDataDelete(
-                currentUserTeamId ?: "",
+                currentUserTeamId ?: EMPTY,
                 currentUserId
             )
         )

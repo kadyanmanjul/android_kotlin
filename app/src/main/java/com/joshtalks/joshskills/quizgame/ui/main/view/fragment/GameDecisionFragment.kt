@@ -14,13 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LEAVE_THE_GAME
-import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentWinScreenBinding
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.quizgame.ui.data.model.*
@@ -31,6 +27,7 @@ import com.joshtalks.joshskills.quizgame.util.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import io.agora.rtc.RtcEngine
 import kotlinx.android.synthetic.main.fragment_question.*
+import kotlinx.android.synthetic.main.fragment_test.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,7 +43,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
 
     private var factory: DecisionDataViewProviderFactory? = null
     private var decisionDataViewModel: DecisionDataViewModelGame? = null
-    private var currentUserId: String? = null
+    private var currentUserId: String = Mentor.getInstance().getId()
     private var opponentTeamMarks: String? = null
     private var isUiActive = false
 
@@ -85,8 +82,8 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     private var partnerId: String? = null
     private var partnerName: String? = null
     private var partnerImage: String? = null
-    private var currentUserName: String? = null
-    private var currentUserImage: String? = null
+    private var currentUserName: String = Mentor.getInstance().getUser()?.firstName ?: EMPTY
+    private var currentUserImage: String = Mentor.getInstance().getUser()?.photo ?: EMPTY
     var time: Int? = 0
 
     val handler = Handler(Looper.getMainLooper())
@@ -128,9 +125,6 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setBackgroundColor(Color.WHITE)
-        currentUserId = Mentor.getInstance().getId()
-        currentUserName = Mentor.getInstance().getUser()?.firstName
-        currentUserImage = Mentor.getInstance().getUser()?.photo
 
         if (PrefManager.getBoolValue(USER_LEAVE_THE_GAME)) {
             binding.team1User2Name.alpha = 0.5f
@@ -216,19 +210,15 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             makeNewTeam()
         }
 
-        if (fromType == RANDOM) {
-            binding.btnAddPeople.visibility = View.VISIBLE
-        }
-
         binding.btnAddPeople.setOnClickListener {
             binding.btnAddPeople.isEnabled = false
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ADD_TO_FRIEND_LIST)
             AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
             gameFirebaseDatabase.createFriendRequest(
-                currentUserId ?: "",
-                currentUserName ?: "",
-                currentUserImage ?: "",
-                partnerId ?: ""
+                currentUserId,
+                currentUserName,
+                currentUserImage,
+                partnerId ?: EMPTY
             )
             lifecycleScope.launch(Dispatchers.Main) {
                 if (isUiActive) {
@@ -243,11 +233,11 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             AudioManagerQuiz.audioRecording.tickPlaying(requireActivity())
             binding.btnPlayAgain.isEnabled = false
             gameFirebaseDatabase.createPlayAgainNotification(
-                partnerId ?: "",
-                currentUserName ?: "",
-                currentUserImage ?: ""
+                partnerId ?: EMPTY,
+                currentUserName,
+                currentUserImage
             )
-            playAgainApiCall(PlayAgain(currentUserTeamId ?: "", currentUserId ?: ""))
+            playAgainApiCall(PlayAgain(currentUserTeamId ?: EMPTY, currentUserId))
             lifecycleScope.launch(Dispatchers.Main) {
                 if (isUiActive) {
                     delay(10000)
@@ -256,11 +246,12 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             }
         }
 
-        gameFirebaseDatabase.getPartnerPlayAgainNotification(currentUserId ?: "", this)
+        gameFirebaseDatabase.getPartnerPlayAgainNotification(currentUserId, this)
     }
 
     fun getFriendRequest() {
-        gameFirebaseDatabase.getFriendRequests(currentUserId ?: "", this)
+        gameFirebaseDatabase.getAcceptFriendRequest(currentUserId, this)
+        gameFirebaseDatabase.getFriendRequests(currentUserId, this)
     }
 
     override fun onStart() {
@@ -306,13 +297,28 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             ViewModelProvider(this, factory!!).get(DecisionDataViewModelGame::class.java)
         decisionDataViewModel?.getRoomUserDataTemp(
             RandomRoomData(
-                roomId ?: "",
-                currentUserId ?: ""
+                roomId ?: EMPTY,
+                currentUserId
+            )
+        )
+        decisionDataViewModel?.checkUserAlreadyFppOrNot(
+            CheckAlreadyFpp(
+                currentUserId,
+                teamId ?: EMPTY
             )
         )
     }
 
     fun showRoomUserData() {
+        activity?.let {
+            decisionDataViewModel?.checkAlreadyFppLiveData?.observe(it, Observer {
+                if (it.alreadyFpp == "false") {
+                    binding.btnAddPeople.visibility = View.VISIBLE
+                } else {
+                    binding.btnAddPeople.visibility = View.INVISIBLE
+                }
+            })
+        }
         activity?.let {
             decisionDataViewModel?.roomUserDataTemp?.observe(it, Observer {
                 initializeUsersTeamsData(it.teamData)
@@ -326,7 +332,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                         currentUserId
                     )
                 )
-                deleteAllFromFirestore(currentUserId ?: "")
+                deleteAllFromFirestore(currentUserId)
             })
         }
     }
@@ -383,55 +389,55 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             binding.txtOnButtonPlayagain.text = "Play Again\nwith ${getSplitName(partnerName)}"
 
             if (currentUserId == team1UserId1) {
-                val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
+                val imageUrl1 = team1User1ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
-                    team1User1Name ?: "",
+                    team1User1Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User1Name.text = getSplitName(team1User1Name)
 
-                val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
+                val imageUrl2 = team1User2ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
-                    team1User2Name ?: "",
+                    team1User2Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User2Name.text = getSplitName(team1User2Name)
             } else {
-                val imageUrl2 = team1User1ImageUrl?.replace("\n", "")
+                val imageUrl2 = team1User1ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
-                    team1User2Name ?: "",
+                    team1User2Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User2Name.text = getSplitName(team1User1Name)
 
-                val imageUrl1 = team1User2ImageUrl?.replace("\n", "")
+                val imageUrl1 = team1User2ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
-                    team1User2Name ?: "",
+                    team1User2Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User1Name.text = getSplitName(team1User2Name)
             }
-            val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team2User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team2User1Name ?: "",
+                team2User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = getSplitName(team2User1Name)
 
-            val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team2User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team2User2Name ?: "",
+                team2User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -455,56 +461,56 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
 
 
             if (team2UserId1 == currentUserId) {
-                val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
+                val imageUrl1 = team2User1ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
-                    team2User1Name ?: "",
+                    team2User1Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User1Name.text = getSplitName(team2User1Name)
 
-                val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
+                val imageUrl2 = team2User2ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
-                    team2User2Name ?: "",
+                    team2User2Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User2Name.text = getSplitName(team2User2Name)
             } else {
-                val imageUrl1 = team2User2ImageUrl?.replace("\n", "")
+                val imageUrl1 = team2User2ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage1.setUserImageOrInitials(
                     imageUrl1,
-                    team2User2Name ?: "",
+                    team2User2Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User1Name.text = getSplitName(team2User2Name)
 
-                val imageUrl2 = team2User1ImageUrl?.replace("\n", "")
+                val imageUrl2 = team2User1ImageUrl?.replace("\n", EMPTY)
                 binding.team1UserImage2.setUserImageOrInitials(
                     imageUrl2,
-                    team2User1Name ?: "",
+                    team2User1Name ?: EMPTY,
                     30,
                     true
                 )
                 binding.team1User2Name.text = getSplitName(team2User1Name)
             }
 
-            val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team1User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team1User1Name ?: "",
+                team1User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = getSplitName(team1User1Name)
 
-            val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team1User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team1User2Name ?: "",
+                team1User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -526,18 +532,18 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         decisionDataViewModel?.saveCallDuration(
             SaveCallDuration(
-                currentUserTeamId ?: "",
+                currentUserTeamId ?: EMPTY,
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId
             )
         )
         if (fromType == RANDOM) {
             decisionDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
-                    roomId ?: "",
-                    currentUserId ?: "",
-                    currentUserTeamId ?: "",
-                    callTimeCount ?: ""
+                    roomId ?: EMPTY,
+                    currentUserId,
+                    currentUserTeamId ?: EMPTY,
+                    callTimeCount ?: EMPTY
                 )
             )
             activity?.let {
@@ -567,10 +573,10 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         } else {
             decisionDataViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
-                    roomId ?: "",
-                    currentUserId ?: "",
-                    currentUserTeamId ?: "",
-                    callTimeCount ?: ""
+                    roomId ?: EMPTY,
+                    currentUserId,
+                    currentUserTeamId ?: EMPTY,
+                    callTimeCount ?: EMPTY
                 )
             )
             activity?.let {
@@ -615,18 +621,18 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         decisionDataViewModel?.saveCallDuration(
             SaveCallDuration(
-                currentUserTeamId ?: "",
+                currentUserTeamId ?: EMPTY,
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId
             )
         )
         if (fromType == RANDOM) {
             decisionDataViewModel?.getClearRadius(
                 SaveCallDurationRoomData(
-                    roomId ?: "",
-                    currentUserId ?: "",
-                    currentUserTeamId ?: "",
-                    callTimeCount ?: ""
+                    roomId ?: EMPTY,
+                    currentUserId,
+                    currentUserTeamId ?: EMPTY,
+                    callTimeCount ?: EMPTY
                 )
             )
             activity?.let {
@@ -636,7 +642,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                             decisionDataViewModel?.saveCallDuration?.observe(it, {
                                 if (it.message == CALL_DURATION_RESPONSE) {
                                     val points = it.points
-                                    if (points.toInt() >= 1){
+                                    if (points.toInt() >= 1) {
                                         lifecycleScope.launch(Dispatchers.Main) {
                                             UtilsQuiz.showSnackBar(
                                                 binding.container,
@@ -658,10 +664,10 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         } else {
             decisionDataViewModel?.deleteUserRoomData(
                 SaveCallDurationRoomData(
-                    roomId ?: "",
-                    currentUserId ?: "",
-                    currentUserTeamId ?: "",
-                    callTimeCount ?: ""
+                    roomId ?: EMPTY,
+                    currentUserId,
+                    currentUserTeamId ?: EMPTY,
+                    callTimeCount ?: EMPTY
                 )
             )
             activity?.let {
@@ -671,7 +677,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                             decisionDataViewModel?.saveCallDuration?.observe(it, {
                                 if (it.message == CALL_DURATION_RESPONSE) {
                                     val points = it.points
-                                    if (points.toInt() >= 1){
+                                    if (points.toInt() >= 1) {
                                         lifecycleScope.launch(Dispatchers.Main) {
                                             UtilsQuiz.showSnackBar(
                                                 binding.container,
@@ -719,35 +725,37 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     ) {
 
         try {
-            CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
+            binding.btnAddPeople.visibility = View.INVISIBLE
+            if (isUiActive)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
             binding.progress.animateProgress()
             binding.userName.text = fromUserName
-            val imageUrl = fromImageUrl.replace("\n", "")
-
-            activity?.let {
-                Glide.with(it)
-                    .load(imageUrl)
-                    .apply(
-                        RequestOptions.placeholderOf(R.drawable.ic_josh_course)
-                            .error(R.drawable.ic_josh_course)
-                    )
-                    .into(binding.userImage)
-            }
+            val imageUrl = fromImageUrl.replace("\n", EMPTY)
+            binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
         } catch (ex: Exception) {
             Timber.d(ex)
         }
 
         binding.eee.setOnClickListener {
+            binding.btnAddPeople.visibility = View.VISIBLE
+            gameFirebaseDatabase.createAcceptFriendRequest(
+                currentUserId,
+                currentUserName,
+                currentUserImage,
+                fromMentorId,
+                "false"
+            )
             handler.removeCallbacksAndMessages(null)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+            gameFirebaseDatabase.deleteRequest(currentUserId)
         }
 
         binding.buttonAccept.setOnClickListener {
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_ACCEPT_BUTTON)
             handler.removeCallbacksAndMessages(null)
             binding.notificationCard.visibility = View.INVISIBLE
+            binding.btnAddPeople.visibility = View.INVISIBLE
             decisionDataViewModel?.addFavouritePracticePartner(
                 AddFavouritePartner(
                     fromMentorId,
@@ -757,24 +765,49 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
             )
             activity?.let {
                 decisionDataViewModel?.fppData?.observe(it, Observer {
-                    gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+                    if (it.message == "done") {
+                        gameFirebaseDatabase.deleteRequest(currentUserId)
+                        gameFirebaseDatabase.createAcceptFriendRequest(
+                            currentUserId,
+                            currentUserName,
+                            currentUserImage,
+                            fromMentorId,
+                            "true"
+                        )
+                    }
                 })
             }
         }
 
         binding.butonDecline.setOnClickListener {
+            binding.btnAddPeople.visibility = View.VISIBLE
+            gameFirebaseDatabase.createAcceptFriendRequest(
+                currentUserId,
+                currentUserName,
+                currentUserImage,
+                fromMentorId,
+                "false"
+            )
             GameAnalytics.push(GameAnalytics.Event.CLICK_ON_DECLINE_BUTTON)
             handler.removeCallbacksAndMessages(null)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-            gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+            gameFirebaseDatabase.deleteRequest(currentUserId)
         }
 
         try {
             handler.postDelayed({
                 if (isUiActive)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
-                gameFirebaseDatabase.deleteRequest(currentUserId ?: "")
+                gameFirebaseDatabase.deleteRequest(currentUserId)
+                gameFirebaseDatabase.createAcceptFriendRequest(
+                    currentUserId,
+                    currentUserName,
+                    currentUserImage,
+                    fromMentorId,
+                    "false"
+                )
+                binding.btnAddPeople.visibility = View.VISIBLE
             }, 10000)
         } catch (ex: Exception) {
         }
@@ -782,7 +815,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     }
 
     private fun againPlayGame() {
-        gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
+        gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId)
 
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
@@ -791,7 +824,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                 ?.replace(
                     R.id.container,
                     SearchingOpponentTeamFragmentFpp.newInstance(
-                        callTimeCount ?: "",
+                        callTimeCount ?: EMPTY,
                         UserDetails(partnerId, partnerName, partnerImage), currentUserTeamId
                     ), "Win"
                 )
@@ -801,7 +834,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     }
 
     private fun getPlayAgainDataFromFirebase() {
-        gameFirebaseDatabase.getPlayAgainAPiData(currentUserId ?: "", this@GameDecisionFragment)
+        gameFirebaseDatabase.getPlayAgainAPiData(currentUserId, this@GameDecisionFragment)
     }
 
     private fun playAgainApiCall(playAgain: PlayAgain) {
@@ -825,26 +858,19 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         mentorId: String
     ) {
         if (mentorId == currentUserId) {
-            gameFirebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+            gameFirebaseDatabase.deletePlayAgainNotification(currentUserId)
             if (isUiActive)
                 CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationPlayAgain)
             binding.userNameForNotPlay.text = userName
             binding.txtMsgPlayAgain.text = "Click on Play Again to play another game with $userName"
-            activity?.let {
-                Glide.with(it)
-                    .load(userImage)
-                    .apply(
-                        RequestOptions.placeholderOf(R.drawable.ic_josh_course)
-                            .error(R.drawable.ic_josh_course)
-                    )
-                    .into(binding.userImageForNotPaly)
-            }
+            val imageUrl = userImage.replace("\n", EMPTY)
+            binding.userImageForNotPaly.setUserImageOrInitials(imageUrl, userName, 30, isRound = true)
 
             binding.cancelNotification.setOnClickListener {
                 handler.removeCallbacksAndMessages(null)
                 if (isUiActive)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationPlayAgain)
-                gameFirebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+                gameFirebaseDatabase.deletePlayAgainNotification(currentUserId)
             }
 
             try {
@@ -853,7 +879,7 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
                         CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
                             binding.notificationPlayAgain
                         )
-                    gameFirebaseDatabase.deletePlayAgainNotification(currentUserId ?: "")
+                    gameFirebaseDatabase.deletePlayAgainNotification(currentUserId)
                 }, 10000)
             } catch (ex: Exception) {
             }
@@ -861,11 +887,55 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
         }
     }
 
+    override fun onPartnerAcceptFriendRequest(
+        userName: String,
+        userImage: String,
+        isAccept: String
+    ) {
+        binding.btnAddPeople.visibility = View.INVISIBLE
+        if (isUiActive) {
+            binding.buttonLinearLayout.visibility = View.INVISIBLE
+            CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
+        }
+        if (isAccept == "true") {
+            handler.removeCallbacksAndMessages(null)
+            binding.txtMsg2.text = "Accept your friend request"
+            binding.userName.text = userName
+            val imageUrl = userImage.replace("\n", EMPTY)
+            binding.userImage.setUserImageOrInitials(imageUrl, userName, 30, isRound = true)
+        } else {
+            handler.removeCallbacksAndMessages(null)
+            binding.txtMsg2.text = "Decline your friend request"
+            binding.userName.text = userName
+            val imageUrl = userImage.replace("\n", EMPTY)
+            binding.userImage.setUserImageOrInitials(imageUrl, userName, 30, isRound = true)
+        }
+
+        binding.eee.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
+            if (isUiActive)
+                CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(binding.notificationCard)
+            gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId)
+        }
+
+        try {
+            handler.postDelayed({
+                if (isUiActive)
+                    CustomDialogQuiz(requireActivity()).scaleAnimationForNotificationUpper(
+                        binding.notificationCard
+                    )
+                gameFirebaseDatabase.deleteAcceptFppRequestNotification(currentUserId)
+            }, 10000)
+        } catch (ex: Exception) {
+        }
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         try {
             isUiActive = false
-            gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId ?: "")
+            gameFirebaseDatabase.deleteUserPlayAgainCollection(currentUserId)
         } catch (ex: Exception) {
         }
     }
@@ -873,9 +943,9 @@ class GameDecisionFragment : Fragment(), GameFirebaseDatabase.OnMakeFriendTrigge
     fun deleteAllFromFirestore(mentorId: String) {
         gameFirebaseDatabase.deleteAllData(mentorId)
         gameFirebaseDatabase.deleteMuteUnmute(mentorId)
-        gameFirebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: "")
-        gameFirebaseDatabase.deleteAnimUser(partnerId ?: "")
-        gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+        gameFirebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: EMPTY)
+        gameFirebaseDatabase.deleteAnimUser(partnerId ?: EMPTY)
+        gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: EMPTY)
     }
 
     fun getSplitName(name: String?): String {

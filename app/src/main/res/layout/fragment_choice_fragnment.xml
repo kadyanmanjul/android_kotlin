@@ -79,10 +79,13 @@
                                     android:layout_marginLeft="@dimen/_5sdp"
                                     android:layout_marginTop="@dimen/_7sdp"
                                     android:layout_toRightOf="@+id/layout"
+                                    android:ellipsize="end"
                                     android:gravity="center_vertical"
+                                    android:singleLine="true"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                                    android:layout_marginRight="@dimen/_10sdp"
                                     android:text="@string/user_name"
                                     android:textColor="@color/test_color"
-                                    android:textSize="@dimen/_10ssp"
                                     android:textStyle="bold" />
 
                                 <View
@@ -97,16 +100,19 @@
 
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/txt_msg_not_play"
-                                    android:layout_width="@dimen/_240sdp"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/divider1"
                                     android:layout_marginLeft="@dimen/_5sdp"
-                                    android:layout_marginTop="@dimen/_6sdp"
+                                    android:layout_marginRight="@dimen/_10sdp"
+                                    android:layout_marginTop="@dimen/_3sdp"
                                     android:layout_toRightOf="@+id/layout"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
                                     android:gravity="center_vertical"
                                     android:text="@string/can_t_play_"
                                     android:textColor="@color/white"
-                                    android:textSize="@dimen/_9sdp"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
                                     android:textStyle="bold" />
                             </RelativeLayout>
                         </RelativeLayout>
@@ -183,11 +189,15 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/_5sdp"
                                 android:layout_marginTop="@dimen/_7sdp"
+                                android:layout_toLeftOf="@+id/button_linear_layout"
                                 android:layout_toRightOf="@+id/notificaton_rel"
+                                android:ellipsize="end"
                                 android:gravity="center_vertical"
+                                android:singleLine="true"
                                 android:text="@string/user_name"
+                                android:layout_marginRight="@dimen/_5sdp"
                                 android:textColor="#FDFC01"
-                                android:textSize="@dimen/_10sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textStyle="bold" />
 
                             <View
@@ -202,16 +212,17 @@
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txt_msg2"
-                                android:layout_width="@dimen/_200sdp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/divider2"
                                 android:layout_marginLeft="@dimen/_5sdp"
-                                android:layout_marginTop="@dimen/_6sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:layout_toLeftOf="@id/button_linear_layout"
                                 android:layout_toRightOf="@+id/notificaton_rel"
                                 android:gravity="center_vertical"
                                 android:text="@string/has_invited"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/_10sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
                                 android:textStyle="bold" />
 
 
@@ -347,9 +358,12 @@
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:layout_toRightOf="@+id/layout1"
                                 android:gravity="center_vertical"
+                                android:layout_marginRight="@dimen/_10sdp"
                                 android:text="@string/user_name"
+                                android:ellipsize="end"
+                                android:singleLine="true"
                                 android:textColor="@color/test_color"
-                                android:textSize="@dimen/_10ssp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textStyle="bold" />
 
                             <View
@@ -364,16 +378,19 @@
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txt_msg_already"
-                                android:layout_width="@dimen/_240sdp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/divider4"
+                                android:layout_marginRight="@dimen/_10sdp"
                                 android:layout_marginLeft="@dimen/_5sdp"
-                                android:layout_marginTop="@dimen/_6sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:ellipsize="end"
+                                android:singleLine="true"
                                 android:layout_toRightOf="@+id/layout1"
                                 android:gravity="center_vertical"
                                 android:text="@string/alreadt_start"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/_9sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
                                 android:textStyle="bold" />
 
                         </RelativeLayout>

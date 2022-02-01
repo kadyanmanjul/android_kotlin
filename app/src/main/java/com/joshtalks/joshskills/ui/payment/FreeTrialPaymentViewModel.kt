@@ -14,14 +14,14 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.D2pSyllabusPdfResponse
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.*
 
 class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -29,6 +29,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
     val d2pSyllabusPdfResponse: MutableLiveData<D2pSyllabusPdfResponse> = MutableLiveData()
+    val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getD2pSyllabusPdfData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -128,4 +129,16 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
+    fun checkMentorIdPaid() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
+                val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
+                mentorPaymentStatus.postValue(response["payment"] as Boolean)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }
