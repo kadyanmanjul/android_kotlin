@@ -6,16 +6,18 @@ import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Typeface
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.AudioManager
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
-import android.os.SystemClock
+import android.os.*
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -73,11 +75,15 @@ const val IS_DEMO_P2P = "is_demo_p2p"
 const val IS_CALL_CONNECTED = "is_call_connected"
 const val OPPOSITE_USER_UID = "opp_user_uid"
 
-class WebRtcActivity : AppCompatActivity() {
+class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private val TAG = "WebRtcActivity"
+    private lateinit var powerManager: PowerManager
+    private lateinit var lock: PowerManager.WakeLock
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    private lateinit var sensorManager: SensorManager
+    private var proximity: Sensor? = null
     private lateinit var scope: CoroutineScope
     private val compositeDisposable = CompositeDisposable()
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
@@ -308,6 +314,12 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Get an instance of the sensor service, and use that to get an instance of
+        // a particular sensor.
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag")
         isIncomingCallHasNewChannel = false
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -471,11 +483,16 @@ class WebRtcActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        proximity?.also { proximity ->
+            sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
+        }
         subscribeRXBus()
     }
 
     override fun onPause() {
         super.onPause()
+        sensorManager.unregisterListener(this)
+        if(lock.isHeld) lock.release()
         compositeDisposable.clear()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         while (WebRtcService.incomingWaitJobsList.isNotEmpty())
@@ -945,6 +962,10 @@ class WebRtcActivity : AppCompatActivity() {
         if (time <= 0) {
             time = callTime
         }
+        if(PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)){
+            viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+            PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
+        }
         val channelName2 =
             if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
         if (time > 0 && channelName2.isNullOrEmpty().not()) {
@@ -1110,5 +1131,29 @@ class WebRtcActivity : AppCompatActivity() {
                 CurrentCallDetails.callConnectedScreenVisible()
             }
         }
+    }
+
+    override fun onSensorChanged(p0: SensorEvent?) {
+
+        if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
+//            face is near to sensor
+            if (mBoundService?.getSpeaker() == false) {
+                turnScreenOff()
+            }
+        } else {
+//            face is away from sensor
+            turnScreenOn()
+        }
+    }
+
+    private fun turnScreenOff() {
+        if (!lock.isHeld) lock.acquire(10 * 60 * 1000L /*10 minutes*/)
+    }
+
+    private fun turnScreenOn() {
+        if (lock.isHeld) lock.release()
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 }
