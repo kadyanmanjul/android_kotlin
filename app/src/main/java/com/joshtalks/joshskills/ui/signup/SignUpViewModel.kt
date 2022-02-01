@@ -298,7 +298,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
                 val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
-                mentorPaymentStatus.postValue(response["payment"] as Boolean)
+                if(response!=null) {
+                    mentorPaymentStatus.postValue(response["payment"] as Boolean)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

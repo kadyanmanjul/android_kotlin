@@ -68,7 +68,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     PrefManager.getStringValue(INSTANCE_ID, false)
                 )
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
@@ -130,14 +130,16 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.getPersonalProfileAsync(Mentor.getInstance().getId())
-                Mentor.getInstance().updateFromResponse(response)
-                response.getUser()?.let {
-                    it.isVerified = true
-                    User.update(it)
+                if (response != null) {
+                    Mentor.getInstance().updateFromResponse(response)
+                    response.getUser()?.let {
+                        it.isVerified = true
+                        User.update(it)
+                    }
+                    AppAnalytics.updateUser()
+                    analyzeUserProfile()
+                    return@launch
                 }
-                AppAnalytics.updateUser()
-                analyzeUserProfile()
-                return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }

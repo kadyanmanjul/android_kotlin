@@ -15,17 +15,36 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
+import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
+import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.truecaller.android.sdk.*
-import kotlinx.coroutines.CoroutineScope
+import com.truecaller.android.sdk.TruecallerSDK
+import com.truecaller.android.sdk.TruecallerSdkScope
+import com.truecaller.android.sdk.ITrueCallback
+import com.truecaller.android.sdk.TrueError
+import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
@@ -143,13 +162,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             .build()
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
-            val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
-            TruecallerSDK.getInstance().setLocale(locale)
+            TruecallerSDK.getInstance().setLocale(Locale(PrefManager.getStringValue(USER_LOCALE)))
         }
     }
 
     private fun openTrueCallerBottomSheet() {
-//        showProgressBar()
         TruecallerSDK.getInstance().getUserProfile(this)
     }
 
@@ -171,7 +188,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
-                hideProgressBar()
                 viewModel.isVerified = true
                 openProfileDetailFragment()
             }
@@ -195,7 +211,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: "",viewModel.isVerified),
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY,
+                    viewModel.isVerified),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }

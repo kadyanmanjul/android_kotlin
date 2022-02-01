@@ -41,7 +41,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View? {
         binding =
             DataBindingUtil.inflate(
@@ -121,7 +121,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
-        if (username != "" && username != name)
+        if (!username.isNullOrEmpty() && username != name)
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
     }
 
