@@ -92,6 +92,8 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
     private var isAnimationCancled = false
     private var callType: CallType? = null
+    private var callieId: String = ""
+    private var callerId: String = ""
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -526,7 +528,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 binding.topicHeader.visibility = View.VISIBLE
                 binding.topicName.text = it["topic_name"]
                 Log.d(TAG, "updateStatusLabel: addObserver -#@- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
-                if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
+                if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
                         "from group \"${WebRtcService.currentCallingGroupName}\""
@@ -585,7 +587,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
-                    if(isCallOnGoing.value!=true) {
+                    if (isCallOnGoing.value != true) {
                         acceptCall(callAcceptApi)
                     }
                     if (isCallFavoritePP()) {
@@ -633,6 +635,9 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
+            callerId = map?.get("caller_uid").toString()
+            callieId = CurrentCallDetails.callieUid
+
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -661,7 +666,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                     } else if (callConnected && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Practice with Partner"
                         Log.d(TAG, "updateStatusLabel:  P2P -#- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
-                        if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
+                        if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                             binding.tvGroupName.visibility = View.VISIBLE
                             binding.tvGroupName.text =
                                 "from group \"${WebRtcService.currentCallingGroupName}\""
@@ -670,7 +675,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                     }
                 }
                 binding.callStatus.text = "Practice with Partner"
-                if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
+                if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
                         "from group \"${WebRtcService.currentCallingGroupName}\""
@@ -962,8 +967,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (time > 0 && channelName2.isNullOrEmpty().not()) {
             runOnUiThread {
                 try {
-                    val currentId =mBoundService?.getUserAgoraId()
-                    val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
                     binding.placeholderBg.visibility = View.VISIBLE
                     VoipCallFeedbackActivity.startPtoPFeedbackActivity(
                         channelName = channelName2,
@@ -974,10 +977,10 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         yourAgoraId = mBoundService?.getUserAgoraId(),
                         activity = this,
                         flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                        callerId = callerId!!,
-                        currentUserId = currentId!!
+                        callerId = callerId.toInt(),
+                        currentUserId = callieId.toInt()
                     )
-                } catch (ex:Exception){
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
                 this.finish()
