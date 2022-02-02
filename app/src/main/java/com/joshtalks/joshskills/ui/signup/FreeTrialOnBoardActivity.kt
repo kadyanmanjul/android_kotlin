@@ -150,7 +150,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
     fun showStartTrialPopup(language: ChooseLanguages) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
-        PrefManager.put(TEST_ID, language.testId)
+        PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
         layout.btnStartTrial.pauseAnimation()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
@@ -272,7 +272,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         hideProgressBar()
     }
 
-    private fun openProfileDetailFragment(testId: String = DEFAULT_TEST_ID) {
+    private fun openProfileDetailFragment(testId: String = FREE_TRIAL_DEFAULT_TEST_ID) {
 //        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
@@ -281,7 +281,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
                 SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY,
                     viewModel.isVerified).apply {
                     val bundle = Bundle()
-                    bundle.putString(TEST_ID, testId)
+                    bundle.putString(FREE_TRIAL_TEST_ID, testId)
                     arguments = bundle
                 },
                 SignUpProfileForFreeTrialFragment::class.java.name
