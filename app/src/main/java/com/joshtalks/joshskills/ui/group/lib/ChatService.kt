@@ -24,7 +24,7 @@ interface NetworkData {
 }
 
 interface MemberNetworkData {
-    fun getMemberData() : MemberResult?
+    fun getMemberData(adminId: String) : MemberResult?
     fun getPageInfo() : PageInfo
 }
 

@@ -216,16 +216,16 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    fun getGroupMemberList(groupId: String, pageInfo: PageInfo? = null): MemberResult {
+    fun getGroupMemberList(groupId: String, adminId: String, pageInfo: PageInfo? = null): MemberResult {
         val memberList = mutableListOf<GroupMember>()
         var pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
         do {
-            val pageMembers = pubnubResponse?.getMemberData()?.list ?: listOf()
+            val pageMembers = pubnubResponse?.getMemberData(adminId)?.list ?: listOf()
             memberList.addAll(pageMembers)
             val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
             pubnubResponse = chatService.getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
         } while (pageMembers.isNotEmpty())
-
+        memberList.sortByDescending { it.isAdmin }
         return MemberResult(memberList, memberList.size)
     }
 

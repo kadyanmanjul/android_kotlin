@@ -8,14 +8,14 @@ data class PubNubMemberData(val data: PNGetChannelMembersResult) : MemberNetwork
 
     val memberList = mutableListOf<GroupMember>()
 
-    override fun getMemberData(): MemberResult {
+    override fun getMemberData(adminId: String): MemberResult {
         memberList.clear()
         data.data.map {
             memberList.add(GroupMember(
                 mentorID = it.uuid.id,
                 memberName = it.uuid.name,
                 memberIcon = it.uuid.profileUrl,
-                isAdmin = false,
+                isAdmin = adminId == it.uuid.id,
                 isOnline = false
             ))
         }
