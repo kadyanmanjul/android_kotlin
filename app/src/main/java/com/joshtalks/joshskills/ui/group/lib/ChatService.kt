@@ -15,7 +15,7 @@ interface ChatService {
     fun getMessageHistory(groupId: String, startTime : Long? = null) : List<ChatItem>
     fun getUnreadMessages(groupId: String, startTime : Long) : List<ChatItem>
     fun getGroupMemberList(groupId: String, pageInfo: PageInfo? = null): MemberNetworkData?
-    //fun getChannelMembers(groupId: String, adminId: String): MemberResult?
+    fun getPubNubOnlineMembers(groupId: String): List<String>?
 }
 
 interface NetworkData {

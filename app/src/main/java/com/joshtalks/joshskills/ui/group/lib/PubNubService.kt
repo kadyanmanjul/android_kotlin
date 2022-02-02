@@ -258,52 +258,7 @@ object PubNubService : ChatService {
         }
     }
 
-    /*override fun getChannelMembers(groupId: String, adminId: String): MemberResult? {
-        val memberStatus = getOnlineMembers(groupId) ?: listOf()
-
-        var adminMember: PNUUIDMetadata? = null
-        try {
-            adminMember = pubnub.channelMembers
-                .channel(groupId)
-                .limit(1)
-                .filter("uuid.id == '$adminId'")
-                .includeUUID(Include.PNUUIDDetailsLevel.UUID)
-                .sync()!!.data[0].uuid
-        }catch (e: Exception){
-            e.printStackTrace()
-        }
-
-        var memberResult: PNGetChannelMembersResult? = null
-        try {
-            memberResult = pubnub.channelMembers
-                .channel(groupId)
-                .limit(512)
-                .includeTotalCount(true)
-                .filter("uuid.id != '$adminId'")
-                .includeUUID(Include.PNUUIDDetailsLevel.UUID)
-                .sync()
-        }catch (e: Exception){
-            e.printStackTrace()
-        }
-
-        val memberList = mutableListOf<GroupMember>()
-        memberResult?.data?.map {
-            memberList.add(GroupMember(
-                mentorID = it.uuid.id,
-                memberName = it.uuid.name,
-                memberIcon = it.uuid.profileUrl,
-                isAdmin = false,
-                isOnline = memberStatus.contains(it.uuid.id)
-            ))
-        }
-        memberList.sortByDescending { it.isOnline }
-        if (adminMember != null) {
-            memberList.add(0, GroupMember(adminMember.id, adminMember.name, adminMember.profileUrl, true, memberStatus.contains(adminMember.id)))
-        }
-        return MemberResult(memberList, memberList.size, memberStatus.size)
-    }*/
-
-    private fun getOnlineMembers(groupId: String) = try {
+    override fun getPubNubOnlineMembers(groupId: String): List<String>? = try {
         pubnub.hereNow()
             .channels(listOf(groupId))
             .sync()?.channels?.get(groupId)?.occupants

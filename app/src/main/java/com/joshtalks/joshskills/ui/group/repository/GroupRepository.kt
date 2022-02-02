@@ -25,17 +25,8 @@ import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupMemberCount
-import com.joshtalks.joshskills.ui.group.model.GroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
-import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
-import com.joshtalks.joshskills.ui.group.model.MemberResult
-import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.lib.PageInfo
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
@@ -225,19 +216,31 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    //TODO: Changes to be done and refactoring
-    fun getGroupMemberList(groupId: String, pageInfo: PageInfo? = null): MemberResult? {
-        Log.d(TAG, "getGroupMemberList: $pageInfo")
-        val pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
-        val memberList = pubnubResponse?.getMemberData()?.list ?: listOf()
-        if (memberList.isEmpty())
-            return pubnubResponse?.getMemberData()
-        val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
-        return getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
+    fun getGroupMemberList(groupId: String, pageInfo: PageInfo? = null): MemberResult {
+        val memberList = mutableListOf<GroupMember>()
+        var pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
+        do {
+            val pageMembers = pubnubResponse?.getMemberData()?.list ?: listOf()
+            memberList.addAll(pageMembers)
+            val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
+            pubnubResponse = chatService.getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
+        } while (pageMembers.isNotEmpty())
+
+        return MemberResult(memberList, memberList.size)
+    }
+
+    suspend fun getGroupOnlineCount(groupId: String): Int? {
+        return try {
+            val response = apiService.getGroupOnlineCount(groupId)
+            return (response["online_count"] as Double).toInt()
+        } catch (e: Exception) {
+            showToast("An error has occurred")
+            0
+        }
     }
 
     suspend fun joinGroup(groupId: String): Boolean {
-        Log.e(TAG, "Joining group : ${groupId}")
+        Log.e(TAG, "Joining group : $groupId")
         val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
         if (response["success"] == true) {
             try {

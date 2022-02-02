@@ -6,13 +6,12 @@ import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResu
 
 data class PubNubMemberData(val data: PNGetChannelMembersResult) : MemberNetworkData {
 
-    val groupList = mutableListOf<GroupMember>()
+    val memberList = mutableListOf<GroupMember>()
 
-    override fun getMemberData(): MemberResult? {
-        if (data.data.isEmpty())
-            return null
+    override fun getMemberData(): MemberResult {
+        memberList.clear()
         data.data.map {
-            groupList.add(GroupMember(
+            memberList.add(GroupMember(
                 mentorID = it.uuid.id,
                 memberName = it.uuid.name,
                 memberIcon = it.uuid.profileUrl,
@@ -20,7 +19,7 @@ data class PubNubMemberData(val data: PNGetChannelMembersResult) : MemberNetwork
                 isOnline = false
             ))
         }
-        return MemberResult(groupList, data.totalCount, 0)
+        return MemberResult(memberList, data.totalCount)
     }
 
     override fun getPageInfo() = PageInfo(
