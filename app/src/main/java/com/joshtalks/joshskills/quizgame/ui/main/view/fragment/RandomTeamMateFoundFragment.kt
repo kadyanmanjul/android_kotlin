@@ -61,6 +61,7 @@ class RandomTeamMateFoundFragment : Fragment(), GameFirebaseDatabase.OnTimeChang
             currentUserTeamId = it.getString(CURRENT_USER_TEAM_ID)
             time = it.getLong(TIME_DATA)
         }
+        setUpViewModel()
     }
 
     override fun onCreateView(

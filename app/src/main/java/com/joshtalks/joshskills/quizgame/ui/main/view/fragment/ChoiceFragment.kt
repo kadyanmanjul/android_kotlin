@@ -248,6 +248,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         //handler5.removeCallbacksAndMessages(null)
         try {
             if (this.mentorId == mentorId) {
+                handler5.removeCallbacksAndMessages(null)
                 firebaseDatabase.deleteUserData(mentorId)
                 if (isShowFrag)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
@@ -362,6 +363,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         declinedUserId: String
     ) {
         handler9.removeCallbacksAndMessages(null)
+        firebaseDatabase.deleteDeclineData(mentorId)
         val image = userImageUrl.replace("\n", EMPTY)
         if (isShowFrag)
             CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCardNotPlay)

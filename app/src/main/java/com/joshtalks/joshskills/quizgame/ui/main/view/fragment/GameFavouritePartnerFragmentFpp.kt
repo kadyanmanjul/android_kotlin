@@ -42,6 +42,7 @@ import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -510,6 +511,13 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                         } else {
                             showToast("Seems like your Internet is too slow or not available.")
                         }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(10000)
+                            if (isActiveFrag) {
+                                holder.binding.clickToken.setImageResource(R.drawable.ic_plus1)
+                                holder.binding.clickToken.isEnabled = true
+                            }
+                        }
                     }
                     holder.binding.clickToken.isEnabled = true
                 }
@@ -546,6 +554,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
     ) {
         try {
             if (this.mentorId == mentorId){
+                handler.removeCallbacksAndMessages(null)
                 firebaseDatabase.deleteUserData(mentorId)
                 if (isActiveFrag)
                     CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
@@ -664,7 +673,8 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
                 ) as FavouriteAdapter.FavViewHolder
             if (fromUserId == mentorId) {
                 try {
-                    holder.binding.clickToken.setImageDrawable(context?.resources?.getDrawable(R.drawable.ic_plus1))
+                    firebaseDatabase.deleteDeclineData(mentorId)
+                    holder.binding.clickToken.setImageResource(R.drawable.ic_plus1)
                     holder.binding.clickToken.isEnabled = true
                     val image = userImageUrl.replace("\n", EMPTY)
                     if (isActiveFrag)
