@@ -58,7 +58,8 @@ class GameNotificationFirebaseData {
                                 channelName,
                                 fromUserId,
                                 fromUserName,
-                                fromImageUrl ?: ""
+                                fromImageUrl ?: "",
+                                mentorId
                             )
                         }
                     }
@@ -269,7 +270,8 @@ class GameNotificationFirebaseData {
             channelName: String,
             fromUserId: String,
             fromUserName: String,
-            fromUserImage: String
+            fromUserImage: String,
+            mentorId: String
         )
 
         fun onNotificationForPartnerNotAcceptTemp(

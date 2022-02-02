@@ -242,16 +242,20 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
         channelName: String,
         fromUserId: String,
         fromUserName: String,
-        fromUserImage: String
+        fromUserImage: String,
+        mentorId: String
     ) {
         //handler5.removeCallbacksAndMessages(null)
         try {
-            if (isShowFrag)
-                CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
-            binding.progress.animateProgress()
-            binding.userName.text = fromUserName
-            val imageUrl = fromUserImage.replace("\n", EMPTY)
-            binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
+            if (this.mentorId == mentorId) {
+                firebaseDatabase.deleteUserData(mentorId)
+                if (isShowFrag)
+                    CustomDialogQuiz(requireActivity()).scaleAnimationForNotification(binding.notificationCard)
+                binding.progress.animateProgress()
+                binding.userName.text = fromUserName
+                val imageUrl = fromUserImage.replace("\n", EMPTY)
+                binding.userImage.setUserImageOrInitials(imageUrl, fromUserName, 30, isRound = true)
+            }
         } catch (ex: Exception) {
             Timber.d(ex)
         }
