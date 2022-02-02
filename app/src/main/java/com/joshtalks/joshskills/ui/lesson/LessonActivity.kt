@@ -37,6 +37,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -221,8 +222,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun subscribeRxBus() {
-/*
-        animateAtsOptionViewEvent.observe(this, { event ->
+        animateAtsOptionViewEvent.observe(this) { event ->
             event?.let {
                 if (customView == null) {
                     customView = CustomWord(this, it.customWord.choice)
@@ -238,7 +238,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
                     val toLocation = IntArray(2)
                     it.customWord.getLocationOnScreen(toLocation)
-//                    toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
+                    toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
                     Log.d(
                         "Yash",
                         "subscribeRxBus() returned: (${it.fromLocation[0]},${it.fromLocation[1]})=>(${toLocation[0]},${toLocation[1]})"
@@ -251,8 +251,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     animateAtsOptionViewEvent.postValue(null)
                 }
             }
-        })
-*/
+        }
         /* compositeDisposable.add(
              RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
                  .subscribeOn(Schedulers.io())
@@ -293,38 +292,38 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         viewModel.lessonQuestionsLiveData.observe(
             this,
             {
-                binding.progressView.visibility = View.GONE
-                viewModel.lessonLiveData.value?.let {
-                    titleView.text =
-                        getString(R.string.lesson_no, it.lessonNo)
-                    lessonNumber = it.lessonNo
-                    lessonIsNewGrammar = it.isNewGrammar
-                }
-                viewModel.lessonIsConvoRoomActive =
-                    (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
-                            && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
-                //viewModel.lessonIsConvoRoomActive  = true
+            binding.progressView.visibility = View.GONE
+            viewModel.lessonLiveData.value?.let {
+                titleView.text =
+                    getString(R.string.lesson_no, it.lessonNo)
+                lessonNumber = it.lessonNo
+                lessonIsNewGrammar = it.isNewGrammar
+            }
+            viewModel.lessonIsConvoRoomActive =
+                (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
+                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
+            //viewModel.lessonIsConvoRoomActive  = true
 
-                if (lessonIsNewGrammar) {
+            if (lessonIsNewGrammar) {
 
-                    totalRuleList = AppObjectController.gsonMapper.fromJson(
-                        PrefManager.getStringValue(ONLINE_TEST_LIST_OF_TOTAL_RULES),
+                totalRuleList = AppObjectController.gsonMapper.fromJson(
+                    PrefManager.getStringValue(ONLINE_TEST_LIST_OF_TOTAL_RULES),
+                    object : TypeToken<ArrayList<Int>?>() {}.type
+                )
+                if (totalRuleList.isNullOrEmpty()) {
+                    viewModel.getListOfRuleIds()
+                } else {
+                    ruleCompletedList = AppObjectController.gsonMapper.fromJson(
+                        PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
                         object : TypeToken<ArrayList<Int>?>() {}.type
                     )
-                    if (totalRuleList.isNullOrEmpty()) {
-                        viewModel.getListOfRuleIds()
-                    } else {
-                        ruleCompletedList = AppObjectController.gsonMapper.fromJson(
-                            PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
-                            object : TypeToken<ArrayList<Int>?>() {}.type
-                        )
-                        setUpNewGrammarLayouts(ruleCompletedList, totalRuleList)
-                    }
-                } else {
-                    setUpTabLayout(lessonNumber, lessonIsNewGrammar)
-                    setTabCompletionStatus()
+                    setUpNewGrammarLayouts(ruleCompletedList, totalRuleList)
                 }
+            } else {
+                setUpTabLayout(lessonNumber, lessonIsNewGrammar)
+                setTabCompletionStatus()
             }
+        }
         )
 
         viewModel.ruleListIds.observe(
@@ -347,33 +346,33 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         viewModel.updatedLessonResponseLiveData.observe(
             this,
             {
-                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-                    if (it.pointsList.isNullOrEmpty().not()) {
-                        showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
-                        playSnackbarSound(this)
-                        it.pointsList?.let { it1 ->
-                            PrefManager.put(
-                                LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
-                                it1.last(), false
-                            )
-                        }
+            if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+                if (it.pointsList.isNullOrEmpty().not()) {
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                    playSnackbarSound(this)
+                    it.pointsList?.let { it1 ->
+                        PrefManager.put(
+                            LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                            it1.last(), false
+                        )
                     }
                 }
             }
+        }
         )
 
         viewModel.pointsSnackBarText.observe(
             this,
             {
-                if (it.pointsList.isNullOrEmpty().not()) {
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
-                    PrefManager.put(
-                        LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
-                        it.pointsList!!.last(),
-                        false
-                    )
-                }
+            if (it.pointsList.isNullOrEmpty().not()) {
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                PrefManager.put(
+                    LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                    it.pointsList!!.last(),
+                    false
+                )
             }
+        }
         )
 
         viewModel.lessonSpotlightStateLiveData.observe(this, {
@@ -552,7 +551,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.arrowAnimation.visibility = View.VISIBLE
                 }
 
-                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 ->{
+                LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
                     if(introVideoUrl.isNullOrBlank().not()){
                         viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
                         viewModel.showHideSpeakingFragmentCallButtons(1)

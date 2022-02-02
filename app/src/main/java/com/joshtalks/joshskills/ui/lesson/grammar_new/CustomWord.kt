@@ -62,14 +62,14 @@ class CustomWord : AppCompatTextView {
                 this.isSelectedByUser = true
             }
             Log.i("Yash", "changeViewGroup: Answer Selected")
-//            this.visibility = View.INVISIBLE
-            /*LessonActivity.animateAtsOptionViewEvent.value =
+            this.visibility = View.VISIBLE
+            LessonActivity.animateAtsOptionViewEvent.value =
                 AnimateAtsOtionViewEvent(
                     fromLocation,
                     this.height,
                     this.width,
                     this
-                )*/
+                )
 //            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
         } else {
             /**
@@ -95,14 +95,14 @@ class CustomWord : AppCompatTextView {
                 this.userSelectedOrder = 100
                 this.isSelectedByUser = false
             }
-           /* LessonActivity.animateAtsOptionViewEvent.value =
+            LessonActivity.animateAtsOptionViewEvent.value =
                 AnimateAtsOtionViewEvent(
                     fromLocation,
                     this.height,
                     this.width,
                     this,
                     optionsLayout
-                )*/
+                )
             //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
             /*RxBus2.publish(
                 AnimateAtsOtionViewEvent(
