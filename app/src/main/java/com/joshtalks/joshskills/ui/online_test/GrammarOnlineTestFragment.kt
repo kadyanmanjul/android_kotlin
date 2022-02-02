@@ -16,6 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_CONTINUE_BUTTON_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -487,6 +489,14 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         val titleBarHeight = contentViewTop - statusBarHeight
         return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }*/
+
+    fun getStartButtonText() = AppObjectController.getFirebaseRemoteConfig().getString(
+        GRAMMAR_START_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+    )
+
+    fun getContinueButtonText() = AppObjectController.getFirebaseRemoteConfig().getString(
+        GRAMMAR_CONTINUE_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+    )
 
 }
 
