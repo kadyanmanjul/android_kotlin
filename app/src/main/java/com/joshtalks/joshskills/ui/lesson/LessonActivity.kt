@@ -37,6 +37,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -221,8 +222,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun subscribeRxBus() {
-/*
-        animateAtsOptionViewEvent.observe(this, { event ->
+        animateAtsOptionViewEvent.observe(this) { event ->
             event?.let {
                 if (customView == null) {
                     customView = CustomWord(this, it.customWord.choice)
@@ -234,15 +234,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 customView?.apply {
                     binding.rootView.addView(this)
                     this.text = it.customWord.choice.text
+                    post {
                     this.x = it.fromLocation[0].toFloat()
                     this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
                     val toLocation = IntArray(2)
                     it.customWord.getLocationOnScreen(toLocation)
-//                    toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
-                    Log.d(
-                        "Yash",
-                        "subscribeRxBus() returned: (${it.fromLocation[0]},${it.fromLocation[1]})=>(${toLocation[0]},${toLocation[1]})"
-                    )
+                        toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
                     this.translationAnimationNew(
                         toLocation,
                         it.customWord,
@@ -251,8 +248,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     animateAtsOptionViewEvent.postValue(null)
                 }
             }
-        })
-*/
+            }
+        }
         /* compositeDisposable.add(
              RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
                  .subscribeOn(Schedulers.io())

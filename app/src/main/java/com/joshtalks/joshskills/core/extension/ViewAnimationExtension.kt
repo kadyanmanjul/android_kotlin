@@ -187,11 +187,6 @@ fun View.translationAnimationNew(
     customWord: CustomWord,
     optionLayout: CustomLayout?
 ) {
-    customWord.visibility = View.INVISIBLE
-    val finalLocation = IntArray(2)
-    customWord.getLocationOnScreen(finalLocation)
-    Log.i("Yash", "translationAnimationNew:toLocation (${toLocation[0]},${toLocation[1]})")
-    Log.i("Yash", "translationAnimationNew:finalLocation (${finalLocation[0]},${finalLocation[1]})")
     this@translationAnimationNew.visibility = View.VISIBLE
     val slideAnim = AnimatorSet()
     slideAnim.playTogether(
@@ -202,26 +197,14 @@ fun View.translationAnimationNew(
     slideSet.play(slideAnim)
     val interpolator = DecelerateInterpolator()
     slideSet.interpolator = interpolator
-    slideSet.duration = 1000
+    slideSet.duration = 300
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
-            Log.i("Yash", "onAnimationEnd:")
             optionLayout?.let {
                 optionLayout.addViewAt(customWord, customWord.choice.sortOrder - 1)
             }
-            this@translationAnimationNew.visibility = View.INVISIBLE
+            this@translationAnimationNew.visibility = View.GONE
             customWord.visibility = View.VISIBLE
-
-            val finalLocation = IntArray(2)
-            customWord.getLocationOnScreen(finalLocation)
-            Log.d(
-                "Yash",
-                "onAnimationEnd() returned: toLocation (${toLocation[0]},${toLocation[1]})"
-            )
-            Log.d(
-                "Yash",
-                "onAnimationEnd() returned: finalLocation (${finalLocation[0]},${finalLocation[1]})"
-            )
         }
     })
     slideSet.start()
