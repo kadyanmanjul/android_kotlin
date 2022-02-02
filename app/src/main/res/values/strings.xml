@@ -937,7 +937,8 @@
     <string name="enter_your_name">Enter your name</string>
     <string name="test_completed_description">ग्रामर का लेवल चेक करने के लिए आपके सभी जवाबों को रिकॉर्ड कर लिया गया हैं \n \n आपकी ग्रामर के Current Status के आधार पर आपके आगे का कोर्स सेट किया जा रहा हैं</string>
     <string name="enter_name_label">आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</string>
-
+    <string name="free_trial_dialog_ji_haan_text">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहे हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n  \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए।\\nआपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं
+</string>
     <!--    Lesson Spotlight-->
     <string name="label_lesson_spotlight">हर Lesson में चार भाग होते है</string>
     <string name="label_convo_room_spotlight">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है </string>

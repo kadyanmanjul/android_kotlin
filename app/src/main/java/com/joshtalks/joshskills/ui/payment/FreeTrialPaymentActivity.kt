@@ -73,6 +73,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
     lateinit var fileName : String
+    var isTimerStopped = false
+    var isPointsScoredMoreThanEqualTo100 = false
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -124,6 +126,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
+        viewModel.getPointsSummary()
         logNewPaymentPageOpened()
 
         viewModel.getD2pSyllabusPdfData()
@@ -220,7 +223,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         R.drawable.blue_rectangle_with_blue_bound_stroke
                     )
                 isEnglishCardTapped = true
-                binding.materialTextView.text = buttonText.get(index)
+                if(isTimerStopped == false && isPointsScoredMoreThanEqualTo100 == false){
+                    binding.materialTextView.text = "Achieve 100 points first"
+                    binding.materialTextView.isEnabled = false
+                    binding.materialTextView.alpha = .5f
+                }else{
+                    binding.materialTextView.text = buttonText.get(index)
+                    binding.materialTextView.isEnabled = true
+                    binding.materialTextView.alpha = 1f
+                }
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.GONE
             } catch (ex: Exception) {
@@ -239,6 +250,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.englishCard.background =
                     ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
                 binding.materialTextView.text = buttonText.get(index)
+                binding.materialTextView.isEnabled = true
+                binding.materialTextView.alpha = 1f
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.VISIBLE
                 isEnglishCardTapped = false
@@ -276,6 +289,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
             override fun onTimerFinish() {
+                isTimerStopped = true
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
         }
@@ -426,6 +440,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         viewModel.d2pSyllabusPdfResponse.observe(this,{
             pdfUrl = it.syllabusPdfLink
         })
+        viewModel.pointsHistoryLiveData.observe(this, {
+            if(it.totalPoints!! >= 100){
+                isPointsScoredMoreThanEqualTo100 = true
+            }
+        })
     }
 
     private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
@@ -545,6 +564,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             PrefManager.put(IS_COURSE_BOUGHT, true)
             if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
+            }
+            if(isEnglishCardTapped && isPointsScoredMoreThanEqualTo100){
+                viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
             }
         }
         // isBackPressDisabled = true

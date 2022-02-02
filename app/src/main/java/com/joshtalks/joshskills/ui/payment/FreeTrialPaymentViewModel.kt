@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.D2pSyllabusPdfResponse
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.HashMap
@@ -30,6 +32,23 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var isProcessing = MutableLiveData<Boolean>()
     val d2pSyllabusPdfResponse: MutableLiveData<D2pSyllabusPdfResponse> = MutableLiveData()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
+    val pointsHistoryLiveData: MutableLiveData<PointsHistoryResponse> = MutableLiveData()
+
+    fun getPointsSummary() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val response = AppObjectController.commonNetworkService.getUserPointsHistory(
+                    Mentor.getInstance().getId()
+                )
+                if (response.isSuccessful && response.body() != null) {
+                    pointsHistoryLiveData.postValue(response.body())
+                }
+            } catch (ex: Exception) {
+                ex.showAppropriateMsg()
+            }
+        }
+    }
 
     fun getD2pSyllabusPdfData() {
         viewModelScope.launch(Dispatchers.IO) {
