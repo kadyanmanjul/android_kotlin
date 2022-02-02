@@ -106,7 +106,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     val message = messageItem.msg
                     if (messageItem.getMessageType() == RECEIVE_META_MESSAGE_LOCAL && message.contains("changed")) {
                         when (message.contains("changed the group icon")) {
-                            true -> { TODO("UPDATE IMAGE ICON") }
+                            true -> {
+                                //TODO("UPDATE IMAGE ICON")
+                            }
                             false -> {
                                 val newGroupName = message.substring(message.lastIndexOf("the group name to ") + 18)
                                 database.groupListDao().updateGroupName(pnMessageResult.channel, newGroupName)
