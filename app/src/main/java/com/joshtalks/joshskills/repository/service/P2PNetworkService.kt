@@ -8,10 +8,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface P2PNetworkService {
 
@@ -40,7 +37,7 @@ interface P2PNetworkService {
     suspend fun p2pCallFeedbackV2(@Body params: Map<String, String?>): Response<KFactor>//FeedbackVoipResponse
 
     @GET("$DIR/voicecall/favourites/{mentorId}/")
-    suspend fun getFavoriteCallerList(@Path("mentorId") mentorId: String): List<FavoriteCaller>
+    suspend fun getFavoriteCallerList(@Path("mentorId") mentorId: String, @Query("course_id") courseId: String): List<FavoriteCaller>
 
     @POST("$DIR/voicecall/favourites/{mentorId}/")
     suspend fun removeFavoriteCallerList(

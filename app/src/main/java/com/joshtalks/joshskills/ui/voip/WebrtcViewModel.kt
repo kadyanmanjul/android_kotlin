@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import java.net.ProtocolException
 import java.util.HashMap
@@ -24,6 +23,7 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["mentor_id"] = Mentor.getInstance().getId()
                 requestParams["partner_id"] = partnerId
+                requestParams["course_id"] = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                 val response =
                     AppObjectController.p2pNetworkService.getFavoriteUserAgoraToken(requestParams)
                 if (response.isSuccessful && response.code() in 200..203) {

@@ -3,8 +3,7 @@ package com.joshtalks.joshskills.ui.voip.favorite
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import java.util.HashMap
@@ -36,7 +35,8 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
     private fun fetchFavoriteCallersFromApi() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = p2pNetworkService.getFavoriteCallerList(Mentor.getInstance().getId())
+                val response = p2pNetworkService.getFavoriteCallerList(Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                 favoriteCallerDao.removeAllFavorite()
                 if (response.isNotEmpty()) {
                     favoriteCallerDao.insertFavoriteCallers(response)
