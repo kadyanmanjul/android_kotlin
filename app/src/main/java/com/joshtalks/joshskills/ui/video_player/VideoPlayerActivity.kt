@@ -618,7 +618,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                             contentId = "$userReferralCode${System.currentTimeMillis()}",
                             sharedItem = sharedItem,
                             sharedItemType = "VI",
-                            deepLink = dynamicLink
+                            deepLink = dynamicLink,
+                            courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                         )
                         val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
                         Timber.i(res.body().toString())

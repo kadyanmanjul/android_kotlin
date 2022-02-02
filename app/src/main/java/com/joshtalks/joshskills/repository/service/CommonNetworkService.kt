@@ -203,11 +203,13 @@ interface CommonNetworkService {
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
         @Query("mentor_id") id: String,
+        @Query("course_id") courseId: String
     ): Response<PointsHistoryResponse>
 
     @GET("$DIR/reputation/get_spoken_history_v2/")
     suspend fun getUserSpokenMinutesHistory(
         @Query("mentor_id") id: String,
+        @Query("course_id") courseId: String
     ): Response<SpokenMinutesHistoryResponse>
 
     @Headers(
@@ -292,12 +294,14 @@ interface CommonNetworkService {
         @Query("key") word: String,
         @Query("page") page: Int,
         @Query("interval_type") intervalType: LeaderboardType,
+        @Query("course_id") courseId: String
     ): Response<List<LeaderboardMentor>>
 
     @GET("$DIR/leaderboard/get_previous_leaderboard/")
     suspend fun getPreviousLeaderboardData(
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") intervalType: String,
+        @Query("course_id") courseId: String
     ): Response<PreviousLeaderboardResponse>
 
     @POST("$DIR/course/free_trial_register_course/")

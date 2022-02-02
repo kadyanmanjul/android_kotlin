@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +23,8 @@ class PreviousLeaderBoardViewModel(application: Application) : AndroidViewModel(
                 val response =
                     AppObjectController.commonNetworkService.getPreviousLeaderboardData(
                         mentorId,
-                        type
+                        type,
+                        PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                     )
                 if (response.isSuccessful && response.body() != null) {
                     previousLeaderBoardData.postValue(response.body())
