@@ -234,21 +234,23 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 customView?.apply {
                     binding.rootView.addView(this)
                     this.text = it.customWord.choice.text
-                    this.x = it.fromLocation[0].toFloat()
-                    this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
-                    val toLocation = IntArray(2)
-                    it.customWord.getLocationOnScreen(toLocation)
-                    toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
-                    Log.d(
-                        "Yash",
-                        "subscribeRxBus() returned: (${it.fromLocation[0]},${it.fromLocation[1]})=>(${toLocation[0]},${toLocation[1]})"
-                    )
-                    this.translationAnimationNew(
-                        toLocation,
-                        it.customWord,
-                        it.optionLayout
-                    )
-                    animateAtsOptionViewEvent.postValue(null)
+                    post {
+                        this.x = it.fromLocation[0].toFloat()
+                        this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
+                        val toLocation = IntArray(2)
+                        it.customWord.getLocationOnScreen(toLocation)
+                        toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
+                        Log.d(
+                            "Yash",
+                            "subscribeRxBus() returned: (${it.fromLocation[0]},${it.fromLocation[1]})=>(${toLocation[0]},${toLocation[1]})"
+                        )
+                        this.translationAnimationNew(
+                            toLocation,
+                            it.customWord,
+                            it.optionLayout
+                        )
+                        animateAtsOptionViewEvent.postValue(null)
+                    }
                 }
             }
         }
