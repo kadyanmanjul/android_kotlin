@@ -786,7 +786,18 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-            getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
+                .replace("\\n", "\n")
+
+        dialogView.findViewById<TextView>(R.id.add_a_topic).text =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_TITLE_TEXT + testId)
+
+        dialogView.findViewById<TextView>(R.id.yes).text =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_YES_BUTTON_TEXT + testId)
+
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             PrefManager.put(FREE_TRIAL_TEST_ID, testId, false)
             val mobileNumber =
