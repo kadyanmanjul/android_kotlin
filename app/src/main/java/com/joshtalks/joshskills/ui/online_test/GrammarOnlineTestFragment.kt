@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_CONTINUE_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_TEST_COMPLETE_DESCRIPTION
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -158,7 +159,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                     ) == lessonNumber
                 ) {
                     binding.description.text = getString(R.string.grammar_continue_test_text)
-                    binding.startBtn.text = getString(R.string.grammar_btn_text_continue)
+                    binding.startBtn.text = getContinueButtonText()
                 }
             }
             (PrefManager.getIntValue(
@@ -526,6 +527,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     fun getContinueButtonText() = AppObjectController.getFirebaseRemoteConfig().getString(
         GRAMMAR_CONTINUE_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
     )
+
+    fun getTestCompletedDescription() = AppObjectController.getFirebaseRemoteConfig().getString(
+        GRAMMAR_TEST_COMPLETE_DESCRIPTION + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+    ).replace("\\n", "\n")
 
 }
 

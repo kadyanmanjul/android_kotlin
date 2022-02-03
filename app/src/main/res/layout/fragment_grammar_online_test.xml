@@ -189,7 +189,7 @@
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:textAlignment="center"
                 android:gravity="center"
-                android:text="@string/test_completed_description"
+                android:text="@{handler.getTestCompletedDescription()}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/score"

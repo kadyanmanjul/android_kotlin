@@ -858,7 +858,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         if (viewModel.courseDetailsLiveData.value?.isFreeTrial?:false || isFromNewFreeTrial ) {
             binding.btnStartCourse.text =
                 AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_COURSE_DETAIL_BTN_TXT)
+                    .getString("${FirebaseRemoteConfigKey.FREE_TRIAL_COURSE_DETAIL_BTN_TXT}_$testId")
         }
     }
 
