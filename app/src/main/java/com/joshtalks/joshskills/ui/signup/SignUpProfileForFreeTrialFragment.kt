@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
+import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 
 class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
@@ -60,9 +61,12 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         addObservers()
         binding.nameEditText.requestFocus()
         initUI()
+        val view: View? = activity?.currentFocus
+        if (view!=null) {
         val imm: InputMethodManager? =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            imm!!.hideSoftInputFromWindow(view?.windowToken, 0)
+        }
     }
 
     private fun initUI() {
