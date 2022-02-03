@@ -17,6 +17,9 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -94,7 +97,18 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-            getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
+                .replace("\\n", "\n")
+
+        dialogView.findViewById<TextView>(R.id.add_a_topic).text =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FREE_TRIAL_POPUP_TITLE_TEXT + language.testId)
+
+        dialogView.findViewById<TextView>(R.id.yes).text =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + language.testId)
+
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
