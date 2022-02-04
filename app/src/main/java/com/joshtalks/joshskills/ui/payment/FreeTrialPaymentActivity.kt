@@ -73,7 +73,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
     lateinit var fileName : String
-    var isTimerStopped = false
     var isPointsScoredMoreThanEqualTo100 = false
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
@@ -223,8 +222,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         R.drawable.blue_rectangle_with_blue_bound_stroke
                     )
                 isEnglishCardTapped = true
-                if(isTimerStopped == false && isPointsScoredMoreThanEqualTo100 == false){
-                    binding.materialTextView.text = "Achieve 100 points first"
+                if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
+                    binding.materialTextView.text = getString(R.string.achieve_100_points_first)
                     binding.materialTextView.isEnabled = false
                     binding.materialTextView.alpha = .5f
                 }else{
@@ -289,7 +288,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
             override fun onTimerFinish() {
-                isTimerStopped = true
+                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
         }
@@ -415,6 +414,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         startTimer(it.expireTime.time - System.currentTimeMillis())
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                        PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     }
                 } else {
                     binding.freeTrialTimer.visibility = View.GONE
