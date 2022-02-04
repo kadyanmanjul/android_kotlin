@@ -81,6 +81,9 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".ui.activity_feed.ActivityFeedMainActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.voip.share_call.ShareWithFriendsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

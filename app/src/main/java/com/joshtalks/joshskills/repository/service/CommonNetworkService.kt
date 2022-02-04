@@ -203,7 +203,8 @@ interface CommonNetworkService {
         @Query("interval_type") intervalType: String? = null,
         @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
-
+    @GET("$DIR/activity_feed/fetch_all/")
+    suspend fun getActivityFeedData(): Response<ActivityFeedList>
 
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
@@ -253,6 +254,11 @@ interface CommonNetworkService {
         @Path("user_profile_impression_id") userProfileImpressionId: String,
         @Body params: Map<String, Long>
     ): WordDetailsResponse
+    @PATCH("$DIR/impression/activity_feed_impression/{activity_feed_impression_id}/")
+    suspend fun engageActivityFeedTime(
+        @Path("activity_feed_impression_id") userProfileImpressionId: String,
+        @Body params: Map<String, Long>
+    ): Any
 
     @POST("$DIR/leaderboard/leaderboard_impression/")
     suspend fun engageLeaderBoardImpressions(
