@@ -8,9 +8,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Movie
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.SystemClock
 import android.util.Log
 import android.view.Gravity
@@ -34,8 +37,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg.*
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -82,6 +90,7 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
+import com.joshtalks.joshskills.util.FilesAudioVideoMerger
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -97,7 +106,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
-
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 private const val TAG = "ReadingFragmentWithoutFeedback"
 
 class ReadingFragmentWithoutFeedback :
@@ -120,6 +133,7 @@ class ReadingFragmentWithoutFeedback :
     private var audioManager: ExoAudioPlayer? = null
     private var currentLessonQuestion: LessonQuestion? = null
     var lessonActivityListener: LessonActivityListener? = null
+    var mergedVideo : File? = null
     private val pauseAnimationCallback by lazy {
         Runnable {
             if (audioManager?.isPlaying() == false)
@@ -223,6 +237,14 @@ class ReadingFragmentWithoutFeedback :
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
         // showTooltip()
+
+        //var uri = RawResourceDataSource.buildRawResourceUri(R.raw.pls2)
+        //binding.mergedVideo.setUrl(uri.toString())
+        //binding.mergedVideo.onStart()
+        val video: Uri = Uri.parse("android.resource://" + requireActivity().getPackageName() + "/" + R.raw.pls2)
+        mergedVideo = FilesAudioVideoMerger.from(requireActivity(),video)
+        Log.e("mytag", "onCreateView: $mergedVideo", )
+
         return binding.rootView
     }
 
@@ -235,6 +257,12 @@ class ReadingFragmentWithoutFeedback :
             binding.playInfoHint.visibility = VISIBLE
         }
     }
+    //private fun mergeaudioVideo(){
+
+//        var uri = RawResourceDataSource.buildRawResourceUri(R.raw.pls2)
+
+
+   // }
 
     override fun onResume() {
         super.onResume()
@@ -982,8 +1010,77 @@ class ReadingFragmentWithoutFeedback :
                         )
                     if (timeDifference > 1) {
                         viewModel.recordFile?.let {
+
+                            var cmd: Array<String>? = null
+
                             isAudioRecordDone = true
+                            /*
+                            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmms", Locale.getDefault()).format(Date())
+                            val imageFileName: String = "JoshSkill" + timeStamp + "_"
+                            val storageDir: File? = context?.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+                            val outputFile = File.createTempFile(imageFileName, ".mp4", storageDir)
+                            */
+                            val f =
+                                File(Environment.getExternalStorageDirectory().toString() + File.separator + "JoshSkill" + File.separator + "Media" + "/JoshApp/cached")
+                            if (!f.exists()) {
+                                f.mkdirs()
+                            }
+                            val desstination =
+                                File(f.absolutePath + File.separator + "record.mp4")
+                            try {
+                                desstination.createNewFile()
+                            } catch (e: IOException) {
+                                e.printStackTrace()
+                            }
+                            val videoFile = File(File(
+                                requireContext().getExternalFilesDir(
+                                    Environment.DIRECTORY_DCIM
+                                )?.absolutePath), "${SimpleDateFormat("yyyyMMdd_HHmmSS", Locale.ENGLISH).format(Date())}record.mp4")
+
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
+
+                            cmd = arrayOf("-y", "-i", mergedVideo?.path?: EMPTY, "-i", filePath?: EMPTY, "-c", "copy","-map", "0:v:0", "-map", "1:a:0",  desstination.path)
+
+                            try {
+                                FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
+                                    override fun onStart() {
+
+                                    }
+
+                                    override fun onProgress(message: String?) {
+
+                                    }
+
+                                    override fun onSuccess(message: String?) {
+                                       // val video: Uri = Uri.parse("android.resource://" + requireActivity().getPackageName() + "/" + R.raw.pls2)
+                                       // mergedVideo = FilesAudioVideoMerger.from(requireActivity(),video)
+                                        //binding.mergedVideo.setVideoPath(outputFile.absolutePath)
+                                       // binding.mergedVideo.start()
+
+                                       // Log.e("mytag", "onCreateView: $mergedVideo")
+
+                                    }
+
+                                    override fun onFailure(message: String?) {
+
+                                        Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
+                                    }
+
+                                    override fun onFinish() {
+                                        showToast("complete")
+                                        binding.mergedVideo.setVideoPath(desstination.absolutePath)
+                                        binding.mergedVideo.start()
+
+                                        Log.e("mytag", "onFinish: $desstination", )
+                                        //Log.e("mytag", "onCreateView: ${FilesAudioVideoMerger.from(requireActivity(),Uri.parse(outputFile.absolutePath))}")
+                                    }
+                                })
+                            } catch (e: Exception) {
+                                Toast.makeText(requireActivity(), e.message, Toast.LENGTH_LONG).show()
+                            } catch (e2: FFmpegCommandAlreadyRunningException) {
+                                Toast.makeText(requireActivity(), e2.message, Toast.LENGTH_LONG).show()
+                            }
+
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             //binding.readingHoldHint.visibility = GONE
                             audioAttachmentInit()

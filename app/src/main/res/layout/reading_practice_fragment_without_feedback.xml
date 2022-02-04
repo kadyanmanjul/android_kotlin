@@ -478,14 +478,49 @@
                     card_view:cardUseCompatPadding="false"
                     tools:visibility="visible">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/your_sub_answer_tv"
+                    <LinearLayout
+                        android:id="@+id/sub_answer_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="start|center"
-                        android:text="@string/your_answer"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                        android:textColor="@color/black" />
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/your_sub_answer_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5"
+                            android:gravity="start|center"
+                            android:text="@string/your_answer"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                            android:textColor="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_cancel"
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:layout_gravity="center|end"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:tint="#878A91"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/ic_cross" />
+
+                    </LinearLayout>
+
+
+                    <VideoView
+                        android:id="@+id/merged_video"
+                        android:layout_width="@dimen/_180sdp"
+                        android:layout_height="@dimen/_320sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_24sdp"
+                        android:layout_marginVertical="@dimen/_50sdp"
+                        android:layout_marginTop="@dimen/_62ssp"
+                        android:layout_marginBottom="@dimen/_42ssp"
+                        android:focusable="true"
+                        android:visibility="visible"
+                        tools:visibility="visible" />
 
                     <LinearLayout
                         android:id="@+id/sub_practise_submit_layout"
@@ -501,7 +536,7 @@
                             android:visibility="gone"
                             tools:itemCount="2"
                             tools:listitem="@layout/practice_audio_item"
-                            tools:visibility="visible" />
+                            tools:visibility="invisible" />
 
                     </LinearLayout>
 
