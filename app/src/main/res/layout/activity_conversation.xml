@@ -292,11 +292,30 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgFeedBtn"
+            android:layout_width="@dimen/_42sdp"
+            android:layout_height="@dimen/_42sdp"
+            android:layout_below="@+id/user_point_container"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginVertical="@dimen/_12sdp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/white_button_round_enabled"
+            android:clickable="true"
+            android:elevation="@dimen/_4sdp"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            app:srcCompat="@drawable/activity_feed_btn"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgGroupChatBtn"
             android:elevation="@dimen/_4sdp"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
-            android:layout_below="@+id/user_point_container"
+            android:layout_below="@+id/imgFeedBtn"
             android:layout_alignParentEnd="true"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginVertical="@dimen/_12sdp"
