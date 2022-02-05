@@ -54,12 +54,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.ReplaySubject
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
-import kotlin.collections.ArrayList
 
 private const val TAG = "Convo Live Room"
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
@@ -678,7 +678,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             customMessage.addProperty("is_hand_raised", isRaised)
             customMessage.addProperty("name", vm.getCurrentUser()?.name ?: DEFAULT_NAME)
             customMessage.addProperty("action", "IS_HAND_RAISED")
+            if (isRaised.not()){
+                customMessage.addProperty("action_from", "HAND_UNRAISE_BUTTON")
+            }
             vm.sendCustomMessage(customMessage, vm.getModeratorId().toString())
+            vm.sendCustomMessage(customMessage, channelName.plus(".other"))
 
         } catch (ex: Exception) {
             showToast(ex.toString())
@@ -824,6 +828,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 customMessage.addProperty("uid", it)
                 customMessage.addProperty("action", "INVITE_SPEAKER")
                 vm.sendCustomMessage(customMessage, it.toString())
+                customMessage.addProperty("action_from", "NOTIFICATOIN_ACCEPT")
+                vm.sendCustomMessage(customMessage, channelName.plus(".other"))
             }
             binding.notificationBar.loadAnimationSlideUp()
         } else {
@@ -849,11 +855,21 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             customMessage.addProperty("name", vm.getCurrentUser()?.name ?: DEFAULT_NAME)
             customMessage.addProperty("action", "IS_HAND_RAISED")
             vm.sendCustomMessage(customMessage, vm.getModeratorId().toString())
+            customMessage.addProperty("action_from", "NOTIFICATOIN_REJECT")
+            vm.sendCustomMessage(customMessage, channelName.plus(".other"))
             binding.notificationBar.loadAnimationSlideUp()
             isHandRaised = !isHandRaised
             binding.apply {
                 handRaiseBtn.visibility = View.GONE
                 handUnraiseBtn.visibility = View.VISIBLE
+            }
+        } else {
+            binding.notificationBar.getUserUuid()?.let {
+                val customMessage = JsonObject()
+                customMessage.addProperty("id", vm.getAgoraUid())
+                customMessage.addProperty("uid", it)
+                customMessage.addProperty("action", "DISMISS_HAND_RAISE_INVITE")
+                vm.sendCustomMessage(customMessage, channelName.plus(".other"))
             }
         }
         binding.notificationBar.loadAnimationSlideUp()
@@ -1128,6 +1144,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             customMessage.addProperty("is_mic_on", false)
                             customMessage.addProperty("action", "INVITE_SPEAKER")
                             vm.sendCustomMessage(customMessage, userUid.toString())
+                            customMessage.addProperty("action_from", "DIRECT_INVITE")
+                            vm.sendCustomMessage(customMessage, channelName.plus(".other"))
                         } else {
                             setNotificationWithoutAction(
                                 "Room has reached maximum allowed number of speakers." +
@@ -1175,6 +1193,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         customMessage.addProperty("uid", user.id)
         customMessage.addProperty("action", "INVITE_SPEAKER")
         vm.sendCustomMessage(customMessage, user.id.toString())
+        customMessage.addProperty("action_from", "BOTTOM_SHEET")
+        vm.sendCustomMessage(customMessage, channelName.plus(".other"))
         //TODO("Not yet implemented")
     }
 
