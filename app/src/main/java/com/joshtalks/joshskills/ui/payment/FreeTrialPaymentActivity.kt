@@ -441,7 +441,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             pdfUrl = it.syllabusPdfLink
         })
         viewModel.pointsHistoryLiveData.observe(this, {
-            if(it.totalPoints!! >= 100){
+            if(it.totalPoints != null && it.totalPoints >= 100){
                 isPointsScoredMoreThanEqualTo100 = true
             }
         })
