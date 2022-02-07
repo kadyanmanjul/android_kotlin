@@ -344,6 +344,7 @@ class GameFavouritePartnerFragmentFpp : Fragment(), FavouriteAdapter.QuizBaseInt
 
     fun positiveBtnAction() {
         AudioManagerQuiz.audioRecording.stopPlaying()
+        engine?.leaveChannel()
         openChoiceScreen()
     }
 

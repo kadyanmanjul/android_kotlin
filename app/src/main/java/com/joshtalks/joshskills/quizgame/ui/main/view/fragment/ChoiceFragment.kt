@@ -185,6 +185,7 @@ class ChoiceFragment : Fragment(), GameNotificationFirebaseData.OnNotificationTr
                     firebaseDatabase.deleteRequested(mentorId)
                     firebaseDatabase.deleteDeclineData(mentorId)
                     firebaseDatabase.changeUserStatus(mentorId, IN_ACTIVE)
+                    engine?.leaveChannel()
                     moveToNewActivity()
                 }
             })

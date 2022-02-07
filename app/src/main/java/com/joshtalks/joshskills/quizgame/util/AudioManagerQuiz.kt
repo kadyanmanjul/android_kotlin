@@ -14,6 +14,7 @@ import timber.log.Timber
 class AudioManagerQuiz() {
     private var recordingJob: CoroutineScope? = null
      var mPlayer: MediaPlayer?=null
+    var mPlayerFor5SecTick:MediaPlayer?=null
 
     fun startPlaying(application:Context, soundFile:Int,isLoop:Boolean){
         destroyCurrentScope()
@@ -121,6 +122,33 @@ class AudioManagerQuiz() {
             e.printStackTrace()
         }
         mPlayer = null
+    }
+
+    fun play5secTick(application:Context){
+        try {
+            mPlayerFor5SecTick = MediaPlayer.create(
+                application,
+                R.raw.voice_5_second
+            )
+            mPlayerFor5SecTick?.setVolume(0.4f,0.4f)
+            mPlayerFor5SecTick?.setOnCompletionListener { mediaPlayer ->
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+            mPlayerFor5SecTick?.start()
+        } catch (ex: Exception) {
+            Timber.d(ex)
+        }
+    }
+
+    fun stop5secTickPlaying() {
+        try {
+            mPlayerFor5SecTick?.stop()
+            mPlayerFor5SecTick?.release()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        mPlayerFor5SecTick = null
     }
 
     fun checkMusicPlayingOrNot(context: Context) : Boolean{
