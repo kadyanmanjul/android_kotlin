@@ -79,6 +79,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
     }
 
+    override fun onPause() {
+        super.onPause()
+        hideProgressBar()
+    }
+
     private fun addViewModelObservers() {
         viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
             hideProgressBar()
@@ -153,6 +158,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun initTrueCallerUI() {
+        hideProgressBar()
         val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
             .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
             .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
@@ -167,6 +173,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private fun openTrueCallerBottomSheet() {
+        showProgressBar()
         TruecallerSDK.getInstance().getUserProfile(this)
     }
 
