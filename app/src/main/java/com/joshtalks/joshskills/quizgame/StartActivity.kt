@@ -87,14 +87,16 @@ class StartActivity : BaseQuizActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         PrefManager.put(USER_ACTIVE_IN_GAME, false)
         AudioManagerQuiz.audioRecording.stopPlaying()
+        AudioManagerQuiz.audioRecording.stop5secTickPlaying()
+        super.onDestroy()
     }
 
     override fun onPause() {
         super.onPause()
         AudioManagerQuiz.audioRecording.stopPlaying()
+        AudioManagerQuiz.audioRecording.stop5secTickPlaying()
         PrefManager.put(USER_ACTIVE_IN_GAME, false)
         firebaseTemp.changeUserStatus(mentorId, IN_ACTIVE)
         vm.homeInactive()
