@@ -307,7 +307,7 @@
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
-            app:srcCompat="@drawable/activity_feed_btn"
+            app:srcCompat="@drawable/ic_activity_feed"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView

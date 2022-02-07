@@ -21,9 +21,9 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
     var currentFeed: MutableLiveData<ActivityFeedResponseFirebase> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val feedDataList: MutableLiveData<ActivityFeedList> = MutableLiveData()
-
+    private var feedTime = System.currentTimeMillis()
+    private var localFlag = false
     fun getFeed() {
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
@@ -35,12 +35,25 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
                     if (FirstTimeUser.flag) {
                         for (doc in value!!.documentChanges) {
                             if (doc.type == DocumentChange.Type.ADDED) {
-                                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
-                                currentFeed.value = doc.document.toObject()
+                                if (localFlag) {
+                                    var timeGap = (System.currentTimeMillis() - feedTime).div(1000)
+                                    if (timeGap >= 0.05) {
+                                        apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                                        currentFeed.value = doc.document.toObject()
+                                        currentFeed.value!!.photoUrl =
+                                            doc.document.get("photo_url").toString()
+                                        feedTime = System.currentTimeMillis()
+                                    }
+                                } else {
+                                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                                    currentFeed.value = doc.document.toObject()
+                                    currentFeed.value!!.photoUrl =
+                                        doc.document.get("photo_url").toString()
+                                }
                             }
                         }
-
                     }
+                    localFlag = true
                     FirstTimeUser.flag = true
                 }
             } catch (ex: Throwable) {
@@ -50,39 +63,36 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
         }
 
     }
+
     fun getActivityFeed() {
         viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    apiCallStatus.postValue(ApiCallStatus.START)
-                    val response = AppObjectController.commonNetworkService.getActivityFeedData()
-                    if (response.isSuccessful && response.body() != null) {
-                        apiCallStatus.postValue(ApiCallStatus.SUCCESS)
-                        feedDataList.postValue(response.body()!!)
-                        return@launch
-                    } else {
-                        apiCallStatus.postValue(ApiCallStatus.FAILED)
-                    }
-                } catch (ex: Throwable) {
-                    ex.showAppropriateMsg()
-                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+            try {
+                val response = AppObjectController.commonNetworkService.getActivityFeedData()
+                if (response.isSuccessful && response.body() != null) {
+                    feedDataList.postValue(response.body()!!)
                 }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiCallStatus.postValue(ApiCallStatus.FAILED)
             }
         }
+    }
+
     fun engageActivityFeedTime(impressionId: String, startTime: Long) {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    if (impressionId.isNullOrBlank())
-                        return@launch
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (impressionId.isNullOrBlank())
+                    return@launch
 
-                    AppObjectController.commonNetworkService.engageActivityFeedTime(
-                        impressionId,
-                        mapOf("time_spent" to startTime)
-                    )
+                AppObjectController.commonNetworkService.engageActivityFeedTime(
+                    impressionId,
+                    mapOf("time_spent" to startTime)
+                )
 
-                } catch (ex: Throwable) {
-                    ex.printStackTrace()
-                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
+    }
 
 }
