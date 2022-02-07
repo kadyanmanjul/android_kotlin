@@ -70,11 +70,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.ReplaySubject
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
 
 private const val TAG = "Convo Frag"
 class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
@@ -152,8 +152,8 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
 
     private fun initPubNub() {
         val pnConf = PNConfiguration()
-        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
-        pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
+        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_ROOM_KEY
+        pnConf.publishKey = BuildConfig.PUBNUB_PUB_ROOMK_KEY
         pnConf.uuid = Mentor.getInstance().getId()
         //pnConf.origin = "com.joshtalks.joshskills"
         pnConf.isSecure = false

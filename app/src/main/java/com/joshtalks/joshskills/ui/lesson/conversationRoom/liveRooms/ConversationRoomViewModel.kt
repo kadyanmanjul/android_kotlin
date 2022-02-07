@@ -19,7 +19,12 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationRoomPubNubEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.*
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.ConversationRoomDetailsResponse
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.ConversationRoomResponse
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.JoinConversionRoomRequest
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.LiveRoomUser
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.RoomListResponse
+import com.joshtalks.joshskills.ui.lesson.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.ui.lesson.conversationRoom.notification.NotificationView
 import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation
 import com.joshtalks.joshskills.ui.lesson.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
@@ -44,10 +49,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.ReplaySubject
+import java.util.Arrays
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.*
 
 const val NOTIFICATION_ID = "notification_id"
 const val NOTIFICATION_BOOLEAN = "notification_boolean"
@@ -189,8 +194,8 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
 
     fun initPubNub(channelName: String?) {
         val pnConf = PNConfiguration()
-        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
-        pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
+        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_ROOM_KEY
+        pnConf.publishKey = BuildConfig.PUBNUB_PUB_ROOMK_KEY
         pnConf.uuid = Mentor.getInstance().getId()
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)

@@ -35,9 +35,6 @@ android {
         //buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         //buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
         buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
-        buildConfigField "String", "PUBNUB_PUB_API_KEY", "\"pub-c-e78a680c-fdd0-4cd2-87fa-8955f935dca8\""
-        buildConfigField "String", "PUBNUB_SUB_API_KEY", "\"sub-c-8e7c9054-437f-11ec-96b3-4a48f5067549\""
-        buildConfigField "String", "PUBNUB_SECRET_API_KEY", "\"sec-c-Mjg3NTUyYTUtODVkZC00ZjEzLWExZTAtOGIzZGJjZjRjNWVk\""
         //buildConfigField "String", "BUGSEE_API_KEY", "\"fd4b6776-752e-44ce-a975-ce4d2e428bc3\""
         //buildConfigField "String", "SMARTLOOK_API_KEY", "\"62418dde1661c1a8190b2c76f25de26a843629a7\""
 
@@ -172,10 +169,13 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://34.93.235.14:9001\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
+            buildConfigField "String", "PUBNUB_PUB_ROOMK_KEY", "\"pub-c-319441e3-7915-4830-9e15-3942ad1f7c78\""
+            buildConfigField "String", "PUBNUB_SUB_ROOM_KEY", "\"sub-c-0f2008e2-8969-11ec-9f2b-a2cedba671e8\""
+            buildConfigField "String", "PUBNUB_SECRET_Room_KEY", "\"sec-c-Y2E4YzIyODYtNmQ3MC00MTAzLWFiOWEtM2I2MGUyNjc2MjJh\""
             /*For Port
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9011\""
             */
@@ -203,6 +203,9 @@ android {
             buildConfigField "String", "BASE_URL_GAME", "\"http://game.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-b61aad14-403b-4408-9a21-3d8d3485feb1\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-060dd328-7060-11ec-9c8d-9eb9413efc82\""
+            buildConfigField "String", "PUBNUB_PUB_ROOMK_KEY", "\"pub-c-e78a680c-fdd0-4cd2-87fa-8955f935dca8\""
+            buildConfigField "String", "PUBNUB_SUB_ROOM_KEY", "\"sub-c-8e7c9054-437f-11ec-96b3-4a48f5067549\""
+            buildConfigField "String", "PUBNUB_SECRET_Room_KEY", "\"sec-c-Mjg3NTUyYTUtODVkZC00ZjEzLWExZTAtOGIzZGJjZjRjNWVk\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -448,8 +451,6 @@ dependencies {
     implementation 'io.sentry:sentry-android:5.6.0'
     implementation 'io.sentry:sentry-android-okhttp:5.6.0'
     implementation 'io.sentry:sentry-android-fragment:5.6.0'
-/*
-    implementation 'io.sentry:sentry-android-timber:5.5.1'
-*/
+
 
 }
