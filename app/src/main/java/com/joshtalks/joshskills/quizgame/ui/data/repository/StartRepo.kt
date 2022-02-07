@@ -25,4 +25,9 @@ class StartRepo(var api: GameApiService?) {
         api?.changeUserStatus(
             Status(Mentor.getInstance().getId(), ACTIVE)
         )
+
+    suspend fun getDeleteInactiveTeam() =
+        api?.deleteInactiveTeam(
+            Mentor.getInstance().getId()
+        )
 }
