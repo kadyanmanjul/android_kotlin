@@ -24,7 +24,7 @@ class QuestionRepo (val api: GameApiService?){
         )
 
     suspend fun getDisplayCorrectAnswer(roomId: String, questionId: String) =
-        api?.getDisplayData(DisplayAnswer(roomId, questionId, Mentor.getInstance().getUserId()))
+        api?.getDisplayData(DisplayAnswer(roomId, questionId, Mentor.getInstance().getId()))
 
     suspend fun getRoomDataTemp(randomRoomData: RandomRoomData) =
         api?.getRoomUserDataTemp(randomRoomData)
