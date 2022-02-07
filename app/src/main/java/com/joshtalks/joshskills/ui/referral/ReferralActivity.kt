@@ -66,7 +66,6 @@ class ReferralActivity : BaseActivity() {
 
     //    private var userReferralURL: String = EMPTY
     var flowFrom: String? = null
-    var referralTimestamp: Long? = null
 
     @ExperimentalUnsignedTypes
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -198,7 +197,7 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        referralTimestamp = System.currentTimeMillis()
+        val referralTimestamp = System.currentTimeMillis()
         val branchUniversalObject = BranchUniversalObject()
             .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
             .setTitle("Invite Friend")
@@ -207,24 +206,26 @@ class ReferralActivity : BaseActivity() {
         val lp = LinkProperties()
             .setChannel(userReferralCode)
             .setFeature("sharing")
-            .setCampaign("referral")
+            .setCampaign(userReferralCode.plus(referralTimestamp))
             .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
             .addControlParameter(
-                Defines.Jsonkey.UTMMedium.key,
+                Defines.Jsonkey.UTMCampaign.key,
                 userReferralCode.plus(referralTimestamp)
             )
+            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
 
         branchUniversalObject
             .generateShortUrl(this, lp) { url, error ->
                 if (error == null)
                     inviteFriends(
                         packageString = packageString,
-                        dynamicLink = url
+                        dynamicLink = url,
+                        referralTimestamp = referralTimestamp
                     )
                 else
                     inviteFriends(
                         packageString = packageString,
+                        referralTimestamp = referralTimestamp,
                         dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
                             PrefManager.getStringValue(USER_SHARE_SHORT_URL)
                         else
@@ -292,7 +293,7 @@ class ReferralActivity : BaseActivity() {
          }*/
     }
 
-    fun inviteFriends(packageString: String? = null, dynamicLink: String) {
+    fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
         var referralText = VIDEO_URL.plus("\n").plus(
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         )
@@ -306,7 +307,7 @@ class ReferralActivity : BaseActivity() {
         try {
             viewModel.getDeepLink(
                 dynamicLink,
-                userReferralCode.plus(referralTimestamp ?: System.currentTimeMillis())
+                userReferralCode.plus(referralTimestamp)
             )
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"
