@@ -240,7 +240,11 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     private fun popBackStack() {
         if (supportFragmentManager.backStackEntryCount > 1) {
-            supportFragmentManager.popBackStack()
+            try {
+                supportFragmentManager.popBackStackImmediate()
+            } catch ( ex:Exception){
+                ex.printStackTrace()
+            }
         } else
             onBackPressed()
     }

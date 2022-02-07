@@ -124,6 +124,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_50sdp"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"
             android:insetTop="0dp"
@@ -140,7 +141,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.8"
-            android:layout_marginBottom="@dimen/_50sdp"
             app:rippleColor="@color/white" />
 
         <FrameLayout
@@ -175,16 +175,16 @@
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:padding="@dimen/_4sdp"
-                    android:src="@drawable/ic_search"
-                    android:tint="@color/white" />
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_search" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
                     android:layout_marginEnd="@dimen/_7sdp"
                     android:padding="@dimen/_4sdp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_more_option" />
+                    app:srcCompat="@drawable/ic_more_option" />
             </LinearLayout>
         </FrameLayout>
 

@@ -26,8 +26,8 @@ import kotlinx.coroutines.launch
 
 class UtilConversationViewModel(application: Application, private var inboxEntity: InboxEntity) :
     AndroidViewModel(application) {
-    private val commonNetworkService = AppObjectController.commonNetworkService
-    private var appDatabase = AppObjectController.appDatabase
+    private val commonNetworkService by lazy { AppObjectController.commonNetworkService }
+    private val appDatabase by lazy { AppObjectController.appDatabase }
     private val jobs = arrayListOf<Job>()
     val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
     val isLoading: MutableLiveData<Boolean> = MutableLiveData()

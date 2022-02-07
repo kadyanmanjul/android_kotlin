@@ -25,17 +25,8 @@ import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupMemberCount
-import com.joshtalks.joshskills.ui.group.model.GroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
-import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
-import com.joshtalks.joshskills.ui.group.model.MemberResult
-import com.joshtalks.joshskills.ui.group.model.MessageItem
-import com.joshtalks.joshskills.ui.group.model.PageInfo
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.group.lib.PageInfo
+import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
@@ -106,7 +97,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     val message = messageItem.msg
                     if (messageItem.getMessageType() == RECEIVE_META_MESSAGE_LOCAL && message.contains("changed")) {
                         when (message.contains("changed the group icon")) {
-                            true -> { TODO("UPDATE IMAGE ICON") }
+                            true -> {
+                                //TODO("UPDATE IMAGE ICON")
+                            }
                             false -> {
                                 val newGroupName = message.substring(message.lastIndexOf("the group name to ") + 18)
                                 database.groupListDao().updateGroupName(pnMessageResult.channel, newGroupName)
@@ -223,8 +216,31 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
+    fun getGroupMemberList(groupId: String, adminId: String, pageInfo: PageInfo? = null): MemberResult {
+        val memberList = mutableListOf<GroupMember>()
+        var pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
+        do {
+            val pageMembers = pubnubResponse?.getMemberData(adminId)?.list ?: listOf()
+            memberList.addAll(pageMembers)
+            val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
+            pubnubResponse = chatService.getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
+        } while (pageMembers.isNotEmpty())
+        memberList.sortByDescending { it.isAdmin }
+        return MemberResult(memberList, memberList.size)
+    }
+
+    suspend fun getGroupOnlineCount(groupId: String): Int? {
+        return try {
+            val response = apiService.getGroupOnlineCount(groupId)
+            return (response["online_count"] as Double).toInt()
+        } catch (e: Exception) {
+            showToast("An error has occurred")
+            0
+        }
+    }
+
     suspend fun joinGroup(groupId: String): Boolean {
-        Log.e(TAG, "Joining group : ${groupId}")
+        Log.e(TAG, "Joining group : $groupId")
         val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
         if (response["success"] == true) {
             try {
@@ -366,9 +382,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         analyticsService.groupImpressionDetails(request)
-
-    fun getGroupMemberList(groupId: String, admin: String): MemberResult? =
-        chatService.getChannelMembers(groupId = groupId, adminId = admin)
 
     private fun getCompressImage(path: String): String {
         return try {
