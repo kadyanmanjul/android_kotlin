@@ -342,24 +342,6 @@ class GameFirebaseDatabase {
             }
     }
 
-    fun getLiveStatus(mentorId: String): String {
-        var status: String? = null
-        sentFriendRequest
-            .addSnapshotListener { value, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                for (doc in value!!) {
-                    if (doc.exists()) {
-                        if (mentorId == doc.id) {
-                            status = doc.data["status"].toString()
-                        }
-                    }
-                }
-            }
-        return status ?: ""
-    }
-
     fun createPlayAgainNotification(partnerUserId: String, userName: String, userImage: String) {
         val channel: HashMap<String, Any> = HashMap()
         channel["userName"] = userName
