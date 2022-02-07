@@ -1,50 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser"/>
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase" />
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="@dimen/_10sdp"
-    android:rotation="180"
-      >
+        android:rotation="180">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_icon"
-        android:layout_width="@dimen/_26sdp"
-        android:layout_height="@dimen/_26sdp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        tools:src="@color/button_color" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_icon"
+            imageResource="@{itemData.photoUrl}"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            tools:src="@color/button_color" />
 
-    <TextView
-        android:id="@+id/feed_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="5"
-        android:ellipsize="end"
-        android:gravity="start"
-        android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-        android:visibility="visible"
-        tools:text="Mohit updated a profile picture" />
+        <TextView
+            android:id="@+id/feed_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:text="@{itemData.name+' '+itemData.text}"
+            android:maxLines="2"
+            partialTextColor="@{itemData.name}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:visibility="visible"
+            tools:text="Mohit updated a profile picture" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/feed_time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_8sdp"
-        android:layout_weight="1"
-        android:ellipsize="end"
-        android:gravity="center_horizontal"
-        android:maxLines="1"
-        android:textSize="@dimen/_10ssp"
-        android:textColor="@color/grey"
-        android:visibility="visible"
-        tools:text="12:49" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/feed_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:text="@{itemData.date.substring(0,5)}"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:textSize="@dimen/_10ssp"
+            android:textColor="@color/grey"
+            android:visibility="visible"
+            tools:text="12:49" />
 
 
-</LinearLayout>
+    </LinearLayout>
+</layout>
 
 
 

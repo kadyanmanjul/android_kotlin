@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.activity_feed
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -10,11 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFeedMainBinding
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
-import java.util.*
 
 class ActivityFeedMainActivity : AppCompatActivity() {
     lateinit var binding: ActivityFeedMainBinding
@@ -46,59 +51,45 @@ class ActivityFeedMainActivity : AppCompatActivity() {
         recyclerView = binding.rvFeeds
         layoutManager=LinearLayoutManager(this)
         recyclerView.adapter = adapter
-        recyclerView.apply {
-            this.setHasFixedSize(true)
-            this.layoutManager = layoutManager
-
-        }
-
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutManager
     }
     private fun getData() {
-        viewModel.getActivityFeed()
         viewModel.getFeed()
+        viewModel.getActivityFeed()
     }
 
     override fun onBackPressed() {
         startTime = System.currentTimeMillis().minus(startTime).div(1000)
-        if (startTime > 0 && impressionId.isBlank().not()) {
+        if (startTime > 0 && impressionId.isNotBlank()) {
             viewModel.engageActivityFeedTime(impressionId, startTime)
         }
         super.onBackPressed()
     }
     private fun addObserver() {
         viewModel.apiCallStatus.observe(this) {
-            if (it == ApiCallStatus.SUCCESS) {
-                FullScreenProgressDialog.hideProgressBar(this)
-            } else if (it == ApiCallStatus.FAILED) {
-                FullScreenProgressDialog.hideProgressBar(this)
-                this.finish()
-            } else if (it == ApiCallStatus.START) {
-                FullScreenProgressDialog.showProgressBar(this)
+            when(it){
+                ApiCallStatus.SUCCESS->
+                    FullScreenProgressDialog.hideProgressBar(this)
+                ApiCallStatus.FAILED-> {
+                    FullScreenProgressDialog.hideProgressBar(this)
+                    this.finish()
+                }
+                ApiCallStatus.START->
+                    FullScreenProgressDialog.showProgressBar(this)
             }
         }
         viewModel.currentFeed.observe(this) {
+                feedList.add(0,it)
+                adapter.notifyItemInserted(0)
+
 
             if(layoutManager.findFirstCompletelyVisibleItemPosition()==0){
                 binding.scrollToEndButton.visibility = View.GONE
-                recyclerView.post { recyclerView.smoothScrollToPosition(0) }
+                recyclerView.layoutManager?.scrollToPosition(0)
             }else{
                 binding.scrollToEndButton.visibility = View.VISIBLE
             }
-            feedList.add(0,it)
-            adapter.notifyItemInserted(0)
-
-//            recyclerView.post { recyclerView.smoothScrollToPosition(0) }
-            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    //some code when initially scrollState changes
-                }
-
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-
-                }
-            })
 
         }
         viewModel.feedDataList.observe(this) {
@@ -114,9 +105,25 @@ class ActivityFeedMainActivity : AppCompatActivity() {
             onBackPressed()
         }
         binding.scrollToEndButton.setOnClickListener{
-            recyclerView.post{recyclerView.smoothScrollToPosition(0)}
+            recyclerView.layoutManager?.scrollToPosition(0)
             binding.scrollToEndButton.visibility = View.GONE
 
+        }
+    }
+    companion object {
+        fun startActivityFeedMainActivity(inboxEntity: InboxEntity, activity:Activity) {
+
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(SINGLE_SPACE)
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(activity.getString(R.string.feature_locked, firstName))
+            } else {
+                val intent = Intent(activity, ActivityFeedMainActivity::class.java)
+                activity.startActivity(intent)
+            }
         }
     }
 }
