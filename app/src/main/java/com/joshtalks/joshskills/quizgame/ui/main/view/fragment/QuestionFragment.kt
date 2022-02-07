@@ -47,7 +47,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private var timer: CountDownTimer? = null
     private var givenTeamId: String? = null
     private var currentUserId: String? = null
-
+    var isTickSoundPlay :Boolean?= true
     private var factory: QuestionProviderFactory? = null
     private var questionViewModel: QuestionViewModelGame? = null
     private var choiceValue: String? = null
@@ -201,6 +201,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                     0
                 )
                 getSelectOptionWithAnim(binding.answer1.text.toString(), 0)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -221,6 +222,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                     1
                 )
                 getSelectOptionWithAnim(binding.answer2.text.toString(), 1)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -242,6 +244,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                 )
 
                 getSelectOptionWithAnim(binding.answer3.text.toString(), 2)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -262,6 +265,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                     3
                 )
                 getSelectOptionWithAnim(binding.answer4.text.toString(), 3)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -389,14 +393,8 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                     seconds = (millisUntilFinished / 1000).toInt()
                     seconds %= 60
                     binding.count.text = String.format("%2d", seconds)
-                    if (seconds == 5) {
-                        activity?.application?.let {
-                            AudioManagerQuiz.audioRecording.startPlaying(
-                                it,
-                                R.raw.voice_5_second,
-                                false
-                            )
-                        }
+                    if (seconds == 5 && isTickSoundPlay == true) {
+                        activity?.let { AudioManagerQuiz.audioRecording.play5secTick(it) }
                     }
                 }
 
@@ -462,6 +460,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             binding.answer3.setTextColor(getBlackColor())
             binding.answer4.setTextColor(getBlackColor())
             position++
+            isTickSoundPlay  = true
             try {
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(100)
@@ -1002,6 +1001,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     ) {
         binding.progress1.pauseProgress()
         disableCardClick()
+        isTickSoundPlay = false
         choiceAnswer(choiceAnswer, isCorrect)
         marks = marks1.toInt()
         binding.marks1.text = marks.toString()
@@ -1140,6 +1140,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                                             }
                                         }
                                         AudioManagerQuiz.audioRecording.stopPlaying()
+                                        AudioManagerQuiz.audioRecording.stop5secTickPlaying()
                                         engine?.leaveChannel()
                                         binding.callTime.stop()
                                         openFavouritePartnerScreen()
@@ -1178,6 +1179,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                                             }
                                         }
                                         AudioManagerQuiz.audioRecording.stopPlaying()
+                                        AudioManagerQuiz.audioRecording.stop5secTickPlaying()
                                         engine?.leaveChannel()
                                         binding.callTime.stop()
                                         openFavouritePartnerScreen()
