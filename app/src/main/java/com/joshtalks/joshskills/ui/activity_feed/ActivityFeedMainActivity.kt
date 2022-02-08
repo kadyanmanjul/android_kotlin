@@ -4,24 +4,20 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFeedMainBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
 
-class ActivityFeedMainActivity : AppCompatActivity() {
+class ActivityFeedMainActivity : BaseActivity() {
     lateinit var binding: ActivityFeedMainBinding
     private var startTime = 0L
     private var impressionId: String = EMPTY
@@ -41,9 +37,9 @@ class ActivityFeedMainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed_main)
         binding.lifecycleOwner = this
         startTime = System.currentTimeMillis()
-        initView()
-        getData()
         addObserver()
+        getData()
+        initView()
         addListeners()
     }
 
@@ -82,8 +78,6 @@ class ActivityFeedMainActivity : AppCompatActivity() {
         viewModel.currentFeed.observe(this) {
                 feedList.add(0,it)
                 adapter.notifyItemInserted(0)
-
-
             if(layoutManager.findFirstCompletelyVisibleItemPosition()==0){
                 binding.scrollToEndButton.visibility = View.GONE
                 recyclerView.layoutManager?.scrollToPosition(0)

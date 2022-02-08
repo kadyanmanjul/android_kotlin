@@ -6,9 +6,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.util.Log
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -19,15 +17,11 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.TextDrawable
-import com.joshtalks.joshskills.core.getUserNameInShort
 import de.hdodenhof.circleimageview.CircleImageView
 
 @BindingAdapter("partialTextColor")
 fun TextView.setColorize(subStringToColorize: String) {
     val spannable: Spannable = SpannableString(text)
-    Log.e("mohit", "executed")
     spannable.setSpan(
         ForegroundColorSpan(getColorHexCode()),
         0,
@@ -46,7 +40,6 @@ fun TextView.setColorize(subStringToColorize: String) {
 @BindingAdapter("imageResource")
 fun CircleImageView.setImage(url: String?) {
     if (url.isNullOrEmpty()) {
-//        setUserInitial(getRandomName(), dpToPx)
         this.setImageResource(R.drawable.ic_call_placeholder)
     } else {
         val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
@@ -64,27 +57,6 @@ fun CircleImageView.setImage(url: String?) {
             .into(this)
     }
 }
-
-fun CircleImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRound(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color)
-        )
-    this.background = drawable
-    this.setImageDrawable(drawable)
-}
-
 fun getColorHexCode(): Int {
     val colorArray = arrayOf(
         "#f83a7e", "#2213fa", "#d5857a",
