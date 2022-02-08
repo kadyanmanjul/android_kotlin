@@ -39,6 +39,9 @@ interface GameApiService {
     @POST("$DIR/fpp/addfpp/")
     suspend fun addUserAsFpp(@Body params: AddFavouritePartner): Response<Success>
 
+    @GET("$DIR/fpp/delete_inactive_teams_from_redis_queue/")
+    suspend fun deleteInactiveTeam(@Query("user_id") userId: String)
+
     //Random
 
     @POST("$DIR/random/search_random_user/")
@@ -99,6 +102,9 @@ interface GameApiService {
 
     @POST("$DIR/quiz/save_call_duration/")
     suspend fun saveCallDuration(@Body prams: SaveCallDuration): Response<CallDurationResponse>
+
+    @POST("$DIR/quiz/check_already_fpp/")
+    suspend fun checkUserAlreadyFppOrNot(@Body params: CheckAlreadyFpp) : Response<CheckAlreadyFppResponse>
 
     @POST("$DIR/quiz/impression/track_game_impressions/")
     @JvmSuppressWildcards

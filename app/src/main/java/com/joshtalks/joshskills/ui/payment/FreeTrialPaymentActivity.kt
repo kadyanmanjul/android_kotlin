@@ -69,10 +69,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     var headingText = mutableListOf<String>()
     private var countdownTimerBack: CountdownTimerBack? = null
 
-    lateinit var pdfUrl : String
+    var pdfUrl : String?= null
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
     lateinit var fileName : String
+    var isPointsScoredMoreThanEqualTo100 = false
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -116,15 +117,24 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
+        if (testId.isBlank()){
+            testId = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+        }
 
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
+        viewModel.getPointsSummary()
         logNewPaymentPageOpened()
 
         viewModel.getD2pSyllabusPdfData()
         binding.syllabusPdfCard.setOnClickListener {
-            getPermissionAndDownloadSyllabus(pdfUrl)
+            if(pdfUrl.isNullOrBlank().not()) {
+                getPermissionAndDownloadSyllabus(pdfUrl!!)
+            }else{
+                showToast("Something Went wrong")
+            }
         }
         viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
     }
@@ -212,7 +222,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         R.drawable.blue_rectangle_with_blue_bound_stroke
                     )
                 isEnglishCardTapped = true
-                binding.materialTextView.text = buttonText.get(index)
+                if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
+                    binding.materialTextView.text = getString(R.string.achieve_100_points_first)
+                    binding.materialTextView.isEnabled = false
+                    binding.materialTextView.alpha = .5f
+                }else{
+                    binding.materialTextView.text = buttonText.get(index)
+                    binding.materialTextView.isEnabled = true
+                    binding.materialTextView.alpha = 1f
+                }
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.GONE
             } catch (ex: Exception) {
@@ -231,6 +249,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.englishCard.background =
                     ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
                 binding.materialTextView.text = buttonText.get(index)
+                binding.materialTextView.isEnabled = true
+                binding.materialTextView.alpha = 1f
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.VISIBLE
                 isEnglishCardTapped = false
@@ -268,6 +288,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
             override fun onTimerFinish() {
+                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
         }
@@ -393,6 +414,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         startTimer(it.expireTime.time - System.currentTimeMillis())
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                        PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     }
                 } else {
                     binding.freeTrialTimer.visibility = View.GONE
@@ -417,6 +439,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         viewModel.d2pSyllabusPdfResponse.observe(this,{
             pdfUrl = it.syllabusPdfLink
+        })
+        viewModel.pointsHistoryLiveData.observe(this, {
+            if(it.totalPoints != null && it.totalPoints >= 100){
+                isPointsScoredMoreThanEqualTo100 = true
+            }
         })
     }
 
@@ -491,9 +518,39 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     override fun onPaymentError(p0: Int, p1: String?) {
         // isBackPressDisabled = true
-        uiHandler.post {
-            showPaymentFailedDialog()
-        }
+        viewModel.mentorPaymentStatus.observe(this, {
+            when(it) {
+                true ->{
+                    if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+                        PrefManager.put(IS_DEMO_P2P, false)
+                    }
+                    val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+                    if (testId == freeTrialTestId) {
+                        PrefManager.put(IS_COURSE_BOUGHT, true)
+                    }
+                    // isBackPressDisabled = true
+                    razorpayOrderId.verifyPayment()
+                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0))
+                    //viewModel.updateSubscriptionStatus()
+
+                    uiHandler.post {
+                        PrefManager.put(IS_PAYMENT_DONE, true)
+                        showPaymentProcessingFragment()
+                    }
+
+                    uiHandler.postDelayed({
+                        navigateToStartCourseActivity()
+                    }, 1000L * 5L)
+                }
+                false -> {
+                    uiHandler.post {
+                        showPaymentFailedDialog()
+                    }
+                }
+            }
+        })
+
     }
 
     @Synchronized
@@ -507,6 +564,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             PrefManager.put(IS_COURSE_BOUGHT, true)
             if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
+            }
+            if(isEnglishCardTapped && isPointsScoredMoreThanEqualTo100){
+                viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
             }
         }
         // isBackPressDisabled = true

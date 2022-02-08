@@ -1,20 +1,26 @@
 package com.joshtalks.joshskills.ui.userprofile
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.DATE_FORMATTER
+import com.joshtalks.joshskills.core.DD_MM_YYYY
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.MAX_YEAR
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
+import com.joshtalks.joshskills.core.getRandomName
+import com.joshtalks.joshskills.core.hideKeyboard
+import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentEditProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
@@ -74,6 +80,27 @@ class EditProfileFragment : DialogFragment() {
         initDOBPicker()
         addObservers()
         addListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeObserver()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
+    private fun subscribeObserver() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { showToast("Something Went Wrong") }
+                .subscribe {
+                    dismiss()
+                })
     }
 
     private fun initDOBPicker() {
@@ -155,14 +182,6 @@ class EditProfileFragment : DialogFragment() {
                 showProgressBar()
             }
         }
-
-        compositeDisposable.add(
-            RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    dismiss()
-                })
     }
 
     private fun addListeners() {

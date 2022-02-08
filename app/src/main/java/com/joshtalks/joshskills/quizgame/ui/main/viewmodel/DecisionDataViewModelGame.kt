@@ -24,6 +24,7 @@ class DecisionDataViewModelGame(var decisionViewModelApplication: Application) :
     var addToRoom: MutableLiveData<AddToRoomResponse> = MutableLiveData()
     var playAgainData: MutableLiveData<Success> = MutableLiveData()
     val saveCallDuration: MutableLiveData<CallDurationResponse> = MutableLiveData()
+    val checkAlreadyFppLiveData: MutableLiveData<CheckAlreadyFppResponse> = MutableLiveData()
 
     fun saveRoomDetails(saveRoomDetails: SaveRoomDetails) {
         try {
@@ -122,6 +123,20 @@ class DecisionDataViewModelGame(var decisionViewModelApplication: Application) :
                     val response = saveRoomRepo.saveDurationOfCall(callDuration)
                     if (response?.isSuccessful == true && response.body() != null) {
                         saveCallDuration.postValue(response.body())
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+        }
+    }
+
+    fun checkUserAlreadyFppOrNot(checkAlreadyFpp: CheckAlreadyFpp){
+        try {
+            if (UpdateReceiver.isNetworkAvailable()) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val response = saveRoomRepo.checkAlreadyFppOrNot(checkAlreadyFpp)
+                    if (response?.isSuccessful == true && response.body() != null) {
+                        checkAlreadyFppLiveData.postValue(response.body())
                     }
                 }
             }

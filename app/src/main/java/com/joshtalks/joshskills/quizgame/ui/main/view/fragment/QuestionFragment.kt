@@ -47,7 +47,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private var timer: CountDownTimer? = null
     private var givenTeamId: String? = null
     private var currentUserId: String? = null
-
+    var isTickSoundPlay :Boolean?= true
     private var factory: QuestionProviderFactory? = null
     private var questionViewModel: QuestionViewModelGame? = null
     private var choiceValue: String? = null
@@ -55,6 +55,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private var gameFirebaseDatabase: GameFirebaseDatabase = GameFirebaseDatabase()
 
     private var isCorrect: String? = null
+    private var secondTeamAns :String?=null
 
     private var roomId: String? = null
 
@@ -193,13 +194,14 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                 drawTriangleOnCard(binding.imageCardLeft1)
                 binding.progress1.pauseProgress()
                 selectOptionCheck(
-                    currentUserId ?: "",
+                    currentUserId ?: EMPTY,
                     team1Id,
                     team2Id,
-                    roomId ?: "",
+                    roomId ?: EMPTY,
                     0
                 )
                 getSelectOptionWithAnim(binding.answer1.text.toString(), 0)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -213,13 +215,14 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                 drawTriangleOnCard(binding.imageCardLeft2)
                 binding.progress1.pauseProgress()
                 selectOptionCheck(
-                    currentUserId ?: "",
+                    currentUserId ?: EMPTY,
                     team1Id,
                     team2Id,
-                    roomId ?: "",
+                    roomId ?: EMPTY,
                     1
                 )
                 getSelectOptionWithAnim(binding.answer2.text.toString(), 1)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -233,14 +236,15 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                 drawTriangleOnCard(binding.imageCardLeft3)
                 binding.progress1.pauseProgress()
                 selectOptionCheck(
-                    currentUserId ?: "",
+                    currentUserId ?: EMPTY,
                     team1Id,
                     team2Id,
-                    roomId ?: "",
+                    roomId ?: EMPTY,
                     2
                 )
 
                 getSelectOptionWithAnim(binding.answer3.text.toString(), 2)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -254,13 +258,14 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                 drawTriangleOnCard(binding.imageCardLeft4)
                 binding.progress1.pauseProgress()
                 selectOptionCheck(
-                    currentUserId ?: "",
+                    currentUserId ?: EMPTY,
                     team1Id,
                     team2Id,
-                    roomId ?: "",
+                    roomId ?: EMPTY,
                     3
                 )
                 getSelectOptionWithAnim(binding.answer4.text.toString(), 3)
+                isTickSoundPlay = false
             } catch (ex: Exception) {
             }
         }
@@ -273,7 +278,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
         }
 
         try {
-            gameFirebaseDatabase.getMuteOrUnMute(currentUserId ?: "", this)
+            gameFirebaseDatabase.getMuteOrUnMute(currentUserId ?: EMPTY, this)
         } catch (ex: Exception) {
         }
         buttonEnableDisable()
@@ -325,7 +330,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
         opponentTeamId: String?
     ) {
         gameFirebaseDatabase.createShowAnimForAnotherUser(partnerId, isCorrect, choiceAnswer, marks)
-        gameFirebaseDatabase.createShowAnimForOpponentTeam(opponentTeamId ?: "", isCorrect, marks)
+        gameFirebaseDatabase.createShowAnimForOpponentTeam(opponentTeamId ?: EMPTY, isCorrect, marks)
     }
 
     private fun getQuestions() {
@@ -349,22 +354,23 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private fun setupViewModel() {
         try {
             factory = QuestionProviderFactory(requireActivity().application)
-            questionViewModel =
-                factory.let { ViewModelProvider(this, it!!).get(QuestionViewModelGame::class.java) }
+            questionViewModel = ViewModelProvider(this,factory!!).get(QuestionViewModelGame::class.java)
             questionViewModel?.getQuizQuestion(
                 QuestionRequest(
                     QUESTION_COUNT,
-                    roomId ?: "",
+                    roomId ?: EMPTY,
                     currentUserId
                 )
             )
             try {
                 questionViewModel?.getRoomUserDataTemp(
                     RandomRoomData(
-                        roomId ?: "",
-                        currentUserId ?: ""
+                        roomId ?: EMPTY,
+                        currentUserId ?: EMPTY
                     )
                 )
+
+                createAnim()
             } catch (e: Exception) {
 
             }
@@ -387,20 +393,16 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                     seconds = (millisUntilFinished / 1000).toInt()
                     seconds %= 60
                     binding.count.text = String.format("%2d", seconds)
-                    if (seconds == 5) {
-                        activity?.application?.let {
-                            AudioManagerQuiz.audioRecording.startPlaying(
-                                it,
-                                R.raw.voice_5_second,
-                                false
-                            )
-                        }
+                    if (seconds == 5 && isTickSoundPlay == true) {
+                        activity?.let { AudioManagerQuiz.audioRecording.play5secTick(it) }
                     }
                 }
 
                 override fun onFinish() {
                     Timber.d("$position")
                     AudioManagerQuiz.audioRecording.stopPlaying()
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: EMPTY)
+                    gameFirebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: EMPTY)
                     displayAnswerAndShowNextQuestion()
                 }
             }
@@ -458,6 +460,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             binding.answer3.setTextColor(getBlackColor())
             binding.answer4.setTextColor(getBlackColor())
             position++
+            isTickSoundPlay  = true
             try {
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(100)
@@ -495,8 +498,8 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             } catch (ex: Exception) {
             }
 
-            gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
-            gameFirebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: "")
+            gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: EMPTY)
+            gameFirebaseDatabase.deletePartnerCutCard(currentUserTeamId ?: EMPTY)
             makeAgainCardSquare()
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(1500)
@@ -560,54 +563,54 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
 
             try {
                 gameFirebaseDatabase.getOpponentShowAnim(
-                    currentUserTeamId ?: "",
+                    currentUserTeamId ?: EMPTY,
                     this@QuestionFragment
                 )
-                gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: EMPTY, this@QuestionFragment)
                 gameFirebaseDatabase.getPartnerCutCard(
-                    currentUserTeamId ?: "",
+                    currentUserTeamId ?: EMPTY,
                     this@QuestionFragment
                 )
                 gameFirebaseDatabase.getOpponentCutCard(
-                    currentUserTeamId ?: "",
+                    currentUserTeamId ?: EMPTY,
                     this@QuestionFragment
                 )
             } catch (ex: Exception) {
                 Timber.d(ex)
             }
 
-            val imageUrl1 = team1User1ImageUrl?.replace("\n", "")
+            val imageUrl1 = team1User1ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage1.setUserImageOrInitials(
                 imageUrl1,
-                team1User1Name ?: "",
+                team1User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team1User1Name.text = getSplitName(team1User1Name)
 
 
-            val imageUrl2 = team1User2ImageUrl?.replace("\n", "")
+            val imageUrl2 = team1User2ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
-                team1User2Name ?: "",
+                team1User2Name ?: EMPTY,
                 30,
                 true
             )
             binding.team1User2Name.text = getSplitName(team1User2Name)
 
-            val imageUrl3 = team2User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team2User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team2User1Name ?: "",
+                team2User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = getSplitName(team2User1Name)
 
-            val imageUrl4 = team2User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team2User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team2User2Name ?: "",
+                team2User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -626,53 +629,53 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
 
             try {
                 gameFirebaseDatabase.getOpponentShowAnim(
-                    currentUserTeamId ?: "",
+                    currentUserTeamId ?: EMPTY,
                     this@QuestionFragment
                 )
-                gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: "", this@QuestionFragment)
+                gameFirebaseDatabase.getAnimShow(currentUserTeamId ?: EMPTY, this@QuestionFragment)
                 gameFirebaseDatabase.getPartnerCutCard(
-                    currentUserTeamId ?: "",
+                    currentUserTeamId ?: EMPTY,
                     this@QuestionFragment
                 )
                 gameFirebaseDatabase.getOpponentCutCard(
-                    currentUserTeamId ?: "",
+                    currentUserTeamId ?: EMPTY,
                     this@QuestionFragment
                 )
             } catch (ex: Exception) {
                 Timber.d(ex)
             }
 
-            val imageUrl1 = team2User1ImageUrl?.replace("\n", "")
+            val imageUrl1 = team2User1ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage1.setUserImageOrInitials(
                 imageUrl1,
-                team2User1Name ?: "",
+                team2User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team1User1Name.text = getSplitName(team2User1Name)
 
-            val imageUrl2 = team2User2ImageUrl?.replace("\n", "")
+            val imageUrl2 = team2User2ImageUrl?.replace("\n", EMPTY)
             binding.team1UserImage2.setUserImageOrInitials(
                 imageUrl2,
-                team2User2Name ?: "",
+                team2User2Name ?: EMPTY,
                 30,
                 true
             )
             binding.team1User2Name.text = getSplitName(team2User2Name)
 
-            val imageUrl3 = team1User1ImageUrl?.replace("\n", "")
+            val imageUrl3 = team1User1ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage1.setUserImageOrInitials(
                 imageUrl3,
-                team1User1Name ?: "",
+                team1User1Name ?: EMPTY,
                 30,
                 true
             )
             binding.team2User1Name.text = getSplitName(team1User1Name)
 
-            val imageUrl4 = team1User2ImageUrl?.replace("\n", "")
+            val imageUrl4 = team1User2ImageUrl?.replace("\n", EMPTY)
             binding.team2UserImage2.setUserImageOrInitials(
                 imageUrl4,
-                team1User2Name ?: "",
+                team1User2Name ?: EMPTY,
                 30,
                 true
             )
@@ -813,9 +816,9 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
 
             questionViewModel?.getSelectOption(
                 roomId,
-                question.que[position].id ?: "",
-                question.que[position].choices?.get(pos)?.id ?: "",
-                givenTeamId ?: ""
+                question.que[position].id ?: EMPTY,
+                question.que[position].choices?.get(pos)?.id ?: EMPTY,
+                givenTeamId ?: EMPTY
             )
         } catch (ex: Exception) {
 
@@ -825,25 +828,10 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     private fun getSelectOptionWithAnim(choiceAnswer: String, pos: Int) {
         disableCardClick()
         try {
-
-            activity?.let {
                 isCorrect = question.que[position].choices?.get(pos)?.isCorrect.toString()
-                questionViewModel?.selectOption?.observe(it, {
-                    choiceAnswer(choiceAnswer, isCorrect ?: "")
-                    val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
-                    if (it.message == BOTH_TEAM_SELECTED) {
-                        gameFirebaseDatabase.createOpponentTeamShowCutCard(
-                            opponentTeamId ?: "",
-                            isCorrect ?: "",
-                            choiceAnswer
-                        )
-                        gameFirebaseDatabase.createPartnerShowCutCard(
-                            currentUserTeamId ?: "",
-                            isCorrect ?: "",
-                            firstTeamAnswer ?: ""
-                        )
-                    }
-                })
+                choiceAnswer(choiceAnswer, isCorrect ?: EMPTY)
+                secondTeamAns = choiceAnswer
+
                 if (isCorrect == TRUE) {
                     marks += if (isLastQuestion) {
                         (seconds * 2)
@@ -878,21 +866,39 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                         opponentTeamId
                     )
                 }
-
-            }
         } catch (ex: Exception) {
         }
     }
 
+    fun createAnim(){
+        activity?.let {
+            questionViewModel?.selectOption?.observe(it, {
+                val firstTeamAnswer = it.choiceData?.get(0)?.choiceData
+                if (it.message == BOTH_TEAM_SELECTED) {
+                    gameFirebaseDatabase.createOpponentTeamShowCutCard(
+                        opponentTeamId ?: EMPTY,
+                        isCorrect ?: EMPTY,
+                        secondTeamAns?:EMPTY
+                    )
+                    gameFirebaseDatabase.createPartnerShowCutCard(
+                        currentUserTeamId ?: EMPTY,
+                        isCorrect ?: EMPTY,
+                        firstTeamAnswer ?: EMPTY
+                    )
+                }
+            })
+        }
+    }
+
     private fun getDisplayAnswerAfterQuesComplete(): String {
-        questionViewModel?.getDisplayAnswerData(roomId ?: "", question.que[position].id ?: "")
+        questionViewModel?.getDisplayAnswerData(roomId ?: EMPTY, question.que[position].id ?: EMPTY)
         enableCardClick()
         activity?.let {
             questionViewModel?.displayAnswerData?.observe(it, { displayAnswerData ->
                 choiceValue = displayAnswerData.correctChoiceValue
             })
         }
-        return choiceValue ?: ""
+        return choiceValue ?: EMPTY
     }
 
     override fun onGetRoomId(currentUserRoomID: String?, mentorId: String) {
@@ -995,6 +1001,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
     ) {
         binding.progress1.pauseProgress()
         disableCardClick()
+        isTickSoundPlay = false
         choiceAnswer(choiceAnswer, isCorrect)
         marks = marks1.toInt()
         binding.marks1.text = marks.toString()
@@ -1083,7 +1090,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             } catch (ex: Exception) {
             }
         }
-        gameFirebaseDatabase.deleteOpponentAnimTeam(opponentTeamId ?: "")
+        gameFirebaseDatabase.deleteOpponentAnimTeam(opponentTeamId ?: EMPTY)
     }
 
     fun onBackPress() {
@@ -1100,9 +1107,9 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
         val startTime: String = (SystemClock.elapsedRealtime() - binding.callTime.base).toString()
         questionViewModel?.saveCallDuration(
             SaveCallDuration(
-                currentUserTeamId ?: "",
+                currentUserTeamId ?: EMPTY,
                 startTime.toInt().div(1000).toString(),
-                currentUserId ?: ""
+                currentUserId ?: EMPTY
             )
         )
 
@@ -1110,10 +1117,10 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             try {
                 questionViewModel?.getClearRadius(
                     SaveCallDurationRoomData(
-                        roomId ?: "",
-                        currentUserId ?: "",
-                        currentUserTeamId ?: "",
-                        callTimeCount ?: ""
+                        roomId ?: EMPTY,
+                        currentUserId ?: EMPTY,
+                        currentUserTeamId ?: EMPTY,
+                        callTimeCount ?: EMPTY
                     )
                 )
                 activity?.let {
@@ -1133,6 +1140,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                                             }
                                         }
                                         AudioManagerQuiz.audioRecording.stopPlaying()
+                                        AudioManagerQuiz.audioRecording.stop5secTickPlaying()
                                         engine?.leaveChannel()
                                         binding.callTime.stop()
                                         openFavouritePartnerScreen()
@@ -1148,10 +1156,10 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             try {
                 questionViewModel?.deleteUserRoomData(
                     SaveCallDurationRoomData(
-                        roomId ?: "",
-                        currentUserId ?: "",
-                        currentUserTeamId ?: "",
-                        callTimeCount ?: ""
+                        roomId ?: EMPTY,
+                        currentUserId ?: EMPTY,
+                        currentUserTeamId ?: EMPTY,
+                        callTimeCount ?: EMPTY
                     )
                 )
                 activity?.let {
@@ -1171,6 +1179,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                                             }
                                         }
                                         AudioManagerQuiz.audioRecording.stopPlaying()
+                                        AudioManagerQuiz.audioRecording.stop5secTickPlaying()
                                         engine?.leaveChannel()
                                         binding.callTime.stop()
                                         openFavouritePartnerScreen()
@@ -1232,7 +1241,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                     roomId,
                     currentUserTeamId,
                     startTime,
-                    fromType ?: ""
+                    fromType ?: EMPTY
                 ), "Win"
             )
             ?.remove(this)
@@ -1285,19 +1294,19 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
             when (choiceAnswer) {
                 binding.answer1.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight1)
-                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: EMPTY)
                 }
                 binding.answer2.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight2)
-                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: EMPTY)
                 }
                 binding.answer3.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight3)
-                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: EMPTY)
                 }
                 binding.answer4.text -> {
                     drawTriangleOnCardRight(binding.imageCardRight4)
-                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: "")
+                    gameFirebaseDatabase.deleteOpponentCutCard(currentUserTeamId ?: EMPTY)
                 }
             }
         } catch (ex: Exception) {
@@ -1394,7 +1403,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                         R.drawable.ic_new_mic_off
                     )
                 )
-                gameFirebaseDatabase.createMicOnOff(partnerId ?: "", "true")
+                gameFirebaseDatabase.createMicOnOff(partnerId ?: EMPTY, "true")
             } else {
                 flag = 1
                 unMuteCall()
@@ -1405,7 +1414,7 @@ class QuestionFragment : Fragment(), GameFirebaseDatabase.OnNotificationTrigger,
                         R.drawable.ic_new_mic
                     )
                 )
-                gameFirebaseDatabase.createMicOnOff(partnerId ?: "", "false")
+                gameFirebaseDatabase.createMicOnOff(partnerId ?: EMPTY, "false")
             }
         } catch (ex: Exception) {
 

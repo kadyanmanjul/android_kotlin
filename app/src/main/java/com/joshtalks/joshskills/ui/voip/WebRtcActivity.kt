@@ -6,16 +6,18 @@ import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Typeface
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.AudioManager
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
-import android.os.SystemClock
+import android.os.*
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -73,11 +75,15 @@ const val IS_DEMO_P2P = "is_demo_p2p"
 const val IS_CALL_CONNECTED = "is_call_connected"
 const val OPPOSITE_USER_UID = "opp_user_uid"
 
-class WebRtcActivity : AppCompatActivity() {
+class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private val TAG = "WebRtcActivity"
+    private lateinit var powerManager: PowerManager
+    private lateinit var lock: PowerManager.WakeLock
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    private lateinit var sensorManager: SensorManager
+    private var proximity: Sensor? = null
     private lateinit var scope: CoroutineScope
     private val compositeDisposable = CompositeDisposable()
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
@@ -86,6 +92,8 @@ class WebRtcActivity : AppCompatActivity() {
     }
     private var isAnimationCancled = false
     private var callType: CallType? = null
+    private var callieId: String = ""
+    private var callerId: String = ""
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -306,6 +314,12 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Get an instance of the sensor service, and use that to get an instance of
+        // a particular sensor.
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag")
         isIncomingCallHasNewChannel = false
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -469,11 +483,16 @@ class WebRtcActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        proximity?.also { proximity ->
+            sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
+        }
         subscribeRXBus()
     }
 
     override fun onPause() {
         super.onPause()
+        sensorManager.unregisterListener(this)
+        if(lock.isHeld) lock.release()
         compositeDisposable.clear()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         while (WebRtcService.incomingWaitJobsList.isNotEmpty())
@@ -509,7 +528,7 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.topicHeader.visibility = View.VISIBLE
                 binding.topicName.text = it["topic_name"]
                 Log.d(TAG, "updateStatusLabel: addObserver -#@- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
-                if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
+                if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
                         "from group \"${WebRtcService.currentCallingGroupName}\""
@@ -568,7 +587,7 @@ class WebRtcActivity : AppCompatActivity() {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
-                    if(isCallOnGoing.value!=true) {
+                    if (isCallOnGoing.value != true) {
                         acceptCall(callAcceptApi)
                     }
                     if (isCallFavoritePP()) {
@@ -616,6 +635,9 @@ class WebRtcActivity : AppCompatActivity() {
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
+            callerId = map?.get("caller_uid").toString()
+            callieId = CurrentCallDetails.callieUid
+
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -644,7 +666,7 @@ class WebRtcActivity : AppCompatActivity() {
                     } else if (callConnected && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Practice with Partner"
                         Log.d(TAG, "updateStatusLabel:  P2P -#- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
-                        if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
+                        if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                             binding.tvGroupName.visibility = View.VISIBLE
                             binding.tvGroupName.text =
                                 "from group \"${WebRtcService.currentCallingGroupName}\""
@@ -653,7 +675,7 @@ class WebRtcActivity : AppCompatActivity() {
                     }
                 }
                 binding.callStatus.text = "Practice with Partner"
-                if(isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
+                if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
                         "from group \"${WebRtcService.currentCallingGroupName}\""
@@ -940,13 +962,15 @@ class WebRtcActivity : AppCompatActivity() {
         if (time <= 0) {
             time = callTime
         }
+        if(PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)){
+            viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+            PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
+        }
         val channelName2 =
             if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
         if (time > 0 && channelName2.isNullOrEmpty().not()) {
             runOnUiThread {
                 try {
-                    val currentId =mBoundService?.getUserAgoraId()
-                    val callerId= Integer.parseInt(mBoundService?.getOppositeUserInfo()?.get("uid"))
                     binding.placeholderBg.visibility = View.VISIBLE
                     VoipCallFeedbackActivity.startPtoPFeedbackActivity(
                         channelName = channelName2,
@@ -957,10 +981,10 @@ class WebRtcActivity : AppCompatActivity() {
                         yourAgoraId = mBoundService?.getUserAgoraId(),
                         activity = this,
                         flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                        callerId = callerId!!,
-                        currentUserId = currentId!!
+                        callerId = callerId.toInt(),
+                        currentUserId = callieId.toInt()
                     )
-                } catch (ex:Exception){
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
                 this.finish()
@@ -1107,5 +1131,29 @@ class WebRtcActivity : AppCompatActivity() {
                 CurrentCallDetails.callConnectedScreenVisible()
             }
         }
+    }
+
+    override fun onSensorChanged(p0: SensorEvent?) {
+
+        if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
+//            face is near to sensor
+            if (mBoundService?.getSpeaker() == false) {
+                turnScreenOff()
+            }
+        } else {
+//            face is away from sensor
+            turnScreenOn()
+        }
+    }
+
+    private fun turnScreenOff() {
+        if (!lock.isHeld) lock.acquire(10 * 60 * 1000L /*10 minutes*/)
+    }
+
+    private fun turnScreenOn() {
+        if (lock.isHeld) lock.release()
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 }

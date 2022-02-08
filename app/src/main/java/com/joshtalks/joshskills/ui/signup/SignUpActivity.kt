@@ -388,7 +388,7 @@ class SignUpActivity : BaseActivity() {
         }
         fbCallbackManager.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().onActivityResultObtained(this, resultCode, data)
+            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
             return
         }
         hideProgressBar()

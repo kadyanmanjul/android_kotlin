@@ -201,9 +201,11 @@ class GrammarButtonView : FrameLayout {
         if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
             RxBus2.publish(
                 VideoShowEvent(
-                    EMPTY,
-                    reviseVideoObject?.id,
-                    reviseVideoObject?.video_url
+                    videoTitle = EMPTY,
+                    videoId = reviseVideoObject?.id,
+                    videoUrl = reviseVideoObject?.video_url,
+                    videoWidth = reviseVideoObject?.video_width ?: 0,
+                    videoHeight = reviseVideoObject?.video_height ?: 0
                 )
             )
         }
@@ -388,7 +390,6 @@ class GrammarButtonView : FrameLayout {
         if (reviseVideoObject?.video_url.isNullOrBlank()) {
             videoIv.visibility = GONE
             animatedVideoIv.visibility = GONE
-            Log.e(TAG, "setWrongView: Null Video Link")
         } else {
             if (PrefManager.isInSet(
                     key = LAST_SEEN_VIDEO_ID,
@@ -396,12 +397,10 @@ class GrammarButtonView : FrameLayout {
                     isConsistent = false,
                 )
             ) {
-                Log.e(TAG, "setWrongView: seenVideo")
                 animatedVideoIv.visibility = GONE
                 videoIv.visibility = VISIBLE
                 videoIv.setImageResource(R.drawable.ic_video_seen)
             } else {
-                Log.e(TAG, "setWrongView: did not see Video")
                 videoIv.visibility = INVISIBLE
                 animatedVideoIv.visibility = VISIBLE
             }

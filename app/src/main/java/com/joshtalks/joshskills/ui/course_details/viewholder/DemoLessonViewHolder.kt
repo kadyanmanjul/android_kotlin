@@ -46,9 +46,11 @@ class DemoLessonViewHolder(
 
         RxBus2.publish(
             VideoShowEvent(
-                data.title,
-                data.video.id,
-                data.video.video_url
+                videoTitle = data.title,
+                videoId = data.video.id,
+                videoUrl = data.video.video_url,
+                videoWidth = data.video.video_width,
+                videoHeight = data.video.video_height,
             )
         )
     }

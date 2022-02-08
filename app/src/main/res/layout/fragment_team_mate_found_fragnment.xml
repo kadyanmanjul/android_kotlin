@@ -29,10 +29,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_30sdp"
-                android:src="@drawable/ic_game_logo_grad"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_game_logo_grad" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -42,11 +42,10 @@
                 android:layout_below="@id/txt_quiz"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_42sdp"
+                android:letterSpacing="0"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:letterSpacing="0"
-                android:maxLines="1"
-                android:minLines="1"
+                android:singleLine="true"
                 android:text="@string/your_team_mate"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
                 android:textColor="@color/white"
@@ -99,8 +98,7 @@
                         android:ellipsize="end"
                         android:gravity="center"
                         android:letterSpacing="0"
-                        android:maxLines="1"
-                        android:minLines="1"
+                        android:singleLine="true"
                         android:text="@string/user_name"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
@@ -148,8 +146,7 @@
                         android:ellipsize="end"
                         android:gravity="center"
                         android:letterSpacing="0"
-                        android:maxLines="1"
-                        android:minLines="1"
+                        android:singleLine="true"
                         android:text="@string/user_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
                         android:textColor="@color/white"

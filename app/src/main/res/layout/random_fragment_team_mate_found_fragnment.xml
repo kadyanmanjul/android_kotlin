@@ -22,16 +22,16 @@
             android:layout_height="match_parent"
             android:background="@drawable/ic_game_back">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/txt_quiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="35dp"
-                android:src="@drawable/ic_game_logo_grad"
+                android:layout_marginTop="@dimen/_30sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_game_logo_grad" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt_quiz1"
@@ -86,12 +86,11 @@
                         android:layout_below="@+id/image_rel"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
+                        android:letterSpacing="0"
+                        android:text="@string/user_name"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:letterSpacing="0"
-                        android:maxLines="1"
-                        android:minLines="1"
-                        android:text="@string/user_name"
+                        android:singleLine="true"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"
                         android:textColor="@color/white"
@@ -133,11 +132,10 @@
                         android:layout_below="@+id/image_rel1"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="@dimen/_6sdp"
+                        android:letterSpacing="0"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:letterSpacing="0"
-                        android:maxLines="1"
-                        android:minLines="1"
+                        android:singleLine="true"
                         android:text="@string/user_name"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2_Bold"

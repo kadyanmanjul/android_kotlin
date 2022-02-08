@@ -7,7 +7,6 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.google.gson.Gson
-
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.AppObjectController
@@ -18,26 +17,19 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
-import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
-import com.joshtalks.joshskills.ui.group.constants.*
-import com.joshtalks.joshskills.ui.group.data.GroupApiService
+import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
+import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.lib.PageInfo
 import com.joshtalks.joshskills.ui.group.model.*
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupRequest
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
-import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
-import com.joshtalks.joshskills.ui.group.model.PageInfo
-import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
-
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
@@ -51,7 +43,6 @@ import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import id.zelory.compressor.Compressor
 import java.io.File
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,10 +57,8 @@ private const val TAG = "GroupRepository"
 
 class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     // TODO: Will use dagger2 for injecting apiService
-    private val apiService: GroupApiService =
-        AppObjectController.retrofit.create(GroupApiService::class.java)
-    private val analyticsService: GroupsAnalyticsService =
-        AppObjectController.retrofit.create(GroupsAnalyticsService::class.java)
+    private val apiService by lazy { AppObjectController.groupsNetworkService }
+    private val analyticsService by lazy { AppObjectController.groupsAnalyticsNetworkService }
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
     private val database = AppObjectController.appDatabase
@@ -108,7 +97,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     val message = messageItem.msg
                     if (messageItem.getMessageType() == RECEIVE_META_MESSAGE_LOCAL && message.contains("changed")) {
                         when (message.contains("changed the group icon")) {
-                            true -> { TODO("UPDATE IMAGE ICON") }
+                            true -> {
+                                //TODO("UPDATE IMAGE ICON")
+                            }
                             false -> {
                                 val newGroupName = message.substring(message.lastIndexOf("the group name to ") + 18)
                                 database.groupListDao().updateGroupName(pnMessageResult.channel, newGroupName)
@@ -225,8 +216,31 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
+    fun getGroupMemberList(groupId: String, adminId: String, pageInfo: PageInfo? = null): MemberResult {
+        val memberList = mutableListOf<GroupMember>()
+        var pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
+        do {
+            val pageMembers = pubnubResponse?.getMemberData(adminId)?.list ?: listOf()
+            memberList.addAll(pageMembers)
+            val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
+            pubnubResponse = chatService.getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
+        } while (pageMembers.isNotEmpty())
+        memberList.sortByDescending { it.isAdmin }
+        return MemberResult(memberList, memberList.size)
+    }
+
+    suspend fun getGroupOnlineCount(groupId: String): Int? {
+        return try {
+            val response = apiService.getGroupOnlineCount(groupId)
+            return (response["online_count"] as Double).toInt()
+        } catch (e: Exception) {
+            showToast("An error has occurred")
+            0
+        }
+    }
+
     suspend fun joinGroup(groupId: String): Boolean {
-        Log.e(TAG, "Joining group : ${groupId}")
+        Log.e(TAG, "Joining group : $groupId")
         val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
         if (response["success"] == true) {
             try {
@@ -368,9 +382,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
         analyticsService.groupImpressionDetails(request)
-
-    fun getGroupMemberList(groupId: String, admin: String): MemberResult? =
-        chatService.getChannelMembers(groupId = groupId, adminId = admin)
 
     private fun getCompressImage(path: String): String {
         return try {

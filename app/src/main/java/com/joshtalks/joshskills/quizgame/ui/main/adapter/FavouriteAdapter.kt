@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieDrawable
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.CustomFavouriteBinding
 import com.joshtalks.joshskills.quizgame.ui.data.model.Favourite
@@ -66,7 +67,7 @@ class FavouriteAdapter(
         fun bind(favouriteDemoData: Favourite?, position: Int) {
             binding.userImage.setUserImageOrInitials(
                 favouriteDemoData?.image,
-                favouriteDemoData?.name ?: "",
+                favouriteDemoData?.name ?: EMPTY,
                 30,
                 isRound = true
             )
@@ -124,7 +125,7 @@ class FavouriteAdapter(
             retStr = str?.substring(0, 1)?.uppercase() + str?.substring(1)
         } catch (e: Exception) {
         }
-        return retStr ?: ""
+        return retStr ?: EMPTY
     }
 
     interface QuizBaseInterface {

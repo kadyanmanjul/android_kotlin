@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -128,8 +129,11 @@ class ReportDialogFragment(function: () -> Unit) : BaseDialogFragment() {
                     putString(CHANNEL_NAME,channelName)
                 }
             }
+    }
 
-
-
+    override fun show(manager: FragmentManager, tag: String?) {
+        if (!manager?.isDestroyed && !manager.isStateSaved) {
+            super.show(manager, tag)
+        }
     }
 }

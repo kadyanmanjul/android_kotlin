@@ -47,6 +47,9 @@ class StartViewModelGame(var startVm: Application) : GameBaseViewModel(startVm) 
             if (Utils.isInternetAvailable()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val response = startRepo.getHomeInactive()
+                    if (response?.isSuccessful == true){
+                        startRepo.getDeleteInactiveTeam()
+                    }
                 }
             }
         } catch (ex: Throwable) {
@@ -66,5 +69,4 @@ class StartViewModelGame(var startVm: Application) : GameBaseViewModel(startVm) 
         } catch (ex: Throwable) {
         }
     }
-
 }

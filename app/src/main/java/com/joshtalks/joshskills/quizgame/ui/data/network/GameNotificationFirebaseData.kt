@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.google.android.gms.tasks.OnCompleteListener
+import com.joshtalks.joshskills.core.EMPTY
 
 const val REQUEST_NOTIFICATION = "RequestTemp"
 const val REQUEST_DECLINE = "RequestDecline"
@@ -29,12 +30,12 @@ class GameNotificationFirebaseData {
     fun createRequest(favUserId: String?, channelName: String?, mentorId: String) {
         val channel: HashMap<String, Any> = HashMap()
         channel["fromUserId"] = mentorId
-        channel["fromUserName"] = userName ?: ""
-        channel["fromImageUrl"] = imageUrl ?: ""
-        channel["channelName"] = channelName ?: ""
+        channel["fromUserName"] = userName ?: EMPTY
+        channel["fromImageUrl"] = imageUrl ?: EMPTY
+        channel["channelName"] = channelName ?: EMPTY
         channel["timestamp"] = FieldValue.serverTimestamp()
         channel["isAccept"] = "false"
-        collectionReference.document(favUserId ?: "").set(channel)
+        collectionReference.document(favUserId ?: EMPTY).set(channel)
     }
 
     fun getUserDataFromFirestore(
@@ -58,7 +59,8 @@ class GameNotificationFirebaseData {
                                 channelName,
                                 fromUserId,
                                 fromUserName,
-                                fromImageUrl ?: ""
+                                fromImageUrl ?: "",
+                                mentorId
                             )
                         }
                     }
@@ -269,7 +271,8 @@ class GameNotificationFirebaseData {
             channelName: String,
             fromUserId: String,
             fromUserName: String,
-            fromUserImage: String
+            fromUserImage: String,
+            mentorId: String
         )
 
         fun onNotificationForPartnerNotAcceptTemp(
