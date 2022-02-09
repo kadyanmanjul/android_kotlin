@@ -682,7 +682,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 customMessage.addProperty("action_from", "HAND_UNRAISE_BUTTON")
             }
             vm.sendCustomMessage(customMessage, vm.getModeratorId().toString())
-            vm.sendCustomMessage(customMessage, channelName.plus(".other"))
+            vm.sendCustomMessage(customMessage, channelName.plus("_other"))
 
         } catch (ex: Exception) {
             showToast(ex.toString())
@@ -829,7 +829,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 customMessage.addProperty("action", "INVITE_SPEAKER")
                 vm.sendCustomMessage(customMessage, it.toString())
                 customMessage.addProperty("action_from", "NOTIFICATOIN_ACCEPT")
-                vm.sendCustomMessage(customMessage, channelName.plus(".other"))
+                vm.sendCustomMessage(customMessage, channelName.plus("_other"))
             }
             binding.notificationBar.loadAnimationSlideUp()
         } else {
@@ -856,7 +856,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             customMessage.addProperty("action", "IS_HAND_RAISED")
             vm.sendCustomMessage(customMessage, vm.getModeratorId().toString())
             customMessage.addProperty("action_from", "NOTIFICATOIN_REJECT")
-            vm.sendCustomMessage(customMessage, channelName.plus(".other"))
+            vm.sendCustomMessage(customMessage, channelName.plus("_other"))
             binding.notificationBar.loadAnimationSlideUp()
             isHandRaised = !isHandRaised
             binding.apply {
@@ -869,7 +869,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 customMessage.addProperty("id", vm.getAgoraUid())
                 customMessage.addProperty("uid", it)
                 customMessage.addProperty("action", "DISMISS_HAND_RAISE_INVITE")
-                vm.sendCustomMessage(customMessage, channelName.plus(".other"))
+                vm.sendCustomMessage(customMessage, channelName.plus("_other"))
             }
         }
         binding.notificationBar.loadAnimationSlideUp()
@@ -1145,7 +1145,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             customMessage.addProperty("action", "INVITE_SPEAKER")
                             vm.sendCustomMessage(customMessage, userUid.toString())
                             customMessage.addProperty("action_from", "DIRECT_INVITE")
-                            vm.sendCustomMessage(customMessage, channelName.plus(".other"))
+                            vm.sendCustomMessage(customMessage, channelName.plus("_other"))
                         } else {
                             setNotificationWithoutAction(
                                 "Room has reached maximum allowed number of speakers." +
@@ -1194,7 +1194,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         customMessage.addProperty("action", "INVITE_SPEAKER")
         vm.sendCustomMessage(customMessage, user.id.toString())
         customMessage.addProperty("action_from", "BOTTOM_SHEET")
-        vm.sendCustomMessage(customMessage, channelName.plus(".other"))
+        vm.sendCustomMessage(customMessage, channelName.plus("_other"))
         //TODO("Not yet implemented")
     }
 
