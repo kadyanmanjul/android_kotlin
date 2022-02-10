@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.interfaces.OnClickUserProfile
 import com.joshtalks.joshskills.core.interfaces.RecyclerViewItemClickListener
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
@@ -23,7 +24,7 @@ import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 
-class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickListener {
+class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickListener,OnClickUserProfile {
     private lateinit var binding: FavoriteListActivityBinding
     private var actionMode: ActionMode? = null
     private val deleteRecords: MutableSet<FavoriteCaller> = mutableSetOf()
@@ -31,7 +32,7 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     private val viewModel: FavoriteCallerViewModel by lazy {
         ViewModelProvider(this).get(FavoriteCallerViewModel::class.java)
     }
-    private val favoriteAdapter: FavoriteAdapter by lazy { FavoriteAdapter(this) }
+    private val favoriteAdapter: FavoriteAdapter by lazy { FavoriteAdapter(this,this) }
 
     private var actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -98,12 +99,12 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
                 }
                 delay(350)
                 favoriteAdapter.addItems(it)
-                binding.progressBar.visibility = View.GONE
+               // binding.progressBar.visibility = View.GONE
             }
         }
         lifecycleScope.launchWhenStarted {
             viewModel.apiCallStatus.collect {
-                binding.progressBar.visibility = View.GONE
+               // binding.progressBar.visibility = View.GONE
                 if (favoriteAdapter.itemCount == 0) {
                     showToast("You can add partners to this list by doing calls and pressing yes")
                 }
@@ -112,11 +113,7 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     override fun onItemClick(view: View?, position: Int) {
-        if (deleteRecords.isEmpty()) {
-            openProfileScreen(favoriteAdapter.getItemAtPosition(position))
-            return
-        }
-        updateListRow(position)
+
     }
 
     private fun openProfileScreen(fc: FavoriteCaller) {
@@ -128,7 +125,7 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     override fun onItemLongClick(view: View?, position: Int) {
-        updateListRow(position)
+       // updateListRow(position)
     }
 
     private fun updateListRow(position: Int) {
@@ -182,5 +179,21 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
                 activity.startActivity(it)
             }
         }
+    }
+
+    override fun clickOnProfile(position: Int) {
+        if (deleteRecords.isEmpty()) {
+            openProfileScreen(favoriteAdapter.getItemAtPosition(position))
+            return
+        }
+        updateListRow(position)
+    }
+
+    override fun clickOnPhoneCall(position: Int) {
+
+    }
+
+    override fun clickLongPressDelete(position: Int) {
+        updateListRow(position)
     }
 }
