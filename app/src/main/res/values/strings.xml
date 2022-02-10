@@ -870,7 +870,7 @@
     <string name="search_leaderboard">Search Leaderboard</string>
     <string name="rank">Rank</string>
     <string name="aapki_new_class">Aapki Nayi Classes </string>
-    <string name="favorites_header">Favorites</string>
+    <string name="favorites_header">Favorites List</string>
     <string name="your_favorite_practice_partners">Your Favorite Practice Partners</string>
     <string name="mute">Mute</string>
     <string name="speaker">Speaker</string>
@@ -1034,6 +1034,13 @@
     <string name="josh_fam">You are a valuable member of the Josh\nfamily</string>
     <string name="share_with_friends">Share with friends</string>
     <string name="great_job">Great Job %1$s!</string>
+    <string name="sent_request">Sent Request</string>
+    <string name="recent_calls">Recent calls</string>
+    <string name="profile_test_for_request">Shobhit and you spoke for 20 min, you can request him to be your favorite practice partner to practice again.</string>
+    <string name="harsh_has_r">Harsh has requested to be your favorite practice partner</string>
+    <string name="confirm">Confirm</string>
+    <string name="not_now_txt">Not Now</string>
+    <string name="fpp_text">Favorite practice partners</string>
     <string name="see_course_list">See course list</string>
 
 </resources>

@@ -209,5 +209,8 @@
     <color name="shadow_progress_color_quiz">#055C39</color>
     <color name="progess_color_quiz">#13B673</color>
     <color name="report_white">#F5F5F5</color>
+    <color name="dark_text_color">#99000000</color>
+    <color name="profile_request_card">#99EEEEEE</color>
+    <color name="not_now">#E1E1E1</color>
 
 </resources>

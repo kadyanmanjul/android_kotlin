@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity" />
+            type="com.joshtalks.joshskills.ui.fpp.RecentCallActivity" />
     </data>
 
     <LinearLayout
@@ -82,10 +82,9 @@
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="start|center"
                         android:singleLine="true"
-                        android:text="@string/favorites_header"
+                        android:text="@string/recent_calls"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:textColor="@color/white" />
                 </RelativeLayout>
 
             </com.google.android.material.appbar.MaterialToolbar>
@@ -93,19 +92,23 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/favorite_list_rv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding = "false"
-                    android:paddingTop="10dp"
+                    android:layout_height="wrap_content"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
             </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
 
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/progress_bar"
