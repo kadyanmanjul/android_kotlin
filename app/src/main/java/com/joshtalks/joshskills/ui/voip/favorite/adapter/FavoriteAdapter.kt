@@ -9,13 +9,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.databinding.FavoriteItemLayoutBinding
+import com.joshtalks.joshskills.core.interfaces.OnClickUserProfile
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.databinding.FppItemListBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.ui.inbox.adapter.FavoriteCallerDiffCallback
-import java.util.ArrayList
+import java.util.*
+
 
 class FavoriteAdapter(
-    private var lifecycleProvider: LifecycleOwner
+    private var lifecycleProvider: LifecycleOwner,
+    private val onClickUserProfile: OnClickUserProfile ,
 ) :
     RecyclerView.Adapter<FavoriteAdapter.FavoriteItemViewHolder>() {
     private var items: ArrayList<FavoriteCaller> = arrayListOf()
@@ -59,7 +63,7 @@ class FavoriteAdapter(
         viewType: Int
     ): FavoriteItemViewHolder {
         val binding =
-            FavoriteItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            FppItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         binding.apply {
             lifecycleOwner = lifecycleProvider
         }
@@ -70,7 +74,7 @@ class FavoriteAdapter(
 
 
     override fun onBindViewHolder(holder: FavoriteItemViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position],position)
     }
 
     override fun getItemId(position: Int): Long {
@@ -81,14 +85,28 @@ class FavoriteAdapter(
         return items[position]
     }
 
-    inner class FavoriteItemViewHolder(val binding: FavoriteItemLayoutBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class FavoriteItemViewHolder(val binding: FppItemListBinding) :
+        RecyclerView.ViewHolder(binding.root){
 
-        fun bind(favoriteCaller: FavoriteCaller) {
+        fun bind(favoriteCaller: FavoriteCaller,position: Int) {
             with(binding) {
                 obj = favoriteCaller
 
                 tvName.text = favoriteCaller.name
+
+                profileImage.setOnClickListener {
+                    onClickUserProfile.clickOnProfile(position)
+                }
+
+                fppCallIcon.setOnClickListener {
+                    onClickUserProfile.clickOnPhoneCall(position)
+                }
+
+                groupItemContainer.setOnLongClickListener {
+                    onClickUserProfile.clickLongPressDelete(position)
+                    true
+                }
+
                 tvSpokenTime.text = spokenTimeText(favoriteCaller.minutesSpoken)
                 if (favoriteCaller.selected) {
                     rootView.setCardBackgroundColor(
