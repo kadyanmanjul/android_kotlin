@@ -14,6 +14,7 @@ import android.graphics.*
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -174,12 +175,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         AppObjectController.gsonMapper.toJson(remoteMessage.data),
                         notificationTypeToken
                     )
+                    Log.e("Sagara","$shortNc : ${remoteMessage.data}")
                     FirestoreDB.getNotification {
                         val nc = it.toNotificationObject(shortNc.id)
                         if (remoteMessage.data["nType"] == "CR") {
                             nc.actionData?.let {
                                 pushIncomingCallAnalytics(it)
                             }
+                            Log.e("Sagara", "${nc.actionData} : ${remoteMessage.data}")
                         }
                         sendNotification(nc)
                     }

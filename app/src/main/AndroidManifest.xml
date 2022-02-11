@@ -82,7 +82,9 @@
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
             android:name=".ui.fpp.RecentCallActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity_feed.ActivityFeedMainActivity"
             android:exported="false" />
@@ -442,8 +444,7 @@
         <activity
             android:name=".ui.voip.favorite.FavoriteListActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.voip.WebRtcActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
