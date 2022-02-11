@@ -20,9 +20,6 @@ data class LinkAttribution(
     val sharedItemType : String,
 
     @SerializedName("deep_link")
-    val deepLink : String,
-
-    @SerializedName("course_id")
-    val courseId: String
+    val deepLink : String
 
 ) : Parcelable
