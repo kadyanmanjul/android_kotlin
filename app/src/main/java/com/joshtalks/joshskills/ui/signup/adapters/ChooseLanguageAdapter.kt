@@ -26,7 +26,7 @@ class ChooseLanguageAdapter(
 
     fun setData(updatedLanguageList: List<ChooseLanguages>) {
         languageSelectionList.clear()
-        languageSelectionList.addAll(updatedLanguageList)
+        languageSelectionList.addAll(updatedLanguageList.sortedBy { it.testId.toInt() })
         notifyDataSetChanged()
     }
 
