@@ -77,7 +77,12 @@ class VoipCallFeedbackActivity : BaseActivity(){
         binding = DataBindingUtil.setContentView(this, R.layout.voip_call_feedback_view)
         binding.lifecycleOwner = this
         binding.handler = this
-        initFun(intent)
+        if(intent!=null){
+            initFun(intent)
+        }else{
+            closeActivity()
+        }
+
     }
 
     override fun onBackPressed() {

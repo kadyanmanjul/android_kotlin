@@ -146,7 +146,7 @@ class WebRtcService : BaseWebRtcService() {
         private var mRtcEngine: RtcEngine? = null
 
         @Volatile
-        private var callData: HashMap<String, String?>? = null
+        public var callData: HashMap<String, String?>? = null
 
         @Volatile
         var currentCallingGroupName = ""
@@ -155,7 +155,7 @@ class WebRtcService : BaseWebRtcService() {
         private var callId: String? = null
 
         @Volatile
-        private var callType: CallType = CallType.OUTGOING
+        public var callType: CallType = CallType.OUTGOING
 
         @Volatile
         var isCallOnGoing: MutableLiveData<Boolean> = MutableLiveData(false)

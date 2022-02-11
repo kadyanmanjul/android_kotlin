@@ -78,8 +78,8 @@
         </ScrollView>
         <ImageView
             android:id="@+id/crossBtn"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
             android:layout_margin="@dimen/_5sdp"
             app:srcCompat="@drawable/ic_cross_red"
             android:layout_gravity="right"
