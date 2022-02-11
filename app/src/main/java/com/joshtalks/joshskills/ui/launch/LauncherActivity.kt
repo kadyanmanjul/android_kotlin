@@ -4,6 +4,9 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.util.Log
@@ -36,6 +39,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Calendar
 
 private const val TAG = "LauncherActivity"
 
@@ -60,13 +66,48 @@ class LauncherActivity : CoreJoshActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             WorkManager.getInstance(applicationContext).cancelAllWork()
             WorkManagerAdmin.appInitWorker()
-            WorkManagerAdmin.setFakeCallNotificationWorker()
+            val dateFormat = SimpleDateFormat("HH")
+            val time: Int = dateFormat.format(Date()).toInt()
+            val getCurrentTimeInMillis = Calendar.getInstance().timeInMillis
+            var lastFakeCallInMillis : Long = PrefManager.getLongValue(LAST_FAKE_CALL_INVOKE_TIME,true)
+            if((time in 7..23) && isUserOnline(this@LauncherActivity) && getCurrentTimeInMillis-lastFakeCallInMillis >=3600000) {
+                PrefManager.put(LAST_FAKE_CALL_INVOKE_TIME,getCurrentTimeInMillis,true)
+                WorkManagerAdmin.setFakeCallNotificationWorker()
+            }
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
             if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {
                 PrefManager.put(IS_FREE_TRIAL, true, false)
             }
         }
+    }
+
+    fun isUserOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val capabilities =
+                    connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+                if (capabilities != null) {
+                    when {
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                            Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                            return true
+                        }
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                            Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                            return true
+                        }
+                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                            Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
     }
 
     private fun animatedProgressBar() {
