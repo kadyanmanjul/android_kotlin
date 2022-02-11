@@ -407,7 +407,7 @@
                     tools:text="22 Oct 2020" />
 
                 <com.google.android.material.card.MaterialCardView
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:id="@+id/sent_request_card"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_94sdp"
@@ -443,7 +443,7 @@
                            />
 
                         <com.google.android.material.button.MaterialButton
-                            android:visibility="visible"
+                            android:visibility="invisible"
                             android:id="@+id/btn_sent_request"
                             android:layout_width="@dimen/_106sdp"
                             android:layout_height="@dimen/_21sdp"
@@ -462,7 +462,7 @@
 
                         <LinearLayout
                             android:id="@+id/btn_confirm_or_not_now_card"
-                            android:visibility="invisible"
+                            android:visibility="visible"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
