@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.D2pSyllabusPdfResponse
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
@@ -40,7 +42,8 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             try {
 
                 val response = AppObjectController.commonNetworkService.getUserPointsHistory(
-                    Mentor.getInstance().getId()
+                    Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                 )
                 if (response.isSuccessful && response.body() != null) {
                     pointsHistoryLiveData.postValue(response.body())

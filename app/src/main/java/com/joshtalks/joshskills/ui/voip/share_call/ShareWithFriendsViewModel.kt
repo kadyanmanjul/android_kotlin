@@ -5,6 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
@@ -21,7 +24,8 @@ class ShareWithFriendsViewModel(application: Application) : AndroidViewModel(app
                     contentId = contentId,
                     sharedItem = "TWENTY_MINUTE_IMAGE",
                     sharedItemType = "IM",
-                    deepLink = deepLink
+                    deepLink = deepLink,
+                    courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                 )
                 val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
                 Timber.i(res.body().toString())
