@@ -19,7 +19,9 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -99,12 +101,12 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
                 }
                 delay(350)
                 favoriteAdapter.addItems(it)
-               // binding.progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
             }
         }
         lifecycleScope.launchWhenStarted {
             viewModel.apiCallStatus.collect {
-               // binding.progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 if (favoriteAdapter.itemCount == 0) {
                     showToast("You can add partners to this list by doing calls and pressing yes")
                 }
@@ -190,7 +192,11 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     override fun clickOnPhoneCall(position: Int) {
-
+       val intent =  WebRtcActivity.getFavMissedCallbackIntent(favoriteAdapter.getItemAtPosition(position).id, this).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
     }
 
     override fun clickLongPressDelete(position: Int) {
