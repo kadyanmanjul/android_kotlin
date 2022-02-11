@@ -203,6 +203,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
                     }
                     temp.addAll(courseList)
+                    if (courseList.isNullOrEmpty().not())
+                        PrefManager.put(CURRENT_COURSE_ID, courseList[0].courseId)
                 }
 
             items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
@@ -340,7 +342,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        PrefManager.put(CURRENT_COURSE_ID, inboxEntity.courseId)
         ConversationActivity.startConversionActivity(this, inboxEntity)
     }
 

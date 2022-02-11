@@ -35,8 +35,7 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
     private fun fetchFavoriteCallersFromApi() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = p2pNetworkService.getFavoriteCallerList(Mentor.getInstance().getId(),
-                    PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                val response = p2pNetworkService.getFavoriteCallerList(Mentor.getInstance().getId())
                 favoriteCallerDao.removeAllFavorite()
                 if (response.isNotEmpty()) {
                     favoriteCallerDao.insertFavoriteCallers(response)

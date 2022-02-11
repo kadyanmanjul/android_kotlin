@@ -70,32 +70,32 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
             type = it.getString(TYPE) ?: EMPTY
             courseId = it.getString(COURSE_ID) ?: EMPTY
         }
-            viewModel.eventLiveData.observe(this) {
-                Log.d(TAG, "onCreate: $this --- $it")
-                it?.let {
-                    Log.d(TAG, "onCreate: eventLiveData -->  $it --- $type")
-                    when(it.eventType) {
-                        NEED_VIEW_BITMAP -> {
-                            if(it.type == type) {
-                                getBitmap()
-                                viewModel.eventLiveData.postValue(null)
-                            }
+        viewModel.eventLiveData.observe(this) {
+            Log.d(TAG, "onCreate: $this --- $it")
+            it?.let {
+                Log.d(TAG, "onCreate: eventLiveData -->  $it --- $type")
+                when(it.eventType) {
+                    NEED_VIEW_BITMAP -> {
+                        if(it.type == type) {
+                            getBitmap()
+                            viewModel.eventLiveData.postValue(null)
                         }
-                        PROFILE_ITEM_CLICKED -> {
-                            if(it.type == type) {
-                                val view = binding.recyclerView.getChildAt(3)
-                                view.performClick()
-                                viewModel.eventLiveData.postValue(null)
-                            }
+                    }
+                    PROFILE_ITEM_CLICKED -> {
+                        if(it.type == type) {
+                            val view = binding.recyclerView.getChildAt(3)
+                            view.performClick()
+                            viewModel.eventLiveData.postValue(null)
                         }
-                        SCROLL_TO_TOP -> {
-                            if(it.type == type) {
-                                binding.recyclerView.scrollToPosition(0)
-                            }
+                    }
+                    SCROLL_TO_TOP -> {
+                        if(it.type == type) {
+                            binding.recyclerView.scrollToPosition(0)
                         }
                     }
                 }
             }
+        }
     }
 
     fun scrollToTop() {
