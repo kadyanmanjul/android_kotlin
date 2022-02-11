@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
+import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsDao
+import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsEntity
 import com.joshtalks.joshskills.repository.local.dao.*
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -33,8 +35,15 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicDao
 import com.joshtalks.joshskills.track.CourseUsageDao
 import com.joshtalks.joshskills.track.CourseUsageModel
+import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
+import com.joshtalks.joshskills.ui.group.data.local.GroupChatDao
+import com.joshtalks.joshskills.ui.group.data.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
+import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -51,9 +60,10 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
-        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class
+        VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class
     ],
-    version = 42,
+    version = 44,
     exportSchema = true
 )
 @TypeConverters(
@@ -141,7 +151,9 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_38_39,
                                 MIGRATION_39_40,
                                 MIGRATION_40_41,
-                                MIGRATION_41_42
+                                MIGRATION_41_42,
+                                MIGRATION_42_43,
+                                MIGRATION_43_44,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -464,36 +476,58 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_37_38: Migration = object : Migration(37,38) {
+        private val MIGRATION_37_38: Migration = object : Migration(37, 38) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN expire_date INTEGER")
                 database.execSQL("ALTER TABLE course ADD COLUMN is_course_bought INTEGER NOT NULL DEFAULT 0")
             }
         }
 
-        private val MIGRATION_38_39: Migration = object : Migration(38,39) {
+        private val MIGRATION_38_39: Migration = object : Migration(38, 39) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN sharableVideoDownloadedLocalPath TEXT ")
             }
         }
 
-        private val MIGRATION_39_40: Migration = object : Migration(39,40) {
+        private val MIGRATION_39_40: Migration = object : Migration(39, 40) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `groups_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
 
             }
         }
-        private val MIGRATION_40_41: Migration = object : Migration(40,41) {
+        private val MIGRATION_40_41: Migration = object : Migration(40, 41) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE lesson_question ADD COLUMN conversation_question_id INTEGER ")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `conversationStatus` TEXT")
 
             }
         }
-        private val MIGRATION_41_42: Migration = object : Migration(41,42) {
+        private val MIGRATION_41_42: Migration = object : Migration(41, 42) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN video_id INTEGER ")
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN is_sharable_video INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
+
+        private val MIGRATION_42_43: Migration = object : Migration(42, 43) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_list_table` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `adminId` TEXT, `groupIcon` TEXT, `createdAt` INTEGER, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `time_token_db` (`groupId` TEXT PRIMARY KEY NOT NULL, `mentorId` TEXT NOT NULL, `timeToken` INTEGER NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_db` (`messageId` TEXT PRIMARY KEY NOT NULL, `sender` TEXT, `message` TEXT NOT NULL, `msgTime` INTEGER NOT NULL, `groupId` TEXT NOT NULL, `msgType` INTEGER NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_chat_analytics` (`groupId` TEXT PRIMARY KEY NOT NULL, `lastSentMsgTime` INTEGER NOT NULL)")
+                database.execSQL("ALTER TABLE `groups_analytics` ADD COLUMN `groupId` TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `game_analytics` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+            }
+        }
+
+        private val MIGRATION_43_44:Migration = object : Migration(43, 44) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_questions_tmp` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE)")
+                database.execSQL("INSERT INTO `assessment_questions_tmp` (`localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status`) SELECT `localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status` FROM `assessment_questions`")
+                database.execSQL("DROP TABLE `assessment_questions`")
+                database.execSQL("ALTER TABLE `assessment_questions_tmp` RENAME TO `assessment_questions`")
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_questions_assessmentId` ON `assessment_questions` (`assessmentId`)")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)");
             }
         }
 
@@ -536,6 +570,10 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun commonDao(): CommonDao
     abstract fun voipAnalyticsDao(): VoipAnalyticsDao
     abstract fun groupsAnalyticsDao(): GroupsAnalyticsDao
+    abstract fun groupListDao(): GroupListDao
+    abstract fun timeTokenDao(): TimeTokenDao
+    abstract fun groupChatDao(): GroupChatDao
+    abstract fun gameAnalyticsDao(): GameAnalyticsDao
 }
 
 class MessageTypeConverters {

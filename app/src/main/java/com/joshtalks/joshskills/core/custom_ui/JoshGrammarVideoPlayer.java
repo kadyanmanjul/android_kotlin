@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.core.custom_ui;
 
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+import static com.joshtalks.joshskills.messaging.RxBus2.publish;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -42,11 +44,11 @@ import com.joshtalks.joshskills.core.CountUpTimer;
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController;
-import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.server.engage.Graph;
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -461,7 +463,7 @@ public class JoshGrammarVideoPlayer extends PlayerView implements View.OnTouchLi
     }
 
     public void fitToScreen() {
-        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
     }
 
     public void setGestureDetector(GestureDetector gestureDetector) {
@@ -546,6 +548,7 @@ public class JoshGrammarVideoPlayer extends PlayerView implements View.OnTouchLi
 
     public interface PlayerFullScreenListener {
         void onFullScreen();
+
         void onClose();
     }
 

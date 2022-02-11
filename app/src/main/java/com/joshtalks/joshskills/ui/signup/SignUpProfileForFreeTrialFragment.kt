@@ -1,13 +1,11 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -20,22 +18,21 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 import kotlinx.android.synthetic.main.instruction_top_view_holder.view.*
 import java.util.*
 
-
 const val FREE_TRIAL_ENTER_NAME_TEXT = "FREE_TRIAL_ENTER_NAME_TEXT_"
-class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
+class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
     private var username = name
+    private var isUserVerified = isVerified
 
     companion object {
-        fun newInstance(name: String) = SignUpProfileForFreeTrialFragment(name)
+        fun newInstance(name: String, isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name, isVerified)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +42,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View? {
         binding =
             DataBindingUtil.inflate(
@@ -63,26 +60,15 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         binding.nameEditText.requestFocus()
-        binding.nameEditText.setText(User.getInstance().firstName)
-
         initUI()
-        val imm: InputMethodManager? =
-            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     private fun initUI() {
-
         binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FREE_TRIAL_ENTER_NAME_TEXT + requireArguments().getString(FREE_TRIAL_TEST_ID, FREE_TRIAL_DEFAULT_TEST_ID))
+
         binding.nameEditText.setText(username)
         binding.nameEditText.isEnabled = true
-
-        val name = binding.nameEditText.text.toString()
-        if (name != username) {
-            viewModel.saveTrueCallerImpression(NAME_CHANGED)
-            username = name
-        }
     }
 
     private fun addObservers() {
@@ -106,7 +92,7 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
                 }
             }
         })
-        viewModel.apiStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.apiStatus.observe(viewLifecycleOwner, {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                     hideProgress()
@@ -117,6 +103,12 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
                 }
             }
         })
+        viewModel.mentorPaymentStatus.observe(viewLifecycleOwner, {
+            when (it) {
+                true -> moveToInboxScreen()
+                false -> submitForFreeTrial()
+            }
+        })
     }
 
     fun submitProfile() {
@@ -125,11 +117,21 @@ class SignUpProfileForFreeTrialFragment(name: String) : BaseSignUpFragment() {
             showToast(getString(R.string.name_error_toast))
             return
         }
+
         startProgress()
+        viewModel.checkMentorIdPaid()
+
+        val name = binding.nameEditText.text.toString()
+        if (!username.isNullOrEmpty() && username != name)
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
+    }
+
+    fun submitForFreeTrial() {
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
         requestMap["is_free_trial"] = "Y"
-        viewModel.completingProfile(requestMap, false)
+
+        viewModel.completingProfile(requestMap, isUserVerified)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
     }
 

@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_22sdp"
-                android:text="Grammar Test"
+                android:text="Grammar Lesson"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                 android:textColor="@color/grammar_black_text_color"

@@ -61,6 +61,12 @@ interface SignUpNetworkService {
         @FieldMap params: Map<String, String?>
     ): Response<User>
 
+    @PATCH("$DIR/user/profile_picture/{id}/")
+    suspend fun updateProfilePicFromPreviousProfile(@Path("id") imageId: String): Response<Any>
+
+    @DELETE("$DIR/user/profile_picture/{id}/")
+    suspend fun deletePreviousProfilePic(@Path("id") imageId: String): Response<Any>
+
     @PATCH("$DIR/mentor/{id}/")
     suspend fun updateUserAddressAsync(
         @Path("id") id: String,
@@ -148,6 +154,12 @@ interface SignUpNetworkService {
 
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
+
+    @GET("$DIR/user/profile_pictures//")
+    suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
+
+    @GET("$DIR/course/course_syllabus/")
+    suspend fun getD2pSyllabusPdf() : Response<D2pSyllabusPdfResponse>
 
     @GET("$DIR/course/language/")
     suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>

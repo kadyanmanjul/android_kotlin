@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.StartActivity" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.quizgame.ui.main.viewmodel.StartViewModelGame" />
+    </data>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/root_layout"
+        android:background="@drawable/bg_start_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".quizgame.StartActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/ic_game_logo_grad"
+            app:layout_constraintBottom_toTopOf="@+id/rectangle_9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:onClick="@{vm.onItemClick}"
+            android:id="@+id/rectangle_9"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_62sdp"
+            app:cardCornerRadius="@dimen/_30sdp"
+            app:cardElevation="@dimen/_3sdp"
+            android:background="@color/transparent"
+            android:backgroundTint="@color/transparent"
+            android:layout_marginTop="@dimen/_125sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="#C3527E"
+            app:strokeWidth="2.5dp">
+<!--            android:focusable="true"-->
+<!--            android:clickable="true"-->
+
+            <RelativeLayout
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/start_game_btn_gradient">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingTop="@dimen/_5sdp"
+                    app:srcCompat="@drawable/ic_play_img" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+    </FrameLayout>
+</layout>

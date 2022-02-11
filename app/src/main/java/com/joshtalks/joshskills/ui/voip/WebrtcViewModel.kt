@@ -11,6 +11,7 @@ import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import timber.log.Timber
 
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
@@ -47,6 +48,20 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
                         apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)
                     }
                 }
+            }
+        }
+    }
+    fun saveIntroVideoFlowImpression(eventName : String, eventDuration : Long = 0L) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName),
+                    Pair("duration", eventDuration)
+                )
+                AppObjectController.commonNetworkService.saveIntroVideoFlowImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
             }
         }
     }

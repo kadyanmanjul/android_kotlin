@@ -81,6 +81,9 @@ class ReferralActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
+
+
+
         activityReferralBinding = DataBindingUtil.setContentView(this, R.layout.activity_referral)
         activityReferralBinding.lifecycleOwner = this
         activityReferralBinding.handler = this
@@ -98,7 +101,6 @@ class ReferralActivity : BaseActivity() {
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
             .push()
-        viewModel.saveImpression(IMPRESSION_OPEN_REFERRAL_SCREEN)
     }
 
 
@@ -114,7 +116,7 @@ class ReferralActivity : BaseActivity() {
 
         if (referralScreenVersion == "version_1") {
             activityReferralBinding.tvHeader.text =
-                getString(R.string.referral_header, refAmount, refAmount)
+                getString(R.string.referral_header)
             activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
                 getString(R.string.refferal_desc1, refAmount),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
@@ -195,32 +197,35 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
+        val referralTimestamp = System.currentTimeMillis()
         val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
             .setTitle("Invite Friend")
             .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
             .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
         val lp = LinkProperties()
             .setChannel(userReferralCode)
             .setFeature("sharing")
-            .setCampaign("referral")
+            .setCampaign(userReferralCode.plus(referralTimestamp))
             .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
             .addControlParameter(
-                Defines.Jsonkey.UTMMedium.key,
-                userReferralCode.plus(System.currentTimeMillis())
+                Defines.Jsonkey.UTMCampaign.key,
+                userReferralCode.plus(referralTimestamp)
             )
+            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
 
         branchUniversalObject
             .generateShortUrl(this, lp) { url, error ->
                 if (error == null)
                     inviteFriends(
                         packageString = packageString,
-                        dynamicLink = url
+                        dynamicLink = url,
+                        referralTimestamp = referralTimestamp
                     )
                 else
                     inviteFriends(
                         packageString = packageString,
+                        referralTimestamp = referralTimestamp,
                         dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
                             PrefManager.getStringValue(USER_SHARE_SHORT_URL)
                         else
@@ -288,7 +293,7 @@ class ReferralActivity : BaseActivity() {
          }*/
     }
 
-    fun inviteFriends(packageString: String? = null, dynamicLink: String) {
+    fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
         var referralText = VIDEO_URL.plus("\n").plus(
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         )
@@ -299,17 +304,18 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
 
         referralText = referralText.plus("\n").plus(dynamicLink)
-        viewModel.getDeepLink(
-            dynamicLink,
-            userReferralCode.plus(System.currentTimeMillis())
-        )
         try {
+            viewModel.getDeepLink(
+                dynamicLink,
+                userReferralCode.plus(referralTimestamp)
+            )
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"
             if (packageString.isNullOrEmpty().not()) {
                 waIntent.setPackage(packageString)
             }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
+
             startActivity(Intent.createChooser(waIntent, "Share with"))
             AppAnalytics
                 .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)

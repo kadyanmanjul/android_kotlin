@@ -24,7 +24,7 @@
             android:elevation="@dimen/_4sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -67,16 +67,126 @@
             android:elevation="@dimen/_1sdp"
             android:focusable="true"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
-        <include
+        <LinearLayout
             android:id="@+id/toolbar_container"
-            layout="@layout/base_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/call_ongoing_layout" />
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:elevation="@dimen/_4sdp"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetEnd="0dp"
+                app:contentInsetEndWithActions="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+
+                <RelativeLayout
+                    android:id="@+id/parent_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_6sdp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_4sdp"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        tools:visibility="visible" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        android:layout_width="@dimen/_180sdp"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_6sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="start|center"
+                        android:singleLine="true"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                        android:textColor="@color/white"
+                        tools:text="Spoken English Course for a" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/iv_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/_8sdp"
+                        android:layout_toEndOf="@id/text_message_title"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="start"
+                        android:padding="@dimen/_4sdp"
+                        android:text="Edit"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textColor="@color/white"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_help"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/_8sdp"
+                        android:layout_toEndOf="@id/text_message_title"
+                        android:gravity="start"
+                        android:padding="@dimen/_4sdp"
+                        android:tint="@color/white"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_help_outline"
+                        tools:visibility="gone" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/_8sdp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:padding="@dimen/_4sdp"
+                        android:tint="@color/white"
+                        app:srcCompat="@drawable/ic_more_option"
+                        tools:visibility="visible" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.appbar.MaterialToolbar>
+        </LinearLayout>
 
         <ScrollView
             android:id="@+id/scroll_view"
@@ -88,7 +198,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/root_view"
@@ -106,7 +215,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
                         android:id="@+id/overlay_profile_tooltip"
@@ -148,7 +257,8 @@
                     android:id="@+id/user_pic"
                     android:layout_width="@dimen/_86sdp"
                     android:layout_height="@dimen/_86sdp"
-                    android:layout_margin="@dimen/_16sdp"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_18sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:background="@color/black"
@@ -158,13 +268,14 @@
                     android:id="@+id/edit_pic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:padding="@dimen/_6sdp"
                     android:text="Edit"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/user_pic"
                     app:layout_constraintEnd_toEndOf="@id/user_pic"
-                    app:layout_constraintStart_toStartOf="@id/user_pic" />
+                    app:layout_constraintStart_toStartOf="@id/user_pic"
+                    tools:visibility="visible" />
 
                 <FrameLayout
                     android:id="@+id/online_status_iv"
@@ -194,14 +305,14 @@
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginTop="@dimen/_18sdp"
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/user_pic"
@@ -228,10 +339,10 @@
                     android:id="@+id/user_age_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
                     android:text="@string/age"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="@id/user_name"
                     app:layout_constraintTop_toBottomOf="@id/user_name" />
@@ -241,11 +352,37 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/grey_7A"
                     app:layout_constraintStart_toEndOf="@id/user_age_text"
                     app:layout_constraintTop_toTopOf="@id/user_age_text"
                     tools:text="22" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_label_hometown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:text="Hometown:"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@id/user_age_text"
+                    app:layout_constraintTop_toBottomOf="@id/user_age_text" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_user_hometown"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:clickable="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/grey_7A"
+                    app:layout_constraintStart_toEndOf="@id/txt_label_hometown"
+                    app:layout_constraintTop_toTopOf="@id/txt_label_hometown"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    tools:text="Patiala is my home town which" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/joined_on_text"
@@ -253,38 +390,97 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/_4sdp"
                     android:text="@string/batch"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="@id/user_age_text"
-                    app:layout_constraintTop_toBottomOf="@id/user_age_text" />
+                    app:layout_constraintStart_toStartOf="@id/txt_label_hometown"
+                    app:layout_constraintTop_toBottomOf="@id/txt_label_hometown" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/joined_on"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/grey_7A"
                     app:layout_constraintStart_toEndOf="@id/joined_on_text"
                     app:layout_constraintTop_toTopOf="@id/joined_on_text"
                     tools:text="22 Oct 2020" />
 
-                <View
-                    android:id="@+id/divider"
+                <RelativeLayout
+                    android:id="@+id/previous_profile_pic_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:layout_margin="@dimen/_8sdp"
-                    android:background="@color/grey"
-                    android:visibility="invisible"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_28sdp"
+                    android:background="@drawable/bg_profile_header"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_pic" />
+                    app:layout_constraintTop_toBottomOf="@id/user_pic">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_previous_dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="@string/previous_dp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_view_more_dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/label_previous_dp"
+                        android:layout_alignBottom="@+id/label_previous_dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:clickable="true"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="See All"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_8ssp"
+                        app:drawableEndCompat="@drawable/ic_arrow"
+                        app:drawableTint="@color/colorPrimary" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/highlights_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="@drawable/bg_profile_header"
+                    android:gravity="center|start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/previous_profile_pic_layout">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_highlights"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="Highlights"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/point_layout"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_50sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:layout_marginEnd="@dimen/_8ssp"
                     android:background="@drawable/ic_points_bg"
                     android:clickable="true"
@@ -295,7 +491,7 @@
                     app:layout_constraintEnd_toStartOf="@id/minutes_layout"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/divider"
+                    app:layout_constraintTop_toBottomOf="@id/highlights_layout"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.33">
 
@@ -339,14 +535,14 @@
                     app:lottie_repeatMode="reverse"
                     app:lottie_scale="1"
                     app:lottie_speed="1"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/minutes_layout"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_marginStart="@dimen/_8ssp"
-                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:background="@drawable/ic_minutes_spoken_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_4sdp"
@@ -355,7 +551,7 @@
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/point_layout"
-                    app:layout_constraintTop_toBottomOf="@id/divider"
+                    app:layout_constraintTop_toBottomOf="@id/highlights_layout"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.36">
 
@@ -389,6 +585,7 @@
                     android:layout_marginTop="@dimen/_4sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/colorPrimary"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/point_layout"
@@ -407,7 +604,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/streaks_text"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_label_become_senior_student"
@@ -426,74 +623,191 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txt_label_senior_student"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/awards_heading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginVertical="@dimen/_10sdp"
-                    android:text="@string/awards"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textColor="@color/black"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_label_become_senior_student"
-                    tools:visibility="visible" />
-
-
-                <View
-                    android:id="@+id/award_divider"
+                <RelativeLayout
+                    android:id="@+id/my_groups_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:layout_marginVertical="@dimen/_3sdp"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:background="@color/light_shade_of_gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/awards_heading" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/no_award_icon"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_32sdp"
-                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/bg_profile_header"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/award_divider"
-                    app:srcCompat="@drawable/ic_no_award"
-                    tools:visibility="visible" />
+                    app:layout_constraintTop_toBottomOf="@id/txt_label_become_senior_student">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_my_groups"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="My Groups"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_view_more_groups"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/label_my_groups"
+                        android:layout_alignBottom="@+id/label_my_groups"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:clickable="true"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="See All"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_8ssp"
+                        app:drawableEndCompat="@drawable/ic_arrow"
+                        app:drawableTint="@color/colorPrimary" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/my_groups_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/my_groups_layout">
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/awards_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:background="@drawable/bg_profile_header"
+                    android:gravity="center|start"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/my_groups_ll">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_awards"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="Awards Cabinet"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_view_more_awards"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/label_awards"
+                        android:layout_alignBottom="@+id/label_awards"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:clickable="true"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:text="See All"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_8ssp"
+                        app:drawableEndCompat="@drawable/ic_arrow"
+                        app:drawableTint="@color/colorPrimary" />
+
+                </RelativeLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/no_award_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:text="No Awards won yet"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                    android:textColor="@color/black"
+                    android:layout_marginVertical="@dimen/_36sdp"
+                    android:elevation="@dimen/_1sdp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_36sdp"
+                    android:text="@string/no_awards_others"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/white"
                     android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/multi_line_ll"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/no_award_icon"
+                    app:layout_constraintTop_toTopOf="@+id/multi_line_ll"
                     tools:visibility="visible" />
 
                 <LinearLayout
                     android:id="@+id/multi_line_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_4sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/bg_wood"
+                    android:minHeight="@dimen/_120sdp"
                     android:orientation="vertical"
-                    android:padding="@dimen/_2sdp"
+                    android:paddingHorizontal="@dimen/_6sdp"
+                    android:paddingVertical="@dimen/_2sdp"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/award_divider"
+                    app:layout_constraintTop_toBottomOf="@id/awards_layout"
                     tools:visibility="visible" />
 
+                <RelativeLayout
+                    android:id="@+id/enrolled_courses_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/bg_profile_header"
+                    android:gravity="center|start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/multi_line_ll">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_enrolled_courses"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:gravity="center|start"
+                        android:text="Courses Enrolled"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/enrolled_courses_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/_80sdp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/enrolled_courses_layout">
+                    <!--
+                                        <include layout="@layout/enrolled_courses_row_item" />
+                                        <include layout="@layout/enrolled_courses_row_item" />
+                                        <include layout="@layout/enrolled_courses_row_item" />
+                    -->
+
+                </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </ScrollView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

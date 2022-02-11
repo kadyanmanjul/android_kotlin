@@ -16,7 +16,11 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.facebook.*
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.GraphRequest
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -30,11 +34,25 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.VerificationService
+import com.joshtalks.joshskills.core.VerificationStatus
+import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.getFBProfilePicture
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
@@ -47,7 +65,12 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.truecaller.android.sdk.*
+import com.truecaller.android.sdk.ITrueCallback
+import com.truecaller.android.sdk.TrueError
+import com.truecaller.android.sdk.TrueException
+import com.truecaller.android.sdk.TrueProfile
+import com.truecaller.android.sdk.TruecallerSDK
+import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.clients.VerificationCallback
 import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -366,8 +389,7 @@ class SignUpActivity : BaseActivity() {
         }
         fbCallbackManager.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance()
-                .onActivityResultObtained(this, requestCode, resultCode, data)
+            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
             return
         }
         hideProgressBar()

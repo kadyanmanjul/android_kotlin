@@ -49,6 +49,8 @@ import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.quizgame.StartActivity
+import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
@@ -59,6 +61,7 @@ import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedMainActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
@@ -78,6 +81,7 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
@@ -99,13 +103,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -186,6 +190,10 @@ class ConversationActivity :
         )
     }
 
+    private val refViewModel: ReferralViewModel by lazy {
+        ViewModelProvider(this).get(ReferralViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
@@ -259,8 +267,25 @@ class ConversationActivity :
         initFreeTrialTimer()
         fetchMessage()
         readMessageDatabaseUpdate()
+        addIssuesToSharedPref()
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
+        }
+    }
+    private fun addIssuesToSharedPref(){
+        CoroutineScope(Dispatchers.IO).launch(){
+
+            try{
+                PrefManager.putPrefObject(REPORT_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT"))
+
+            }catch (e:java.lang.Exception){
+            }
+            try{
+                PrefManager.putPrefObject(BLOCK_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK"))
+
+            }catch (e:java.lang.Exception){
+            }
+
         }
     }
 
@@ -430,6 +455,14 @@ class ConversationActivity :
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             }
+            conversationBinding.ivIconReferral.setOnClickListener {
+                refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
+
+                ReferralActivity.startReferralActivity(
+                    this@ConversationActivity,
+                    ConversationActivity::class.java.name
+                )
+            }
 
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             profileFeatureActiveView(inboxEntity.isCapsuleCourse)
@@ -437,6 +470,9 @@ class ConversationActivity :
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
+
+                        refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
+
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
                             ConversationActivity::class.java.name
@@ -528,12 +564,19 @@ class ConversationActivity :
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
+        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse ){
+            PrefManager.put(IS_COURSE_BOUGHT, true)
+        }
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
+        conversationBinding.imgFeedBtn.setOnClickListener {
 
+            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
+
+        }
         conversationBinding.imgGroupChatBtn.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
@@ -547,6 +590,21 @@ class ConversationActivity :
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
                 GroupAnalytics.push(MAIN_GROUP_ICON)
+                startActivity(intent)
+            }
+        }
+
+        conversationBinding.imgGameBtn.setOnClickListener {
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(" ")
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(getString(R.string.feature_locked, firstName))
+            } else {
+                val intent = Intent(this, StartActivity::class.java)
+                GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
                 startActivity(intent)
             }
         }
@@ -865,7 +923,7 @@ class ConversationActivity :
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 null,
                 it,
-                conversationId = inboxEntity.conversation_id
+                conversationId = inboxEntity.conversation_id,
             )
         }
     }
@@ -903,10 +961,27 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if(userProfileData.hasGroupAccess)
+                if(userProfileData.hasGroupAccess){
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
-                else
+                }
+                else{
                     conversationBinding.imgGroupChatBtn.visibility = GONE
+                }
+                initScoreCardView(userProfileData)
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                    profileFeatureActiveView(true)
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            utilConversationViewModel.userData.collectLatest { userProfileData ->
+                this@ConversationActivity.userProfileData = userProfileData
+                if(userProfileData.isGameActive){
+                    conversationBinding.imgGameBtn.visibility = VISIBLE
+                }
+                else{
+                    conversationBinding.imgGameBtn.visibility = GONE
+                }
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)
@@ -1099,7 +1174,7 @@ class ConversationActivity :
                 ?.let { unseenAwards.addAll(it) }
         }
         if (unseenAwards.isNotEmpty()) {
-            showAward(unseenAwards)
+//            showAward(unseenAwards)
         }
     }
 
@@ -1548,7 +1623,7 @@ class ConversationActivity :
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        showAward(listOf(it.award), true)
+//                        showAward(listOf(it.award), true)
                     },
                     {
                         it.printStackTrace()

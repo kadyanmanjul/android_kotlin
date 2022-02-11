@@ -1,9 +1,5 @@
 package com.joshtalks.joshskills.ui.inbox
 
-//import com.cometchat.pro.core.AppSettings
-//import com.cometchat.pro.core.CometChat
-//import com.cometchat.pro.exceptions.CometChatException
-//import com.cometchat.pro.models.User
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +8,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -134,6 +131,12 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     fun getTotalWatchTime() {
         viewModelScope.launch(Dispatchers.IO) {
             _overAllWatchTime.emit(appDatabase.videoEngageDao().getOverallWatchTime() ?: 0L)
+        }
+    }
+
+    fun handleGroupTimeTokens() {
+        CoroutineScope(Dispatchers.IO).launch {
+            GroupRepository().fireTimeTokenAPI()
         }
     }
 

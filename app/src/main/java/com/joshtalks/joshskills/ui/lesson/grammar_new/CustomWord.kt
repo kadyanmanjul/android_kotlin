@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -10,9 +11,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.nex3z.flowlayout.FlowLayout
 
 class CustomWord : AppCompatTextView {
@@ -35,6 +36,9 @@ class CustomWord : AppCompatTextView {
 
     fun changeViewGroup(optionsLayout: CustomLayout, answerLayout: FlowLayout) {
         if (parent is CustomLayout) {
+            /**
+             * Answer Selected
+             */
             val fromLocation = IntArray(2)
             this.getLocationOnScreen(fromLocation)
             val layoutParams = LinearLayout.LayoutParams(
@@ -57,10 +61,20 @@ class CustomWord : AppCompatTextView {
                 this.userSelectedOrder = answerLayout.childCount
                 this.isSelectedByUser = true
             }
+            Log.i("Yash", "changeViewGroup: Answer Selected")
             this.visibility = View.INVISIBLE
-            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
+            LessonActivity.animateAtsOptionViewEvent.value =
+                AnimateAtsOtionViewEvent(
+                    fromLocation,
+                    this.height,
+                    this.width,
+                    this
+                )
+//            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
         } else {
-
+            /**
+             * Answer Unselected
+             */
             val fromLocation = IntArray(2)
             this.getLocationOnScreen(fromLocation)
             val layoutParams = LinearLayout.LayoutParams(
@@ -81,6 +95,15 @@ class CustomWord : AppCompatTextView {
                 this.userSelectedOrder = 100
                 this.isSelectedByUser = false
             }
+            this.visibility = View.INVISIBLE
+            LessonActivity.animateAtsOptionViewEvent.value =
+                AnimateAtsOtionViewEvent(
+                    fromLocation,
+                    this.height,
+                    this.width,
+                    this,
+                    optionsLayout
+                )
             //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
             /*RxBus2.publish(
                 AnimateAtsOtionViewEvent(
@@ -91,7 +114,6 @@ class CustomWord : AppCompatTextView {
                     optionsLayout
                 )
             )*/
-
         }
     }
 

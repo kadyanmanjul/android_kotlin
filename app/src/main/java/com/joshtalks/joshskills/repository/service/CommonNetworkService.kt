@@ -56,7 +56,7 @@ interface CommonNetworkService {
     @PATCH("$DIR/mentor/restore_id/{id}/")
     suspend fun postFreshChatRestoreIDAsync(
         @Path("id") id: String,
-        @FieldMap params: Map<String, String?>,
+        @FieldMap params: Map<String, String?>
     ): FreshChatRestoreIDResponse
 
     @POST("$DIR/mentor/gaid_detail/")
@@ -65,7 +65,7 @@ interface CommonNetworkService {
     @PATCH("$DIR/mentor/gaid_detail/{id}/")
     suspend fun patchMentorWithGAIdAsync(
         @Path("id") id: Int,
-        @Body params: HashMap<String, @JvmSuppressWildcards List<String>>,
+        @Body params: HashMap<String, @JvmSuppressWildcards List<String>>
     ): Response<Any>
 
     @FormUrlEncoded
@@ -74,9 +74,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/payment/verify_v2/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
-
-    @GET("$DIR/payment/verify_razorpay_order/")
-    suspend fun verifyErrorPayment(@Body params: Map<String, String>): Any
 
     @POST("$DIR/course/certificate/generate/")
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
@@ -102,12 +99,12 @@ interface CommonNetworkService {
     @PATCH("$DIR/support/faq/{id}/")
     suspend fun patchFaqFeedback(
         @Path("id") id: String,
-        @Body params: Map<String, String?>,
+        @Body params: Map<String, String?>
     ): FAQ
 
     @GET("$DIR/course/course_details/")
     suspend fun getCourseDetails(
-        @QueryMap params: Map<String, String>,
+        @QueryMap params: Map<String, String>
     ): Response<CourseDetailsResponseV2>
 
     @GET("$DIR/course/course_details_v2/")
@@ -115,17 +112,17 @@ interface CommonNetworkService {
 
     @POST("$DIR/course/course_heading/")
     suspend fun getCourseEnrolledDetails(
-        @Body params: CourseEnrolledRequest,
+        @Body params: CourseEnrolledRequest
     ): Response<CourseEnrolledResponse>
 
     @GET("$DIR/conversation-practice/{id}/")
     suspend fun getConversationPractise(
-        @Path("id") id: String,
+        @Path("id") id: String
     ): Response<ConversationPractiseModel>
 
     @POST("$DIR/conversation-practice/submit/")
     suspend fun submitConversationPractice(
-        @Body request: SubmitConversationPractiseRequest,
+        @Body request: SubmitConversationPractiseRequest
     ): Response<SuccessResponse>
 
     @GET("$DIR/conversation-practice/mentor/")
@@ -147,7 +144,7 @@ interface CommonNetworkService {
     suspend fun getLeaderBoardData(
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") interval: String,
-        @Query("course_id") course_id: String?,
+        @Query("course_id") course_id: String?
     ): Response<LeaderboardResponse>
 
     // not using this
@@ -155,12 +152,12 @@ interface CommonNetworkService {
     suspend fun getLeaderBoardDataViaPage(
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") interval: String,
-        @Query("above_list_page") page: Int,
+        @Query("above_list_page") page: Int
     ): Response<LeaderboardResponse>
 
     @GET("$DIR/leaderboard/get_animated_leaderboard/")
     suspend fun getAnimatedLeaderBoardData(
-        @Query("mentor_id") mentorId: String,
+        @Query("mentor_id") mentorId: String
     ): Response<AnimatedLeaderBoardResponse>
 
     @POST("$DIR/version/onboarding/")
@@ -197,8 +194,17 @@ interface CommonNetworkService {
     suspend fun getUserProfileData(
         @Path("mentor_id") id: String,
         @Query("interval_type") intervalType: String? = null,
-        @Query("previous_page") previousPage: String? = null,
+        @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
+
+    @GET("$DIR/user/user_profile_v2/{mentor_id}/")
+    suspend fun getUserProfileDataV3(
+        @Path("mentor_id") id: String,
+        @Query("interval_type") intervalType: String? = null,
+        @Query("previous_page") previousPage: String? = null
+    ): Response<UserProfileResponse>
+    @GET("$DIR/activity_feed/fetch_all/")
+    suspend fun getActivityFeedData(): Response<ActivityFeedList>
 
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
@@ -229,12 +235,12 @@ interface CommonNetworkService {
 
     @GET("$DIR/group/{group_id}/pinnedmessages/")
     suspend fun getPinnedMessages(
-        @Path("group_id") groupId: String,
+        @Path("group_id") groupId: String
     ): Response<JsonArray>
 
     @PATCH("$DIR/reputation/award_mentor/")
     suspend fun patchAwardDetails(
-        @Body params: HashMap<String, List<Int>>,
+        @Body params: HashMap<String, List<Int>>
     ): Response<PointsInfoResponse>
 
     @Headers(
@@ -248,34 +254,40 @@ interface CommonNetworkService {
     @PATCH("$DIR/impression/user_profile_impression/{user_profile_impression_id}/")
     suspend fun engageUserProfileTime(
         @Path("user_profile_impression_id") userProfileImpressionId: String,
-        @Body params: Map<String, Long>,
+        @Body params: Map<String, Long>
     ): WordDetailsResponse
+
+    @PATCH("$DIR/impression/activity_feed_impression/{activity_feed_impression_id}/")
+    suspend fun engageActivityFeedTime(
+        @Path("activity_feed_impression_id") userProfileImpressionId: String,
+        @Body params: Map<String, Long>
+    ): Any
 
     @POST("$DIR/leaderboard/leaderboard_impression/")
     suspend fun engageLeaderBoardImpressions(
-        @Body params: Map<String, String>,
+        @Body params: Map<String, String>
     ): Any
 
     @GET("$DIR/reputation/award_render/")
     suspend fun get3DWebView(
-        @Query("award_mentor_id") awardMentorId: String,
+        @Query("award_mentor_id") awardMentorId: String
     ): String
 
     @FormUrlEncoded
     @PUT("$DIR/group/voicenote/notification/")
     suspend fun audioPlayed(
         @Field("group_id") groupId: String,
-        @Field("message_id") messageId: Int,
+        @Field("message_id") messageId: Int
     ): Response<Any>
 
     @POST("$DIR/engage/user-activity/")
     suspend fun engageUserSession(
-        @Body params: HashMap<String, List<AppUsageModel>>,
+        @Body params: HashMap<String, List<AppUsageModel>>
     ): Response<Void>
 
     @POST("$DIR/engage/course-user-activity/")
     suspend fun engageCourseUsageSession(
-        @Body params: HashMap<String, List<CourseUsageSync>>,
+        @Body params: HashMap<String, List<CourseUsageSync>>
     ): Response<Void>
 
     @POST("$DIR/mentor/gaid/")
@@ -286,7 +298,7 @@ interface CommonNetworkService {
 
     @GET("$DIR/group/{conversation_id}/unread_message/ ")
     suspend fun getUnreadMessageCount(
-        @Path("conversation_id") conversationId: String,
+        @Path("conversation_id") conversationId: String
     ): Response<JsonObject>
 
     @GET("$DIR/leaderboard/get_filtered_leaderboard/")
@@ -313,6 +325,12 @@ interface CommonNetworkService {
     @POST("$DIR/impression/tcflow_track_impressions/")
     suspend fun saveTrueCallerImpression(@Body params: Map<String, String>): Response<Void>
 
+    @POST("$DIR/payment/verify_payment/")
+    suspend fun checkMentorPayStatus(@Body params: Map<String, String>): Map<String, Any>
+
     @POST("$DIR/link_attribution/deep_link/")
     suspend fun getDeepLink(@Body params: LinkAttribution): Response<Any>
+
+    @POST("$DIR/impression/track_course_impressions/")
+    suspend fun saveIntroVideoFlowImpression(@Body params: Map<String, Any?>): Response<Any>
 }

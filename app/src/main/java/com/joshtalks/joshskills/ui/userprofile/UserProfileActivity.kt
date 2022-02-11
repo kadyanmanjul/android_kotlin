@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -18,6 +19,12 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -26,27 +33,29 @@ import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.AwardCategory
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
+import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
+import java.util.*
+import jp.wasabeef.glide.transformations.CropTransformation
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.DecimalFormat
-import java.util.*
 
 const val TOOLTIP_USER_PROFILE_SCREEN = "TOOLTIP_USER_PROFILE_SCREEN_"
 
@@ -59,34 +68,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var previousPage: String? = EMPTY
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
+    private var isSeniorStudent: Boolean = false
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
-    /*private val pointAnimator by lazy {
-        ValueAnimator.ofFloat(1.2f, 0.8f).apply {
-            duration = 780
-            repeatCount = ValueAnimator.INFINITE
-            repeatMode = ValueAnimator.REVERSE
-            addUpdateListener {
-                binding.points.scaleX = it.animatedValue as Float
-                binding.points.scaleY = it.animatedValue as Float
-            }
-            addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {}
-
-                override fun onAnimationEnd(animation: Animator?) {
-                    if (isPointAnimatorCancel) {
-                        binding.points.scaleX = 1f
-                        binding.points.scaleY = 1f
-                    }
-                }
-
-                override fun onAnimationCancel(animation: Animator?) {}
-
-                override fun onAnimationRepeat(animation: Animator?) {}
-            })
-        }
-    }*/
-    //private var isPointAnimatorCancel = false
     private var isAnimationVisible = false
 
     init {
@@ -131,14 +115,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.userPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
-                    ImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null)
+                    ProfileImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null,mentorId,false)
                         .show(supportFragmentManager, "ImageShow")
                 } else {
                     openChooser()
+
                 }
             } else {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
-                    ImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null)
+                    ProfileImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null,mentorId,false)
                         .show(supportFragmentManager, "ImageShow")
                 }
             }
@@ -146,8 +131,42 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.editPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 openChooser()
+
             }
         }
+        binding.labelViewMoreAwards.setOnClickListener {
+            showAllAwards()
+        }
+        binding.awardsLayout.setOnClickListener {
+            showAllAwards()
+        }
+
+        binding.labelViewMoreDp.setOnClickListener {
+            openPreviousProfilePicsScreen()
+        }
+        binding.previousProfilePicLayout.setOnClickListener {
+            openPreviousProfilePicsScreen()
+        }
+        binding.labelViewMoreGroups.setOnClickListener{
+            openMyGroupsScreen()
+        }
+        binding.myGroupsLayout.setOnClickListener{
+            openMyGroupsScreen()
+        }
+        binding.txtUserHometown.setOnClickListener {
+            if (mentorId == Mentor.getInstance().getId()) {
+                binding.txtUserHometown.isClickable = true
+                EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
+            }
+
+        }
+        binding.userAge.setOnClickListener {
+            if (mentorId == Mentor.getInstance().getId()) {
+                binding.userAge.isClickable = true
+                EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
+            }
+        }
+
     }
 
     private fun initToolbar() {
@@ -158,12 +177,25 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         with(iv_help) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openHelpActivity()
+            if (mentorId == Mentor.getInstance().getId()) {
+                visibility = View.GONE
+            } else {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    openHelpActivity()
+                }
             }
         }
-        text_message_title.text = getString(R.string.profile)
+        with(iv_edit) {
+            if (mentorId == Mentor.getInstance().getId()) {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    openEditProfileScreen()
+                }
+            } else {
+                visibility = View.GONE
+            }
+        }
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
                 .getId()
         ) {
@@ -175,6 +207,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         if (mentorId == Mentor.getInstance().getId()) {
+            binding.editPic.visibility = View.VISIBLE
+        } else {
             binding.editPic.visibility = View.GONE
         }
     }
@@ -197,13 +231,23 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         }
                     )
                 }
-                R.id.change_dp -> {
-                    openChooser()
-                }
             }
             return@setOnMenuItemClickListener false
         }
         popupMenu.show()
+    }
+
+    fun openEditProfileScreen() {
+        EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
+    }
+
+    fun openPreviousProfilePicsScreen() {
+        PreviousProfilePicsFragment.newInstance(mentorId)
+            .show(supportFragmentManager, "PreviousProfilePics")
+    }
+    fun openMyGroupsScreen() {
+        MyGroupsFragment.newInstance()
+            .show(supportFragmentManager, "MyGroups")
     }
 
     /* private fun initRecyclerView() {
@@ -257,7 +301,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     binding.editPic.visibility = View.VISIBLE
                     binding.editPic.text = "Add"
                 } else {
-                    binding.editPic.visibility = View.GONE
+                    binding.editPic.visibility = View.VISIBLE
+                    binding.editPic.text = "Edit"
                 }
             }
             binding.userPic.post {
@@ -272,6 +317,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         viewModel.apiCallStatus.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
+                getProfileData(intervalType, previousPage)
                 hideProgressBar()
             } else if (it == ApiCallStatus.FAILED) {
                 hideProgressBar()
@@ -279,26 +325,65 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 showProgressBar()
             }
         }
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(SaveProfileClickedEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    getProfileData(intervalType, previousPage)
+                })
+
     }
 
     private fun initView(userData: UserProfileResponse) {
         val resp = StringBuilder()
         userData.name?.split(" ")?.forEachIndexed { index, string ->
             if (index < 2) {
-                resp.append(string.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                resp.append(
+                    string.lowercase(Locale.getDefault())
+                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
                     .append(" ")
             }
         }
+        text_message_title.text = resp
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
+        if (userData.age == null || userData.age <= 1) {
+            binding.userAge.text = "_________"
+            binding.userAge.letterSpacing = 0.0F
+            binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.black))
+        } else {
+            binding.userAge.text = userData.age.toString()
+            binding.txtUserHometown.letterSpacing = 0.05F
+            binding.userAge.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
+        }
+        if (userData.hometown.isNullOrBlank()) {
+            binding.txtUserHometown.text = "_________"
+            binding.txtUserHometown.letterSpacing = 0.0F
+            binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.black))
+        } else {
+            binding.txtUserHometown.text = userData.hometown
+            binding.txtUserHometown.letterSpacing = 0.05F
+            binding.txtUserHometown.setTextColor(ContextCompat.getColor(this, R.color.grey_7A))
+        }
         binding.joinedOn.text = userData.joinedOn
-        if (userData.isOnline!!) {
+        if (userData.isOnline == true) {
             binding.onlineStatusIv.visibility = View.VISIBLE
         }
+
+        if (userData.previousProfilePictures != null) {
+            binding.previousProfilePicLayout.visibility = View.VISIBLE
+            binding.labelPreviousDp.setText("Previous Profile Photos (${userData.previousProfilePictures.profilePictures.size})")
+        } else {
+            binding.previousProfilePicLayout.visibility = View.GONE
+            binding.labelPreviousDp.text = userData.previousProfilePictures?.label
+        }
+
         if (userData.isSeniorStudent) {
             binding.txtLabelSeniorStudent.text = getString(R.string.label_senior_student, resp)
-            binding.txtLabelSeniorStudent.visibility = View.VISIBLE
-            binding.txtLabelBecomeSeniorStudent.visibility = View.VISIBLE
+            // binding.txtLabelSeniorStudent.visibility = View.VISIBLE
+            // binding.txtLabelBecomeSeniorStudent.visibility = View.VISIBLE
             binding.imgSeniorStudentBadge.visibility = View.VISIBLE
         } else {
             binding.txtLabelSeniorStudent.visibility = View.GONE
@@ -348,26 +433,116 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
         binding.streaksText.visibility = View.GONE
+        if (userData.isSeniorStudent) {
+            this.isSeniorStudent = true
+
+            binding.awardsLayout.visibility = View.VISIBLE
+            binding.multiLineLl.visibility = View.VISIBLE
+            binding.multiLineLl.removeAllViews()
+            val layoutInflater =
+                AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
+            val title = view.findViewById(R.id.title) as AppCompatTextView
+            title.text = "Senior Student"
+            setSeniorStudentAwardView(view!!)
+            if (view != null) {
+                binding.multiLineLl.addView(view)
+            }
+        }
 
         if (userData.awardCategory.isNullOrEmpty()) {
-            binding.awardsHeading.visibility = View.GONE
+            binding.labelViewMoreAwards.visibility = View.GONE
+            binding.awardsLayout.isClickable=false
+            if(!userData.isSeniorStudent) {
+                binding.noAwardText.visibility = View.VISIBLE
+                if (mentorId == Mentor.getInstance().getId()) {
+                    binding.noAwardText.text =
+                        getString(R.string.no_awards_me, resp.trim().split(" ")[0])
+                } else {
+                    binding.noAwardText.text =
+                        getString(R.string.no_awards_others, resp.trim().split(" ")[0])
+                }
+            }
+
         } else {
             this.awardCategory = userData.awardCategory
-            binding.awardsHeading.visibility = View.VISIBLE
+            binding.awardsLayout.visibility = View.VISIBLE
+            binding.multiLineLl.visibility = View.VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {
-                binding.multiLineLl.removeAllViews()
-                userData.awardCategory?.forEach { awardCategory ->
-                    val view = addLinerLayout(awardCategory)
+                binding.labelViewMoreAwards.visibility = View.VISIBLE
+                userData.awardCategory?.sortedBy { it.sortOrder }?.forEach { awardCategory ->
+                    val view = getAwardLayoutItem(awardCategory)
                     if (view != null) {
                         binding.multiLineLl.addView(view)
                     }
                 }
             } else {
-                binding.noAwardIcon.visibility = View.VISIBLE
-                binding.noAwardText.visibility = View.VISIBLE
+                if(!userData.isSeniorStudent) {
+                    binding.noAwardText.visibility = View.VISIBLE
+                    binding.labelViewMoreAwards.visibility = View.GONE
+                    binding.awardsLayout.isClickable=false
+                    if (mentorId == Mentor.getInstance().getId()) {
+                        binding.noAwardText.text =
+                            getString(R.string.no_awards_me, resp.trim().split(" ")[0])
+                    } else {
+                        binding.noAwardText.text =
+                            getString(R.string.no_awards_others, resp.trim().split(" ")[0])
+                    }
+                }
+            }
+        }
+        if (userData.myGroupsList.isNullOrEmpty()) {
+            binding.myGroupsLayout.visibility = View.GONE
+            binding.myGroupsLl.visibility = View.GONE
+        } else {
+            binding.myGroupsLayout.visibility = View.VISIBLE
+            binding.myGroupsLl.visibility = View.VISIBLE
+            binding.labelMyGroups.text= "My Groups (${userData.myGroupsList.size})"
+            binding.myGroupsLl.removeAllViews()
+            var countGroups = 0
+            userData.myGroupsList.forEach {
+                if (countGroups < 3) {
+                    val view = getMyGroupsLayoutItem(it)
+                    if (view != null) {
+                        binding.myGroupsLl.addView(view)
+                        countGroups++
+                    }
+                }
+            }
+        }
+        if (userData.enrolledCoursesList == null) {
+            binding.enrolledCoursesLayout.visibility = View.GONE
+            binding.enrolledCoursesLl.visibility = View.GONE
+        } else {
+            binding.enrolledCoursesLayout.visibility = View.VISIBLE
+            binding.enrolledCoursesLl.visibility = View.VISIBLE
+            binding.labelEnrolledCourses.text = userData.enrolledCoursesList.label
+            binding.enrolledCoursesLl.removeAllViews()
+            var countCourses = 0
+            userData.enrolledCoursesList.courses.forEach { course ->
+                if (countCourses < 3) {
+                    val view = getEnrolledCourseLayoutItem(course)
+                    if (view != null) {
+                        binding.enrolledCoursesLl.addView(view)
+                        countCourses++
+                    }
+                }
             }
         }
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
+    }
+
+    private fun setSeniorStudentAwardView(view: View) {
+        var v: View? = view.findViewById<ConstraintLayout>(R.id.award1)
+        v?.visibility = View.VISIBLE
+        var image: ImageView = view.findViewById(R.id.image_award1)
+        var title: AppCompatTextView = view.findViewById(R.id.title_award1)
+        var date: AppCompatTextView = view.findViewById(R.id.date_award1)
+        var count: AppCompatTextView = view.findViewById(R.id.txt_count_award1)
+        date.visibility =  GONE
+        title.visibility =  GONE
+        count.visibility =  GONE
+        image.setImageResource(R.drawable.senior_student_with_shadow)
     }
 
     private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
@@ -378,8 +553,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             return false
         } else {
             awardCategory.forEach {
-                it.awards?.forEach {
-                    if (it.is_achieved) {
+                it.awards?.forEach { award ->
+                    if (award.is_achieved) {
                         return true
                     }
                 }
@@ -394,10 +569,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             viewModel.getUserProfileUrl().isNullOrBlank(),
             isFromRegistration = false
         )
+
     }
 
     @SuppressLint("WrongViewCast")
-    private fun addLinerLayout(awardCategory: AwardCategory): View? {
+    private fun getAwardLayoutItem(awardCategory: AwardCategory): View? {
         val layoutInflater =
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
@@ -406,7 +582,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         var haveAchievedAwards = false
         var index = 0
 
-        awardCategory.awards?.forEach {
+        awardCategory.awards?.sortedBy { it.sortOrder }?.forEach {
+
+
             if (mentorId == Mentor.getInstance().getId()) {
                 setAwardView(it, index, view!!)
 
@@ -423,6 +601,77 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         return view
     }
+    @SuppressLint("WrongViewCast")
+    private fun getMyGroupsLayoutItem(groupInfo: GroupInfo): View? {
+        val layoutInflater =
+            AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view =
+            layoutInflater.inflate(R.layout.my_groups_row_item, binding.rootView, false)
+        val txtGroupName = view.findViewById(R.id.tv_group_name) as AppCompatTextView
+        val txtMinutesSpoken= view.findViewById(R.id.tv_minutes_spoken) as AppCompatTextView
+        val imggGroupIcon = view.findViewById(R.id.group_icon) as CircleImageView
+
+        txtGroupName.text = groupInfo.groupName
+        txtMinutesSpoken.text =groupInfo.textToShow
+        if(groupInfo.groupIcon==null){
+            imggGroupIcon.setImageResource(R.drawable.group_default_icon)
+
+        }else{
+            setImage(imggGroupIcon, groupInfo.groupIcon)
+        }
+        return view
+    }
+
+    @SuppressLint("WrongViewCast")
+    private fun getEnrolledCourseLayoutItem(course: CourseEnrolled): View? {
+        val layoutInflater =
+            AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view =
+            layoutInflater.inflate(R.layout.enrolled_courses_row_item, binding.rootView, false)
+        val txtCourseName = view.findViewById(R.id.tv_course_name) as AppCompatTextView
+        val txtStudentsEnrolled = view.findViewById(R.id.tv_students_enrolled) as AppCompatTextView
+        val imgCourseIcon = view.findViewById(R.id.profile_image) as CircleImageView
+
+        txtCourseName.text = course.courseName
+        txtStudentsEnrolled.text =
+            getString(R.string.total_students_enrolled, course.noOfStudents.toString())
+        setImage(imgCourseIcon, course.courseImage)
+        return view
+    }
+
+    fun setImage(imageView: ImageView, url: String?) {
+        if (url.isNullOrEmpty()) {
+            imageView.setImageResource(R.drawable.ic_josh_course)
+            return
+        }
+
+        val multi = MultiTransformation(
+            CropTransformation(
+                Utils.dpToPx(48),
+                Utils.dpToPx(48),
+                CropTransformation.CropType.CENTER
+            ),
+            RoundedCornersTransformation(
+                Utils.dpToPx(ROUND_CORNER),
+                0,
+                RoundedCornersTransformation.CornerType.ALL
+            )
+        )
+        Glide.with(AppObjectController.joshApplication)
+            .load(url)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(
+                RequestOptions.bitmapTransform(multi).apply(
+                    RequestOptions().placeholder(R.drawable.ic_josh_course)
+                        .error(R.drawable.ic_josh_course)
+                )
+
+            )
+            .into(imageView)
+    }
 
     private fun setAwardView(award: Award, index: Int, view: View) {
         var v: View? = null
@@ -435,7 +684,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     award,
                     view.findViewById(R.id.image_award1),
                     view.findViewById(R.id.title_award1),
-                    view.findViewById(R.id.date_award1)
+                    view.findViewById(R.id.date_award1),
+                    view.findViewById(R.id.txt_count_award1)
                 )
             }
             1 -> {
@@ -446,7 +696,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     award,
                     view.findViewById(R.id.image_award2),
                     view.findViewById(R.id.title_award2),
-                    view.findViewById(R.id.date_award2)
+                    view.findViewById(R.id.date_award2),
+                    view.findViewById(R.id.txt_count_award2)
                 )
             }
             2 -> {
@@ -456,29 +707,42 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     award,
                     view.findViewById(R.id.image_award3),
                     view.findViewById(R.id.title_award3),
-                    view.findViewById(R.id.date_award3)
+                    view.findViewById(R.id.date_award3),
+                    view.findViewById(R.id.txt_count_award3)
                 )
             }
             else -> {
             }
         }
-        v?.setOnClickListener {
-            RxBus2.publish(
-                AwardItemClickedEventBus(award)
-            )
-        }
+//        v?.setOnClickListener {
+//            RxBus2.publish(
+//                AwardItemClickedEventBus(award)
+//            )
+//        }
     }
 
     private fun setViewToLayout(
         award: Award,
         image: ImageView,
         title: AppCompatTextView,
-        date: AppCompatTextView
+        date: AppCompatTextView,
+        count: AppCompatTextView
     ) {
         title.text = award.awardText
-        date.text = award.dateText
+        if (award.dateText.isNullOrBlank()) {
+            date.visibility = View.INVISIBLE
+        } else {
+            date.visibility = View.VISIBLE
+            date.text = award.dateText
+        }
         award.imageUrl?.let {
             image.setImage(it, this)
+        }
+        if (award.count > 1) {
+            count.visibility = View.VISIBLE
+            count.text = award.count.toString()
+        } else {
+            count.visibility = View.GONE
         }
     }
 
@@ -488,7 +752,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     fun showAllAwards() {
         awardCategory?.let {
-            SeeAllAwardActivity.startSeeAllAwardActivity(this, it)
+            SeeAllAwardActivity.startSeeAllAwardActivity(this, it, this.isSeniorStudent)
         }
     }
 
@@ -520,7 +784,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     {
                         viewModel.userData.value?.photoUrl = it.url
                         if (it.url.isBlank()) {
-                            viewModel.completingProfile("")
+                            viewModel.saveProfileInfo("")
                         }
                     },
                     {
@@ -531,7 +795,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     private fun openAwardPopUp(award: Award) {
-        showAward(listOf(award), true)
+//        showAward(listOf(award), true)
     }
 
     override fun onStop() {
@@ -575,10 +839,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             intervalType: String? = null,
             previousPage: String? = null,
             conversationId: String? = null,
-            isFromConversationRoom: Boolean = false
+            isFromConversationRoom: Boolean=false,
 
             ) {
-            isScreenOpenByConversationRoom = isFromConversationRoom
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
                 intervalType?.let {

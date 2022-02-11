@@ -13,7 +13,7 @@ data class AssessmentQuestionResponse(
     val id: Int,
 
     @SerializedName("text")
-    val text: String,
+    val text: String?,
 
     @SerializedName("sub_text")
     val subText: String = EMPTY,

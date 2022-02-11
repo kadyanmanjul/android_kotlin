@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 
 const val USER_UNIQUE_ID = "user_unique_id"
 const val GID_SET_FOR_USER = "gid_set_for_user"
@@ -91,6 +93,8 @@ const val HAS_SEEN_VOCAB_SPEAKING_ANIMATION = "joshskills_has_seen_vocab_speakin
 const val HAS_SEEN_VOCAB_HAND_TOOLTIP = "joshskills_has_seen_vocab_hand_tooltip"
 const val HAS_SEEN_READING_HAND_TOOLTIP = "joshskills_has_seen_reading_hand_tooltip"
 const val HAS_SEEN_READING_TOOLTIP = "joshskills_has_seen_reading_tooltip"
+const val HAS_SEEN_GROUP_TOOLTIP = "joshskills_has_seen_group_tooltip"
+const val HAS_SEEN_GROUP_CALL_TOOLTIP = "joshskills_has_seen_group_call_tooltip"
 const val HAS_SEEN_READING_PLAY_ANIMATION = "joshskills_has_seen_reading_play_animation"
 const val HAS_SEEN_SPEAKING_TOOLTIP = "joshskills_has_seen_speaking_tooltip"
 const val LESSON_COMPLETE_SNACKBAR_TEXT_STRING = "lesson_complete_snackbar_text_string"
@@ -106,6 +110,16 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
+const val IS_ENGLISH_SYLLABUS_PDF_OPENED = "is_english_syllabus_pdf_opened"
+const val BLOCK_ISSUE = "BLOCK_ISSUE"
+const val REPORT_ISSUE = "REPORT_ISSUE"
+const val USER_ACTIVE_IN_GAME = "game_active"
+const val USER_LEAVE_THE_GAME = "game_left"
+const val USER_MUTE_OR_NOT = "mute_un_mute"
+const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
+const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
+const val IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN = "is_call_btn_clicked_from_new_screen"
+const val IS_FREE_TRIAL_ENDED = "is_free_trial_ended"
 const val CURRENT_COURSE_ID = "course_id"
 const val DEFAULT_COURSE_ID = "151"
 
@@ -176,13 +190,33 @@ object PrefManager {
     fun getIntValue(key: String, isConsistent: Boolean = false, defValue: Int): Int {
         return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
         else prefManagerCommon.getInt(key, defValue)
-
     }
+
+    fun getSetValue(key: String, isConsistent: Boolean = false, defValue: Set<String> = setOf()): Set<String> {
+        return if (isConsistent) prefManagerConsistent.getStringSet(key, defValue) ?: defValue
+        else prefManagerCommon.getStringSet(key, defValue) ?: defValue
+    }
+
+    fun appendToSet(
+        key: String,
+        value: String,
+        isConsistent: Boolean = false,
+    ) {
+        getSetValue(key, isConsistent).toMutableSet().also {
+            it.add(value)
+            put(key, it, isConsistent)
+        }
+    }
+
+    fun isInSet(
+        key: String,
+        value: String,
+        isConsistent: Boolean = false
+    ): Boolean = getSetValue(key, isConsistent).contains(value)
 
     fun getLongValue(key: String, isConsistent: Boolean = false): Long {
         return if (isConsistent) prefManagerConsistent.getLong(key, 0)
         else prefManagerCommon.getLong(key, 0)
-
     }
 
     private fun getFloatValue(key: String, isConsistent: Boolean = false): Float {
@@ -220,6 +254,21 @@ object PrefManager {
         else prefManagerCommon.edit().putBoolean(key, value).apply()
     }
 
+    fun put(key: String, value: Set<String>, isConsistent: Boolean = false) {
+        if (isConsistent) prefManagerConsistent.edit().putStringSet(key, value).apply()
+        else prefManagerCommon.edit().putStringSet(key, value).apply()
+    }
+
+    fun putPrefObject(key: String, objects: Any){
+        val gson = Gson()
+        val jsonString = gson.toJson(objects)
+        put(key = key, value=jsonString)
+    }
+    fun getPrefObject(key: String):ReportModel?{
+        val gson = Gson()
+        val json: String = getStringValue(key=key, defaultValue = "") as String
+        return gson.fromJson(json, ReportModel::class.java)
+    }
 
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN
@@ -242,7 +291,7 @@ object PrefManager {
         WorkManagerAdmin.appStartWorker()
     }
 
-    fun clearDatabase(){
+    fun clearDatabase() {
         LastSyncPrefManager.clear()
         AppDatabase.clearDatabase()
     }

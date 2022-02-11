@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
@@ -20,18 +19,38 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
+import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
+import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
+import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.truecaller.android.sdk.*
 import kotlinx.coroutines.CoroutineScope
+import com.truecaller.android.sdk.TruecallerSDK
+import com.truecaller.android.sdk.TruecallerSdkScope
+import com.truecaller.android.sdk.ITrueCallback
+import com.truecaller.android.sdk.TrueError
+import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
-
+import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
@@ -41,6 +60,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -50,19 +70,47 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
-        addViewModelObserver()
-        initTrueCallerUI()
-//        if (intent.getBooleanExtra(SHOW_SIGN_UP_FRAGMENT, false) &&
-//            Mentor.getInstance().getId().isNotEmpty()
-//        ) {
-//            openProfileDetailFragment()
-//        }
+        if (intent.getBooleanExtra(SHOW_SIGN_UP_FRAGMENT, false) &&
+            Mentor.getInstance().getId().isNotEmpty()
+        ) {
+            openProfileDetailFragment()
+        }
+        addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
     }
 
     override fun onStart() {
         super.onStart()
+        initTrueCallerUI()
         viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        hideProgressBar()
+    }
+
+    private fun addViewModelObservers() {
+        viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
+            hideProgressBar()
+            when (it) {
+                SignUpStepStatus.ProfileInCompleted -> {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        PrefManager.clearDatabase()
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
+                        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
+                    }
+                    openProfileDetailFragment()
+                }
+                SignUpStepStatus.SignUpCompleted, SignUpStepStatus.ERROR -> {
+                    openProfileDetailFragment()
+                }
+                else -> return@Observer
+            }
+        })
+        viewModel.progressBarStatus.observe(this, androidx.lifecycle.Observer {
+            showProgressBar()
+        })
     }
 
     fun signUp() {
@@ -113,13 +161,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
-                //to check if the truecaller exist in the users phone
-                if(TruecallerSDK.getInstance().isUsable) {
-                    openTrueCaller()
-                }
-                else {
+                if (TruecallerSDK.getInstance().isUsable)
+                    openTrueCallerBottomSheet()
+                else
                     openProfileDetailFragment(language.testId)
-                }
                 alertDialog.dismiss()
             }
         }
@@ -130,16 +175,69 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
+    fun initTrueCallerUI() {
+        hideProgressBar()
+        val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
+            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
+            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
+            .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
+            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
+            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
+            .build()
+        TruecallerSDK.init(trueScope)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance().setLocale(Locale(PrefManager.getStringValue(USER_LOCALE)))
+        }
+    }
+
+    private fun openTrueCallerBottomSheet() {
+        showProgressBar()
+        TruecallerSDK.getInstance().getUserProfile(this)
+    }
+
+    private val sdkCallback: ITrueCallback = object : ITrueCallback {
+        override fun onFailureProfileShared(trueError: TrueError) {
+            openProfileDetailFragment()
+            hideProgressBar()
+            if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
+                showToast(application.getString(R.string.internet_not_available_msz))
+            }
+        }
+
+        override fun onVerificationRequired(p0: TrueError?) {
+            openProfileDetailFragment()
+        }
+
+        override fun onSuccessProfileShared(trueProfile: TrueProfile) {
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
+                viewModel.userName = trueProfile.firstName
+                viewModel.verifyUserViaTrueCaller(trueProfile)
+                viewModel.isVerified = true
+                openProfileDetailFragment()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance()
+                .onActivityResultObtained(this, requestCode, resultCode, data)
+            hideProgressBar()
+            return
+        }
+        hideProgressBar()
+    }
+
     private fun openProfileDetailFragment(testId: String = FREE_TRIAL_DEFAULT_TEST_ID) {
-//        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName?:"").apply {
-                    val bundle = Bundle()
-                    bundle.putString(FREE_TRIAL_TEST_ID, testId)
-                    arguments = bundle
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY, viewModel.isVerified).apply {
+                    arguments = Bundle().putString(FREE_TRIAL_TEST_ID, testId)
                 },
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
@@ -157,90 +255,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             return
         }
         super.onBackPressed()
-    }
-
-    private fun openTrueCaller(){
-        showProgressBar()
-        viewModel.saveTrueCallerImpression(TRUECALLER_FT_LOGIN)
-        TruecallerSDK.getInstance().getUserProfile(this@FreeTrialOnBoardActivity)
-    }
-
-    fun initTrueCallerUI() {
-        val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
-            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
-            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
-            .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
-            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
-            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
-            .build()
-        TruecallerSDK.init(trueScope)
-        if (TruecallerSDK.getInstance().isUsable) {
-            val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
-            TruecallerSDK.getInstance().setLocale(locale)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TruecallerSDK.SHARE_PROFILE_REQUEST_CODE) {
-            TruecallerSDK.getInstance()
-                .onActivityResultObtained(this, requestCode, resultCode, data)
-        }
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().onActivityResultObtained(this, requestCode, resultCode, data)
-            return
-        }
-        hideProgressBar()
-    }
-
-    private val sdkCallback: ITrueCallback = object : ITrueCallback {
-        override fun onFailureProfileShared(trueError: TrueError) {
-            hideProgressBar()
-            if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
-                showToast(application.getString(R.string.internet_not_available_msz))
-            }
-        }
-        override fun onVerificationRequired(p0: TrueError?) {
-        }
-        override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.userName = trueProfile.firstName
-                viewModel.verifyUserViaTrueCaller(trueProfile)
-            }
-        }
-    }
-
-    private fun addViewModelObserver() {
-        viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
-            hideProgressBar()
-            when (it) {
-                SignUpStepStatus.ProfileInCompleted -> {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        PrefManager.clearDatabase()
-                        PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
-                        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
-                    }
-                    openProfileDetailFragment()
-                }
-                SignUpStepStatus.ProfileCompleted -> {
-                    openProfileDetailFragment()
-                }
-                SignUpStepStatus.SignUpCompleted -> {
-                    openProfileDetailFragment()
-                }
-                else -> return@Observer
-            }
-        })
-        viewModel.progressBarStatus.observe(this, androidx.lifecycle.Observer {
-            showProgressBar()
-        })
-    }
-
-
-    override fun onDestroy() {
-        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        TruecallerSDK.clear()
-        super.onDestroy()
     }
 
     fun openChooseLanguageFragment() {

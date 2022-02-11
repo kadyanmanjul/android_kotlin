@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
+import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
+import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
@@ -32,8 +34,6 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.ui.group.JoshGroupActivity
-import com.joshtalks.joshskills.ui.group.views.GroupBottomSheet
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
@@ -163,10 +163,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnStart.setOnClickListener {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
         }
 
         binding.btnGroupCall.setOnClickListener {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if(isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
@@ -276,6 +278,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (haveAnyFavCaller) {
                 startPractise(favoriteUserCall = true)
             } else {
@@ -294,6 +297,37 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
+
+        viewModel.lessonLiveData.observe(viewLifecycleOwner, {
+            if(it.lessonNo == 1){
+                binding.btnCallDemo.visibility = View.GONE
+                binding.txtHowToSpeak.visibility = View.VISIBLE
+                binding.txtHowToSpeak.setOnClickListener {
+                    viewModel.isHowToSpeakClicked(true)
+                    binding.btnCallDemo.visibility = View.VISIBLE
+                    viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
+                }
+
+                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                    if(it == 1){
+                        binding.nestedScrollView.visibility = View.INVISIBLE
+                        binding.btnCallDemo.visibility = View.VISIBLE
+                    }
+                    if(it == 2){
+                        binding.nestedScrollView.visibility = View.VISIBLE
+                        binding.btnCallDemo.visibility = View.GONE
+                    }
+                })
+            }else{
+                binding.btnCallDemo.visibility = View.GONE
+            }
+        })
+
+        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
+            if(it == true){
+                binding.btnCallDemo.visibility = View.GONE
+            }
+        })
     }
 
     private fun showTooltip() {

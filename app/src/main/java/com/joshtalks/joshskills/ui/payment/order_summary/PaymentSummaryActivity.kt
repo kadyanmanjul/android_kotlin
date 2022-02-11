@@ -31,7 +31,6 @@ import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.flurry.android.FlurryAgent
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
@@ -869,8 +868,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         uiHandler.postDelayed({
             navigateToStartCourseActivity(true)
         }, 1000 * 5)
-
-        FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
     }
 
     private fun addECommerceEvent(razorpayPaymentId: String) {

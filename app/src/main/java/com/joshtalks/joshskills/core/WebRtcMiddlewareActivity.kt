@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+
 open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
@@ -79,17 +80,23 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
                 if (time > 0 && channelName.isNullOrEmpty().not()) {
-                    VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                        channelName = channelName,
-                        callTime = time,
-                        callerName = mBoundService?.getOppositeCallerName(),
-                        callerImage = mBoundService?.getOppositeCallerProfilePic(),
-                        yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                        yourAgoraId = mBoundService?.getUserAgoraId(),
-                        dimBg = true,
-                        activity = this@WebRtcMiddlewareActivity,
-                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    )
+                    try {
+                        VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                            channelName = channelName,
+                            callTime = time,
+                            callerName = mBoundService?.getOppositeCallerName(),
+                            callerImage = mBoundService?.getOppositeCallerProfilePic(),
+                            yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                            yourAgoraId = mBoundService?.getUserAgoraId(),
+                            dimBg = true,
+                            activity = this@WebRtcMiddlewareActivity,
+                            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                            callerId = mBoundService?.getOppositeCallerId()?: -1,
+                            currentUserId=mBoundService?.getUserAgoraId()?: -1
+                        )
+                    } catch (ex:Exception){
+                        ex.printStackTrace()
+                    }
                     this@WebRtcMiddlewareActivity.finish()
                 }
                 mBoundService?.setOppositeUserInfo(null)

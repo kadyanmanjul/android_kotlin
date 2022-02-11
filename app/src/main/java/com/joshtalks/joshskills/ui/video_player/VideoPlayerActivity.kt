@@ -51,7 +51,8 @@ import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
-import com.joshtalks.joshskills.ui.referral.*
+import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
+import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -546,58 +547,98 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     fun getDeepLinkAndInviteFriends() {
-        val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
-        userReferralCode = Mentor.getInstance().referralCode
+        val referralTimestamp = System.currentTimeMillis()
         val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
             .setTitle("Invite Friend")
             .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
             .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
         val lp = LinkProperties()
-            .setChannel("social")
+            .setChannel(userReferralCode)
             .setFeature("sharing")
-            .setCampaign("referral")
+            .setCampaign(userReferralCode.plus(referralTimestamp))
             .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(Defines.Jsonkey.UTMMedium.key, userReferralCode.plus(System.currentTimeMillis()))
+            .addControlParameter(
+                Defines.Jsonkey.UTMCampaign.key,
+                userReferralCode.plus(referralTimestamp)
+            )
+            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
+
         branchUniversalObject
             .generateShortUrl(this, lp) { url, error ->
-                if (error == null) {
-                    if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
-                        PrefManager.put(USER_SHARE_SHORT_URL, url)
-                    inviteFriends(url)
-                }
+                if (error == null)
+                    inviteFriends(
+                        dynamicLink = url,
+                        referralTimestamp = referralTimestamp
+                    )
                 else
                     inviteFriends(
                         dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
                             PrefManager.getStringValue(USER_SHARE_SHORT_URL)
                         else
-                            getAppShareUrl()
+                            getAppShareUrl(),
+                        referralTimestamp = referralTimestamp
                     )
             }
-//        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-//            link = Uri.parse("https://joshskill.app.link")
-//            domainUriPrefix = domain
-//            androidParameters(BuildConfig.APPLICATION_ID) {
-//                minimumVersion = 69
-//            }
-//            googleAnalyticsParameters {
-//                source = userReferralCode.plus(System.currentTimeMillis())
-//                medium = "Mobile"
-//                campaign = "user_referer"
-//            }
-//        }.addOnSuccessListener { result ->
-//            result.shortLink?.let {
-//                if (it.toString().isNotEmpty()) {
-//                    if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
-//                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-//                    inviteFriends(it.toString())
-//                } else
-//                    inviteFriends(getDefaultLink())
-//            }
-//        }.addOnFailureListener {
-//            inviteFriends(getDefaultLink())
-//            it.printStackTrace()
-//        }
+        /* val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+             domainUriPrefix = domain
+             link = Uri.parse("https://joshskill.app.link")
+ //            link =
+ //                Uri.parse(
+ //                    "https://joshskill.app.link/" +
+ //                            "?apn=${application.packageName}" +
+ //                            "&link=https://joshskill.app.link/" +
+ //                            "&source=$userReferralCode" +
+ //                            "&medium=${
+ //                                userReferralCode.plus(
+ //                                    System.currentTimeMillis()
+ //                                )
+ //                            }&campaign=referral"
+ //                )
+             androidParameters(BuildConfig.APPLICATION_ID) {
+                 minimumVersion = 69
+             }
+             googleAnalyticsParameters {
+                 source = userReferralCode.plus(System.currentTimeMillis())
+                 medium = "Mobile"
+                 campaign = "user_referer"
+             }
+
+         }.addOnSuccessListener { result ->
+             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.shortLink}")
+             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.previewLink}")
+             result.warnings.forEach {
+                 Log.w(TAG, "getDeepLinkAndInviteFriends: Warning${it.message}")
+             }
+             result.shortLink?.let {
+                 try {
+                     if (it.toString().isNotEmpty()) {
+                         if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
+                             PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                         inviteFriends(packageString = packageString, dynamicLink = it.toString())
+                     } else
+                         inviteFriends(
+                             packageString = packageString,
+                             dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                                 PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                             else
+                                 getAppShareUrl()
+                         )
+                 } catch (ex: Exception) {
+                     ex.printStackTrace()
+                 }
+             }
+         }.addOnFailureListener {
+             it.printStackTrace()
+             inviteFriends(
+                 packageString = packageString,
+                 dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                     PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                 else
+                     getAppShareUrl()
+             )
+         }*/
     }
 
     fun getDefaultLink(): String = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
@@ -605,9 +646,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     else
         getAppShareUrl()
 
-    fun inviteFriends(dynamicLink: String) {
+    fun inviteFriends(dynamicLink: String, referralTimestamp: Long) {
         var referralText =
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_SHARABLE_VIDEO)
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(REFERRAL_SHARE_TEXT_SHARABLE_VIDEO)
         referralText = referralText.plus("\n").plus(dynamicLink)
         chatObject?.run {
             try {
@@ -615,7 +657,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     try {
                         val requestData = LinkAttribution(
                             mentorId = Mentor.getInstance().getId(),
-                            contentId = "$userReferralCode${System.currentTimeMillis()}",
+                            contentId = userReferralCode.plus(
+                                referralTimestamp
+                            ),
                             sharedItem = sharedItem,
                             sharedItemType = "VI",
                             deepLink = dynamicLink,
@@ -628,7 +672,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     }
                 }
 
-                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath
+                val fileDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)?.absolutePath
                 val destination = fileDir + File.separator + this.sharableVideoDownloadedLocalPath
 
                 val waIntent = Intent(Intent.ACTION_SEND)
@@ -860,7 +905,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             }
 
             videoId?.run {
-                if (isSharableVideo.not()){
+                if (isSharableVideo.not()) {
                     EngagementNetworkHelper.engageVideoApi(
                         VideoEngage(
                             videoViewGraphList.toList(),
@@ -869,8 +914,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                             courseID = courseId,
                         )
                     )
-                }else{
-                   val videoEngage = VideoEngage(
+                } else {
+                    val videoEngage = VideoEngage(
                         videoViewGraphList.toList(),
                         this.toInt(),
                         countUpTimer.time.toLong(),

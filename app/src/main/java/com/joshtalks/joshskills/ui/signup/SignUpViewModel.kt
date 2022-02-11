@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -33,13 +32,13 @@ import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
+    val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
     var resendAttempt: Int = 1
     var incorrectAttempt: Int = 0
     var currentTime: Long = 0
@@ -54,19 +53,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var loginViaStatus: LoginViaStatus? = null
     val service = AppObjectController.signUpNetworkService
 
-    fun saveTrueCallerImpression(eventName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val requestData = hashMapOf(
-                    Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("event_name", eventName)
-                )
-                AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
         id: String,
@@ -306,6 +292,20 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         return EMPTY
     }
 
+    fun checkMentorIdPaid() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
+                val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
+                if(response!=null) {
+                    mentorPaymentStatus.postValue(response["payment"] as Boolean)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun completingProfile(map: MutableMap<String, String?>, isUserVerified: Boolean = true) {
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
@@ -416,6 +416,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val resp =
                     AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
                         mapOf(
+                            "is_verified" to User.getInstance().isVerified.toString(),
                             "mentor_id" to mentorId,
                             "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                             "event_name" to IMPRESSION_REGISTER_FREE_TRIAL,
@@ -438,4 +439,17 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun saveTrueCallerImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 }

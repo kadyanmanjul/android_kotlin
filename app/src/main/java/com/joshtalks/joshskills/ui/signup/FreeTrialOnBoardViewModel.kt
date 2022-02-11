@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
@@ -13,12 +12,12 @@ import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,14 +25,14 @@ import timber.log.Timber
 import java.util.*
 
 class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {
-    private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
-    val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
+
+    val signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
-    val service = AppObjectController.signUpNetworkService
-    val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
-    val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
+    val service = AppObjectController.signUpNetworkService
     var userName: String? = null
+    var isVerified: Boolean = false
+
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -73,8 +72,8 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     PrefManager.getStringValue(INSTANCE_ID, false)
                 )
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
-                if (response.isSuccessful) {
-                    response.body()?.run { //when api calls
+                if (response.isSuccessful && response.body() != null) {
+                    response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
                             RegistrationMethods.TRUE_CALLER
@@ -85,7 +84,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
-            _signUpStatus.postValue(SignUpStepStatus.ERROR)
+            signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -115,54 +114,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun completingProfile(map: MutableMap<String, String?>, isUserVerified: Boolean = true) {
-        progressBarStatus.postValue(true)
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        it.isVerified = isUserVerified
-                        User.getInstance().updateFromResponse(it)
-                        _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
-                    }
-                    return@launch
-                }
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-            _signUpStatus.postValue(SignUpStepStatus.ERROR)
-        }
-    }
-
-    fun startFreeTrial(mentorId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                apiStatus.postValue(ApiCallStatus.START)
-                val resp =
-                    AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
-                        mapOf(
-                            "mentor_id" to mentorId,
-                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
-                            "event_name" to IMPRESSION_REGISTER_FREE_TRIAL
-                        )
-                    )
-
-
-                if (resp.isSuccessful) {
-                    PrefManager.put(IS_GUEST_ENROLLED, value = true)
-                    apiStatus.postValue(ApiCallStatus.SUCCESS)
-                    return@launch
-                }
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-                apiStatus.postValue(ApiCallStatus.FAILED)
-                ex.printStackTrace()
-            }
-            apiStatus.postValue(ApiCallStatus.FAILED)
-        }
-    }
-
     private fun deleteMentor(mentorId: String, oldMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -175,7 +126,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
-            _signUpStatus.postValue(SignUpStepStatus.ERROR)
+            signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -183,27 +134,29 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.getPersonalProfileAsync(Mentor.getInstance().getId())
-                Mentor.getInstance().updateFromResponse(response)
-                response.getUser()?.let {
-                    it.isVerified = true
-                    User.update(it)
+                if (response != null) {
+                    Mentor.getInstance().updateFromResponse(response)
+                    response.getUser()?.let {
+                        it.isVerified = true
+                        User.update(it)
+                    }
+                    AppAnalytics.updateUser()
+                    analyzeUserProfile()
+                    return@launch
                 }
-                AppAnalytics.updateUser()
-                analyzeUserProfile()
-                return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
-            _signUpStatus.postValue(SignUpStepStatus.ERROR)
+            signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
     private fun analyzeUserProfile() {
         val user = User.getInstance()
         if (user.phoneNumber.isNullOrEmpty() || user.firstName.isNullOrEmpty()) {
-            return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
+            return signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
-        _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+        signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
     }
 
     fun getAvailableLanguages() {

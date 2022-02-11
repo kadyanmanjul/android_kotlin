@@ -1,31 +1,25 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
-import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
-import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.playSnackbarSound
-import com.joshtalks.joshskills.core.playWrongAnswerSound
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -38,11 +32,7 @@ import com.joshtalks.joshskills.repository.server.assessment.OnlineTestType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.ui.assessment.view.Stub
-import com.joshtalks.joshskills.ui.chat.vh.AtsChoiceView
-import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
-import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
-import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
-import com.joshtalks.joshskills.ui.chat.vh.SubjectiveChoiceView
+import com.joshtalks.joshskills.ui.chat.vh.*
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
@@ -54,16 +44,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
-import com.tonyodev.fetch2core.Func
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.lang.reflect.Type
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
-
+import java.lang.reflect.Type
 
 class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
 
@@ -91,6 +77,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     var reviseVideoObject: VideoModel? = null
     private var compositeDisposable = CompositeDisposable()
     private var previousId: Int = -1
+    private var completed = false
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnlineTestInterface)
@@ -109,8 +96,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             lessonNumber = it.getInt(GrammarOnlineTestFragment.CURRENT_LESSON_NUMBER, -1)
         }
 
-        lessonId = if (requireActivity().intent.hasExtra(LessonActivity.LESSON_ID))
-            requireActivity().intent.getIntExtra(LessonActivity.LESSON_ID, 0) else 0
+        lessonId = if (requireActivity().intent.hasExtra(LessonActivity.LESSON_ID)) {
+            requireActivity().intent.getIntExtra(LessonActivity.LESSON_ID, 0)
+        } else 0
 
         binding =
             DataBindingUtil.inflate(
@@ -142,12 +130,12 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun setObservers() {
-
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
             this.ruleAssessmentQuestionId = onlineTestResponse.ruleAssessmentQuestionId
             this.reviseVideoObject = onlineTestResponse.videoObject
             this.totalQuestion = onlineTestResponse.totalQuestions
-            this.totalAnsweredQuestions = onlineTestResponse.totalAnswered
+            this.totalAnsweredQuestions = onlineTestResponse.totalAnswered ?: 0
+            animateProgress()
             if (onlineTestResponse.completed) {
                 PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, lessonNumber)
                 if (onlineTestResponse.ruleAssessmentId != null) {
@@ -211,6 +199,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun addNewRuleCompleted(ruleCompletedId: Int) {
+        completed = true
         val mapTypeToken: Type = object : TypeToken<List<Int>?>() {}.type
         val list: List<Int>? = AppObjectController.gsonMapper.fromJson(
             PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
@@ -236,10 +225,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             showGrammarCompleteFragment()
             return
         }
+        Timber.d("setupViews(): totalQuestion :$totalQuestion")
         if (totalQuestion != null) {
             binding.questionProgressBar.visibility = View.VISIBLE
-            binding.questionProgressBar.max = (totalQuestion!! + 1) * 100
-            animateProgress()
+            binding.questionProgressBar.max = (totalQuestion ?: 0).times(100)
         } else {
             binding.questionProgressBar.visibility = View.VISIBLE
         }
@@ -253,6 +242,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 assessmentQuestions.question.isNewHeader
             )
         }
+        binding.videoContainer.setOnClickListener {
+            LessonActivity.isVideoVisible.postValue(false)
+        }
         when (assessmentQuestions.question.choiceType) {
             ChoiceType.ARRANGE_THE_SENTENCE -> {
                 mcqChoiceView?.get()?.visibility = View.GONE
@@ -260,6 +252,11 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 atsChoiceView?.resolved().let {
                     atsChoiceView?.get()?.visibility = View.VISIBLE
                     atsChoiceView!!.get().setup(assessmentQuestions)
+                    atsChoiceView!!.get().addImpressionCallback(object : TrackUndoImpression {
+                        override fun trackUndoImpression() {
+                            viewModel.saveImpression(IMPRESSION_UNDO_ATS_OPTION)
+                        }
+                    })
                     atsChoiceView!!.get()
                         .addCallback(object : EnableDisableGrammarButtonCallback {
                             override fun disableGrammarButton() {
@@ -362,15 +359,35 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 override fun nextQuestion() {
                     moveToNextGrammarQuestion()
                 }
+
+                override fun onVideoButtonAppear(
+                    isClicked: Boolean,
+                    wrongAnswerHeading: String?,
+                    wrongAnswerText: String?
+                ) {
+                    if (isClicked)
+                        binding.progressContainer.isVisible = true
+                    if (PrefManager.hasKey(
+                            HAS_SEEN_QUIZ_VIDEO_TOOLTIP,
+                        ).not() && isClicked.not()
+                    ) {
+                        lessonActivityListener?.showVideoToolTip(
+                            shouldShow = true,
+                            wrongAnswerHeading = wrongAnswerHeading,
+                            wrongAnswerText = wrongAnswerText,
+                            videoClickListener = { buttonView!!.get().viewVideo() }
+                        )
+                    }
+                }
             })
         }
     }
 
     private fun animateProgress() {
         val currentProgress = binding.questionProgressBar.progress
-        val finalProgress = (totalAnsweredQuestions?.plus(1)?.times(100)) ?: 0
+        val finalProgress = (totalAnsweredQuestions ?: 0).times(100)
         ValueAnimator.ofInt(currentProgress, finalProgress).apply {
-            duration = 200
+            duration = 400
             addUpdateListener {
                 binding.questionProgressBar.progress = it.animatedValue as Int
             }
@@ -409,7 +426,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     request.priority = Priority.HIGH
                     request.networkType = NetworkType.ALL
                     request.tag = choice.remoteId.toString()
-                    AppObjectController.getFetchObject().enqueue(request, Func {
+                    AppObjectController.getFetchObject().enqueue(request, {
                         choice.localAudioUrl = it.file
                         choice.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                         CoroutineScope(Dispatchers.IO).launch {
@@ -426,7 +443,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         DownloadUtils.objectFetchListener.remove(it.tag)
                         Timber.e(it.url + "   " + it.file)
                     },
-                        Func {
+                        {
                             it.throwable?.printStackTrace()
                             choice.downloadStatus = DOWNLOAD_STATUS.FAILED
                             CoroutineScope(Dispatchers.IO).launch {
@@ -476,32 +493,28 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     fun showGrammarCompleteFragment() {
-        activity?.supportFragmentManager?.let { fragmentManager ->
-            fragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.parent_Container,
-                    GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList),
-                    GrammarOnlineTestFragment.TAG
-                )
-                .addToBackStack(TAG)
-                .commitAllowingStateLoss()
-        }
+        activity?.supportFragmentManager?.beginTransaction()?.replace(
+            R.id.parent_Container,
+            GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList),
+            GrammarOnlineTestFragment.TAG
+        )?.addToBackStack(TAG)?.commitAllowingStateLoss()
     }
 
     private fun onCheckQuestion(
         assessmentQuestions: AssessmentQuestionWithRelations,
         status: Boolean
     ) {
+        if (completed) {
+            completed = false
+            totalAnsweredQuestions = 0
+            animateProgress()
+        }
         assessmentQuestions.question.status =
             if (status) QuestionStatus.CORRECT else QuestionStatus.WRONG
-        val isLastQuestion = (totalQuestion == (totalAnsweredQuestions ?: 0) + 1)
-        if (!isLastQuestion) {
-            if (status) {
-                playSnackbarSound(requireActivity())
-            } else {
-                playWrongAnswerSound(requireActivity())
-            }
+        if (status) {
+            playSnackbarSound(requireActivity())
+        } else {
+            playWrongAnswerSound(requireActivity())
         }
         viewModel.postAnswerAndGetNewQuestion(
             assessmentQuestions,
@@ -512,6 +525,11 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun moveToNextGrammarQuestion() {
+        if (completed) {
+            completed = false
+            totalAnsweredQuestions = 0
+            animateProgress()
+        }
         lessonActivityListener?.onLessonUpdate()
         setupViews(assessmentQuestions!!)
     }
@@ -531,20 +549,65 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun addObserver() {
+        LessonActivity.isVideoVisible.observe(viewLifecycleOwner, { isVideoVisible ->
+            if (!isVideoVisible) {
+                binding.videoPlayer.onPause()
+                if (binding.videoContainer.isVisible)
+                    binding.videoContainer
+                        .animate()
+                        .alpha(0.0f)
+                        .setDuration(200)
+                        .setListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator?) {
+                                super.onAnimationEnd(animation)
+                                binding.videoContainer.visibility = View.GONE
+                            }
+                        })
+                        .start()
+            } else if (binding.videoContainer.isVisible.not()) {
+                binding.videoContainer
+                    .animate()
+                    .alpha(1.0f)
+                    .setDuration(500)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            super.onAnimationEnd(animation)
+                            binding.videoContainer.visibility = View.VISIBLE
+                            binding.progressContainer.isVisible = false
+                        }
+                    })
+                    .start()
+            }
+        })
         compositeDisposable.add(
             RxBus2.listen(VideoShowEvent::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    binding.videoContainer.visibility = View.VISIBLE
+                    LessonActivity.isVideoVisible.value = true
                     binding.videoPlayer.apply {
-                        visibility = View.VISIBLE
                         setUrl(it.videoUrl)
                         setVideoId(it.videoId)
                         fitToScreen()
+                        if (it.videoHeight != 0 && it.videoWidth != 0) {
+                            (binding.videoPlayer.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
+                                (it.videoWidth.toDouble() / it.videoHeight).toString()
+                        }
                         downloadStreamPlay()
-                        setPlayListener(object : JoshGrammarVideoPlayer.PlayerFullScreenListener {
-
+                        setPlayerEventCallback { event, _ ->
+                            if (event == ExoPlayer.STATE_ENDED) {
+                                LessonActivity.isVideoVisible.value = false
+//                                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, true)
+                                it.videoId?.let { videoId ->
+                                    PrefManager.appendToSet(
+                                        LAST_SEEN_VIDEO_ID,
+                                        videoId, false
+                                    )
+                                }
+                            }
+                        }
+                        setPlayListener(object :
+                            JoshGrammarVideoPlayer.PlayerFullScreenListener {
                             override fun onFullScreen() {
                                 val currentVideoProgressPosition = binding.videoPlayer.progress
                                 startActivity(
@@ -557,12 +620,12 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                                         conversationId = getConversationId()
                                     )
                                 )
-                                visibility = View.GONE
+                                LessonActivity.isVideoVisible.value = false
                             }
 
                             override fun onClose() {
                                 onPause()
-                                visibility = View.GONE
+                                LessonActivity.isVideoVisible.value = false
                             }
                         })
                     }

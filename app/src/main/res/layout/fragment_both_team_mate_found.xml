@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickHandler"
+            type="com.joshtalks.joshskills.quizgame.ui.main.view.fragment.BothTeamMateFoundFpp" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".quizgame.ui.main.view.fragment.BothTeamMateFoundFpp">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_game_back">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/txtquiz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_30sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_game_logo_grad" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/card1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_60sdp"
+                app:layout_constraintBottom_toTopOf="@+id/rel1"
+                app:layout_constraintTop_toTopOf="@+id/txtquiz">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:background="@drawable/new_card_border"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    app:cardElevation="@dimen/_35sdp"
+                    app:cardMaxElevation="@dimen/_15sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="#8785FB"
+                    app:strokeWidth="@dimen/_1sdp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/new_card_border"
+                        android:gravity="center"
+                        android:text="Team Found"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_305sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card1">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_23sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image1"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:src="@drawable/josh_skill"
+                        app:civ_border_color="@color/light_blue_quiz"
+                        app:civ_border_width="@dimen/_4sdp" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/user_name1"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/user_image1"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/user_name"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relative_layout_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/_23sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image2"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:src="@drawable/josh_skill"
+                        app:civ_border_color="@color/light_blue_quiz"
+                        app:civ_border_width="@dimen/_4sdp" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image_shadow2"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        android:visibility="gone" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/user_name2"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/user_image2"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/user_name"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/globe"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_below="@id/relative_layout_2"
+                    android:layout_centerInParent="true">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/vs"
+                        app:srcCompat="@drawable/left_to_right" />
+
+
+                    <RelativeLayout
+                        android:id="@+id/vs1"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_centerInParent="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/ic_ellipse_79" />
+
+                    <RelativeLayout
+                        android:id="@+id/vs"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_centerInParent="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/back_vs">
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/image9"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_70sdp"
+                            android:layout_centerInParent="true"
+                            app:lottie_autoPlay="true"
+                            app:lottie_fileName="lottie/globeanim.json"
+                            app:lottie_loop="true"
+                            app:lottie_speed="1" />
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/vs"
+                        app:srcCompat="@drawable/right_toleft_wave" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/globe"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="@dimen/_23sdp"
+                    android:layout_marginRight="@dimen/_23sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image4"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:src="@drawable/josh_skill"
+                        app:civ_border_color="@color/light_blue_quiz"
+                        app:civ_border_width="@dimen/_4sdp" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image4_shadow"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:src="@drawable/ic_offline_shadow_img"
+                        android:visibility="invisible"
+                        app:civ_border_color="@color/light_blue_quiz"
+                        app:civ_border_width="@dimen/_4sdp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/user_name4"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/user_image4"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/user_name"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relative4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/globe"
+                    android:layout_marginLeft="@dimen/_23sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/user_image3"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:src="@drawable/josh_skill"
+                        app:civ_border_color="@color/light_blue_quiz"
+                        app:civ_border_width="@dimen/_4sdp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/user_name3"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/user_image3"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/user_name"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="@dimen/_55sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    app:cardCornerRadius="@dimen/_10sdp">
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/_55sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:background="#000">
+
+                        <Chronometer
+                            android:id="@+id/call_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:text=""
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            android:textColor="@color/white"
+                            android:visibility="invisible" />
+
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

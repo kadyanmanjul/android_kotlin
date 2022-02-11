@@ -2,11 +2,9 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.app.Application
 import android.location.Location
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.flurry.sdk.ex
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
@@ -19,47 +17,46 @@ import java.net.ProtocolException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import retrofit2.Response
 import timber.log.Timber
 
 private const val TAG = "VoipCallingViewModel"
+
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
     fun getUserForTalk(
-        courseId: String?,
-        topicId: Int?,
-        location: Location?,
-        aFunction: (String, String, Int) -> Unit,
-        is_demo: Boolean = PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false),
-        groupId : String? = null
+            courseId: String?,
+            topicId: Int?,
+            location: Location?,
+            aFunction: (String, String, Int) -> Unit,
+            is_demo: Boolean = PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false),
+            groupId: String? = null
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = AgoraTokenRequest(
-                    Mentor.getInstance().getId(),
-                    courseId,
-                    is_demo,
-                    topicId.toString(),
-                    groupId = groupId
+                        Mentor.getInstance().getId(),
+                        courseId,
+                        is_demo,
+                        topicId.toString(),
+                        groupId = groupId
                 )
                 val response =
-                    AppObjectController.p2pNetworkService.getAgoraClientToken(request)
+                        AppObjectController.p2pNetworkService.getAgoraClientToken(request)
                 if (response.isSuccessful && response.code() in 200..203) {
                     response.body()?.let {
                         CurrentCallDetails.set(
-                            it["channel_name"] ?: "",
-                            callId = it["agora_call_id"] ?: "",
-                            callieUid = it["uid"] ?: "",
-                            callerUid = ""
+                                it["channel_name"] ?: "",
+                                callId = it["agora_call_id"] ?: "",
+                                callieUid = it["uid"] ?: "",
+                                callerUid = ""
                         )
 
                         try {
                             AppObjectController.p2pNetworkService.sendAgoraTokenConformation(mapOf("agora_call_id" to it["agora_call_id"]))
-                        } catch (e : Exception) {
+                        } catch (e: Exception) {
                             e.printStackTrace()
                             WebRtcService.tokenConformationApiFailed()
                             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
@@ -69,9 +66,9 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                             uploadUserCurrentLocation(it["channel_name"]!!, location)
                         }
                         aFunction.invoke(
-                            it["token"]!!,
-                            it["channel_name"]!!,
-                            it["uid"]!!.toInt()
+                                it["token"]!!,
+                                it["channel_name"]!!,
+                                it["uid"]!!.toInt()
                         )
                     }
                 } else if (response.code() == 204) {
@@ -93,10 +90,10 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun initCallForFavoriteCaller(
-        courseId: String,
-        topicId: Int?,
-        location: Location,
-        aFunction: (String, String, Int) -> Unit
+            courseId: String,
+            topicId: Int?,
+            location: Location,
+            aFunction: (String, String, Int) -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -105,15 +102,15 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                 requestParams["course_id"] = courseId
                 requestParams["topic_id"] = topicId?.toString() ?: ""
                 val response =
-                    AppObjectController.p2pNetworkService.getFavoriteUserAgoraToken(requestParams)
+                        AppObjectController.p2pNetworkService.getFavoriteUserAgoraToken(requestParams)
                 if (response.isSuccessful && response.code() in 200..203) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {
                         uploadUserCurrentLocation(it["channel_name"]!!, location)
                         aFunction.invoke(
-                            it["token"]!!,
-                            it["channel_name"]!!,
-                            it["uid"]!!.toInt()
+                                it["token"]!!,
+                                it["channel_name"]!!,
+                                it["uid"]!!.toInt()
                         )
                     }
                 } else if (response.code() == 204 || response.code() == 500) {
@@ -128,10 +125,10 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun initCallForNewUser(
-        courseId: String,
-        topicId: Int?,
-        location: Location,
-        aFunction: (String, String, Int) -> Unit
+            courseId: String,
+            topicId: Int?,
+            location: Location,
+            aFunction: (String, String, Int) -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -140,15 +137,15 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                 requestParams["course_id"] = courseId
                 requestParams["topic_id"] = topicId?.toString() ?: ""
                 val response =
-                    AppObjectController.p2pNetworkService.getNewUserAgoraToken(requestParams)
+                        AppObjectController.p2pNetworkService.getNewUserAgoraToken(requestParams)
                 if (response.isSuccessful && response.code() in 200..203) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {
                         uploadUserCurrentLocation(it["channel_name"]!!, location)
                         aFunction.invoke(
-                            it["token"]!!,
-                            it["channel_name"]!!,
-                            it["uid"]!!.toInt()
+                                it["token"]!!,
+                                it["channel_name"]!!,
+                                it["uid"]!!.toInt()
                         )
                     }
                 } else if (response.code() == 204 || response.code() == 500) {
@@ -166,7 +163,7 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestObj =
-                    RequestUserLocation(channelName, location.latitude, location.longitude)
+                        RequestUserLocation(channelName, location.latitude, location.longitude)
                 AppObjectController.p2pNetworkService.uploadUserLocationAgora(requestObj)
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -178,8 +175,8 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         CoroutineScope(Job() + Dispatchers.IO).launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
-                    Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("event_name", eventName)
+                        Pair("mentor_id", Mentor.getInstance().getId()),
+                        Pair("event_name", eventName)
                 )
                 AppObjectController.commonNetworkService.saveImpression(requestData)
             } catch (ex: Exception) {

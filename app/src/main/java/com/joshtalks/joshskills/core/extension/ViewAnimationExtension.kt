@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.*
@@ -181,19 +182,17 @@ fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
     this.startAnimation(animSet)
 }
 
-fun View.transaltionAnimationNew(
+fun View.translationAnimationNew(
     toLocation: IntArray,
     customWord: CustomWord,
     optionLayout: CustomLayout?
 ) {
-    this@transaltionAnimationNew.visibility = View.VISIBLE
-    customWord.visibility = View.INVISIBLE
+    this@translationAnimationNew.visibility = View.VISIBLE
     val slideAnim = AnimatorSet()
     slideAnim.playTogether(
         ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
         ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
     )
-
     val slideSet = AnimatorSet()
     slideSet.play(slideAnim)
     val interpolator = DecelerateInterpolator()
@@ -202,10 +201,10 @@ fun View.transaltionAnimationNew(
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
             optionLayout?.let {
-                optionLayout.addViewAt(customWord,customWord.choice.sortOrder-1)
+                optionLayout.addViewAt(customWord, customWord.choice.sortOrder - 1)
             }
-            this@transaltionAnimationNew.setVisibility(View.INVISIBLE)
-            customWord.visibility=View.VISIBLE
+            this@translationAnimationNew.visibility = View.GONE
+            customWord.visibility = View.VISIBLE
         }
     })
     slideSet.start()

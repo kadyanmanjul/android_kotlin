@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.voip.voip_rating.ClickListenerHandler" />
+    </data>
+    <androidx.cardview.widget.CardView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_5sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_5sdp"
+        android:layout_gravity="center"
+        android:layout_marginRight="@dimen/_10sdp"
+        app:cardBackgroundColor="@color/report_white"
+        >
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/headTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/_16sdp"
+                    android:paddingStart="@dimen/_32sdp"
+                    android:paddingEnd="@dimen/_32sdp"
+                    android:gravity="center"
+                    android:text="Harsh, Is call ka etna chota hone ka reason kya tha?"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                    android:textColor="@color/freshchat_black"
+                    android:textSize="@dimen/_16ssp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/issueRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="@dimen/_200sdp"
+                    android:layout_marginTop="8dp"
+                    tools:listitem="@layout/item_report_layout"
+                    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:spanCount="2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/headTv" />
+
+                <Button
+                    android:id="@+id/submitBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:background="@drawable/white_button_round_enabled"
+                    android:textColor="@color/white"
+                    android:text="Submit"
+                    android:onClick="@{() -> handler.submitReport() }"
+                    android:textAllCaps="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
+                    android:enabled="false"
+                    android:textAlignment="center"
+                    app:layout_constraintHorizontal_bias="0.482"
+                    app:layout_constraintTop_toBottomOf="@+id/issueRv"
+                    app:layout_constraintVertical_bias="1.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+        <ImageView
+            android:id="@+id/crossBtn"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_margin="@dimen/_5sdp"
+            app:srcCompat="@drawable/ic_cross_red"
+            android:layout_gravity="right"
+            app:tint="@color/report_black"
+            />
+    </androidx.cardview.widget.CardView>
+</layout>
