@@ -718,7 +718,7 @@
 <!--    style of dialog box-->
     <style name="dialog_theme" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:colorBackground">@color/report_black</item>
     </style>

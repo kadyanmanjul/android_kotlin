@@ -187,9 +187,9 @@
             android:paddingTop="@dimen/_8sdp"
             android:paddingEnd="@dimen/_5sdp"
             android:paddingBottom="@dimen/_8sdp"
-            app:srcCompat="@drawable/ic_send"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_send" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView"

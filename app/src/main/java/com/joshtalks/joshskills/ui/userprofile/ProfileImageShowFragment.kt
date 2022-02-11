@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.userprofile
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -23,15 +24,15 @@ import kotlinx.android.synthetic.main.fragment_image_show.big_image_view
 
 const val IMAGE_SOURCE = "image_source"
 const val IMAGE_ID = "image_id"
-const val MENTOR_ID="mentor_id"
-const val IS_PREVIOUS_PROFILE="is_previous_profile"
+const val MENTOR_ID = "mentor_id"
+const val IS_PREVIOUS_PROFILE = "is_previous_profile"
 
 class ProfileImageShowFragment : DialogFragment() {
     private var imagePath: String? = null
     private var courseName: String? = null
     private var imageId: String? = null
-    private var mentorId:String?=null
-    private var isPreviousProfile=false
+    private var mentorId: String? = null
+    private var isPreviousProfile = false
     private val viewModel by lazy {
         ViewModelProvider(activity as UserProfileActivity).get(
             UserProfileViewModel::class.java
@@ -51,11 +52,11 @@ class ProfileImageShowFragment : DialogFragment() {
             it.getString(IMAGE_ID)?.let { id ->
                 imageId = id
             }
-            it.getString(MENTOR_ID)?.let{
-                mentorId=it
+            it.getString(MENTOR_ID)?.let {
+                mentorId = it
             }
             it.getBoolean(IS_PREVIOUS_PROFILE).let {
-                isPreviousProfile=it
+                isPreviousProfile = it
             }
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
@@ -81,12 +82,12 @@ class ProfileImageShowFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(isPreviousProfile &&mentorId.equals(Mentor.getInstance().getId())){
+        if (isPreviousProfile && mentorId.equals(Mentor.getInstance().getId())) {
             view.findViewById<LinearLayout>(R.id.parent_layout).visibility = View.VISIBLE
-        }else{
+        } else {
             view.findViewById<LinearLayout>(R.id.parent_layout).visibility = View.GONE
         }
-        Utils.setImage(big_image_view,imagePath)
+        Utils.setImage(big_image_view, imagePath)
         courseName?.run {
             view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
 
@@ -97,9 +98,14 @@ class ProfileImageShowFragment : DialogFragment() {
             builder.setMessage(R.string.delete_popup)
                 .setNegativeButton(Html.fromHtml("<font color='#E10717'><b>Delete<b></font>")) { dialog, id ->
                     viewModel.deletePreviousProfilePic(imageId!!)
-                    Handler().postDelayed({ dismiss() }, 1000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        try {
+                            dismiss()
+                        } catch (ex:Exception){
+
+                        }}, 1000)
                 }
-                .setPositiveButton(Html.fromHtml("<font color='#107BE5'><b>Cancel<b></font>")){ dialog, id -> }
+                .setPositiveButton(Html.fromHtml("<font color='#107BE5'><b>Cancel<b></font>")) { dialog, id -> }
             builder.create()
             builder.show()
         }

@@ -103,11 +103,11 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recyclerView">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_22sdp"
-                        android:src="@drawable/arrow_down"
+                        app:srcCompat="@drawable/arrow_down"
                         app:tint="#6F6F6F" />
 
                     <TextView
@@ -137,13 +137,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/expand_members_list">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/ignore_ui_msg"
                         android:paddingStart="@dimen/_24sdp"
                         android:paddingEnd="@dimen/_18sdp"
-                        android:src="@drawable/ic_exit_group" />
+                        app:srcCompat="@drawable/ic_exit_group" />
 
                     <TextView
                         android:layout_width="wrap_content"

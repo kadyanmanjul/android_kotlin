@@ -1,11 +1,10 @@
-package com.joshtalks.joshskills.ui.group.model
+package com.joshtalks.joshskills.ui.group.lib
 
 import android.util.Log
 import com.google.gson.JsonObject
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.group.lib.ChatService
-import com.joshtalks.joshskills.ui.group.lib.NetworkData
-import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.model.GroupListResponse
+import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 

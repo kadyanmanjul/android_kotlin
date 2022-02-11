@@ -57,7 +57,7 @@ class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
         notifyDataSetChanged()
     }
 
-    fun addMembersToList(members: MutableList<GroupMember>) {
+    fun addMembersToList(members: List<GroupMember>) {
         memberList = members
         showAllMembers = false
         notifyDataSetChanged()

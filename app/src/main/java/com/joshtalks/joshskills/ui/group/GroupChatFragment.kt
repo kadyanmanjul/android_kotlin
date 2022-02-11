@@ -51,7 +51,6 @@ class GroupChatFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.group_chat_fragment, container, false)
-        init()
         return binding.root
     }
 
@@ -83,6 +82,7 @@ class GroupChatFragment : BaseFragment() {
     }
 
     override fun initViewBinding() {
+        init()
         binding.vm = vm
         binding.executePendingBindings()
         vm.memberCount.set(0)
@@ -185,9 +185,9 @@ class GroupChatFragment : BaseFragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         CoroutineScope(Dispatchers.IO).launch {
             vm.chatAdapter.submitData(PagingData.empty())
         }
+        super.onDestroy()
     }
 }

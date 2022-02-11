@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.group.model
+package com.joshtalks.joshskills.ui.group.lib
 import com.pubnub.api.models.consumer.PNPage
 
 //data class PubNubPageInfo(val previous : PNPage, val next : PNPage) : PageInfo<PNPage> {
