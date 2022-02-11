@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
@@ -445,7 +446,7 @@ class WebRtcActivity : AppCompatActivity() {
             val oMap = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val oChannel = oMap?.get(RTC_CHANNEL_KEY)
             Log.d(TAG, "onNewIntent(375): $nChannel .... $oChannel")
-            if (nChannel != oChannel) {
+            if (nChannel != oChannel && isCallOnGoing.value!=true) {
                 finish()
                 startActivity(nIntent)
                 overridePendingTransition(0, 0)
@@ -541,19 +542,40 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun initCall() {
-        setCallScreenBackground()
-        updateButtonStatus()
-        callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+        if (isCallFavoritePP() || isCallOnGoing.value == true) {
+            Log.d(TAG, "onNewIntent4: ")
+            intent= intent.apply {
+                putExtra(CALL_TYPE, WebRtcService.callType)
+                WebRtcService.callData?.apply {
+                    if (mBoundService?.isFavorite() == true) {
+                        put(RTC_IS_FAVORITE, "true")
+                    }
+                    if (mBoundService?.isGroupCall()==true) {
+                        put(RTC_IS_GROUP_CALL, "true")
+                    }
 
-        if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
+                    if (isNewUserCall()) {
+                        put(RTC_IS_NEW_USER_CALL, "true")
+                    }
+                }
+                putExtra(IS_CALL_CONNECTED, isCallOnGoing.value)
+                putExtra(CALL_USER_OBJ, WebRtcService.callData)
+            }
             updateCallInfo()
         } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
         }*/
+        setCallScreenBackground()
+        updateButtonStatus()
+
+        callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+
+
 
         callType?.run {
             updateStatusLabel()
             if (CallType.OUTGOING == this) {
+
                 startCallTimer()
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
