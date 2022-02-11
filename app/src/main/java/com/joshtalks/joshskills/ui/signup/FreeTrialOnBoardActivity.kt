@@ -231,13 +231,15 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private fun openProfileDetailFragment(testId: String = FREE_TRIAL_DEFAULT_TEST_ID) {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+//        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
                 SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY, viewModel.isVerified).apply {
-                    arguments = Bundle().putString(FREE_TRIAL_TEST_ID, testId)
+                    val bundle = Bundle()
+                    bundle.putString(FREE_TRIAL_TEST_ID, testId)
+                    arguments = bundle
                 },
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
