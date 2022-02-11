@@ -38,8 +38,7 @@ class ReferralViewModel(application: Application) : AndroidViewModel(application
                     contentId = contentId,
                     sharedItem = "INVITE",
                     sharedItemType = "TX",
-                    deepLink = deepLink,
-                    courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                    deepLink = deepLink
                 )
                 val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
                 Timber.i(res.body().toString())

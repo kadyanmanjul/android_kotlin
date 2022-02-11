@@ -662,8 +662,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                             ),
                             sharedItem = sharedItem,
                             sharedItemType = "VI",
-                            deepLink = dynamicLink,
-                            courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                            deepLink = dynamicLink
                         )
                         val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
                         Timber.i(res.body().toString())
