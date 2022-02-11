@@ -42,6 +42,7 @@ import kotlinx.coroutines.*
 import java.util.*
 
 const val TOOLTIP_ONLINE_STATUS = "TOOLTIP_ONLINE_STATUS_"
+const val FAKE_LIVE_USER_POSITION = 2
 
 class LeaderBoardFragment : Fragment(), ViewInflated {
     private val TAG = "LeaderBoardFragment"
@@ -337,11 +338,12 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
             )
         )
 
-        if (type == "TODAY") {
+        if (type == "TODAY" && leaderboardResponse1.top_50_mentor_list.isNullOrEmpty().not() &&
+            leaderboardResponse1.top_50_mentor_list!!.size > FAKE_LIVE_USER_POSITION) {
             liveUserPosition =
                 leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
             if (liveUserPosition < 0 || liveUserPosition >= 3) {
-                liveUserPosition = 2
+                liveUserPosition = FAKE_LIVE_USER_POSITION
                 leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)
                     ?.next()?.isOnline = true
                 liveUserPosition = liveUserPosition.plus(2)

@@ -961,8 +961,7 @@ class SyncFavoriteCaller(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         try {
             val response = AppObjectController.p2pNetworkService.getFavoriteCallerList(
-                Mentor.getInstance().getId(),
-                PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                Mentor.getInstance().getId()
             )
             AppObjectController.appDatabase.favoriteCallerDao().also {
                 it.removeAllFavorite()

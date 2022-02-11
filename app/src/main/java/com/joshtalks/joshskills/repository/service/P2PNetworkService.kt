@@ -35,7 +35,7 @@ interface P2PNetworkService {
     suspend fun p2pCallFeedbackV2(@Body params: Map<String, String?>): Response<Void>//FeedbackVoipResponse
 
     @GET("$DIR/voicecall/favourites/{mentorId}/")
-    suspend fun getFavoriteCallerList(@Path("mentorId") mentorId: String, @Query("course_id") courseId: String): List<FavoriteCaller>
+    suspend fun getFavoriteCallerList(@Path("mentorId") mentorId: String): List<FavoriteCaller>
 
     @POST("$DIR/voicecall/favourites/{mentorId}/")
     suspend fun removeFavoriteCallerList(
