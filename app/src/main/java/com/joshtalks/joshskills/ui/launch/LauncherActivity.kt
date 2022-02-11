@@ -69,9 +69,9 @@ class LauncherActivity : CoreJoshActivity() {
             val dateFormat = SimpleDateFormat("HH")
             val time: Int = dateFormat.format(Date()).toInt()
             val getCurrentTimeInMillis = Calendar.getInstance().timeInMillis
-            var lastFakeCallInMillis : Long = PrefManager.getLongValue(LAST_FAKE_CALL_INVOKE_TIME,true)
-            if((time in 7..23) && isUserOnline(this@LauncherActivity) && getCurrentTimeInMillis-lastFakeCallInMillis >=3600000) {
-                PrefManager.put(LAST_FAKE_CALL_INVOKE_TIME,getCurrentTimeInMillis,true)
+            var lastFakeCallInMillis: Long = PrefManager.getLongValue(LAST_FAKE_CALL_INVOKE_TIME, true)
+            if ((time in 7..23) && isUserOnline(this@LauncherActivity) && getCurrentTimeInMillis - lastFakeCallInMillis >= 3600000) {
+                PrefManager.put(LAST_FAKE_CALL_INVOKE_TIME, getCurrentTimeInMillis, true)
                 WorkManagerAdmin.setFakeCallNotificationWorker()
             }
             Branch.getInstance(applicationContext).resetUserSession()
@@ -92,15 +92,12 @@ class LauncherActivity : CoreJoshActivity() {
                 if (capabilities != null) {
                     when {
                         capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                            Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
                             return true
                         }
                         capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                            Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
                             return true
                         }
                         capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                            Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
                             return true
                         }
                     }
