@@ -208,31 +208,91 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     private fun setListeners() {
+        binding.ivExpand.setOnClickListener {
+            try {
+                showEnglishButtonTextAndCardDecoration()
+                binding.linearLayoutCompatEnglish.visibility = View.VISIBLE
+                binding.ivExpand.visibility = View.GONE
+                binding.ivMinimise.visibility = View.VISIBLE
+                binding.syllabusPdfCard.visibility = View.VISIBLE
+
+                binding.linearLayoutCompatSubscription.visibility = View.GONE
+                binding.ivExpand1.visibility = View.VISIBLE
+                binding.ivMinimise1.visibility = View.GONE
+                binding.seeCourseList.visibility = View.GONE
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+
+        binding.ivMinimise.setOnClickListener {
+            binding.linearLayoutCompatEnglish.visibility = View.GONE
+            binding.ivExpand.visibility = View.VISIBLE
+            binding.ivMinimise.visibility = View.GONE
+            binding.syllabusPdfCard.visibility = View.GONE
+        }
+
+        binding.ivExpand1.setOnClickListener {
+            try {
+                index = 1
+                binding.subscriptionCard.background =
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.blue_rectangle_with_blue_bound_stroke
+                    )
+                binding.englishCard.background =
+                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+                binding.materialTextView.text = buttonText.get(index)
+                binding.materialTextView.isEnabled = true
+                binding.materialTextView.alpha = 1f
+                binding.txtLabelHeading.text = headingText.get(index)
+                isEnglishCardTapped = false
+                scrollToBottom()
+
+                binding.linearLayoutCompatSubscription.visibility = View.VISIBLE
+                binding.ivExpand1.visibility = View.GONE
+                binding.ivMinimise1.visibility = View.VISIBLE
+                binding.seeCourseList.visibility = View.VISIBLE
+
+                binding.linearLayoutCompatEnglish.visibility = View.GONE
+                binding.ivExpand.visibility = View.VISIBLE
+                binding.ivMinimise.visibility = View.GONE
+                binding.syllabusPdfCard.visibility = View.GONE
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+
+        binding.ivMinimise1.setOnClickListener {
+            binding.linearLayoutCompatSubscription.visibility = View.GONE
+            binding.ivExpand1.visibility = View.VISIBLE
+            binding.ivMinimise1.visibility = View.GONE
+            binding.seeCourseList.visibility = View.GONE
+        }
+
         binding.ivBack.setOnClickListener {
             onBackPressed()
         }
         binding.englishCard.setOnClickListener {
             try {
-                index = 0
-                binding.subscriptionCard.background =
-                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-                binding.englishCard.background =
-                    ContextCompat.getDrawable(
-                        this,
-                        R.drawable.blue_rectangle_with_blue_bound_stroke
-                    )
-                isEnglishCardTapped = true
-                if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
-                    binding.materialTextView.text = getString(R.string.achieve_100_points_first)
-                    binding.materialTextView.isEnabled = false
-                    binding.materialTextView.alpha = .5f
-                }else{
-                    binding.materialTextView.text = buttonText.get(index)
-                    binding.materialTextView.isEnabled = true
-                    binding.materialTextView.alpha = 1f
+                showEnglishButtonTextAndCardDecoration()
+                if(binding.ivExpand.visibility == View.VISIBLE){
+                    binding.linearLayoutCompatEnglish.visibility = View.VISIBLE
+                    binding.ivExpand.visibility = View.GONE
+                    binding.ivMinimise.visibility = View.VISIBLE
+                    binding.syllabusPdfCard.visibility = View.VISIBLE
+
+                    binding.linearLayoutCompatSubscription.visibility = View.GONE
+                    binding.ivExpand1.visibility = View.VISIBLE
+                    binding.ivMinimise1.visibility = View.GONE
+                    binding.seeCourseList.visibility = View.GONE
+
+                }else if(binding.ivMinimise.visibility == View.VISIBLE){
+                    binding.linearLayoutCompatEnglish.visibility = View.GONE
+                    binding.ivExpand.visibility = View.VISIBLE
+                    binding.ivMinimise.visibility = View.GONE
+                    binding.syllabusPdfCard.visibility = View.GONE
                 }
-                binding.txtLabelHeading.text = headingText.get(index)
-                binding.seeCourseList.visibility = View.GONE
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -252,14 +312,32 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.materialTextView.isEnabled = true
                 binding.materialTextView.alpha = 1f
                 binding.txtLabelHeading.text = headingText.get(index)
-                binding.seeCourseList.visibility = View.VISIBLE
                 isEnglishCardTapped = false
                 scrollToBottom()
+
+                if(binding.ivExpand1.visibility == View.VISIBLE){
+                    binding.linearLayoutCompatSubscription.visibility = View.VISIBLE
+                    binding.ivExpand1.visibility = View.GONE
+                    binding.ivMinimise1.visibility = View.VISIBLE
+                    binding.seeCourseList.visibility = View.VISIBLE
+
+                    binding.linearLayoutCompatEnglish.visibility = View.GONE
+                    binding.ivExpand.visibility = View.VISIBLE
+                    binding.ivMinimise.visibility = View.GONE
+                    binding.syllabusPdfCard.visibility = View.GONE
+
+                }else if(binding.ivMinimise1.visibility == View.VISIBLE){
+                    binding.linearLayoutCompatSubscription.visibility = View.GONE
+                    binding.ivExpand1.visibility = View.VISIBLE
+                    binding.ivMinimise1.visibility = View.GONE
+                    binding.seeCourseList.visibility = View.GONE
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
         binding.seeCourseList.setOnClickListener {
+            viewModel.saveImpression(SEE_COURSE_LIST_BUTTON_CLICKED)
             CourseExploreActivity.startCourseExploreActivity(
                 this,
                 COURSE_EXPLORER_CODE,
@@ -268,6 +346,28 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 isClickable = false
             )
         }
+    }
+
+    private fun showEnglishButtonTextAndCardDecoration(){
+            index = 0
+            binding.subscriptionCard.background =
+                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+            binding.englishCard.background =
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.blue_rectangle_with_blue_bound_stroke
+                )
+            isEnglishCardTapped = true
+            if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
+                binding.materialTextView.text = getString(R.string.achieve_100_points_first)
+                binding.materialTextView.isEnabled = false
+                binding.materialTextView.alpha = .5f
+            }else{
+                binding.materialTextView.text = buttonText.get(index)
+                binding.materialTextView.isEnabled = true
+                binding.materialTextView.alpha = 1f
+            }
+            binding.txtLabelHeading.text = headingText.get(index)
     }
 
     override fun onStart() {
@@ -306,7 +406,50 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             try {
                 buttonText = mutableListOf<String>()
                 headingText = mutableListOf<String>()
-                it.subHeadings?.let { list ->
+                it.subHeadings?.get(0)?.let { list ->
+                    for (i in list.indices) {
+                        when (i) {
+                            0 -> {
+                                binding.txtPointer1English.text = list[i]
+                                binding.txtPointer1English.visibility = View.VISIBLE
+                            }
+                            1 -> {
+                                binding.txtPointer2English.text = list[i]
+                                binding.txtPointer2English.visibility = View.VISIBLE
+                            }
+                            2 -> {
+                                binding.txtPointer3English.text = list[i]
+                                binding.txtPointer3English.visibility = View.VISIBLE
+                            }
+                            3 -> {
+                                binding.txtPointer4English.text = list[i]
+                                binding.txtPointer4English.visibility = View.VISIBLE
+                            }
+                            4 -> {
+                                binding.txtPointer5English.text = list[i]
+                                binding.txtPointer5English.visibility = View.VISIBLE
+                            }
+                            5 -> {
+                                binding.txtPointer6English.text = list[i]
+                                binding.txtPointer6English.visibility = View.VISIBLE
+                            }
+                            6 -> {
+                                binding.txtPointer7English.text = list[i]
+                                binding.txtPointer7English.visibility = View.VISIBLE
+                            }
+                            7 -> {
+                                binding.txtPointer8English.text = list[i]
+                                binding.txtPointer8English.visibility = View.VISIBLE
+                            }
+                            8 -> {
+                                binding.txtPointer9English.text = list[i]
+                                binding.txtPointer9English.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                }
+
+                it.subHeadings?.get(1)?.let { list ->
                     for (i in list.indices) {
                         when (i) {
                             0 -> {
@@ -328,30 +471,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                             4 -> {
                                 binding.txtPointer5.text = list[i]
                                 binding.txtPointer5.visibility = View.VISIBLE
-                            }
-                            5 -> {
-                                binding.txtPointer6.text = list[i]
-                                binding.txtPointer6.visibility = View.VISIBLE
-                            }
-                            6 -> {
-                                binding.txtPointer7.text = list[i]
-                                binding.txtPointer7.visibility = View.VISIBLE
-                            }
-                            7 -> {
-                                binding.txtPointer8.text = list[i]
-                                binding.txtPointer8.visibility = View.VISIBLE
-                            }
-                            8 -> {
-                                binding.txtPointer9.text = list[i]
-                                binding.txtPointer9.visibility = View.VISIBLE
-                            }
-                            9 -> {
-                                binding.txtPointer10.text = list[i]
-                                binding.txtPointer10.visibility = View.VISIBLE
-                            }
-                            10 -> {
-                                binding.txtPointer11.text = list[i]
-                                binding.txtPointer11.visibility = View.VISIBLE
                             }
                         }
                     }
