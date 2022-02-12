@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.fpp.RecentCallActivity" />
+            type="com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity" />
     </data>
 
     <LinearLayout
@@ -82,7 +82,7 @@
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="start|center"
                         android:singleLine="true"
-                        android:text="@string/recent_calls"
+                        android:text="@string/favourite_requests"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -105,7 +105,7 @@
                     android:id="@+id/favorite_list_rv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:listitem="@layout/fpp_recent_item_list"
+                    tools:listitem="@layout/fpp_requests_row_item"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

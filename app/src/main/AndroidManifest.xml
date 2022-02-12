@@ -81,6 +81,9 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".ui.fpp.SeeAllRequestsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.fpp.RecentCallActivity"
             android:exported="true" />
         <activity
@@ -101,10 +104,10 @@
         <activity
             android:name=".ui.group.JoshGroupActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
             android:alwaysRetainTaskState="true"

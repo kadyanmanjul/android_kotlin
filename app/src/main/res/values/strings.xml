@@ -1035,6 +1035,7 @@
     <string name="great_job">Great Job %1$s!</string>
     <string name="sent_request">Sent Request</string>
     <string name="recent_calls">Recent calls</string>
+    <string name="favourite_requests">Favourite Requests</string>
     <string name="profile_test_for_request">Shobhit and you spoke for 20 min, you can request him to be your favorite practice partner to practice again.</string>
     <string name="harsh_has_r">Harsh has requested to be your favorite practice partner</string>
     <string name="confirm">Confirm</string>
