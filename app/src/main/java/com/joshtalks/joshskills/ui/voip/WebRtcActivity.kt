@@ -560,7 +560,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
     private fun initCall() {
         if (isCallFavoritePP() || isCallOnGoing.value == true) {
-            Log.d(TAG, "onNewIntent4: ")
             intent= intent.apply {
                 putExtra(CALL_TYPE, WebRtcService.callType)
                 WebRtcService.callData?.apply {
@@ -570,7 +569,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                     if (mBoundService?.isGroupCall()==true) {
                         put(RTC_IS_GROUP_CALL, "true")
                     }
-
                     if (isNewUserCall()) {
                         put(RTC_IS_NEW_USER_CALL, "true")
                     }
@@ -584,15 +582,10 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         }*/
         setCallScreenBackground()
         updateButtonStatus()
-
         callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
-
-
-
         callType?.run {
             updateStatusLabel()
             if (CallType.OUTGOING == this) {
-
                 startCallTimer()
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
