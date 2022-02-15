@@ -11,9 +11,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat.setTextAppearance
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
@@ -408,71 +411,29 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 headingText = mutableListOf<String>()
                 it.subHeadings?.get(0)?.let { list ->
                     for (i in list.indices) {
-                        when (i) {
-                            0 -> {
-                                binding.txtPointer1English.text = list[i]
-                                binding.txtPointer1English.visibility = View.VISIBLE
-                            }
-                            1 -> {
-                                binding.txtPointer2English.text = list[i]
-                                binding.txtPointer2English.visibility = View.VISIBLE
-                            }
-                            2 -> {
-                                binding.txtPointer3English.text = list[i]
-                                binding.txtPointer3English.visibility = View.VISIBLE
-                            }
-                            3 -> {
-                                binding.txtPointer4English.text = list[i]
-                                binding.txtPointer4English.visibility = View.VISIBLE
-                            }
-                            4 -> {
-                                binding.txtPointer5English.text = list[i]
-                                binding.txtPointer5English.visibility = View.VISIBLE
-                            }
-                            5 -> {
-                                binding.txtPointer6English.text = list[i]
-                                binding.txtPointer6English.visibility = View.VISIBLE
-                            }
-                            6 -> {
-                                binding.txtPointer7English.text = list[i]
-                                binding.txtPointer7English.visibility = View.VISIBLE
-                            }
-                            7 -> {
-                                binding.txtPointer8English.text = list[i]
-                                binding.txtPointer8English.visibility = View.VISIBLE
-                            }
-                            8 -> {
-                                binding.txtPointer9English.text = list[i]
-                                binding.txtPointer9English.visibility = View.VISIBLE
-                            }
-                        }
+                        val textViewEnglish = AppCompatTextView(this)
+                        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
+                        textViewEnglish.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+                        textViewEnglish.setCompoundDrawablePadding(76)
+                        textViewEnglish.gravity = Gravity.CENTER or Gravity.START
+                        textViewEnglish.setPadding(0, 0, 0, 30)
+                        setTextAppearance(textViewEnglish, R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular)
+                        textViewEnglish.text = list[i]
+                        binding.linearLayoutCompatEnglish.addView(textViewEnglish)
                     }
                 }
 
                 it.subHeadings?.get(1)?.let { list ->
                     for (i in list.indices) {
-                        when (i) {
-                            0 -> {
-                                binding.txtPointer1.text = list[i]
-                                binding.txtPointer1.visibility = View.VISIBLE
-                            }
-                            1 -> {
-                                binding.txtPointer2.text = list[i]
-                                binding.txtPointer2.visibility = View.VISIBLE
-                            }
-                            2 -> {
-                                binding.txtPointer3.text = list[i]
-                                binding.txtPointer3.visibility = View.VISIBLE
-                            }
-                            3 -> {
-                                binding.txtPointer4.text = list[i]
-                                binding.txtPointer4.visibility = View.VISIBLE
-                            }
-                            4 -> {
-                                binding.txtPointer5.text = list[i]
-                                binding.txtPointer5.visibility = View.VISIBLE
-                            }
-                        }
+                        val textViewSubscription = AppCompatTextView(this)
+                        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
+                        textViewSubscription.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+                        textViewSubscription.setCompoundDrawablePadding(76)
+                        textViewSubscription.gravity = Gravity.CENTER or Gravity.START
+                        textViewSubscription.setPadding(0, 0, 0, 30)
+                        setTextAppearance(textViewSubscription, R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular)
+                        textViewSubscription.text = list[i]
+                        binding.linearLayoutCompatSubscription.addView(textViewSubscription)
                     }
                 }
 
