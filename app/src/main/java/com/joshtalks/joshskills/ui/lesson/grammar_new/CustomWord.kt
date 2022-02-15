@@ -62,7 +62,7 @@ class CustomWord : AppCompatTextView {
                 this.isSelectedByUser = true
             }
             Log.i("Yash", "changeViewGroup: Answer Selected")
-            this.visibility = View.INVISIBLE
+            this.visibility = View.VISIBLE
             LessonActivity.animateAtsOptionViewEvent.value =
                 AnimateAtsOtionViewEvent(
                     fromLocation,
@@ -95,7 +95,6 @@ class CustomWord : AppCompatTextView {
                 this.userSelectedOrder = 100
                 this.isSelectedByUser = false
             }
-            this.visibility = View.INVISIBLE
             LessonActivity.animateAtsOptionViewEvent.value =
                 AnimateAtsOtionViewEvent(
                     fromLocation,
