@@ -219,8 +219,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
                     }
                     temp.addAll(courseList)
-                    if (courseList.isNullOrEmpty().not())
-                        PrefManager.put(CURRENT_COURSE_ID, courseList[0].courseId)
+                    if (courseList.isNullOrEmpty().not()) {
+                        val capsuleCourse = courseList[0]
+                        PrefManager.put(CURRENT_COURSE_ID, capsuleCourse.courseId)
+                        PrefManager.put(FREE_TRIAL_DEFAULT_TEST_ID, capsuleCourse.paidTestId)
+                    }
                 }
 
             items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
