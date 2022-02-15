@@ -63,7 +63,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class
     ],
-    version = 44,
+    version = 45,
     exportSchema = true
 )
 @TypeConverters(
@@ -154,6 +154,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_41_42,
                                 MIGRATION_42_43,
                                 MIGRATION_43_44,
+                                MIGRATION_44_45,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -528,6 +529,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `assessment_questions_tmp` RENAME TO `assessment_questions`")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_questions_assessmentId` ON `assessment_questions` (`assessmentId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)");
+            }
+        }
+
+        private val MIGRATION_44_45:Migration = object : Migration(44, 45) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE course ADD COLUMN paid_test_id TEXT")
             }
         }
 
