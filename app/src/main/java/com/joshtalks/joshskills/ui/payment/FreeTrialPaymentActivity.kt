@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -106,10 +107,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
 
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
-            testId = AppObjectController.getFirebaseRemoteConfig()
-                .getString(
-                    FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID)
-                )
+            testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+            } else {
+                PrefManager.getStringValue(PAID_COURSE_TEST_ID)
+            }
         }
         if (intent.hasExtra(EXPIRED_TIME)) {
             expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)
@@ -121,8 +124,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
         if (testId.isBlank()){
-            testId = AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
+            testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+            } else {
+                PrefManager.getStringValue(PAID_COURSE_TEST_ID)
+            }
         }
 
         setObservers()
@@ -367,6 +374,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         data1.heading.let { it1 -> headingText.add(it1) }
 
                         binding.title1.text = data1.courseHeading
+                        binding.textHeaderSyllabus.text = getString(R.string.the_ultimate_spoken_english_n_course_syllabus, data1.courseName)
                         binding.txtCurrency1.text = data1.discount?.get(0).toString()
                         binding.txtFinalPrice1.text = data1.discount?.substring(1)
                         binding.txtOgPrice1.text = getString(R.string.price, data1.actualAmount)
@@ -561,8 +569,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
         }
-        val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+        val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+        } else {
+            PrefManager.getStringValue(PAID_COURSE_TEST_ID)
+        }
 
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)

@@ -122,6 +122,7 @@ const val IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN = "is_call_btn_clicked_from_new_sc
 const val IS_FREE_TRIAL_ENDED = "is_free_trial_ended"
 const val CURRENT_COURSE_ID = "course_id"
 const val DEFAULT_COURSE_ID = "151"
+const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 
 object PrefManager {
 
