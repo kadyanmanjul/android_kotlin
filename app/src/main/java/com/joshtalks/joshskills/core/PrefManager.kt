@@ -127,6 +127,7 @@ const val IS_ENGLISH_SYLLABUS_PDF_OPENED = "is_english_syllabus_pdf_opened"
 const val IS_FREE_TRIAL_ENDED = "is_free_trial_ended"
 const val CURRENT_COURSE_ID = "course_id"
 const val DEFAULT_COURSE_ID = "151"
+const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 
 object PrefManager {
 
