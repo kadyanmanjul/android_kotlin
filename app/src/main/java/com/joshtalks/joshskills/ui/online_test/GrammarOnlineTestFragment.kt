@@ -181,7 +181,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 binding.startTestContainer.visibility = View.VISIBLE
                 binding.testCompletedContainer.visibility = View.GONE
                 binding.testScoreContainer.visibility = View.GONE
-                if (BuildConfig.DEBUG && BuildConfig.VERSION_CODE == 50006) {
+                if (BuildConfig.DEBUG && BuildConfig.VERSION_CODE >= 50006) {
                     binding.startBtn.isEnabled = true
                     binding.startBtn.isClickable = true
                     binding.description.text =

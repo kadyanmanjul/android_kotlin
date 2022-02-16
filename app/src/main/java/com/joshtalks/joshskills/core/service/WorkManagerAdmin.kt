@@ -311,7 +311,7 @@ object WorkManagerAdmin {
             PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) != 0L &&
             PrefManager.getLongValue(COURSE_EXPIRY_TIME_IN_MS) < System.currentTimeMillis()
         ) {
-            val delay = (10L..60L).random()
+            val delay = (10L..45L).random()
             val workRequest = OneTimeWorkRequestBuilder<FakeCallNotificationWorker>()
                 .setInputData(workDataOf())
                 .setInitialDelay(delay, TimeUnit.SECONDS)
