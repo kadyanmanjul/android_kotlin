@@ -206,7 +206,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     if (courseList.isNullOrEmpty().not()) {
                         val capsuleCourse = courseList[0]
                         PrefManager.put(CURRENT_COURSE_ID, capsuleCourse.courseId)
-                        PrefManager.put(FREE_TRIAL_DEFAULT_TEST_ID, capsuleCourse.paidTestId)
+                        PrefManager.put(PAID_COURSE_TEST_ID, capsuleCourse.paidTestId)
                     }
                 }
 
