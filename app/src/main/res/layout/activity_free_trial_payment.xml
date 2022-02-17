@@ -237,7 +237,7 @@
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:outlineSpotShadowColor="@color/gray_e6"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:cardBackgroundColor="#F0F0F0"
                         app:cardCornerRadius="@dimen/_10sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -274,13 +274,14 @@
 
                             <TextView
                                 android:id="@+id/text_header_syllabus"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/_14sdp"
                                 android:layout_marginTop="@dimen/_3sdp"
                                 android:text="@string/the_ultimate_spoken_english_n_course_syllabus"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                                 android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/img_syllabus"
                                 app:layout_constraintTop_toTopOf="@+id/img_syllabus" />
 
