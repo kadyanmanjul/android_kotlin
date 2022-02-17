@@ -13,7 +13,9 @@ import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityRecentCallBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.fpp.adapters.AdapterCallback
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
+import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -22,9 +24,9 @@ val SENT_REQUEST = "send_request"
 val IS_ALREADY_FPP = "is_already_fpp"
 val REQUESTED = "requested"
 val HAS_RECIEVED_REQUEST="has_recieved_request"
-class RecentCallActivity : WebRtcMiddlewareActivity() {
+class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
     private lateinit var binding: ActivityRecentCallBinding
-    private val recentCallAdapter by lazy { RecentCallsAdapter(this) }
+    private val recentCallAdapter by lazy { RecentCallsAdapter(this,this) }
 
     private val viewModel: RecentCallViewModel by lazy {
         ViewModelProvider(this).get(RecentCallViewModel::class.java)
@@ -79,6 +81,24 @@ class RecentCallActivity : WebRtcMiddlewareActivity() {
                     showToast("You can add partners to this list by ")
                 }
             }
+        }
+    }
+    override fun onClickCallback(requestStatus: String?, mentorId: String?) {
+        when(requestStatus){
+            SENT_REQUEST->{
+                if (mentorId != null) {
+                    viewModel.sendFppRequest(mentorId)
+                }
+            }
+            REQUESTED->{
+                if (mentorId != null) {
+                    viewModel.deleteFppRequest(mentorId)
+                }
+            }
+            HAS_RECIEVED_REQUEST->{
+
+            }
+
         }
     }
 }

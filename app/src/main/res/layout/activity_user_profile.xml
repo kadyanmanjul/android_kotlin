@@ -376,12 +376,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
                     android:clickable="false"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/grey_7A"
                     app:layout_constraintStart_toEndOf="@id/txt_label_hometown"
                     app:layout_constraintTop_toTopOf="@id/txt_label_hometown"
-                    android:singleLine="true"
-                    android:ellipsize="end"
                     tools:text="Patiala is my home town which" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -407,20 +407,21 @@
                     tools:text="22 Oct 2020" />
 
                 <com.google.android.material.card.MaterialCardView
-                    android:visibility="visible"
                     android:id="@+id/sent_request_card"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_94sdp"
+                    android:layout_marginTop="@dimen/_19sdp"
+                    android:background="@color/profile_request_card"
+                    android:longClickable="true"
+                    android:visibility="visible"
+                    app:cardBackgroundColor="@color/profile_request_card"
+                    app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/joined_on"
-                    android:background="@color/profile_request_card"
-                    android:longClickable="true"
-                    app:cardBackgroundColor="@color/profile_request_card"
-                    app:cardElevation="0dp"
                     tools:cardBackgroundColor="@color/profile_request_card"
-                    tools:cardPreventCornerOverlap="false"
-                    android:layout_marginTop="@dimen/_19sdp">
+                    tools:cardPreventCornerOverlap="false">
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_97sdp">
@@ -434,16 +435,14 @@
                             android:layout_marginEnd="@dimen/_32sdp"
                             android:gravity="center"
                             android:lineSpacingExtra="0dp"
-                            android:maxLines="3"
                             android:lines="3"
+                            android:maxLines="3"
                             android:text="@string/profile_test_for_request"
                             android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                            android:textColor="@color/pure_black"
-                           />
+                            android:textColor="@color/pure_black" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:visibility="invisible"
                             android:id="@+id/btn_sent_request"
                             android:layout_width="@dimen/_106sdp"
                             android:layout_height="@dimen/_21sdp"
@@ -458,20 +457,21 @@
                             android:text="@string/sent_request"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                             android:textColor="@color/white"
+                            android:visibility="invisible"
                             app:rippleColor="@color/white" />
 
                         <LinearLayout
                             android:id="@+id/btn_confirm_or_not_now_card"
-                            android:visibility="visible"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_below="@+id/profile_text"
                             android:layout_centerHorizontal="true"
                             android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
                             android:layout_marginRight="@dimen/_10sdp"
                             android:gravity="center_horizontal"
-                            android:weightSum="2"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:layout_below="@+id/profile_text">
+                            android:visibility="visible"
+                            android:weightSum="2">
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_confirm_request"
@@ -489,10 +489,10 @@
                                 android:id="@+id/btn_not_now_request"
                                 android:layout_width="@dimen/_91sdp"
                                 android:layout_height="@dimen/_22sdp"
-                                android:insetTop="0dp"
-                                android:insetBottom="0dp"
                                 android:layout_marginStart="@dimen/_8sdp"
                                 android:backgroundTint="@color/not_now"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
                                 android:text="@string/not_now_txt"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                                 android:textColor="@color/pure_black"
@@ -506,7 +506,7 @@
                 <RelativeLayout
                     android:id="@+id/fpp_list_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_28sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/bg_profile_header"
                     android:clickable="true"
@@ -523,28 +523,49 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="@dimen/_13sdp"
-                        android:src="@drawable/ic_baseline_keyboard_arrow_down_32" />
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_left_icon_close" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/fpp_dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/arrow_down_img"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_toRightOf="@+id/arrow_down_img"
                         android:gravity="center|start"
                         android:text="@string/fpp_text"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black" />
-
-
                 </RelativeLayout>
 
+                <LinearLayout
+                    android:id="@+id/my_fpp_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fpp_list_layout"/>
+
+                <TextView
+                    android:id="@+id/view_all_fpp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:gravity="center_horizontal"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                    android:text="View all"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/my_fpp_ll" />
 
                 <RelativeLayout
                     android:id="@+id/previous_profile_pic_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_28sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/bg_profile_header"
                     android:clickable="true"
@@ -553,7 +574,7 @@
                     android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/fpp_list_layout">
+                    app:layout_constraintTop_toBottomOf="@id/view_all_fpp">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/label_previous_dp"
@@ -590,8 +611,8 @@
                 <RelativeLayout
                     android:id="@+id/highlights_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/bg_profile_header"
                     android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -763,7 +784,7 @@
                 <RelativeLayout
                     android:id="@+id/my_groups_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_28sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/bg_profile_header"
                     android:clickable="true"
@@ -784,6 +805,7 @@
                         android:text="My Groups"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/label_view_more_groups"
                         android:layout_width="wrap_content"
@@ -813,19 +835,18 @@
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/my_groups_layout">
-                </LinearLayout>
+                    app:layout_constraintTop_toBottomOf="@id/my_groups_layout"></LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/awards_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_28sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:background="@drawable/bg_profile_header"
-                    android:gravity="center|start"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center|start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/my_groups_ll">
@@ -899,7 +920,7 @@
                 <RelativeLayout
                     android:id="@+id/enrolled_courses_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_28sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/bg_profile_header"
                     android:gravity="center|start"

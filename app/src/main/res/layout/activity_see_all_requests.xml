@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.fpp.RecentCallActivity" />
+            type="com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity" />
     </data>
 
     <RelativeLayout
@@ -85,7 +84,7 @@
                         android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="start|center"
                         android:singleLine="true"
-                        android:text="@string/recent_calls"
+                        android:text="@string/favorite_requests"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                         android:textColor="@color/white"
                         android:textStyle="bold"/>
@@ -109,7 +108,7 @@
                 android:clipToPadding="false"
                 android:paddingTop="10dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:listitem="@layout/fpp_recent_item_list"
+                tools:listitem="@layout/fpp_requests_list_item"
                 tools:itemCount="10"/>
         </LinearLayout>
 

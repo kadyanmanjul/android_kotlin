@@ -1,85 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/group_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_46sdp"
+    android:background="@color/white">
 
-    <data>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_34sdp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/_14sdp"
+        android:background="@drawable/white_button_round_enabled"
+        android:gravity="center_vertical|start"
+        android:src="@drawable/img_5"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/title_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/title_container"
+        tools:visibility="visible" />
 
-        <variable
-            name="obj"
-            type="com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller" />
-    </data>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/root_view"
-        android:layout_width="match_parent"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/title_container"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:clipToPadding="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:longClickable="true"
-        app:cardBackgroundColor="@color/white"
-        app:cardElevation="0dp"
-        tools:cardBackgroundColor="@color/white"
-        tools:cardPreventCornerOverlap="false">
+        android:layout_marginStart="@dimen/_9sdp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/group_item_container"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_46sdp"
-            android:layout_gravity="center_vertical"
-            android:background="@color/white"
-            android:clipToPadding="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:longClickable="true">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+            android:textColor="@color/pure_black"
+            tools:text="Harsh Gupta" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="@dimen/_34sdp"
-                android:layout_height="@dimen/_34sdp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_14sdp"
-                android:background="@drawable/white_button_round_enabled"
-                android:gravity="center_vertical|start"
-                android:src="@drawable/img_5"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@id/title_container"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/title_container"
-                tools:visibility="visible" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_spoken_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="@color/dark_text_color"
+            tools:text="Spoke for 20 minutes" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/title_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_9sdp"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/profile_image"
-                app:layout_constraintTop_toTopOf="parent">
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                    android:textColor="@color/pure_black"
-                    tools:text="Harsh Gupta" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_spoken_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                    android:textColor="@color/dark_text_color"
-                    tools:text="Spoke for 20 minutes" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-</layout>
