@@ -160,6 +160,10 @@ interface CommonNetworkService {
         @Query("mentor_id") mentorId: String
     ): Response<AnimatedLeaderBoardResponse>
 
+    @GET("$DIR/fpp/profile_favourite/{user_profile_mentor_id}/")
+    suspend fun getFppStatusInProfile(
+        @Path("user_profile_mentor_id") mentorId: String
+    ): Response<FppStatusInProfileResponse>
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
 

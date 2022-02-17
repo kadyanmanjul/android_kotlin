@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObje
 import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
+import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
@@ -64,4 +65,18 @@ interface P2PNetworkService {
 
     @GET("$DIR/fpp/get_recent_calls/")
     suspend fun getRecentCallsList(@Query("mentor_id") mentorId: String) : Response<RecentCallResponse>
+
+    @POST("$DIR/fpp/requests/{reciever_mentor_id}/")
+    suspend fun sendFppRequest(@Path("reciever_mentor_id") mentorId: String):Response<Any>
+
+    @DELETE("$DIR/fpp/requests/{reciever_mentor_id}/")
+    suspend fun deleteFppRequest(@Path("reciever_mentor_id") mentorId: String):Response<Any>
+
+    @PATCH("$DIR/fpp/requests/{sender_mentor_id}/")
+    suspend fun confirmOrRejectFppRequest(
+        @Path("sender_mentor_id") mentorId: String,
+        @Body params: Map<String, String>
+    ):Response<Any>
+    @GET("$DIR/fpp/pending_requests")
+    suspend fun getPendingRequestsList() : Response<PendingRequestResponse>
 }

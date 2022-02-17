@@ -7,19 +7,18 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat.setBackgroundTintList
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
-import com.joshtalks.joshskills.ui.fpp.HAS_RECIEVED_REQUEST
-import com.joshtalks.joshskills.ui.fpp.IS_ALREADY_FPP
-import com.joshtalks.joshskills.ui.fpp.REQUESTED
-import com.joshtalks.joshskills.ui.fpp.SENT_REQUEST
+import com.joshtalks.joshskills.ui.fpp.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
+import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
 import kotlin.collections.ArrayList
 
-class RecentCallsAdapter(private var lifecycleProvider: LifecycleOwner) :
+class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ) :
 
     RecyclerView.Adapter<RecentCallsAdapter.RecentItemViewHolder>() {
     private var items: ArrayList<RecentCall> = arrayListOf()
@@ -99,6 +98,37 @@ class RecentCallsAdapter(private var lifecycleProvider: LifecycleOwner) :
                 obj = recentCall
                 tvName.text = recentCall.firstName
                 tvSpokenTime.text = spokenTimeText(recentCall.callDuration ?: 0)
+                btnSentRequest.setOnClickListener{
+                    when(recentCall.fppRequestStatus){
+                        SENT_REQUEST->{
+                            btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
+                                AppObjectController.joshApplication,
+                                R.color.not_now
+                            )
+                            btnSentRequest.text = "Requested"
+                            callback.onClickCallback(recentCall.fppRequestStatus,recentCall.receiverMentorId)
+                        }
+                        REQUESTED->{
+                            btnSentRequest.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    AppObjectController.joshApplication,
+                                    R.color.colorAccent
+                                )
+                            )
+                            btnSentRequest.text = context.resources.getText(R.string.sent_request)
+                            btnSentRequest.setTextColor(ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.white
+                            ))
+                            callback.onClickCallback(recentCall.fppRequestStatus,recentCall.receiverMentorId)
+
+                        }
+                        HAS_RECIEVED_REQUEST->{
+                            btnSentRequest.visibility = View.INVISIBLE
+//                            callback.onClickCallback(recentCall,recentCall.receiverMentorId)
+                        }
+                    }
+                }
             }
         }
 

@@ -37,4 +37,23 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
+     fun sendFppRequest(receiverMentorId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                p2pNetworkService.sendFppRequest(receiverMentorId)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+     fun deleteFppRequest(receiverMentorId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                p2pNetworkService.deleteFppRequest(receiverMentorId)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
 }

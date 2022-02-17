@@ -19,11 +19,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.repository.server.AwardCategory
-import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -47,6 +43,10 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val animatedLeaderBoardData: MutableLiveData<AnimatedLeaderBoardResponse> = MutableLiveData()
     val previousProfilePics: MutableLiveData<PreviousProfilePictures> = MutableLiveData()
+    val fppList: MutableLiveData<List<FppDetails>> = MutableLiveData()
+    val fppRequest: MutableLiveData<FppRequest> = MutableLiveData()
+    private val p2pNetworkService = AppObjectController.p2pNetworkService
+
 
     var context: JoshApplication = getApplication()
 
@@ -289,6 +289,29 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
     }
+    fun getFppStatusInProfile(mentorId: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.commonNetworkService.getFppStatusInProfile(mentorId)
+                if (response.isSuccessful && response.body() != null) {
+                    if(response.body()!!.fppList.isNullOrEmpty()){
+                        fppRequest.postValue(response.body()!!.fppRequest)
+                    }else if(response.body()!!.fppRequest==null){
+                        fppList.postValue(response.body()!!.fppList)
+                    }
+                } else if (response.errorBody() != null
+                    && response.errorBody()!!.string().contains("mentor_id is not valid")
+                ) {
+                    showToast(AppObjectController.joshApplication.getString(R.string.user_does_not_exist))
+                } else {
+                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+        }
+    }
 
     fun engageUserProfileTime(impressionId: String, startTime: Long) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
@@ -315,6 +338,33 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
 
                 val response = AppObjectController.commonNetworkService.get3DWebView(awardMentorId)
 
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+     fun sendFppRequest(receiverMentorId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                p2pNetworkService.sendFppRequest(receiverMentorId)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+     fun deleteFppRequest(receiverMentorId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                p2pNetworkService.deleteFppRequest(receiverMentorId)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+      fun confirmFppRequest(senderMentorId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, mapOf("is_Accepted" to "true"))
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
