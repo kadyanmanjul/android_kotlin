@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -16,6 +18,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -37,11 +40,16 @@ import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEven
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.fpp.HAS_RECIEVED_REQUEST
+import com.joshtalks.joshskills.ui.fpp.IS_ALREADY_FPP
+import com.joshtalks.joshskills.ui.fpp.REQUESTED
+import com.joshtalks.joshskills.ui.fpp.SENT_REQUEST
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -70,6 +78,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
     private var isAnimationVisible = false
+    var isExpanded = true
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -151,6 +160,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.myGroupsLayout.setOnClickListener{
             openMyGroupsScreen()
         }
+        binding.viewAllFpp.setOnClickListener {
+            FavoriteListActivity.openFavoriteCallerActivity(this, CONVERSATION_ID)
+        }
         binding.txtUserHometown.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.txtUserHometown.isClickable = true
@@ -163,6 +175,21 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 binding.userAge.isClickable = true
                 EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
             }
+        }
+        binding.btnSentRequest.setOnClickListener{
+            viewModel.sendFppRequest(mentorId)
+            binding.btnSentRequest.visibility= GONE
+        }
+        binding.btnConfirmRequest.setOnClickListener{
+            viewModel.confirmFppRequest(mentorId)
+            binding.btnConfirmRequest.visibility= GONE
+            binding.btnNotNowRequest.visibility= GONE
+
+        }
+        binding.btnNotNowRequest.setOnClickListener{
+            viewModel.deleteFppRequest(mentorId)
+            binding.btnConfirmRequest.visibility= GONE
+            binding.btnNotNowRequest.visibility= GONE
         }
 
     }
@@ -264,23 +291,80 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     private fun addObserver() {
         viewModel.userData.observe(
-            this,
-            {
-                if (it.isCourseBought.not() &&
-                    it.expiryDate != null &&
-                    it.expiryDate.time < System.currentTimeMillis()
-                ) {
-                    binding.freeTrialExpiryLayout.visibility = View.VISIBLE
-                } else {
-                    binding.freeTrialExpiryLayout.visibility = View.GONE
+            this
+        ) {
+            if (it.isCourseBought.not() &&
+                it.expiryDate != null &&
+                it.expiryDate.time < System.currentTimeMillis()
+            ) {
+                binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+            } else {
+                binding.freeTrialExpiryLayout.visibility = View.GONE
+            }
+            it?.let {
+                impressionId = it.userProfileImpressionId ?: EMPTY
+                hideProgressBar()
+                initView(it)
+            }
+        }
+        viewModel.fppRequest.observe(this) {
+            when (it.requestStatus) {
+                SENT_REQUEST -> {
+                    binding.sentRequestCard.visibility= VISIBLE
+                    binding.btnSentRequest.visibility= VISIBLE
+                    binding.profileText.text=it.text
                 }
-                it?.let {
-                    impressionId = it.userProfileImpressionId ?: EMPTY
-                    hideProgressBar()
-                    initView(it)
+                IS_ALREADY_FPP -> {
+                }
+                REQUESTED -> {
+
+                }
+                HAS_RECIEVED_REQUEST -> {
+                    binding.sentRequestCard.visibility= VISIBLE
+                    binding.btnConfirmRequest.visibility= VISIBLE
+                    binding.btnNotNowRequest.visibility= VISIBLE
+                    binding.profileText.text=it.text
+
                 }
             }
-        )
+        }
+        viewModel.fppList.observe(this){
+            if (it.isNullOrEmpty()) {
+                binding.fppListLayout.visibility = View.GONE
+                binding.myFppLl.visibility = View.GONE
+            } else {
+                binding.fppListLayout.visibility = VISIBLE
+                binding.myFppLl.visibility = VISIBLE
+                binding.fppDp.text= "Favorite practice partners (${it.size})"
+                binding.viewAllFpp.text = "View all (${it.size})"
+                binding.myFppLl.removeAllViews()
+                binding.arrowDownImg.setImageDrawable(drawableUp)
+                binding.arrowDownImg.setOnClickListener {view->
+                    if (isExpanded) {
+                        isExpanded = false
+                        binding.arrowDownImg.setImageDrawable(drawableUp)
+                        binding.myFppLl.visibility = View.VISIBLE
+                        binding.viewAllFpp.visibility = View.VISIBLE
+                        binding.viewAllFpp.text = "View all (${it.size})"
+                    }else{
+                        isExpanded = true
+                        binding.arrowDownImg.setImageDrawable(drawableDown)
+                        binding.myFppLl.visibility = View.GONE
+                        binding.viewAllFpp.visibility = View.GONE
+                    }
+                }
+                var countFppList = 0
+                it.forEach {
+                    if (countFppList < 3) {
+                        val view = getFppLayoutItem(it)
+                        if (view != null) {
+                            binding.myFppLl.addView(view)
+                            countFppList++
+                        }
+                    }
+                }
+            }
+        }
 
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
@@ -568,6 +652,35 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             isFromRegistration = false
         )
 
+    }
+    private val drawableDown: Drawable? by lazy {
+        ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_left_icon_close,
+            null
+        )
+    }
+    val drawableUp: Drawable? by lazy {
+        ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_down_icon,
+            null
+        )
+    }
+
+    @SuppressLint("WrongViewCast")
+    private fun getFppLayoutItem(fppDetails: FppDetails): View? {
+        val layoutInflater =
+            AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view =
+            layoutInflater.inflate(R.layout.fpp_item_list_for_profile, binding.rootView, false)
+        val txtUserName = view.findViewById(R.id.tv_name) as AppCompatTextView
+        val imageUserProfile = view.findViewById(R.id.profile_image) as CircleImageView
+        //val txtTotalSpokeTime = view.findViewById(R.id.txt_spoke) as AppCompatTextView
+        txtUserName.text = fppDetails.fullName?:""
+        //txtTotalSpokeTime.text = fppList.
+        imageUserProfile.setUserImageOrInitials(fppDetails.photoUrl?:"",fppDetails.fullName?:"")
+        return view
     }
 
     @SuppressLint("WrongViewCast")
