@@ -570,7 +570,7 @@ class WebRtcActivity : AppCompatActivity() {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
-                    if (isCallOnGoing.value != true) {
+                    if (mBoundService?.isCallerJoined!= true) {
                         acceptCall(callAcceptApi)
                     }
                     if (isCallFavoritePP()) {

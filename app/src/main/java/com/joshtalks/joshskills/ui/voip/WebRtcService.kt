@@ -2442,7 +2442,7 @@ data class NoUserFound(val action: String = "calling.action.no_user_found") :
 
 data class HoldCall(val action: String = "calling.action.hold_call") : WebRtcCalling()
 data class ResumeCall(val action: String = "calling.action.resume_call") : WebRtcCalling()
-data class UserJoined(val action: String = "calling.action.resume_call") : WebRtcCalling()
+data class UserJoined(val action: String = "calling.action.user_joined") : WebRtcCalling()
 data class ConversationRoomJoin(val action: String = "calling.action.conversation_room_joined") :
     WebRtcCalling()
 
