@@ -542,7 +542,7 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun initCall() {
-        if (isCallFavoritePP() || isCallOnGoing.value == true) {
+        if (isCallFavoritePP() || mBoundService?.isCallerJoined == true) {
             intent= intent.apply {
                 putExtra(CALL_TYPE, WebRtcService.callType)
                 WebRtcService.callData?.apply {
