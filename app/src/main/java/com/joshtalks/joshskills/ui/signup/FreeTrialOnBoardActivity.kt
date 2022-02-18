@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -36,6 +37,8 @@ import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.TruecallerSDK
 import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.ITrueCallback
@@ -178,9 +181,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
+
         override fun onFailureProfileShared(trueError: TrueError) {
-            openProfileDetailFragment()
-            hideProgressBar()
+            if(TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
+                hideProgressBar()
+                openProfileDetailFragment()
+            }
+
             if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
                 showToast(application.getString(R.string.internet_not_available_msz))
             }
@@ -196,9 +203,26 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 viewModel.isVerified = true
+                if(viewModel.isUserExist) {
+                    moveToInboxScreen()
+                }
                 openProfileDetailFragment()
             }
         }
+    }
+
+    private fun moveToInboxScreen() {
+        AppAnalytics.create(AnalyticsEvent.FREE_TRIAL_ONBOARDING.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+            .push()
+        val intent = Intent(this, InboxActivity::class.java).apply {
+            putExtra(FLOW_FROM, "free trial onboarding journey")
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

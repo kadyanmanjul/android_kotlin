@@ -150,6 +150,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
+        var phoneNumber = User.getInstance().phoneNumber
+        phoneNumber = phoneNumber?.substring(3)
+        binding.mobileEt.setText(phoneNumber)
         initToolbarView()
         initViewModel()
         subscribeObservers()

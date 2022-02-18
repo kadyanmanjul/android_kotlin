@@ -29,6 +29,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val service = AppObjectController.signUpNetworkService
     var userName: String? = null
     var isVerified: Boolean = false
+    var isUserExist: Boolean = false
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -69,6 +70,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 )
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
                 if (response.isSuccessful && response.body() != null) {
+                    isUserExist = response.body()!!.isUserExist
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
@@ -94,6 +96,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             user.isVerified = true
             user.token = loginResponse.token
             user.source = loginResponse.createdSource!!
+            user.phoneNumber = loginResponse.mobile
             User.update(user)
             PrefManager.put(API_TOKEN, loginResponse.token)
             Mentor.getInstance()

@@ -312,9 +312,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
+                val phoneNumberComingFromTrueCaller = User.getInstance().phoneNumber ?: EMPTY
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = isUserVerified
+                        if(phoneNumberComingFromTrueCaller.isNotEmpty()) {
+                            it.phoneNumber = phoneNumberComingFromTrueCaller
+                        }
                         User.getInstance().updateFromResponse(it)
                         _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
                     }
