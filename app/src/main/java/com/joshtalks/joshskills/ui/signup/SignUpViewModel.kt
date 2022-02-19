@@ -316,7 +316,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = isUserVerified
-                        if(phoneNumberComingFromTrueCaller.isNotEmpty()) {
+                        if(phoneNumberComingFromTrueCaller.isNotEmpty() && User.getInstance().phoneNumber.isNullOrEmpty()) {
                             it.phoneNumber = phoneNumberComingFromTrueCaller
                         }
                         User.getInstance().updateFromResponse(it)
