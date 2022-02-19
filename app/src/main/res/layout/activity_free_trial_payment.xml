@@ -15,7 +15,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent_Container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_free_trial_payment">
 
         <ScrollView
             android:id="@+id/scroll_view"
@@ -29,8 +30,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_free_trial_payment">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_back"
@@ -62,6 +62,38 @@
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:text="Free Trial ends in 06:00:00" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/apply_coupon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginRight="@dimen/_7sdp"
+                    android:shadowColor="#4A4545"
+                    android:shadowDx="0"
+                    android:shadowDy="4"
+                    android:shadowRadius="8"
+                    android:text="Apply Coupon"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:shadowColor="@color/black"
+                    android:layout_marginRight="@dimen/_7sdp"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="10"
+                    android:text="20% OFF"
+                    android:visibility="gone"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+                    android:textColor="#25D366"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/apply_coupon" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_label_heading"

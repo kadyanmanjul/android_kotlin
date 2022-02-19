@@ -18,18 +18,26 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import java.math.BigDecimal
+import java.util.*
+import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +61,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     var buttonText = mutableListOf<String>()
     var headingText = mutableListOf<String>()
     private var countdownTimerBack: CountdownTimerBack? = null
+    private var couponApplied = false
+    private var compositeDisposable = CompositeDisposable()
+    var isDiscount = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +77,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
 
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
-            testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)?:FREE_TRIAL_PAYMENT_TEST_ID
+            testId = intent.getStringExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)
+                ?: FREE_TRIAL_PAYMENT_TEST_ID
         }
         if (intent.hasExtra(EXPIRED_TIME)) {
             expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)
@@ -77,7 +89,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
-        if (testId.isBlank()){
+        if (testId.isBlank()) {
             testId = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         }
@@ -148,11 +160,47 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 isClickable = false
             )
         }
+        binding.applyCoupon.setOnClickListener {
+            viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
+            val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
+            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        }
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(PromoCodeSubmitEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it.promoCode.isNullOrEmpty().not())
+                        showProgressBar()
+                    couponApplied = true
+                    viewModel.getPaymentDetails(testId.toInt(), it.promoCode!!)
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     override fun onStart() {
         super.onStart()
         binding.subscriptionCard.performClick()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
     }
 
     private fun startTimer(startTimeInMilliSeconds: Long) {
@@ -297,7 +345,23 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 } else {
                     binding.freeTrialTimer.visibility = View.GONE
                 }
-
+                if (couponApplied) {
+                    hideProgressBar()
+                    when (it.couponDetails.isPromoCode) {
+                        true -> {
+                            showToast("Coupon Applied Successfully")
+                            viewModel.saveImpression(IMPRESSION_APPLY_COUPON_SUCCESS)
+                            binding.discount.text = it.couponDetails.header
+                            binding.applyCoupon.text = getString(R.string.coupon_applied)
+                            binding.discount.visibility = View.VISIBLE
+                            binding.applyCoupon.isClickable = false
+                            isDiscount = true
+                        }
+                        false -> {
+                            showToast(getString(R.string.invalid_coupon_code))
+                        }
+                    }
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -339,7 +403,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     "description",
                     viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName + "_app"
                 )
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
             options.put("order_id", orderDetails.razorpayOrderId)
@@ -394,6 +458,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        if (isDiscount) {
+            viewModel.saveImpression(IMPRESSION_PAY_DISCOUNT)
+        } else {
+            viewModel.saveImpression(IMPRESSION_PAY_FULL_FEES)
+        }
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
         }
@@ -404,7 +473,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
-        MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0))
+        MarketingAnalytics.coursePurchased(
+            BigDecimal(
+                viewModel.orderDetailsLiveData.value?.amount ?: 0.0
+            )
+        )
         //viewModel.updateSubscriptionStatus()
 
         uiHandler.post {
@@ -497,5 +570,4 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
     }
-
 }

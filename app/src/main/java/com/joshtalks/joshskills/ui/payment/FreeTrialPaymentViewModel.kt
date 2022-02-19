@@ -7,19 +7,20 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.*
 
 class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -27,13 +28,13 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
 
-    fun getPaymentDetails(testId: Int) {
+    fun getPaymentDetails(testId: Int, couponCode: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             isProcessing.postValue(true)
             val data = HashMap<String, Any>()
             data["test_id"] = testId
             data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
-
+            data["code"] = couponCode
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 data["mentor_id"] = Mentor.getInstance().getId()
             }
@@ -96,6 +97,20 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                 }
             }
             isProcessing.postValue(false)
+        }
+    }
+
+    fun saveImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 
