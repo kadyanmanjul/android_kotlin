@@ -451,6 +451,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     private fun setObservers() {
         viewModel.paymentDetailsLiveData.observe(this) {
+            binding.englishCard.elevation = resources.getDimension(R.dimen._15sdp)
+            binding.subscriptionCard.elevation = resources.getDimension(R.dimen._15sdp)
             try {
                 buttonText = mutableListOf<String>()
                 headingText = mutableListOf<String>()
@@ -575,6 +577,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.progressBar.visibility = View.VISIBLE
             } else {
                 binding.progressBar.visibility = View.GONE
+                binding.englishCard.elevation = resources.getDimension(R.dimen._15sdp)
+                binding.subscriptionCard.elevation = resources.getDimension(R.dimen._15sdp)
             }
         }
 
@@ -631,6 +635,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             showToast(getString(R.string.internet_not_available_msz))
             return
         }
+
+        binding.englishCard.elevation = 0f
+        binding.subscriptionCard.elevation = 0f
 
         var phoneNumber = getPhoneNumber()
         if (phoneNumber.isEmpty()) {
