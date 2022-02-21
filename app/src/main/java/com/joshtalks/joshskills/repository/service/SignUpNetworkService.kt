@@ -103,6 +103,9 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/fcm/")
     suspend fun postFCMToken(@FieldMap params: Map<String, String>): Response<FCMResponse>
 
+    @POST("$DIR/mentor/fcm/verify")
+    suspend fun checkFCMInServer(@Body params: Map<String, String>): Map<String, String>
+
     @POST("$DIR/mentor/install_source")
     suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
 
