@@ -305,7 +305,7 @@ class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParamete
                     "registration_id" to PrefManager.getStringValue(FCM_TOKEN)
                 )
             )
-            if (result["message"] != "FCM_ACTIVE")
+            if (result["message"] != FCM_ACTIVE)
                 WorkManagerAdmin.regenerateFCMWorker()
 
             Result.success()
@@ -335,7 +335,7 @@ class RegenerateFCMTokenWorker(context: Context, workerParams: WorkerParameters)
         FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(
                 OnCompleteListener { task ->
-                    Timber.d("FCMToken asdf : Refreshed")
+                    Timber.d("FCMToken : Refreshed")
                     if (!task.isSuccessful) {
                         task.exception?.run {
                             LogException.catchException(this)

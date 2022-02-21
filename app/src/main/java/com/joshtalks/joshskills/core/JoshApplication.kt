@@ -59,7 +59,7 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
-        initServices()
+//        initServices()
         initGroups()
     }
 

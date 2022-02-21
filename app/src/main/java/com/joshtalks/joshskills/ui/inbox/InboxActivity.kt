@@ -95,7 +95,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initView()
         addLiveDataObservable()
         addAfterTime()
-        showAppAutoStartDialog()
+//        showAppAutoStartDialog()
     }
 
     private fun showAppAutoStartDialog() {
