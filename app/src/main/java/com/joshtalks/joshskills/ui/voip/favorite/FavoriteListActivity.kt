@@ -21,12 +21,12 @@ import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 
-class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickListener,OnClickUserProfile {
+class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickListener,
+    OnClickUserProfile {
     private lateinit var binding: FavoriteListActivityBinding
     private var actionMode: ActionMode? = null
     private val deleteRecords: MutableSet<FavoriteCaller> = mutableSetOf()
@@ -34,7 +34,7 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     private val viewModel: FavoriteCallerViewModel by lazy {
         ViewModelProvider(this).get(FavoriteCallerViewModel::class.java)
     }
-    private val favoriteAdapter: FavoriteAdapter by lazy { FavoriteAdapter(this,this) }
+    private val favoriteAdapter: FavoriteAdapter by lazy { FavoriteAdapter(this, this) }
 
     private var actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -77,6 +77,13 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
 
     private fun initView() {
 
+        binding.btnViewRecentCalls.setOnClickListener {
+            RecentCallActivity.openRecentCallActivity(
+                this,
+                intent.getStringExtra(CONVERSATION_ID) ?: ""
+            )
+        }
+
         binding.favoriteListRv.apply {
             itemAnimator = null
             layoutManager = LinearLayoutManager(applicationContext).apply {
@@ -108,7 +115,7 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
             viewModel.apiCallStatus.collect {
                 binding.progressBar.visibility = View.GONE
                 if (favoriteAdapter.itemCount == 0) {
-                    showToast("You can add partners to this list by doing calls and pressing yes")
+                    binding.emptyCard.visibility = View.VISIBLE
                 }
             }
         }
@@ -127,7 +134,7 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     override fun onItemLongClick(view: View?, position: Int) {
-       // updateListRow(position)
+        // updateListRow(position)
     }
 
     private fun updateListRow(position: Int) {
@@ -164,6 +171,9 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
         showToast(getDeleteMessage())
         favoriteAdapter.removeAndUpdated()
         viewModel.deleteUsersFromFavoriteList(deleteRecords.toMutableList())
+        if (favoriteAdapter.getItemSize() <= 0) {
+            binding.emptyCard.visibility = View.VISIBLE
+        }
     }
 
     private fun getDeleteMessage(): String {
@@ -192,11 +202,11 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     override fun clickOnPhoneCall(position: Int) {
-       val intent =  WebRtcActivity.getFavMissedCallbackIntent(favoriteAdapter.getItemAtPosition(position).id, this).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivity(intent)
+        viewModel.getCallOnGoing(
+            favoriteAdapter.getItemAtPosition(position).mentorId,
+            favoriteAdapter.getItemAtPosition(position).id,
+            this
+        )
     }
 
     override fun clickLongPressDelete(position: Int) {

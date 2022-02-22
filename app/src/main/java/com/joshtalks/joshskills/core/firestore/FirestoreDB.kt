@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.firestore
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
@@ -33,7 +34,7 @@ object FirestoreDB {
                             Timber.d("FSDB : Notification : $it")
                             saveCurrentNotificationTime(it.modified!!.seconds)
                             onSuccess(it)
-                            // removeNotificationAfterRead(mentorId)
+                            removeNotificationAfterRead(mentorId)
                         }
                     }
                 } catch (ex: Exception) {

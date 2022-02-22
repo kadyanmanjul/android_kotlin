@@ -37,14 +37,17 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
     }
 
     fun addItems(newList: ArrayList<RecentCall>) {
-        if (newList.isEmpty()) {
-            return
+        try {
+            if (newList.isEmpty()) {
+                return
+            }
+            val diffCallback = RecentDiffCallback(items, newList)
+            val diffResult = DiffUtil.calculateDiff(diffCallback)
+            items.clear()
+            items.addAll(newList)
+            diffResult.dispatchUpdatesTo(this)
+        } catch (ex: Exception) {
         }
-        val diffCallback = RecentDiffCallback(items, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        items.clear()
-        items.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = items.size

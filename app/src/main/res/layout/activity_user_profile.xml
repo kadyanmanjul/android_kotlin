@@ -566,7 +566,7 @@
                 <RelativeLayout
                     android:id="@+id/previous_profile_pic_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_28sdp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/bg_profile_header"
                     android:clickable="true"

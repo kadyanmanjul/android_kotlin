@@ -23,6 +23,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.clevertap.android.sdk.CleverTapAPI
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.freshchat.consumer.sdk.Freshchat
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -559,6 +561,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
                 callForceDisconnect()
+                return null
+            }
+            NotificationAction.CALL_DECLINE_NOTIFICATION -> {
+                callDeclineDisconnect()
                 return null
             }
             NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
@@ -1461,6 +1467,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     callForceDisconnect()
                     null
                 }
+                NotificationAction.CALL_DECLINE_NOTIFICATION -> {
+                    callDeclineDisconnect()
+                    null
+                }
                 NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
                     WebRtcService.noUserFoundCallDisconnect()
                     null
@@ -1528,6 +1538,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
         private fun callForceDisconnect() {
             WebRtcService.forceDisconnect()
+        }
+
+        private fun callDeclineDisconnect() {
+            WebRtcService.declineDisconnect()
         }
 
         private fun callForceConnect(actionData: String?) {

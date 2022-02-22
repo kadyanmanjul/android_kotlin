@@ -1043,6 +1043,11 @@
     <string name="confirm">Confirm</string>
     <string name="not_now_txt">Not Now</string>
     <string name="fpp_text">Favorite practice partners</string>
+    <string name="start_a_practice_partner_call_from_recent">You will be able to see you practice partner calls here. </string>
+    <string name="view_recent_calls">View recent calls</string>
+    <string name="no_recent_calls_yet">No recent calls yet...</string>
+    <string name="no_favorite_practice_partners">No favorite practice partners...</string>
+    <string name="you_can_add_fpp">You can add favorite practice partners by sending and accepting requests from recent practice partner calls</string>
 
 
 </resources>
