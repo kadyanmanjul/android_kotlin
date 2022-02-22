@@ -79,4 +79,7 @@ interface P2PNetworkService {
     ):Response<Any>
     @GET("$DIR/fpp/pending_requests")
     suspend fun getPendingRequestsList() : Response<PendingRequestResponse>
+
+    @POST("$DIR/fpp/check_already_on_call/")
+    suspend fun checkUserInCallOrNot(@Body params : Map<String,String>) : Response<HashMap<String,String>>
 }

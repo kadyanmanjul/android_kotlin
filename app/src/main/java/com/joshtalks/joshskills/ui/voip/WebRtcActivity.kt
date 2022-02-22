@@ -439,7 +439,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             {
                 onDisconnectCall(DISCONNECT.NO_USER_FOUND_FAILURE)
             },
-            20000
+            50000
         )
     }
 
@@ -566,6 +566,14 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
+        setCallScreenBackground()
+        updateButtonStatus()
+        callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+
+        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false){
+            mBoundService?.startPlaying()
+        }
+
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
                 intent = intent.apply {
@@ -643,7 +651,9 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             if (WebRtcService.isCallOnGoing.value == true) {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
-                startCallTimer()
+                if (mBoundService?.isCallerJoined==true){
+                    startCallTimer()
+                }
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
@@ -659,8 +669,12 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
-            callerId = map?.get("caller_uid") ?: mBoundService?.getOppositeCallerId().toString()
-            callieId = map?.get("uid") ?: mBoundService?.getUserAgoraId().toString()
+            callerId = if (isCallFavoritePP())
+                intent.getIntExtra(RTC_PARTNER_ID,1).toString()
+            else
+                map?.get("caller_uid")?: mBoundService?.getOppositeCallerId().toString()
+            callieId = CurrentCallDetails.callieUid
+
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -930,6 +944,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun onDisconnectCall(reason: VoipEvent) {
+        mBoundService?.stopPlaying()
         WebRtcService.disconnectCall(reason)
         AppObjectController.uiHandler.postDelayed(
             {
@@ -1001,7 +1016,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         callerName = userDetailLiveData.value?.get("name"),
                         callerImage = userDetailLiveData.value?.get("profile_pic"),
                         yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                        yourAgoraId = callieId.toInt(),
+                        yourAgoraId = mBoundService?.getUserAgoraId(),
                         activity = this,
                         flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                         callerId = callerId.toInt(),
