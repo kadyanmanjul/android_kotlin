@@ -20,7 +20,6 @@
         android:longClickable="true"
         app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
-        android:layout_margin="@dimen/_1sdp"
         tools:cardBackgroundColor="@color/white"
         tools:cardPreventCornerOverlap="false">
 
@@ -34,47 +33,71 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:longClickable="true">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="@dimen/_34sdp"
-                android:layout_height="@dimen/_34sdp"
-                android:layout_centerVertical="true"
+            <RelativeLayout
+                android:id="@+id/parent_img"
+                android:layout_width="@dimen/_38sdp"
+                android:layout_height="@dimen/_38sdp"
                 android:layout_marginStart="@dimen/_14sdp"
-                android:background="@drawable/white_button_round_enabled"
-                android:gravity="center_vertical|start"
-                android:src="@drawable/img_5"
-                android:visibility="visible"
-                app:favoriteCallerImage="@{obj}"
+                android:gravity="center_horizontal"
                 app:layout_constraintBottom_toBottomOf="@id/title_container"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/title_container"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toTopOf="@id/title_container">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="@dimen/_34sdp"
+                    android:layout_height="@dimen/_34sdp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/white_button_round_enabled"
+                    android:gravity="center_vertical|start"
+                    android:src="@drawable/img_5"
+                    android:visibility="visible"
+                    app:favoriteCallerImage="@{obj}"
+                    tools:visibility="visible" />
+
+            </RelativeLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_tick"
                 android:layout_width="@dimen/_15sdp"
                 android:layout_height="@dimen/_15sdp"
+                android:elevation="@dimen/_10sdp"
                 android:gravity="center_vertical|start"
-                app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-                app:layout_constraintEnd_toEndOf="@+id/profile_image"
+                app:layout_constraintBottom_toBottomOf="@+id/parent_img"
+                app:layout_constraintEnd_toEndOf="@+id/parent_img"
                 app:srcCompat="@drawable/ic_fc_select_bg"
-                tools:visibility="visible" />
+                tools:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_online_tick"
+                android:layout_width="@dimen/_8sdp"
+                android:layout_height="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_3sdp"
+                android:layout_marginBottom="@dimen/_3sdp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/green"
+                android:gravity="center_vertical|start"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/parent_img"
+                app:layout_constraintEnd_toEndOf="@+id/parent_img"
+                tools:visibility="invisible" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/title_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_9sdp"
-                android:orientation="vertical"
                 android:gravity="center_vertical"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/profile_image"
+                app:layout_constraintStart_toEndOf="@+id/parent_img"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_160sdp"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                     android:textColor="@color/pure_black"
@@ -85,8 +108,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:singleLine="true"
                     android:layout_marginTop="@dimen/_2sdp"
+                    android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                     android:textColor="@color/dark_text_color"
                     tools:text="Spoke for 20 minutes" />

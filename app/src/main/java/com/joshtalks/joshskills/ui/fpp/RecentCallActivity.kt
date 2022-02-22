@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityRecentCallBinding
@@ -30,6 +31,9 @@ val SENT_REQUEST = "send_request"
 val IS_ALREADY_FPP = "is_already_fpp"
 val ALREADY_FPP="already_fpp"
 val REQUESTED = "requested"
+val HAS_RECIEVED_REQUEST = "has_recieved_request"
+
+class RecentCallActivity : WebRtcMiddlewareActivity() {
 val HAS_RECIEVED_REQUEST="has_recieved_request"
 class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
     private lateinit var binding: ActivityRecentCallBinding
@@ -44,6 +48,7 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_recent_call)
         binding.handler = this
         setSupportActionBar(binding.toolbar)
+        initView()
         addObservable()
     }
 

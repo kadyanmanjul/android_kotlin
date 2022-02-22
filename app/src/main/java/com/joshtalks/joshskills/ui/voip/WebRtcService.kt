@@ -309,6 +309,16 @@ class WebRtcService : BaseWebRtcService() {
             serviceIntent.startServiceForWebrtc()
         }
 
+        fun declineDisconnect() {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = CallDeclineDisconnect().action
+            }
+            serviceIntent.startServiceForWebrtc()
+        }
+
         fun noUserFoundCallDisconnect() {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
@@ -1236,6 +1246,18 @@ class WebRtcService : BaseWebRtcService() {
                                     )
                                     RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                                 }
+                                this == CallDeclineDisconnect().action -> {
+                                    stopRing()
+                                    callForceDisconnect = true
+                                    if (JoshApplication.isAppVisible.not()) {
+                                        addNotification(CallDisconnect().action, null)
+                                    }
+                                    endCall(
+                                        apiCall = false,
+                                        reason = DISCONNECT.CALL_DECLINE_NOTIFICATION_FAILURE
+                                    )
+                                    RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+                                }
                                 this == CallForceConnect().action -> {
                                     stopRing()
                                     callStartTime = 0L
@@ -1332,6 +1354,7 @@ class WebRtcService : BaseWebRtcService() {
         addNotification(CallConnect().action, callData)
         joshAudioManager?.startCommunication()
         joshAudioManager?.stopConnectTone()
+        stopPlaying()
         audioFocus()
     }
 
@@ -1610,6 +1633,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun joinCall(data: HashMap<String, String?>, isNewChannelGiven: Boolean = false) {
+        Log.e(TAG, "joinCall: $data")
         if (!isNewChannelGiven && isTimeOutToPickCall) {
             isTimeOutToPickCall = false
             RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
@@ -2454,6 +2478,8 @@ data class ConversationRoomJoin(val action: String = "calling.action.conversatio
 
 data class FavoriteIncomingCall(val action: String = "calling.action.favorite_incoming_call") :
     WebRtcCalling()
+
+data class CallDeclineDisconnect(val action:String = "calling.action.decline_disconnect"):WebRtcCalling()
 
 enum class CallState(val state: Int) {
     CALL_STATE_CONNECTED(0), CALL_STATE_IDLE(1), CALL_STATE_BUSY(2),
