@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.interfaces.OnClickUserProfile
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FppItemListBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.ui.inbox.adapter.FavoriteCallerDiffCallback
@@ -19,7 +18,7 @@ import java.util.*
 
 class FavoriteAdapter(
     private var lifecycleProvider: LifecycleOwner,
-    private val onClickUserProfile: OnClickUserProfile ,
+    private val onClickUserProfile: OnClickUserProfile,
 ) :
     RecyclerView.Adapter<FavoriteAdapter.FavoriteItemViewHolder>() {
     private var items: ArrayList<FavoriteCaller> = arrayListOf()
@@ -57,6 +56,8 @@ class FavoriteAdapter(
         notifyDataSetChanged()
     }
 
+    fun getItemSize() = items.size
+
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -74,7 +75,7 @@ class FavoriteAdapter(
 
 
     override fun onBindViewHolder(holder: FavoriteItemViewHolder, position: Int) {
-        holder.bind(items[position],position)
+        holder.bind(items[position], position)
     }
 
     override fun getItemId(position: Int): Long {
@@ -86,13 +87,15 @@ class FavoriteAdapter(
     }
 
     inner class FavoriteItemViewHolder(val binding: FppItemListBinding) :
-        RecyclerView.ViewHolder(binding.root){
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(favoriteCaller: FavoriteCaller,position: Int) {
+        fun bind(favoriteCaller: FavoriteCaller, position: Int) {
             with(binding) {
                 obj = favoriteCaller
 
                 tvName.text = favoriteCaller.name
+                if (favoriteCaller.isOnline)
+                    ivOnlineTick.visibility = View.VISIBLE
 
                 profileImage.setOnClickListener {
                     onClickUserProfile.clickOnProfile(position)
@@ -109,7 +112,20 @@ class FavoriteAdapter(
 
                 tvSpokenTime.text = spokenTimeText(favoriteCaller.minutesSpoken)
                 if (favoriteCaller.selected) {
-                    rootView.setCardBackgroundColor(
+                    fppCallIcon.setOnClickListener {
+                        onClickUserProfile.clickLongPressDelete(position)
+                        rootView.setCardBackgroundColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.white
+                            )
+                        )
+                        ivTick.visibility = View.GONE
+                    }
+                    groupItemContainer.setOnClickListener {
+                        onClickUserProfile.clickLongPressDelete(position)
+                    }
+                    groupItemContainer.setBackgroundColor(
                         ContextCompat.getColor(
                             context,
                             R.color.select_bg_color
@@ -117,7 +133,13 @@ class FavoriteAdapter(
                     )
                     ivTick.visibility = View.VISIBLE
                 } else {
-                    rootView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
+                    fppCallIcon.isEnabled = true
+                    groupItemContainer.setBackgroundColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.white
+                        )
+                    )
                     ivTick.visibility = View.GONE
                 }
             }

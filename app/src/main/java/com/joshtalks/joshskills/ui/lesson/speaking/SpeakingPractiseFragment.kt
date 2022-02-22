@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -282,12 +283,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if (haveAnyFavCaller) {
-                startPractise(favoriteUserCall = true)
-            } else {
-                showToast(getString(R.string.empty_favorite_list_message))
-            }
+            FavoriteListActivity.openFavoriteCallerActivity(requireActivity(), CONVERSATION_ID)
+//            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+//            if (haveAnyFavCaller) {
+//                startPractise(favoriteUserCall = true)
+//            } else {
+//                showToast(getString(R.string.empty_favorite_list_message))
+//            }
         }
         binding.btnNewStudent.setOnClickListener {
             startPractise(favoriteUserCall = false, isNewUserCall = true)
