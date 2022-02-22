@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
@@ -23,6 +24,7 @@ import com.joshtalks.joshskills.ui.fpp.adapters.AdapterCallback
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
+import kotlinx.coroutines.delay
 
 val SENT_REQUEST = "send_request"
 val IS_ALREADY_FPP = "is_already_fpp"
@@ -49,6 +51,18 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
         super.onStart()
         viewModel.getFavorites()
     }
+
+    private fun initView() {
+        var recyclerView: RecyclerView = binding.recentListRv
+        recyclerView.layoutManager = LinearLayoutManager(applicationContext).apply {
+            isSmoothScrollbarEnabled = true
+        }
+        recyclerView.setHasFixedSize(true)
+        recentCallAdapter= RecentCallsAdapter(this,this,this,intent.getStringExtra(
+            CONVERSATION_ID))
+        recyclerView.adapter = recentCallAdapter
+    }
+
     companion object {
         fun openRecentCallActivity(activity: Activity, conversationId: String) {
             Intent(activity, RecentCallActivity::class.java).apply {
@@ -58,21 +72,14 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
             }
         }
     }
-    private fun initView(arraylist:ArrayList<RecentCall>) {
-        var recyclerView: RecyclerView = binding.recentListRv
-        recyclerView.layoutManager =  LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
-        recentCallAdapter= RecentCallsAdapter(arraylist,this,this,this,intent.getStringExtra(
-            CONVERSATION_ID))
-        recyclerView.adapter = recentCallAdapter
-    }
 
     private fun addObservable() {
-        viewModel.recentCallList.observe(this) {
+        viewModel.recentCallList.observe(this){
                 if (it != null) {
-                    initView(it.arrayList)
+                    recentCallAdapter.addItems(it.arrayList)
                 }
             }
+
         viewModel.apiCallStatus.observe(this) {
             if(flag) {
                 when (it) {
