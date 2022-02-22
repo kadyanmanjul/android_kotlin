@@ -543,24 +543,26 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun initCall() {
         if (isCallFavoritePP() || mBoundService?.isCallerJoined == true) {
-            intent= intent.apply {
-                putExtra(CALL_TYPE, WebRtcService.callType)
-                WebRtcService.callData?.apply {
-                    if (mBoundService?.isFavorite() == true) {
-                        put(RTC_IS_FAVORITE, "true")
+            if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
+                intent = intent.apply {
+                    putExtra(CALL_TYPE, WebRtcService.callType)
+                    WebRtcService.callData?.apply {
+                        if (mBoundService?.isFavorite() == true) {
+                            put(RTC_IS_FAVORITE, "true")
+                        }
+                        if (mBoundService?.isGroupCall() == true) {
+                            put(RTC_IS_GROUP_CALL, "true")
+                        }
+                        if (isNewUserCall()) {
+                            put(RTC_IS_NEW_USER_CALL, "true")
+                        }
                     }
-                    if (mBoundService?.isGroupCall()==true) {
-                        put(RTC_IS_GROUP_CALL, "true")
-                    }
-                    if (isNewUserCall()) {
-                        put(RTC_IS_NEW_USER_CALL, "true")
-                    }
+                    putExtra(IS_CALL_CONNECTED, mBoundService?.isCallerJoined)
+                    putExtra(CALL_USER_OBJ, WebRtcService.callData)
                 }
-                putExtra(IS_CALL_CONNECTED, isCallOnGoing.value)
-                putExtra(CALL_USER_OBJ, WebRtcService.callData)
+                updateCallInfo()
             }
-            updateCallInfo()
-        } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
+        }/*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
         }*/
         setCallScreenBackground()
@@ -633,9 +635,8 @@ class WebRtcActivity : AppCompatActivity() {
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
-            callerId = map?.get("caller_uid").toString()
-            callieId = CurrentCallDetails.callieUid
-
+              callerId = map?.get("caller_uid") ?: mBoundService?.getOppositeCallerId().toString()
+              callieId = CurrentCallDetails.callieUid
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
