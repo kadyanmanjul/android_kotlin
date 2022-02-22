@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.fpp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +28,14 @@ class SeeAllRequestsActivity : AppCompatActivity() ,AdapterCallback{
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)
         binding.lifecycleOwner = this
+        binding.ivBack.setOnClickListener{
+            onBackPressed()
+        }
         addObserver()
+    }
+
+    override fun onStart() {
+        super.onStart()
         getPendingRequests()
     }
 
@@ -49,21 +57,30 @@ class SeeAllRequestsActivity : AppCompatActivity() ,AdapterCallback{
             }
         }
         viewModel.pendingRequestsList.observe(this){
+
             initView(it.pendingRequestsList)
         }
     }
 
     private fun initView(pendingRequestsList: List<PendingRequestDetail>) {
-        var recyclerView: RecyclerView = binding.recentListRv
-        recyclerView.layoutManager =  LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = SeeAllRequestsAdapter(pendingRequestsList,this)
+        if(pendingRequestsList.isNullOrEmpty()){
+        }else {
+            var recyclerView: RecyclerView = binding.recentListRv
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.setHasFixedSize(true)
+            recyclerView.adapter = SeeAllRequestsAdapter(pendingRequestsList, this, this)
+        }
     }
 
-    override fun onClickCallback(requestStatus: String?, mentorId: String?) {
+    override fun onClickCallback(
+        requestStatus: String?,
+        mentorId: String?,
+        position: Int,
+        name: String?
+    ) {
         if (requestStatus != null) {
             if (mentorId != null) {
-                viewModel.confirmOrRejectFppRequest(requestStatus,mentorId)
+                viewModel.confirmOrRejectFppRequest(mentorId,requestStatus,"REQUESTS_SCREEN")
             }
         }
     }

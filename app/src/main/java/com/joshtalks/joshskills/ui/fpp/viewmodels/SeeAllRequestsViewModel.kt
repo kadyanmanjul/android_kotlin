@@ -18,22 +18,26 @@ class SeeAllRequestsViewModel(application: Application) : AndroidViewModel(appli
     fun getPendingRequestsList() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                apiCallStatus.postValue(ApiCallStatus.START)
                 val response = p2pNetworkService.getPendingRequestsList()
                 if (response.isSuccessful) {
                     pendingRequestsList.postValue(response.body())
+                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                     return@launch
                 }
-                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Throwable) {
                 apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                 ex.printStackTrace()
             }
         }
     }
-    fun confirmOrRejectFppRequest(senderMentorId:String,userStatus:String) {
+    fun confirmOrRejectFppRequest(senderMentorId:String,userStatus:String,pageType:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, mapOf(userStatus to "true"))
+                val map: HashMap<String, String> = HashMap<String, String>()
+                map[userStatus] = "true"
+                map["page_type"] = pageType
+                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
