@@ -1,27 +1,27 @@
 package com.joshtalks.joshskills.ui.fpp.adapters
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat.setBackgroundTintList
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
 import com.joshtalks.joshskills.ui.fpp.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
-import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import kotlin.collections.ArrayList
 
-class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ) :
+class RecentCallsAdapter(  private val items: ArrayList<RecentCall>,var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ,var activity:Activity,var conversationID:String?) :
 
     RecyclerView.Adapter<RecentCallsAdapter.RecentItemViewHolder>() {
-    private var items: ArrayList<RecentCall> = arrayListOf()
+
     private val context = AppObjectController.joshApplication
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -35,21 +35,11 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
         return RecentItemViewHolder(binding)
     }
 
-    fun addItems(newList: ArrayList<RecentCall>) {
-        if (newList.isEmpty()) {
-            return
-        }
-        val diffCallback = RecentDiffCallback(items, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        items.clear()
-        items.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
     override fun getItemCount(): Int = items.size
 
 
     override fun onBindViewHolder(holder: RecentCallsAdapter.RecentItemViewHolder, position: Int) {
+        holder.setIsRecyclable(false)
         holder.bind(items[position], position)
     }
 
@@ -62,42 +52,75 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
 
         @SuppressLint("UseCompatLoadingForColorStateLists")
         fun bind(recentCall: RecentCall, position: Int) {
+            binding.rootView.setOnClickListener{
+                openUserProfileActivity(
+                    recentCall.receiverMentorId,
+                    "RECENT_CALL"
+                )
+            }
             with(binding) {
                 when (recentCall.fppRequestStatus) {
                     SENT_REQUEST -> {
+                        btnSentRequest.visibility = View.VISIBLE
                         btnSentRequest.setBackgroundColor(
                             ContextCompat.getColor(
                                 AppObjectController.joshApplication,
                                 R.color.colorAccent
                             )
                         )
-                        btnSentRequest.text = context.resources.getText(R.string.sent_request)
+                        btnSentRequest.text = context.resources.getText(R.string.send_request)
                         btnSentRequest.setTextColor(ContextCompat.getColor(
                             AppObjectController.joshApplication,
                             R.color.white
                         ))
                     }
-                    IS_ALREADY_FPP -> {
+                    ALREADY_FPP -> {
                         btnSentRequest.visibility = View.INVISIBLE
                     }
                     REQUESTED -> {
+                        btnSentRequest.visibility = View.VISIBLE
                         btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
                             AppObjectController.joshApplication,
                             R.color.not_now
                         )
                         btnSentRequest.text = "Requested"
+                        btnSentRequest.setTextColor(ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.black_quiz
+                        ))
                     }
                     HAS_RECIEVED_REQUEST -> {
+                        btnSentRequest.visibility = View.VISIBLE
                         btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
                             AppObjectController.joshApplication,
                             R.color.not_now
                         )
                         btnSentRequest.text = "Respond"
+                        btnSentRequest.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_reverse_polygon, 0)
+                        btnSentRequest.setTextColor(ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.black_quiz
+                        ))
                     }
                 }
                 obj = recentCall
                 tvName.text = recentCall.firstName
-                tvSpokenTime.text = spokenTimeText(recentCall.callDuration ?: 0)
+                tvSpokenTime.text = SINGLE_SPACE + recentCall.textToShow
+                if(recentCall.callType=="incoming") {
+                    tvSpokenTime.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_incoming_call,
+                        0,
+                        0,
+                        0
+                    )
+                }else{
+                    tvSpokenTime.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_outgoing_call,
+                        0,
+                        0,
+                        0
+                    )
+                }
                 btnSentRequest.setOnClickListener{
                     when(recentCall.fppRequestStatus){
                         SENT_REQUEST->{
@@ -106,7 +129,16 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                                 R.color.not_now
                             )
                             btnSentRequest.text = "Requested"
-                            callback.onClickCallback(recentCall.fppRequestStatus,recentCall.receiverMentorId)
+                            btnSentRequest.setTextColor(ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.black_quiz
+                            ))
+                            callback.onClickCallback(
+                                recentCall.fppRequestStatus,
+                                recentCall.receiverMentorId,
+                                position,
+                                null
+                            )
                         }
                         REQUESTED->{
                             btnSentRequest.setBackgroundColor(
@@ -115,32 +147,41 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                                     R.color.colorAccent
                                 )
                             )
-                            btnSentRequest.text = context.resources.getText(R.string.sent_request)
+                            btnSentRequest.text = context.resources.getText(R.string.send_request)
                             btnSentRequest.setTextColor(ContextCompat.getColor(
                                 AppObjectController.joshApplication,
                                 R.color.white
                             ))
-                            callback.onClickCallback(recentCall.fppRequestStatus,recentCall.receiverMentorId)
+                            callback.onClickCallback(
+                                recentCall.fppRequestStatus,
+                                recentCall.receiverMentorId,
+                                position,
+                                null,)
 
                         }
                         HAS_RECIEVED_REQUEST->{
-                            btnSentRequest.visibility = View.INVISIBLE
-//                            callback.onClickCallback(recentCall,recentCall.receiverMentorId)
+                            callback.onClickCallback(
+                                recentCall.fppRequestStatus,
+                                recentCall.receiverMentorId,
+                                position,
+                                recentCall.firstName
+                            )
                         }
                     }
                 }
             }
         }
-
-        private fun spokenTimeText(minute: Int): String {
-            val string = StringBuilder()
-            string.append("Total time Spoken: $minute ")
-            if (minute > 1) {
-                string.append("minutes")
-            } else {
-                string.append("minute")
-            }
-            return string.toString()
+    }
+    private fun openUserProfileActivity(id: String, previousPage: String?) {
+        previousPage?.let {
+            UserProfileActivity.startUserProfileActivity(
+                activity,
+                id,
+                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                null,
+                it,
+                conversationId = conversationID
+            )
         }
     }
 }

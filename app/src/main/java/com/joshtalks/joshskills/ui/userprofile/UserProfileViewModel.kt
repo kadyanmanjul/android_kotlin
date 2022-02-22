@@ -295,9 +295,13 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val response = AppObjectController.commonNetworkService.getFppStatusInProfile(mentorId)
                 if (response.isSuccessful && response.body() != null) {
                     if(response.body()!!.fppList.isNullOrEmpty()){
-                        fppRequest.postValue(response.body()!!.fppRequest)
+                        response.body()!!.fppRequest?.let{
+                            fppRequest.postValue(it)
+                        }
                     }else if(response.body()!!.fppRequest==null){
-                        fppList.postValue(response.body()!!.fppList)
+                        response.body()!!.fppList?.let{
+                            fppList.postValue(it)
+                        }
                     }
                 } else if (response.errorBody() != null
                     && response.errorBody()!!.string().contains("mentor_id is not valid")
@@ -361,10 +365,13 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
-      fun confirmFppRequest(senderMentorId:String) {
+    fun confirmOrRejectFppRequest(senderMentorId:String,userStatus:String,pageType:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, mapOf("is_Accepted" to "true"))
+                val map: HashMap<String, String> = HashMap<String, String>()
+                map[userStatus] = "true"
+                map["page_type"] = pageType
+                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

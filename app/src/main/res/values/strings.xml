@@ -1034,6 +1034,7 @@
     <string name="share_with_friends">Share with friends</string>
     <string name="great_job">Great Job %1$s!</string>
     <string name="sent_request">Sent Request</string>
+    <string name="send_request">Send Request</string>
     <string name="requested">Requested</string>
     <string name="recent_calls">Recent calls</string>
     <string name="favorite_requests">Favorite Requests</string>

@@ -10,6 +10,9 @@ data class RecentCall(
     @SerializedName("photo_url") var photoUrl: String?,
     @SerializedName("call_duration") var callDuration: Int?,
     @SerializedName("fpp_request_status") var fppRequestStatus:String,
-    @SerializedName("mentor_id") var receiverMentorId:String
+    @SerializedName("mentor_id") var receiverMentorId:String,
+    @SerializedName("text") var textToShow:String?,
+    @SerializedName("call_type") var callType:String?
+
 
 )

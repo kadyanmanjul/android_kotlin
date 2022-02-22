@@ -66,7 +66,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center_vertical|start"
-                        android:onClick="@{()->handler.onBackPressed()}"
                         android:paddingTop="@dimen/_6sdp"
                         android:paddingBottom="@dimen/_6sdp"
                         android:visibility="visible"
@@ -94,7 +93,6 @@
 
 
         </com.google.android.material.appbar.AppBarLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -111,20 +109,5 @@
                 tools:listitem="@layout/fpp_requests_list_item"
                 tools:itemCount="10"/>
         </LinearLayout>
-
-
-        <com.mikhaellopez.circularprogressbar.CircularProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
-            android:layout_centerInParent="true"
-            android:elevation="@dimen/_5sdp"
-            app:cpb_background_progressbar_color="@android:color/transparent"
-            app:cpb_background_progressbar_width="0dp"
-            app:cpb_indeterminate_mode="true"
-            app:cpb_progress_direction="to_left"
-            app:cpb_progressbar_color="@color/colorAccent"
-            app:cpb_progressbar_width="@dimen/_4sdp"
-            app:cpb_round_border="true" />
     </RelativeLayout>
 </layout>
