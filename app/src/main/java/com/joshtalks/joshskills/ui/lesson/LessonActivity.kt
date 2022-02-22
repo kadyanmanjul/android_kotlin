@@ -213,8 +213,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
-        setUpVideoProgressListener()
-        viewModel.getVideoData()
     }
 
     override fun onResume() {
@@ -294,6 +292,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 titleView.text =
                     getString(R.string.lesson_no, it.lessonNo)
                 lessonNumber = it.lessonNo
+
+                if(it.lessonNo == 1){
+                    setUpVideoProgressListener()
+                    viewModel.getVideoData()
+                }
+
                 lessonIsNewGrammar = it.isNewGrammar
             }
             viewModel.lessonIsConvoRoomActive =
