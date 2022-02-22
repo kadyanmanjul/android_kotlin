@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -18,10 +19,10 @@ import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import kotlin.collections.ArrayList
 
-class RecentCallsAdapter(  private val items: ArrayList<RecentCall>,var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ,var activity:Activity,var conversationID:String?) :
+class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ,var activity:Activity,var conversationID:String?) :
 
     RecyclerView.Adapter<RecentCallsAdapter.RecentItemViewHolder>() {
-
+    private var items: ArrayList<RecentCall> = arrayListOf()
     private val context = AppObjectController.joshApplication
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -33,6 +34,17 @@ class RecentCallsAdapter(  private val items: ArrayList<RecentCall>,var lifecycl
             lifecycleOwner = lifecycleProvider
         }
         return RecentItemViewHolder(binding)
+    }
+
+    fun addItems(newList: ArrayList<RecentCall>) {
+        if (newList.isEmpty()) {
+            return
+        }
+        val diffCallback = RecentDiffCallback(items, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        items.clear()
+        items.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = items.size
