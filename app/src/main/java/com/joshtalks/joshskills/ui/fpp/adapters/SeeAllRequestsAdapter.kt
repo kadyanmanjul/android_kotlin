@@ -1,20 +1,22 @@
 package com.joshtalks.joshskills.ui.fpp.adapters
 
+import android.app.Activity
+import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View.GONE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.databinding.ActivityFeedRowItemBinding
 import com.joshtalks.joshskills.databinding.FppRequestsListItemBinding
-import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import com.joshtalks.joshskills.ui.fpp.ISACCEPTED
 import com.joshtalks.joshskills.ui.fpp.ISREJECTED
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
-import java.util.ArrayList
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
 class SeeAllRequestsAdapter(
-    private val items: List<PendingRequestDetail>,var callback: AdapterCallback
+    private val items: List<PendingRequestDetail>,var callback: AdapterCallback,var activity:Activity
 ) : RecyclerView.Adapter<SeeAllRequestsAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view= DataBindingUtil.inflate<FppRequestsListItemBinding>(
@@ -26,20 +28,58 @@ class SeeAllRequestsAdapter(
         return ViewHolder(view)
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position],position)
     }
 
     override fun getItemCount(): Int = items.size
     inner class ViewHolder(val binding: FppRequestsListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(pendingRequestDetail: PendingRequestDetail) {
+        fun bind(pendingRequestDetail: PendingRequestDetail,position: Int) {
             binding.itemData=pendingRequestDetail
+            binding.rootView.setOnClickListener{
+                pendingRequestDetail.senderMentorId?.let { it1 ->
+                    openUserProfileActivity(
+                        it1,
+                        "ALL_REQUESTS"
+                    )
+                }
+            }
             binding.btnConfirmRequest.setOnClickListener{
-                callback.onClickCallback(ISACCEPTED,pendingRequestDetail.senderMentorId)
+                binding.btnNotNow.visibility=GONE
+                binding.btnConfirmRequest.visibility=GONE
+                binding.tvSpokenTime.text="You are now favorite practice partners"
+                binding.rootView.setCardBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
+                callback.onClickCallback(
+                    ISACCEPTED,
+                    pendingRequestDetail.senderMentorId,
+                    position,
+                    null
+                )
             }
             binding.btnNotNow.setOnClickListener{
-                callback.onClickCallback(ISREJECTED,pendingRequestDetail.senderMentorId)
+                binding.btnNotNow.visibility=GONE
+                binding.btnConfirmRequest.visibility=GONE
+                binding.tvSpokenTime.text="Request Removed"
+                binding.rootView.setCardBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
+                callback.onClickCallback(
+                    ISREJECTED,
+                    pendingRequestDetail.senderMentorId,
+                    position,
+                    null
+                )
             }
 
+        }
+    }
+    private fun openUserProfileActivity(id: String, previousPage: String?) {
+        previousPage?.let {
+            UserProfileActivity.startUserProfileActivity(
+                activity ,
+                id,
+                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                null,
+                it,
+                conversationId = null
+            )
         }
     }
 }

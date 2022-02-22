@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
@@ -40,10 +42,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEven
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.fpp.HAS_RECIEVED_REQUEST
-import com.joshtalks.joshskills.ui.fpp.IS_ALREADY_FPP
-import com.joshtalks.joshskills.ui.fpp.REQUESTED
-import com.joshtalks.joshskills.ui.fpp.SENT_REQUEST
+import com.joshtalks.joshskills.ui.fpp.*
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
@@ -54,8 +53,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
-import java.util.*
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.base_toolbar.*
@@ -64,6 +61,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.DecimalFormat
+import java.util.*
 
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 
@@ -78,6 +77,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
     private var isAnimationVisible = false
+    private var userName :String? = null
     var isExpanded = true
 
     init {
@@ -101,6 +101,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         addObserver()
         startTime = System.currentTimeMillis()
         initToolbar()
+        viewModel.getFppStatusInProfile(mentorId)
         getProfileData(intervalType, previousPage)
         setOnClickListeners()
     }
@@ -177,21 +178,70 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         binding.btnSentRequest.setOnClickListener{
-            viewModel.sendFppRequest(mentorId)
-            binding.btnSentRequest.visibility= GONE
+            with(binding) {
+                if(btnSentRequest.text=="Requested"){
+                    btnSentRequest.setBackgroundColor(
+                        ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.colorAccent
+                        )
+                    )
+                    btnSentRequest.text = "Send Request"
+                    btnSentRequest.setTextColor(ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.white
+                    ))
+                    viewModel.deleteFppRequest(mentorId)
+                }else{
+                    btnSentRequest.setBackgroundColor(
+                        ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.not_now
+                        )
+                    )
+                    btnSentRequest.text = "Requested"
+                    btnSentRequest.setTextColor(
+                        ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.black_quiz
+                        )
+                    )
+                    viewModel.sendFppRequest(mentorId)
+                }
+
+            }
         }
         binding.btnConfirmRequest.setOnClickListener{
-            viewModel.confirmFppRequest(mentorId)
+            viewModel.confirmOrRejectFppRequest(mentorId, ISACCEPTED,"USER_PROFILE")
             binding.btnConfirmRequest.visibility= GONE
             binding.btnNotNowRequest.visibility= GONE
-
+            binding.profileText.text= userName+ " and you are now favorite practice partners"
+            var layoutParams: RelativeLayout.LayoutParams =
+                binding.profileText.layoutParams as RelativeLayout.LayoutParams
+            layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
+            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
+            layoutParams.topMargin = resources.getDimension(R.dimen._11sdp).toInt()
+            layoutParams.bottomMargin = resources.getDimension(R.dimen._11sdp).toInt()
+            binding.profileText.layoutParams = layoutParams
+            binding.btnConfirmOrNotNowCard.visibility=GONE
+            binding.sentRequestCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.request_respond))
         }
+
         binding.btnNotNowRequest.setOnClickListener{
-            viewModel.deleteFppRequest(mentorId)
+            viewModel.confirmOrRejectFppRequest(mentorId, ISREJECTED,"USER_PROFILE")
             binding.btnConfirmRequest.visibility= GONE
             binding.btnNotNowRequest.visibility= GONE
+            var layoutParams: RelativeLayout.LayoutParams =
+                binding.profileText.layoutParams as RelativeLayout.LayoutParams
+            layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
+            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
+            layoutParams.topMargin = resources.getDimension(R.dimen._11sdp).toInt()
+            layoutParams.bottomMargin = resources.getDimension(R.dimen._11sdp).toInt()
+            binding.profileText.layoutParams = layoutParams
+            binding.profileText.text=userName+"'s favorite practice partner request has been removed"
+            binding.btnConfirmOrNotNowCard.visibility=GONE
+            binding.profileText.gravity=Gravity.CENTER_VERTICAL
         }
-
     }
 
     private fun initToolbar() {
@@ -304,6 +354,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             it?.let {
                 impressionId = it.userProfileImpressionId ?: EMPTY
                 hideProgressBar()
+                userName= it.name
                 initView(it)
             }
         }
@@ -317,7 +368,22 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 IS_ALREADY_FPP -> {
                 }
                 REQUESTED -> {
-
+                    with(binding) {
+                        sentRequestCard.visibility = VISIBLE
+                        btnSentRequest.visibility = VISIBLE
+                        profileText.text = it.text
+                        btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
+                            AppObjectController.joshApplication,
+                            R.color.not_now
+                        )
+                        btnSentRequest.text = "Requested"
+                        btnSentRequest.setTextColor(
+                            ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.black_quiz
+                            )
+                        )
+                    }
                 }
                 HAS_RECIEVED_REQUEST -> {
                     binding.sentRequestCard.visibility= VISIBLE
@@ -336,6 +402,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 binding.fppListLayout.visibility = VISIBLE
                 binding.myFppLl.visibility = VISIBLE
                 binding.fppDp.text= "Favorite practice partners (${it.size})"
+                binding.viewAllFpp.visibility= VISIBLE
                 binding.viewAllFpp.text = "View all (${it.size})"
                 binding.myFppLl.removeAllViews()
                 binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -368,12 +435,18 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
-                hideProgressBar()
+                binding.scrollViewShimmer.visibility= GONE
+                binding.profileShimmerView.pauseAnimation()
+                binding.scrollView.visibility= VISIBLE
             } else if (it == ApiCallStatus.FAILED) {
-                hideProgressBar()
+                binding.scrollViewShimmer.visibility= GONE
+                binding.profileShimmerView.pauseAnimation()
+                binding.scrollView.visibility= VISIBLE
                 this.finish()
             } else if (it == ApiCallStatus.START) {
-                showProgressBar()
+                binding.scrollView.visibility= GONE
+                binding.scrollViewShimmer.visibility= VISIBLE
+                binding.profileShimmerView.playAnimation()
             }
         }
 
@@ -676,9 +749,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             layoutInflater.inflate(R.layout.fpp_item_list_for_profile, binding.rootView, false)
         val txtUserName = view.findViewById(R.id.tv_name) as AppCompatTextView
         val imageUserProfile = view.findViewById(R.id.profile_image) as CircleImageView
-        //val txtTotalSpokeTime = view.findViewById(R.id.txt_spoke) as AppCompatTextView
+        val txtTotalSpokeTime = view.findViewById(R.id.tv_spoken_time) as AppCompatTextView
         txtUserName.text = fppDetails.fullName?:""
-        //txtTotalSpokeTime.text = fppList.
+        txtTotalSpokeTime.text = fppDetails.text
         imageUserProfile.setUserImageOrInitials(fppDetails.photoUrl?:"",fppDetails.fullName?:"")
         return view
     }

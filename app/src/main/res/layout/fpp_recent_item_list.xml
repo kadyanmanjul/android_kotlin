@@ -85,7 +85,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_sent_request"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_88sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:layout_marginEnd="@dimen/_14sdp"
                 android:backgroundTint="@color/colorAccent"
@@ -94,7 +94,8 @@
                 android:elevation="0dp"
                 app:elevation="0dp"
                 android:insetBottom="0dp"
-                android:text="@string/sent_request"
+                android:visibility="gone"
+                android:text="@string/send_request"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                 android:textColor="@color/white"
