@@ -10,7 +10,6 @@
             type="com.joshtalks.joshskills.ui.userprofile.UserProfileActivity" />
 
     </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent_Container"
         android:layout_width="match_parent"
@@ -409,11 +408,11 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/sent_request_card"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_94sdp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_19sdp"
                     android:background="@color/profile_request_card"
                     android:longClickable="true"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@color/profile_request_card"
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -424,7 +423,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_97sdp">
+                        android:layout_height="wrap_content">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/profile_text"
@@ -433,7 +432,7 @@
                             android:layout_marginStart="@dimen/_32sdp"
                             android:layout_marginTop="@dimen/_11sdp"
                             android:layout_marginEnd="@dimen/_32sdp"
-                            android:gravity="center"
+                            android:gravity="center_horizontal"
                             android:lineSpacingExtra="0dp"
                             android:lines="3"
                             android:maxLines="3"
@@ -451,15 +450,15 @@
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:layout_marginEnd="@dimen/_14sdp"
+                            android:layout_marginBottom="@dimen/_10sdp"
                             android:backgroundTint="@color/colorAccent"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
-                            android:text="@string/sent_request"
+                            android:text="@string/send_request"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                             android:textColor="@color/white"
-                            android:visibility="invisible"
-                            app:rippleColor="@color/white" />
-
+                            android:visibility="gone"
+                            app:rippleColor="@color/white"/>
                         <LinearLayout
                             android:id="@+id/btn_confirm_or_not_now_card"
                             android:layout_width="wrap_content"
@@ -469,10 +468,10 @@
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:layout_marginRight="@dimen/_10sdp"
+                            android:layout_marginBottom="@dimen/_10sdp"
                             android:gravity="center_horizontal"
                             android:visibility="visible"
                             android:weightSum="2">
-
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_confirm_request"
                                 android:layout_width="@dimen/_91sdp"
@@ -481,10 +480,10 @@
                                 android:insetTop="0dp"
                                 android:insetBottom="0dp"
                                 android:text="@string/confirm"
+                                android:visibility="gone"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                                 android:textColor="@color/white"
-                                app:rippleColor="@color/white" />
-
+                                app:rippleColor="@color/white"/>
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_not_now_request"
                                 android:layout_width="@dimen/_91sdp"
@@ -493,11 +492,11 @@
                                 android:backgroundTint="@color/not_now"
                                 android:insetTop="0dp"
                                 android:insetBottom="0dp"
+                                android:visibility="gone"
                                 android:text="@string/not_now_txt"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                                 android:textColor="@color/pure_black"
-                                app:rippleColor="@color/white" />
-
+                                app:rippleColor="@color/white"/>
                         </LinearLayout>
                     </RelativeLayout>
 
@@ -513,6 +512,7 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center|start"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/sent_request_card">
@@ -544,7 +544,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/fpp_list_layout"/>
@@ -555,6 +555,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:gravity="center_horizontal"
+                    android:visibility="gone"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                     android:text="View all"
                     android:textColor="@color/colorAccent"
@@ -963,6 +964,26 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
+        <ScrollView
+            android:id="@+id/scroll_view_shimmer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:elevation="@dimen/_2sdp"
+            android:fillViewport="true"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/profile_shimmer_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/user_profile_shimmer" />
+        </ScrollView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

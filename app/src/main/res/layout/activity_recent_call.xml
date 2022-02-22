@@ -112,20 +112,5 @@
                 tools:listitem="@layout/fpp_recent_item_list"
                 tools:itemCount="10"/>
         </LinearLayout>
-
-
-        <com.mikhaellopez.circularprogressbar.CircularProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
-            android:layout_centerInParent="true"
-            android:elevation="@dimen/_5sdp"
-            app:cpb_background_progressbar_color="@android:color/transparent"
-            app:cpb_background_progressbar_width="0dp"
-            app:cpb_indeterminate_mode="true"
-            app:cpb_progress_direction="to_left"
-            app:cpb_progressbar_color="@color/colorAccent"
-            app:cpb_progressbar_width="@dimen/_4sdp"
-            app:cpb_round_border="true" />
     </RelativeLayout>
 </layout>

@@ -1,10 +1,14 @@
 package com.joshtalks.joshskills.ui.chat
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
@@ -23,8 +27,16 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
+import android.view.*
+import android.view.View.*
+import android.view.animation.*
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -35,6 +47,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.Player
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
@@ -119,6 +132,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.repository.server.FppDetails
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
@@ -134,6 +148,11 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.fpp.BlurDrawable
+import com.joshtalks.joshskills.ui.fpp.ISACCEPTED
+import com.joshtalks.joshskills.ui.fpp.ISREJECTED
+import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
+import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
@@ -165,6 +184,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
+import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
@@ -219,7 +239,33 @@ class ConversationActivity :
             activity.startActivity(intent)
         }
     }
+    private var addButtonClicked = false
+    private var isFABOpen = false
 
+    private val rotateOpenAnimation: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_open_animation
+        )
+    }
+    private val rotateCloseAnimation: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.rotate_close_animation
+        )
+    }
+    private val fromBottomAnimation: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.from_bottom_animation
+        )
+    }
+    private val toBottomAnimation: Animation by lazy {
+        AnimationUtils.loadAnimation(
+            this,
+            R.anim.to_bottom_animation
+        )
+    }
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
@@ -272,8 +318,81 @@ class ConversationActivity :
             this.finish()
             return
         }
+        val beneathView: RelativeLayout= conversationBinding.rootView
+        val blurDrawable = BlurDrawable(beneathView, 25)
+
+        conversationBinding.imggg.setBackgroundDrawable(blurDrawable)
+        conversationBinding.floatingActionButtonAdd?.setOnClickListener {
+            onAddButtonClicked()
+            conversationViewModel.getPendingRequestsList()
+        }
         init()
         showRestartButton()
+    }
+    private fun onAddButtonClicked() {
+        setVisibility(addButtonClicked)
+        setAnimation(addButtonClicked)
+        buttonSetClickable()
+        addButtonClicked = !addButtonClicked
+    }
+
+    private fun setVisibility(buttonClicked: Boolean) {
+        with(conversationBinding) {
+            if (!buttonClicked) {
+                imgFeedBtn.visibility = VISIBLE
+                imgGameBtn.visibility = VISIBLE
+                imgGroupChatBtn.visibility = VISIBLE
+                imgcnfmBtn.visibility = VISIBLE
+                quickCardView.visibility = VISIBLE
+
+            } else {
+
+                imgFeedBtn.visibility = GONE
+                imgGameBtn.visibility = GONE
+                imgGroupChatBtn.visibility = GONE
+                imgcnfmBtn.visibility = GONE
+                quickCardView.visibility = GONE
+
+            }
+        }
+    }
+
+    //Setting the animation on the buttons
+    private fun setAnimation(buttonClicked: Boolean) {
+        with(conversationBinding) {
+            if (!buttonClicked) {
+                imgFeedBtn.startAnimation(fromBottomAnimation)
+                imgGameBtn.startAnimation(fromBottomAnimation)
+                imgGroupChatBtn.startAnimation(fromBottomAnimation)
+                imgcnfmBtn.startAnimation(fromBottomAnimation)
+                floatingActionButtonAdd?.startAnimation(rotateOpenAnimation)
+
+            } else {
+                    imgFeedBtn.startAnimation(toBottomAnimation)
+                    imgGameBtn.startAnimation(toBottomAnimation)
+                    imgGroupChatBtn.startAnimation(toBottomAnimation)
+                    imgcnfmBtn.startAnimation(toBottomAnimation)
+                    floatingActionButtonAdd?.startAnimation(rotateCloseAnimation)
+
+            }
+        }
+    }
+
+    //Checking if the add button is clicked
+    private fun buttonSetClickable() {
+        with(conversationBinding) {
+            if (!addButtonClicked) {
+                imgFeedBtn.isClickable = true
+                imgGameBtn.isClickable = true
+                imgGroupChatBtn.isClickable = true
+                imgcnfmBtn.isClickable = true
+            } else {
+                imgFeedBtn.isClickable = false
+                imgGameBtn.isClickable = false
+                imgGroupChatBtn.isClickable = false
+                imgcnfmBtn.isClickable = false
+            }
+        }
     }
 
     override fun getConversationId(): String {
@@ -725,6 +844,11 @@ class ConversationActivity :
 //        }
         conversationBinding.imgFeedBtn.setOnClickListener {
             ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity, this)
+            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
+        }
+        conversationBinding.imgcnfmBtn.setOnClickListener{
+            val intent = Intent(this, SeeAllRequestsActivity::class.java)
+            startActivity(intent)
         }
         conversationBinding.imgGroupChatBtn.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
@@ -1121,6 +1245,33 @@ class ConversationActivity :
                     profileFeatureActiveView(true)
             }
         }
+        conversationViewModel.pendingRequestsList.observe(this){
+            if (it.pendingRequestsList.isNullOrEmpty()) {
+                conversationBinding.quickViewNoRequests.visibility= VISIBLE
+            } else {
+                conversationBinding.myRequestsLl.visibility= VISIBLE
+                conversationBinding.viewAllRequests.visibility= VISIBLE
+                conversationBinding.viewAllRequests.text="See all ${it.pendingRequestsList.size} requests"
+                conversationBinding.viewAllRequests.isClickable=true
+                conversationBinding.horizontalLine.visibility= VISIBLE
+                conversationBinding.viewAllRequests.setOnClickListener{
+                    val intent = Intent(this, SeeAllRequestsActivity::class.java)
+                    startActivity(intent)
+                }
+                var countRequestsList = 0
+                conversationBinding.myRequestsLl.removeAllViews()
+                it.pendingRequestsList.forEach {
+                    if (countRequestsList < 7) {
+                        val view = getPendingRequestItem(it)
+                        if (view != null) {
+                            conversationBinding.myRequestsLl.addView(view)
+                            countRequestsList++
+                        }
+                    }
+                }
+            }
+        }
+
 
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
@@ -1241,6 +1392,40 @@ class ConversationActivity :
             if (activityFeedControl) conversationBinding.imgFeedBtn.visibility =
                 VISIBLE else conversationBinding.imgFeedBtn.visibility = GONE
         }
+    }
+    @SuppressLint("WrongViewCast")
+    private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): View? {
+        val layoutInflater =
+            AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view =
+            layoutInflater.inflate(R.layout.fpp_quick_view_lists_item, conversationBinding.root, false)
+        val txtUserName = view.findViewById(R.id.tv_name) as AppCompatTextView
+        val imageUserProfile = view.findViewById(R.id.profile_image) as CircleImageView
+        val txtTotalSpokeTime = view.findViewById(R.id.tv_spoken_time) as AppCompatTextView
+        val btnCnfm = view.findViewById(R.id.btn_confirm_request) as Button
+        val btnNotNow=view.findViewById(R.id.btn_not_now) as Button
+        val itemContainer=view.findViewById(R.id.group_item_container) as ConstraintLayout
+        txtUserName.text = pendingRequestDetail.fullName?:""
+        txtTotalSpokeTime.text = pendingRequestDetail.textToShow
+        imageUserProfile.setUserImageOrInitials(pendingRequestDetail.photoUrl?:"",pendingRequestDetail.fullName?:"")
+        btnCnfm.setOnClickListener{
+            btnCnfm.visibility=GONE
+            btnNotNow.visibility=GONE
+            txtTotalSpokeTime.text="You are now favorite practice partners"
+            itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
+            conversationViewModel.confirmOrRejectFppRequest(pendingRequestDetail.senderMentorId!!,
+                ISACCEPTED,"QUICKVIEW")
+        }
+        btnNotNow.setOnClickListener{
+            btnCnfm.visibility=GONE
+            btnNotNow.visibility=GONE
+            txtTotalSpokeTime.text="Request Removed"
+            itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
+            conversationViewModel.confirmOrRejectFppRequest(pendingRequestDetail.senderMentorId!!,
+                ISREJECTED,"QUICKVIEW")
+
+        }
+        return view
     }
 
     private fun addRVPatch(count: Int) {

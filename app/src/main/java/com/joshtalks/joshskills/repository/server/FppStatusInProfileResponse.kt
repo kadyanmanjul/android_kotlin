@@ -16,14 +16,12 @@ data class FppRequest (
     val requestStatus:String?
 )
 data class FppDetails(
-    @SerializedName("partner_mentor_id")
+    @SerializedName("mentor_id")
     val partnerMentorId:String?,
     @SerializedName("photo_url")
     val photoUrl:String?,
-    @SerializedName("full_name")
+    @SerializedName("name")
     val fullName:String?,
     @SerializedName("text")
     val text:String?,
-    @SerializedName("request_status")
-    val requestStatus:String?
 )
