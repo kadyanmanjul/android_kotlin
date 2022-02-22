@@ -31,13 +31,13 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.File
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -67,7 +67,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val lessonSpotlightStateLiveData: MutableLiveData<LessonSpotlightState?> = MutableLiveData(null)
     val grammarSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
     val speakingSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
-    val eventLiveData: MutableLiveData<Event<Unit>> = MutableLiveData()
+    val eventLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
     var lessonIsConvoRoomActive: Boolean = false
     var isFreeTrail = false
 

@@ -62,11 +62,11 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 const val GRAMMAR_POSITION = 0
 const val SPEAKING_POSITION = 1
@@ -1131,7 +1131,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         itemImageView.y = overlayItem.y.toFloat() - OFFSET
         itemImageView.setOnClickListener {
             binding.itemOverlay.visibility = View.INVISIBLE
-            viewModel.eventLiveData.postValue(Event(Unit))
+            viewModel.eventLiveData.postValue(Event(true))
         }
         itemImageView.requestLayout()
         itemImageView.post {
