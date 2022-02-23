@@ -220,6 +220,12 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
+                val user = User.getInstance()
+                user.firstName = trueProfile.firstName
+                user.phoneNumber = trueProfile.phoneNumber
+                user.email = trueProfile.email
+                user.gender = trueProfile.gender
+                User.update(user)
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 viewModel.isVerified = true

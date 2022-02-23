@@ -38,6 +38,14 @@
         android:orderInCategory="100"
         android:title="@string/favorite_list"
         app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/menu_restart_course"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/restart_course"
+        app:showAsAction="collapseActionView" />
+
     <item
         android:id="@+id/menu_help"
         android:actionLayout="@layout/base_toolbar"

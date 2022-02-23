@@ -155,6 +155,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.activity_payment_summary.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -240,6 +242,8 @@ class ConversationActivity :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.e("Ayaaz conv","${User.getInstance().phoneNumber}")
+        User.getInstance()
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
@@ -555,6 +559,29 @@ class ConversationActivity :
                             this,
                             inboxEntity.conversation_id
                         )
+                    }
+                    R.id.menu_restart_course -> {
+                        var checkIfCourseRestart = false
+                        var phoneNumber = User.getInstance().phoneNumber
+                        phoneNumber = phoneNumber?.substring(3)
+                        var email = User.getInstance().email
+                        when {
+                            email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()-> {
+                                conversationViewModel.restartCourse(phoneNumber.toString())
+                                checkIfCourseRestart = true
+                            }
+                            phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()-> {
+                                conversationViewModel.restartCourse(email)
+                                checkIfCourseRestart = true
+                            }
+                            email.isNullOrEmpty() && phoneNumber.isNullOrEmpty() -> {
+                                checkIfCourseRestart = false
+                            }
+                        }
+                        if(checkIfCourseRestart)
+                            showToast("Please restart your app")
+                        else
+                            showToast("Course can't restart")
                     }
                 }
                 return@setOnMenuItemClickListener true

@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import java.io.File
 import java.util.*
@@ -332,6 +333,23 @@ class ConversationViewModel(
                 mAudioRecording.setFile(it.absolutePath)
                 recordFile = it
                 mAudioRecording.startRecording()
+            }
+        }
+    }
+
+     fun restartCourse(mobile:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestParams: HashMap<String, String> = HashMap()
+                requestParams["input_delete_user"] = "MobileNumber"
+                requestParams["country_code"] = "+91"
+                requestParams["mobile"] = mobile
+                requestParams["course_id"] = inboxEntity.courseId
+
+                AppObjectController.commonNetworkService.restartCourse(requestParams)
+                return@launch
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
             }
         }
     }
