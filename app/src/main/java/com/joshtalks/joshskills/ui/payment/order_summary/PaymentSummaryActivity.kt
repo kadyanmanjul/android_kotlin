@@ -283,6 +283,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             }
 
             if (couponApplied) {
+                hideProgressBar()
                 when (paymentSummaryResponse.couponDetails.isPromoCode) {
                     true -> {
                         showToast("Coupon Applied Successfully")
@@ -449,6 +450,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.promoCode.isNullOrEmpty().not()) {
+                        showProgressBar()
                         couponApplied = true
                         getPaymentDetails(false, testId, it.promoCode)
                     }
