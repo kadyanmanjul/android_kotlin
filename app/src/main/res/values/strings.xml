@@ -278,6 +278,7 @@
     <string name="help">Help</string>
     <string name="close">Close</string>
     <string name="favorite_list">Favorite List</string>
+    <string name="restart_course">Restart Course</string>
     <string name="show_details">Show Details</string>
     <string name="select_course">Select Course</string>
     <string name="selected">Selected</string>
