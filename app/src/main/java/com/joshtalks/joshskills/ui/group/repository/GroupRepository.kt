@@ -497,7 +497,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun getGroupMembersCount(): Map<String, GroupMemberCount>? {
         return try {
-            apiService.getOnlineUserCount(JSONArray(database.groupListDao().getGroupIds()))
+            val groupIds = database.groupListDao().getGroupIds()
+            if (groupIds.isNotEmpty())
+                apiService.getOnlineUserCount(JSONArray(groupIds))
+            else
+                null
         } catch (e: Exception){
             showToast("An error has occurred")
             null
