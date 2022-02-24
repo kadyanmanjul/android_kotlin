@@ -1388,9 +1388,6 @@ class ConversationActivity :
                 }
             } else {
                 Blurry.delete(conversationBinding.rootView)
-//                lifecycleScope.launchWhenCreated {
-//                    Blurry.with(this@ConversationActivity).radius(0).onto(conversationBinding.rootView)
-//                }
                 buttonClicked = true
                 conversationBinding.quickCardView.visibility = INVISIBLE
                 imgActivityFeed.visibility = GONE
@@ -1438,7 +1435,7 @@ class ConversationActivity :
             itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
             conversationViewModel.confirmOrRejectFppRequest(
                 pendingRequestDetail.senderMentorId!!,
-                ISACCEPTED, "QUICKVIEW"
+                ISACCEPTED, "QUICK_VIEW"
             )
         }
         btnNotNow.setOnClickListener {
@@ -1448,7 +1445,7 @@ class ConversationActivity :
             itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
             conversationViewModel.confirmOrRejectFppRequest(
                 pendingRequestDetail.senderMentorId!!,
-                ISREJECTED, "QUICKVIEW"
+                ISREJECTED, "QUICK_VIEW"
             )
 
         }
