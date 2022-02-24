@@ -89,6 +89,9 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         })
         viewModel.apiStatus.observe(viewLifecycleOwner, {
             when (it) {
+                ApiCallStatus.START -> {
+                    startProgress()
+                }
                 ApiCallStatus.SUCCESS -> {
                     hideProgress()
                     moveToInboxScreen()
@@ -112,8 +115,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
             showToast(getString(R.string.name_error_toast))
             return
         }
-
-        startProgress()
+        binding.btnLogin.isEnabled = false
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
