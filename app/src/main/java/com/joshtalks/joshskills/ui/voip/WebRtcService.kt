@@ -66,6 +66,7 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.HashMap
 import kotlin.collections.set
 
@@ -96,6 +97,8 @@ class WebRtcService : BaseWebRtcService() {
         HangUpRtcOnPstnCallAnsweredListener()
 
     private var callStartTime: Long = 0
+    private var isForceConnect = AtomicBoolean(false)
+    private var forceConnectData = hashMapOf<String,String?>()
     private var callForceDisconnect = false
     private var mHandler: Handler? = null
     private val handlerThread: HandlerThread by lazy { CustomHandlerThread("WebrtcThread") }
@@ -531,6 +534,32 @@ class WebRtcService : BaseWebRtcService() {
 
             callData = null
             CurrentCallDetails.reset()
+            if(isForceConnect.get())
+                forceConnectCall()
+        }
+
+        fun forceConnectCall() {
+            Log.d(TAG, "forceConnectCall: Callback")
+            isForceConnect.set(false)
+            val data = forceConnectData
+            callData = data
+            CurrentCallDetails.fromMap(data)
+            if (data.containsKey(RTC_CHANNEL_KEY)) {
+                channelName = data[RTC_CHANNEL_KEY]
+            }
+            removeIncomingNotification()
+            if (WebRtcActivity.isIncomingCallHasNewChannel) {
+                joinCall(data, isNewChannelGiven = true)
+            } else if (callCallback != null && callCallback?.get() != null && !WebRtcActivity.isIncomingCallHasNewChannel) {
+                Log.d(TAG, "onStartCommand: ForceConnect Channel Data --> ${data}")
+                callCallback?.get()?.switchChannel(data)
+            } else {
+                Log.d(TAG, "onStartCommand: ")
+                startAutoPickCallActivity(
+                    false,
+                    isFromForceConnect = true
+                )
+            }
         }
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
@@ -1214,38 +1243,15 @@ class WebRtcService : BaseWebRtcService() {
                                     compositeDisposable.clear()
                                     switchChannel = true
                                     setOppositeUserInfo(null)
-                                    if (isCallOnGoing.value == true) {
-                                        mRtcEngine?.leaveChannel()
-                                    }
                                     resetConfig()
                                     addNotification(CallForceConnect().action, null)
                                     callData = null
                                     CurrentCallDetails.reset()
-                                    AppObjectController.uiHandler.postDelayed(
-                                        {
-                                            val data =
-                                                intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                            callData = data
-                                            CurrentCallDetails.fromMap(data)
-                                            if (data.containsKey(RTC_CHANNEL_KEY)) {
-                                                channelName = data[RTC_CHANNEL_KEY]
-                                            }
-                                            removeIncomingNotification()
-                                            if (WebRtcActivity.isIncomingCallHasNewChannel) {
-                                                joinCall(data, isNewChannelGiven = true)
-                                            } else if (callCallback != null && callCallback?.get() != null && !WebRtcActivity.isIncomingCallHasNewChannel) {
-                                                Log.d(TAG, "onStartCommand: CallForceConnect -->")
-                                                callCallback?.get()?.switchChannel(data)
-                                            } else {
-                                                Log.d(TAG, "onStartCommand: ")
-                                                startAutoPickCallActivity(
-                                                    false,
-                                                    isFromForceConnect = true
-                                                )
-                                            }
-                                        },
-                                        750
-                                    )
+                                    forceConnectData = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                    isForceConnect.set(true)
+                                    if (isCallOnGoing.value == true) {
+                                        mRtcEngine?.leaveChannel() // TODO: Must listen the callback
+                                    }
                                 }
                                 this == HoldCall().action -> {
                                     val message = Message()
