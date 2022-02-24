@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -13,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
@@ -29,16 +31,16 @@ import kotlinx.coroutines.delay
 
 val SENT_REQUEST = "send_request"
 val IS_ALREADY_FPP = "is_already_fpp"
-val ALREADY_FPP="already_fpp"
+val ALREADY_FPP = "already_fpp"
 val REQUESTED = "requested"
 val HAS_RECIEVED_REQUEST = "has_recieved_request"
 
-class RecentCallActivity : WebRtcMiddlewareActivity() {
-val HAS_RECIEVED_REQUEST="has_recieved_request"
 class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
     private lateinit var binding: ActivityRecentCallBinding
     lateinit var recentCallAdapter: RecentCallsAdapter
-
+    var recyclerView: RecyclerView? = null
+    var itemPosition: Int = 0
+    var isFirstTime = true
     private val viewModel: RecentCallViewModel by lazy {
         ViewModelProvider(this).get(RecentCallViewModel::class.java)
     }
@@ -47,8 +49,9 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_recent_call)
         binding.handler = this
+        recyclerView = binding.recentListRv
+
         setSupportActionBar(binding.toolbar)
-        initView()
         addObservable()
     }
 
@@ -57,15 +60,19 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
         viewModel.getFavorites()
     }
 
-    private fun initView() {
-        var recyclerView: RecyclerView = binding.recentListRv
-        recyclerView.layoutManager = LinearLayoutManager(applicationContext).apply {
+    private fun initView(recentCallList: ArrayList<RecentCall>?) {
+        recyclerView?.layoutManager = LinearLayoutManager(applicationContext).apply {
             isSmoothScrollbarEnabled = true
         }
-        recyclerView.setHasFixedSize(true)
-        recentCallAdapter= RecentCallsAdapter(this,this,this,intent.getStringExtra(
-            CONVERSATION_ID))
-        recyclerView.adapter = recentCallAdapter
+        recyclerView?.setHasFixedSize(true)
+        recentCallAdapter = RecentCallsAdapter(
+            this,
+            this,
+            this,
+            intent.getStringExtra(CONVERSATION_ID),
+            recentCallList
+        )
+        recyclerView?.adapter = recentCallAdapter
     }
 
     companion object {
@@ -79,52 +86,63 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
     }
 
     private fun addObservable() {
-        viewModel.recentCallList.observe(this){
-                if (it != null) {
-                    recentCallAdapter.addItems(it.arrayList)
+        viewModel.recentCallList.observe(this) {
+            if (it != null) {
+                if (isFirstTime){
+                    initView(it.arrayList)
+                    isFirstTime = false
+                }else{
+                    recentCallAdapter.updateList(it.arrayList,recyclerView,itemPosition)
                 }
             }
+        }
 
         viewModel.apiCallStatus.observe(this) {
-            if(flag) {
+            if (flag) {
                 when (it) {
                     ApiCallStatus.SUCCESS -> {
-                        FullScreenProgressDialog.hideProgressBar(this)
+                        binding.progressBar.visibility = View.GONE
+                        if (recentCallAdapter.itemCount == 0) {
+                            binding.emptyCard.visibility = View.VISIBLE
+                        }
                         flag = false
                     }
                     ApiCallStatus.FAILED -> {
-                        FullScreenProgressDialog.hideProgressBar(this)
+                        binding.progressBar.visibility = View.GONE
                         this.finish()
                     }
                     ApiCallStatus.START ->
-                        FullScreenProgressDialog.showProgressBar(this)
+                        binding.progressBar.visibility = View.VISIBLE
                 }
 
             }
         }
 
     }
+
     override fun onClickCallback(
         requestStatus: String?,
         mentorId: String?,
         position: Int,
         name: String?
     ) {
-        when(requestStatus){
-            SENT_REQUEST->{
+        itemPosition = position
+        when (requestStatus) {
+            SENT_REQUEST -> {
                 if (mentorId != null) {
                     viewModel.sendFppRequest(mentorId)
                 }
             }
-            REQUESTED->{
+            REQUESTED -> {
                 if (mentorId != null) {
                     viewModel.deleteFppRequest(mentorId)
                 }
             }
-            HAS_RECIEVED_REQUEST->{
+            HAS_RECIEVED_REQUEST -> {
                 val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
                 val inflater = this.layoutInflater
-                val dialogView: View = inflater.inflate(R.layout.respond_request_alert_dialog, null)
+                val dialogView: View =
+                    inflater.inflate(R.layout.respond_request_alert_dialog, null)
                 dialogBuilder.setView(dialogView)
                 val alertDialog: AlertDialog = dialogBuilder.create()
                 val width = AppObjectController.screenWidth * .9
@@ -132,16 +150,22 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
                 alertDialog.show()
                 alertDialog.window?.setLayout(width.toInt(), height)
                 alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dialogView.findViewById<TextView>(R.id.text).text =name + " has requested to be your favorite practice partner"
-                dialogView.findViewById<MaterialTextView>(R.id.confirm_button).setOnClickListener {
-                    if (mentorId != null) {
-                        viewModel.confirmOrRejectFppRequest(mentorId, ISACCEPTED,"RECENT_CALL")
-                        alertDialog.dismiss()
+                dialogView.findViewById<TextView>(R.id.text).text =
+                    name + " has requested to be your favorite practice partner"
+                dialogView.findViewById<MaterialTextView>(R.id.confirm_button)
+                    .setOnClickListener {
+                        if (mentorId != null) {
+                            viewModel.confirmOrRejectFppRequest(
+                                mentorId,
+                                ISACCEPTED,
+                                "RECENT_CALL"
+                            )
+                            alertDialog.dismiss()
+                        }
                     }
-                }
                 dialogView.findViewById<MaterialTextView>(R.id.not_now).setOnClickListener {
                     if (mentorId != null) {
-                        viewModel.confirmOrRejectFppRequest(mentorId, ISREJECTED,"RECENT_CALL")
+                        viewModel.confirmOrRejectFppRequest(mentorId, ISREJECTED, "RECENT_CALL")
                         alertDialog.dismiss()
                     }
                 }

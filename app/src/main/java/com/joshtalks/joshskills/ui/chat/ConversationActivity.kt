@@ -7,8 +7,6 @@ import android.content.Context
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
@@ -32,9 +30,7 @@ import android.view.View.*
 import android.view.animation.*
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -47,7 +43,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.Player
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
@@ -132,7 +127,6 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.FppDetails
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
@@ -148,7 +142,6 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.fpp.BlurDrawable
 import com.joshtalks.joshskills.ui.fpp.ISACCEPTED
 import com.joshtalks.joshskills.ui.fpp.ISREJECTED
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
@@ -187,6 +180,10 @@ import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import jp.wasabeef.blurry.Blurry
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
 import java.util.Timer
 import java.util.TimerTask
@@ -239,8 +236,8 @@ class ConversationActivity :
             activity.startActivity(intent)
         }
     }
-    private var addButtonClicked = false
-    private var isFABOpen = false
+
+    private var buttonClicked = true
 
     private val rotateOpenAnimation: Animation by lazy {
         AnimationUtils.loadAnimation(
@@ -318,82 +315,47 @@ class ConversationActivity :
             this.finish()
             return
         }
-        val beneathView: RelativeLayout= conversationBinding.rootView
-        val blurDrawable = BlurDrawable(beneathView, 25)
-
-        conversationBinding.imggg.setBackgroundDrawable(blurDrawable)
-        conversationBinding.floatingActionButtonAdd?.setOnClickListener {
-            onAddButtonClicked()
-            conversationViewModel.getPendingRequestsList()
-        }
         init()
         showRestartButton()
     }
-    private fun onAddButtonClicked() {
-        setVisibility(addButtonClicked)
-        setAnimation(addButtonClicked)
-        buttonSetClickable()
-        addButtonClicked = !addButtonClicked
-    }
-
-    private fun setVisibility(buttonClicked: Boolean) {
-        with(conversationBinding) {
-            if (!buttonClicked) {
-                imgFeedBtn.visibility = VISIBLE
-                imgGameBtn.visibility = VISIBLE
-                imgGroupChatBtn.visibility = VISIBLE
-                imgcnfmBtn.visibility = VISIBLE
-                quickCardView.visibility = VISIBLE
-
-            } else {
-
-                imgFeedBtn.visibility = GONE
-                imgGameBtn.visibility = GONE
-                imgGroupChatBtn.visibility = GONE
-                imgcnfmBtn.visibility = GONE
-                quickCardView.visibility = GONE
-
-            }
-        }
-    }
 
     //Setting the animation on the buttons
-    private fun setAnimation(buttonClicked: Boolean) {
+    private fun setButtonsAnimation() {
         with(conversationBinding) {
             if (!buttonClicked) {
-                imgFeedBtn.startAnimation(fromBottomAnimation)
-                imgGameBtn.startAnimation(fromBottomAnimation)
-                imgGroupChatBtn.startAnimation(fromBottomAnimation)
-                imgcnfmBtn.startAnimation(fromBottomAnimation)
-                floatingActionButtonAdd?.startAnimation(rotateOpenAnimation)
+                conversationBinding.imgActivityFeed.startAnimation(fromBottomAnimation)
+                conversationBinding.imgGameBtn.startAnimation(fromBottomAnimation)
+                conversationBinding.imgGroupChatBtn.startAnimation(fromBottomAnimation)
+                conversationBinding.imgFppRequest.startAnimation(fromBottomAnimation)
+                floatingActionButtonAdd.startAnimation(rotateOpenAnimation)
 
             } else {
-                    imgFeedBtn.startAnimation(toBottomAnimation)
-                    imgGameBtn.startAnimation(toBottomAnimation)
-                    imgGroupChatBtn.startAnimation(toBottomAnimation)
-                    imgcnfmBtn.startAnimation(toBottomAnimation)
-                    floatingActionButtonAdd?.startAnimation(rotateCloseAnimation)
+                conversationBinding.imgActivityFeed.startAnimation(toBottomAnimation)
+                conversationBinding.imgGameBtn.startAnimation(toBottomAnimation)
+                conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
+                conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
+                floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
 
             }
         }
     }
 
-    //Checking if the add button is clicked
+    /*Checking if the add button is clicked
     private fun buttonSetClickable() {
         with(conversationBinding) {
-            if (!addButtonClicked) {
-                imgFeedBtn.isClickable = true
+            if (!isExpandableVisible) {
+                imgActivityFeed.isClickable = true
                 imgGameBtn.isClickable = true
                 imgGroupChatBtn.isClickable = true
-                imgcnfmBtn.isClickable = true
+                imgFppRequest.isClickable = true
             } else {
-                imgFeedBtn.isClickable = false
+                imgActivityFeed.isClickable = false
                 imgGameBtn.isClickable = false
                 imgGroupChatBtn.isClickable = false
-                imgcnfmBtn.isClickable = false
+                imgFppRequest.isClickable = false
             }
         }
-    }
+    }*/
 
     override fun getConversationId(): String {
         return inboxEntity.conversation_id
@@ -446,7 +408,6 @@ class ConversationActivity :
 
     private fun init() {
         initToolbar()
-        //  groupChatHintLogic()    //Group chat hint UI
         // initCourseProgressTooltip()    // course progress tooltip
         initRV()
         initView()
@@ -461,6 +422,9 @@ class ConversationActivity :
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
     }
+
+    private fun addIssuesToSharedPref() {
+        CoroutineScope(Dispatchers.IO).launch() {
 
     private fun initABTest() {
         conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED.name)
@@ -834,22 +798,20 @@ class ConversationActivity :
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
+
         if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
         }
 
-//        conversationBinding.imgGroupChat.setOnClickListener {
-//            val intent = Intent(this, JoshGroupActivity::class.java)
-//            startActivity(intent)
-//        }
-        conversationBinding.imgFeedBtn.setOnClickListener {
+        conversationBinding.imgActivityFeed.setOnClickListener {
             ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity, this)
-            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
         }
-        conversationBinding.imgcnfmBtn.setOnClickListener{
+
+        conversationBinding.imgFppRequest.setOnClickListener {
             val intent = Intent(this, SeeAllRequestsActivity::class.java)
             startActivity(intent)
         }
+
         conversationBinding.imgGroupChatBtn.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
@@ -908,13 +870,6 @@ class ConversationActivity :
         conversationBinding.imgGroupChat.visibility =
             View.GONE//if (inboxEntity.isGroupActive) GONE else GONE
 
-//        conversationBinding.imgGroupChat.setOnClickListener {
-//            utilConversationViewModel.initCometChat()
-//        }
-//        conversationBinding.imgGroupChatOverlay.setOnClickListener {
-//            conversationBinding.overlayLayout.visibility = GONE
-//            utilConversationViewModel.initCometChat()
-//        }
         conversationBinding.refreshLayout.setOnRefreshListener {
             if (internetAvailableFlag) {
                 conversationBinding.refreshLayout.isRefreshing = true
@@ -1235,26 +1190,26 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if (userProfileData.hasGroupAccess) {
-                    conversationBinding.imgGroupChatBtn.visibility = VISIBLE
-                } else {
-                    conversationBinding.imgGroupChatBtn.visibility = GONE
-                }
+                conversationBinding.imgMain.visibility = VISIBLE
+                //setExpandableButtons(userProfileData)
+                clickFabButton(userProfileData)
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)
             }
         }
-        conversationViewModel.pendingRequestsList.observe(this){
+
+        conversationViewModel.pendingRequestsList.observe(this) {
             if (it.pendingRequestsList.isNullOrEmpty()) {
-                conversationBinding.quickViewNoRequests.visibility= VISIBLE
+                conversationBinding.quickViewNoRequests.visibility = VISIBLE
             } else {
-                conversationBinding.myRequestsLl.visibility= VISIBLE
-                conversationBinding.viewAllRequests.visibility= VISIBLE
-                conversationBinding.viewAllRequests.text="See all ${it.pendingRequestsList.size} requests"
-                conversationBinding.viewAllRequests.isClickable=true
-                conversationBinding.horizontalLine.visibility= VISIBLE
-                conversationBinding.viewAllRequests.setOnClickListener{
+                conversationBinding.myRequestsLl.visibility = VISIBLE
+                conversationBinding.viewAllRequests.visibility = VISIBLE
+                conversationBinding.viewAllRequests.text =
+                    "See all requests (${it.pendingRequestsList.size})"
+                conversationBinding.viewAllRequests.isClickable = true
+                conversationBinding.horizontalLineForHeading.visibility = VISIBLE
+                conversationBinding.viewAllRequests.setOnClickListener {
                     val intent = Intent(this, SeeAllRequestsActivity::class.java)
                     startActivity(intent)
                 }
@@ -1393,36 +1348,108 @@ class ConversationActivity :
                 VISIBLE else conversationBinding.imgFeedBtn.visibility = GONE
         }
     }
+
+    private fun clickFabButton(userProfileData: UserProfileResponse) {
+        conversationBinding.floatingActionButtonAdd.setOnClickListener {
+            setExpandableButtons(userProfileData)
+            setButtonsAnimation()
+            conversationViewModel.getPendingRequestsList()
+        }
+    }
+
+
+    private fun setExpandableButtons(userProfileData: UserProfileResponse) {
+        with(conversationBinding) {
+            if (buttonClicked) {
+                //we can remove elevation if ui will lack
+                lifecycleScope.launchWhenCreated {
+                    Blurry.with(this@ConversationActivity).radius(25).sampling(1)
+                        .onto(conversationBinding.rootView)
+                }
+                buttonClicked = false
+                conversationBinding.quickCardView.visibility = VISIBLE
+                imgActivityFeed.visibility = VISIBLE
+                imgFppRequest.visibility = VISIBLE
+
+                if (userProfileData.isGameActive) {
+                    imgGameBtn.visibility = VISIBLE
+                }
+
+                if (userProfileData.hasGroupAccess) {
+                    imgGroupChatBtn.visibility = VISIBLE
+                }
+
+                if (userProfileData.isGameActive && userProfileData.hasGroupAccess) {
+                    img1.visibility = VISIBLE
+                } else if (userProfileData.isGameActive || userProfileData.hasGroupAccess) {
+                    img2.visibility = VISIBLE
+                } else {
+                    img3.visibility = VISIBLE
+                }
+            } else {
+                Blurry.delete(conversationBinding.rootView)
+//                lifecycleScope.launchWhenCreated {
+//                    Blurry.with(this@ConversationActivity).radius(0).onto(conversationBinding.rootView)
+//                }
+                buttonClicked = true
+                conversationBinding.quickCardView.visibility = INVISIBLE
+                imgActivityFeed.visibility = GONE
+                imgFppRequest.visibility = GONE
+
+                if (userProfileData.isGameActive)
+                    imgGameBtn.visibility = GONE
+
+                if (userProfileData.hasGroupAccess)
+                    imgGroupChatBtn.visibility = GONE
+
+                img1.visibility = INVISIBLE
+                img2.visibility = INVISIBLE
+                img3.visibility = INVISIBLE
+            }
+        }
+    }
+
     @SuppressLint("WrongViewCast")
     private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): View? {
         val layoutInflater =
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view =
-            layoutInflater.inflate(R.layout.fpp_quick_view_lists_item, conversationBinding.root, false)
-        val txtUserName = view.findViewById(R.id.tv_name) as AppCompatTextView
-        val imageUserProfile = view.findViewById(R.id.profile_image) as CircleImageView
-        val txtTotalSpokeTime = view.findViewById(R.id.tv_spoken_time) as AppCompatTextView
-        val btnCnfm = view.findViewById(R.id.btn_confirm_request) as Button
-        val btnNotNow=view.findViewById(R.id.btn_not_now) as Button
-        val itemContainer=view.findViewById(R.id.group_item_container) as ConstraintLayout
-        txtUserName.text = pendingRequestDetail.fullName?:""
+            layoutInflater.inflate(
+                R.layout.fpp_quick_view_lists_item,
+                conversationBinding.root,
+                false
+            )
+        val txtUserName: AppCompatTextView = view.findViewById(R.id.tv_name)
+        val imageUserProfile: CircleImageView = view.findViewById(R.id.profile_image)
+        val txtTotalSpokeTime: AppCompatTextView = view.findViewById(R.id.tv_spoken_time)
+        val btnConfirm: Button = view.findViewById(R.id.btn_confirm_request)
+        val btnNotNow: Button = view.findViewById(R.id.btn_not_now)
+        val itemContainer: ConstraintLayout = view.findViewById(R.id.fpp_request_container)
+        txtUserName.text = pendingRequestDetail.fullName ?: ""
         txtTotalSpokeTime.text = pendingRequestDetail.textToShow
-        imageUserProfile.setUserImageOrInitials(pendingRequestDetail.photoUrl?:"",pendingRequestDetail.fullName?:"")
-        btnCnfm.setOnClickListener{
-            btnCnfm.visibility=GONE
-            btnNotNow.visibility=GONE
-            txtTotalSpokeTime.text="You are now favorite practice partners"
+        imageUserProfile.setUserImageOrInitials(
+            pendingRequestDetail.photoUrl ?: "",
+            pendingRequestDetail.fullName ?: ""
+        )
+        btnConfirm.setOnClickListener {
+            btnConfirm.visibility = GONE
+            btnNotNow.visibility = GONE
+            txtTotalSpokeTime.text = "You are now favorite practice partners"
             itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-            conversationViewModel.confirmOrRejectFppRequest(pendingRequestDetail.senderMentorId!!,
-                ISACCEPTED,"QUICKVIEW")
+            conversationViewModel.confirmOrRejectFppRequest(
+                pendingRequestDetail.senderMentorId!!,
+                ISACCEPTED, "QUICKVIEW"
+            )
         }
-        btnNotNow.setOnClickListener{
-            btnCnfm.visibility=GONE
-            btnNotNow.visibility=GONE
-            txtTotalSpokeTime.text="Request Removed"
+        btnNotNow.setOnClickListener {
+            btnConfirm.visibility = GONE
+            btnNotNow.visibility = GONE
+            txtTotalSpokeTime.text = "Request Removed"
             itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-            conversationViewModel.confirmOrRejectFppRequest(pendingRequestDetail.senderMentorId!!,
-                ISREJECTED,"QUICKVIEW")
+            conversationViewModel.confirmOrRejectFppRequest(
+                pendingRequestDetail.senderMentorId!!,
+                ISREJECTED, "QUICKVIEW"
+            )
 
         }
         return view
@@ -2038,11 +2065,7 @@ class ConversationActivity :
             ).push()
     }
 
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         try {
             if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                 data?.let { intent ->
@@ -2144,17 +2167,10 @@ class ConversationActivity :
         )
     }
 
-    override fun onStart() {
-        super.onStart()
-        //showLessonTooltip()
-    }
-
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
-//        if (inboxEntity.isGroupActive) {
-//            utilConversationViewModel.getCometChatUnreadMessageCount(inboxEntity.conversation_id)
-//        }
+
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
         }
@@ -2306,26 +2322,19 @@ class ConversationActivity :
         }
     }
 
-    override fun onPlayerResume() {
-    }
+    override fun onPlayerResume() {}
 
-    override fun onCurrentTimeUpdated(lastPosition: Long) {
-    }
+    override fun onCurrentTimeUpdated(lastPosition: Long) {}
 
-    override fun onTrackChange(tag: String?) {
-    }
+    override fun onTrackChange(tag: String?) {}
 
-    override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
-    }
+    override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {}
 
-    override fun onPositionDiscontinuity(reason: Int) {
-    }
+    override fun onPositionDiscontinuity(reason: Int) {}
 
-    override fun onPlayerReleased() {
-    }
+    override fun onPlayerReleased() {}
 
-    override fun onPlayerEmptyTrack() {
-    }
+    override fun onPlayerEmptyTrack() {}
 
     override fun complete() {
         audioPlayerManager?.seekTo(0)
@@ -2333,14 +2342,11 @@ class ConversationActivity :
         setPlayProgress(0)
     }
 
-    override fun onSuccessDismiss() {
-    }
+    override fun onSuccessDismiss() {}
 
-    override fun onDismiss() {
-    }
+    override fun onDismiss() {}
 
-    override fun onDurationUpdate(duration: Long?) {
-    }
+    override fun onDurationUpdate(duration: Long?) {}
 
     private fun scrollToEnd() {
         lifecycleScope.launch(Dispatchers.Main) {

@@ -171,7 +171,6 @@ android {
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
-            buildConfigField "String", "ACTIVITY_FEED_COLLECTION", "\"activity_feed_staging\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
             /*For Port */
@@ -449,5 +448,11 @@ dependencies {
     implementation 'io.sentry:sentry-android-fragment:5.6.0'
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
 
+
+    implementation 'com.github.wasabeef:blurry:4.0.0'
+
+/*
+    implementation 'io.sentry:sentry-android-timber:5.5.1'
+*/
 
 }

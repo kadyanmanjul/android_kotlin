@@ -1046,6 +1046,8 @@
     <string name="no_recent_calls_yet">No recent calls yet...</string>
     <string name="no_favorite_practice_partners">No favorite practice partners...</string>
     <string name="you_can_add_fpp">You can add favorite practice partners by sending and accepting requests from recent practice partner calls</string>
+    <string name="see_all_requests">See all requests</string>
+    <string name="favorite_practice_partner_requests">Favorite practice partner requests</string>
 
 
 </resources>
