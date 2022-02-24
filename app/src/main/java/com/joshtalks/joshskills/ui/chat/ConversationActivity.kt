@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.chat
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -24,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.Player
 import com.google.android.material.button.MaterialButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -195,7 +197,6 @@ class ConversationActivity :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.e("Ayaaz conv","${User.getInstance().phoneNumber}")
         User.getInstance()
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
@@ -519,8 +520,16 @@ class ConversationActivity :
                                 checkIfCourseRestart = false
                             }
                         }
-                        if(checkIfCourseRestart)
-                            showToast("Please restart your app")
+                        if(checkIfCourseRestart) {
+                            MaterialDialog(this@ConversationActivity).show{
+                                message(R.string.restart_course_message)
+                                positiveButton(R.string.restart_now) {
+                                    buildRestartDialog()
+                                }
+                                negativeButton(R.string.cancel_bold) {
+                                }
+                            }
+                        }
                         else
                             showToast("Course can't restart")
                     }
@@ -530,6 +539,18 @@ class ConversationActivity :
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+    }
+
+    fun buildRestartDialog() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.restart_course_dialog, null)
+        dialogBuilder.setView(dialogView)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        val width = AppObjectController.screenWidth * .9
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        alertDialog.show()
+        alertDialog.window?.setLayout(width.toInt(), height)
     }
 
     private fun initRV() {

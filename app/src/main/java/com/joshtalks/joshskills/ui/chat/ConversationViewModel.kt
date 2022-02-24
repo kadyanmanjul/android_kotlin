@@ -334,6 +334,7 @@ class ConversationViewModel(
                 requestParams["country_code"] = "+91"
                 requestParams["mobile"] = mobile
                 requestParams["course_id"] = inboxEntity.courseId
+                requestParams["is_api"] = true.toString()
 
                 AppObjectController.commonNetworkService.restartCourse(requestParams)
                 return@launch
