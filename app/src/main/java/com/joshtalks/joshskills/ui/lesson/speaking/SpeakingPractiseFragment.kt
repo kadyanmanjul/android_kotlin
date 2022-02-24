@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
 import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
@@ -25,6 +25,8 @@ import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.ABTestFragment
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
@@ -54,7 +56,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SpeakingPractiseFragment : CoreJoshFragment() {
+class SpeakingPractiseFragment : ABTestFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -80,6 +82,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             "कोर्स का सबसे मज़ेदार हिस्सा।",
             "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
         )
+    }
+
+    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+        Log.d("Manjul", "onReceiveABTestData() called with: abTestCampaignData = $abTestCampaignData")
+    }
+
+    override fun initCampaigns() {
+        getCampaigns("FREE_TRIAL")
+        getAllCampaigns()
     }
 
     override fun onAttach(context: Context) {
@@ -165,6 +176,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnStart.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
+            postGoalData("FT_GOAL1")
         }
 
         binding.btnGroupCall.setOnClickListener {
