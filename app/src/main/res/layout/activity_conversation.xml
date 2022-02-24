@@ -19,14 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <ImageView
-            android:id="@+id/imggg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <include
             android:id="@+id/overlay_view"
@@ -122,18 +114,18 @@
                         android:textColor="@color/white"
                         tools:text="Spoken English Course" />
 
-<!--                    <androidx.appcompat.widget.AppCompatImageView-->
-<!--                        android:id="@+id/ic_notification_dot"-->
-<!--                        android:layout_width="@dimen/_8sdp"-->
-<!--                        android:layout_height="@dimen/_8sdp"-->
-<!--                        android:layout_alignEnd="@id/text_message_title"-->
-<!--                        android:layout_marginTop="@dimen/_4sdp"-->
-<!--                        android:background="@drawable/timer_drawable"-->
-<!--                        android:backgroundTint="@color/wa_color"-->
-<!--                        android:gravity="start"-->
-<!--                        android:tint="@color/wh_fc"-->
-<!--                        android:visibility="gone"-->
-<!--                        tools:visibility="gone" />-->
+                    <!--                    <androidx.appcompat.widget.AppCompatImageView-->
+                    <!--                        android:id="@+id/ic_notification_dot"-->
+                    <!--                        android:layout_width="@dimen/_8sdp"-->
+                    <!--                        android:layout_height="@dimen/_8sdp"-->
+                    <!--                        android:layout_alignEnd="@id/text_message_title"-->
+                    <!--                        android:layout_marginTop="@dimen/_4sdp"-->
+                    <!--                        android:background="@drawable/timer_drawable"-->
+                    <!--                        android:backgroundTint="@color/wa_color"-->
+                    <!--                        android:gravity="start"-->
+                    <!--                        android:tint="@color/wh_fc"-->
+                    <!--                        android:visibility="gone"-->
+                    <!--                        tools:visibility="gone" />-->
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_icon_referral"
@@ -298,6 +290,7 @@
                 app:srcCompat="@drawable/ic_cross" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -376,8 +369,8 @@
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:visibility="gone"
                 android:padding="@dimen/_4sdp"
+                android:visibility="gone"
                 app:elevation="@dimen/_4sdp"
                 app:srcCompat="@drawable/ic_groupchat"
                 tools:visibility="gone" />
@@ -605,9 +598,9 @@
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:background="@drawable/bg_cta_button"
                 android:gravity="center"
+                android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
-                android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
@@ -803,123 +796,164 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </FrameLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/root"
-            android:orientation="vertical"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true">
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/_15sdp"
+            android:fillAfter="false"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical">
 
             <RelativeLayout
-                android:visibility="gone"
                 android:id="@+id/quickCardView"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_gravity="center"
+                android:layout_height="@dimen/_370sdp"
+                android:elevation="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
                 android:focusable="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_gravity="bottom"
-                    android:focusable="true"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_height="wrap_content">
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/quick_view_corner"
+                    android:focusable="true">
 
-                    <com.google.android.material.card.MaterialCardView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="375dp"
-                        app:cardCornerRadius="10dp"
-                        android:orientation="vertical">
+                        android:layout_height="@dimen/_352sdp"
+                        android:backgroundTint="@color/white"
+                        android:clipToPadding="false"
+                        android:elevation="@dimen/_6sdp">
 
                         <TextView
                             android:id="@+id/quick_view_heading"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
-                            android:gravity="start"
-                            android:text="Favorite practice partner requests"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                            android:textColor="@color/pure_black"/>
-                        <LinearLayout
+                            android:layout_marginStart="@dimen/_13sdp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:text="@string/favorite_practice_partner_requests"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
+                            android:textColor="@color/pure_black"
+                            android:textStyle="bold" />
+
+                        <View
                             android:id="@+id/horizontal_line_for_heading"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="0.5dp"
-                            android:background="#687C90"
-                            android:layout_gravity="center"
                             android:layout_below="@+id/quick_view_heading"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:background="#26000000"
                             android:orientation="horizontal" />
+
                         <ImageView
                             android:id="@+id/quick_view_no_requests"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/_217sdp"
+                            android:layout_height="@dimen/_93sdp"
+                            android:layout_centerInParent="true"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_quick_view_no_requests"
-                            android:visibility="gone"/>
+                            android:visibility="invisible" />
+
                         <LinearLayout
                             android:id="@+id/my_requests_ll"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/horizontal_line_for_heading"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:layout_marginBottom="@dimen/_52sdp"
                             android:orientation="vertical"
-                            android:visibility="gone" />
-                        <LinearLayout
-                            android:id="@+id/horizontal_line"
-                            android:layout_width="0dp"
+                            android:visibility="visible" />
+
+                        <View
+                            android:id="@+id/horizontal_line_for_heading1"
+                            android:layout_width="match_parent"
                             android:layout_height="0.5dp"
-                            android:background="#687C90"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginBottom="@dimen/_34sdp"
+                            android:background="#26000000"
                             android:orientation="horizontal"
-                            android:visibility="gone"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent" />
+                            android:visibility="visible" />
+
                         <TextView
                             android:id="@+id/view_all_requests"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="@dimen/_11sdp"
                             android:gravity="center_horizontal"
-                            android:text="See all"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                            android:text="@string/see_all_requests"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_1.0"
                             android:textColor="@color/colorAccent"
-                            android:visibility="gone" />
-
-                    </com.google.android.material.card.MaterialCardView>
+                            android:textStyle="bold"
+                            android:visibility="visible" />
+                    </RelativeLayout>
 
                 </RelativeLayout>
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:scaleType="fitXY"
-                    android:layout_marginStart="45dp"
-                    android:src="@drawable/ic_rectangle_1414">
 
-                </ImageView>
+                <ImageView
+                    android:id="@+id/img1"
+                    android:layout_width="@dimen/_55sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_rectangle_1414"
+                    android:visibility="invisible"
+                    tools:visibility="invisible"/>
+
+                <ImageView
+                    android:id="@+id/img2"
+                    android:layout_width="@dimen/_58sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_toRightOf="@+id/img1"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_rectangle_1414"
+                    android:visibility="invisible"
+                    tools:visibility="invisible"/>
+
+                <ImageView
+                    android:id="@+id/img3"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_toRightOf="@+id/img2"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_rectangle_1414"
+                    android:visibility="invisible"
+                    tools:visibility="invisible"/>
 
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/img_main"
                 android:layout_width="match_parent"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:elevation="@dimen/_15sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@+id/quickCardView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.954"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginEnd="25dp"
-                android:layout_height="60dp">
+                tools:visibility="invisible">
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/floatingActionButtonAdd"
                     android:layout_width="wrap_content"
-                    android:layout_height="60dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     app:backgroundTint="@color/colorAccent"
@@ -927,44 +961,49 @@
                     app:tint="@color/white" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imgGameBtn"
-                    android:layout_width="60dp"
+                    android:id="@+id/img_game_btn"
+                    android:layout_width="@dimen/_47sdp"
                     android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/floatingActionButtonAdd"
                     android:focusable="true"
                     android:src="@drawable/ic_game"
                     android:visibility="gone"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:layout_toStartOf="@+id/floatingActionButtonAdd">
-                </de.hdodenhof.circleimageview.CircleImageView>
+                    tools:visibility="gone" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imgFeedBtn"
-                    android:layout_width="60dp"
+                    android:id="@+id/img_activity_feed"
+                    android:layout_width="@dimen/_47sdp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/img_game_btn"
                     android:focusable="true"
+                    android:src="@drawable/ic_groups"
                     android:visibility="gone"
-                    android:layout_marginEnd="10dp"
-                    android:layout_toStartOf="@+id/imgGameBtn"
-                    app:srcCompat="@drawable/ic_groups" />
+                    tools:visibility="gone" />
+
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imgGroupChatBtn"
-                    android:layout_width="60dp"
+                    android:id="@+id/img_group_chat_btn"
+                    android:layout_width="@dimen/_47sdp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/img_activity_feed"
                     android:focusable="true"
+                    android:src="@drawable/ic_activity_feed"
                     android:visibility="gone"
-                    android:layout_marginEnd="10dp"
-                    android:layout_toStartOf="@+id/imgFeedBtn"
-                    android:src="@drawable/ic_activity_feed" />
+                    tools:visibility="gone" />
+
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imgcnfmBtn"
-                    android:layout_width="60dp"
+                    android:id="@+id/img_fpp_request"
+                    android:layout_width="@dimen/_47sdp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/img_group_chat_btn"
                     android:focusable="true"
+                    android:src="@drawable/ic_groups"
                     android:visibility="gone"
-                    android:layout_marginEnd="10dp"
-                    android:layout_toStartOf="@+id/imgGroupChatBtn"
-                    android:src="@drawable/ic_groups" />
+                    tools:visibility="gone" />
 
             </RelativeLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
