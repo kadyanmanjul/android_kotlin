@@ -19,10 +19,9 @@ import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import kotlin.collections.ArrayList
 
-class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ,var activity:Activity,var conversationID:String?) :
+class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ,var activity:Activity,var conversationID:String?,var items:ArrayList<RecentCall>?) :
 
     RecyclerView.Adapter<RecentCallsAdapter.RecentItemViewHolder>() {
-    private var items: ArrayList<RecentCall> = arrayListOf()
     private val context = AppObjectController.joshApplication
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -36,30 +35,36 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
         return RecentItemViewHolder(binding)
     }
 
-    fun addItems(newList: ArrayList<RecentCall>) {
-        try {
-            if (newList.isEmpty()) {
-                return
-            }
-            val diffCallback = RecentDiffCallback(items, newList)
-            val diffResult = DiffUtil.calculateDiff(diffCallback)
-            items.clear()
-            items.addAll(newList)
-            diffResult.dispatchUpdatesTo(this)
-        } catch (ex: Exception) {
-        }
+//    fun addItems(newList: ArrayList<RecentCall>) {
+//        try {
+//            if (newList.isEmpty()) {
+//                return
+//            }
+//            val diffCallback = RecentDiffCallback(items, newList)
+//            val diffResult = DiffUtil.calculateDiff(diffCallback)
+//            items.clear()
+//            items.addAll(newList)
+//            diffResult.dispatchUpdatesTo(this)
+//        } catch (ex: Exception) {
+//        }
+//    }
+
+    fun updateList(list:ArrayList<RecentCall>, recyclerView: RecyclerView?,position: Int){
+        items = list
+        notifyDataSetChanged()
+        recyclerView?.smoothScrollToPosition(position)
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = items?.size?:0
 
 
     override fun onBindViewHolder(holder: RecentCallsAdapter.RecentItemViewHolder, position: Int) {
         holder.setIsRecyclable(false)
-        holder.bind(items[position], position)
+        holder.bind(items?.get(position)!!, position)
     }
 
     fun getItemAtPosition(position: Int): RecentCall {
-        return items[position]
+        return items?.get(position)!!
     }
 
     inner class RecentItemViewHolder(val binding: FppRecentItemListBinding) :
