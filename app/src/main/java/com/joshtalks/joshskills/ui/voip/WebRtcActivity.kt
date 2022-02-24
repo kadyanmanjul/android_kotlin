@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
@@ -57,12 +56,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_ACCEPT = "web_rtc_call_accept"
@@ -542,7 +541,7 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun initCall() {
-        if (isCallFavoritePP() || mBoundService?.isCallerJoined == true) {
+        if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
                 intent = intent.apply {
                     putExtra(CALL_TYPE, WebRtcService.callType)
@@ -587,7 +586,7 @@ class WebRtcActivity : AppCompatActivity() {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 val callAcceptApi = intent.getBooleanExtra(CALL_ACCEPT, true)
                 if (autoPickUp) {
-                    if (mBoundService?.isCallerJoined!= true) {
+                    if (isCallOnGoing.value != true) {
                         acceptCall(callAcceptApi)
                     }
                     if (isCallFavoritePP()) {
@@ -635,8 +634,8 @@ class WebRtcActivity : AppCompatActivity() {
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
-              callerId = map?.get("caller_uid") ?: mBoundService?.getOppositeCallerId().toString()
-              callieId = CurrentCallDetails.callieUid
+            callerId = map?.get("caller_uid") ?: mBoundService?.getOppositeCallerId().toString()
+            callieId = map?.get("uid") ?: mBoundService?.getUserAgoraId().toString()
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
