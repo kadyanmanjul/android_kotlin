@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity" />
@@ -86,13 +87,14 @@
                         android:text="@string/favorite_requests"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                         android:textColor="@color/white"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
                 </RelativeLayout>
 
             </com.google.android.material.appbar.MaterialToolbar>
 
 
         </com.google.android.material.appbar.AppBarLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -106,8 +108,33 @@
                 android:clipToPadding="false"
                 android:paddingTop="10dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:listitem="@layout/fpp_requests_list_item"
-                tools:itemCount="10"/>
+                tools:itemCount="10"
+                tools:listitem="@layout/fpp_requests_list_item" />
         </LinearLayout>
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_5sdp"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_left"
+            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_width="@dimen/_4sdp"
+            app:cpb_round_border="true" />
+
+        <ImageView
+            android:id="@+id/fpp_no_requests"
+            android:layout_width="@dimen/_217sdp"
+            android:layout_height="@dimen/_93sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_quick_view_no_requests"
+            android:visibility="invisible" />
+
     </RelativeLayout>
 </layout>

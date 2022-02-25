@@ -97,6 +97,10 @@ class FavoriteAdapter(
                 if (favoriteCaller.isOnline)
                     ivOnlineTick.visibility = View.VISIBLE
 
+                binding.groupItemContainer.setOnClickListener{
+                    onClickUserProfile.clickOnProfile(position)
+                }
+
                 profileImage.setOnClickListener {
                     onClickUserProfile.clickOnProfile(position)
                 }

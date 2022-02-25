@@ -10,8 +10,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FppRequestsListItemBinding
-import com.joshtalks.joshskills.ui.fpp.ISACCEPTED
-import com.joshtalks.joshskills.ui.fpp.ISREJECTED
+import com.joshtalks.joshskills.ui.fpp.constants.ALL_REQUESTS
+import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
+import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
@@ -39,7 +40,7 @@ class SeeAllRequestsAdapter(
                 pendingRequestDetail.senderMentorId?.let { it1 ->
                     openUserProfileActivity(
                         it1,
-                        "ALL_REQUESTS"
+                        ALL_REQUESTS
                     )
                 }
             }
@@ -47,9 +48,9 @@ class SeeAllRequestsAdapter(
                 binding.btnNotNow.visibility=GONE
                 binding.btnConfirmRequest.visibility=GONE
                 binding.tvSpokenTime.text="You are now favorite practice partners"
-                binding.rootView.setCardBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
+                binding.rootView.setBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
                 callback.onClickCallback(
-                    ISACCEPTED,
+                    IS_ACCEPTED,
                     pendingRequestDetail.senderMentorId,
                     position,
                     null
@@ -59,9 +60,9 @@ class SeeAllRequestsAdapter(
                 binding.btnNotNow.visibility=GONE
                 binding.btnConfirmRequest.visibility=GONE
                 binding.tvSpokenTime.text="Request Removed"
-                binding.rootView.setCardBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
+                binding.rootView.setBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
                 callback.onClickCallback(
-                    ISREJECTED,
+                    IS_REJECTED,
                     pendingRequestDetail.senderMentorId,
                     position,
                     null

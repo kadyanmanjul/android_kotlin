@@ -19,7 +19,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
-        android:layout_margin="@dimen/_1sdp"
+        app:cardCornerRadius="0dp"
         tools:cardBackgroundColor="@color/white"
         tools:cardPreventCornerOverlap="false">
 

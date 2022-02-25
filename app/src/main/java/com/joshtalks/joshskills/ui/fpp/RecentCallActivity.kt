@@ -1,39 +1,30 @@
 package com.joshtalks.joshskills.ui.fpp
 
 import android.app.Activity
-import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import android.view.Window
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textview.MaterialTextView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityRecentCallBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.adapters.AdapterCallback
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
-import kotlinx.coroutines.delay
-
-val SENT_REQUEST = "send_request"
-val IS_ALREADY_FPP = "is_already_fpp"
-val ALREADY_FPP = "already_fpp"
-val REQUESTED = "requested"
-val HAS_RECIEVED_REQUEST = "has_recieved_request"
 
 class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
     private lateinit var binding: ActivityRecentCallBinding
@@ -88,11 +79,11 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
     private fun addObservable() {
         viewModel.recentCallList.observe(this) {
             if (it != null) {
-                if (isFirstTime){
+                if (isFirstTime) {
                     initView(it.arrayList)
                     isFirstTime = false
-                }else{
-                    recentCallAdapter.updateList(it.arrayList,recyclerView,itemPosition)
+                } else {
+                    recentCallAdapter.updateList(it.arrayList, recyclerView, itemPosition)
                 }
             }
         }
@@ -139,34 +130,33 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
                 }
             }
             HAS_RECIEVED_REQUEST -> {
-                val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-                val inflater = this.layoutInflater
-                val dialogView: View =
-                    inflater.inflate(R.layout.respond_request_alert_dialog, null)
-                dialogBuilder.setView(dialogView)
-                val alertDialog: AlertDialog = dialogBuilder.create()
-                val width = AppObjectController.screenWidth * .9
-                val height = ViewGroup.LayoutParams.WRAP_CONTENT
-                alertDialog.show()
-                alertDialog.window?.setLayout(width.toInt(), height)
-                alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                val dialogView = Dialog(this)
+                dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+                dialogView.setCancelable(true)
+                dialogView.setContentView(R.layout.respond_request_alert_dialog)
+                dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialogView.show()
+
+                val btnConfirm = dialogView.findViewById<MaterialButton>(R.id.confirm_button)
+                val btnNotNow = dialogView.findViewById<MaterialButton>(R.id.not_now)
                 dialogView.findViewById<TextView>(R.id.text).text =
-                    name + " has requested to be your favorite practice partner"
-                dialogView.findViewById<MaterialTextView>(R.id.confirm_button)
+                    "$name has requested to be your favorite practice partner"
+                btnConfirm
                     .setOnClickListener {
                         if (mentorId != null) {
                             viewModel.confirmOrRejectFppRequest(
                                 mentorId,
-                                ISACCEPTED,
-                                "RECENT_CALL"
+                                IS_ACCEPTED,
+                                RECENT_CALL
                             )
-                            alertDialog.dismiss()
+                            dialogView.dismiss()
                         }
                     }
-                dialogView.findViewById<MaterialTextView>(R.id.not_now).setOnClickListener {
+                btnNotNow.setOnClickListener {
                     if (mentorId != null) {
-                        viewModel.confirmOrRejectFppRequest(mentorId, ISREJECTED, "RECENT_CALL")
-                        alertDialog.dismiss()
+                        viewModel.confirmOrRejectFppRequest(mentorId, IS_REJECTED, RECENT_CALL)
+                        dialogView.dismiss()
                     }
                 }
 

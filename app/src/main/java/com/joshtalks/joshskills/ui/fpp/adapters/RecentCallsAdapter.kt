@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
 import com.joshtalks.joshskills.ui.fpp.*
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import kotlin.collections.ArrayList
@@ -34,20 +35,6 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
         }
         return RecentItemViewHolder(binding)
     }
-
-//    fun addItems(newList: ArrayList<RecentCall>) {
-//        try {
-//            if (newList.isEmpty()) {
-//                return
-//            }
-//            val diffCallback = RecentDiffCallback(items, newList)
-//            val diffResult = DiffUtil.calculateDiff(diffCallback)
-//            items.clear()
-//            items.addAll(newList)
-//            diffResult.dispatchUpdatesTo(this)
-//        } catch (ex: Exception) {
-//        }
-//    }
 
     fun updateList(list:ArrayList<RecentCall>, recyclerView: RecyclerView?,position: Int){
         items = list
@@ -75,7 +62,7 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
             binding.rootView.setOnClickListener{
                 openUserProfileActivity(
                     recentCall.receiverMentorId,
-                    "RECENT_CALL"
+                    RECENT_CALL
                 )
             }
             with(binding) {

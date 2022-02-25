@@ -213,5 +213,6 @@
     <color name="profile_request_card">#99EEEEEE</color>
     <color name="not_now">#E1E1E1</color>
     <color name="request_respond">#FFF9D7</color>
+    <color name="blur_color">#666666</color>
 
 </resources>

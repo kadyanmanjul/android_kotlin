@@ -798,28 +798,40 @@
         </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/root"
+            android:id="@+id/blur_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:elevation="@dimen/_11sdp"
+            android:visibility="gone" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar_container"
             android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_40sdp"
             android:backgroundTint="@color/white"
             android:elevation="@dimen/_15sdp"
             android:fillAfter="false"
-            android:layout_alignParentEnd="true"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/quickCardView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_370sdp"
-                android:elevation="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_15sdp"
                 android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:elevation="@dimen/_15sdp"
                 android:focusable="true"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="invisible">
 
@@ -833,7 +845,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_352sdp"
+                        android:layout_height="@dimen/_356sdp"
                         android:backgroundTint="@color/white"
                         android:clipToPadding="false"
                         android:elevation="@dimen/_6sdp">
@@ -907,33 +919,36 @@
 
                 <ImageView
                     android:id="@+id/img1"
-                    android:layout_width="@dimen/_55sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_rectangle_1414"
                     android:visibility="invisible"
-                    tools:visibility="invisible"/>
+                    tools:visibility="invisible" />
 
                 <ImageView
                     android:id="@+id/img2"
-                    android:layout_width="@dimen/_58sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_toRightOf="@+id/img1"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_rectangle_1414"
                     android:visibility="invisible"
-                    tools:visibility="invisible"/>
+                    tools:visibility="invisible" />
 
                 <ImageView
                     android:id="@+id/img3"
-                    android:layout_width="@dimen/_60sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_toRightOf="@+id/img2"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_rectangle_1414"
                     android:visibility="invisible"
-                    tools:visibility="invisible"/>
+                    tools:visibility="invisible" />
 
             </RelativeLayout>
 
@@ -941,9 +956,9 @@
                 android:id="@+id/img_main"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_60sdp"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:elevation="@dimen/_15sdp"
                 android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:elevation="@dimen/_15sdp"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@+id/quickCardView"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -1001,12 +1016,15 @@
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_toStartOf="@+id/img_group_chat_btn"
                     android:focusable="true"
-                    android:src="@drawable/ic_groups"
+                    android:src="@drawable/ic_requests"
                     android:visibility="gone"
                     tools:visibility="gone" />
 
             </RelativeLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
     </RelativeLayout>
 
 </layout>

@@ -447,9 +447,6 @@ dependencies {
     implementation 'io.sentry:sentry-android:5.6.0'
     implementation 'io.sentry:sentry-android-okhttp:5.6.0'
     implementation 'io.sentry:sentry-android-fragment:5.6.0'
-
-    implementation 'com.github.wasabeef:blurry:4.0.0'
-
 /*
     implementation 'io.sentry:sentry-android-timber:5.5.1'
 */

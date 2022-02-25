@@ -1,126 +1,107 @@
-package com.joshtalks.joshskills.ui.fpp;
+package com.joshtalks.joshskills.ui.fpp.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RSRuntimeException;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
 
-import java.lang.ref.WeakReference;
-import java.util.InputMismatchException;
+class Blur {
 
-public class BlurDrawable extends Drawable {
-
-    private WeakReference<View> targetRef;
-    private Bitmap blurred;
-    private Paint paint;
-    private int radius;
-
-
-    public BlurDrawable(View target) {
-        this(target, 10);
+    public static Bitmap of(View view, BlurFactor factor) {
+        view.setDrawingCacheEnabled(true);
+        view.destroyDrawingCache();
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
+        Bitmap cache = view.getDrawingCache();
+        Bitmap bitmap = of(view.getContext(), cache, factor);
+        cache.recycle();
+        return bitmap;
     }
 
-    public BlurDrawable(View target, int radius) {
-        this.targetRef = new WeakReference<View>(target);
-        setRadius(radius);
-        target.setDrawingCacheEnabled(true);
-        target.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
-        paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setFilterBitmap(true);
+    public static Bitmap of(Context context, Bitmap source, BlurFactor factor) {
+        int width = factor.width / factor.sampling;
+        int height = factor.height / factor.sampling;
+
+        if (Helper.hasZero(width, height)) {
+            return null;
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        canvas.scale(1 / (float) factor.sampling, 1 / (float) factor.sampling);
+        Paint paint = new Paint();
+        paint.setFlags(Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
+        PorterDuffColorFilter filter =
+                new PorterDuffColorFilter(factor.color, PorterDuff.Mode.SRC_ATOP);
+        paint.setColorFilter(filter);
+        canvas.drawBitmap(source, 0, 0, paint);
+
+        try {
+            bitmap = Blur.rs(context, bitmap, factor.radius);
+        } catch (RSRuntimeException e) {
+            bitmap = Blur.stack(bitmap, factor.radius, true);
+        }
+
+        if (factor.sampling == BlurFactor.DEFAULT_SAMPLING) {
+            return bitmap;
+        } else {
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, factor.width, factor.height, true);
+            bitmap.recycle();
+            return scaled;
+        }
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        if (blurred == null) {
-            View target = targetRef.get();
-            if (target != null) {
-                Bitmap bitmap = target.getDrawingCache(true);
-                if (bitmap == null) return;
-                blurred = fastBlur(bitmap, radius);
+    private static Bitmap rs(Context context, Bitmap bitmap, int radius) throws RSRuntimeException {
+        RenderScript rs = null;
+        Allocation input = null;
+        Allocation output = null;
+        ScriptIntrinsicBlur blur = null;
+        try {
+            rs = RenderScript.create(context);
+            rs.setMessageHandler(new RenderScript.RSMessageHandler());
+            input = Allocation.createFromBitmap(rs, bitmap, Allocation.MipmapControl.MIPMAP_NONE,
+                    Allocation.USAGE_SCRIPT);
+            output = Allocation.createTyped(rs, input.getType());
+            blur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+
+            blur.setInput(input);
+            blur.setRadius(radius);
+            blur.forEach(output);
+            output.copyTo(bitmap);
+        } finally {
+            if (rs != null) {
+                rs.destroy();
+            }
+            if (input != null) {
+                input.destroy();
+            }
+            if (output != null) {
+                output.destroy();
+            }
+            if (blur != null) {
+                blur.destroy();
             }
         }
-        if (blurred != null && !blurred.isRecycled())
-            canvas.drawBitmap(blurred, 0, 0, paint);
+
+        return bitmap;
     }
 
-    /**
-     * Set the bluring radius that will be applied to target view's bitmap
-     *
-     * @param radius should be 0-100
-     */
-    public void setRadius(int radius) {
-        if (radius < 0 || radius > 100)
-            throw new InputMismatchException("Radius must be 0 <= radius <= 100 !");
-        this.radius = radius;
-        if (blurred != null) {
-            blurred.recycle();
-            blurred = null;
+    private static Bitmap stack(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {
+
+        Bitmap bitmap;
+        if (canReuseInBitmap) {
+            bitmap = sentBitmap;
+        } else {
+            bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
         }
-        invalidateSelf();
-    }
-
-
-    public int getRadius() {
-        return radius;
-    }
-
-    @Override
-    public void setAlpha(int alpha) {
-    }
-
-
-    @Override
-    public void setColorFilter(ColorFilter cf) {
-
-    }
-
-    @Override
-    public int getOpacity() {
-        return PixelFormat.TRANSLUCENT;
-    }
-
-    /**
-     * from https://stackoverflow.com/a/10028267/3133545
-     * <p/>
-     * <p/>
-     * <p/>
-     * Stack Blur v1.0 from
-     * http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
-     * <p/>
-     * Java Author: Mario Klingemann <mario at quasimondo.com>
-     * http://incubator.quasimondo.com
-     * created Feburary 29, 2004
-     * Android port : Yahel Bouaziz <yahel at kayenko.com>
-     * http://www.kayenko.com
-     * ported april 5th, 2012
-     * <p/>
-     * This is a compromise between Gaussian Blur and Box blur
-     * It creates much better looking blurs than Box Blur, but is
-     * 7x faster than my Gaussian Blur implementation.
-     * <p/>
-     * I called it Stack Blur because this describes best how this
-     * filter works internally: it creates a kind of moving stack
-     * of colors whilst scanning through the image. Thereby it
-     * just has to add one new block of color to the right side
-     * of the stack and remove the leftmost color. The remaining
-     * colors on the topmost layer of the stack are either added on
-     * or reduced by one, depending on if they are on the right or
-     * on the left side of the stack.
-     * <p/>
-     * If you are using this algorithm in your code please add
-     * the following line:
-     * <p/>
-     * Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
-     */
-    private static Bitmap fastBlur(Bitmap sentBitmap, int radius) {
-
-
-        Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
 
         if (radius < 1) {
             return (null);
@@ -130,7 +111,6 @@ public class BlurDrawable extends Drawable {
         int h = bitmap.getHeight();
 
         int[] pix = new int[w * h];
-        Log.e("pix", w + " " + h + " " + pix.length);
         bitmap.getPixels(pix, 0, w, 0, 0, w, h);
 
         int wm = w - 1;
@@ -138,15 +118,15 @@ public class BlurDrawable extends Drawable {
         int wh = w * h;
         int div = radius + radius + 1;
 
-        int r[] = new int[wh];
-        int g[] = new int[wh];
-        int b[] = new int[wh];
+        int[] r = new int[wh];
+        int[] g = new int[wh];
+        int[] b = new int[wh];
         int rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
-        int vmin[] = new int[Math.max(w, h)];
+        int[] vmin = new int[Math.max(w, h)];
 
         int divsum = (div + 1) >> 1;
         divsum *= divsum;
-        int dv[] = new int[256 * divsum];
+        int[] dv = new int[256 * divsum];
         for (i = 0; i < 256 * divsum; i++) {
             dv[i] = (i / divsum);
         }
@@ -320,5 +300,4 @@ public class BlurDrawable extends Drawable {
 
         return (bitmap);
     }
-
 }
