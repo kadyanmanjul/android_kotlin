@@ -9,8 +9,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -43,6 +42,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.*
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
@@ -75,9 +75,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var isSeniorStudent: Boolean = false
     private var startTime = 0L
-    private val TAG = "UserProfileActivity"
     private var isAnimationVisible = false
-    private var userName :String? = null
+    private var userName: String? = null
     var isExpanded = true
 
     init {
@@ -123,7 +122,13 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.userPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
-                    ProfileImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null,mentorId,false)
+                    ProfileImageShowFragment.newInstance(
+                        viewModel.getUserProfileUrl(),
+                        null,
+                        null,
+                        mentorId,
+                        false
+                    )
                         .show(supportFragmentManager, "ImageShow")
                 } else {
                     openChooser()
@@ -131,7 +136,13 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             } else {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
-                    ProfileImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null,mentorId,false)
+                    ProfileImageShowFragment.newInstance(
+                        viewModel.getUserProfileUrl(),
+                        null,
+                        null,
+                        mentorId,
+                        false
+                    )
                         .show(supportFragmentManager, "ImageShow")
                 }
             }
@@ -155,10 +166,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.previousProfilePicLayout.setOnClickListener {
             openPreviousProfilePicsScreen()
         }
-        binding.labelViewMoreGroups.setOnClickListener{
+        binding.labelViewMoreGroups.setOnClickListener {
             openMyGroupsScreen()
         }
-        binding.myGroupsLayout.setOnClickListener{
+        binding.myGroupsLayout.setOnClickListener {
             openMyGroupsScreen()
         }
         binding.viewAllFpp.setOnClickListener {
@@ -177,9 +188,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
             }
         }
-        binding.btnSentRequest.setOnClickListener{
+        binding.btnSentRequest.setOnClickListener {
             with(binding) {
-                if(btnSentRequest.text=="Requested"){
+                if (btnSentRequest.text == "Requested") {
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
@@ -187,12 +198,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         )
                     )
                     btnSentRequest.text = "Send Request"
-                    btnSentRequest.setTextColor(ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.white
-                    ))
+                    btnSentRequest.setTextColor(
+                        ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.white
+                        )
+                    )
                     viewModel.deleteFppRequest(mentorId)
-                }else{
+                } else {
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
@@ -211,51 +224,57 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
             }
         }
-        binding.btnConfirmRequest.setOnClickListener{
-            viewModel.confirmOrRejectFppRequest(mentorId, ISACCEPTED,"USER_PROFILE")
-            binding.btnConfirmRequest.visibility= GONE
-            binding.btnNotNowRequest.visibility= GONE
-            binding.profileText.text= userName+ " and you are now favorite practice partners"
-            var layoutParams: RelativeLayout.LayoutParams =
+        binding.btnConfirmRequest.setOnClickListener {
+            viewModel.confirmOrRejectFppRequest(mentorId, IS_ACCEPTED, USER_PROFILE)
+            binding.btnConfirmRequest.visibility = GONE
+            binding.btnNotNowRequest.visibility = GONE
+            binding.profileText.text = "$userName and you are now favorite practice partners"
+            val layoutParams: RelativeLayout.LayoutParams =
                 binding.profileText.layoutParams as RelativeLayout.LayoutParams
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
             layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
             layoutParams.topMargin = resources.getDimension(R.dimen._11sdp).toInt()
             layoutParams.bottomMargin = resources.getDimension(R.dimen._11sdp).toInt()
             binding.profileText.layoutParams = layoutParams
-            binding.btnConfirmOrNotNowCard.visibility=GONE
-            binding.sentRequestCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.request_respond))
+            binding.btnConfirmOrNotNowCard.visibility = GONE
+            binding.sentRequestCard.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.request_respond
+                )
+            )
         }
 
-        binding.btnNotNowRequest.setOnClickListener{
-            viewModel.confirmOrRejectFppRequest(mentorId, ISREJECTED,"USER_PROFILE")
-            binding.btnConfirmRequest.visibility= GONE
-            binding.btnNotNowRequest.visibility= GONE
-            var layoutParams: RelativeLayout.LayoutParams =
+        binding.btnNotNowRequest.setOnClickListener {
+            viewModel.confirmOrRejectFppRequest(mentorId, IS_REJECTED, USER_PROFILE)
+            binding.btnConfirmRequest.visibility = GONE
+            binding.btnNotNowRequest.visibility = GONE
+            val layoutParams: RelativeLayout.LayoutParams =
                 binding.profileText.layoutParams as RelativeLayout.LayoutParams
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
             layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
             layoutParams.topMargin = resources.getDimension(R.dimen._11sdp).toInt()
             layoutParams.bottomMargin = resources.getDimension(R.dimen._11sdp).toInt()
             binding.profileText.layoutParams = layoutParams
-            binding.profileText.text=userName+"'s favorite practice partner request has been removed"
-            binding.btnConfirmOrNotNowCard.visibility=GONE
-            binding.profileText.gravity=Gravity.CENTER_VERTICAL
+            binding.profileText.text =
+                "$userName's favorite practice partner request has been removed"
+            binding.btnConfirmOrNotNowCard.visibility = GONE
+            binding.profileText.gravity = Gravity.CENTER_VERTICAL
         }
     }
 
     private fun initToolbar() {
         with(iv_back) {
-            visibility = View.VISIBLE
+            visibility = VISIBLE
             setOnClickListener {
                 onBackPressed()
             }
         }
         with(iv_help) {
             if (mentorId == Mentor.getInstance().getId()) {
-                visibility = View.GONE
+                visibility = GONE
             } else {
-                visibility = View.VISIBLE
+                visibility = VISIBLE
                 setOnClickListener {
                     openHelpActivity()
                 }
@@ -263,28 +282,28 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         with(iv_edit) {
             if (mentorId == Mentor.getInstance().getId()) {
-                visibility = View.VISIBLE
+                visibility = VISIBLE
                 setOnClickListener {
                     openEditProfileScreen()
                 }
             } else {
-                visibility = View.GONE
+                visibility = GONE
             }
         }
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
                 .getId()
         ) {
             with(iv_setting) {
-                visibility = View.VISIBLE
+                visibility = VISIBLE
                 setOnClickListener {
                     openPopupMenu(it)
                 }
             }
         }
         if (mentorId == Mentor.getInstance().getId()) {
-            binding.editPic.visibility = View.VISIBLE
+            binding.editPic.visibility = VISIBLE
         } else {
-            binding.editPic.visibility = View.GONE
+            binding.editPic.visibility = GONE
         }
     }
 
@@ -320,6 +339,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         PreviousProfilePicsFragment.newInstance(mentorId)
             .show(supportFragmentManager, "PreviousProfilePics")
     }
+
     fun openMyGroupsScreen() {
         MyGroupsFragment.newInstance()
             .show(supportFragmentManager, "MyGroups")
@@ -347,23 +367,23 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 it.expiryDate != null &&
                 it.expiryDate.time < System.currentTimeMillis()
             ) {
-                binding.freeTrialExpiryLayout.visibility = View.VISIBLE
+                binding.freeTrialExpiryLayout.visibility = VISIBLE
             } else {
-                binding.freeTrialExpiryLayout.visibility = View.GONE
+                binding.freeTrialExpiryLayout.visibility = GONE
             }
             it?.let {
                 impressionId = it.userProfileImpressionId ?: EMPTY
                 hideProgressBar()
-                userName= it.name
+                userName = it.name
                 initView(it)
             }
         }
         viewModel.fppRequest.observe(this) {
             when (it.requestStatus) {
                 SENT_REQUEST -> {
-                    binding.sentRequestCard.visibility= VISIBLE
-                    binding.btnSentRequest.visibility= VISIBLE
-                    binding.profileText.text=it.text
+                    binding.sentRequestCard.visibility = VISIBLE
+                    binding.btnSentRequest.visibility = VISIBLE
+                    binding.profileText.text = it.text
                 }
                 IS_ALREADY_FPP -> {
                 }
@@ -386,38 +406,38 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     }
                 }
                 HAS_RECIEVED_REQUEST -> {
-                    binding.sentRequestCard.visibility= VISIBLE
-                    binding.btnConfirmRequest.visibility= VISIBLE
-                    binding.btnNotNowRequest.visibility= VISIBLE
-                    binding.profileText.text=it.text
+                    binding.sentRequestCard.visibility = VISIBLE
+                    binding.btnConfirmRequest.visibility = VISIBLE
+                    binding.btnNotNowRequest.visibility = VISIBLE
+                    binding.profileText.text = it.text
 
                 }
             }
         }
-        viewModel.fppList.observe(this){
+        viewModel.fppList.observe(this) {
             if (it.isNullOrEmpty()) {
-                binding.fppListLayout.visibility = View.GONE
-                binding.myFppLl.visibility = View.GONE
+                binding.fppListLayout.visibility = GONE
+                binding.myFppLl.visibility = GONE
             } else {
                 binding.fppListLayout.visibility = VISIBLE
                 binding.myFppLl.visibility = VISIBLE
-                binding.fppDp.text= "Favorite practice partners (${it.size})"
-                binding.viewAllFpp.visibility= VISIBLE
+                binding.fppDp.text = "Favorite practice partners (${it.size})"
+                binding.viewAllFpp.visibility = VISIBLE
                 binding.viewAllFpp.text = "View all (${it.size})"
                 binding.myFppLl.removeAllViews()
                 binding.arrowDownImg.setImageDrawable(drawableUp)
-                binding.arrowDownImg.setOnClickListener {view->
+                binding.arrowDownImg.setOnClickListener { view ->
                     if (isExpanded) {
                         isExpanded = false
                         binding.arrowDownImg.setImageDrawable(drawableUp)
-                        binding.myFppLl.visibility = View.VISIBLE
-                        binding.viewAllFpp.visibility = View.VISIBLE
+                        binding.myFppLl.visibility = VISIBLE
+                        binding.viewAllFpp.visibility = VISIBLE
                         binding.viewAllFpp.text = "View all (${it.size})"
-                    }else{
+                    } else {
                         isExpanded = true
                         binding.arrowDownImg.setImageDrawable(drawableDown)
-                        binding.myFppLl.visibility = View.GONE
-                        binding.viewAllFpp.visibility = View.GONE
+                        binding.myFppLl.visibility = GONE
+                        binding.viewAllFpp.visibility = GONE
                     }
                 }
                 var countFppList = 0
@@ -435,17 +455,17 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
-                binding.scrollViewShimmer.visibility= GONE
+                binding.scrollViewShimmer.visibility = GONE
                 binding.profileShimmerView.pauseAnimation()
-                binding.scrollView.visibility= VISIBLE
+                binding.scrollView.visibility = VISIBLE
             } else if (it == ApiCallStatus.FAILED) {
-                binding.scrollViewShimmer.visibility= GONE
+                binding.scrollViewShimmer.visibility = GONE
                 binding.profileShimmerView.pauseAnimation()
-                binding.scrollView.visibility= VISIBLE
+                binding.scrollView.visibility = VISIBLE
                 this.finish()
             } else if (it == ApiCallStatus.START) {
-                binding.scrollView.visibility= GONE
-                binding.scrollViewShimmer.visibility= VISIBLE
+                binding.scrollView.visibility = GONE
+                binding.scrollViewShimmer.visibility = VISIBLE
                 binding.profileShimmerView.playAnimation()
             }
         }
@@ -453,10 +473,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         viewModel.userProfileUrl.observe(this) {
             if (mentorId.equals(Mentor.getInstance().getId())) {
                 if (it.isNullOrBlank()) {
-                    binding.editPic.visibility = View.VISIBLE
+                    binding.editPic.visibility = VISIBLE
                     binding.editPic.text = "Add"
                 } else {
-                    binding.editPic.visibility = View.VISIBLE
+                    binding.editPic.visibility = VISIBLE
                     binding.editPic.text = "Edit"
                 }
             }
@@ -524,14 +544,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         binding.joinedOn.text = userData.joinedOn
         if (userData.isOnline == true) {
-            binding.onlineStatusIv.visibility = View.VISIBLE
+            binding.onlineStatusIv.visibility = VISIBLE
         }
 
         if (userData.previousProfilePictures != null) {
-            binding.previousProfilePicLayout.visibility = View.VISIBLE
-            binding.labelPreviousDp.setText("Previous Profile Photos (${userData.previousProfilePictures.profilePictures.size})")
+            binding.previousProfilePicLayout.visibility = VISIBLE
+            binding.labelPreviousDp.text =
+                "Previous Profile Photos (${userData.previousProfilePictures.profilePictures.size})"
         } else {
-            binding.previousProfilePicLayout.visibility = View.GONE
+            binding.previousProfilePicLayout.visibility = GONE
             binding.labelPreviousDp.text = userData.previousProfilePictures?.label
         }
 
@@ -539,11 +560,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.txtLabelSeniorStudent.text = getString(R.string.label_senior_student, resp)
             // binding.txtLabelSeniorStudent.visibility = View.VISIBLE
             // binding.txtLabelBecomeSeniorStudent.visibility = View.VISIBLE
-            binding.imgSeniorStudentBadge.visibility = View.VISIBLE
+            binding.imgSeniorStudentBadge.visibility = VISIBLE
         } else {
-            binding.txtLabelSeniorStudent.visibility = View.GONE
-            binding.txtLabelBecomeSeniorStudent.visibility = View.GONE
-            binding.imgSeniorStudentBadge.visibility = View.GONE
+            binding.txtLabelSeniorStudent.visibility = GONE
+            binding.txtLabelBecomeSeniorStudent.visibility = GONE
+            binding.imgSeniorStudentBadge.visibility = GONE
         }
 
         userData.points?.let {
@@ -587,12 +608,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
-        binding.streaksText.visibility = View.GONE
+        binding.streaksText.visibility = GONE
         if (userData.isSeniorStudent) {
             this.isSeniorStudent = true
 
-            binding.awardsLayout.visibility = View.VISIBLE
-            binding.multiLineLl.visibility = View.VISIBLE
+            binding.awardsLayout.visibility = VISIBLE
+            binding.multiLineLl.visibility = VISIBLE
             binding.multiLineLl.removeAllViews()
             val layoutInflater =
                 AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -606,10 +627,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
 
         if (userData.awardCategory.isNullOrEmpty()) {
-            binding.labelViewMoreAwards.visibility = View.GONE
-            binding.awardsLayout.isClickable=false
-            if(!userData.isSeniorStudent) {
-                binding.noAwardText.visibility = View.VISIBLE
+            binding.labelViewMoreAwards.visibility = GONE
+            binding.awardsLayout.isClickable = false
+            if (!userData.isSeniorStudent) {
+                binding.noAwardText.visibility = VISIBLE
                 if (mentorId == Mentor.getInstance().getId()) {
                     binding.noAwardText.text =
                         getString(R.string.no_awards_me, resp.trim().split(" ")[0])
@@ -621,10 +642,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         } else {
             this.awardCategory = userData.awardCategory
-            binding.awardsLayout.visibility = View.VISIBLE
-            binding.multiLineLl.visibility = View.VISIBLE
+            binding.awardsLayout.visibility = VISIBLE
+            binding.multiLineLl.visibility = VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {
-                binding.labelViewMoreAwards.visibility = View.VISIBLE
+                binding.labelViewMoreAwards.visibility = VISIBLE
                 userData.awardCategory?.sortedBy { it.sortOrder }?.forEach { awardCategory ->
                     val view = getAwardLayoutItem(awardCategory)
                     if (view != null) {
@@ -632,10 +653,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     }
                 }
             } else {
-                if(!userData.isSeniorStudent) {
-                    binding.noAwardText.visibility = View.VISIBLE
-                    binding.labelViewMoreAwards.visibility = View.GONE
-                    binding.awardsLayout.isClickable=false
+                if (!userData.isSeniorStudent) {
+                    binding.noAwardText.visibility = VISIBLE
+                    binding.labelViewMoreAwards.visibility = GONE
+                    binding.awardsLayout.isClickable = false
                     if (mentorId == Mentor.getInstance().getId()) {
                         binding.noAwardText.text =
                             getString(R.string.no_awards_me, resp.trim().split(" ")[0])
@@ -647,12 +668,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         if (userData.myGroupsList.isNullOrEmpty()) {
-            binding.myGroupsLayout.visibility = View.GONE
-            binding.myGroupsLl.visibility = View.GONE
+            binding.myGroupsLayout.visibility = GONE
+            binding.myGroupsLl.visibility = GONE
         } else {
-            binding.myGroupsLayout.visibility = View.VISIBLE
-            binding.myGroupsLl.visibility = View.VISIBLE
-            binding.labelMyGroups.text= "My Groups (${userData.myGroupsList.size})"
+            binding.myGroupsLayout.visibility = VISIBLE
+            binding.myGroupsLl.visibility = VISIBLE
+            binding.labelMyGroups.text = "My Groups (${userData.myGroupsList.size})"
             binding.myGroupsLl.removeAllViews()
             var countGroups = 0
             userData.myGroupsList.forEach {
@@ -666,11 +687,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         if (userData.enrolledCoursesList == null) {
-            binding.enrolledCoursesLayout.visibility = View.GONE
-            binding.enrolledCoursesLl.visibility = View.GONE
+            binding.enrolledCoursesLayout.visibility = GONE
+            binding.enrolledCoursesLl.visibility = GONE
         } else {
-            binding.enrolledCoursesLayout.visibility = View.VISIBLE
-            binding.enrolledCoursesLl.visibility = View.VISIBLE
+            binding.enrolledCoursesLayout.visibility = VISIBLE
+            binding.enrolledCoursesLl.visibility = VISIBLE
             binding.labelEnrolledCourses.text = userData.enrolledCoursesList.label
             binding.enrolledCoursesLl.removeAllViews()
             var countCourses = 0
@@ -688,15 +709,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     private fun setSeniorStudentAwardView(view: View) {
-        var v: View? = view.findViewById<ConstraintLayout>(R.id.award1)
-        v?.visibility = View.VISIBLE
-        var image: ImageView = view.findViewById(R.id.image_award1)
-        var title: AppCompatTextView = view.findViewById(R.id.title_award1)
-        var date: AppCompatTextView = view.findViewById(R.id.date_award1)
-        var count: AppCompatTextView = view.findViewById(R.id.txt_count_award1)
-        date.visibility =  GONE
-        title.visibility =  GONE
-        count.visibility =  GONE
+        val v: View? = view.findViewById<ConstraintLayout>(R.id.award1)
+        v?.visibility = VISIBLE
+        val image: ImageView = view.findViewById(R.id.image_award1)
+        val title: AppCompatTextView = view.findViewById(R.id.title_award1)
+        val date: AppCompatTextView = view.findViewById(R.id.date_award1)
+        val count: AppCompatTextView = view.findViewById(R.id.txt_count_award1)
+        date.visibility = GONE
+        title.visibility = GONE
+        count.visibility = GONE
         image.setImageResource(R.drawable.senior_student_with_shadow)
     }
 
@@ -726,6 +747,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         )
 
     }
+
     private val drawableDown: Drawable? by lazy {
         ResourcesCompat.getDrawable(
             AppObjectController.joshApplication.resources,
@@ -750,9 +772,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         val txtUserName = view.findViewById(R.id.tv_name) as AppCompatTextView
         val imageUserProfile = view.findViewById(R.id.profile_image) as CircleImageView
         val txtTotalSpokeTime = view.findViewById(R.id.tv_spoken_time) as AppCompatTextView
-        txtUserName.text = fppDetails.fullName?:""
+        txtUserName.text = fppDetails.fullName ?: ""
         txtTotalSpokeTime.text = fppDetails.text
-        imageUserProfile.setUserImageOrInitials(fppDetails.photoUrl?:"",fppDetails.fullName?:"")
+        imageUserProfile.setUserImageOrInitials(
+            fppDetails.photoUrl ?: "",
+            fppDetails.fullName ?: ""
+        )
         return view
     }
 
@@ -785,6 +810,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         return view
     }
+
     @SuppressLint("WrongViewCast")
     private fun getMyGroupsLayoutItem(groupInfo: GroupInfo): View? {
         val layoutInflater =
@@ -792,15 +818,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         val view =
             layoutInflater.inflate(R.layout.my_groups_row_item, binding.rootView, false)
         val txtGroupName = view.findViewById(R.id.tv_group_name) as AppCompatTextView
-        val txtMinutesSpoken= view.findViewById(R.id.tv_minutes_spoken) as AppCompatTextView
+        val txtMinutesSpoken = view.findViewById(R.id.tv_minutes_spoken) as AppCompatTextView
         val imggGroupIcon = view.findViewById(R.id.group_icon) as CircleImageView
 
         txtGroupName.text = groupInfo.groupName
-        txtMinutesSpoken.text =groupInfo.textToShow
-        if(groupInfo.groupIcon==null){
+        txtMinutesSpoken.text = groupInfo.textToShow
+        if (groupInfo.groupIcon == null) {
             imggGroupIcon.setImageResource(R.drawable.group_default_icon)
 
-        }else{
+        } else {
             setImage(imggGroupIcon, groupInfo.groupIcon)
         }
         return view
@@ -862,7 +888,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         when (index) {
             0 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award1)
-                v.visibility = View.VISIBLE
+                v.visibility = VISIBLE
 
                 setViewToLayout(
                     award,
@@ -874,7 +900,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
             1 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award2)
-                v.visibility = View.VISIBLE
+                v.visibility = VISIBLE
 
                 setViewToLayout(
                     award,
@@ -886,7 +912,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
             2 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award3)
-                v.visibility = View.VISIBLE
+                v.visibility = VISIBLE
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award3),
@@ -914,19 +940,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     ) {
         title.text = award.awardText
         if (award.dateText.isNullOrBlank()) {
-            date.visibility = View.INVISIBLE
+            date.visibility = INVISIBLE
         } else {
-            date.visibility = View.VISIBLE
+            date.visibility = VISIBLE
             date.text = award.dateText
         }
         award.imageUrl?.let {
             image.setImage(it, this)
         }
         if (award.count > 1) {
-            count.visibility = View.VISIBLE
+            count.visibility = VISIBLE
             count.text = award.count.toString()
         } else {
-            count.visibility = View.GONE
+            count.visibility = GONE
         }
     }
 
@@ -1023,7 +1049,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             intervalType: String? = null,
             previousPage: String? = null,
             conversationId: String? = null,
-            isFromConversationRoom: Boolean=false,
+            isFromConversationRoom: Boolean = false,
 
             ) {
             Intent(activity, UserProfileActivity::class.java).apply {
@@ -1087,8 +1113,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private fun showOverlayAnimation() {
         lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
-            binding.contentOverlay.visibility = View.VISIBLE
-            binding.arrowAnimation.visibility = View.VISIBLE
+            binding.contentOverlay.visibility = VISIBLE
+            binding.arrowAnimation.visibility = VISIBLE
             /*binding.arrowAnimation.addAnimatorListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator?) {
                     animatePoints()
@@ -1108,10 +1134,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             })*/
             binding.arrowAnimation.playAnimation()
-            binding.toolbarOverlay.visibility = View.VISIBLE
+            binding.toolbarOverlay.visibility = VISIBLE
             //animatePoints()
-            binding.labelTapToDismiss.visibility = View.INVISIBLE
-            binding.overlayProfileTooltip.visibility = View.VISIBLE
+            binding.labelTapToDismiss.visibility = INVISIBLE
+            binding.overlayProfileTooltip.visibility = VISIBLE
             PrefManager.put(HAS_SEEN_PROFILE_ANIMATION, true)
             isAnimationVisible = true
             binding.overlayProfileTooltip.startAnimation(
@@ -1155,11 +1181,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.toolbarOverlay.setOnClickListener(null)
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
         //stopPointAnimation()
-        binding.arrowAnimation.visibility = View.GONE
-        binding.contentOverlay.visibility = View.GONE
-        binding.toolbarOverlay.visibility = View.GONE
-        binding.labelTapToDismiss.visibility = View.INVISIBLE
-        binding.overlayProfileTooltip.visibility = View.GONE
+        binding.arrowAnimation.visibility = GONE
+        binding.contentOverlay.visibility = GONE
+        binding.toolbarOverlay.visibility = GONE
+        binding.labelTapToDismiss.visibility = INVISIBLE
+        binding.overlayProfileTooltip.visibility = GONE
         isAnimationVisible = false
     }
 

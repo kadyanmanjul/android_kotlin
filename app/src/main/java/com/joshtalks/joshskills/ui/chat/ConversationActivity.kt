@@ -75,10 +75,12 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.fpp.ISACCEPTED
-import com.joshtalks.joshskills.ui.fpp.ISREJECTED
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
+import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
+import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
+import com.joshtalks.joshskills.ui.fpp.constants.QUICK_VIEW
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
+import com.joshtalks.joshskills.ui.fpp.utils.Blurry
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
@@ -113,7 +115,6 @@ import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -1030,6 +1031,7 @@ class ConversationActivity :
             if (it.pendingRequestsList.isNullOrEmpty()) {
                 conversationBinding.quickViewNoRequests.visibility = VISIBLE
             } else {
+                conversationBinding.quickViewNoRequests.visibility = INVISIBLE
                 conversationBinding.myRequestsLl.visibility = VISIBLE
                 conversationBinding.viewAllRequests.visibility = VISIBLE
                 conversationBinding.viewAllRequests.text =
@@ -1165,8 +1167,29 @@ class ConversationActivity :
             if (buttonClicked) {
                 //we can remove elevation if ui will lack
                 lifecycleScope.launchWhenCreated {
-                    Blurry.with(this@ConversationActivity).radius(25).sampling(1)
+                    Blurry.with(this@ConversationActivity).radius(25).sampling(3)
                         .onto(conversationBinding.rootView)
+                }
+//                conversationBinding.rootView.isClickable = false
+//                conversationBinding.rootView.isEnabled = false
+                conversationBinding.blurView.setOnClickListener {
+                    Blurry.delete(conversationBinding.blurView)
+                    conversationBinding.blurView.visibility = GONE
+                    conversationBinding.blurView.setOnClickListener(null)
+                    buttonClicked = true
+                    conversationBinding.quickCardView.visibility = INVISIBLE
+                    imgActivityFeed.visibility = GONE
+                    imgFppRequest.visibility = GONE
+
+                    if (userProfileData.isGameActive)
+                        imgGameBtn.visibility = GONE
+
+                    if (userProfileData.hasGroupAccess)
+                        imgGroupChatBtn.visibility = GONE
+
+                    img1.visibility = INVISIBLE
+                    img2.visibility = INVISIBLE
+                    img3.visibility = INVISIBLE
                 }
                 buttonClicked = false
                 conversationBinding.quickCardView.visibility = VISIBLE
@@ -1189,7 +1212,10 @@ class ConversationActivity :
                     img3.visibility = VISIBLE
                 }
             } else {
+//                conversationBinding.rootView.isClickable = true
+//                conversationBinding.rootView.isEnabled = true
                 Blurry.delete(conversationBinding.rootView)
+                conversationBinding.blurView.setOnClickListener(null)
                 buttonClicked = true
                 conversationBinding.quickCardView.visibility = INVISIBLE
                 imgActivityFeed.visibility = GONE
@@ -1237,7 +1263,7 @@ class ConversationActivity :
             itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
             conversationViewModel.confirmOrRejectFppRequest(
                 pendingRequestDetail.senderMentorId!!,
-                ISACCEPTED, "QUICK_VIEW"
+                IS_ACCEPTED, QUICK_VIEW
             )
         }
         btnNotNow.setOnClickListener {
@@ -1247,7 +1273,7 @@ class ConversationActivity :
             itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
             conversationViewModel.confirmOrRejectFppRequest(
                 pendingRequestDetail.senderMentorId!!,
-                ISREJECTED, "QUICK_VIEW"
+                IS_REJECTED, QUICK_VIEW
             )
 
         }
