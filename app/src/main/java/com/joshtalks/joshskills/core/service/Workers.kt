@@ -40,17 +40,18 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
+import timber.log.Timber
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
@@ -279,7 +280,7 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                     regenerateFCM()
                 }
             }
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
             return Result.failure()
         }
@@ -431,9 +432,9 @@ class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
         if (chatIdList.isNullOrEmpty().not()) {
             chatIdList.forEach {
                 try {
-                    if (it.isSharableVideo){
+                    if (it.isSharableVideo) {
                         AppObjectController.chatNetworkService.engageSharableVideoApi(it)
-                    } else{
+                    } else {
                         AppObjectController.chatNetworkService.engageVideoApiV2(it)
                     }
                     syncEngageVideoList.add(it.id)
@@ -1079,4 +1080,21 @@ fun getGoogleAdId(context: Context): String? {
 
     }
     return null
+}
+
+class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            ABTestRepository().updateAllCampaigns(
+                listOf(
+                    "FREE_TRIAL",
+                    "SPEAKING_INTRODUCTION_VIDEO"
+                )
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
 }

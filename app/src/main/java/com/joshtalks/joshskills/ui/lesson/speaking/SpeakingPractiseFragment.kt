@@ -90,7 +90,6 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
     override fun initCampaigns() {
         getCampaigns("FREE_TRIAL")
-        getAllCampaigns()
     }
 
     override fun onAttach(context: Context) {

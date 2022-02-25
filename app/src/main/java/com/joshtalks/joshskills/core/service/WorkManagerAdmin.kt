@@ -41,7 +41,8 @@ object WorkManagerAdmin {
             .beginWith(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
-                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
+                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
+                    OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build()
                 )
             )
             .then(
@@ -66,7 +67,12 @@ object WorkManagerAdmin {
 
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
+            .beginWith(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build(),
+                    OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build()
+                )
+            )
             // .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(
