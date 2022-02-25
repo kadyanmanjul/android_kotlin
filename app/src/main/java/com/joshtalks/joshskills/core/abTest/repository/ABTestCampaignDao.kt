@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.google.firebase.inject.Deferred
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 
 @Dao
@@ -33,5 +32,5 @@ interface ABTestCampaignDao {
     suspend fun deleteSingleCampaign(campaign: ABTestCampaignData)
 
     @Query("DELETE FROM ab_test_campaigns")
-    suspend fun deleteAllCampaigns() : Deferred<Any>
+    suspend fun deleteAllCampaigns()
 }
