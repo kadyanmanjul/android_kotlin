@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +22,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -202,11 +204,15 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     override fun clickOnPhoneCall(position: Int) {
-        viewModel.getCallOnGoing(
-            favoriteAdapter.getItemAtPosition(position).mentorId,
-            favoriteAdapter.getItemAtPosition(position).id,
-            this
-        )
+        if (WebRtcService.isCallOnGoing.value == true) {
+            viewModel.getCallOnGoing(
+                favoriteAdapter.getItemAtPosition(position).mentorId,
+                favoriteAdapter.getItemAtPosition(position).id,
+                this
+            )
+        }else{
+            showToast("You can't place a new call while you are on call", Toast.LENGTH_LONG)
+        }
     }
 
     override fun clickLongPressDelete(position: Int) {
