@@ -260,7 +260,6 @@ class ConversationActivity :
                 conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
                 conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
                 floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
-
             }
         }
     }
@@ -1018,9 +1017,8 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                conversationBinding.imgMain.visibility = VISIBLE
-                //setExpandableButtons(userProfileData)
-                clickFabButton(userProfileData)
+                conversationBinding.floatingActionButtonAdd.visibility = VISIBLE
+                blurViewOnClickListeners(userProfileData)
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)
@@ -1153,8 +1151,15 @@ class ConversationActivity :
         }
     }
 
-    private fun clickFabButton(userProfileData: UserProfileResponse) {
+    private fun blurViewOnClickListeners(userProfileData: UserProfileResponse) {
         conversationBinding.floatingActionButtonAdd.setOnClickListener {
+            setExpandableButtons(userProfileData)
+            setButtonsAnimation()
+            conversationViewModel.getPendingRequestsList()
+        }
+
+        conversationBinding.blurView.setOnClickListener {
+            showToast(it.id.toString())
             setExpandableButtons(userProfileData)
             setButtonsAnimation()
             conversationViewModel.getPendingRequestsList()
@@ -1166,56 +1171,30 @@ class ConversationActivity :
         with(conversationBinding) {
             if (buttonClicked) {
                 //we can remove elevation if ui will lack
+                conversationBinding.userPointContainer.elevation = 0f
+                conversationBinding.imgPointer.visibility = VISIBLE
                 lifecycleScope.launchWhenCreated {
+                    conversationBinding.blurView.visibility = VISIBLE
                     Blurry.with(this@ConversationActivity).radius(25).sampling(3)
-                        .onto(conversationBinding.rootView)
+                        .onto(conversationBinding.blurView, conversationBinding.rootView)
                 }
-//                conversationBinding.rootView.isClickable = false
-//                conversationBinding.rootView.isEnabled = false
-                conversationBinding.blurView.setOnClickListener {
-                    Blurry.delete(conversationBinding.blurView)
-                    conversationBinding.blurView.visibility = GONE
-                    conversationBinding.blurView.setOnClickListener(null)
-                    buttonClicked = true
-                    conversationBinding.quickCardView.visibility = INVISIBLE
-                    imgActivityFeed.visibility = GONE
-                    imgFppRequest.visibility = GONE
 
-                    if (userProfileData.isGameActive)
-                        imgGameBtn.visibility = GONE
-
-                    if (userProfileData.hasGroupAccess)
-                        imgGroupChatBtn.visibility = GONE
-
-                    img1.visibility = INVISIBLE
-                    img2.visibility = INVISIBLE
-                    img3.visibility = INVISIBLE
-                }
                 buttonClicked = false
                 conversationBinding.quickCardView.visibility = VISIBLE
+
                 imgActivityFeed.visibility = VISIBLE
                 imgFppRequest.visibility = VISIBLE
 
-                if (userProfileData.isGameActive) {
+                if (userProfileData.isGameActive)
                     imgGameBtn.visibility = VISIBLE
-                }
 
-                if (userProfileData.hasGroupAccess) {
+                if (userProfileData.hasGroupAccess)
                     imgGroupChatBtn.visibility = VISIBLE
-                }
-
-                if (userProfileData.isGameActive && userProfileData.hasGroupAccess) {
-                    img1.visibility = VISIBLE
-                } else if (userProfileData.isGameActive || userProfileData.hasGroupAccess) {
-                    img2.visibility = VISIBLE
-                } else {
-                    img3.visibility = VISIBLE
-                }
             } else {
-//                conversationBinding.rootView.isClickable = true
-//                conversationBinding.rootView.isEnabled = true
-                Blurry.delete(conversationBinding.rootView)
-                conversationBinding.blurView.setOnClickListener(null)
+                Blurry.delete(conversationBinding.blurView)
+                conversationBinding.imgPointer.visibility = INVISIBLE
+                conversationBinding.userPointContainer.elevation = 3f
+                conversationBinding.blurView.visibility = GONE
                 buttonClicked = true
                 conversationBinding.quickCardView.visibility = INVISIBLE
                 imgActivityFeed.visibility = GONE
@@ -1226,10 +1205,6 @@ class ConversationActivity :
 
                 if (userProfileData.hasGroupAccess)
                     imgGroupChatBtn.visibility = GONE
-
-                img1.visibility = INVISIBLE
-                img2.visibility = INVISIBLE
-                img3.visibility = INVISIBLE
             }
         }
     }

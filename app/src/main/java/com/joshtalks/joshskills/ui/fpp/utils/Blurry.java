@@ -78,19 +78,19 @@ public class Blurry {
 //            return new BitmapComposer(context, bitmap, factor, async);
 //        }
 
-        public void onto(final ViewGroup target) {
+        public void onto(final ViewGroup target, final ViewGroup from) {
             factor.width = target.getMeasuredWidth();
             factor.height = target.getMeasuredHeight();
 
             if (async) {
                 BlurTask task = new BlurTask(target, factor, bitmap -> {
                     final BitmapDrawable drawable =
-                            new BitmapDrawable(target.getResources(), Blur.of(context, bitmap, factor));
+                            new BitmapDrawable(from.getResources(), Blur.of(context, bitmap, factor));
                     addView(target, drawable);
                 });
                 task.execute();
             } else {
-                Drawable drawable = new BitmapDrawable(context.getResources(), Blur.of(target, factor));
+                Drawable drawable = new BitmapDrawable(context.getResources(), Blur.of(from, factor));
                 addView(target, drawable);
             }
         }
