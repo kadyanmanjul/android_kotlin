@@ -63,8 +63,20 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where  is_sync= 0")
     suspend fun getUnSyncMessage(): List<ChatModel>
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertReadingVideoDownloadedPath(readingVideo: ReadingVideo)
+
+    @Query("SELECT path FROM reading_video where id= :questionId")
+    suspend fun getDownloadedVideoPath(questionId: String): String
+
+    @Query("SELECT isDownloaded FROM reading_video where id= :questionId")
+    suspend fun getDownloadedVideoStatus(questionId: String): Boolean
+
     @Insert
-    fun insertReadingVideoDownloadedPath(readingVideo: ReadingVideo)
+    suspend fun insertCompressedVideo(compressedVideo: CompressedVideo)
+
+    @Query("SELECT path FROM compressed_video where id= :questionId")
+    suspend fun getCompressedVideo(questionId: String): String
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAMessage(chat: ChatModel): Long
@@ -143,6 +155,9 @@ interface ChatDao {
 
     @Query(value = "UPDATE PdfTable SET total_view = :total_view where id= :id ")
     suspend fun updateTotalViewForPdf(id: String, total_view: Int)
+
+    @Query(value = "UPDATE reading_video SET path = :new_path, isDownloaded = :downloaded where id= :questionId ")
+    suspend fun updateReadingTable(questionId: String, new_path: String, downloaded: Boolean)
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId ORDER BY ID DESC LIMIT 1")
     suspend fun getLastOneChat(conversationId: String): ChatModel?

@@ -245,8 +245,6 @@ object VideoCompressor : CoroutineScope by MainScope() {
             resolver.let {
                 val filePath = (context.applicationInfo.dataDir + File.separator
                         + System.currentTimeMillis())
-//                val filePath = get+.getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS)?.absolutePath!! + File.separator
-//                        + System.currentTimeMillis())
                 val file = File(filePath)
 
                 resolver.openInputStream(uri)?.use { inputStream ->

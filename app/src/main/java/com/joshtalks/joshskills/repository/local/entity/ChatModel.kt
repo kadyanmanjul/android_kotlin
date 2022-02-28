@@ -194,6 +194,14 @@ data class ChatModel(
 data class ReadingVideo(
     @PrimaryKey
     val id: String = "",
+    val path: String = "",
+    var isDownloaded: Boolean = false
+)
+
+@Entity(tableName = "compressed_video")
+data class CompressedVideo(
+    @PrimaryKey
+    val id: String = "",
     val path: String = ""
 )
 

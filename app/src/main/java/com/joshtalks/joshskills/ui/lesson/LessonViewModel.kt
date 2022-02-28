@@ -80,7 +80,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
-    val videoUrlForReadingPractice: MutableLiveData<String> = MutableLiveData()
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) = practicePartnerCallDurationLiveData.postValue(time)
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
@@ -172,14 +171,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             lessonQuestion.pdfList =
                                 appDatabase.chatDao().getPdfOfQuestion(lessonQuestion.id)
 
-//                        LessonMaterialType.OTHER ->
-//                            lessonQuestion.imageList =
-//                                appDatabase.chatDao().getImagesOfQuestion(lessonQuestion.id)
-//
-//                        LessonMaterialType.OTHER ->
-//                            lessonQuestion.videoList =
-//                                appDatabase.chatDao().getVideosOfQuestion(lessonQuestion.id)
-
                         else-> {
                             lessonQuestion.imageList =
                                 appDatabase.chatDao().getImagesOfQuestion(lessonQuestion.id)
@@ -215,15 +206,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 )
 
                 if (response.data.isNullOrEmpty().not()) {
-//                    videoUrlForReadingPractice.value = response.data.filter { response.data.chatType }
-                    //currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
                     response.data.forEach {
                         it.questionId = it.id
                         it.lessonId = lessonId
                         saveQuestionToDB(it)
-//                        if(it.chatType == CHAT_TYPE.RP && it.videoList.isNullOrEmpty()){
-//                            videoUrlForReadingPractice.value = it.videoList?.get(0)?.video_url
-//                        }
                     }
                     response.data.maxByOrNull { it.modified }?.let {
                         LastSyncPrefManager.put(

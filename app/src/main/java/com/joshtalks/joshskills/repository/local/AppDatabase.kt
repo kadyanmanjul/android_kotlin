@@ -120,7 +120,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
-        ABTestCampaignData::class, ReadingVideo::class
+        ABTestCampaignData::class, ReadingVideo::class, CompressedVideo::class
     ],
     version = 45,
     exportSchema = true
@@ -596,6 +596,13 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_44_45:Migration = object : Migration(44, 45) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN paid_test_id TEXT")
+            }
+        }
+
+        private val MIGRATION_45_46:Migration = object : Migration(45, 46) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `reading_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL, `isDownloaded` TEXT NOT NULL )")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `compressed_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL)")
             }
         }
 
