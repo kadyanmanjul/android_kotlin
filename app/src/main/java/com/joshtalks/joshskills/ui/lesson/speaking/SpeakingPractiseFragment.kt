@@ -66,6 +66,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
     private var questionId: String? = null
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
+    private var isIntroVideoEnabled = true
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -86,10 +87,18 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
     override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
         Log.d("Manjul", "onReceiveABTestData() called with: abTestCampaignData = $abTestCampaignData")
+
+        abTestCampaignData?.let { map->
+            isIntroVideoEnabled = (map.variantKey == "SIV_ENABLED" )&& map.variableMap?.isEnabled == true
+        }
+        if(isIntroVideoEnabled){
+
+        }
+
     }
 
     override fun initCampaigns() {
-        getCampaigns("FREE_TRIAL")
+        getCampaigns("SPEAKING_INTRODUCTION_VIDEO")
     }
 
     override fun onAttach(context: Context) {

@@ -29,7 +29,7 @@ data class VariableMap(
     @SerializedName("color")
     val color: String?,
     @SerializedName("is_enabled")
-    val isEnabled: String?,
+    val isEnabled: Boolean?,
     @SerializedName("position")
     val position: String?
 )

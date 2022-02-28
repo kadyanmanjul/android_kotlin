@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.repository
 
+import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -32,7 +33,8 @@ class ABTestRepository {
     suspend fun updateAllCampaigns(list: List<String>) {
         try {
             database.deleteAllCampaigns()
-            val apiResponse = apiService.getAllCampaigns(list.joinToString())
+            Log.d("Manjul", "updateAllCampaigns() called with: list = ${list.joinToString(",")}")
+            val apiResponse = apiService.getAllCampaigns(list.joinToString(","))
             if (apiResponse.isSuccessful && apiResponse.body() != null) {
                 database.insertCampaigns(apiResponse.body()!!)
             }
