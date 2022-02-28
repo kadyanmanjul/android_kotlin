@@ -73,6 +73,11 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
         viewModel.getFavorites()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getFavorites()
+    }
+
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
     }
@@ -111,6 +116,7 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
                 delay(350)
                 favoriteAdapter.addItems(it)
                 binding.progressBar.visibility = View.GONE
+                binding.emptyCard.visibility = View.GONE
             }
         }
         lifecycleScope.launchWhenStarted {
