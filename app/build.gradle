@@ -177,7 +177,7 @@ android {
             /*For Port
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9011\""
             */
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9008\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9009\""
 
             applicationVariants.all { variant ->
                 variant.outputs.all {

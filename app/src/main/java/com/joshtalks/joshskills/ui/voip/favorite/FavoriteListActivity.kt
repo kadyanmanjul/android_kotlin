@@ -210,14 +210,14 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
     }
 
     override fun clickOnPhoneCall(position: Int) {
-        if (WebRtcService.isCallOnGoing.value == true) {
+        if (WebRtcService.isCallOnGoing.value == false) {
             viewModel.getCallOnGoing(
                 favoriteAdapter.getItemAtPosition(position).mentorId,
                 favoriteAdapter.getItemAtPosition(position).id,
                 this
             )
         }else{
-            showToast("You can't place a new call while you are on call", Toast.LENGTH_LONG)
+            showToast("You can't place a new call while you're already in a call.", Toast.LENGTH_LONG)
         }
     }
 
