@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
@@ -59,6 +60,8 @@ class ConversationViewModel(
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
+    var batchStartedDate:String = EMPTY
+    var lastLesson:Int = -1
 
     val abTestCampaignliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }
@@ -353,6 +356,23 @@ class ConversationViewModel(
                 ex.showAppropriateMsg()
             }
         }
+    }
+
+     fun regCourse() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp:List<Course> =
+                    AppObjectController.chatNetworkService.getRegisteredCourses()
+                batchStartedDate = resp[0].batchStarted
+            }
+            catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    suspend fun getLastLessonForCourse():Int {
+        return AppObjectController.appDatabase.lessonDao().getLastLessonForCourse(inboxEntity.courseId.toInt())
     }
 
     fun isRecordingStarted(): Boolean {

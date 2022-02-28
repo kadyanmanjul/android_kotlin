@@ -47,7 +47,6 @@
     <string name="pdf_desc" formatted="false">%s Page \u2022 PDF</string>
     <string name="restart">Restart</string>
     <string name="restart_now">Restart Now</string>
-    <string name="cancel_bold">Cancel</string>
     <string name="logout_message">Are you sure you want to logout?</string>
     <string name="logout">Logout</string>
     <string name="update_message">An update has just been downloaded.</string>

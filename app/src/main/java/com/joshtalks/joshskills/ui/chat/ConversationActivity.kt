@@ -146,6 +146,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_conversation.*
 import java.lang.ref.WeakReference
 import java.util.Timer
 import java.util.TimerTask
@@ -229,7 +230,7 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
-
+    private var lastLesson: Int? = null
     private var currentTooltipIndex = 0
     private var activityFeedControl = false
     private val leaderboardTooltipList by lazy {
@@ -255,6 +256,19 @@ class ConversationActivity :
             return
         }
         init()
+        conversationAdapter.getLastLesson()
+//        Log.e("Ayaaz","${conversationAdapter.getLastLesson()?.lessonName}")
+//        Log.e("Ayaaz","${conversationAdapter.getLastLesson()?.lessonNo}")
+//        Log.e("Ayaaz","${conversationAdapter.isUserAttemptedLesson()}")
+//        Log.e("Ayaaz","${conversationAdapter.getLastLesson()?.status}")
+//        CoroutineScope(Dispatchers.IO).launch {
+//            delay(1000)
+//            val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(90)
+//            Log.e("Ayaaz dis", "initScoreCardView: $status")
+//        }
+//        Log.e("Ayaaz","${AppObjectController.appDatabase.lessonDao().getLessonStatus(90)}")
+        showRestartButton()
+
     }
 
     override fun getConversationId(): String {
@@ -562,35 +576,7 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_restart_course -> {
-                        var checkIfCourseRestart = false
-                        var phoneNumber = User.getInstance().phoneNumber
-                        phoneNumber = phoneNumber?.substring(3)
-                        var email = User.getInstance().email
-                        when {
-                            email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()-> {
-                                conversationViewModel.restartCourse(phoneNumber.toString())
-                                checkIfCourseRestart = true
-                            }
-                            phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()-> {
-                                conversationViewModel.restartCourse(email)
-                                checkIfCourseRestart = true
-                            }
-                            email.isNullOrEmpty() && phoneNumber.isNullOrEmpty() -> {
-                                checkIfCourseRestart = false
-                            }
-                        }
-                        if(checkIfCourseRestart) {
-                            MaterialDialog(this@ConversationActivity).show{
-                                message(R.string.restart_course_message)
-                                positiveButton(R.string.restart_now) {
-                                    buildRestartDialog()
-                                }
-                                negativeButton(R.string.cancel_bold) {
-                                }
-                            }
-                        }
-                        else
-                            showToast("Course can't restart")
+                        restartCourse()
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -610,6 +596,51 @@ class ConversationActivity :
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         alertDialog.show()
         alertDialog.window?.setLayout(width.toInt(), height)
+    }
+    fun restartCourse() {
+        var checkIfCourseRestart = false
+        var phoneNumber = User.getInstance().phoneNumber
+        phoneNumber = phoneNumber?.substring(3)
+        var email = User.getInstance().email
+        when {
+            email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()-> {
+                conversationViewModel.restartCourse(phoneNumber.toString())
+                checkIfCourseRestart = true
+            }
+            phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()-> {
+                conversationViewModel.restartCourse(email)
+                checkIfCourseRestart = true
+            }
+            email.isNullOrEmpty() && phoneNumber.isNullOrEmpty() -> {
+                checkIfCourseRestart = false
+            }
+        }
+        if(checkIfCourseRestart) {
+            MaterialDialog(this@ConversationActivity).show{
+                message(R.string.restart_course_message)
+                positiveButton(R.string.restart_now) {
+                    conversationBinding.btnRestartCourse.visibility = View.GONE
+                    buildRestartDialog()
+                }
+                negativeButton(R.string.cancel) {
+                }
+            }
+        }
+        else
+            showToast("Course can't restart")
+    }
+    fun showRestartButton() {
+        CoroutineScope(Dispatchers.IO).launch {
+            lastLesson= conversationViewModel.getLastLessonForCourse()
+            Log.e("Ayaaz","${inboxEntity.courseId}")
+            if(lastLesson == 90 && inboxEntity.courseId == "151") {
+                conversationBinding.btnRestartCourse.visibility = View.VISIBLE
+                conversationBinding.messageButton.visibility = View.GONE
+                conversationBinding.chatEdit.visibility = View.GONE
+            }
+            else
+                conversationBinding.btnRestartCourse.visibility = View.GONE
+        }
     }
 
     private fun initRV() {
