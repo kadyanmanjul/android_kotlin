@@ -1027,6 +1027,7 @@ class ConversationActivity :
 
         conversationViewModel.pendingRequestsList.observe(this) {
             if (it.pendingRequestsList.isNullOrEmpty()) {
+                conversationBinding.myRequestsLl.removeAllViews()
                 conversationBinding.quickViewNoRequests.visibility = VISIBLE
             } else {
                 conversationBinding.quickViewNoRequests.visibility = INVISIBLE
@@ -1159,10 +1160,8 @@ class ConversationActivity :
         }
 
         conversationBinding.blurView.setOnClickListener {
-            showToast(it.id.toString())
             setExpandableButtons(userProfileData)
             setButtonsAnimation()
-            conversationViewModel.getPendingRequestsList()
         }
     }
 
@@ -1170,18 +1169,8 @@ class ConversationActivity :
     private fun setExpandableButtons(userProfileData: UserProfileResponse) {
         with(conversationBinding) {
             if (buttonClicked) {
-                //we can remove elevation if ui will lack
-                conversationBinding.userPointContainer.elevation = 0f
-                conversationBinding.imgPointer.visibility = VISIBLE
-                lifecycleScope.launchWhenCreated {
-                    conversationBinding.blurView.visibility = VISIBLE
-                    Blurry.with(this@ConversationActivity).radius(25).sampling(3)
-                        .onto(conversationBinding.blurView, conversationBinding.rootView)
-                }
-
-                buttonClicked = false
-                conversationBinding.quickCardView.visibility = VISIBLE
-
+                conversationBinding.root.setOnClickListener {}
+                showBlurOrQuickView()
                 imgActivityFeed.visibility = VISIBLE
                 imgFppRequest.visibility = VISIBLE
 
@@ -1191,12 +1180,8 @@ class ConversationActivity :
                 if (userProfileData.hasGroupAccess)
                     imgGroupChatBtn.visibility = VISIBLE
             } else {
-                Blurry.delete(conversationBinding.blurView)
-                conversationBinding.imgPointer.visibility = INVISIBLE
-                conversationBinding.userPointContainer.elevation = 3f
-                conversationBinding.blurView.visibility = GONE
-                buttonClicked = true
-                conversationBinding.quickCardView.visibility = INVISIBLE
+                conversationBinding.root.onFocusChangeListener = null
+                hideBlurOrQuickView()
                 imgActivityFeed.visibility = GONE
                 imgFppRequest.visibility = GONE
 
@@ -1208,6 +1193,32 @@ class ConversationActivity :
             }
         }
     }
+
+    private fun showBlurOrQuickView(){
+        conversationBinding.userPointContainer.elevation = 0f
+        conversationBinding.imgMain.visibility = VISIBLE
+        conversationBinding.imgPointer.visibility = VISIBLE
+        conversationBinding.root.setOnClickListener {  }
+        lifecycleScope.launchWhenCreated {
+            conversationBinding.blurView.visibility = VISIBLE
+            Blurry.with(this@ConversationActivity).radius(25).sampling(3)
+                .onto(conversationBinding.blurView, conversationBinding.rootView)
+        }
+
+        buttonClicked = false
+        conversationBinding.quickCardView.visibility = VISIBLE
+    }
+
+    private fun hideBlurOrQuickView(){
+        conversationBinding.root.setOnClickListener(null)
+        Blurry.delete(conversationBinding.blurView)
+        conversationBinding.imgPointer.visibility = INVISIBLE
+        conversationBinding.userPointContainer.elevation = 3f
+        conversationBinding.blurView.visibility = GONE
+        buttonClicked = true
+        conversationBinding.quickCardView.visibility = GONE
+    }
+
 
     @SuppressLint("WrongViewCast")
     private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): View? {
@@ -1983,6 +1994,9 @@ class ConversationActivity :
     }
 
     override fun onStop() {
+        hideBlurOrQuickView()
+        conversationBinding.imgMain.visibility= INVISIBLE
+        setButtonsAnimation()
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)

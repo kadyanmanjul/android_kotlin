@@ -797,29 +797,28 @@
             android:fillAfter="false"
             android:orientation="vertical">
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButtonAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:visibility="invisible"
+                app:backgroundTint="@color/colorAccent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_add_24"
+                app:tint="@color/white" />
+
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/img_main"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_68sdp"
                 android:elevation="@dimen/_15sdp"
-                android:visibility="visible"
-                android:layout_marginEnd="@dimen/_8sdp"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@+id/quickCardView"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:visibility="visible">
-
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/floatingActionButtonAdd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:backgroundTint="@color/colorAccent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_baseline_add_24"
-                    app:tint="@color/white" />
-
+                app:layout_constraintEnd_toStartOf="@+id/floatingActionButtonAdd"
+                tools:visibility="invisible">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_game_btn"
@@ -829,7 +828,6 @@
                     android:focusable="true"
                     android:src="@drawable/ic_game"
                     android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@id/floatingActionButtonAdd"
                     app:layout_constraintStart_toStartOf="@+id/img_group_chat_btn"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:visibility="gone" />
@@ -978,7 +976,6 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:background="@color/gray_9E"
             android:layout_alignParentBottom="true"
             android:visibility="invisible"
             tools:visibility="invisible" />
