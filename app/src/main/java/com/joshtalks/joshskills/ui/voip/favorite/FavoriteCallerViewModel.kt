@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.voip.favorite
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -104,10 +103,8 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
                     } else {
                         showToast(response.body()?.getValue("message") ?: "", Toast.LENGTH_LONG)
                     }
-                    // checkCallOngoing.postValue(response.body())
                 }
             } catch (ex: Throwable) {
-                Log.e("sagar", "getCallOnGoing: ${ex.message}")
                 ex.printStackTrace()
             }
         }

@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core.firestore
 
-import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
