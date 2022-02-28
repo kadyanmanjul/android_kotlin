@@ -145,6 +145,9 @@ data class LessonQuestion(
     @IgnoredOnParcel
     var filePath: String? = null,
 
+//    @Ignore
+//    var videoFilePath: String? = null,
+
     @Ignore
     var playProgress: Int = 0,
 
@@ -217,6 +220,23 @@ interface LessonQuestionDao {
                     question.pdfList =
                         AppObjectController.appDatabase.chatDao()
                             .getPdfOfQuestion(questionId = question.id)
+//                LessonMaterialType.OTHER ->
+//                    question.imageList =
+//                        AppObjectController.appDatabase.chatDao()
+//                            .getImagesOfQuestion(questionId = question.id)
+//                LessonMaterialType.OTHER ->
+//                    question.videoList =
+//                        AppObjectController.appDatabase.chatDao()
+//                            .getVideosOfQuestion(questionId = question.id)
+                else->{
+                    question.imageList =
+                        AppObjectController.appDatabase.chatDao()
+                            .getImagesOfQuestion(questionId = question.id)
+                    question.videoList =
+                        AppObjectController.appDatabase.chatDao()
+                            .getVideosOfQuestion(questionId = question.id)
+
+                }
             }
             if (question.type == LessonQuestionType.PR) {
                 question.practiseEngagementV2 =

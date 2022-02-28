@@ -190,6 +190,13 @@ data class ChatModel(
     }
 }
 
+@Entity(tableName = "reading_video")
+data class ReadingVideo(
+    @PrimaryKey
+    val id: String = "",
+    val path: String = ""
+)
+
 @Entity(tableName = "question_table")
 @Parcelize
 data class Question(

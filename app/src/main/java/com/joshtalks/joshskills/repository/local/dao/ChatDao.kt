@@ -12,23 +12,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.ImageType
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.entity.OptionType
-import com.joshtalks.joshskills.repository.local.entity.PdfType
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import java.util.Date
 
@@ -78,6 +62,9 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where  is_sync= 0")
     suspend fun getUnSyncMessage(): List<ChatModel>
+
+    @Insert
+    fun insertReadingVideoDownloadedPath(readingVideo: ReadingVideo)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAMessage(chat: ChatModel): Long
