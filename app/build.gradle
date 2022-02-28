@@ -450,6 +450,4 @@ dependencies {
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
 
 
-    //AutoStarter
-    implementation 'com.github.judemanutd:autostarter:1.1.0'
 }

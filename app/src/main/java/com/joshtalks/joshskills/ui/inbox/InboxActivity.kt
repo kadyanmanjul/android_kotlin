@@ -1,14 +1,10 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -46,7 +42,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
-import com.judemanutd.autostarter.AutoStartPermissionHelper
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
@@ -95,35 +90,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initView()
         addLiveDataObservable()
         addAfterTime()
-//        showAppAutoStartDialog()
-    }
-
-    private fun showAppAutoStartDialog() {
-        val builder = AlertDialog.Builder(this)
-        val dialog: AlertDialog = builder.setMessage("To receive calls and notifications please turn on the switch in the settings")
-            .setPositiveButton("Settings") { dialog, id ->
-                if (AutoStartPermissionHelper.getInstance().isAutoStartPermissionAvailable(applicationContext))
-                    AutoStartPermissionHelper.getInstance().getAutoStartPermission(
-                        applicationContext,
-                        open = true,
-                        newTask = true
-                    )
-            }
-            .setNegativeButton("Cancel") { dialog, id ->
-                dialog.cancel()
-            }
-            .create()
-
-        dialog.show()
-
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
-            it.setTypeface(null, Typeface.BOLD)
-            it.setTextColor(Color.parseColor("#107BE5"))
-        }
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).let{
-            it.setTypeface(null, Typeface.BOLD)
-            it.setTextColor(Color.parseColor("#8D8D8D"))
-        }
     }
 
     private fun addAfterTime() {
