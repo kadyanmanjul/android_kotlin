@@ -399,21 +399,6 @@
             </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/scroll_to_last_lesson"
-                android:layout_width="@dimen/_32sdp"
-                android:layout_height="@dimen/_32sdp"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_40sdp"
-                android:adjustViewBounds="true"
-                android:padding="@dimen/_4sdp"
-                android:scaleType="centerInside"
-                android:visibility="gone"
-                app:elevation="@dimen/_4sdp"
-                app:srcCompat="@drawable/arrow_up"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/scroll_to_end_button"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
@@ -500,7 +485,7 @@
                 android:layout_marginHorizontal="@dimen/_20sdp"
                 android:backgroundTint="@color/button_color"
                 android:elevation="@dimen/_4sdp"
-                android:onClick="@{()->handler.restartCourse()}"
+                android:onClick="@{()->handler.restartCourse(true)}"
                 android:padding="@dimen/_8sdp"
                 android:text="Restart Course"
                 android:textAllCaps="false"

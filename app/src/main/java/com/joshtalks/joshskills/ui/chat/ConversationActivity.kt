@@ -576,7 +576,8 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_restart_course -> {
-                        restartCourse()
+                        conversationViewModel.saveImpression(IMPRESSION_CLICK_RESTART_COURSE_DOT)
+                        restartCourse(false)
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -597,7 +598,11 @@ class ConversationActivity :
         alertDialog.show()
         alertDialog.window?.setLayout(width.toInt(), height)
     }
-    fun restartCourse() {
+
+    fun restartCourse(isFromRestartButton: Boolean) {
+        if(isFromRestartButton) {
+            conversationViewModel.saveImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
+        }
         var checkIfCourseRestart = false
         var phoneNumber = User.getInstance().phoneNumber
         phoneNumber = phoneNumber?.substring(3)
@@ -619,6 +624,12 @@ class ConversationActivity :
             MaterialDialog(this@ConversationActivity).show{
                 message(R.string.restart_course_message)
                 positiveButton(R.string.restart_now) {
+                    if(isFromRestartButton) {
+                        conversationViewModel.saveImpression(IMPRESSION_SUCCESS_RESTART_90LESSONS)
+                    }
+                    else {
+                        conversationViewModel.saveImpression(IMPRESSION_SUCCESS_RESTART_COURSE_DOT)
+                    }
                     conversationBinding.btnRestartCourse.visibility = View.GONE
                     buildRestartDialog()
                 }
