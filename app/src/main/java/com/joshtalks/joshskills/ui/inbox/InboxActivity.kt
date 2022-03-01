@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -33,7 +32,6 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -84,8 +82,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        User.getInstance()
-        Log.e("Ayaaz","${User.getInstance().phoneNumber}")
         WorkManagerAdmin.requiredTaskInLandingPage()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()

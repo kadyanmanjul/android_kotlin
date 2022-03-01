@@ -146,7 +146,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_conversation.*
 import java.lang.ref.WeakReference
 import java.util.Timer
 import java.util.TimerTask
@@ -245,7 +244,6 @@ class ConversationActivity :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        User.getInstance()
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
@@ -256,19 +254,7 @@ class ConversationActivity :
             return
         }
         init()
-        conversationAdapter.getLastLesson()
-//        Log.e("Ayaaz","${conversationAdapter.getLastLesson()?.lessonName}")
-//        Log.e("Ayaaz","${conversationAdapter.getLastLesson()?.lessonNo}")
-//        Log.e("Ayaaz","${conversationAdapter.isUserAttemptedLesson()}")
-//        Log.e("Ayaaz","${conversationAdapter.getLastLesson()?.status}")
-//        CoroutineScope(Dispatchers.IO).launch {
-//            delay(1000)
-//            val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(90)
-//            Log.e("Ayaaz dis", "initScoreCardView: $status")
-//        }
-//        Log.e("Ayaaz","${AppObjectController.appDatabase.lessonDao().getLessonStatus(90)}")
         showRestartButton()
-
     }
 
     override fun getConversationId(): String {
@@ -643,7 +629,6 @@ class ConversationActivity :
     fun showRestartButton() {
         CoroutineScope(Dispatchers.IO).launch {
             lastLesson= conversationViewModel.getLastLessonForCourse()
-            Log.e("Ayaaz","${inboxEntity.courseId}")
             if(lastLesson == 90 && inboxEntity.courseId == "151") {
                 conversationBinding.btnRestartCourse.visibility = View.VISIBLE
                 conversationBinding.messageButton.visibility = View.GONE
