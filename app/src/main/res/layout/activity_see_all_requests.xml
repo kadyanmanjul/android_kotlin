@@ -95,22 +95,16 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recent_list_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/appbar"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recent_list_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingTop="10dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:itemCount="10"
-                tools:listitem="@layout/fpp_requests_list_item" />
-        </LinearLayout>
+            android:clipToPadding="false"
+            android:paddingTop="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:itemCount="10"
+            tools:listitem="@layout/fpp_requests_list_item" />
 
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/progress_bar"

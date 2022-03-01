@@ -82,4 +82,7 @@ interface P2PNetworkService {
 
     @POST("$DIR/fpp/check_already_on_call/")
     suspend fun checkUserInCallOrNot(@Body params : Map<String,String>) : Response<HashMap<String,String>>
+
+    @POST("$DIR/fpp/block/")
+    suspend fun blockFppUser(@Body params : Map<String,String>) : Response<Any>
 }

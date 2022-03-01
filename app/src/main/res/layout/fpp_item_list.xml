@@ -18,6 +18,7 @@
         android:clipToPadding="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:longClickable="true"
+        app:cardCornerRadius="0dp"
         app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
         tools:cardBackgroundColor="@color/white"

@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -78,6 +79,9 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
 
     private fun addObservable() {
         viewModel.recentCallList.observe(this) {
+            if (it?.arrayList?.size?:0 <= 0)
+                binding.emptyCard.visibility = View.VISIBLE
+
             if (it != null) {
                 if (isFirstTime) {
                     initView(it.arrayList)
@@ -93,7 +97,7 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
                 when (it) {
                     ApiCallStatus.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
-                        if (recentCallAdapter.itemCount == 0) {
+                        if (recentCallAdapter.itemCount <= 0) {
                             binding.emptyCard.visibility = View.VISIBLE
                         }
                         flag = false
@@ -164,4 +168,30 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
 
         }
     }
+
+    override fun onUserBlock(toMentorId: String?, name: String?) {
+        val dialogView = Dialog(this)
+        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        dialogView.setCancelable(true)
+        dialogView.setContentView(R.layout.block_user_alert_dialog)
+        dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogView.show()
+
+        val btnConfirm = dialogView.findViewById<AppCompatTextView>(R.id.yes_button)
+        val btnNotNow = dialogView.findViewById<AppCompatTextView>(R.id.not_now)
+        dialogView.findViewById<TextView>(R.id.text).text =
+            "Block $name"
+        btnConfirm
+            .setOnClickListener {
+                if (toMentorId != null) {
+                    viewModel.blockUser(toMentorId)
+                    dialogView.dismiss()
+                }
+            }
+        btnNotNow.setOnClickListener {
+            dialogView.dismiss()
+        }
+    }
+
 }

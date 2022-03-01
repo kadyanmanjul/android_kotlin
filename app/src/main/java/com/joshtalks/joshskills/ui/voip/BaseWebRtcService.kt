@@ -132,6 +132,7 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
 */
     @SuppressLint("MissingPermission")
     protected fun startRingtoneAndVibration() {
+        stopPlaying()
         if (PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE).not()) {
             return
         }

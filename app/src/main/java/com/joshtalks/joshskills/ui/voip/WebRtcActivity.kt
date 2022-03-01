@@ -1025,6 +1025,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
     fun onStopCall() {
         //     SoundPoolManager.getInstance(this).release()
+        mBoundService?.stopPlaying()
         AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()

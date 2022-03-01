@@ -10,11 +10,27 @@
             type="com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/root_view"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clipToPadding="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="0dp"
+        android:elevation="0dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardElevation="0dp"
+        tools:cardBackgroundColor="@color/white"
+        tools:cardPreventCornerOverlap="false">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/group_item_container"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/_46sdp"
-        android:background="@color/white">
+        android:layout_gravity="center_vertical"
+        android:background="@color/white"
+        android:clipToPadding="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -104,7 +120,7 @@
             android:stateListAnimator="@null"
             android:text="@string/not_now"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Semi_bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
             android:textColor="@color/pure_black"
             android:textStyle="bold"
             app:cornerRadius="@dimen/_2sdp"
@@ -114,6 +130,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

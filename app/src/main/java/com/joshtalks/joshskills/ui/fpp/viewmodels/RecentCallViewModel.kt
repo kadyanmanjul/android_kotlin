@@ -38,7 +38,8 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
-     fun sendFppRequest(receiverMentorId:String) {
+
+    fun sendFppRequest(receiverMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 p2pNetworkService.sendFppRequest(receiverMentorId)
@@ -48,7 +49,8 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
-     fun deleteFppRequest(receiverMentorId:String) {
+
+    fun deleteFppRequest(receiverMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 p2pNetworkService.deleteFppRequest(receiverMentorId)
@@ -58,14 +60,30 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
-    fun confirmOrRejectFppRequest(senderMentorId:String,userStatus:String,pageType:String) {
+
+    fun confirmOrRejectFppRequest(senderMentorId: String, userStatus: String, pageType: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val map: HashMap<String, String> = HashMap<String, String>()
+                val map: HashMap<String, String> = HashMap()
                 map[userStatus] = "true"
                 map["page_type"] = pageType
                 p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
                 getFavorites()
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun blockUser(toMentorId:String){
+        viewModelScope.launch (Dispatchers.IO){
+            try {
+                val map: HashMap<String, String> = HashMap()
+                map["to_mentor_id"] = toMentorId
+                var res = p2pNetworkService.blockFppUser(map)
+                if(res.isSuccessful){
+                    getFavorites()
+                }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

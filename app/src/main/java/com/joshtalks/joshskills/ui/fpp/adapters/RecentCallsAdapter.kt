@@ -20,7 +20,13 @@ import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import kotlin.collections.ArrayList
 
-class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:AdapterCallback ,var activity:Activity,var conversationID:String?,var items:ArrayList<RecentCall>?) :
+class RecentCallsAdapter(
+    var lifecycleProvider: LifecycleOwner,
+    var callback: AdapterCallback,
+    var activity: Activity,
+    var conversationID: String?,
+    var items: ArrayList<RecentCall>?
+) :
 
     RecyclerView.Adapter<RecentCallsAdapter.RecentItemViewHolder>() {
     private val context = AppObjectController.joshApplication
@@ -36,13 +42,13 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
         return RecentItemViewHolder(binding)
     }
 
-    fun updateList(list:ArrayList<RecentCall>, recyclerView: RecyclerView?,position: Int){
+    fun updateList(list: ArrayList<RecentCall>, recyclerView: RecyclerView?, position: Int) {
         items = list
         notifyDataSetChanged()
         recyclerView?.smoothScrollToPosition(position)
     }
 
-    override fun getItemCount(): Int = items?.size?:0
+    override fun getItemCount(): Int = items?.size ?: 0
 
 
     override fun onBindViewHolder(holder: RecentCallsAdapter.RecentItemViewHolder, position: Int) {
@@ -59,11 +65,21 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
 
         @SuppressLint("UseCompatLoadingForColorStateLists")
         fun bind(recentCall: RecentCall, position: Int) {
-            binding.rootView.setOnClickListener{
+            binding.rootView.setOnClickListener {
                 openUserProfileActivity(
                     recentCall.receiverMentorId,
                     RECENT_CALL
                 )
+            }
+            binding.rootView.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.white
+                )
+            )
+
+            binding.imgBlock.setOnClickListener {
+                callback.onUserBlock(recentCall.receiverMentorId, recentCall.firstName)
             }
             with(binding) {
                 when (recentCall.fppRequestStatus) {
@@ -76,10 +92,12 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                             )
                         )
                         btnSentRequest.text = context.resources.getText(R.string.send_request)
-                        btnSentRequest.setTextColor(ContextCompat.getColor(
-                            AppObjectController.joshApplication,
-                            R.color.white
-                        ))
+                        btnSentRequest.setTextColor(
+                            ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.white
+                            )
+                        )
                     }
                     ALREADY_FPP -> {
                         btnSentRequest.visibility = View.INVISIBLE
@@ -91,10 +109,12 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                             R.color.not_now
                         )
                         btnSentRequest.text = "Requested"
-                        btnSentRequest.setTextColor(ContextCompat.getColor(
-                            AppObjectController.joshApplication,
-                            R.color.black_quiz
-                        ))
+                        btnSentRequest.setTextColor(
+                            ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.black_quiz
+                            )
+                        )
                     }
                     HAS_RECIEVED_REQUEST -> {
                         btnSentRequest.visibility = View.VISIBLE
@@ -103,24 +123,34 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                             R.color.not_now
                         )
                         btnSentRequest.text = "Respond"
-                        btnSentRequest.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_reverse_polygon, 0)
-                        btnSentRequest.setTextColor(ContextCompat.getColor(
-                            AppObjectController.joshApplication,
-                            R.color.black_quiz
-                        ))
+                        btnSentRequest.setCompoundDrawablesWithIntrinsicBounds(
+                            0,
+                            0,
+                            R.drawable.ic_reverse_polygon,
+                            0
+                        )
+                        btnSentRequest.setTextColor(
+                            ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.black_quiz
+                            )
+                        )
+                    }
+                    NONE-> {
+                        btnSentRequest.visibility = View.INVISIBLE
                     }
                 }
                 obj = recentCall
                 tvName.text = recentCall.firstName
                 tvSpokenTime.text = SINGLE_SPACE + recentCall.textToShow
-                if(recentCall.callType=="incoming") {
+                if (recentCall.callType == "incoming") {
                     tvSpokenTime.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_incoming_call,
                         0,
                         0,
                         0
                     )
-                }else{
+                } else {
                     tvSpokenTime.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_outgoing_call,
                         0,
@@ -128,18 +158,20 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                         0
                     )
                 }
-                btnSentRequest.setOnClickListener{
-                    when(recentCall.fppRequestStatus){
-                        SENT_REQUEST->{
+                btnSentRequest.setOnClickListener {
+                    when (recentCall.fppRequestStatus) {
+                        SENT_REQUEST -> {
                             btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
                                 AppObjectController.joshApplication,
                                 R.color.not_now
                             )
                             btnSentRequest.text = "Requested"
-                            btnSentRequest.setTextColor(ContextCompat.getColor(
-                                AppObjectController.joshApplication,
-                                R.color.black_quiz
-                            ))
+                            btnSentRequest.setTextColor(
+                                ContextCompat.getColor(
+                                    AppObjectController.joshApplication,
+                                    R.color.black_quiz
+                                )
+                            )
                             callback.onClickCallback(
                                 recentCall.fppRequestStatus,
                                 recentCall.receiverMentorId,
@@ -147,7 +179,7 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                                 null
                             )
                         }
-                        REQUESTED->{
+                        REQUESTED -> {
                             btnSentRequest.setBackgroundColor(
                                 ContextCompat.getColor(
                                     AppObjectController.joshApplication,
@@ -155,18 +187,21 @@ class RecentCallsAdapter( var lifecycleProvider: LifecycleOwner,var callback:Ada
                                 )
                             )
                             btnSentRequest.text = context.resources.getText(R.string.send_request)
-                            btnSentRequest.setTextColor(ContextCompat.getColor(
-                                AppObjectController.joshApplication,
-                                R.color.white
-                            ))
+                            btnSentRequest.setTextColor(
+                                ContextCompat.getColor(
+                                    AppObjectController.joshApplication,
+                                    R.color.white
+                                )
+                            )
                             callback.onClickCallback(
                                 recentCall.fppRequestStatus,
                                 recentCall.receiverMentorId,
                                 position,
-                                null,)
+                                null,
+                            )
 
                         }
-                        HAS_RECIEVED_REQUEST->{
+                        HAS_RECIEVED_REQUEST -> {
                             callback.onClickCallback(
                                 recentCall.fppRequestStatus,
                                 recentCall.receiverMentorId,

@@ -19,6 +19,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@color/white"
         app:cardElevation="0dp"
+        android:elevation="0dp"
         app:cardCornerRadius="0dp"
         tools:cardBackgroundColor="@color/white"
         tools:cardPreventCornerOverlap="false">
@@ -30,8 +31,7 @@
             android:layout_height="@dimen/_46sdp"
             android:layout_gravity="center_vertical"
             android:background="@color/white"
-            android:clipToPadding="true"
-            android:foreground="?android:attr/selectableItemBackground">
+            android:clipToPadding="true">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
@@ -62,7 +62,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_name"
-                    android:layout_width="@dimen/_140sdp"
+                    android:layout_width="@dimen/_120sdp"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="end"
@@ -87,23 +87,34 @@
                 android:id="@+id/btn_sent_request"
                 android:layout_width="@dimen/_88sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_14sdp"
                 android:backgroundTint="@color/colorAccent"
-                android:stateListAnimator="@null"
-                android:insetTop="0dp"
                 android:elevation="0dp"
-                app:elevation="0dp"
+                android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:visibility="gone"
+                android:stateListAnimator="@null"
                 android:text="@string/send_request"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                 android:textColor="@color/white"
+                android:visibility="invisible"
+                app:elevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_block"
+                app:layout_constraintHorizontal_bias="0.96"
+                app:layout_constraintStart_toEndOf="@+id/title_container"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_block"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_new_dot"
+                android:padding="@dimen/_5sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/white"
-                />
+                app:layout_constraintBottom_toBottomOf="parent">
+            </androidx.appcompat.widget.AppCompatImageView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>

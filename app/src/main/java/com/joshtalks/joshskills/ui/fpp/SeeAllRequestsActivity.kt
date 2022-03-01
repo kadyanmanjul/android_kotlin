@@ -88,4 +88,6 @@ class SeeAllRequestsActivity : AppCompatActivity(), AdapterCallback {
             }
         }
     }
+
+    override fun onUserBlock(toMentorId: String?, name: String?) {}
 }

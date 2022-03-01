@@ -103,6 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/tab_layout_"
+            android:paddingTop="@dimen/_10sdp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:listitem="@layout/fpp_item_list" />
 
