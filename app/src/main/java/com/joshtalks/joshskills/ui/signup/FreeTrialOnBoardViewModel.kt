@@ -96,7 +96,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             user.isVerified = true
             user.token = loginResponse.token
             user.source = loginResponse.createdSource!!
-            user.phoneNumber = loginResponse.mobile
             User.update(user)
             PrefManager.put(API_TOKEN, loginResponse.token)
             Mentor.getInstance()
