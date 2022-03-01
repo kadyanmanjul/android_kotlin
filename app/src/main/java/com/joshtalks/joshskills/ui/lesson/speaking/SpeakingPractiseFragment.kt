@@ -67,6 +67,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
     private var isIntroVideoEnabled = true
+    private var lessonNo = 0
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -91,14 +92,13 @@ class SpeakingPractiseFragment : ABTestFragment() {
         abTestCampaignData?.let { map->
             isIntroVideoEnabled = (map.variantKey == "SIV_ENABLED" )&& map.variableMap?.isEnabled == true
         }
-        if(isIntroVideoEnabled){
-
-        }
+        isIntroVideoEnabled= true
+        initDemoViews(lessonNo)
 
     }
 
     override fun initCampaigns() {
-        getCampaigns("SPEAKING_INTRODUCTION_VIDEO")
+        //getCampaigns("SPEAKING_INTRODUCTION_VIDEO")
     }
 
     override fun onAttach(context: Context) {
@@ -319,28 +319,8 @@ class SpeakingPractiseFragment : ABTestFragment() {
         }
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner, {
-            if(it.lessonNo == 1){
-                binding.btnCallDemo.visibility = View.GONE
-                binding.txtHowToSpeak.visibility = View.VISIBLE
-                binding.txtHowToSpeak.setOnClickListener {
-                    viewModel.isHowToSpeakClicked(true)
-                    binding.btnCallDemo.visibility = View.VISIBLE
-                    viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
-                }
-
-                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
-                    if(it == 1){
-                        binding.nestedScrollView.visibility = View.INVISIBLE
-                        binding.btnCallDemo.visibility = View.VISIBLE
-                    }
-                    if(it == 2){
-                        binding.nestedScrollView.visibility = View.VISIBLE
-                        binding.btnCallDemo.visibility = View.GONE
-                    }
-                })
-            }else{
-                binding.btnCallDemo.visibility = View.GONE
-            }
+            lessonNo = it.lessonNo
+            getCampaigns("SPEAKING_INTRODUCTION_VIDEO")
         })
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
@@ -348,6 +328,33 @@ class SpeakingPractiseFragment : ABTestFragment() {
                 binding.btnCallDemo.visibility = View.GONE
             }
         })
+    }
+
+    private fun initDemoViews(it: Int) {
+        if(it == 1 && isIntroVideoEnabled){
+            lessonActivityListener?.showIntroVideo()
+            lessonNo = it
+            binding.btnCallDemo.visibility = View.GONE
+            binding.txtHowToSpeak.visibility = View.VISIBLE
+            binding.txtHowToSpeak.setOnClickListener {
+                viewModel.isHowToSpeakClicked(true)
+                binding.btnCallDemo.visibility = View.VISIBLE
+                viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
+            }
+
+            viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                if(it == 1){
+                    binding.nestedScrollView.visibility = View.INVISIBLE
+                    binding.btnCallDemo.visibility = View.VISIBLE
+                }
+                if(it == 2){
+                    binding.nestedScrollView.visibility = View.VISIBLE
+                    binding.btnCallDemo.visibility = View.GONE
+                }
+            })
+        }else{
+            binding.btnCallDemo.visibility = View.GONE
+        }
     }
 
     private fun showTooltip() {

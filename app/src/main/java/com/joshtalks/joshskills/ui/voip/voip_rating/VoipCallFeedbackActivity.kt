@@ -9,7 +9,6 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
@@ -17,16 +16,15 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
-import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.repository.local.model.KFactor
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
+import java.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import timber.log.Timber
 import retrofit2.Response
-import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
 const val ARG_CALLER_NAME = "caller_name"
@@ -150,6 +148,8 @@ class VoipCallFeedbackActivity : BaseActivity(){
             }
             if (minute > 0) {
                 mTime.append(minute).append(getMinuteString(minute))
+
+                practiceViewModel.postGoal("SIV_GT_2MIN")
             }
             if (second > 0) {
                 mTime.append(second).append(getSecondString(second))
