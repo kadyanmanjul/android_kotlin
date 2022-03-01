@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.fragments
 
 import android.os.Bundle
 import android.view.Gravity
@@ -14,12 +14,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.databinding.FragmentPreviousProfilePicsBinding
-import com.joshtalks.joshskills.repository.server.ProfilePicture
-import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
+import com.joshtalks.joshskills.ui.userprofile.models.ProfilePicture
+import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
+import com.joshtalks.joshskills.ui.userprofile.adapters.PreviousPicsAdapter
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
 class PreviousProfilePicsFragment : DialogFragment() {
     lateinit var binding: FragmentPreviousProfilePicsBinding
     lateinit var mentorId:String
+    private var startTime = 0L
+    private var impressionId : String? =null
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(
             UserProfileViewModel::class.java
@@ -35,6 +39,9 @@ class PreviousProfilePicsFragment : DialogFragment() {
             }
         }
         changeDialogConfiguration()
+        startTime = System.currentTimeMillis()
+        viewModel.userProfileSectionImpression(mentorId,"PROFILE_PICTURE")
+        viewModel.getPreviousProfilePics(mentorId)
     }
 
     private fun changeDialogConfiguration() {
@@ -69,33 +76,6 @@ class PreviousProfilePicsFragment : DialogFragment() {
     }
 
     private fun addObservers() {
-        viewModel.userData.observe(
-            this, {
-                hideProgressBar()
-                if(it.previousProfilePictures==null||it.previousProfilePictures.profilePictures.isNullOrEmpty()){
-                    dismiss()
-                }
-                initView(it?.previousProfilePictures)
-            })
-
-        viewModel.apiCallStatusLiveData.observe(this) {
-            when (it) {
-                ApiCallStatus.SUCCESS -> {
-                    hideProgressBar()
-                }
-                ApiCallStatus.FAILED -> {
-                    hideProgressBar()
-                    this.dismiss()
-                }
-                ApiCallStatus.START -> {
-                    showProgressBar()
-                }
-                else -> {
-                    hideProgressBar()
-                    this.dismiss()
-                }
-            }
-        }
 
         viewModel.apiCallStatus.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
@@ -106,12 +86,14 @@ class PreviousProfilePicsFragment : DialogFragment() {
                 showProgressBar()
             }
         }
-
         viewModel.previousProfilePics.observe(this) {
             if(it==null||it.profilePictures.isNullOrEmpty()){
                 dismiss()
             }
             initView(it)
+        }
+        viewModel.sectionImpressionResponse.observe(this){
+            impressionId=it.sectionImpressionId
         }
 
     }
@@ -120,6 +102,14 @@ class PreviousProfilePicsFragment : DialogFragment() {
         binding.ivBack.setOnClickListener {
             dismiss()
         }
+    }
+
+    override fun onPause() {
+        startTime = System.currentTimeMillis().minus(startTime).div(1000)
+        if (startTime > 0 && impressionId!!.isBlank().not()) {
+            viewModel.engageUserProfileSectionTime(impressionId!!, startTime.toString())
+        }
+        super.onPause()
     }
 
     private fun initView(previousProfilePics: PreviousProfilePictures?) {

@@ -158,4 +158,7 @@ interface SignUpNetworkService {
 
     @GET("$DIR/user/profile_pictures//")
     suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
+    @GET("$DIR/course/course_syllabus/")
+    suspend fun getD2pSyllabusPdf() : Response<D2pSyllabusPdfResponse>
+
 }

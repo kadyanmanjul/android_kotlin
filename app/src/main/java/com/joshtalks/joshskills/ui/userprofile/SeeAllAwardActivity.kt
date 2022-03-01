@@ -11,6 +11,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -18,9 +19,10 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.FragmentSeeAllAwardBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.AwardCategory
+import com.joshtalks.joshskills.ui.userprofile.models.Award
+import com.joshtalks.joshskills.ui.userprofile.models.AwardCategory
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.mindorks.placeholderview.PlaceHolderView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -34,7 +36,14 @@ class SeeAllAwardActivity : BaseActivity() {
     private lateinit var awardCategory: List<AwardCategory>
     private var isSeniorStudent: Boolean = false
     private val compositeDisposable = CompositeDisposable()
-
+    private var mentorId: String? = null
+    private var startTime = 0L
+    private var impressionId: String? = null
+    private val viewModel by lazy {
+        ViewModelProvider(this).get(
+            UserProfileViewModel::class.java
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +53,19 @@ class SeeAllAwardActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.fragment_see_all_award)
         binding.lifecycleOwner = this
         binding.fragment = this
+        mentorId = intent.getStringExtra(MENTOR_ID)
+        startTime = System.currentTimeMillis()
+        addObservers()
+        mentorId?.let { viewModel.userProfileSectionImpression(it, "AWARD") }
         initRecyclerView()
         initToolbar()
+    }
+
+    private fun addObservers() {
+        viewModel.sectionImpressionResponse.observe(this) {
+            impressionId = it.sectionImpressionId
+        }
+
     }
 
     override fun getConversationId(): String? {
@@ -102,6 +122,18 @@ class SeeAllAwardActivity : BaseActivity() {
         title.visibility = View.GONE
         count.visibility = View.GONE
         image.setImageResource(R.drawable.senior_student_with_shadow)
+    }
+
+    override fun onBackPressed() {
+        startTime = System.currentTimeMillis().minus(startTime).div(1000)
+        impressionId?.let {
+            if (startTime > 0 && impressionId!!.isBlank().not()) {
+                viewModel.engageUserProfileSectionTime(impressionId!!, startTime.toString())
+            }
+        }
+
+        super.onBackPressed()
+
     }
 
     @SuppressLint("WrongViewCast")
@@ -167,11 +199,13 @@ class SeeAllAwardActivity : BaseActivity() {
     companion object {
         const val AWARD_CATEGORY = "award_category"
         const val IS_SENIOR = "IsSenior"
+        const val MENTOR_ID = "MentorId"
 
         fun startSeeAllAwardActivity(
             activity: Activity,
             awardCategory: List<AwardCategory>,
             isSeniorStudent: Boolean,
+            mentorId: String? = null,
             conversationId: String? = null,
             flags: Array<Int> = arrayOf(),
         ) {
@@ -179,6 +213,7 @@ class SeeAllAwardActivity : BaseActivity() {
                 putExtra(CONVERSATION_ID, conversationId)
                 putParcelableArrayListExtra(AWARD_CATEGORY, ArrayList(awardCategory))
                 putExtra(IS_SENIOR, isSeniorStudent)
+                putExtra(MENTOR_ID, mentorId)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

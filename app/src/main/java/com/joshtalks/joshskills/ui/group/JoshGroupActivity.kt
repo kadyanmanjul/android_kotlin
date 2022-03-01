@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
-import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.repository.server
+package com.joshtalks.joshskills.ui.userprofile.models
 
 
 import android.os.Parcelable
@@ -14,6 +14,8 @@ data class UserProfileResponse(
     val createdAt: Int?,
     @SerializedName("date_of_birth")
     val dateOfBirth: String?,
+    @SerializedName("profile_pictures_count")
+    val profilePicturesCount:Int?,
     @SerializedName("joined_on")
     val joinedOn: String?,
     @SerializedName("lastActiveAt")
@@ -72,18 +74,6 @@ data class UserProfileResponse(
     val isGameActive: Boolean = false
 )
 
-data class GroupInfo(
-    @SerializedName("text")
-    val textToShow: String?,
-    @SerializedName("minutes")
-    val minutesSpoken: Int?,
-    @SerializedName("name")
-    val groupName: String?,
-    @SerializedName("icon")
-    val groupIcon: String?,
-
-)
-
 data class Certificate(
     @SerializedName("id")
     val id: Int?,
@@ -102,46 +92,6 @@ data class Certificate(
     @SerializedName("is_seen")
     val isSeen: Boolean?
 )
-
-@Parcelize
-data class AwardCategory(
-    @SerializedName("id")
-    val id: Int?,
-    @SerializedName("label")
-    val label: String?,
-    @SerializedName("sort_order")
-    val sortOrder: Int?,
-    @SerializedName("awards")
-    var awards: List<Award>?
-) : Parcelable
-
-@Parcelize
-data class Award(
-    @SerializedName("id")
-    val id: Int?,
-    @SerializedName("award_text")
-    val awardText: String?,
-    @SerializedName("sort_order")
-    val sortOrder: Int?,
-    @SerializedName("date_text")
-    var dateText:String?,
-    @SerializedName("image_url")
-    val imageUrl: String?,
-    @SerializedName("award_description")
-    val awardDescription: String?,
-    @SerializedName("is_achieved")
-    val is_achieved: Boolean = false,
-    @SerializedName("is_seen")
-    val isSeen: Boolean?,
-    @SerializedName("count")
-    val count: Int = 0,
-    @SerializedName("date_list")
-    val dateList: List<String?>?,
-
-    var recentDate:String?
-
-
-) : Parcelable
 
 
 

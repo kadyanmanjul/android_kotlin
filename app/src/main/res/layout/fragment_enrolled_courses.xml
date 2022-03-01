@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.userprofile.fragments.MyGroupsFragment" />
+            type="com.joshtalks.joshskills.ui.userprofile.fragments.EnrolledCoursesFragement" />
 
     </data>
 
@@ -62,14 +62,14 @@
                     android:gravity="center_vertical|start"
                     android:lines="1"
                     android:padding="@dimen/_5sdp"
-                    android:text="My Groups"
+                    android:text="Enrolled Courses"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:textColor="@color/white" />
 
             </com.google.android.material.appbar.MaterialToolbar>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvGroups"
+                android:id="@+id/rvCourses"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_12sdp"

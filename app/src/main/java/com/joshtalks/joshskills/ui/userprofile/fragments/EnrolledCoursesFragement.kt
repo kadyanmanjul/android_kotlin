@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.fragments
 
 import android.os.Bundle
 import android.view.Gravity
@@ -13,11 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.databinding.FragmentMyGroupsBinding
-import com.joshtalks.joshskills.repository.server.GroupInfo
+import com.joshtalks.joshskills.databinding.FragmentEnrolledCoursesBinding
+import com.joshtalks.joshskills.ui.userprofile.models.EnrolledCoursesList
+import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
-class MyGroupsFragment : DialogFragment() {
-    lateinit var binding: FragmentMyGroupsBinding
+class EnrolledCoursesFragement : DialogFragment() {
+    lateinit var binding: FragmentEnrolledCoursesBinding
+    private var startTime = 0L
+    private var impressionId : String? =null
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(
             UserProfileViewModel::class.java
@@ -28,6 +32,7 @@ class MyGroupsFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialogBlank)
         changeDialogConfiguration()
+        startTime = System.currentTimeMillis()
     }
 
     private fun changeDialogConfiguration() {
@@ -46,7 +51,7 @@ class MyGroupsFragment : DialogFragment() {
         isCancelable = true
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_my_groups,
+            R.layout.fragment_enrolled_courses,
             container,
             false
         )
@@ -62,16 +67,14 @@ class MyGroupsFragment : DialogFragment() {
     }
 
     private fun addObservers() {
-        viewModel.userData.observe(
-            this, { userProfileResponse ->
-                hideProgressBar()
-                userProfileResponse?.myGroupsList?.let{
-                    initView(it)
-                }
+        viewModel.coursesList.observe(
+            this
+        ) {
+            hideProgressBar()
+            initView(it)
+        }
 
-            })
-
-        viewModel.apiCallStatusLiveData.observe(this) {
+        viewModel.apiCallStatusForCoursesList.observe(this) {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                     hideProgressBar()
@@ -89,25 +92,9 @@ class MyGroupsFragment : DialogFragment() {
                 }
             }
         }
-
-        viewModel.apiCallStatus.observe(this) {
-            when (it) {
-                ApiCallStatus.SUCCESS -> {
-                    hideProgressBar()
-                }
-                ApiCallStatus.FAILED -> {
-                    hideProgressBar()
-                }
-                ApiCallStatus.START -> {
-                    showProgressBar()
-                }
-                else -> {
-                    hideProgressBar()
-
-                }
-            }
+        viewModel.sectionImpressionResponse.observe(this){
+            impressionId=it.sectionImpressionId
         }
-
     }
 
     private fun addListeners() {
@@ -115,13 +102,20 @@ class MyGroupsFragment : DialogFragment() {
             dismiss()
         }
     }
+    override fun onPause() {
+        startTime = System.currentTimeMillis().minus(startTime).div(1000)
+        if (startTime > 0 && impressionId!!.isBlank().not()) {
+            viewModel.engageUserProfileSectionTime(impressionId!!, startTime.toString())
+        }
+        super.onPause()
+    }
 
-    private fun initView(myGroupsList: List<GroupInfo>) {
-        val recyclerView: RecyclerView = binding.rvGroups
-            recyclerView.setHasFixedSize(true)
-            recyclerView.apply {
-                this.layoutManager = LinearLayoutManager(context)
-                this.adapter = MyGroupsListAdapter( myGroupsList)
+    private fun initView(enrolledCoursesList: EnrolledCoursesList) {
+        val recyclerView: RecyclerView = binding.rvCourses
+        recyclerView.setHasFixedSize(true)
+        recyclerView.apply {
+            this.layoutManager = LinearLayoutManager(context)
+            this.adapter = EnrolledCoursesListAdapter( enrolledCoursesList.courses)
 
         }
     }
@@ -136,6 +130,6 @@ class MyGroupsFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = MyGroupsFragment()
+        fun newInstance() = EnrolledCoursesFragement()
     }
 }
