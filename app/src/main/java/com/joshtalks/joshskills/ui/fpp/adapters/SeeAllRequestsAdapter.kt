@@ -44,11 +44,17 @@ class SeeAllRequestsAdapter(
                     )
                 }
             }
+            binding.rootView.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    activity,
+                    R.color.white
+                )
+            )
             binding.btnConfirmRequest.setOnClickListener{
                 binding.btnNotNow.visibility=GONE
                 binding.btnConfirmRequest.visibility=GONE
                 binding.tvSpokenTime.text="You are now favorite practice partners"
-                binding.rootView.setBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
+                binding.groupItemContainer.setBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
                 callback.onClickCallback(
                     IS_ACCEPTED,
                     pendingRequestDetail.senderMentorId,
@@ -60,7 +66,7 @@ class SeeAllRequestsAdapter(
                 binding.btnNotNow.visibility=GONE
                 binding.btnConfirmRequest.visibility=GONE
                 binding.tvSpokenTime.text="Request Removed"
-                binding.rootView.setBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
+                binding.groupItemContainer.setBackgroundColor(ContextCompat.getColor(activity, R.color.request_respond));
                 callback.onClickCallback(
                     IS_REJECTED,
                     pendingRequestDetail.senderMentorId,

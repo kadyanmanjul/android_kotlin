@@ -7,6 +7,7 @@ const val REQUESTED = "requested"
 const val HAS_RECIEVED_REQUEST = "has_recieved_request"
 const val IS_ACCEPTED = "is_accepted"
 const val IS_REJECTED = "is_rejected"
+const val NONE= "none"
 
 const val RECENT_CALL = "RECENT_CALL"
 const val REQUESTS_SCREEN = "REQUESTS_SCREEN"

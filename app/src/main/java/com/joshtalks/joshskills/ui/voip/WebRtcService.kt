@@ -1236,6 +1236,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallForceDisconnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callForceDisconnect = true
                                     if (JoshApplication.isAppVisible.not()) {
                                         addNotification(CallDisconnect().action, null)
@@ -1248,6 +1249,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallDeclineDisconnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callForceDisconnect = true
                                     if (JoshApplication.isAppVisible.not()) {
                                         addNotification(CallDisconnect().action, null)
@@ -1260,6 +1262,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallForceConnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callStartTime = 0L
                                     cancelCallieDisconnectTimer()
                                     compositeDisposable.clear()
@@ -1865,6 +1868,7 @@ class WebRtcService : BaseWebRtcService() {
         }
         RtcEngine.destroy()
         stopRing()
+        stopPlaying()
         userDetailMap = null
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
@@ -1945,6 +1949,7 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun incomingCallNotification(incomingData: HashMap<String, String?>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")
+        stopPlaying()
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
         val pendingIntent = PendingIntent.getActivity(
             this,

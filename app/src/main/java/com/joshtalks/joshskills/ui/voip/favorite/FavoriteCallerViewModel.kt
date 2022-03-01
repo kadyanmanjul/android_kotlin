@@ -27,16 +27,20 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
 
     fun getFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
-            getFavoriteUsersDB()
-            fetchFavoriteCallersFromApi()
-            deleteFavoriteUsers()
+            try {
+                getFavoriteUsersDB()
+                fetchFavoriteCallersFromApi()
+                deleteFavoriteUsers()
+            }catch (ex:Exception){}
         }
     }
 
     fun deleteUsersFromFavoriteList(list: MutableList<FavoriteCaller>) {
         viewModelScope.launch(Dispatchers.IO) {
-            favoriteCallerDao.updateFavoriteCallerStatus(list.map { it.id })
-            deleteFavoriteUsers()
+            try {
+                favoriteCallerDao.updateFavoriteCallerStatus(list.map { it.id })
+                deleteFavoriteUsers()
+            }catch (ex:Exception){}
         }
     }
 
@@ -59,7 +63,9 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun getFavoriteUsersDB() {
-        favoriteCallerList.emit(favoriteCallerDao.getFavoriteCallers().sortedBy { it.lastCalledAt })
+        try {
+            favoriteCallerList.emit(favoriteCallerDao.getFavoriteCallers())
+        } catch (ex: Exception){}
     }
 
     private fun deleteFavoriteUsers() {

@@ -587,7 +587,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         updateButtonStatus()
         callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
 
-        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false){
+        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false && callType!=CallType.INCOMING){
             mBoundService?.startPlaying()
         }
 
@@ -1025,6 +1025,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
     fun onStopCall() {
         //     SoundPoolManager.getInstance(this).release()
+        mBoundService?.stopPlaying()
         AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
