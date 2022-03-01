@@ -502,7 +502,7 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_restart_course -> {
-                        conversationViewModel.saveImpression(IMPRESSION_CLICK_RESTART_COURSE_DOT)
+                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_COURSE_DOT)
                         restartCourse(false)
                     }
                 }
@@ -527,7 +527,7 @@ class ConversationActivity :
 
     fun restartCourse(isFromRestartButton: Boolean) {
         if(isFromRestartButton) {
-            conversationViewModel.saveImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
+            conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
         }
         var checkIfCourseRestart = false
         var phoneNumber = User.getInstance().phoneNumber
@@ -535,11 +535,11 @@ class ConversationActivity :
         var email = User.getInstance().email
         when {
             email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()-> {
-                conversationViewModel.restartCourse(phoneNumber.toString())
+                conversationViewModel.restartCourse(phoneNumber.toString(),"MobileNumber")
                 checkIfCourseRestart = true
             }
             phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()-> {
-                conversationViewModel.restartCourse(email)
+                conversationViewModel.restartCourse(email,"Email")
                 checkIfCourseRestart = true
             }
             email.isNullOrEmpty() && phoneNumber.isNullOrEmpty() -> {
@@ -551,10 +551,10 @@ class ConversationActivity :
                 message(R.string.restart_course_message)
                 positiveButton(R.string.restart_now) {
                     if(isFromRestartButton) {
-                        conversationViewModel.saveImpression(IMPRESSION_SUCCESS_RESTART_90LESSONS)
+                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_SUCCESS_RESTART_90LESSONS)
                     }
                     else {
-                        conversationViewModel.saveImpression(IMPRESSION_SUCCESS_RESTART_COURSE_DOT)
+                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_SUCCESS_RESTART_COURSE_DOT)
                     }
                     conversationBinding.btnRestartCourse.visibility = View.GONE
                     buildRestartDialog()

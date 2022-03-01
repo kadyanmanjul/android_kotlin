@@ -328,11 +328,11 @@ class ConversationViewModel(
         }
     }
 
-     fun restartCourse(mobile:String) {
+     fun restartCourse(mobile:String,inputDeleteUser:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestParams: HashMap<String, String> = HashMap()
-                requestParams["input_delete_user"] = "MobileNumber"
+                requestParams["input_delete_user"] = inputDeleteUser
                 requestParams["country_code"] = "+91"
                 requestParams["mobile"] = mobile
                 requestParams["course_id"] = inboxEntity.courseId
@@ -346,14 +346,14 @@ class ConversationViewModel(
         }
     }
 
-    fun saveImpression(eventName: String) {
+    fun saveRestartCourseImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
                     Pair("event_name", eventName)
                 )
-                AppObjectController.commonNetworkService.saveImpression(requestData)
+                AppObjectController.commonNetworkService.restartCourseImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
