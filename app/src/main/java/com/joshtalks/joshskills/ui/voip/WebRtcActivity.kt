@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
@@ -21,6 +20,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
 import android.view.View

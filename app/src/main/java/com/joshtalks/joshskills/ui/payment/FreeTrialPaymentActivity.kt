@@ -53,15 +53,12 @@ import io.reactivex.schedulers.Schedulers
 import java.math.BigDecimal
 import java.util.*
 import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
-import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.File
-import java.math.BigDecimal
-import java.util.*
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
