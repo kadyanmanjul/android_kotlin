@@ -1232,7 +1232,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         itemImageView.y = overlayItem.y.toFloat() - OFFSET
         itemImageView.setOnClickListener {
             binding.itemOverlay.visibility = View.INVISIBLE
-            viewModel.eventLiveData.postValue(Event(Unit))
+            viewModel.eventLiveData.postValue(Event(true))
         }
         itemImageView.requestLayout()
         itemImageView.post {

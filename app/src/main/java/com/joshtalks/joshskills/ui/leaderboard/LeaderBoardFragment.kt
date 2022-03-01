@@ -344,8 +344,12 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                 leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
             if (liveUserPosition < 0 || liveUserPosition >= 3) {
                 liveUserPosition = 2
-                leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)
-                    ?.next()?.isOnline = true
+                if (leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)
+                        ?.hasNext() == true
+                ) {
+                    leaderboardResponse1.top_50_mentor_list.listIterator(liveUserPosition)
+                        .next().isOnline = true
+                }
                 liveUserPosition = liveUserPosition.plus(2)
             } else {
                 liveUserPosition = liveUserPosition.plus(2)

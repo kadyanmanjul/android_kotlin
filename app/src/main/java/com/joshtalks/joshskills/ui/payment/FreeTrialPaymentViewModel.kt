@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
@@ -63,13 +64,13 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun getPaymentDetails(testId: Int) {
+    fun getPaymentDetails(testId: Int, couponCode: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {
             isProcessing.postValue(true)
             val data = HashMap<String, Any>()
             data["test_id"] = testId
             data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
-
+            data["code"] = couponCode
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 data["mentor_id"] = Mentor.getInstance().getId()
             }
