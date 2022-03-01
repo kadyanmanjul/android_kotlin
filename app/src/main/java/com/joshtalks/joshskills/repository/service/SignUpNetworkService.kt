@@ -156,9 +156,6 @@ interface SignUpNetworkService {
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
 
-    @GET("$DIR/user/profile_pictures//")
-    suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
-
     @GET("$DIR/course/course_syllabus/")
     suspend fun getD2pSyllabusPdf() : Response<D2pSyllabusPdfResponse>
 

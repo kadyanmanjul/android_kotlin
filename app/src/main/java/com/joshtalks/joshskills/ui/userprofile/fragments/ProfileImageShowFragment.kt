@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import kotlinx.android.synthetic.main.fragment_image_show.big_image_view
 
 const val IMAGE_SOURCE = "image_source"
@@ -97,7 +99,11 @@ class ProfileImageShowFragment : DialogFragment() {
             val builder = AlertDialog.Builder(context)
             builder.setMessage(R.string.delete_popup)
                 .setNegativeButton(Html.fromHtml("<font color='#E10717'><b>Delete<b></font>")) { dialog, id ->
-                    viewModel.deletePreviousProfilePic(imageId!!)
+                    imageId?.let { it -> mentorId?.let { it1 ->
+                        viewModel.deletePreviousProfilePic(it,
+                            it1
+                        )
+                    } }
                     Handler(Looper.getMainLooper()).postDelayed({
                         try {
                             dismiss()
@@ -111,7 +117,8 @@ class ProfileImageShowFragment : DialogFragment() {
         }
         view.findViewById<View>(R.id.set_as_profile_layout).setOnClickListener {
             imageId?.let {
-                viewModel.updateProfilePicFromPreviousProfile(it)
+                mentorId?.let { it1 -> viewModel.updateProfilePicFromPreviousProfile(it, it1) }
+
             }
             dismiss()
 

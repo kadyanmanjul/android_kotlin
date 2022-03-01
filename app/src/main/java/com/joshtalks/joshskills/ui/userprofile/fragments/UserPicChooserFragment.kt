@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.fragments
 
 import android.os.Bundle
 import android.os.Environment

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setPreviousProfileImage
-import com.joshtalks.joshskills.repository.server.ProfilePicture
+import com.joshtalks.joshskills.ui.userprofile.models.ProfilePicture
 
 class PreviousPicsAdapter(
     private val items: List<ProfilePicture> = emptyList(),

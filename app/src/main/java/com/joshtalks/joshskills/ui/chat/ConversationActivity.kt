@@ -62,8 +62,8 @@ import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.Award
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedMainActivity

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.fragments
 
 import android.annotation.TargetApi
 import android.content.DialogInterface
@@ -30,8 +30,10 @@ import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.repository.service.DIR
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
 class ShowAwardFragment : DialogFragment() {
 

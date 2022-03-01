@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.repository.server.GroupInfo
+import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MyGroupsListAdapter(

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.repository.server
+package com.joshtalks.joshskills.ui.userprofile.models
 
 
 import android.os.Parcelable
@@ -27,3 +27,7 @@ data class ProfilePicture(
     @SerializedName("is_current_profile")
     val isCurrentProfile: Boolean = false
 ) : Parcelable
+data class PictureHeader(
+    @SerializedName("profile_pictures")
+    val previousProfilePictures: PreviousProfilePictures
+)

@@ -28,11 +28,13 @@ import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryRes
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
+import com.joshtalks.joshskills.ui.userprofile.models.*
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -207,6 +209,19 @@ interface CommonNetworkService {
         @Query("interval_type") intervalType: String? = null,
         @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
+
+    @GET("$DIR/user/profile_awards/{mentor_id}/")
+    suspend fun getProfileAwards(@Path("mentor_id") id: String): Response<AwardHeader>
+
+    @GET("$DIR/user/profile_groups/{mentor_id}/")
+    suspend fun getProfileGroups(@Path("mentor_id") id: String): Response<GroupsHeader>
+
+    @GET("$DIR/user/profile_courses/{mentor_id}/")
+    suspend fun getProfileCourses(@Path("mentor_id") id: String): Response<CourseHeader>
+
+    @GET("$DIR/user/profile_pictures/{mentor_id}/")
+    suspend fun getPreviousProfilePics(@Path("mentor_id")id: String): Response<PictureHeader>
+
     @GET("$DIR/activity_feed/fetch_all/")
     suspend fun getActivityFeedData(): Response<ActivityFeedList>
 
@@ -258,6 +273,13 @@ interface CommonNetworkService {
         @Path("user_profile_impression_id") userProfileImpressionId: String,
         @Body params: Map<String, Long>
     ): WordDetailsResponse
+
+    @POST("$DIR/impression/user_profile_section_impression/")
+    suspend fun userProfileSectionImpression(@Body params: Map<String, String>): UserProfileSectionResponse
+
+    @PATCH("$DIR/impression/user_profile_section_impression/")
+    suspend fun engageUserProfileSectionTime(@Body params: Map<String, String>): Any
+
     @PATCH("$DIR/impression/activity_feed_impression/{activity_feed_impression_id}/")
     suspend fun engageActivityFeedTime(
         @Path("activity_feed_impression_id") userProfileImpressionId: String,

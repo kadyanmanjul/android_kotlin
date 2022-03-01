@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.repository.server
+package com.joshtalks.joshskills.ui.userprofile.models
 
 import com.google.gson.annotations.SerializedName
 
@@ -6,7 +6,7 @@ data class FppStatusInProfileResponse(
     @SerializedName("fpp_list")
     val fppList:List<FppDetails>?,
     @SerializedName("fpp_request")
-    val fppRequest:FppRequest?
+    val fppRequest: FppRequest?
     )
 
 data class FppRequest (

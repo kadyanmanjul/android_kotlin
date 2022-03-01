@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.fragments
 
 import android.os.Bundle
 import android.view.Gravity
@@ -24,7 +24,8 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentEditProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -138,30 +139,11 @@ class EditProfileFragment : DialogFragment() {
 
     private fun addObservers() {
         viewModel.userData.observe(
-            this, {
-                hideProgressBar()
-                initView(it)
-            })
-
-        viewModel.apiCallStatusLiveData.observe(this) {
-            when (it) {
-                ApiCallStatus.SUCCESS -> {
-                    hideProgressBar()
-                }
-                ApiCallStatus.FAILED -> {
-                    hideProgressBar()
-                    this.dismiss()
-                }
-                ApiCallStatus.START -> {
-                    showProgressBar()
-                }
-                else -> {
-                    hideProgressBar()
-                    this.dismiss()
-                }
-            }
+            this
+        ) {
+            hideProgressBar()
+            initView(it)
         }
-
         viewModel.userProfileUrl.observe(this) {
             binding.userPic.post {
                 binding.userPic.setUserImageOrInitials(
