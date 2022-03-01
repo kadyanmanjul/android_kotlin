@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PointsListRespo
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
@@ -792,6 +793,24 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     Pair("event_name", eventName)
                 )
                 AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun getDeepLink(deepLink: String, contentId: String) {
+        viewModelScope.launch {
+            try {
+                val requestData = LinkAttribution(
+                    mentorId = Mentor.getInstance().getId(),
+                    contentId = contentId,
+                    sharedItem = "READING_SECTION_VIDEO",
+                    sharedItemType = "VI",
+                    deepLink = deepLink
+                )
+                val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
+                Timber.i(res.body().toString())
             } catch (ex: Exception) {
                 Timber.e(ex)
             }

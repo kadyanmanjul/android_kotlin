@@ -63,6 +63,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
+import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
@@ -79,6 +80,9 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Defines
+import io.branch.referral.util.LinkProperties
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.reading_practice_fragment_without_feedback.*
@@ -95,7 +99,6 @@ import kotlin.collections.ArrayList
 
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
-
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
     Player.EventListener,
@@ -116,6 +119,7 @@ class ReadingFragmentWithoutFeedback :
     private var audioManager: ExoAudioPlayer? = null
     private var currentLessonQuestion: LessonQuestion? = null
     var lessonActivityListener: LessonActivityListener? = null
+    private var userReferralCode: String = EMPTY
     var video: String? = null
     var videoDownPath : String? = null
     var outputFile : String = ""
@@ -293,7 +297,7 @@ class ReadingFragmentWithoutFeedback :
         pauseAllAudioAndUpdateViews()
     }
 
-    private fun getPermissionAndDownloadSyllabus(url: String) {
+    private fun getPermissionAndDownloadVideo(url: String) {
         PermissionUtils.storageReadAndWritePermission(requireContext(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -756,7 +760,7 @@ class ReadingFragmentWithoutFeedback :
                                         var ansVideoPath = AppObjectController.appDatabase.chatDao().getDownloadedVideoPath(currentLessonQuestion!!.questionId)
                                         binding.mergedVideo.setVideoPath(ansVideoPath)
                                     }else if(AppObjectController.appDatabase.chatDao().getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao().getDownloadedVideoStatus(currentLessonQuestion!!.questionId) == false){
-                                        getPermissionAndDownloadSyllabus(currentLessonQuestion!!.practiceEngagement?.get(0)?.answerUrl.toString())
+                                        getPermissionAndDownloadVideo(currentLessonQuestion!!.practiceEngagement?.get(0)?.answerUrl.toString())
                                     }
                                 }
                             }else{
@@ -1438,17 +1442,76 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun shareVideoForAudio(path: String){
+
+        userReferralCode = Mentor.getInstance().referralCode
+        val branchUniversalObject = BranchUniversalObject()
+            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setTitle("Invite Friend")
+            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+        val lp = LinkProperties()
+            .setChannel(userReferralCode)
+            .setFeature("sharing")
+            .setCampaign("referral")
+            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
+            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
+            .addControlParameter(
+                Defines.Jsonkey.UTMMedium.key,
+                userReferralCode.plus(System.currentTimeMillis())
+            )
+        branchUniversalObject
+            .generateShortUrl(requireContext(), lp) { url, error ->
+                if (error == null)
+                    inviteFriends(
+                        dynamicLink = url,
+                        path = path
+                    )
+                else
+                    inviteFriends(
+                        dynamicLink = (if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                        else
+                            getAppShareUrl()),
+                        path = path
+                    )
+            }
+
+//            val destination = path!!
+//            val waIntent = Intent(Intent.ACTION_SEND)
+//            waIntent.type = "*/*"
+//            waIntent.putExtra(Intent.EXTRA_TEXT, "")
+//            waIntent.putExtra(
+//                Intent.EXTRA_STREAM,
+//                Uri.parse(destination)
+//            )
+//            waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//            startActivity(Intent.createChooser(waIntent, "Share with"))
+
+    }
+
+    fun inviteFriends(dynamicLink: String, path: String) {
+        viewModel.getDeepLink(
+            dynamicLink,
+            userReferralCode.plus(System.currentTimeMillis())
+        )
+        try {
             val destination = path!!
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "*/*"
-            waIntent.putExtra(Intent.EXTRA_TEXT, "")
+            waIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink)
             waIntent.putExtra(
                 Intent.EXTRA_STREAM,
                 Uri.parse(destination)
             )
             waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(Intent.createChooser(waIntent, "Share with"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
+    private fun getAppShareUrl(): String {
+        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
     fun closeRecordedView(){
