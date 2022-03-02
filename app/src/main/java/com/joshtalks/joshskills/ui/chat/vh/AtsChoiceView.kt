@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -30,12 +29,14 @@ import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import com.nex3z.flowlayout.FlowLayout
+import java.util.ArrayList
+import java.util.HashSet
+import java.util.LinkedList
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.random.Random
 
 class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
 
@@ -106,18 +107,6 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
         answerFlowLayout.removeAllViews()
         answerList.clear()
         val selectedWords = ArrayList<CustomWord>()
-        /*var i = 0
-        assessmentQuestion.choiceList
-            .sortedBy { it.sortOrder }
-            .forEach {
-                it.sortOrder = ++i
-                val wordView = getWordView(it)
-                addChoiceToOptionsLayout(wordView)
-                if (it.userSelectedOrder != 0 && it.userSelectedOrder != 100) {
-                    selectedWords.add(wordView)
-                    it.text?.let { it1 -> answerList.add(it1) }
-                }
-            }*/
         val selectedIndices = HashSet<Int>()
         var i = 0
         while (i < assessmentQuestion.choiceList.size) {
@@ -196,7 +185,6 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
 
     fun isCorrectAnswer(): Boolean {
         lockViews()
-        Log.d("Yash", "isCorrectAnswer: ")
         if (isAnyAnswerSelected().not()) {
             unlockViews()
             return false

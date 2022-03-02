@@ -19,9 +19,9 @@ interface LessonActivityListener {
     fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String? = null,
-        wrongAnswerHeading2: String? = null,
-        wrongAnswerText1: String? = null,
-        wrongAnswerText2: String? = null,
+        wrongAnswerSubHeading: String? = null,
+        wrongAnswerText: String? = null,
+        wrongAnswerDescription: String? = null,
         videoClickListener: (() -> Unit)? = null
     )
 }

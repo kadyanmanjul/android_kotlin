@@ -32,6 +32,9 @@ import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import kotlinx.android.synthetic.main.activity_launcher.retry
@@ -39,9 +42,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Calendar
 
 private const val TAG = "LauncherActivity"
 
@@ -153,7 +153,6 @@ class LauncherActivity : CoreJoshActivity() {
             Branch.sessionBuilder(WeakReference(this@LauncherActivity).get())
                 .withCallback { referringParams, error ->
                     try {
-                        Log.d("Yash", "handleIntent: referringParams=>  $referringParams")
                         val jsonParams =
                             referringParams ?: (Branch.getInstance().firstReferringParams
                                 ?: Branch.getInstance().latestReferringParams)
@@ -182,7 +181,6 @@ class LauncherActivity : CoreJoshActivity() {
                             if (it.has(Defines.Jsonkey.UTMCampaign.key))
                                 installReferrerModel.utmTerm =
                                     it.getString(Defines.Jsonkey.UTMCampaign.key)
-                            Log.i("Yash", "handleIntent: $installReferrerModel")
                             InstallReferrerModel.update(installReferrerModel)
                         }
                         if (isFinishing.not()) {
@@ -382,7 +380,6 @@ class LauncherActivity : CoreJoshActivity() {
             }
             obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             InstallReferrerModel.getPrefObject()?.let {
-                Log.e("Yash", "initGaid: InstallReferrerModel=> $it")
                 obj.installOn = it.installOn
                 obj.utmMedium =
                     if (it.utmMedium.isNullOrEmpty() && it.otherInfo != null && it.otherInfo!!.containsKey(

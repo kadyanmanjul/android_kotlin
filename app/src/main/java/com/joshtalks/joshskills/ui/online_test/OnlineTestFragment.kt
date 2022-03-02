@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +46,9 @@ import com.tonyodev.fetch2.Request
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Type
 
@@ -362,9 +363,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 override fun onVideoButtonAppear(
                     isClicked: Boolean,
                     wrongAnswerHeading: String?,
-                    wrongAnswerHeading2: String?,
-                    wrongAnswerText1: String?,
-                    wrongAnswerText2: String?
+                    wrongAnswerSubHeading: String?,
+                    wrongAnswerText: String?,
+                    wrongAnswerDescription: String?
                 ) {
                     if (isClicked)
                         binding.progressContainer.isVisible = true
@@ -375,9 +376,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         lessonActivityListener?.showVideoToolTip(
                             shouldShow = true,
                             wrongAnswerHeading = wrongAnswerHeading,
-                            wrongAnswerHeading2 = wrongAnswerHeading2,
-                            wrongAnswerText1 = wrongAnswerText1,
-                            wrongAnswerText2 = wrongAnswerText2,
+                            wrongAnswerSubHeading = wrongAnswerSubHeading,
+                            wrongAnswerText = wrongAnswerText,
+                            wrongAnswerDescription = wrongAnswerDescription,
                             videoClickListener = { buttonView!!.get().viewVideo() }
                         )
                     }
