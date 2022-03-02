@@ -270,6 +270,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    //For InstantTaskExecutorRule
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
 
     def room_version = "2.3.0-alpha02"
 
@@ -413,6 +416,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    // Optional -- Robolectric environment
+    testImplementation "androidx.test:core:1.4.0"
+
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0'
 
     implementation 'com.airbnb.android:lottie:3.7.0'
     implementation 'info.kimjihyok:voice-ripple-record-button:0.1.3'

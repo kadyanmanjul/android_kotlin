@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
+import com.joshtalks.joshskills.ui.call.lib.AgoraCallingService
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +59,9 @@ class JoshApplication :
         AppObjectController.init(this)
         registerBroadcastReceiver()
         initGroups()
+        CoroutineScope(Dispatchers.IO).launch {
+            AgoraCallingService.initCallingService()
+        }
     }
 
     override fun onTerminate() {
