@@ -102,7 +102,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
-    private var customView: CustomWord? = null
+//    private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
@@ -222,8 +222,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun subscribeRxBus() {
-        animateAtsOptionViewEvent.observe(this) { event ->
-            event?.let {
+        /*animateAtsOptionViewEvent.observe(this) { event ->
+            event?.getContentIfNotHandledOrReturnNull()?.let {
                 if (customView == null) {
                     customView = CustomWord(this, it.customWord.choice)
                 } else {
@@ -239,46 +239,48 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
                         val toLocation = IntArray(2)
                         it.customWord.getLocationOnScreen(toLocation)
-                        toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
+                        toLocation[1] = toLocation[1] - getStatusBarHeight()
                         this.translationAnimationNew(
                             toLocation,
                             it.customWord,
                             it.optionLayout
                         )
-                        animateAtsOptionViewEvent.postValue(null)
                     }
                 }
             }
-        }
-        /* compositeDisposable.add(
+        }*/
+        compositeDisposable.add(
              RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
                  .subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
                  .subscribe { event ->
-                     Log.d(TAG, "subscribeRxBus() returned: $event")
-                     if (customView == null) {
+//                     Log.d(TAG, "subscribeRxBus() returned: $event")
+                    /*if (customView == null) {
                          customView = CustomWord(this, event.customWord.choice)
                      } else {
- //                        binding.rootView.removeView(customView)
+                        binding.rootView.removeView(customView)
                          customView?.updateChoice(event.customWord.choice)
                          //customView?.choice = event.customWord.choice
-                     }
-                     customView?.apply {
- //                        binding.rootView.addView(this)
+                    }*/
+                    CustomWord(this, event.customWord.choice).apply {
+                        binding.rootView.addView(this)
                          this.text = event.customWord.choice.text
                          this.x = event.fromLocation[0].toFloat()
                          this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
                          val toLocation = IntArray(2)
                          event.customWord.getLocationOnScreen(toLocation)
-                         toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
-                         this.transaltionAnimationNew(
+                        toLocation[1] = toLocation[1] - getStatusBarHeight()
+                        this.translationAnimationNew(
                              toLocation,
                              event.customWord,
-                             event.optionLayout
+                            event.optionLayout,
+                            doOnAnimationEnd = {
+                                binding.rootView.removeView(this)
+                            }
                          )
                      }
                  }
-         )*/
+        )
     }
 
     override fun getConversationId(): String? {
@@ -741,7 +743,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     override fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String?,
-        wrongAnswerText: String?,
+        wrongAnswerHeading2: String?,
+        wrongAnswerText1: String?,
+        wrongAnswerText2: String?,
         videoClickListener: (() -> Unit)?
     ) {
         if (shouldShow.not()) PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
@@ -757,7 +761,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
             wrongAnswerTitle.text = wrongAnswerHeading
-            wrongAnswerDesc.text = wrongAnswerText
+            explanationTitle.text = wrongAnswerHeading2
+            wrongAnswerDesc.text = wrongAnswerText1
+            explanationText.text = wrongAnswerText2
         }
     }
 
@@ -1153,7 +1159,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         const val LAST_LESSON_STATUS = "last_lesson_status"
         const val LESSON_SECTION = "lesson_section"
         val isVideoVisible = MutableLiveData(false)
-        val animateAtsOptionViewEvent = MutableLiveData<AnimateAtsOtionViewEvent?>(null)
+//        val animateAtsOptionViewEvent = MutableLiveData<Event<AnimateAtsOtionViewEvent?>>()
 
         fun getActivityIntent(
             context: Context,

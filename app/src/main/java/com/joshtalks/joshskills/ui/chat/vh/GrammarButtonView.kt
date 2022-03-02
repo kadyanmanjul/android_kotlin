@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
@@ -14,7 +13,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textview.MaterialTextView
@@ -187,9 +185,11 @@ class GrammarButtonView : FrameLayout {
     fun viewVideo() {
         if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
             callback?.onVideoButtonAppear(
-                true,
-                this.questionFeedback?.wrongAnswerHeading,
-                this.questionFeedback?.wrongAnswerText
+                isClicked = true,
+                wrongAnswerHeading = this.questionFeedback?.wrongAnswerHeading,
+                wrongAnswerHeading2 = this.questionFeedback?.wrongAnswerHeading2,
+                wrongAnswerText1 = this.questionFeedback?.wrongAnswerText,
+                wrongAnswerText2 = this.questionFeedback?.wrongAnswerText2,
             )
             openVideoObject()
             animatedVideoIv.visibility = GONE
@@ -405,9 +405,11 @@ class GrammarButtonView : FrameLayout {
                 animatedVideoIv.visibility = VISIBLE
             }
             callback?.onVideoButtonAppear(
-                false,
-                this.questionFeedback?.wrongAnswerHeading,
-                this.questionFeedback?.wrongAnswerText
+                isClicked = false,
+                wrongAnswerHeading = this.questionFeedback?.wrongAnswerHeading,
+                wrongAnswerHeading2 = this.questionFeedback?.wrongAnswerText,
+                wrongAnswerText1 = questionFeedback?.wrongAnswerText,
+                wrongAnswerText2 = questionFeedback?.wrongAnswerText2
             )
             updateImageTint(videoIv, R.color.grammar_red_color_dark)
         }
@@ -478,7 +480,9 @@ class GrammarButtonView : FrameLayout {
         fun onVideoButtonAppear(
             isClicked: Boolean,
             wrongAnswerHeading: String?,
-            wrongAnswerText: String?
+            wrongAnswerHeading2: String?,
+            wrongAnswerText1: String?,
+            wrongAnswerText2: String?
         )
     }
 

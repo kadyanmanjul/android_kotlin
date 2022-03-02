@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.lesson
 
-import android.view.View
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 
 interface LessonActivityListener {
@@ -20,7 +19,9 @@ interface LessonActivityListener {
     fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String? = null,
-        wrongAnswerText: String? = null,
+        wrongAnswerHeading2: String? = null,
+        wrongAnswerText1: String? = null,
+        wrongAnswerText2: String? = null,
         videoClickListener: (() -> Unit)? = null
     )
 }

@@ -225,7 +225,6 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             showGrammarCompleteFragment()
             return
         }
-        Timber.d("setupViews(): totalQuestion :$totalQuestion")
         if (totalQuestion != null) {
             binding.questionProgressBar.visibility = View.VISIBLE
             binding.questionProgressBar.max = (totalQuestion ?: 0).times(100)
@@ -363,7 +362,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 override fun onVideoButtonAppear(
                     isClicked: Boolean,
                     wrongAnswerHeading: String?,
-                    wrongAnswerText: String?
+                    wrongAnswerHeading2: String?,
+                    wrongAnswerText1: String?,
+                    wrongAnswerText2: String?
                 ) {
                     if (isClicked)
                         binding.progressContainer.isVisible = true
@@ -374,7 +375,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         lessonActivityListener?.showVideoToolTip(
                             shouldShow = true,
                             wrongAnswerHeading = wrongAnswerHeading,
-                            wrongAnswerText = wrongAnswerText,
+                            wrongAnswerHeading2 = wrongAnswerHeading2,
+                            wrongAnswerText1 = wrongAnswerText1,
+                            wrongAnswerText2 = wrongAnswerText2,
                             videoClickListener = { buttonView!!.get().viewVideo() }
                         )
                     }
@@ -549,7 +552,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun addObserver() {
-        LessonActivity.isVideoVisible.observe(viewLifecycleOwner, { isVideoVisible ->
+        LessonActivity.isVideoVisible.observe(viewLifecycleOwner) { isVideoVisible ->
             if (!isVideoVisible) {
                 binding.videoPlayer.onPause()
                 if (binding.videoContainer.isVisible)
@@ -578,7 +581,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     })
                     .start()
             }
-        })
+        }
         compositeDisposable.add(
             RxBus2.listen(VideoShowEvent::class.java)
                 .subscribeOn(Schedulers.io())
