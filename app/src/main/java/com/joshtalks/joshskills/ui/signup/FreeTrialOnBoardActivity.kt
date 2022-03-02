@@ -286,7 +286,6 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
     }
 
     private fun openProfileDetailFragment(testId: String = FREE_TRIAL_DEFAULT_TEST_ID) {
-//        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
@@ -315,4 +314,15 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         super.onBackPressed()
     }
 
+    fun openChooseLanguageFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                ChooseLanguageOnBoardFragment.newInstance(),
+                ChooseLanguageOnBoardFragment::class.java.name
+            )
+        }
+    }
 }

@@ -707,7 +707,7 @@ class ConversationActivity :
             ) {
                 val nameArr = User.getInstance().firstName?.split(" ")
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
+                showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
             } else {
                 val intent = Intent(this, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, getConversationId())
@@ -724,7 +724,7 @@ class ConversationActivity :
             ) {
                 val nameArr = User.getInstance().firstName?.split(" ")
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
+                showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
             } else {
                 val intent = Intent(this, StartActivity::class.java)
                 GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
@@ -1742,7 +1742,7 @@ class ConversationActivity :
                         ) {
                             val nameArr = User.getInstance().firstName?.split(" ")
                             val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                            showToast(getString(R.string.feature_locked, firstName))
+                            showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
                         } else {
                             startActivityForResult(
                                 LessonActivity.getActivityIntent(

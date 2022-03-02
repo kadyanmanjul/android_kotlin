@@ -113,7 +113,8 @@ class ActivityFeedMainActivity : BaseActivity() {
             ) {
                 val nameArr = User.getInstance().firstName?.split(SINGLE_SPACE)
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(activity.getString(R.string.feature_locked, firstName))
+                val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID)
+                showToast(getFeatureLockedText(courseId, firstName))
             } else {
                 val intent = Intent(activity, ActivityFeedMainActivity::class.java)
                 activity.startActivity(intent)
