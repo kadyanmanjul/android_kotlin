@@ -562,9 +562,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
-        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false){
-            mBoundService?.startPlaying()
-        }
         if (isCallFavoritePP() || isCallOnGoing.value == true) {
             intent= intent.apply {
                 putExtra(CALL_TYPE, WebRtcService.callType)
@@ -589,6 +586,11 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         setCallScreenBackground()
         updateButtonStatus()
         callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+
+        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false && callType!=CallType.INCOMING){
+            mBoundService?.startPlaying()
+        }
+
         callType?.run {
             updateStatusLabel()
             if (CallType.OUTGOING == this) {
@@ -662,8 +664,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 intent.getIntExtra(RTC_PARTNER_ID,1).toString()
             else
                 map?.get("caller_uid")?: mBoundService?.getOppositeCallerId().toString()
-            callieId = CurrentCallDetails.callieUid
-
             callieId = map?.get("uid") ?: mBoundService?.getUserAgoraId().toString()
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
