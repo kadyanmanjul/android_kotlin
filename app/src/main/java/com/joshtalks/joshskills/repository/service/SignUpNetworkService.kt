@@ -52,6 +52,9 @@ interface SignUpNetworkService {
     @POST("$DIR/user/user_verification/")
     suspend fun userVerification(@Body requestUserVerification: RequestUserVerification): Response<LoginResponse>
 
+    @GET("$DIR/user/sign_out/")
+    suspend fun signoutUser(@Query("mentor_id") mentorId: String): Response<Void>
+
     @GET("$DIR/mentor/{id}/personal_profile/")
     suspend fun getPersonalProfileAsync(@Path("id") id: String): Mentor
 

@@ -685,18 +685,20 @@ abstract class BaseActivity :
             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-            val intent =
-                    Intent(
-                            AppObjectController.joshApplication,
-                            SignUpActivity::class.java
-                    )
+            val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra(FLOW_FROM, "CourseExploreActivity")
             }
-            PrefManager.clearUser()
-            AppObjectController.joshApplication.startActivity(intent)
+            try {
+                AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
+                PrefManager.clearUser()
+                AppObjectController.joshApplication.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                showToast("Something went wrong. Please try again.")
+            }
         }
     }
 
