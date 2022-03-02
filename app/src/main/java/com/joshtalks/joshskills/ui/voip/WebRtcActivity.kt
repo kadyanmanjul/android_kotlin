@@ -29,6 +29,7 @@ import android.view.animation.BounceInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -53,6 +54,7 @@ import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
+
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.joshtalks.joshskills.util.DateUtils
 import com.karumi.dexter.MultiplePermissionsReport
@@ -86,6 +88,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private lateinit var sensorManager: SensorManager
     private var proximity: Sensor? = null
     private lateinit var scope: CoroutineScope
@@ -995,7 +998,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         callerName = userDetailLiveData.value?.get("name"),
                         callerImage = userDetailLiveData.value?.get("profile_pic"),
                         yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                        yourAgoraId = mBoundService?.getUserAgoraId(),
+                        yourAgoraId = callieId.toInt(),
                         activity = this,
                         flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                         callerId = callerId.toInt(),
@@ -1149,12 +1152,10 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-
     override fun onSensorChanged(p0: SensorEvent?) {
-
         if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
 //            face is near to sensor
-            if (mBoundService?.getSpeaker() == false) {
+            if (mBoundService?.getSpeaker() == false && mBoundService?.audioRoute==1 && !audioManager.isBluetoothScoOn) {
                 turnScreenOff()
             }
         } else {
