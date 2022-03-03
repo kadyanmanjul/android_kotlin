@@ -88,7 +88,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
-    val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    var audioManager: AudioManager? = null
     private lateinit var sensorManager: SensorManager
     private var proximity: Sensor? = null
     private lateinit var scope: CoroutineScope
@@ -324,6 +324,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        audioManager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
         proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
         powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag")
@@ -1155,7 +1156,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(p0: SensorEvent?) {
         if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
 //            face is near to sensor
-            if (mBoundService?.getSpeaker() == false && mBoundService?.audioRoute==1 && !audioManager.isBluetoothScoOn) {
+            if (mBoundService?.getSpeaker() == false && mBoundService?.audioRoute==1 && !audioManager?.isBluetoothScoOn!!) {
                 turnScreenOff()
             }
         } else {
