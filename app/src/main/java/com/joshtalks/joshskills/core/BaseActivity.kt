@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.core
 
-//import com.uxcam.OnVerificationListener
-//import com.uxcam.UXCam
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.LauncherActivity
@@ -65,6 +63,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
+import com.joshtalks.joshskills.ui.extra.OPEN_AUTO_START
 import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
 import com.joshtalks.joshskills.ui.gif.GIFActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
@@ -609,14 +608,11 @@ abstract class BaseActivity :
 
     fun checkForOemNotifications() {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (shouldRequireCustomPermission()) {
                 var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
                 if (oemIntent == null) {
                     oemIntent = Intent(
                             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.parse(
-                                    "package:$packageName"
-                            )
+                            Uri.parse("package:$packageName")
                     )
                     oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
                     oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -624,19 +620,18 @@ abstract class BaseActivity :
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     CustomPermissionDialogFragment.showCustomPermissionDialog(
-                            oemIntent,
-                            supportFragmentManager
+                        oemIntent,
+                        supportFragmentManager,
+                        OPEN_AUTO_START
                     )
                 }
-            }
         }
     }
 
     fun shouldRequireCustomPermission(): Boolean {
         val oemIntent = PowerManagers.getIntentForOEM(this)
         val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        return NotificationManagerCompat.from(this).areNotificationsEnabled()
-                .not() && oemIntent != null && performedAction == EMPTY
+        return isNotificationEnabled() && oemIntent != null && performedAction == EMPTY
     }
 
     fun isNotificationEnabled() =

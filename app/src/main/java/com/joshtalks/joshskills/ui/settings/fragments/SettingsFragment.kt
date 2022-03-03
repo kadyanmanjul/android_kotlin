@@ -83,18 +83,21 @@ class SettingsFragment : Fragment() {
 
         if ((requireActivity() as BaseActivity).isNotificationEnabled()) {
             binding.notificationStatusTv.setText(R.string.off)
-            binding.notificationDiscription.text = AppObjectController.getFirebaseRemoteConfig()
+            binding.notificationDescription.text = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_DISABLED)
             binding.notificationStatusTv.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.rounded_grey_bg_2dp)
         } else {
             binding.notificationRightIv.visibility = View.GONE
             binding.notificationStatusTv.setText(R.string.on)
-            binding.notificationDiscription.text = AppObjectController.getFirebaseRemoteConfig()
+            binding.notificationDescription.text = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_ENABLED)
             binding.notificationStatusTv.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.rounded_primary_bg_2dp)
         }
+
+        if (PowerManagers.getIntentForOEM(requireContext() as BaseActivity) == null)
+            binding.autoStartRl.visibility = View.GONE
 
         return binding.root
     }
@@ -220,6 +223,10 @@ class SettingsFragment : Fragment() {
 
     fun showNotificationSettingPopup() {
         (requireActivity() as SettingsActivity).openAppNotificationSettings()
+    }
+
+    fun showAutoStartPermissionPopup() {
+        (requireActivity() as BaseActivity).checkForOemNotifications()
     }
 
     fun hideBottomView() {

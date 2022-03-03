@@ -14,30 +14,35 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBinding
 
+const val OPEN_NOTIFICATION = "OPEN_NOTIFICATION"
+const val OPEN_AUTO_START = "OPEN_AUTO_START"
+
 class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentCustomPermissionDialogBinding
-    private val interactionListener by lazy { activity as CustomPermissionDialogInteractionListener }
 
     companion object {
+
         lateinit var mIntent: Intent
+        var eventType: String = OPEN_NOTIFICATION
+
         fun newInstance(intent: Intent): CustomPermissionDialogFragment {
             mIntent = intent
             return CustomPermissionDialogFragment()
         }
 
-        /**
-         *  Show fragment asking for custom permission to start app in background for proper working of notifications
-         */
-        fun showCustomPermissionDialog(intent: Intent, supportFragmentManager: FragmentManager) {
+        fun showCustomPermissionDialog(
+            intent: Intent,
+            supportFragmentManager: FragmentManager,
+            eventType: String
+        ) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag("custom_permission_fragment_dialog")
-            if (prev != null) {
+            if (prev != null)
                 fragmentTransaction.remove(prev)
-            }
+            this.eventType = eventType
             fragmentTransaction.addToBackStack(null)
-            newInstance(intent)
-                .show(supportFragmentManager, "custom_permission_fragment_dialog")
+            newInstance(intent).show(supportFragmentManager, "custom_permission_fragment_dialog")
         }
     }
 
@@ -55,9 +60,28 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         )
         binding.lifecycleOwner = this
         binding.fragment = this
-        binding.textView3.text = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.NOTIFICATION_SETTING_DESCRIPTION)
+
+        initPopupUI()
         return binding.root
+    }
+
+    private fun initPopupUI() {
+        when(eventType) {
+            OPEN_NOTIFICATION -> {
+                binding.textView3.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.NOTIFICATION_SETTING_DESCRIPTION)
+                binding.popupHeading.visibility = View.GONE
+                binding.appCompatImageView.visibility = View.GONE
+            }
+            OPEN_AUTO_START -> {
+                binding.tvSelectAddress.text = getString(R.string.go_to_settings)
+                binding.textView3.text = getString(R.string.permission_dialog_description)
+
+                if (!AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.SHOW_AUTOSTART_IMAGE))
+                    binding.appCompatImageView.visibility = View.GONE
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

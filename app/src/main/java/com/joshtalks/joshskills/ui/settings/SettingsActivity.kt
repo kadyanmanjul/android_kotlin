@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
+import com.joshtalks.joshskills.ui.extra.OPEN_NOTIFICATION
 import com.joshtalks.joshskills.ui.settings.fragments.SettingsFragment
 import kotlinx.android.synthetic.main.base_toolbar.*
 
@@ -50,7 +51,8 @@ class SettingsActivity : WebRtcMiddlewareActivity() {
 
             CustomPermissionDialogFragment.showCustomPermissionDialog(
                 oemIntent,
-                supportFragmentManager
+                supportFragmentManager,
+                OPEN_NOTIFICATION
             )
         }
     }

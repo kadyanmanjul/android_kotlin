@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.Log;
 
 import java.util.List;
 
@@ -20,8 +21,9 @@ public class AutoStartHelper {
     public final String TAG = "AutoStartHelper";
     private String PACKAGE_JOSHSKILLS = "com.joshtalks.joshskills";
 
-    // Xiaomi
+    // Xiaomi and Redmi
     private final String BRAND_XIAOMI = "xiaomi";
+    private final String BRAND_REDMI = "redmi";
     private String PACKAGE_XIAOMI_MAIN = "com.miui.securitycenter";
     private String PACKAGE_XIAOMI_COMPONENT = "com.miui.permcenter.autostart.AutoStartManagementActivity";
 
@@ -32,13 +34,16 @@ public class AutoStartHelper {
 
     // ASUS ROG
     private final String BRAND_ASUS = "asus";
-    private String PACKAGE_ASUS_MAIN = "com.asus.mobilemanager";
+    private String PACKAGE_ASUS_MAIN = "com.asus.batterysoh";
     private String PACKAGE_ASUS_COMPONENT = "com.asus.mobilemanager.powersaver.PowerSaverSettings";
 
     // Honor
     private final String BRAND_HONOR = "honor";
     private String PACKAGE_HONOR_MAIN = "com.huawei.systemmanager";
     private String PACKAGE_HONOR_COMPONENT = "com.huawei.systemmanager.optimize.process.ProtectActivity";
+
+    // realme
+    private final String BRAND_REALME = "realme";
 
     // Oppo
     private final String BRAND_OPPO = "oppo";
@@ -75,13 +80,17 @@ public class AutoStartHelper {
                 autoStartAsus(context);
                 break;
             case BRAND_XIAOMI:
+            case BRAND_REDMI:
                 autoStartXiaomi(context);
                 break;
-            case BRAND_LETV:
-                autoStartLetv(context);
-                break;
+//            case BRAND_LETV:
+//                autoStartLetv(context);
+//                break;
             case BRAND_HONOR:
                 autoStartHonor(context);
+                break;
+            case BRAND_REALME:
+                autoStartRealme(context);
                 break;
             case BRAND_OPPO:
                 autoStartOppo(context);
@@ -89,9 +98,9 @@ public class AutoStartHelper {
             case BRAND_VIVO:
                 autoStartVivo(context);
                 break;
-            case BRAND_NOKIA:
-                autoStartNokia(context);
-                break;
+//            case BRAND_NOKIA:
+//                autoStartNokia(context);
+//                break;
         }
     }
 
@@ -147,7 +156,6 @@ public class AutoStartHelper {
         }
     }
 
-
     private void autoStartHonor(final Context context) {
         if (isPackageExists(context, PACKAGE_HONOR_MAIN)) {
             showAlert(context, (dialog, which) -> {
@@ -158,6 +166,11 @@ public class AutoStartHelper {
                 }
             });
         }
+    }
+
+    private void autoStartRealme(final Context context) {
+        if (isPackageExists(context, PACKAGE_JOSHSKILLS))
+            showAlert(context, (dialog, which) -> openAppInfoSettings(context));
     }
 
     private void autoStartOppo(final Context context) {
@@ -179,19 +192,8 @@ public class AutoStartHelper {
                     }
                 }
             });
-        } else if (isPackageExists(context, PACKAGE_JOSHSKILLS)) {
-            showAlert(context, (dialog, which) -> {
-                try {
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Uri uri = Uri.fromParts("package", PACKAGE_JOSHSKILLS, null);
-                    intent.setData(uri);
-                    context.startActivity(intent);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            });
-        }
+        } else if (isPackageExists(context, PACKAGE_JOSHSKILLS))
+            showAlert(context, (dialog, which) -> openAppInfoSettings(context));
     }
 
     private void autoStartVivo(final Context context) {
@@ -218,6 +220,7 @@ public class AutoStartHelper {
 
     private void autoStartNokia(final Context context) {
         if (isPackageExists(context, PACKAGE_NOKIA_MAIN)) {
+            Log.e(TAG, "autoStartNokia: 1");
             showAlert(context, (dialog, which) -> {
                 try {
                     startIntent(context, PACKAGE_NOKIA_MAIN, PACKAGE_NOKIA_COMPONENT);
@@ -227,7 +230,6 @@ public class AutoStartHelper {
             });
         }
     }
-
 
     private void startIntent(Context context, String packageName, String componentName) throws Exception {
         try {
@@ -245,10 +247,22 @@ public class AutoStartHelper {
         PackageManager pm = context.getPackageManager();
         packages = pm.getInstalledApplications(0);
         for (ApplicationInfo packageInfo : packages) {
+            Log.e(TAG, packageInfo.packageName);
             if (packageInfo.packageName.equals(targetPackage))
                 return true;
         }
-
         return false;
+    }
+
+    private void openAppInfoSettings(Context context) {
+        try {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri uri = Uri.fromParts("package", PACKAGE_JOSHSKILLS, null);
+            intent.setData(uri);
+            context.startActivity(intent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

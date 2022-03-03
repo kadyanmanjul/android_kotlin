@@ -200,8 +200,9 @@
 
     <!--    Custom Permission Dialog-->
     <string name="cancel_button">Cancel Button</string>
-    <string name="permission_dialog_description">Rojana class time par paane ke liye abhi notification on kare</string>
+    <string name="permission_dialog_description">Agar aap course ko leke serious ho aur <b>Lessons</b> reminder and <b>Practice partner</b> calls miss nahi karna chahate ho to :\n\n<b>Settings</b> me jake <b>Auto Start</b> ko <b>ON</b> kare</string>
     <string name="allow">Allow</string>
+    <string name="go_to_settings">Go to Settings</string>
     <string name="do_not_ask_again">Dobara na pooche</string>
 
     <!--    Payment Failed Dialog-->
@@ -426,6 +427,7 @@
     <string name="clear_all_downloads">Clear All Downloads</string>
     <string name="sign_out">Sign out</string>
     <string name="notifications">Notifications</string>
+    <string name="autostart">Allow app to Auto Start</string>
     <string name="language">Language</string>
     <string name="english">English</string>
     <string name="low">Low</string>
@@ -435,6 +437,7 @@
     <string name="other">Other</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="auto_start_prompt_message">Please enable Autostart to receive notifications when the app is in the background</string>
     <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
     <string name="start_course_free">Start my Courses For Free</string>
     <string name="buy_pass">Buy All Course Access Pass</string>
