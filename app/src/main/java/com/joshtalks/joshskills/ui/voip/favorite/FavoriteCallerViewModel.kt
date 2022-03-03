@@ -99,7 +99,7 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
                 map["to_mentor_id"] = toMentorId
                 val response = p2pNetworkService.checkUserInCallOrNot(map)
                 if (response.isSuccessful) {
-                    if (response.body()?.getValue("message") == "User is not on call") {
+                    if (response.code() == 200) {
                         val intent =
                             WebRtcActivity.getFavMissedCallbackIntent(uid, activity).apply {
                                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
