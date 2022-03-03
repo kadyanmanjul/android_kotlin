@@ -639,6 +639,9 @@ abstract class BaseActivity :
                 .not() && oemIntent != null && performedAction == EMPTY
     }
 
+    fun isNotificationEnabled() =
+        NotificationManagerCompat.from(this).areNotificationsEnabled().not()
+
     fun isUserProfileComplete(): Boolean {
         try {
             val user = User.getInstance()

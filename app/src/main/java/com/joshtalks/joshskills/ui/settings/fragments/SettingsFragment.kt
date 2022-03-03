@@ -78,13 +78,10 @@ class SettingsFragment : Fragment() {
                     binding.blackShadowIv.visibility = View.VISIBLE
             }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
 
-        }
-        )
-
-        if ((requireActivity() as BaseActivity).shouldRequireCustomPermission()) {
+        if ((requireActivity() as BaseActivity).isNotificationEnabled()) {
             binding.notificationStatusTv.setText(R.string.off)
             binding.notificationDiscription.text = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_DISABLED)
@@ -98,7 +95,6 @@ class SettingsFragment : Fragment() {
             binding.notificationStatusTv.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.rounded_primary_bg_2dp)
         }
-
 
         return binding.root
     }
@@ -178,8 +174,7 @@ class SettingsFragment : Fragment() {
 
     fun openSelectLanguageFragment() {
         (requireActivity() as BaseActivity).replaceFragment(
-            R.id.settings_container, LanguageFragment(), LanguageFragment.TAG,
-            TAG
+            R.id.settings_container, LanguageFragment(), LanguageFragment.TAG, TAG
         )
     }
 
@@ -187,8 +182,7 @@ class SettingsFragment : Fragment() {
         logEvent(AnalyticsEvent.PERSONAL_PROFILE_CLICKED.name)
         if (User.getInstance().isVerified) {
             (requireActivity() as BaseActivity).replaceFragment(
-                R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG,
-                TAG
+                R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG, TAG
             )
         } else {
             showLoginPopup()
@@ -225,7 +219,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun showNotificationSettingPopup() {
-        (requireActivity() as BaseActivity).checkForOemNotifications()
+        (requireActivity() as SettingsActivity).openAppNotificationSettings()
     }
 
     fun hideBottomView() {
