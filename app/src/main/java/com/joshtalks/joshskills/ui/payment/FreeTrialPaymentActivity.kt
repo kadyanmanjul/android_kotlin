@@ -287,17 +287,24 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         binding.englishCard.setOnClickListener {
             try {
-                index = 0
-                binding.subscriptionCard.background =
-                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-                binding.englishCard.background =
-                    ContextCompat.getDrawable(
-                        this,
-                        R.drawable.blue_rectangle_with_blue_bound_stroke
-                    )
-                binding.materialTextView.text = buttonText.get(index)
-                binding.txtLabelHeading.text = headingText.get(index)
-                binding.seeCourseList.visibility = View.GONE
+                showEnglishButtonTextAndCardDecoration()
+                if(binding.ivExpand.visibility == View.VISIBLE){
+                    binding.linearLayoutCompatEnglish.visibility = View.VISIBLE
+                    binding.ivExpand.visibility = View.GONE
+                    binding.ivMinimise.visibility = View.VISIBLE
+                    binding.syllabusPdfCard.visibility = View.VISIBLE
+
+                    binding.linearLayoutCompatSubscription.visibility = View.GONE
+                    binding.ivExpand1.visibility = View.VISIBLE
+                    binding.ivMinimise1.visibility = View.GONE
+                    binding.seeCourseList.visibility = View.GONE
+
+                }else if(binding.ivMinimise.visibility == View.VISIBLE){
+                    binding.linearLayoutCompatEnglish.visibility = View.GONE
+                    binding.ivExpand.visibility = View.VISIBLE
+                    binding.ivMinimise.visibility = View.GONE
+                    binding.syllabusPdfCard.visibility = View.GONE
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
