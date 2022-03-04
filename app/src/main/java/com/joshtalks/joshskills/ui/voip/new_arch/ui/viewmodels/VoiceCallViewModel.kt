@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
@@ -171,40 +173,36 @@ class VoiceCallViewModel : BaseViewModel() {
 
 object CallDataObj : CallData {
     override fun getProfileImage(): String? {
-        return CallDetails.remoteUserImageUrl
+        return VoipPref.getProfileImage()
     }
 
     override fun getCallerName(): String {
-        return CallDetails.remoteUserName
-    }
-
-    override fun getTopicHeader(): String {
-        return CallDetails.topicHeader
+        return VoipPref.getCallerName()
     }
 
     override fun getTopicName(): String {
-        return CallDetails.topicName
+        return VoipPref.getTopicName()
     }
 
     override fun getCallType(): Int {
-        return CallDetails.callType
+        return VoipPref.getCallType()
     }
 
     override fun getCallTypeHeader(): String {
-        when(CallDetails.callType) {
+        return when(VoipPref.getCallType()) {
             1 -> {
-//                 Normal Call
-                return "Practice with Partner"
+    //                 Normal Call
+                "Practice with Partner"
             }
             2 -> {
-//                 FPP
-                return "Favorite Practice Partner"
+    //                 FPP
+                "Favorite Practice Partner"
             }
             3 -> {
-//                 Group Call
-                return "Group Call"
+    //                 Group Call
+                "Group Call"
             }
-            else -> return ""
+            else -> ""
         }
     }
 

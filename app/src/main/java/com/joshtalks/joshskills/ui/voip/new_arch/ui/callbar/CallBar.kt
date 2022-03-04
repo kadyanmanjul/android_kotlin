@@ -112,7 +112,18 @@ class VoipPref {
         fun getStartTimeStamp(): Long {
             return preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
         }
-
+        fun getTopicName(): String {
+            return "Lets talks"
+        }
+        fun getCallerName(): String {
+            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_NAME,"").toString()
+        }
+        fun getCallType(): Int {
+            return preferenceManager.getInt(PREF_KEY_CURRENT_CALL_TYPE,-1)
+        }
+        fun getProfileImage(): String {
+            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_IMAGE,"").toString()
+        }
         fun setListener(callTimeStampListener: CallTimeStampListener) {
             preferenceManager.registerOnSharedPreferenceChangeListener(callTimeStampListener)
         }

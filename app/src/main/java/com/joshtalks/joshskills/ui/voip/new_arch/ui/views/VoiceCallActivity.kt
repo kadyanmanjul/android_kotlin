@@ -51,7 +51,7 @@ class VoiceCallActivity : BaseActivity() {
     override fun initViewState() {
         event.observe(this) {
             when(it.what) {
-                CALL_CONNECTED_EVENT -> addCallUserFragment()
+                CALL_CONNECTED_EVENT -> replaceCallUserFragment()
                 CALL_DISCONNECT_REQUEST -> finish()
                 else -> {
                     if(it.what < 0) {
@@ -72,6 +72,11 @@ class VoiceCallActivity : BaseActivity() {
     private fun addCallUserFragment() {
         supportFragmentManager.commit {
             add(R.id.voice_call_container, CallFragment(), "CallFragment")
+        }
+    }
+    private fun replaceCallUserFragment() {
+        supportFragmentManager.commit {
+            replace(R.id.voice_call_container, CallFragment(), "CallFragment")
         }
     }
 
