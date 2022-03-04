@@ -20,7 +20,7 @@ class UserPresence :UserPresenceInterface {
         }
     }
 
-    override fun setUserPresenceInDB(key: String, value: PresenceStatus) {
+    override fun setUserPresence(key: String, value: PresenceStatus) {
         status = when(value){
             PresenceStatus.Online->{
                 true
