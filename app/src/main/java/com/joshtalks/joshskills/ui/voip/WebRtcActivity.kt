@@ -401,6 +401,16 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         return (isSetAsGroup == true || isGroupCallIntent)
     }
 
+    private fun isCallSenior(): Boolean {
+        val isSetAsSeniorCall = mBoundService?.isToSeniorStudentCall()
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        val isSeniorCallIntent = map != null && map.containsKey(RTC_IS_SENIOR_CALL)
+        if (isSetAsSeniorCall == false && isSeniorCallIntent) {
+            mBoundService?.setAsSeniorCall()
+        }
+        return (isSetAsSeniorCall == true || isSeniorCallIntent)
+    }
+
     private fun isNewUserCall(): Boolean {
         val isSetAsNewUserCall = mBoundService?.isNewUserCall()
         val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
@@ -684,7 +694,10 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         binding.callerName.text = "${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}"
                         setImageInIV(map?.get(RTC_WEB_GROUP_PHOTO))
                         return@run
-                    } else if (callConnected.not() && isCallFavoritePP().not()) {
+                    }else if (callConnected.not() && isCallSenior()) {
+                        binding.callStatus.text = "Incoming Call from New Student"
+                        return@run
+                    }else if (callConnected.not() && isCallFavoritePP().not()) {
                         binding.callStatus.text = "Incoming Call from"
                         binding.callerName.text = "Practice Partner"
                         return@run

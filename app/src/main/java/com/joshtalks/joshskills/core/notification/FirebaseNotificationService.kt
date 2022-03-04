@@ -119,6 +119,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import com.joshtalks.joshskills.ui.voip.RTC_IS_SENIOR_CALL
+
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -1618,10 +1620,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                     data[RTC_UID_KEY] = obj.getString("uid")
                     data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+
                     try {
                         data[RTC_CALL_ID] = obj.getString("agoraCallId")
                     } catch (e: Exception) {
                         e.printStackTrace()
+                    }
+                    if(obj.has("senior_connected")){
+                        data[RTC_IS_SENIOR_CALL] = obj.getString("senior_connected")
                     }
                     if (obj.has("group_name"))
                         data[RTC_WEB_GROUP_CALL_GROUP_NAME] = obj.getString("group_name")

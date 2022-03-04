@@ -81,6 +81,7 @@ const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_IS_NEW_USER_CALL = "is_new_user_call"
 const val RTC_IS_GROUP_CALL = "is_group_call"
+const val RTC_IS_SENIOR_CALL = "is_senior_call"
 const val RTC_IS_GROUP_CALL_ID = "is_group_call_id"
 const val RTC_GROUP_CALL_GROUP_NAME = "group_call_group_name"
 const val RTC_WEB_GROUP_CALL_GROUP_NAME = "group_web_call_group_name"
@@ -1693,11 +1694,22 @@ class WebRtcService : BaseWebRtcService() {
         return false
     }
 
+    fun isToSeniorStudentCall(): Boolean {
+        if (callData != null && callData!!.containsKey(RTC_IS_SENIOR_CALL)){
+            Log.e("senior", "true")
+            return true
+        }
+        Log.e("senior", "false")
+        return false
+    }
+
     fun setAsFavourite() = callData?.put(RTC_IS_FAVORITE, "true")
 
     fun setAsGroupCall() = callData?.put(RTC_IS_GROUP_CALL, "true")
 
     fun setAsNewUserCall() = callData?.put(RTC_IS_NEW_USER_CALL, "true")
+
+    fun setAsSeniorCall() = callData?.put(RTC_IS_SENIOR_CALL, "true")
 
     private fun getCallerName() = callData?.get(RTC_NAME) ?: EMPTY
 
@@ -2064,9 +2076,12 @@ class WebRtcService : BaseWebRtcService() {
             true
         )
         val avatar: Bitmap? = getIncomingCallAvatar(isFavorite = isFavorite(), isFromGroup = isGroupCall())
-        val customView = getRemoteViews(isFavorite = isFavorite(), isFromGroup = isGroupCall())
+        val customView = getRemoteViews(isFavorite = isFavorite(), isFromGroup = isGroupCall(), isToSeniorCall = isToSeniorStudentCall())
 
-        customView.setImageViewBitmap(R.id.photo, avatar)
+        if(!isToSeniorStudentCall()){
+            customView.setImageViewBitmap(R.id.photo, avatar)
+        }
+
         customView.setOnClickPendingIntent(R.id.answer_btn, answerPendingIntent)
         customView.setOnClickPendingIntent(R.id.decline_btn, declinePendingIntent)
         builder.setLargeIcon(avatar)
@@ -2110,7 +2125,8 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    private fun getRemoteViews(isFavorite: Boolean, isFromGroup: Boolean): RemoteViews {
+    private fun getRemoteViews(isFavorite: Boolean, isFromGroup: Boolean, isToSeniorCall : Boolean = false): RemoteViews {
+   // private fun getRemoteViews(isFavorite: Boolean, isFromGroup: Boolean): RemoteViews {
         val layout = when{
             isFavorite -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 R.layout.favorite_call_notification_patch
@@ -2118,8 +2134,11 @@ class WebRtcService : BaseWebRtcService() {
                 R.layout.favorite_call_notification
             }
             isFromGroup -> R.layout.group_call_notification
+            isToSeniorCall -> R.layout.new_call_notification
             else -> R.layout.call_notification
         }
+
+        Log.e("dfgg", callData.toString())
 
         val customView = RemoteViews(packageName, layout)
         customView.setTextViewText(
@@ -2127,6 +2146,7 @@ class WebRtcService : BaseWebRtcService() {
             when {
                 isFavorite -> getString(R.string.favorite_p2p_title)
                 isFromGroup -> getString(R.string.group_p2p_title)
+                isToSeniorCall-> getString(R.string.p2p_title_new_call)
                 else -> getString(R.string.p2p_title)
             }
         )
@@ -2135,6 +2155,7 @@ class WebRtcService : BaseWebRtcService() {
             when {
                 isFavorite -> getCallerName()
                 isFromGroup -> getGroupName()
+                isToSeniorCall -> getString(R.string.p2p_subtitle_new_call)
                 else -> getString(R.string.p2p_subtitle)
             }
         )

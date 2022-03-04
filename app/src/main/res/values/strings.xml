@@ -862,10 +862,12 @@
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
+    <string name="p2p_title_new_call">New Student Calling</string>
     <string name="group_p2p_title">Call From Group</string>
     <string name="convo_notification_title">%1s has started a conversation about %1s</string>
     <string name="room_title">Join Conversation Room</string>
     <string name="p2p_subtitle">Speaking Practice</string>
+    <string name="p2p_subtitle_new_call">Motivate New Student &amp; Earn upto 2x points</string>
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
     <string name="hold_call">Call On Hold</string>

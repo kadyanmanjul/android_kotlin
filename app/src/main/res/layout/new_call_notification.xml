@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="128dip"
+    android:background="@drawable/new_call_notification_bg">
+
+    <ImageView
+        android:id="@+id/photo"
+        android:layout_width="42dip"
+        android:layout_height="42dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dip"
+        android:layout_marginTop="20dip"
+        android:layerType="hardware"
+        android:src="@drawable/new_call_icon" />
+
+
+
+    <LinearLayout
+        android:id="@+id/text_wrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/photo"
+        android:layout_marginLeft="12dip"
+        android:layout_marginRight="20dip"
+        android:layout_toRightOf="@+id/photo"
+        android:gravity="center_vertical|left"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="left"
+            android:singleLine="true"
+            android:textColor="#FFF"
+            android:textSize="18dip"
+            tools:text="Wow Such Doge" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:singleLine="false"
+            android:text="JoshSkills Call"
+            android:textColor="#D4D5D6"
+            android:textSize="14dip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="48.3dip"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingTop=".3dip">
+
+        <FrameLayout
+            android:id="@+id/decline_btn"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_margin="2dip"
+            android:layout_weight="1"
+            android:background="@drawable/bar_selector_white">
+
+            <TextView
+                android:id="@+id/decline_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:drawableStart="@drawable/ic_call_end"
+                android:drawablePadding="@dimen/_12sdp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:fontWeight="600"
+                android:textColor="@color/call_decline_color"
+                android:textSize="14dip"
+                app:drawableStartCompat="@drawable/ic_call_end"
+                app:drawableTint="@color/call_decline_color"
+                app:fontWeight="600"
+                tools:text="@string/decline" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/answer_btn"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_margin="2dip"
+            android:layout_weight="1"
+            android:background="@drawable/bar_selector_white">
+
+            <TextView
+                android:id="@+id/answer_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:drawableStart="@drawable/ic_pick_call"
+                android:drawablePadding="@dimen/_12sdp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:textColor="@color/call_action_color"
+                android:textSize="14dip"
+                android:fontWeight="600"
+                app:drawableLeftCompat="@drawable/ic_pick_call"
+                app:drawableStartCompat="@drawable/ic_pick_call"
+                app:drawableTint="@color/call_action_color"
+                app:fontWeight="600"
+                tools:text="@string/answer" />
+
+        </FrameLayout>
+    </LinearLayout>
+</RelativeLayout>
+

@@ -7,6 +7,7 @@
     <color name="status_bar_color">@color/colorPrimaryDark</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="yellowish">#EDC035</color>
 
     <color name="checkmark_blue">#34B7F1</color>
 
