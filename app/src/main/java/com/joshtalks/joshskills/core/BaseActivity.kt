@@ -606,7 +606,7 @@ abstract class BaseActivity :
             SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
 
-    fun checkForOemNotifications() {
+    fun checkForOemNotifications(event: String) {
         lifecycleScope.launch(Dispatchers.IO) {
                 var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
                 if (oemIntent == null) {
@@ -622,7 +622,7 @@ abstract class BaseActivity :
                     CustomPermissionDialogFragment.showCustomPermissionDialog(
                         oemIntent,
                         supportFragmentManager,
-                        OPEN_AUTO_START
+                        event
                     )
                 }
         }
@@ -630,8 +630,7 @@ abstract class BaseActivity :
 
     fun shouldRequireCustomPermission(): Boolean {
         val oemIntent = PowerManagers.getIntentForOEM(this)
-        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        return isNotificationEnabled() && oemIntent != null && performedAction == EMPTY
+        return isNotificationEnabled() && oemIntent != null
     }
 
     fun isNotificationEnabled() =

@@ -11,6 +11,7 @@
     <string name="downloading_certificate">Downloading your certificate</string>
     <string name="downloading_complete">Downloading complete</string>
     <string name="not_now">Not Now</string>
+    <string name="not_now_underline"><u>Not Now</u></string>
     <string name="settings">Settings</string>
     <string name="quiz_game">Quiz Game</string>
     <string name="build_your_team">Build your team</string>
@@ -200,10 +201,12 @@
 
     <!--    Custom Permission Dialog-->
     <string name="cancel_button">Cancel Button</string>
-    <string name="permission_dialog_description">Agar aap course ko leke serious ho aur <b>Lessons</b> reminder and <b>Practice partner</b> calls miss nahi karna chahate ho to :\n\n<b>Settings</b> me jake <b>Auto Start</b> ko <b>ON</b> kare</string>
+    <string name="permission_dialog_description"><![CDATA[Agar aap course ko leke serious ho aur <b>Lessons</b> reminder and <b>Practice partner</b> calls miss nahi karna chahate ho to:<br><br><b>Settings</b> me jake <b>Auto Start</b> ko <b>ON</b> kare]]></string>
     <string name="allow">Allow</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="do_not_ask_again">Dobara na pooche</string>
+    <string name="allow_autostart">Allow app to Auto Start</string>
+    <string name="serious_student_ho">Kya aap Serious Student ho?</string>
 
     <!--    Payment Failed Dialog-->
     <string name="try_again">Try again</string>

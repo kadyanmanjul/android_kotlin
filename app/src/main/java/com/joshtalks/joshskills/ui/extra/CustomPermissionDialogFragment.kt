@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBindin
 
 const val OPEN_NOTIFICATION = "OPEN_NOTIFICATION"
 const val OPEN_AUTO_START = "OPEN_AUTO_START"
+const val OPEN_AUTO_START_SETTINGS = "OPEN_AUTO_START_SETTINGS"
 
 class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
 
@@ -74,8 +76,15 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
                 binding.appCompatImageView.visibility = View.GONE
             }
             OPEN_AUTO_START -> {
-                binding.tvSelectAddress.text = getString(R.string.go_to_settings)
-                binding.textView3.text = getString(R.string.permission_dialog_description)
+                binding.textView3.text = HtmlCompat.fromHtml(getString(R.string.permission_dialog_description), HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+                if (!AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.SHOW_AUTOSTART_IMAGE))
+                    binding.appCompatImageView.visibility = View.GONE
+            }
+            OPEN_AUTO_START_SETTINGS -> {
+                binding.popupHeading.text = getString(R.string.allow_autostart)
+                binding.textView3.text = HtmlCompat.fromHtml(getString(R.string.permission_dialog_description), HtmlCompat.FROM_HTML_MODE_LEGACY)
 
                 if (!AppObjectController.getFirebaseRemoteConfig()
                         .getBoolean(FirebaseRemoteConfigKey.SHOW_AUTOSTART_IMAGE))
@@ -84,38 +93,28 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
-    }
-
     fun allow() {
-        PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.ALLOW.name)
+        PrefManager.put(SHOULD_SHOW_AUTOSTART_POPUP, false)
         logAction(PermissionAction.ALLOW)
         dismiss()
         navigateToSettings()
     }
 
     fun cancel() {
-        PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.CANCEL.name)
         logAction(PermissionAction.CANCEL)
         dismiss()
     }
 
     fun doNotAskAgain() {
-        PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
         logAction(PermissionAction.DO_NOT_ASK_AGAIN)
         dismiss()
     }
 
-    /**
-     * Navigate To Power Manager Settings
-     * */
+    /** Navigate To Power Manager Settings **/
     fun navigateToSettings() {
         try {
             activity?.startActivity(mIntent)
         } catch (ex: Throwable) {
-            PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
             dismissAllowingStateLoss()
         }
     }
