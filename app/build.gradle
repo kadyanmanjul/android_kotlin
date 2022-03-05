@@ -442,6 +442,14 @@ dependencies {
     //keyboard
     implementation "com.vanniktech:emoji-ios:0.8.0"
     implementation "com.vanniktech:emoji-material:0.8.0"
+    //CameraX
+    def camerax_version = "1.1.0-beta01"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-video:${camerax_version}"
+    implementation "androidx.camera:camera-view:${camerax_version}"
+
 
     //mixpanel
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
