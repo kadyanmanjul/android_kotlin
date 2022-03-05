@@ -139,7 +139,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
-            callerImage = image!!
+            callerImage = image?: EMPTY
             if (image.isNullOrEmpty()) {
                 binding.cImage.setImageBitmap(
                     callerName.textDrawableBitmap(
