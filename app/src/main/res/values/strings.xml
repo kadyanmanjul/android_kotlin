@@ -1045,6 +1045,12 @@
     <string name="free_trial_dialog_ji_haan_text">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n  \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।
     </string>
     <string name="achieve_100_points_first">Achieve 100 points first</string>
+    <string name="select_friend">Select friends</string>
+    <string name="total_help_me">You have helped 4 people start learning English</string>
+    <string name="total_help_other">has helped 4 people start learning English</string>
+    <string name="help_learning">You have helped 4 people start learning English</string>
+    <string name="hindi_txt"> आपके ऐसे कौनसे दोस्त है जिनकी आप अंग्रेजी बोलने में मदद करना चाहते है</string>
+    <string name="share_details">Jab bhi aapke link share karne pe aapka koi dost iss course ko join karega tab aapki profile pe ye number update hoga</string>
 
     <string name="course_restart_success">Course Restarted Successfully</string>
     <string name="course_restart_fail">Course Can Not Restart</string>

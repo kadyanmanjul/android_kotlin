@@ -69,7 +69,9 @@ data class UserProfileResponse(
     @SerializedName("course_enrolled")
     val enrolledCoursesList: EnrolledCoursesList? = null,
     @SerializedName("is_game_active")
-    val isGameActive: Boolean = false
+    val isGameActive: Boolean = false,
+    @SerializedName("referral_count")
+    val numberOfReferral: Int?
 )
 
 data class GroupInfo(

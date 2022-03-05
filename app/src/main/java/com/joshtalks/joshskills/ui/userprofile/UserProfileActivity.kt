@@ -529,6 +529,22 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             }
         }
+
+        //if(userData.numberOfReferral != 0){
+        if(mentorId == Mentor.getInstance().getId()){
+            if(userData.numberOfReferral != 0){
+                binding.refNoText.text = "You have helped " +  userData.numberOfReferral + " people start learning English"
+            }else{
+                binding.refNoText.text = "You have not helped anyone start learning English"
+            }
+        }else{
+            if(userData.numberOfReferral != 0){
+                binding.refNoText.text = resp.append("has helped" + userData.numberOfReferral + " people start learning English")
+            }else{
+                binding.refNoText.text = resp.append("has not helped anyone start learning English")
+            }
+        }
+
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
     }
 
@@ -998,5 +1014,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
         return AppObjectController.getFirebaseRemoteConfig()
             .getString(TOOLTIP_USER_PROFILE_SCREEN + courseId)
+    }
+
+    fun openShareScreen(){
+        val intent = Intent(this, ShareFromProfile::class.java)
+        startActivity(intent)
     }
 }
