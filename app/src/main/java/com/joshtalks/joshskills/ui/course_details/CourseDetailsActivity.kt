@@ -79,6 +79,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var flowFrom: String? = null
     private var downloadID: Long = -1
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
+    private var is100PointsObtained = false
+    var expiredTime: Long = 0L
+    val ENGLISH_COURSE_TEST_ID = 102
+    var isPointsScoredMoreThanEqualTo100 = false
 
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
@@ -146,6 +150,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
+        if(testId == 102){
+            viewModel.getPointsSummary()
+            viewModel.getPaymentDetails(testId.toInt())
+        }
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
@@ -305,6 +313,29 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 showMoveToInboxScreen()
             }
         })
+
+        viewModel.pointsHistoryLiveData.observe(this, {
+            if(it.totalPoints != null && it.totalPoints >= 4){
+                isPointsScoredMoreThanEqualTo100 = true
+            }
+        })
+
+        viewModel.paymentDetailsLiveData.observe(this) {
+            expiredTime = it.expireTime!!.time
+            if(expiredTime != 0L && expiredTime <= System.currentTimeMillis()){
+                binding.btnStartCourse.isEnabled = true
+                binding.btnStartCourse.alpha = 1f
+            } else if(isPointsScoredMoreThanEqualTo100 && testId == 102) {
+                binding.btnStartCourse.isEnabled = true
+                binding.btnStartCourse.alpha = 1f
+                is100PointsObtained = true
+            }else if(testId == 102 && !isPointsScoredMoreThanEqualTo100 && expiredTime != 0L && expiredTime > System.currentTimeMillis()){
+                binding.btnStartCourse.text = getString(R.string.achieve_100_points_to_buy)
+                binding.btnStartCourse.isEnabled = false
+                binding.btnStartCourse.alpha = .5f
+                is100PointsObtained = false
+            }
+        }
     }
 
     private fun showMoveToInboxScreen() {
@@ -669,7 +700,14 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 )
             } else {
                 logStartCourseAnalyticEvent(testId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial)
+                if(testId == 102){
+                    PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial,
+                        is100PointsObtained = is100PointsObtained
+                    )
+                }else{
+                    PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial
+                    )
+                }
             }
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }
