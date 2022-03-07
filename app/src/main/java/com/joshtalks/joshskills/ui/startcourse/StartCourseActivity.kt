@@ -139,11 +139,6 @@ class StartCourseActivity : CoreJoshActivity() {
         }
     }
 
-    fun isProfileComplete():Boolean {
-        val user = User.getInstance()
-        return (!user.firstName.isNullOrEmpty() && !user.phoneNumber.isNullOrEmpty() && !user.dateOfBirth.isNullOrEmpty()  && !user.gender.isNullOrEmpty())
-    }
-
     private fun setListeners() {
         binding.materialButton.setOnClickListener {
             if (isUserRegistered) {
@@ -153,7 +148,7 @@ class StartCourseActivity : CoreJoshActivity() {
                     .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
                     .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, transactionId)
                     .push()
-                if(isProfileComplete())
+                if(isRegProfileComplete())
                 startActivity(getInboxActivityIntent())
                 else {
                     val intent = Intent(this, SignUpActivity::class.java).apply {

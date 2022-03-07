@@ -654,6 +654,11 @@ abstract class BaseActivity :
         return false
     }
 
+    fun isRegProfileComplete():Boolean {
+        val user = User.getInstance()
+        return (!user.firstName.isNullOrEmpty() && !user.phoneNumber.isNullOrEmpty() && !user.dateOfBirth.isNullOrEmpty() && !user.gender.isNullOrEmpty())
+    }
+
     fun replaceFragment(
             containerId: Int,
             fragment: Fragment,

@@ -132,18 +132,13 @@ class SignUpActivity : BaseActivity() {
         if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment(false)
         }
-        else if(User.getInstance().isVerified && !isProfileComplete()) {
+        else if(User.getInstance().isVerified && !isRegProfileComplete()) {
             openProfileDetailFragment(true)
         }
         else {
             openSignUpOptionsFragment()
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    fun isProfileComplete():Boolean {
-        val user = User.getInstance()
-        return (!user.firstName.isNullOrEmpty() && !user.phoneNumber.isNullOrEmpty() && !user.dateOfBirth.isNullOrEmpty() && !user.gender.isNullOrEmpty())
     }
 
     private fun addViewModelObserver() {
