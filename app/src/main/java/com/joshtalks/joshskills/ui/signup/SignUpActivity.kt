@@ -131,10 +131,19 @@ class SignUpActivity : BaseActivity() {
         setupTrueCaller()
         if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment(false)
-        } else {
+        }
+        else if(User.getInstance().isVerified && !isProfileComplete()) {
+            openProfileDetailFragment(true)
+        }
+        else {
             openSignUpOptionsFragment()
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    fun isProfileComplete():Boolean {
+        val user = User.getInstance()
+        return (!user.firstName.isNullOrEmpty() && !user.phoneNumber.isNullOrEmpty() && !user.dateOfBirth.isNullOrEmpty() && !user.gender.isNullOrEmpty())
     }
 
     private fun addViewModelObserver() {
