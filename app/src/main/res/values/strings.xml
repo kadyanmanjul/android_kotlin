@@ -1043,4 +1043,17 @@
         <font color ="@android:color/black">from ...</font>
     </string>
 
+
+<!--    Notification Module-->
+    <string name="channel_name_calls">Calls</string>
+    <string name="channel__calls_description">Calls Notification</string>
+    <string name="CHANNEL_ID_CALLS">10001</string>
+    <string name="channel_name_normal">others</string>
+    <string name="channel_calls_description">For Incoming Calls Notification</string>
+    <string name="channel_others_description">some other updates</string>
+    <string name="CHANNEL_ID_OTHERS">10002</string>
+    <string name="notification_title">Notification Title</string>
+    <string name="notification_content" >Notification Content</string>
+    <string name="accept_call">Accept</string>
+    <string name="reject_call">Reject</string>
 </resources>
