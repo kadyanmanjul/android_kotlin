@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/base_app_color">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/base_toolbar" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_profile_pic"
+            android:layout_width="@dimen/_68sdp"
+            android:layout_height="@dimen/_68sdp"
+            android:background="@drawable/user_profile_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05263157894736842105263157894737"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnFollow"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:background="@drawable/follow_button_background"
+            android:gravity="center"
+            android:text="@string/follow"
+            android:textColor="@color/follow_button_stroke"
+            android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.92264416315049226441631504922644"
+            app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintVertical_bias="0.90999997" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:textColor="@color/profile_font_color"
+            android:textAppearance="@style/BB_Typography_Nunito_Bold"
+            app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
+            app:layout_constraintTop_toBottomOf="@id/iv_profile_pic"
+            tools:text="Akhand Swarup Pandit" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:textColor="@color/profile_font_color"
+            app:layout_constraintStart_toStartOf="@id/tvUserName"
+            app:layout_constraintTop_toBottomOf="@id/tvUserName"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            tools:text="99 followers" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvProfileBio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:textColor="@color/profile_font_color"
+            app:layout_constraintStart_toStartOf="@id/tvFollowers"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            app:layout_constraintTop_toBottomOf="@id/tvFollowers"
+            tools:text="This is Akhand Swarup’s Bio.\nHe is an IES Officer" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/_26sdp"
+            android:layout_marginEnd="@dimen/_26sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="#C4C4C4"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintTop_toBottomOf="@id/tvProfileBio" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSpeakerRoomHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_regular"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/profile_font_color"
+            app:layout_constraintStart_toStartOf="@id/tvFollowers"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            android:text="@string/upcoming_rooms" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            app:layout_constraintTop_toBottomOf="@+id/tvSpeakerRoomHeading"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/li_room_event" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

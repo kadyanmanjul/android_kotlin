@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="follow_button_stroke">#48609D</color>
+    <color name="base_app_color">#F1EFE5</color>
+    <color name="reminder_button_color">#F1EFE5</color>
+    <color name="reminder_on_button_color">#27AE61</color>
+    <color name="profile_font_color">#333333</color>
+    <color name="profile_feed_item_font_color">#1E1D1B</color>
+    <color name="join_room_button_color">#EBA937</color>
 </resources>
