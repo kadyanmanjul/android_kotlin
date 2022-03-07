@@ -207,7 +207,8 @@ interface CommonNetworkService {
     suspend fun getUserProfileDataV3(
         @Path("mentor_id") id: String,
         @Query("interval_type") intervalType: String? = null,
-        @Query("previous_page") previousPage: String? = null
+        @Query("previous_page") previousPage: String? = null,
+        @Query("?api_version=") apiVersion:Int = 2
     ): Response<UserProfileResponse>
 
     @GET("$DIR/user/profile_awards/{mentor_id}/")

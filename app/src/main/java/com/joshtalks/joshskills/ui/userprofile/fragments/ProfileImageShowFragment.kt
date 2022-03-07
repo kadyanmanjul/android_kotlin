@@ -12,8 +12,9 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.ViewPager
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -21,20 +22,25 @@ import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.userprofile.adapters.AdapterCallback
+import com.joshtalks.joshskills.ui.userprofile.adapters.ViewPagerAdapter
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
-import kotlinx.android.synthetic.main.fragment_image_show.big_image_view
 
-const val IMAGE_SOURCE = "image_source"
-const val IMAGE_ID = "image_id"
 const val MENTOR_ID = "mentor_id"
 const val IS_PREVIOUS_PROFILE = "is_previous_profile"
+const val List_OF_IMAGES ="list_of_images"
+const val LIST_OF_IDS="List_of_ids"
+const val POSITION ="Position"
 
-class ProfileImageShowFragment : DialogFragment() {
-    private var imagePath: String? = null
-    private var courseName: String? = null
-    private var imageId: String? = null
+class ProfileImageShowFragment : DialogFragment(),AdapterCallback {
     private var mentorId: String? = null
     private var isPreviousProfile = false
+    private var position:Int=0
+    var imagesUrls : Array<String> = arrayOf()
+    var imageIds :  Array<String> = arrayOf()
+    lateinit var viewPager: ViewPager
+
+    lateinit var viewPagerAdapter: ViewPagerAdapter
     private val viewModel by lazy {
         ViewModelProvider(activity as UserProfileActivity).get(
             UserProfileViewModel::class.java
@@ -44,21 +50,24 @@ class ProfileImageShowFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { it ->
-            it.getString(IMAGE_SOURCE)?.let { path ->
-                imagePath = path
-            }
-
-            it.getString(COURSE_NAME)?.let { course ->
-                courseName = course
-            }
-            it.getString(IMAGE_ID)?.let { id ->
-                imageId = id
-            }
             it.getString(MENTOR_ID)?.let {
                 mentorId = it
             }
-            it.getBoolean(IS_PREVIOUS_PROFILE).let {
+            it.getBoolean(IS_PREVIOUS_PROFILE)?.let {
                 isPreviousProfile = it
+            }
+            it.getStringArray(List_OF_IMAGES)?.let{
+                if (it != null) {
+                    imagesUrls=it
+                }
+            }
+            it.getStringArray(LIST_OF_IDS)?.let {
+                if (it != null) {
+                    imageIds=it
+                }
+            }
+            it.getInt(POSITION)?.let {
+                position=it
             }
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
@@ -84,22 +93,22 @@ class ProfileImageShowFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewPager = view.findViewById(R.id.viewPagerMain) as ViewPager
+        viewPagerAdapter =  ViewPagerAdapter(AppObjectController.joshApplication, imagesUrls,::dismissAllowingStateLoss,this)
+        viewPager.adapter = viewPagerAdapter
+        viewPager.currentItem = position
+
         if (isPreviousProfile && mentorId.equals(Mentor.getInstance().getId())) {
             view.findViewById<LinearLayout>(R.id.parent_layout).visibility = View.VISIBLE
         } else {
             view.findViewById<LinearLayout>(R.id.parent_layout).visibility = View.GONE
-        }
-        Utils.setImage(big_image_view, imagePath)
-        courseName?.run {
-            view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
-
         }
         view.findViewById<View>(R.id.delete_layout).setOnClickListener {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(context)
             builder.setMessage(R.string.delete_popup)
                 .setNegativeButton(Html.fromHtml("<font color='#E10717'><b>Delete<b></font>")) { dialog, id ->
-                    imageId?.let { it -> mentorId?.let { it1 ->
+                    imageIds[position]?.let { it -> mentorId?.let { it1 ->
                         viewModel.deletePreviousProfilePic(it,
                             it1
                         )
@@ -116,7 +125,7 @@ class ProfileImageShowFragment : DialogFragment() {
             builder.show()
         }
         view.findViewById<View>(R.id.set_as_profile_layout).setOnClickListener {
-            imageId?.let {
+            imageIds[position]?.let {
                 mentorId?.let { it1 -> viewModel.updateProfilePicFromPreviousProfile(it, it1) }
 
             }
@@ -129,30 +138,36 @@ class ProfileImageShowFragment : DialogFragment() {
                 .push()
             dismiss()
         }
-        if (imageId.isNullOrEmpty().not()) {
-            EngagementNetworkHelper.engageImageApi(ImageEngage(imageId!!))
+
+        if (imageIds.isNullOrEmpty().not()) {
+            EngagementNetworkHelper.engageImageApi(ImageEngage(imageIds[position]!!))
         }
+
     }
 
     companion object {
         fun newInstance(
-            path: String?,
-            courseName: String?,
-            imageId: String?,
             mentorId: String,
-            isPreviousProfile: Boolean
+            isPreviousProfile: Boolean,
+            imageUrls: Array<String>?,
+            position: Int,
+            imageIds: Array<String>?
         ) =
             ProfileImageShowFragment().apply {
                 arguments = Bundle().apply {
-                    putString(IMAGE_SOURCE, path)
-                    putString(COURSE_NAME, courseName)
-                    putString(IMAGE_ID, imageId)
                     putString(MENTOR_ID, mentorId)
                     putBoolean(IS_PREVIOUS_PROFILE, isPreviousProfile)
+                    putStringArray(List_OF_IMAGES,imageUrls)
+                    putInt(POSITION,position)
+                    putStringArray(LIST_OF_IDS,imageIds)
 
 
                 }
             }
+    }
+
+    override fun onSwipeCallback(position: Int) {
+        this.position=position
     }
 
 }

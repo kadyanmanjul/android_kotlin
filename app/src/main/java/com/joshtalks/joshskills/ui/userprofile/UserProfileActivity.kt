@@ -4,23 +4,29 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
-import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -66,6 +72,9 @@ import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
 
+const val FOR_BASIC_DETAILS="For_Basic_Details"
+const val FOR_REST="For_Rest"
+const val FOR_EDIT_SCREEN="For_Edit_Screen"
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
@@ -102,6 +111,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         mentorId = intent.getStringExtra(KEY_MENTOR_ID) ?: EMPTY
         intervalType = intent.getStringExtra(INTERVAL_TYPE)
         previousPage = intent.getStringExtra(PREVIOUS_PAGE)
+        binding.txtFavouriteJoshTalk.movementMethod = LinkMovementMethod.getInstance()
         addObserver()
         startTime = System.currentTimeMillis()
         initToolbar()
@@ -126,15 +136,26 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.userPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
-                    ProfileImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null,mentorId,false)
+                    ProfileImageShowFragment.newInstance(
+                        mentorId,
+                        false,
+                        arrayOf(viewModel.getUserProfileUrl()!!),
+                        0,
+                       null
+                    )
                         .show(supportFragmentManager, "ImageShow")
                 } else {
                     openChooser()
-
                 }
             } else {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
-                    ProfileImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null,mentorId,false)
+                    ProfileImageShowFragment.newInstance(
+                        mentorId,
+                        false,
+                        arrayOf(viewModel.getUserProfileUrl()!!),
+                        0,
+                        null
+                    )
                         .show(supportFragmentManager, "ImageShow")
                 }
             }
@@ -180,26 +201,38 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.txtUserHometown.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.txtUserHometown.isClickable = true
-                EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
+                EditProfileFragment.newInstance(FOR_BASIC_DETAILS).show(supportFragmentManager, "EditProfile")
+            }
+        }
+        binding.withoutEducation.setOnClickListener{
+            if (mentorId == Mentor.getInstance().getId()) {
+                binding.txtUserHometown.isClickable = true
+                EditProfileFragment.newInstance(FOR_REST).show(supportFragmentManager, "EditProfile")
+            }
+        }
+        binding.withoutFutureGoals.setOnClickListener{
+            if (mentorId == Mentor.getInstance().getId()) {
+                binding.txtUserHometown.isClickable = true
+                EditProfileFragment.newInstance(FOR_BASIC_DETAILS).show(supportFragmentManager, "EditProfile")
             }
 
         }
         binding.userAge.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.userAge.isClickable = true
-                EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
+                EditProfileFragment.newInstance(FOR_BASIC_DETAILS).show(supportFragmentManager, "EditProfile")
             }
         }
         binding.btnSentRequest.setOnClickListener{
             with(binding) {
-                if(btnSentRequest.text=="Requested"){
+                if(btnSentRequest.text==getString(R.string.requested)){
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
                             R.color.colorAccent
                         )
                     )
-                    btnSentRequest.text = "Send Request"
+                    btnSentRequest.text = getString(R.string.send_request)
                     btnSentRequest.setTextColor(ContextCompat.getColor(
                         AppObjectController.joshApplication,
                         R.color.white
@@ -251,7 +284,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             layoutParams.topMargin = resources.getDimension(R.dimen._11sdp).toInt()
             layoutParams.bottomMargin = resources.getDimension(R.dimen._11sdp).toInt()
             binding.profileText.layoutParams = layoutParams
-            binding.profileText.text=userName+"'s favorite practice partner request has been removed"
+            binding.profileText.text=getString(R.string.profile_request_removed_text,userName)
             binding.btnConfirmOrNotNowCard.visibility=GONE
             binding.profileText.gravity=Gravity.CENTER_VERTICAL
         }
@@ -278,7 +311,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             if (mentorId == Mentor.getInstance().getId()) {
                 visibility = View.VISIBLE
                 setOnClickListener {
-                    openEditProfileScreen()
+                    EditProfileFragment.newInstance(FOR_EDIT_SCREEN).show(supportFragmentManager, "EditProfile")
                 }
             } else {
                 visibility = View.GONE
@@ -325,11 +358,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         popupMenu.show()
     }
-
-    fun openEditProfileScreen() {
-        EditProfileFragment.newInstance().show(supportFragmentManager, "EditProfile")
-    }
-
     fun openPreviousProfilePicsScreen() {
         PreviousProfilePicsFragment.newInstance(mentorId)
             .show(supportFragmentManager, "PreviousProfilePics")
@@ -384,7 +412,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
                 val title = view.findViewById(R.id.title) as AppCompatTextView
-                title.text = "Senior Student"
+                title.text = getString(R.string.senior_student)
                 setSeniorStudentAwardView(view!!)
                 if (view != null) {
                     binding.multiLineLl.addView(view)
@@ -441,7 +469,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             } else {
                 binding.myGroupsLayout.visibility = VISIBLE
                 binding.myGroupsLl.visibility = VISIBLE
-                binding.labelMyGroups.text= "Groups"
+                binding.labelMyGroups.text= getString(R.string.group_title)
                 binding.myGroupsLl.removeAllViews()
                 var countGroups = 0
                 it.myGroupsList.forEach {
@@ -462,7 +490,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             } else {
                 binding.enrolledCoursesLayout.visibility = View.VISIBLE
                 binding.enrolledCoursesLl.visibility = View.VISIBLE
-                binding.labelEnrolledCourses.text ="Courses"
+                binding.labelEnrolledCourses.text =getString(R.string.courses_title)
                 binding.enrolledCoursesLl.removeAllViews()
                 var countCourses = 0
                 it.courses.forEach { course ->
@@ -495,7 +523,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                             AppObjectController.joshApplication,
                             R.color.not_now
                         )
-                        btnSentRequest.text = "Requested"
+                        btnSentRequest.text = getString(R.string.requested)
                         btnSentRequest.setTextColor(
                             ContextCompat.getColor(
                                 AppObjectController.joshApplication,
@@ -520,9 +548,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             } else {
                 binding.fppListLayout.visibility = VISIBLE
                 binding.myFppLl.visibility = VISIBLE
-                binding.fppDp.text= "Favorite practice partners"
+                binding.fppDp.text=getString(R.string.fpp_text)
                 binding.viewAllFpp.visibility= VISIBLE
-                binding.viewAllFpp.text = "See All"
+                binding.viewAllFpp.text = getString(R.string.see_all)
                 binding.myFppLl.removeAllViews()
                 var countFppList = 0
                 it.forEach {
@@ -615,13 +643,13 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
 
         viewModel.userProfileUrl.observe(this) {
-            if (mentorId.equals(Mentor.getInstance().getId())) {
+            if (mentorId == Mentor.getInstance().getId()) {
                 if (it.isNullOrBlank()) {
                     binding.editPic.visibility = View.VISIBLE
-                    binding.editPic.text = "Add"
+                    binding.editPic.text =getString(R.string.add)
                 } else {
                     binding.editPic.visibility = View.VISIBLE
-                    binding.editPic.text = "Edit"
+                    binding.editPic.text = getString(R.string.edit_text)
                 }
             }
             binding.userPic.post {
@@ -685,6 +713,109 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         if (userData.isOnline == true) {
             binding.onlineStatusIv.visibility = View.VISIBLE
         }
+        if(!userData.futureGoals.isNullOrBlank()){
+            binding.seperatorBasicDetails.visibility= VISIBLE
+            binding.txtLabelFutureGoals.visibility= VISIBLE
+            binding.txtFutureGoals.visibility= VISIBLE
+            binding.txtFutureGoals.text = userData.futureGoals
+        }else{
+            binding.seperatorBasicDetails.visibility= GONE
+            binding.txtLabelFutureGoals.visibility= GONE
+            binding.txtFutureGoals.visibility= GONE
+        }
+        if(!userData.favouriteJoshTalk.isNullOrBlank()){
+            binding.seperatorFavouriteJoshTalk.visibility= VISIBLE
+            binding.labelFavouriteJoshTalk.visibility= VISIBLE
+            binding.txtFavouriteJoshTalk.visibility= VISIBLE
+            binding.txtFavouriteJoshTalk.text = userData.favouriteJoshTalk
+        }else{
+            binding.seperatorFavouriteJoshTalk.visibility= GONE
+            binding.labelFavouriteJoshTalk.visibility= GONE
+            binding.txtFavouriteJoshTalk.visibility= GONE
+        }
+        if(userData.futureGoals.isNullOrBlank()&&userData.favouriteJoshTalk.isNullOrBlank()&& mentorId == Mentor.getInstance().getId()){
+            binding.withoutFutureGoals.visibility= VISIBLE
+        }else{
+            binding.withoutFutureGoals.visibility= GONE
+        }
+        if(userData.educationDetails==null && userData.occupationDetails==null){
+            if(mentorId == Mentor.getInstance().getId()){
+                binding.educationOccupationLayout.visibility= GONE
+                binding.withoutEducation.visibility= VISIBLE
+            }
+        }else{
+            binding.withoutEducation.visibility= GONE
+            binding.educationOccupationLayout.visibility= VISIBLE
+            var occupationDetailsFlag: Boolean
+            if(userData.occupationDetails!!.designation!=null || userData.occupationDetails!!.company!=null){
+                binding.txtLabelOccupation.visibility= VISIBLE
+                occupationDetailsFlag=true
+                if(userData.occupationDetails!!.designation!=null){
+                    binding.txtOccupation.visibility= VISIBLE
+                    binding.txtOccupation.text=userData.occupationDetails!!.designation
+                }else{
+                    binding.txtOccupation.visibility= GONE
+                }
+                if(userData.occupationDetails!!.company!=null){
+                    binding.txtPlace.visibility= VISIBLE
+                    binding.txtPlace.text="at " + userData.occupationDetails!!.company
+                    binding.txtPlace.setColorize("at")
+                }else{
+                    binding.txtPlace.visibility= GONE
+
+                }
+            }else{
+                occupationDetailsFlag=false
+                binding.txtLabelOccupation.visibility= GONE
+                binding.txtOccupation.visibility= GONE
+                binding.txtPlace.visibility= GONE
+            }
+            var educationDetailsFlag: Boolean
+
+            if(userData.educationDetails!!.year!=null||userData.educationDetails!!.degree!=null||userData.educationDetails!!.college!=null){
+                binding.labelEducation.visibility= VISIBLE
+                educationDetailsFlag=true
+                if(userData.educationDetails!!.degree!=null){
+                    binding.txtDegree.visibility= VISIBLE
+                    binding.txtDegree.text=userData.educationDetails!!.degree
+                }else{
+                    binding.txtDegree.visibility= GONE
+                }
+                if(userData.educationDetails!!.year!=null) {
+                    binding.txtDate.visibility= VISIBLE
+                    if(userData.educationDetails!!.college!=null){
+                        binding.txtDate.text = "from " + userData.educationDetails!!.college + SINGLE_SPACE +"  • "+ userData.educationDetails!!.year
+                        binding.txtDate.setColorize("from")
+                    }else{
+                        binding.txtDate.text = SINGLE_SPACE +"•"+ userData.educationDetails!!.year
+                    }
+                }else{
+                    binding.txtDate.visibility= GONE
+                    if(userData.educationDetails!!.college!=null){
+                        binding.txtDate.visibility= VISIBLE
+                        binding.txtDate.text = "from " + userData.educationDetails!!.college
+                        binding.txtDate.setColorize("from")
+                    }else{
+                        binding.txtDate.visibility= GONE
+                    }
+                }
+            }else{
+                educationDetailsFlag=false
+                binding.labelEducation.visibility= GONE
+            }
+            if(educationDetailsFlag && occupationDetailsFlag){
+                binding.EducationOccupationLayoutDp.text = getString(R.string.education_occupation_text)
+                binding.seperatorEducationDetails.visibility= VISIBLE
+            }else{
+                if(educationDetailsFlag){
+                    binding.EducationOccupationLayoutDp.text = getString(R.string.education_text)
+                }
+                if(occupationDetailsFlag){
+                    binding.EducationOccupationLayoutDp.text = getString(R.string.occupation_text)
+                }
+                binding.seperatorEducationDetails.visibility= GONE
+            }
+        }
 
         if (userData.isSeniorStudent) {
             binding.txtLabelSeniorStudent.text = getString(R.string.label_senior_student, resp)
@@ -694,7 +825,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.txtLabelBecomeSeniorStudent.visibility = View.GONE
             binding.imgSeniorStudentBadge.visibility = View.GONE
         }
-
         userData.points?.let {
             var incrementalPoints = 0
             val incrementalValue = it.div(50)
@@ -736,7 +866,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
             if (userData.profilePicturesCount != 0) {
                 binding.previousProfilePicLayout.visibility = View.VISIBLE
-                binding.labelPreviousDp.setText("Previous Profile Photos (${userData.profilePicturesCount})")
+                binding.labelPreviousDp.text = getString(R.string.previous_profile_text,userData.profilePicturesCount.toString())
             } else {
                 binding.previousProfilePicLayout.visibility = View.GONE
             }
@@ -758,6 +888,22 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         title.visibility =  GONE
         count.visibility =  GONE
         image.setImageResource(R.drawable.senior_student_with_shadow)
+    }
+    fun TextView.setColorize(subStringToColorize: String) {
+        val spannable: Spannable = SpannableString(text)
+        spannable.setSpan(
+            ForegroundColorSpan(Color.parseColor("#687c90")),
+            0,
+            subStringToColorize.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannable.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            subStringToColorize.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        setText(spannable, TextView.BufferType.SPANNABLE)
     }
 
     private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
@@ -1014,7 +1160,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     {
                         viewModel.userData.value?.photoUrl = it.url
                         if (it.url.isBlank()) {
-                            viewModel.saveProfileInfo("")
+                            viewModel.saveProfileInfo(null)
                         }
                     },
                     {

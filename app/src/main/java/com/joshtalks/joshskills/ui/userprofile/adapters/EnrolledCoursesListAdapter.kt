@@ -33,7 +33,7 @@ class EnrolledCoursesListAdapter(
         var courseText: AppCompatTextView = view.findViewById(R.id.tv_students_enrolled)
         fun bind(courseEnrolled: CourseEnrolled) {
             courseName.text=courseEnrolled.courseName
-            courseText.text=courseEnrolled.noOfStudents.toString()+" students enrolled"
+            courseText.text=AppObjectController.joshApplication.getString(R.string.enrolled_student_text,courseEnrolled.noOfStudents.toString())
             if(courseEnrolled.courseImage==null){
                 courseIcon.setImageResource(R.drawable.group_default_icon)
             }else{

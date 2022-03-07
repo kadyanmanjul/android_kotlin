@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -62,6 +63,11 @@ interface SignUpNetworkService {
         @FieldMap params: Map<String, String?>
     ): Response<User>
 
+    @PATCH("$DIR/user/user_update/{id}/")
+    suspend fun updateUserProfileV2(
+        @Path("id") userId: String,
+        @Body params: UpdateProfilePayload
+    ): Response<Any>
     @PATCH("$DIR/user/profile_picture/{id}/")
     suspend fun updateProfilePicFromPreviousProfile(@Path("id") imageId: String): Response<Any>
 
