@@ -1463,6 +1463,9 @@ class WebRtcService : BaseWebRtcService() {
                 if (isNewUserCall()) {
                     put(RTC_IS_NEW_USER_CALL, "true")
                 }
+                if (isToSeniorStudentCall()) {
+                    put(RTC_IS_SENIOR_CALL, "true")
+                }
             }
             putExtra(CALL_USER_OBJ, data)
             putExtra(CALL_TYPE, CallType.INCOMING)
