@@ -79,9 +79,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var flowFrom: String? = null
     private var downloadID: Long = -1
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
-    private var is100PointsObtained = false
     var expiredTime: Long = 0L
-    val ENGLISH_COURSE_TEST_ID = 102
+    private val ENGLISH_COURSE_TEST_ID = 102
     var isPointsScoredMoreThanEqualTo100 = false
 
 
@@ -120,6 +119,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         }
         if (testId != 0) {
             getCourseDetails(testId)
+
+            if(testId == ENGLISH_COURSE_TEST_ID){
+                viewModel.getPointsSummary()
+            }
+
         } else {
             finish()
         }
@@ -150,10 +154,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
-        if(testId == 102){
-            viewModel.getPointsSummary()
-            viewModel.getPaymentDetails(testId.toInt())
-        }
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
@@ -241,6 +241,22 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, { data ->
+
+            if(data.expiredDate != null){
+                expiredTime = data.expiredDate!!.time
+                if(expiredTime != 0L && expiredTime <= System.currentTimeMillis()){
+                    binding.btnStartCourse.isEnabled = true
+                    binding.btnStartCourse.alpha = 1f
+                } else if(isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID) {
+                    binding.btnStartCourse.isEnabled = true
+                    binding.btnStartCourse.alpha = 1f
+                }else if(testId == ENGLISH_COURSE_TEST_ID && !isPointsScoredMoreThanEqualTo100 && expiredTime != 0L && expiredTime > System.currentTimeMillis()){
+                    binding.btnStartCourse.text = getString(R.string.achieve_100_points_to_buy)
+                    binding.btnStartCourse.isEnabled = false
+                    binding.btnStartCourse.alpha = .5f
+                }
+            }
+
             isFromNewFreeTrial = data.isFreeTrial
             binding.txtActualPrice.text = data.paymentData.actualAmount
             binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
@@ -315,27 +331,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         })
 
         viewModel.pointsHistoryLiveData.observe(this, {
-            if(it.totalPoints != null && it.totalPoints >= 4){
+            if(it.totalPoints != null && it.totalPoints >= 100){
                 isPointsScoredMoreThanEqualTo100 = true
             }
         })
 
-        viewModel.paymentDetailsLiveData.observe(this) {
-            expiredTime = it.expireTime!!.time
-            if(expiredTime != 0L && expiredTime <= System.currentTimeMillis()){
-                binding.btnStartCourse.isEnabled = true
-                binding.btnStartCourse.alpha = 1f
-            } else if(isPointsScoredMoreThanEqualTo100 && testId == 102) {
-                binding.btnStartCourse.isEnabled = true
-                binding.btnStartCourse.alpha = 1f
-                is100PointsObtained = true
-            }else if(testId == 102 && !isPointsScoredMoreThanEqualTo100 && expiredTime != 0L && expiredTime > System.currentTimeMillis()){
-                binding.btnStartCourse.text = getString(R.string.achieve_100_points_to_buy)
-                binding.btnStartCourse.isEnabled = false
-                binding.btnStartCourse.alpha = .5f
-                is100PointsObtained = false
-            }
-        }
     }
 
     private fun showMoveToInboxScreen() {
@@ -700,9 +700,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 )
             } else {
                 logStartCourseAnalyticEvent(testId)
-                if(testId == 102){
+                if(testId == ENGLISH_COURSE_TEST_ID){
                     PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial,
-                        is100PointsObtained = is100PointsObtained
+                        is100PointsObtained = isPointsScoredMoreThanEqualTo100
                     )
                 }else{
                     PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial

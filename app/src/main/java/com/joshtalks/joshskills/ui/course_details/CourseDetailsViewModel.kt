@@ -35,39 +35,6 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val demoCourseDetailsLiveData: MutableLiveData<DemoCourseDetailsResponse> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val pointsHistoryLiveData: MutableLiveData<PointsHistoryResponse> = MutableLiveData()
-    var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
-
-
-    fun getPaymentDetails(testId: Int, couponCode: String = EMPTY) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val data = HashMap<String, Any>()
-            data["test_id"] = testId
-            data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
-            data["code"] = couponCode
-            if (Mentor.getInstance().getId().isNotEmpty()) {
-                data["mentor_id"] = Mentor.getInstance().getId()
-            }
-
-            try {
-                val res =
-                    AppObjectController.signUpNetworkService.getFreeTrialPaymentData(data)
-                paymentDetailsLiveData.postValue(res)
-            } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }
-                }
-            }
-        }
-    }
-
 
     fun getPointsSummary() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -84,8 +51,6 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
             }
         }
     }
-
-
 
     fun fetchCourseDetails(testId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
