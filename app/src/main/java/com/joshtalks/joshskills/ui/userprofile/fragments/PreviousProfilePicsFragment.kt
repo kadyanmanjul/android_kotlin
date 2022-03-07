@@ -89,8 +89,9 @@ class PreviousProfilePicsFragment : DialogFragment() {
         viewModel.previousProfilePics.observe(this) {
             if(it==null||it.profilePictures.isNullOrEmpty()){
                 dismiss()
+            }else{
+                initView(it)
             }
-            initView(it)
         }
         viewModel.sectionImpressionResponse.observe(this){
             impressionId=it.sectionImpressionId
@@ -112,7 +113,19 @@ class PreviousProfilePicsFragment : DialogFragment() {
         super.onPause()
     }
 
-    private fun initView(previousProfilePics: PreviousProfilePictures?) {
+    private fun initView(previousProfilePics: PreviousProfilePictures) {
+        var imagesUrls : Array<String> = Array(previousProfilePics.profilePictures.size){""}
+        var count=0
+        previousProfilePics?.profilePictures?.forEach{
+            imagesUrls[count] = it.photoUrl
+            count++
+        }
+        var imageIds : Array<String> = Array(previousProfilePics.profilePictures.size){""}
+        count=0
+        previousProfilePics?.profilePictures?.forEach{
+            imageIds[count] = it.id.toString()
+            count++
+        }
         previousProfilePics?.profilePictures?.sortedBy { it.timestamp?.time }
             ?.let { picsList ->
                 val recyclerView: RecyclerView = binding.rvPreviousPics
@@ -122,13 +135,13 @@ class PreviousProfilePicsFragment : DialogFragment() {
                     recyclerView.adapter = PreviousPicsAdapter(
                     picsList,
                     object : PreviousPicsAdapter.OnPreviousPicClickListener {
-                        override fun onPreviousPicClick(profilePicture: ProfilePicture) {
+                        override fun onPreviousPicClick(profilePicture: ProfilePicture,position:Int) {
                             ProfileImageShowFragment.newInstance(
-                                profilePicture.photoUrl,
-                                null,
-                                profilePicture.id.toString(),
                                 mentorId,
-                                true
+                                true,
+                                imagesUrls,
+                                position,
+                                imageIds
                             )
                                 .show(activity!!.supportFragmentManager, "ImageShow")
                         }

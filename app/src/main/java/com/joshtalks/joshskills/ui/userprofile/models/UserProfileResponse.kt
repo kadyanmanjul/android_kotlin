@@ -71,7 +71,15 @@ data class UserProfileResponse(
     @SerializedName("course_enrolled")
     val enrolledCoursesList: EnrolledCoursesList? = null,
     @SerializedName("is_game_active")
-    val isGameActive: Boolean = false
+    val isGameActive: Boolean = false,
+    @SerializedName("future_goals")
+    var futureGoals:String?= null,
+    @SerializedName("favourite_josh_talk")
+    var favouriteJoshTalk:String?= null,
+    @SerializedName("education_details")
+    var educationDetails:EducationDetails?= EducationDetails(),
+    @SerializedName("occupation_details")
+    var occupationDetails:OccupationDetails?=OccupationDetails()
 )
 
 data class Certificate(

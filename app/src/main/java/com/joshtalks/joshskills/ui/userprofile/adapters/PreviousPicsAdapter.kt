@@ -23,7 +23,7 @@ class PreviousPicsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position],position)
     }
 
     override fun getItemCount(): Int = items.size
@@ -32,16 +32,15 @@ class PreviousPicsAdapter(
         var imgPreviousPic: AppCompatImageView = view.findViewById(R.id.previous_p)
         var previousPicShimmer: LottieAnimationView =view.findViewById<LottieAnimationView>(R.id.previous_pic_shimmer_layout)
         var profilePicture: ProfilePicture? = null
-        fun bind(profilePicture: ProfilePicture) {
+        fun bind(profilePicture: ProfilePicture,position: Int) {
             this.profilePicture = profilePicture
             imgPreviousPic.setPreviousProfileImage(profilePicture.photoUrl, view.context,previousPicShimmer)
-            view.setOnClickListener { onPreviousPicClickListener.onPreviousPicClick(profilePicture) }
+            view.setOnClickListener { onPreviousPicClickListener.onPreviousPicClick(profilePicture,position) }
         }
 
     }
-
     interface OnPreviousPicClickListener {
-        fun onPreviousPicClick(profilePicture: ProfilePicture)
+        fun onPreviousPicClick(profilePicture: ProfilePicture,position: Int)
     }
 
 }
