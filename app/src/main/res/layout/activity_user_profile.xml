@@ -433,7 +433,7 @@
                         android:id="@+id/ref_no_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:text="@string/total_help_me"
                         android:layout_marginLeft="@dimen/_6sdp"
                         android:layout_marginRight="@dimen/_10sdp"
                         android:textSize="@dimen/_11sdp"
