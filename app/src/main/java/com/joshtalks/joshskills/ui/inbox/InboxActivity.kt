@@ -8,12 +8,24 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
+import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -21,9 +33,9 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
@@ -32,16 +44,23 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.fragment_listen_practise.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.find_more_layout.find_more_new
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
+import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -59,6 +78,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private var compositeDisposable = CompositeDisposable()
     private lateinit var findMoreLayout: View
     var isPermissionRequired: Boolean = true
+    val mixpanel: MixpanelAPI by lazy {
+        MixpanelAPI.getInstance(
+            this,
+            "4c574e3a5e6b933a0e55c88239f6e994"
+        )
+    }
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
 
@@ -94,7 +119,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
         }
-        
+
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.apply {
             itemAnimator = null
@@ -113,12 +138,48 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         recycler_view_inbox.adapter = inboxAdapter
         iv_setting.setOnClickListener {
             openPopupMenu(it)
+            CoroutineScope(Dispatchers.IO).launch {
+                val data = ABTestRepository().getCampaignData("SPEAKING_INTRODUCTION_VIDEO")
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey?: EMPTY)
+                    props.put("Variable",AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    mixpanel.track("Impression", props)
+                    props.put("Campaign","SPEAKING_INTRODUCTION_VIDEO")
+                    mixpanel.flush()
+                }
+            }
         }
+
         find_more.setOnClickListener {
             courseExploreClick()
+            CoroutineScope(Dispatchers.IO).launch {
+                val data = ABTestRepository().getCampaignData("SPEAKING_INTRODUCTION_VIDEO")
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey?: EMPTY)
+                    props.put("Variable",AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put("Campaign","SPEAKING_INTRODUCTION_VIDEO")
+                    props.put("Goal","SIV_GT_2MIN")
+                    mixpanel.track("Conversion", props)
+                    mixpanel.flush()
+                }
+            }
         }
         find_more_new.setOnClickListener {
             courseExploreClick()
+            CoroutineScope(Dispatchers.IO).launch {
+                val data = ABTestRepository().getCampaignData("SPEAKING_INTRODUCTION_VIDEO")
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey?: EMPTY)
+                    props.put("Variable",AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put("Goal","SIV_GT_2MIN")
+                    props.put("Campaign","SPEAKING_INTRODUCTION_VIDEO")
+                    mixpanel.track("Conversion", props)
+                    mixpanel.flush()
+                }
+            }
         }
         buy_english_course.setOnClickListener {
             FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
@@ -219,13 +280,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
                 if (haveFreeTrialCourse) {
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.GONE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.VISIBLE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
+                        View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
+                        View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
+                        View.VISIBLE
                 } else {
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.VISIBLE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.GONE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
+                        View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
+                        View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
+                        View.GONE
                 }
             }
         }
@@ -252,7 +319,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         try {
             inboxAdapter.notifyDataSetChanged()
 
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
         Runtime.getRuntime().gc()

@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -212,8 +211,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
-        setUpVideoProgressListener()
-        viewModel.getVideoData()
     }
 
     override fun onResume() {
@@ -703,6 +700,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 ex.printStackTrace()
             }
         }
+    }
+
+    override fun showIntroVideo() {
+        setUpVideoProgressListener()
+        viewModel.getVideoData()
     }
 
     override fun showVideoToolTip(

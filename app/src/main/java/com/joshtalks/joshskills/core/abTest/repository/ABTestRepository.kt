@@ -33,7 +33,6 @@ class ABTestRepository {
     suspend fun updateAllCampaigns(list: List<String>) {
         try {
             database.deleteAllCampaigns()
-            Log.d("Manjul", "updateAllCampaigns() called with: list = ${list.joinToString(",")}")
             val apiResponse = apiService.getAllCampaigns(list.joinToString(","))
             if (apiResponse.isSuccessful && apiResponse.body() != null) {
                 database.insertCampaigns(apiResponse.body()!!)

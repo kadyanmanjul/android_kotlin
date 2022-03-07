@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -403,6 +404,12 @@ class PracticeViewModel(application: Application) :
     fun getPracticeAfterUploaded(id: String, callback: (ChatModel) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             callback.invoke(AppObjectController.appDatabase.chatDao().getUpdatedChatObjectViaId(id))
+        }
+    }
+
+    fun postGoal(s: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            ABTestRepository().postGoal(s)
         }
     }
 
