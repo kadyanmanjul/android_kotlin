@@ -12,12 +12,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBinding
 
-const val OPEN_NOTIFICATION = "OPEN_NOTIFICATION"
-const val OPEN_AUTO_START = "OPEN_AUTO_START"
-const val OPEN_AUTO_START_SETTINGS = "OPEN_AUTO_START_SETTINGS"
+const val NOTIFICATION_POPUP = "NOTIFICATION_POPUP"
+const val AUTO_START_POPUP = "AUTO_START_POPUP"
+const val AUTO_START_SETTINGS_POPUP = "AUTO_START_SETTINGS_POPUP"
 
 class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
 
@@ -26,7 +25,7 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
     companion object {
 
         lateinit var mIntent: Intent
-        var eventType: String = OPEN_NOTIFICATION
+        var popupType: String = NOTIFICATION_POPUP
 
         fun newInstance(intent: Intent): CustomPermissionDialogFragment {
             mIntent = intent
@@ -36,13 +35,13 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         fun showCustomPermissionDialog(
             intent: Intent,
             supportFragmentManager: FragmentManager,
-            eventType: String
+            popupType: String
         ) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag("custom_permission_fragment_dialog")
             if (prev != null)
                 fragmentTransaction.remove(prev)
-            this.eventType = eventType
+            this.popupType = popupType
             fragmentTransaction.addToBackStack(null)
             newInstance(intent).show(supportFragmentManager, "custom_permission_fragment_dialog")
         }
@@ -68,46 +67,54 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun initPopupUI() {
-        when(eventType) {
-            OPEN_NOTIFICATION -> {
+        when(popupType) {
+            NOTIFICATION_POPUP -> {
                 binding.textView3.text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.NOTIFICATION_SETTING_DESCRIPTION)
                 binding.popupHeading.visibility = View.GONE
                 binding.appCompatImageView.visibility = View.GONE
+                logImpression(AnalyticsEvent.NOTIFICATION_SETTINGS_CLICKED)
             }
-            OPEN_AUTO_START -> {
+            AUTO_START_POPUP -> {
                 binding.textView3.text = HtmlCompat.fromHtml(getString(R.string.permission_dialog_description), HtmlCompat.FROM_HTML_MODE_LEGACY)
-
                 if (!AppObjectController.getFirebaseRemoteConfig()
                         .getBoolean(FirebaseRemoteConfigKey.SHOW_AUTOSTART_IMAGE))
                     binding.appCompatImageView.visibility = View.GONE
+
+                logImpression(AnalyticsEvent.AUTOSTART_CONV_SHOWN)
             }
-            OPEN_AUTO_START_SETTINGS -> {
+            AUTO_START_SETTINGS_POPUP -> {
                 binding.popupHeading.text = getString(R.string.allow_autostart)
                 binding.textView3.text = HtmlCompat.fromHtml(getString(R.string.permission_dialog_description), HtmlCompat.FROM_HTML_MODE_LEGACY)
-
                 if (!AppObjectController.getFirebaseRemoteConfig()
                         .getBoolean(FirebaseRemoteConfigKey.SHOW_AUTOSTART_IMAGE))
                     binding.appCompatImageView.visibility = View.GONE
+
+                logImpression(AnalyticsEvent.AUTOSTART_SETTINGS_CLICKED)
             }
         }
     }
 
     fun allow() {
-        PrefManager.put(SHOULD_SHOW_AUTOSTART_POPUP, false)
-        logAction(PermissionAction.ALLOW)
         dismiss()
+        when(popupType) {
+            NOTIFICATION_POPUP -> logImpression(AnalyticsEvent.NOTIFICATION_SETTINGS_YES)
+            AUTO_START_POPUP -> {
+                PrefManager.put(SHOULD_SHOW_AUTOSTART_POPUP, false)
+                logImpression(AnalyticsEvent.AUTOSTART_CONV_YES)
+            }
+            AUTO_START_SETTINGS_POPUP -> logImpression(AnalyticsEvent.AUTOSTART_SETTINGS_YES)
+        }
         navigateToSettings()
     }
 
     fun cancel() {
-        logAction(PermissionAction.CANCEL)
         dismiss()
-    }
-
-    fun doNotAskAgain() {
-        logAction(PermissionAction.DO_NOT_ASK_AGAIN)
-        dismiss()
+        when(popupType) {
+            NOTIFICATION_POPUP -> logImpression(AnalyticsEvent.NOTIFICATION_SETTINGS_NO)
+            AUTO_START_POPUP -> logImpression(AnalyticsEvent.AUTOSTART_CONV_NO)
+            AUTO_START_SETTINGS_POPUP -> logImpression(AnalyticsEvent.AUTOSTART_SETTINGS_NO)
+        }
     }
 
     /** Navigate To Power Manager Settings **/
@@ -119,9 +126,7 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun logAction(actionPerformed: PermissionAction) {
-        AppAnalytics.create(AnalyticsEvent.CUSTOM_PERMISSION_ACTION.NAME)
-            .addParam("Action", actionPerformed.name)
-            .push()
+    fun logImpression(actionPerformed: AnalyticsEvent) {
+        (requireActivity() as BaseActivity).pushAnalyticsToServer(actionPerformed.NAME)
     }
 }

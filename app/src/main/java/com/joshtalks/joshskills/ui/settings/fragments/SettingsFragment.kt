@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LanguageItem
-import com.joshtalks.joshskills.ui.extra.OPEN_AUTO_START_SETTINGS
+import com.joshtalks.joshskills.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -227,7 +227,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun showAutoStartPermissionPopup() {
-        (requireActivity() as BaseActivity).checkForOemNotifications(OPEN_AUTO_START_SETTINGS)
+        (requireActivity() as BaseActivity).checkForOemNotifications(AUTO_START_SETTINGS_POPUP)
     }
 
     fun hideBottomView() {

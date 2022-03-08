@@ -132,7 +132,7 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.extra.OPEN_AUTO_START
+import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
@@ -1244,8 +1244,8 @@ class ConversationActivity :
                                 setOverlayAnimation()
                             } else if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
                                 && System.currentTimeMillis().minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L) {
-                                checkForOemNotifications(OPEN_AUTO_START)
                                 PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
+                                checkForOemNotifications(AUTO_START_POPUP)
                             }
                         }
                     }

@@ -63,7 +63,6 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
-import com.joshtalks.joshskills.ui.extra.OPEN_AUTO_START
 import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
 import com.joshtalks.joshskills.ui.gif.GIFActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
@@ -608,23 +607,23 @@ abstract class BaseActivity :
 
     fun checkForOemNotifications(event: String) {
         lifecycleScope.launch(Dispatchers.IO) {
-                var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
-                if (oemIntent == null) {
-                    oemIntent = Intent(
-                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.parse("package:$packageName")
-                    )
-                    oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
-                    oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+            var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
+            if (oemIntent == null) {
+                oemIntent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:$packageName")
+                )
+                oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
+                oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
 
-                lifecycleScope.launch(Dispatchers.Main) {
-                    CustomPermissionDialogFragment.showCustomPermissionDialog(
-                        oemIntent,
-                        supportFragmentManager,
-                        event
-                    )
-                }
+            lifecycleScope.launch(Dispatchers.Main) {
+                CustomPermissionDialogFragment.showCustomPermissionDialog(
+                    oemIntent,
+                    supportFragmentManager,
+                    event
+                )
+            }
         }
     }
 
@@ -635,6 +634,20 @@ abstract class BaseActivity :
 
     fun isNotificationEnabled() =
         NotificationManagerCompat.from(this).areNotificationsEnabled().not()
+
+    fun pushAnalyticsToServer(eventName: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 
     fun isUserProfileComplete(): Boolean {
         try {
