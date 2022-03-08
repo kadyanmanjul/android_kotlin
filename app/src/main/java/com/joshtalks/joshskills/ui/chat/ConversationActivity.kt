@@ -123,6 +123,7 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
+import com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
@@ -144,6 +145,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import java.lang.ref.WeakReference
 import java.util.Timer
 import java.util.TimerTask
@@ -1729,6 +1732,24 @@ class ConversationActivity :
                     }
                 )
         )
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(SpecialPracticeEventBus::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe(
+                    {
+                        SpecialPracticeActivity.start(
+                            this,
+                            conversationId = inboxEntity.conversation_id,
+                            it.specialId
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
+        )
+
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(LessonItemClickEventBus::class.java)

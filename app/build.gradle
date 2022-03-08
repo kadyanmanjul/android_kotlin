@@ -14,7 +14,7 @@ def minorVersion = 0
 def patchVersion = 19
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
@@ -169,13 +169,13 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            //buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
             buildConfigField "String", "ACTIVITY_FEED_COLLECTION", "\"activity_feed_staging\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
             /*For Port */
-//            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9010\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9010\""
 
             applicationVariants.all { variant ->
                 variant.outputs.all {
@@ -443,13 +443,19 @@ dependencies {
     implementation "com.vanniktech:emoji-ios:0.8.0"
     implementation "com.vanniktech:emoji-material:0.8.0"
     //CameraX
-    def camerax_version = "1.1.0-beta01"
+    def camerax_version = "1.1.0-beta02"
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
     implementation "androidx.camera:camera-video:${camerax_version}"
     implementation "androidx.camera:camera-view:${camerax_version}"
+    implementation 'androidx.camera:camera-lifecycle:1.0.2'
 
+    implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.4.1'
+
+/*
+    implementation 'io.sentry:sentry-android-timber:5.5.1'
+*/
 
     //mixpanel
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
