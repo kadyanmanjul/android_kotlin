@@ -121,7 +121,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class, ABTestCampaignData::class
     ],
-    version = 46,
+    version = 44,
     exportSchema = true
 )
 @TypeConverters(
@@ -212,8 +212,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_40_41,
                                 MIGRATION_41_42,
                                 MIGRATION_42_43,
-                                MIGRATION_43_44,
-                                MIGRATION_44_45,
+                                MIGRATION_43_44
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -587,16 +586,11 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("DROP TABLE `assessment_questions`")
                 database.execSQL("ALTER TABLE `assessment_questions_tmp` RENAME TO `assessment_questions`")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_questions_assessmentId` ON `assessment_questions` (`assessmentId`)")
-                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)");
-            }
-        }
-
-        private val MIGRATION_44_45:Migration = object : Migration(44, 45) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)")
                 database.execSQL("ALTER TABLE course ADD COLUMN paid_test_id TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `ab_test_campaigns` (`is_campaign_active` INTEGER NOT NULL, `campaign_key` TEXT NOT NULL, `variant_key` TEXT, `variable_map` TEXT, PRIMARY KEY (`campaign_key`))")
             }
         }
-
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
