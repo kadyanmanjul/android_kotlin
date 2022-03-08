@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.local.dao
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import java.util.Date
 
 @Dao
@@ -366,6 +368,8 @@ interface ChatDao {
 
             chatModel.lesson = getLesson(chatModel) // Add Lesson
 
+            chatModel.specialPractice = getSpecialPractice(chatModel)
+
             chatModel.question = getQuestion(chatModel) // Add Question
         }
         return listOfChat
@@ -378,6 +382,8 @@ interface ChatDao {
             chatModel.awardMentorModel = getAwardMentor(chatModel)
 
             chatModel.lesson = getLesson(chatModel) // Add Lesson
+
+            chatModel.specialPractice = getSpecialPractice(chatModel) // Add Special practice
 
             chatModel.question = getQuestion(chatModel) // Add Question
         } catch (ex: Throwable) {
@@ -399,6 +405,15 @@ interface ChatDao {
             //  val courseId=getCourseId(chatModel.conversationId)
             return AppObjectController.appDatabase.lessonDao()
                 .getLessonFromChatId(chatModel.chatId)
+        }
+        return null
+    }
+
+    private fun getSpecialPractice(chatModel: ChatModel): SpecialPractice? {
+        if (chatModel.type == BASE_MESSAGE_TYPE.SPECIAL_PRACTICE) {
+            return AppObjectController.appDatabase.specialDao()
+                .getSpecialPracticeFromChatId()
+//                .getSpecialPracticeFromChatId(chatModel.chatId)
         }
         return null
     }

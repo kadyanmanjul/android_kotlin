@@ -152,6 +152,10 @@ object NetworkRequestHelper {
                     it.chatId = chatModel.chatId
                     AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
                 }
+
+                chatModel.specialPractice?.let {
+                    AppObjectController.appDatabase.specialDao().insertSingleItem(it)
+                }
             }
             if (resp.chatModelList.isEmpty()) {
                 RxBus2.publish(DBInsertion("ChatIEmpty"))

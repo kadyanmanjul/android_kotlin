@@ -1036,6 +1036,16 @@
     <string name="josh_fam">You are a valuable member of the Josh\nfamily</string>
     <string name="share_with_friends">Share with friends</string>
     <string name="great_job">Great Job %1$s!</string>
+    <string name="see_course_list">See course list</string>
+    <string name="record_video">Record Video</string>
+    <string name="record_and_submit_video">Record your video and submit the practice</string>
+    <string name="submit_your_practice">Submit your practice</string>
+    <string name="play_video">Play Video</string>
+    <string name="instruction_text">To understand how to complete this special practice watch this video submitted by Harsh who started this course on 8th of January 2021.</string>
+    <string name="text_temp">In this special practice your task is to create a video where you are teaching the meaning of this word</string>
+    <string name="your_submitted_video">Your Submitted video</string>
+    <string name="special_practice_text"><b>Vedant Maheshwari</b> sir has sent you a special practice for completing total 300 minutes speaking practice</string>
+
     <string name="how_to_speak"><u>How To Speak?</u></string>
 
     <string name="download_syllabus_23_pages">Download Syllabus<b> • </b>15 pages</string>

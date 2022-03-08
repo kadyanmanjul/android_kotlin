@@ -101,6 +101,8 @@ import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -119,9 +121,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
-        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class, ABTestCampaignData::class
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class, SpecialPractice::class
     ],
-    version = 44,
+    version = 45,
     exportSchema = true
 )
 @TypeConverters(
@@ -590,6 +592,8 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `ab_test_campaigns` (`is_campaign_active` INTEGER NOT NULL, `campaign_key` TEXT NOT NULL, `variant_key` TEXT, `variable_map` TEXT, PRIMARY KEY (`campaign_key`))")
             }
         }
+
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -633,6 +637,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun timeTokenDao(): TimeTokenDao
     abstract fun groupChatDao(): GroupChatDao
     abstract fun gameAnalyticsDao(): GameAnalyticsDao
+    abstract fun specialDao():SpecialDao
     abstract fun abCampaignDao(): ABTestCampaignDao
 }
 

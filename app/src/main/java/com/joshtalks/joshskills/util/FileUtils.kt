@@ -1,13 +1,17 @@
 package com.joshtalks.joshskills.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.AssetFileDescriptor
+import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
-import android.provider.DocumentsContract
-import com.joshtalks.joshskills.util.FileFormat.*
+import android.provider.OpenableColumns
+import android.util.Log
+import android.view.View
 import com.joshtalks.joshskills.util.Utils.DATE_FORMAT
 import java.io.*
 import java.nio.channels.FileChannel
@@ -24,6 +28,8 @@ enum class FileFormat(val extension: String) {
 
 const val FILE_NAME_PREFIX = "JoshSkills_"
 const val PARENT_DIRECTORY = "JoshSkills"
+private const val EOF = -1
+private const val DEFAULT_BUFFER_SIZE = 1024 * 4
 
 val fileOutputPath: String
     get() {
@@ -80,10 +86,10 @@ fun copyFile(sourceFile: File?, destFile: File) {
 
 private fun getDirectory(fileFormat: FileFormat) =
     when (fileFormat) {
-        VIDEO -> Environment.DIRECTORY_MOVIES
-        AUDIO -> Environment.DIRECTORY_MUSIC
-        IMAGE -> Environment.DIRECTORY_PICTURES
-        TEXT, PDF -> Environment.DIRECTORY_DOCUMENTS
+        FileFormat.VIDEO -> Environment.DIRECTORY_MOVIES
+        FileFormat.AUDIO -> Environment.DIRECTORY_MUSIC
+        FileFormat.IMAGE -> Environment.DIRECTORY_PICTURES
+        FileFormat.TEXT, FileFormat.PDF -> Environment.DIRECTORY_DOCUMENTS
     }
 
 fun getNewTempFile(context: Context, fileFormat: FileFormat): File {
@@ -99,4 +105,54 @@ fun getNewTempFile(context: Context, fileFormat: FileFormat): File {
 
 fun getFileExtension(filePath: String): String {
     return filePath.substring(filePath.lastIndexOf("."))
+}
+
+@Throws(IOException::class)
+fun uriToFile(context: Context, uri: Uri?): File {
+    val inputStream = context.contentResolver.openInputStream(uri!!)
+    val tempFile = getNewTempFile(context, FileFormat.VIDEO)
+    tempFile.deleteOnExit()
+    try {
+        val out = FileOutputStream(tempFile)
+        if (inputStream != null) {
+            copy(inputStream, out)
+            inputStream.close()
+            out.close()
+        }
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+    }
+    return tempFile
+}
+
+@Throws(IOException::class)
+private fun copy(input: InputStream, output: OutputStream): Long {
+    var count: Long = 0
+    var n: Int
+    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+    while (EOF !== input.read(buffer).also { n = it }) {
+        output.write(buffer, 0, n)
+        count += n.toLong()
+    }
+    return count
+}
+
+fun getBitMapFromView(view: View): Bitmap {
+    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    view.draw(canvas)
+    return bitmap
+}
+
+fun Bitmap.toFile(context: Context): File {
+    val file = getNewTempFile(context, FileFormat.IMAGE)
+    try {
+        val out = FileOutputStream(file)
+        this.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        out.close()
+        return file
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    return file
 }

@@ -521,7 +521,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
-        <activity android:name=".ui.special_practice.RecordVideoActivity" />
+        <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
