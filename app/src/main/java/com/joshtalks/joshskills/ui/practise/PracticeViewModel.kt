@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
@@ -56,6 +57,16 @@ class PracticeViewModel(application: Application) :
 
 
     private val mAudioRecording: M4ABaseAudioRecording = M4ABaseAudioRecording()
+
+    val abTestCampaignliveData = MutableLiveData<ABTestCampaignData?>()
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getCampaignData(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                abTestCampaignliveData.postValue(campaign)
+            }
+        }
+    }
 
     @Synchronized
     fun startRecordAudio(recordListener: OnAudioRecordListener?) {

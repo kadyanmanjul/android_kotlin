@@ -14,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.local.model.KFactor
@@ -50,6 +52,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
     private var currentId:Int= -1
     private var minute = 0
     private var callerImage: String = EMPTY
+    private var p2pCallShareControl: Boolean = false
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -80,7 +83,12 @@ class VoipCallFeedbackActivity : BaseActivity(){
         }else{
             closeActivity()
         }
+        initABTest()
 
+    }
+
+    private fun initABTest(){
+        practiceViewModel.getCampaignData(CampaignKeys.P2P_IMAGE_SHARING.name)
     }
 
     override fun onBackPressed() {
@@ -107,6 +115,13 @@ class VoipCallFeedbackActivity : BaseActivity(){
                 }
             }
         )
+
+        practiceViewModel.abTestCampaignliveData.observe(this){abTestCampaignData->
+            abTestCampaignData?.let {map->
+                p2pCallShareControl=(map.variantKey == VariantKeys.P2P_IS_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+        }
+
     }
 
     fun initFun(arguments: Intent) {
@@ -192,7 +207,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
                     requestParams["response"] = response
                     val apiResponse =
                         AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
-                    startShareActivity(apiResponse)
+                    if(p2pCallShareControl) startShareActivity(apiResponse)
                     WorkManagerAdmin.syncFavoriteCaller()
                     delay(250)
                 } catch (ex: Throwable) {
