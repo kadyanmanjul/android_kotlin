@@ -1,98 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout
+        android:id="@+id/fragment_record_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black">
+        android:layout_height="match_parent">
 
-        <androidx.camera.view.PreviewView
-            android:id="@+id/previewView"
-            android:background="@android:color/black"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="V,9:16"/>
-
-        <ImageButton
-            android:id="@+id/recordVideoBtn"
-            android:layout_width="@dimen/_48sdp"
-            android:layout_height="@dimen/_48sdp"
-            android:layout_margin="@dimen/_24sdp"
-            android:background="@drawable/ic_ellipse_circle_bg"
-            android:backgroundTint="@color/red"
-            android:padding="@dimen/paddingSmall"
-            android:src="@drawable/ic_stop_white_48"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="ContentDescription" />
-
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_24sdp"
-            android:background="@color/white"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="@dimen/_16sdp"
-            app:layout_constraintBottom_toTopOf="@id/recordVideoBtn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_height="match_parent"
+            android:background="@android:color/black">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/word"
+            <androidx.camera.view.PreviewView
+                android:id="@+id/previewView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/recordVideoBtn"
+                android:layout_width="@dimen/_61sdp"
+                android:layout_height="@dimen/_61sdp"
+                android:layout_margin="@dimen/_24sdp"
+                android:background="@drawable/ic_camera_start_bg"
+                android:padding="@dimen/medium_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="ContentDescription" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/imageOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_24sdp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/_16sdp"
+                app:layout_constraintBottom_toTopOf="@id/recordVideoBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/word_in_english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.165"
+                    android:text="ATTACK"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_38sdp"
+                    android:textStyle="bold"
+                    tools:text="ATTACK" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/word_in_hindi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:letterSpacing="0.165"
+                    android:text="हमला"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_28sdp"
+                    android:textStyle="bold"
+                    tools:text="हमला" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/sentence_in_hindi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:text="रूस ने यूक्रेन पर हमला किया"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold"
+                    tools:text="रूस ने यूक्रेन पर हमला किया" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/sentence_in_english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:text="Russia attacked Ukraine"
+                    android:textColor="@color/black"
+                    tools:text="Russia attacked Ukraine" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <Chronometer
+                android:id="@+id/chronometer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:letterSpacing="0.165"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                tools:text="ATTACK" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/meaning"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:letterSpacing="0.165"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:background="@drawable/gray_btn_pressed_state"
+                android:drawableStart="@drawable/ic_chronomrter_icon"
+                android:drawablePadding="@dimen/_5sdp"
+                android:padding="@dimen/_4sdp"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_20sdp"
-                android:textStyle="bold"
-                tools:text="हमला" />
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:textColor="@color/black"
-                tools:text="हमला हमलाह मलाह मलाहमलाहमलाहमलाहमला" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:textColor="@color/black"
-                tools:text="हमला हमलाह मलाह मलाहमलाहमलाहमलाहमला" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <Chronometer
-            android:id="@+id/chronometer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:background="@drawable/gray_btn_pressed_state"
-            android:padding="@dimen/_4sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

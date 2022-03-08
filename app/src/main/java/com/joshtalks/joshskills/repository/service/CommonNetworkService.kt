@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import androidx.work.ListenableWorker
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
@@ -34,7 +35,8 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
-import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -368,4 +370,10 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/restart_course_track_impressions/")
     suspend fun restartCourseImpression(@Body params: Map<String, String>): Response<Void>
+
+    @POST("$DIR/question/special_practice_details/")
+    suspend fun getSpecialPracticeDetails(@Body params: Map<String, Any>): Response<SpecialPracticeModel>
+
+    @POST("$DIR/question/special_practice_submit/")
+    suspend fun saveVideoOnServer(@Body params: SaveVideoModel): Response<SuccessResponse>
 }

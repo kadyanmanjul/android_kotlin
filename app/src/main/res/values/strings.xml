@@ -534,7 +534,7 @@
     <string name="eagerness_to_learn">Eagerness to Learn: </string>
     <string name="was_the_respect_fullness">Was Respectful: </string>
     <string name="submit_feedback">Submit Feedback</string>
-    <string name="speak_practise_title">Welcome to Practice with Partner</string>
+    <string name="speak_practise_title">Welcome to \n Practice with Partner</string>
     <string name="today_topic">Today\'s Topic</string>
     <string name="call_practice_partner">Call Practice Partner</string>
     <string name="pp_message">In this practice you have to speak to a practice partner for %s minute</string>
@@ -1060,6 +1060,16 @@
     <string name="education_occupation_text">Education and Occupation</string>
     <string name="education_text">Education</string>
     <string name="occupation_text">Occupation</string>
+    <string name="see_course_list">See course list</string>
+    <string name="record_video">Record Video</string>
+    <string name="record_and_submit_video">Record your video and submit the practice</string>
+    <string name="submit_your_practice">Submit your practice</string>
+    <string name="play_video">Play Video</string>
+    <string name="instruction_text">To understand how to complete this special practice watch this video submitted by Harsh who started this course on 8th of January 2021.</string>
+    <string name="text_temp">In this special practice your task is to create a video where you are teaching the meaning of this word</string>
+    <string name="your_submitted_video">Your Submitted video</string>
+    <string name="special_practice_text"><b>Vedant Maheshwari</b> sir has sent you a special practice for completing total 300 minutes speaking practice</string>
+
     <string name="how_to_speak"><u>How To Speak?</u></string>
     <string name="responsd">Respond</string>
     <string name="previous_profile_text">Previous Profile Photos (%s)</string>
@@ -1078,7 +1088,6 @@
 
     <string name="download_syllabus_23_pages">Download Syllabus<b> • </b>15 pages</string>
     <string name="the_ultimate_spoken_english_n_course_syllabus">The Ultimate Spoken English \nCourse Syllabus</string>
-    <string name="see_course_list">See course list</string>
     <string name="achieve_100_points_to_buy">Achieve 100 points to buy</string>
     <string name="free_trial_dialog_ji_haan_text">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n  \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।
     </string>
