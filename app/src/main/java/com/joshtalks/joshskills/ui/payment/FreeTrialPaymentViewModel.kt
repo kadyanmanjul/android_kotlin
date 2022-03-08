@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -160,5 +159,4 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
-
 }

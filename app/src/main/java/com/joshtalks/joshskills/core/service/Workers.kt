@@ -13,7 +13,11 @@ import android.util.Log
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.work.*
+import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
+import androidx.work.Worker
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
@@ -22,19 +26,57 @@ import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.ApiRespStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CALL_RINGTONE_NOT_MUTE
+import com.joshtalks.joshskills.core.COUNTRY_ISO
+import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.InstallReferralUtil
+import com.joshtalks.joshskills.core.LAST_ACTIVE_API_TIME
+import com.joshtalks.joshskills.core.LOCAL_NOTIFICATION_INDEX
+import com.joshtalks.joshskills.core.LOGIN_ON
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.P2P_LAST_CALL
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
+import com.joshtalks.joshskills.core.RESTORE_ID
+import com.joshtalks.joshskills.core.SERVER_GID_ID
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.notification.*
+import com.joshtalks.joshskills.core.changeLocale
+import com.joshtalks.joshskills.core.getDefaultCountryIso
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
+import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
+import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
@@ -47,7 +89,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
 import kotlin.system.exitProcess
@@ -1088,8 +1130,8 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
         try {
             ABTestRepository().updateAllCampaigns(
                 listOf(
-                    "FREE_TRIAL",
-                    "SPEAKING_INTRODUCTION_VIDEO"
+                    CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name,
+                    CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name
                 )
             )
         } catch (ex: Exception) {

@@ -4,10 +4,14 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 open class ABTestViewModel(application: Application) : AndroidViewModel(application) {
     protected val jobs = arrayListOf<Job>()
@@ -35,9 +39,20 @@ open class ABTestViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun postGoal(goal: String) {
+    fun postGoal(goal: String, campaign: String?) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             repository.postGoal(goal)
+            if (campaign != null) {
+                val data = ABTestRepository().getCampaignData(campaign)
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey ?: EMPTY)
+                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put("Campaign", campaign)
+                    props.put("Goal", goal)
+                    MixPanelTracker().publishEvent(goal, props)
+                }
+            }
         }
     }
 

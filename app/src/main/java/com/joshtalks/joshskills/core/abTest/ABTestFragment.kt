@@ -32,8 +32,8 @@ abstract class ABTestFragment : CoreJoshFragment() {
         abTestViewModel.getAllCampaigns()
     }
 
-    protected fun postGoalData(goal:String){
-        abTestViewModel.postGoal(goal)
+    protected fun postGoalData(goal:String,campaign: String?){
+        abTestViewModel.postGoal(goal,campaign)
     }
 
     protected abstract fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?)

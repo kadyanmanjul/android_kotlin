@@ -21,11 +21,37 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
+import com.joshtalks.joshskills.core.BUY_ENGLISH_COURSE_BUTTON_CLICKED
+import com.joshtalks.joshskills.core.D2P_COURSE_SYLLABUS_OPENED
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IMPRESSION_APPLY_COUPON_SUCCESS
+import com.joshtalks.joshskills.core.IMPRESSION_CLICKED_APPLY_COUPON
+import com.joshtalks.joshskills.core.IMPRESSION_PAY_DISCOUNT
+import com.joshtalks.joshskills.core.IMPRESSION_PAY_FULL_FEES
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.IS_ENGLISH_SYLLABUS_PDF_OPENED
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
+import com.joshtalks.joshskills.core.POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SEE_COURSE_LIST_BUTTON_CLICKED
+import com.joshtalks.joshskills.core.SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.ABTestActivity
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
+import com.joshtalks.joshskills.core.getPhoneNumber
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
@@ -35,8 +61,8 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
-import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
+import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
@@ -50,20 +76,18 @@ import com.razorpay.PaymentResultListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 import java.math.BigDecimal
-import java.util.*
-import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-import java.io.File
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
 
-class FreeTrialPaymentActivity : CoreJoshActivity(),
+class FreeTrialPaymentActivity : ABTestActivity(),
     PaymentResultListener {
 
     private lateinit var binding: ActivityFreeTrialPaymentBinding
@@ -86,6 +110,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var isEnglishCardTapped = false
     lateinit var fileName : String
     var isPointsScoredMoreThanEqualTo100 = false
+    private var syllabusControl = false
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -150,6 +175,17 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
         viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
+    }
+
+    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+        abTestCampaignData?.let { map->
+            syllabusControl = ( map.variantKey == VariantKeys.SYLLABUS_ENABLED.name )&& map.variableMap?.isEnabled == true
+        }
+
+    }
+
+    override fun initCampaigns() {
+        getCampaigns(CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name)
     }
 
     private fun getPermissionAndDownloadSyllabus(url: String) {
@@ -717,6 +753,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             PrefManager.put(IS_COURSE_BOUGHT, true)
             if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
+                postGoalData(GoalKeys.OPEN_PDF_BUY__ENGLISH_COURSE.name,CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name)
             }
             if(isEnglishCardTapped && isPointsScoredMoreThanEqualTo100){
                 viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)

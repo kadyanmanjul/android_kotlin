@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -27,6 +26,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.ABTestFragment
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
@@ -96,8 +96,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     override fun initCampaigns() {
-        //getCampaigns("SPEAKING_INTRODUCTION_VIDEO")
-    }
+     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -182,7 +181,6 @@ class SpeakingPractiseFragment : ABTestFragment() {
         binding.btnStart.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
-            postGoalData("FT_GOAL1")
         }
 
         binding.btnGroupCall.setOnClickListener {
@@ -318,7 +316,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner, {
             lessonNo = it.lessonNo
-            getCampaigns("SPEAKING_INTRODUCTION_VIDEO")
+            getCampaigns(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
         })
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
