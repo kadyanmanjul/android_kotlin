@@ -35,6 +35,10 @@ import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
+import com.joshtalks.joshskills.core.abTest.ABTestActivity
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
@@ -182,6 +186,7 @@ class ConversationActivity :
     private var refreshMessageByUser = false
 
     private var currentTooltipIndex = 0
+    private var activityFeedControl = false
     private val leaderboardTooltipList by lazy {
         listOf(
             "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
@@ -264,12 +269,16 @@ class ConversationActivity :
         initFuture()
         addObservable()
         initFreeTrialTimer()
+        initABTest()
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
+    }
+    private fun initABTest(){
+        conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED.name)
     }
     private fun addIssuesToSharedPref(){
         CoroutineScope(Dispatchers.IO).launch(){
@@ -571,6 +580,7 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
+        if(activityFeedControl) conversationBinding.imgFeedBtn.visibility= VISIBLE else conversationBinding.imgFeedBtn.visibility= VISIBLE
         conversationBinding.imgFeedBtn.setOnClickListener {
 
             ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
@@ -1081,6 +1091,12 @@ class ConversationActivity :
                 showProgressBar()
             } else {
                 hideProgressBar()
+            }
+        }
+
+        conversationViewModel.abTestCampaignliveData.observe(this){abTestCampaignData->
+            abTestCampaignData?.let {map->
+                activityFeedControl=(map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
             }
         }
     }
