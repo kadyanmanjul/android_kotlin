@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
 import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
@@ -35,7 +34,6 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
@@ -44,7 +42,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
@@ -55,11 +52,9 @@ import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 
 const val REGISTER_INFO_CODE = 2001
@@ -78,12 +73,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private var compositeDisposable = CompositeDisposable()
     private lateinit var findMoreLayout: View
     var isPermissionRequired: Boolean = true
-    val mixpanel: MixpanelAPI by lazy {
-        MixpanelAPI.getInstance(
-            this,
-            "4c574e3a5e6b933a0e55c88239f6e994"
-        )
-    }
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
 
@@ -138,48 +127,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         recycler_view_inbox.adapter = inboxAdapter
         iv_setting.setOnClickListener {
             openPopupMenu(it)
-            CoroutineScope(Dispatchers.IO).launch {
-                val data = ABTestRepository().getCampaignData("SPEAKING_INTRODUCTION_VIDEO")
-                data?.let {
-                    val props = JSONObject()
-                    props.put("Variant", data?.variantKey?: EMPTY)
-                    props.put("Variable",AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    mixpanel.track("Impression", props)
-                    props.put("Campaign","SPEAKING_INTRODUCTION_VIDEO")
-                    mixpanel.flush()
-                }
-            }
         }
 
         find_more.setOnClickListener {
             courseExploreClick()
-            CoroutineScope(Dispatchers.IO).launch {
-                val data = ABTestRepository().getCampaignData("SPEAKING_INTRODUCTION_VIDEO")
-                data?.let {
-                    val props = JSONObject()
-                    props.put("Variant", data?.variantKey?: EMPTY)
-                    props.put("Variable",AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put("Campaign","SPEAKING_INTRODUCTION_VIDEO")
-                    props.put("Goal","SIV_GT_2MIN")
-                    mixpanel.track("Conversion", props)
-                    mixpanel.flush()
-                }
-            }
         }
         find_more_new.setOnClickListener {
             courseExploreClick()
-            CoroutineScope(Dispatchers.IO).launch {
-                val data = ABTestRepository().getCampaignData("SPEAKING_INTRODUCTION_VIDEO")
-                data?.let {
-                    val props = JSONObject()
-                    props.put("Variant", data?.variantKey?: EMPTY)
-                    props.put("Variable",AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put("Goal","SIV_GT_2MIN")
-                    props.put("Campaign","SPEAKING_INTRODUCTION_VIDEO")
-                    mixpanel.track("Conversion", props)
-                    mixpanel.flush()
-                }
-            }
         }
         buy_english_course.setOnClickListener {
             FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
