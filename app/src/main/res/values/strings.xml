@@ -1051,6 +1051,8 @@
     <string name="help_learning">You have helped 4 people start learning English</string>
     <string name="hindi_txt"> आपके ऐसे कौनसे दोस्त है जिनकी आप अंग्रेजी बोलने में मदद करना चाहते है</string>
     <string name="share_details">Jab bhi aapke link share karne pe aapka koi dost iss course ko join karega tab aapki profile pe ye number update hoga</string>
+    <string name="referCntText"><b>You have helped %s people start learning English</b></string>
+    <string name="noReferral"><b>You have not helped anyone start learning English yet</b></string>
 
     <string name="course_restart_success">Course Restarted Successfully</string>
     <string name="course_restart_fail">Course Can Not Restart</string>

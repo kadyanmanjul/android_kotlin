@@ -73,7 +73,7 @@
                     android:text="Help your friends and family"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                     android:textColor="@color/white"
-                    android:textStyle="bold"
+
                     tools:text="Help your friends and family" />
                 <!--            tools:text="Help your friends and family"-->
 
@@ -128,16 +128,19 @@
             android:id="@+id/help_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_50sdp"
-            android:layout_marginStart="65dp"
-            android:layout_marginTop="@dimen/_18sdp"
-            android:layout_marginEnd="65dp"
+            android:layout_marginHorizontal="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_22sdp"
+
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+            android:textSize="@dimen/_16sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/share_details_layout"
             tools:text="@string/total_help_me"/>
+<!--        android:layout_marginStart="@dimen/_10sdp"-->
+<!--        android:layout_marginHorizontal="@dimen/_30sdp"-->
+<!--        android:layout_marginEnd="65dp"-->
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/help_iv"

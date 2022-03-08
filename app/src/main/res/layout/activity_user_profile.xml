@@ -411,13 +411,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_20sdp"
-                    android:layout_marginLeft="@dimen/_16sdp"
-                    android:layout_marginRight="@dimen/_16sdp"
+
                     android:clickable="true"
                     android:focusable="true"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/total_help_me"
                     android:singleLine="false"
+                    android:paddingLeft="@dimen/_30sdp"
+                    android:paddingRight="@dimen/_6sdp"
+
                     android:textSize="@dimen/_11sdp"
                     android:drawableStart="@drawable/info_iv"
                     android:drawablePadding="@dimen/_6sdp"
@@ -426,6 +428,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_pic"/>
+<!--                android:layout_marginLeft="@dimen/_16sdp"-->
+<!--                android:layout_marginRight="@dimen/_16sdp"-->
+
 <!--                android:seniorStudentText="@{handler.ans}"-->
 
 <!--                <androidx.constraintlayout.widget.ConstraintLayout-->

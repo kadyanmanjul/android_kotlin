@@ -5,18 +5,23 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Typeface
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityShareFromProfileBinding
-import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.*
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
@@ -62,17 +67,39 @@ class ShareFromProfile : AppCompatActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
 
-        //referralCount = intent.getIntExtra(VIEWER_REFERRAL, 0)!!
-        referralCount = 5
+        referralCount = intent.getIntExtra(VIEWER_REFERRAL, 0)!!
+        //referralCount = 5
         if(referralCount != 0){
             //binding.helpTv.text = "You have helped" + referralCount + "people start learning English"
-            binding.helpTv.text = "You have helped" + Html.fromHtml("<font color='#E58638'><b>referralCount<b></font>") + "people start learning English"
+            //binding.helpTv.text = "You have helped " + referralCount.toString() + " people start learning English"
+            binding.helpTv.text = getString(R.string.referCntText, referralCount.toString())
+            var substr:String = referralCount.toString() + " people"
+            binding.helpTv.setColorize(substr)
         }else{
-            binding.helpTv.text = "You have not helped anyone start learning English yet"
+            binding.helpTv.text = getString(R.string.noReferral)
         }
 //        binding.helpTv.text = referralCount
 
     }
+
+    fun TextView.setColorize(subStringToColorize: String) {
+        val spannable: Spannable = SpannableString(text)
+        spannable.setSpan(
+            ForegroundColorSpan( Color.parseColor("#E58638")),
+           // 7,
+            16,
+            16 + subStringToColorize.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+//        spannable.setSpan(
+//            StyleSpan(Typeface.BOLD),
+//            16,
+//            subStringToColorize.length,
+//            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+//        )
+        setText(spannable, TextView.BufferType.SPANNABLE)
+    }
+
 
     fun shareWithFriends(){
         getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
