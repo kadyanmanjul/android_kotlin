@@ -580,8 +580,6 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        if(activityFeedControl) conversationBinding.imgFeedBtn.visibility= VISIBLE else conversationBinding.imgFeedBtn.visibility= GONE
-
         conversationBinding.imgFeedBtn.setOnClickListener {
             ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
         }
@@ -1097,6 +1095,7 @@ class ConversationActivity :
             abTestCampaignData?.let {map->
                 activityFeedControl=(map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
             }
+            if(activityFeedControl) conversationBinding.imgFeedBtn.visibility= VISIBLE else conversationBinding.imgFeedBtn.visibility= GONE
         }
     }
 
