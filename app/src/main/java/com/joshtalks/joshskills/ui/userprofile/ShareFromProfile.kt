@@ -9,6 +9,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.text.Html
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.BuildConfig
@@ -37,14 +38,14 @@ class ShareFromProfile : AppCompatActivity() {
     private val viewModel: ShareFromProfileViewModel by lazy {
         ViewModelProvider(this).get(ShareFromProfileViewModel::class.java)
     }
-    lateinit var referralCount: String
+    private var referralCount: Int = 0
 
     private var userReferralCode: String = EMPTY
 
     companion object{
         fun startShareFromProfile(
             activity: Activity,
-            viewerReferral: String
+            viewerReferral: Int
         ){
             Intent(activity, ShareFromProfile::class.java).apply{
                 putExtra(VIEWER_REFERRAL, viewerReferral)
@@ -61,13 +62,15 @@ class ShareFromProfile : AppCompatActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
 
-        referralCount = intent.getStringExtra(VIEWER_REFERRAL)!!
-//        if(referralCount != 0){
-//            binding.helpTv.text = "You have helped" + referralCount + "people start learning English"
-//        }else{
-//            binding.helpTv.text = "You have not helped anyone start learning English yet"
-//        }
-        binding.helpTv.text = referralCount
+        //referralCount = intent.getIntExtra(VIEWER_REFERRAL, 0)!!
+        referralCount = 5
+        if(referralCount != 0){
+            //binding.helpTv.text = "You have helped" + referralCount + "people start learning English"
+            binding.helpTv.text = "You have helped" + Html.fromHtml("<font color='#E58638'><b>referralCount<b></font>") + "people start learning English"
+        }else{
+            binding.helpTv.text = "You have not helped anyone start learning English yet"
+        }
+//        binding.helpTv.text = referralCount
 
     }
 

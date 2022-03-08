@@ -133,7 +133,6 @@
             android:layout_marginTop="@dimen/_18sdp"
             android:layout_marginEnd="65dp"
             android:gravity="center"
-            android:seniorStudentText="@{handler.referralCount}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

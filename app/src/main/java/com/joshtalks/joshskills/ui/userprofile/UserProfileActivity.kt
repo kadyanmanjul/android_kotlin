@@ -72,7 +72,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
     private var isAnimationVisible = false
-    lateinit var viewerReferral: String
+    private var viewerReferral: Int = 0
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -286,7 +286,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
                 viewerReferral = it.referralOfViewer!!
 
-                binding.referralInfoText.text = it.numberOfReferral
+//                binding.referralInfoText.text = it.numberOfReferral
             }
         )
 
@@ -538,19 +538,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
 //        ans = userData.numberOfReferral
 //        binding.referralInfoText.text = ans
-//        if(mentorId == Mentor.getInstance().getId()){
-//            if(userData.numberOfReferral != 0){
-//                binding.refNoText.text = "You have helped " +  userData.numberOfReferral + " people start learning English"
-//            }else{
-//                binding.refNoText.text = "You have not helped anyone start learning English"
-//            }
-//        }else{
-//            if(userData.numberOfReferral != 0){
-//                binding.refNoText.text = resp.append("has helped" + userData.numberOfReferral + " people start learning English")
-//            }else{
-//                binding.refNoText.text = resp.append("has not helped anyone start learning English")
-//            }
-//        }
+        if(mentorId == Mentor.getInstance().getId()){
+            if(userData.numberOfReferral != 0){
+                binding.referralInfoText.text = "You have helped " +  userData.numberOfReferral + " people start learning English"
+            }else{
+                binding.referralInfoText.text = "You have not helped anyone start learning English"
+            }
+        }else{
+            if(userData.numberOfReferral != 0){
+                binding.referralInfoText.text = resp.append("has helped" + userData.numberOfReferral + " people start learning English")
+            }else{
+                binding.referralInfoText.text = resp.append("has not helped anyone start learning English")
+            }
+        }
 
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
     }
