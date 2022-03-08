@@ -580,11 +580,10 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        if(activityFeedControl) conversationBinding.imgFeedBtn.visibility= VISIBLE else conversationBinding.imgFeedBtn.visibility= VISIBLE
+        if(activityFeedControl) conversationBinding.imgFeedBtn.visibility= VISIBLE else conversationBinding.imgFeedBtn.visibility= GONE
+
         conversationBinding.imgFeedBtn.setOnClickListener {
-
             ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
-
         }
         conversationBinding.imgGroupChatBtn.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
