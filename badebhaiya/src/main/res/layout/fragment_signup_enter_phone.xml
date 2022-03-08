@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/base_app_color">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvEnterPhonePrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signup_with_prompt"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            android:textSize="@dimen/_18ssp"
+            android:layout_marginTop="@dimen/_44sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/phone_container"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvEnterPhonePrompt"
+            app:layout_constraintVertical_bias="0.4">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/country_code_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/country_code"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/country_code_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14ssp"
+                android:digits="1234567890"
+                android:lines="1"
+                android:maxLength="13"
+                android:hint="Phone Number"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/privacy_policy_text"
+            android:gravity="center"
+            android:textSize="@dimen/_10ssp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phone_container" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_30sdp"
+            android:background="@drawable/next_button_selector"
+            android:text="@string/next"
+            android:textSize="@dimen/_17ssp"
+            android:paddingHorizontal="@dimen/_50sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+            android:textColor="@color/white"
+            android:layout_marginBottom="@dimen/_46sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
