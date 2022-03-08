@@ -15,4 +15,9 @@
     <string name="signup_with_prompt">Sign in with your phone #</string>
     <string name="privacy_policy_text">By entering your number, you’re agreeing to our Terms of\n Service and Privacy Policy. Thanks!</string>
     <string name="country_code">+91</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="enter_otp_prompt">Please verify your OTP</string>
+    <string name="verify_otp_for_phone_text">Enter the OTP your received on\n %s</string>
+    <string name="skip">Skip</string>
+    <string name="add_profile_photo_prompt">Add a profile photo!</string>
 </resources>

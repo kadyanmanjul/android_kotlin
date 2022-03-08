@@ -58,8 +58,9 @@
                 android:textSize="@dimen/_14ssp"
                 android:digits="1234567890"
                 android:lines="1"
+                android:inputType="phone"
                 android:maxLength="13"
-                android:hint="Phone Number"/>
+                android:hint="@string/phone_number"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
