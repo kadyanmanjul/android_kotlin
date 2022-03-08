@@ -130,14 +130,15 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_50sdp"
             android:layout_marginStart="65dp"
-            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_18sdp"
             android:layout_marginEnd="65dp"
             android:gravity="center"
-            android:text="@string/help_learning"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            android:seniorStudentText="@{handler.referralCount}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/share_details_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/share_details_layout"
+            tools:text="@string/total_help_me"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/help_iv"
@@ -155,7 +156,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/hindi_txt"
-            android:textSize="@dimen/_13sdp"
+            android:textSize="@dimen/_14sdp"
             android:layout_marginTop="@dimen/_42sdp"
             android:layout_marginHorizontal="@dimen/_30sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"

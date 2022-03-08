@@ -72,6 +72,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
     private var isAnimationVisible = false
+    lateinit var viewerReferral: String
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -82,6 +83,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             UserProfileViewModel::class.java
         )
     }
+
+    lateinit var ans: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -281,6 +284,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     hideProgressBar()
                     initView(it)
                 }
+                viewerReferral = it.referralOfViewer!!
+
+                binding.referralInfoText.text = it.numberOfReferral
             }
         )
 
@@ -530,20 +536,21 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
 
-        //if(userData.numberOfReferral != 0){
-        if(mentorId == Mentor.getInstance().getId()){
-            if(userData.numberOfReferral != 0){
-                binding.refNoText.text = "You have helped " +  userData.numberOfReferral + " people start learning English"
-            }else{
-                binding.refNoText.text = "You have not helped anyone start learning English"
-            }
-        }else{
-            if(userData.numberOfReferral != 0){
-                binding.refNoText.text = resp.append("has helped" + userData.numberOfReferral + " people start learning English")
-            }else{
-                binding.refNoText.text = resp.append("has not helped anyone start learning English")
-            }
-        }
+//        ans = userData.numberOfReferral
+//        binding.referralInfoText.text = ans
+//        if(mentorId == Mentor.getInstance().getId()){
+//            if(userData.numberOfReferral != 0){
+//                binding.refNoText.text = "You have helped " +  userData.numberOfReferral + " people start learning English"
+//            }else{
+//                binding.refNoText.text = "You have not helped anyone start learning English"
+//            }
+//        }else{
+//            if(userData.numberOfReferral != 0){
+//                binding.refNoText.text = resp.append("has helped" + userData.numberOfReferral + " people start learning English")
+//            }else{
+//                binding.refNoText.text = resp.append("has not helped anyone start learning English")
+//            }
+//        }
 
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
     }
@@ -1017,7 +1024,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     fun openShareScreen(){
-        val intent = Intent(this, ShareFromProfile::class.java)
-        startActivity(intent)
+        ShareFromProfile.startShareFromProfile(
+            this,
+            viewerReferral
+        )
     }
 }

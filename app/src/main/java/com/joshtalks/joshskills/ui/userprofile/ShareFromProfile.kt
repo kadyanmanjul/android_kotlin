@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.userprofile
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -14,15 +15,18 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityShareFromProfileBinding
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.*
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
 import io.branch.referral.util.LinkProperties
+import kotlinx.android.synthetic.main.activity_gif.view.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.lang.Exception
 
+//lateinit var referralCount: String
 const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
 class ShareFromProfile : AppCompatActivity() {
@@ -33,13 +37,38 @@ class ShareFromProfile : AppCompatActivity() {
     private val viewModel: ShareFromProfileViewModel by lazy {
         ViewModelProvider(this).get(ShareFromProfileViewModel::class.java)
     }
+    lateinit var referralCount: String
 
     private var userReferralCode: String = EMPTY
+
+    companion object{
+        fun startShareFromProfile(
+            activity: Activity,
+            viewerReferral: String
+        ){
+            Intent(activity, ShareFromProfile::class.java).apply{
+                putExtra(VIEWER_REFERRAL, viewerReferral)
+            }.run {
+                activity.startActivity(this)
+            }
+        }
+
+        const val VIEWER_REFERRAL= "viewerReferral"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.lifecycleOwner = this
         binding.handler = this
+
+        referralCount = intent.getStringExtra(VIEWER_REFERRAL)!!
+//        if(referralCount != 0){
+//            binding.helpTv.text = "You have helped" + referralCount + "people start learning English"
+//        }else{
+//            binding.helpTv.text = "You have not helped anyone start learning English yet"
+//        }
+        binding.helpTv.text = referralCount
+
     }
 
     fun shareWithFriends(){

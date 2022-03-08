@@ -1047,7 +1047,7 @@
     <string name="achieve_100_points_first">Achieve 100 points first</string>
     <string name="select_friend">Select friends</string>
     <string name="total_help_me">You have helped 4 people start learning English</string>
-    <string name="total_help_other">has helped 4 people start learning English</string>
+<!--    <string name="total_help_other">has helped 4 people start learning English</string>-->
     <string name="help_learning">You have helped 4 people start learning English</string>
     <string name="hindi_txt"> आपके ऐसे कौनसे दोस्त है जिनकी आप अंग्रेजी बोलने में मदद करना चाहते है</string>
     <string name="share_details">Jab bhi aapke link share karne pe aapka koi dost iss course ko join karega tab aapki profile pe ye number update hoga</string>
