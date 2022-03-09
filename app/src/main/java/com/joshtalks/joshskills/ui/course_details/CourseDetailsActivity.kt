@@ -79,9 +79,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var flowFrom: String? = null
     private var downloadID: Long = -1
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
-    var expiredTime: Long = 0L
-    private val ENGLISH_COURSE_TEST_ID = 102
-    var isPointsScoredMoreThanEqualTo100 = false
 
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
@@ -119,11 +116,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         }
         if (testId != 0) {
             getCourseDetails(testId)
-
-            if(testId == ENGLISH_COURSE_TEST_ID){
-                viewModel.getPointsSummary()
-            }
-
         } else {
             finish()
         }
@@ -241,22 +233,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, { data ->
-
-            if(data.expiredDate != null){
-                expiredTime = data.expiredDate!!.time
-                if(expiredTime != 0L && expiredTime <= System.currentTimeMillis()){
-                    binding.btnStartCourse.isEnabled = true
-                    binding.btnStartCourse.alpha = 1f
-                } else if(isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID) {
-                    binding.btnStartCourse.isEnabled = true
-                    binding.btnStartCourse.alpha = 1f
-                }else if(testId == ENGLISH_COURSE_TEST_ID && !isPointsScoredMoreThanEqualTo100 && expiredTime != 0L && expiredTime > System.currentTimeMillis()){
-                    binding.btnStartCourse.text = getString(R.string.achieve_100_points_to_buy)
-                    binding.btnStartCourse.isEnabled = false
-                    binding.btnStartCourse.alpha = .5f
-                }
-            }
-
             isFromNewFreeTrial = data.isFreeTrial
             binding.txtActualPrice.text = data.paymentData.actualAmount
             binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
@@ -329,13 +305,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 showMoveToInboxScreen()
             }
         })
-
-        viewModel.pointsHistoryLiveData.observe(this, {
-            if(it.totalPoints != null && it.totalPoints >= 100){
-                isPointsScoredMoreThanEqualTo100 = true
-            }
-        })
-
     }
 
     private fun showMoveToInboxScreen() {
@@ -700,14 +669,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 )
             } else {
                 logStartCourseAnalyticEvent(testId)
-                if(testId == ENGLISH_COURSE_TEST_ID){
-                    PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial,
-                        is100PointsObtained = isPointsScoredMoreThanEqualTo100
-                    )
-                }else{
-                    PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial
-                    )
-                }
+                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial)
             }
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }

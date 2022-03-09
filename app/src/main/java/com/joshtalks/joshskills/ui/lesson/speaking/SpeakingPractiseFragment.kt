@@ -88,11 +88,9 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        abTestCampaignData?.let { map ->
-            isIntroVideoEnabled =
-                (map.variantKey == VariantKeys.SIV_ENABLED.name) && map.variableMap?.isEnabled == true
+        abTestCampaignData?.let { map->
+            isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
         }
-        isIntroVideoEnabled = true
         initDemoViews(lessonNo)
 
     }

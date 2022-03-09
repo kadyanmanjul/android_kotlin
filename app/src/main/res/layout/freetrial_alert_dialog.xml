@@ -32,7 +32,7 @@
         android:layout_marginHorizontal="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_4sdp"
         android:gravity="top"
-        android:text="@string/free_trial_dialog_ji_haan_text"
+        android:text="@string/free_trial_dialog_desc"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
         android:textColor="#99000000"
         app:layout_constraintEnd_toEndOf="parent"

@@ -38,7 +38,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
-import timber.log.Timber
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: JoshApplication = getApplication()
@@ -348,19 +347,4 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
-
-    fun saveImpression(eventName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val requestData = hashMapOf(
-                    Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("event_name", eventName)
-                )
-                AppObjectController.commonNetworkService.saveImpression(requestData)
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
-
 }

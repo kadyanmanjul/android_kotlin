@@ -35,6 +35,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
@@ -111,6 +113,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var ruleIdLeftList = ArrayList<Int>()
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
+    private var introVideoControl = false
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -510,11 +513,31 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    if (introVideoUrl.isNullOrBlank().not()) {
+                    if(introVideoControl){
+                        if (introVideoUrl.isNullOrBlank().not()) {
                         viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
                         viewModel.showHideSpeakingFragmentCallButtons(1)
                         showIntroVideoUi()
+                        }
+                    }else{
+                        binding.overlayLayout.visibility = View.VISIBLE
+                        binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                        binding.spotlightTabVocab.visibility = View.INVISIBLE
+                        binding.spotlightTabReading.visibility = View.INVISIBLE
+                        binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                        binding.lessonSpotlightTooltip.setTooltipText(
+                            resources.getText(R.string.label_speaking_spotlight_2).toString()
+                        )
+                        binding.lessonSpotlightTooltip.post {
+                            slideInAnimation(binding.lessonSpotlightTooltip)
+                        }
+                        binding.spotlightStartGrammarTest.visibility = View.GONE
+                        binding.spotlightCallBtn.visibility = View.VISIBLE
+                        binding.spotlightCallBtnText.visibility = View.VISIBLE
+                        binding.arrowAnimation.visibility = View.VISIBLE
                     }
+
                 }
 
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
@@ -703,8 +726,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     override fun showIntroVideo() {
-        setUpVideoProgressListener()
-        viewModel.getVideoData()
+            introVideoControl  = true
+            setUpVideoProgressListener()
+            viewModel.getVideoData()
     }
 
     override fun showVideoToolTip(
