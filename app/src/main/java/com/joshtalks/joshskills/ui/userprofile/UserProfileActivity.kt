@@ -5,17 +5,22 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +42,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEven
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.activity_feed.setColorize
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
@@ -536,19 +542,28 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
 
-//        ans = userData.numberOfReferral
-//        binding.referralInfoText.text = ans
         if(mentorId == Mentor.getInstance().getId()){
+            binding.referralInfoText.visibility = VISIBLE
             if(userData.numberOfReferral != 0){
-                binding.referralInfoText.text = "You have helped " +  userData.numberOfReferral + " people start learning English"
+                val text = SpannableStringBuilder()
+                    .append("You have helped ")
+                    .bold { append(userData.numberOfReferral.toString() + " people") }
+                    .append(" start learning English")
+                binding.referralInfoText.text = text
             }else{
-                binding.referralInfoText.text = "You have not helped anyone start learning English"
+                binding.referralInfoText.text = getString(R.string.help_text_me)
             }
         }else{
             if(userData.numberOfReferral != 0){
-                binding.referralInfoText.text = resp.append("has helped" + userData.numberOfReferral + " people start learning English")
-            }else{
-                binding.referralInfoText.text = resp.append("has not helped anyone start learning English")
+                    binding.referralInfoText.visibility = VISIBLE
+                val text = SpannableStringBuilder()
+                    .append(resp.trim().split(" ")[0] + " has helped ")
+                    .bold { append(userData.numberOfReferral.toString() + " people") }
+                    .append(" start learning English")
+                binding.referralInfoText.text = text
+            }
+            else{
+                binding.referralInfoText.visibility = GONE
             }
         }
 

@@ -58,7 +58,6 @@
                     app:srcCompat="@drawable/ic_arrow_back"
                     tools:visibility="visible" />
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_message_title"
                     android:layout_width="wrap_content"
@@ -73,9 +72,7 @@
                     android:text="Help your friends and family"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                     android:textColor="@color/white"
-
                     tools:text="Help your friends and family" />
-                <!--            tools:text="Help your friends and family"-->
 
             </RelativeLayout>
 
@@ -120,7 +117,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/image_view"
                 app:layout_constraintTop_toTopOf="@+id/image_view" />
-            <!--        app:layout_constraintBottom_toBottomOf="@+id/image_view"-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -130,17 +126,13 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_30sdp"
             android:layout_marginTop="@dimen/_22sdp"
-
             android:gravity="center"
             android:textSize="@dimen/_16sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/share_details_layout"
             tools:text="@string/total_help_me"/>
-<!--        android:layout_marginStart="@dimen/_10sdp"-->
-<!--        android:layout_marginHorizontal="@dimen/_30sdp"-->
-<!--        android:layout_marginEnd="65dp"-->
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/help_iv"
@@ -166,24 +158,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/help_iv" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/selectBtn"
             android:layout_width="@dimen/_250sdp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:background="@drawable/round_rectangle"
-            android:backgroundTint="#107BE5"
-            android:clickable="true"
-            android:focusable="true"
+            android:backgroundTint="@color/button_color"
+            android:gravity="center"
             android:onClick="@{()-> handler.shareWithFriends()}"
+            android:layout_marginTop="@dimen/_28sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
             android:text="@string/select_friend"
-            android:textSize="@dimen/_12sdp"
-            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
             android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hindi_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/hindi_tv"
+            app:rippleColor="@color/white"
+            tools:visibility="visible" />
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </layout>

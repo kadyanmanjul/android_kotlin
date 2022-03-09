@@ -32,7 +32,6 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.lang.Exception
 
-//lateinit var referralCount: String
 const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
 class ShareFromProfile : AppCompatActivity() {
@@ -68,35 +67,23 @@ class ShareFromProfile : AppCompatActivity() {
         binding.handler = this
 
         referralCount = intent.getIntExtra(VIEWER_REFERRAL, 0)!!
-        //referralCount = 5
         if(referralCount != 0){
-            //binding.helpTv.text = "You have helped" + referralCount + "people start learning English"
-            //binding.helpTv.text = "You have helped " + referralCount.toString() + " people start learning English"
             binding.helpTv.text = getString(R.string.referCntText, referralCount.toString())
             var substr:String = referralCount.toString() + " people"
             binding.helpTv.setColorize(substr)
         }else{
             binding.helpTv.text = getString(R.string.noReferral)
         }
-//        binding.helpTv.text = referralCount
-
     }
 
     fun TextView.setColorize(subStringToColorize: String) {
         val spannable: Spannable = SpannableString(text)
         spannable.setSpan(
             ForegroundColorSpan( Color.parseColor("#E58638")),
-           // 7,
             16,
             16 + subStringToColorize.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-//        spannable.setSpan(
-//            StyleSpan(Typeface.BOLD),
-//            16,
-//            subStringToColorize.length,
-//            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-//        )
         setText(spannable, TextView.BufferType.SPANNABLE)
     }
 
@@ -159,10 +146,8 @@ class ShareFromProfile : AppCompatActivity() {
             }
 
             waIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            waIntent.putExtra(Intent.EXTRA_STREAM, uri)
-            waIntent.putExtra(Intent.EXTRA_TEXT, "मैं English सीख रहा हूँ ,जहाँ enviroment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.\n" +
-                    "Link :\n" + dynamicLink)
-            waIntent.type = "image/*"
+            waIntent.putExtra(Intent.EXTRA_TEXT, "Mai har roz angrezi mei baat karke angrezi seekh rha hu. Mai chahta hu aap bhi mere saath angrezi seekhe. Is link ko click karke yeh app download kare -\n" + dynamicLink)
+            waIntent.type = "text/plain"
             startActivity(Intent.createChooser(waIntent, "Share with"))
 
         } catch (e: PackageManager.NameNotFoundException) {

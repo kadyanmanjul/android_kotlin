@@ -1061,4 +1061,5 @@
         <font color="#107BE5">speak english confidently</font>
         <font color ="@android:color/black">from ...</font>
     </string>
+    <string name="help_text_me">You have not helped anyone start learning English</string>
 </resources>
