@@ -120,12 +120,12 @@ class ReadingFragmentWithoutFeedback :
     private var currentLessonQuestion: LessonQuestion? = null
     var lessonActivityListener: LessonActivityListener? = null
     private var userReferralCode: String = EMPTY
-    var video: String? = null
-    var videoDownPath : String? = null
-    var outputFile : String = ""
+    private var video: String? = null
+    private var videoDownPath : String? = null
+    private var outputFile : String = ""
     private var downloadID: Long = -1
     lateinit var fileName : String
-    var fileDir: String = ""
+    private var fileDir: String = ""
 
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
@@ -1099,7 +1099,7 @@ class ReadingFragmentWithoutFeedback :
             binding.practiseSubmitLayout.visibility = VISIBLE
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         if(video.isNullOrEmpty().not()){
-            binding.mergedVideo.visibility = VISIBLE  //to be reviewed again by shivani
+            binding.mergedVideo.visibility = VISIBLE
             binding.ivShare.visibility = VISIBLE
         }else{
             binding.audioList.visibility = VISIBLE
