@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.SPEAKING_POINTS
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.ABTestFragment
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
@@ -87,16 +88,17 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        abTestCampaignData?.let { map->
-            isIntroVideoEnabled = (map.variantKey == "SIV_ENABLED" )&& map.variableMap?.isEnabled == true
+        abTestCampaignData?.let { map ->
+            isIntroVideoEnabled =
+                (map.variantKey == VariantKeys.SIV_ENABLED.name) && map.variableMap?.isEnabled == true
         }
-        isIntroVideoEnabled= true
+        isIntroVideoEnabled = true
         initDemoViews(lessonNo)
 
     }
 
     override fun initCampaigns() {
-     }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -185,7 +187,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
         binding.btnGroupCall.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if(isCallOngoing(R.string.call_engage_initiate_call_message))
+            if (isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, getConversationId())
@@ -320,14 +322,14 @@ class SpeakingPractiseFragment : ABTestFragment() {
         })
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
-            if(it == true){
+            if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
             }
         })
     }
 
     private fun initDemoViews(it: Int) {
-        if(it == 1 && isIntroVideoEnabled){
+        if (it == 1 && isIntroVideoEnabled) {
             lessonActivityListener?.showIntroVideo()
             lessonNo = it
             binding.btnCallDemo.visibility = View.GONE
@@ -339,16 +341,16 @@ class SpeakingPractiseFragment : ABTestFragment() {
             }
 
             viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
-                if(it == 1){
+                if (it == 1) {
                     binding.nestedScrollView.visibility = View.INVISIBLE
                     binding.btnCallDemo.visibility = View.VISIBLE
                 }
-                if(it == 2){
+                if (it == 2) {
                     binding.nestedScrollView.visibility = View.VISIBLE
                     binding.btnCallDemo.visibility = View.GONE
                 }
             })
-        }else{
+        } else {
             binding.btnCallDemo.visibility = View.GONE
         }
     }
