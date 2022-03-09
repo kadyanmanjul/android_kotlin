@@ -72,7 +72,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/_30sdp"
+            android:layout_height="@dimen/_34sdp"
             android:layout_marginBottom="@dimen/_46sdp"
             android:background="@drawable/next_button_selector"
             android:paddingHorizontal="@dimen/_50sdp"
