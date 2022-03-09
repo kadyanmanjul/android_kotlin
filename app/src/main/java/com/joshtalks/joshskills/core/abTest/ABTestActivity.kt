@@ -31,10 +31,6 @@ abstract class ABTestActivity : CoreJoshActivity() {
         abTestViewModel.getAllCampaigns()
     }
 
-    protected fun updateAllCampaigns(list: List<String>){
-        abTestViewModel.updateAllCampaigns(list)
-    }
-
     protected fun postGoalData(goal:String,campaign: String?){
         abTestViewModel.postGoal(goal,campaign)
     }
