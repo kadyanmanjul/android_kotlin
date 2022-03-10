@@ -18,7 +18,7 @@ class SpecialPracticeViewModel(application: Application) : AndroidViewModel(appl
     val specialPracticeData = MutableLiveData<SpecialPracticeModel>()
     val specialIdData = MutableLiveData<SpecialPractice>()
 
-    fun fetchSpecialPracticeData(params: HashMap<String, Any>) {
+    fun fetchSpecialPracticeData(params: HashMap<String, String>) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = specialPracticeRepo.getSpecialData(params)
@@ -31,11 +31,11 @@ class SpecialPracticeViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun getSpecialId(){
-        viewModelScope.launch (Dispatchers.IO){
-             specialIdData.postValue(AppObjectController.appDatabase.specialDao().getSpecialPracticeFromChatId())
+    fun getSpecialId(specialId:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            specialIdData.postValue(
+                AppObjectController.appDatabase.specialDao().getSpecialPracticeFromId(specialId)
+            )
         }
     }
-
-
 }

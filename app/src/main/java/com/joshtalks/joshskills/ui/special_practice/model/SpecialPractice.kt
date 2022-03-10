@@ -5,6 +5,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
@@ -15,15 +16,17 @@ data class SpecialPractice(
     @PrimaryKey
     @SerializedName("id")
     @ColumnInfo(name = "special_id")
-    val id: Int?,
+    val id: Int,
+
+    @ColumnInfo(name = "chat_id")
+    @Expose var chatId: String = "",
+
+//    @ColumnInfo(name = "recorded_video")
+//    @Expose var recordedVideo: String = "",
 
     @ColumnInfo(name = "created")
     @SerializedName("created")
     val created: String?,
-
-    /*@ColumnInfo(name = "chat_id")
-    @SerializedName("chat_id")
-    var chatId: String = "",*/
 
     @ColumnInfo(name = "image_url")
     @SerializedName("image_url")
@@ -53,20 +56,20 @@ data class SpecialPractice(
     @SerializedName("word_text")
     val wordText: String?,
 
-    @ColumnInfo(name ="sentence_en")
+    @ColumnInfo(name = "sentence_en")
     @SerializedName("sentence_en")
-    val sentenceEnglish:String?,
+    val sentenceEnglish: String?,
 
-    @ColumnInfo(name ="word_en")
+    @ColumnInfo(name = "word_en")
     @SerializedName("word_en")
-    val wordEnglish:String?,
+    val wordEnglish: String?,
 
     @ColumnInfo(name = "sentence_hi")
     @SerializedName("sentence_hi")
-    val sentenceHindi :String?,
+    val sentenceHindi: String?,
 
     @ColumnInfo(name = "word_hi")
     @SerializedName("word_hi")
-    val wordHindi :String?
+    val wordHindi: String?
 
-): Parcelable
+) : Parcelable

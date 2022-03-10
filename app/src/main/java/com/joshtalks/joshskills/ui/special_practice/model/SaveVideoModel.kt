@@ -8,5 +8,5 @@ data class SaveVideoModel(
     @SerializedName("video_url")
     var videoUrl: String,
     @SerializedName("special_practice_id")
-    var specialPracticeId: Int
+    var specialPracticeId: String
 )
