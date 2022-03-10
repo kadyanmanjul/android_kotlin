@@ -25,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
-private const val TAG = "PubNub_Service"
+private const val TAG = "PubNubService"
 
 object PubNubService : ChatService {
 
@@ -35,13 +35,12 @@ object PubNubService : ChatService {
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }
+
     private val config by lazy {
         PNConfiguration().apply {
             logVerbosity = PNLogVerbosity.BODY
         }
     }
-
-    override fun initializeChatService() {}
 
     override fun <T> subscribeToChatEvents(groups: List<String>, observer: ChatEventObserver<T>) {
         pubnub.addListener(observer.getObserver() as @NotNull SubscribeCallback)

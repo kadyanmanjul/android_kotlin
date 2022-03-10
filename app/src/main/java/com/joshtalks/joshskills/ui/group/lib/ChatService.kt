@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.group.lib
 import com.joshtalks.joshskills.ui.group.model.*
 
 interface ChatService {
-    fun initializeChatService()
     fun <T> subscribeToChatEvents(groups : List<String>, observer: ChatEventObserver<T>)
     fun <T> unsubscribeToChatEvents(observer: ChatEventObserver<T>)
     fun sendMessage(groupName: String, messageItem: MessageItem)
