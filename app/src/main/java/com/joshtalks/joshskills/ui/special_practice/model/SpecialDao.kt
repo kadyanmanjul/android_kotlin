@@ -14,7 +14,9 @@ interface SpecialDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSingleItem(specialPractice: SpecialPractice)
 
-//    @Query("UPDATE special_table SET recorded_video = :recordedVideo where special_id == :specialId")
-//    fun updateRecordedTable(specialId: String,recordedVideo:String)
+    @Query("UPDATE special_table SET recorded_video = :recordedVideo where special_id == :specialId")
+    fun updateRecordedTable(specialId: String,recordedVideo:String)
+
+
 
 }

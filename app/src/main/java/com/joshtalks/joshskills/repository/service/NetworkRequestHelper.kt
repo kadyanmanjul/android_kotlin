@@ -156,6 +156,7 @@ object NetworkRequestHelper {
 
                 chatModel.specialPractice?.let {
                     it.chatId = chatModel.chatId
+                    it.recordedVideo = EMPTY
                     AppObjectController.appDatabase.specialDao().insertSingleItem(it)
                 }
             }
@@ -280,6 +281,7 @@ object NetworkRequestHelper {
 
                 chatModel.specialPractice?.let {
                     it.chatId = chatModel.chatId
+                    it.recordedVideo = EMPTY
                     AppObjectController.appDatabase.specialDao().insertSingleItem(it)
                 }
             }
