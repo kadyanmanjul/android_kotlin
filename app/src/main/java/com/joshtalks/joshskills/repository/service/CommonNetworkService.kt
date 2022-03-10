@@ -341,7 +341,7 @@ interface CommonNetworkService {
     suspend fun restartCourseImpression(@Body params: Map<String, String>): Response<Void>
 
     @POST("$DIR/question/special_practice_details/")
-    suspend fun getSpecialPracticeDetails(@Body params: Map<String, Any>): Response<SpecialPracticeModel>
+    suspend fun getSpecialPracticeDetails(@Body params: Map<String, String>): Response<SpecialPracticeModel>
 
     @POST("$DIR/question/special_practice_submit/")
     suspend fun saveVideoOnServer(@Body params: SaveVideoModel): Response<SuccessResponse>

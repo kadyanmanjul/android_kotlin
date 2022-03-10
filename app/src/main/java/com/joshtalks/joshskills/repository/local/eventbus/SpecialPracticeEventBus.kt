@@ -1,3 +1,3 @@
 package com.joshtalks.joshskills.repository.local.eventbus
 
-class SpecialPracticeEventBus(val specialId: Int)
+class SpecialPracticeEventBus(val specialId: String)

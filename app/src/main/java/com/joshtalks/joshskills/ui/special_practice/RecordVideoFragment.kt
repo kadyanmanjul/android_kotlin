@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.ui.special_practice
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.Log
@@ -24,6 +24,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentRecordVideoBinding
 import com.joshtalks.joshskills.util.getBitMapFromView
 import com.joshtalks.joshskills.util.getNameString
@@ -41,7 +42,13 @@ class RecordVideoFragment : CoreJoshFragment() {
     private lateinit var videoCapture: VideoCapture<Recorder>
     private var currentRecording: Recording? = null
     private lateinit var recordingState: VideoRecordEvent
-    private var specialId = 0
+    private var specialId: String? = null
+    private var wordInEnglish: String? = null
+    private var wordInHindi: String? = null
+    private var sentenceInEnglish: String? = null
+    private var sentenceInHindi: String? = null
+    private var timer: CountDownTimer? = null
+
 
     enum class UiState {
         IDLE,
@@ -53,6 +60,17 @@ class RecordVideoFragment : CoreJoshFragment() {
     private val mainThreadExecutor by lazy { ContextCompat.getMainExecutor(requireContext()) }
     private var enumerationDeferred: Deferred<Unit>? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            wordInEnglish = it.getString(WORD_IN_ENGLISH)
+            sentenceInEnglish = it.getString(SENTENCE_IN_ENGLISH)
+            wordInHindi = it.getString(WORD_IN_HINDI)
+            sentenceInHindi = it.getString(SENTENCE_IN_HINDI)
+            specialId = it.getString(SPECIAL_ID)
+        }
+    }
+
     companion object {
         private const val WORD_IN_ENGLISH = "WORD_IN_ENGLISH"
         private const val SENTENCE_IN_ENGLISH = "SENTENCE_IN_ENGLISH"
@@ -63,18 +81,18 @@ class RecordVideoFragment : CoreJoshFragment() {
             wordInEnglish: String,
             sentenceInEnglish: String,
             wordInHindi: String,
-            sentenceInHindi: String
-        ): RecordVideoFragment {
-            val args = Bundle()
-            args.putString(WORD_IN_ENGLISH, wordInEnglish)
-            args.putString(SENTENCE_IN_ENGLISH, sentenceInEnglish)
-            args.putString(WORD_IN_HINDI, wordInHindi)
-            args.putString(SENTENCE_IN_HINDI, sentenceInHindi)
-            val fragment = RecordVideoFragment()
-            fragment.arguments = args
-            return RecordVideoFragment()
-        }
-
+            sentenceInHindi: String,
+            specialId11: String
+        ) =
+            RecordVideoFragment().apply {
+                arguments = Bundle().apply {
+                    putString(WORD_IN_ENGLISH, wordInEnglish)
+                    putString(SENTENCE_IN_ENGLISH, sentenceInEnglish)
+                    putString(WORD_IN_HINDI, wordInHindi)
+                    putString(SENTENCE_IN_HINDI, sentenceInHindi)
+                    putString(SPECIAL_ID, specialId11)
+                }
+            }
     }
 
     override fun onCreateView(
@@ -88,35 +106,18 @@ class RecordVideoFragment : CoreJoshFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getTime()
         initCameraFragment()
-
-        arguments?.getString(WORD_IN_ENGLISH)?.let {
-            binding.wordInEnglish.text = it
-        }
-        arguments?.getString(SENTENCE_IN_ENGLISH)?.let {
-            binding.sentenceInEnglish.text = it
-        }
-        arguments?.getString(WORD_IN_HINDI)?.let {
-            binding.wordInHindi.text = it
-        }
-        arguments?.getString(SENTENCE_IN_HINDI)?.let {
-            binding.sentenceInHindi.text = it
-        }
+        setImageData()
         onBackPress()
     }
 
     private fun setImageData() {
-        arguments?.getString(WORD_IN_ENGLISH)?.let {
-            binding.wordInEnglish.text = it
-        }
-        arguments?.getString(SENTENCE_IN_ENGLISH)?.let {
-            binding.sentenceInEnglish.text = it
-        }
-        arguments?.getString(WORD_IN_HINDI)?.let {
-            binding.wordInHindi.text = it
-        }
-        arguments?.getString(SENTENCE_IN_HINDI)?.let {
-            binding.sentenceInHindi.text = it
+        if (wordInEnglish != EMPTY && sentenceInEnglish != EMPTY && wordInHindi != EMPTY && sentenceInHindi != EMPTY) {
+            binding.wordInEnglish.text = wordInEnglish
+            binding.sentenceInEnglish.text = sentenceInEnglish
+            binding.wordInHindi.text = wordInHindi
+            binding.sentenceInHindi.text = sentenceInHindi
         }
     }
 
@@ -133,106 +134,139 @@ class RecordVideoFragment : CoreJoshFragment() {
 
     @SuppressLint("ClickableViewAccessibility", "MissingPermission")
     private fun initializeUI() {
-
-        binding.recordVideoBtn.apply {
-            setOnClickListener {
-                if (!this@RecordVideoFragment::recordingState.isInitialized || recordingState is VideoRecordEvent.Finalize) {
-                    startRecording()
-                    setBackgroundResource(R.drawable.ic_ellipse_50__2_)
-                    setImageResource(R.drawable.ic_rectangle_stop)
-                } else {
-                    when (recordingState) {
-                        is VideoRecordEvent.Start -> {
-                            currentRecording?.stop()
-                            setBackgroundResource(R.drawable.ic_ellipse_50__2_)
-                            setImageResource(R.drawable.ic_rectangle_stop)
+        try {
+            binding.recordVideoBtn.apply {
+                setOnClickListener {
+                    if (!this@RecordVideoFragment::recordingState.isInitialized || recordingState is VideoRecordEvent.Finalize) {
+                        startRecording()
+                        timer?.start()
+                        setBackgroundResource(R.drawable.ic_ellipse_50__2_)
+                        setImageResource(R.drawable.ic_rectangle_stop)
+                    } else {
+                        when (recordingState) {
+                            is VideoRecordEvent.Start -> {
+                                timer?.onFinish()
+                                currentRecording?.stop()
+                                setBackgroundResource(R.drawable.ic_ellipse_50__2_)
+                                setImageResource(R.drawable.ic_rectangle_stop)
+                            }
+                            is VideoRecordEvent.Pause -> {
+                                currentRecording?.resume()
+                                setImageDrawable(null)
+                            }
+                            else -> throw IllegalStateException("recordingState in unknown state")
                         }
-                        is VideoRecordEvent.Pause -> {
-                            currentRecording?.resume()
-                            setImageDrawable(null)
-                        }
-                        else -> throw IllegalStateException("recordingState in unknown state")
                     }
                 }
             }
+        } catch (ex: Exception) {
         }
     }
 
     private suspend fun bindCaptureUseCase() {
-        val cameraProvider = ProcessCameraProvider.getInstance(requireContext()).await()
-
-        val preview = Preview.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            .build().apply {
-                setSurfaceProvider(binding.previewView.surfaceProvider)
-            }
-        val recorder = Recorder.Builder()
-            .setQualitySelector(QualitySelector.from(Quality.LOWEST))
-            .build()
-
-        videoCapture = VideoCapture.withOutput(recorder)
-
         try {
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                viewLifecycleOwner,
-                CameraSelector.DEFAULT_FRONT_CAMERA,
-                videoCapture,
-                preview
-            )
-        } catch (exc: Exception) {
-            Log.e("Sagar", "Use case binding failed", exc)
+            val cameraProvider = ProcessCameraProvider.getInstance(requireContext()).await()
+
+            val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .build().apply {
+                    setSurfaceProvider(binding.previewView.surfaceProvider)
+                }
+            val recorder = Recorder.Builder()
+                .setQualitySelector(QualitySelector.from(Quality.LOWEST))
+                .build()
+
+            videoCapture = VideoCapture.withOutput(recorder)
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
+                    viewLifecycleOwner,
+                    CameraSelector.DEFAULT_FRONT_CAMERA,
+                    videoCapture,
+                    preview
+                )
+            } catch (exc: Exception) {
+                Log.e("Sagar", "Use case binding failed", exc)
+            }
+        } catch (ex: Exception) {
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun startRecording() {
         // create MediaStoreOutputOptions for our recorder: resulting our recording!
-        val name = "JoshSkill-recording-" +
-                SimpleDateFormat("ddMMyyyy", Locale.US)
-                    .format(System.currentTimeMillis()) + ".mp4"
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Video.Media.DISPLAY_NAME, name)
+        try {
+            val name = "JoshSkill-recording-" +
+                    SimpleDateFormat("ddMMyyyy", Locale.US)
+                        .format(System.currentTimeMillis()) + ".mp4"
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Video.Media.DISPLAY_NAME, name)
+            }
+            val mediaStoreOutput = MediaStoreOutputOptions.Builder(
+                requireActivity().contentResolver,
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            )
+                .setContentValues(contentValues)
+                .build()
+
+            // configure Recorder and Start recording to the mediaStoreOutput.
+            currentRecording = videoCapture.output
+                .prepareRecording(requireActivity(), mediaStoreOutput)
+                .apply { withAudioEnabled() }
+                .start(mainThreadExecutor, captureListener)
+
+        } catch (ex: Exception) {
         }
-        val mediaStoreOutput = MediaStoreOutputOptions.Builder(
-            requireActivity().contentResolver,
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        )
-            .setContentValues(contentValues)
-            .build()
-
-        // configure Recorder and Start recording to the mediaStoreOutput.
-        currentRecording = videoCapture.output
-            .prepareRecording(requireActivity(), mediaStoreOutput)
-            .apply { withAudioEnabled() }
-            .start(mainThreadExecutor, captureListener)
-
-        Log.i("Sagar", "Recording started")
     }
 
     private val captureListener = Consumer<VideoRecordEvent> { event ->
         // cache the recording state
-        if (event !is VideoRecordEvent.Status)
-            recordingState = event
+        try {
+            if (event !is VideoRecordEvent.Status)
+                recordingState = event
 
-        updateUI(event)
+            updateUI(event)
 
-        if (event is VideoRecordEvent.Finalize) {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.fragment_record_container,
-                    ViewAndShareVideoFragment.newInstance(
-                        videoPath = uriToFile(
-                            requireContext(),
-                            event.outputResults.outputUri
-                        ).absolutePath,
-                        imagePath = getBitMapFromView(binding.imageOverlay).toFile(requireContext()).absolutePath,
-                        imageBitmap = getBitMapFromView(binding.imageOverlay),
-                    )
-                ).commit()
-            Log.d("Sagar", "video saved to uri: ${event.outputResults.outputUri}")
+            if (event is VideoRecordEvent.Finalize) {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.fragment_record_container,
+                        ViewAndShareVideoFragment.newInstance(
+                            videoPath = uriToFile(
+                                requireContext(),
+                                event.outputResults.outputUri
+                            ).absolutePath,
+                            imagePath = getBitMapFromView(binding.imageOverlay).toFile(
+                                requireContext()
+                            ).absolutePath,
+                            imageBitmap = getBitMapFromView(binding.imageOverlay),
+                            specialId ?: EMPTY
+                        )
+                    ).commit()
+            }
+        } catch (ex: Exception) {
+
         }
     }
+
+    fun getTime() {
+        try {
+            timer = object : CountDownTimer(30000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+
+                }
+
+                override fun onFinish() {
+                    currentRecording?.stop()
+                    binding.recordVideoBtn.setBackgroundResource(R.drawable.ic_ellipse_50__2_)
+                    binding.recordVideoBtn.setImageResource(R.drawable.ic_rectangle_stop)
+                }
+            }
+        } catch (ex: Exception) {
+        }
+    }
+
 
     private fun updateUI(event: VideoRecordEvent) {
         val state = if (event is VideoRecordEvent.Status) recordingState.getNameString()
@@ -271,9 +305,13 @@ class RecordVideoFragment : CoreJoshFragment() {
     }
 
     private fun moveToNewActivity() {
-        val i = Intent(activity, SpecialPracticeActivity::class.java)
-        startActivity(i)
-        (activity as Activity?)?.overridePendingTransition(0, 0)
-        requireActivity().finish()
+        try {
+            val i = Intent(activity, SpecialPracticeActivity::class.java)
+            i.putExtra(SPECIAL_ID, specialId)
+            startActivity(i)
+            requireActivity().overridePendingTransition(0, 0)
+            requireActivity().finish()
+        } catch (ex: Exception) {
+        }
     }
 }

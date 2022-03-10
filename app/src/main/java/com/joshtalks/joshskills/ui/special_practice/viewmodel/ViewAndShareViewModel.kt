@@ -25,7 +25,7 @@ class ViewAndShareViewModel (application: Application) :
     AndroidViewModel(application){
     val specialIdData = MutableLiveData<SpecialPractice>()
 
-    fun submitPractise(localPath:String,specialId:Int) {
+    fun submitPractise(localPath:String,specialId:String) {
         var videoUrl = ""
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -44,9 +44,9 @@ class ViewAndShareViewModel (application: Application) :
 
                 val resp = ViewAndShareRepo().saveRecordedVideo(SaveVideoModel(Mentor.getInstance().getId(),videoUrl,specialId))
                 if (resp.isSuccessful && resp.body() != null) {
-                    showToast("$resp")
+
                 } else {
-                    showToast("$resp")
+
                 }
             } catch (ex: Exception) {
                 showToast("${ex.message}")
@@ -78,11 +78,5 @@ class ViewAndShareViewModel (application: Application) :
             ).execute()
             return@async responseUpload.code()
         }.await()
-    }
-
-    fun getSpecialId(){
-        viewModelScope.launch (Dispatchers.IO){
-            specialIdData.postValue(AppObjectController.appDatabase.specialDao().getSpecialPracticeFromChatId())
-        }
     }
 }
