@@ -31,9 +31,9 @@ class PSTNCallState : BroadcastReceiver(){
     companion object {
         val pstnFlow = MutableSharedFlow<PSTNListener.PSTNState>()
     }
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(applicationContext: Context, intent: Intent) {
         try {
-            getCallingState(context, intent)
+            getCallingState(applicationContext, intent)
         } catch (ex: Exception) {
             try {
             } catch (e: Exception) {
@@ -42,12 +42,12 @@ class PSTNCallState : BroadcastReceiver(){
 
     }
 
-    private fun getCallingState(context: Context, intent: Intent) {
+    private fun getCallingState(applicationContext: Context, intent: Intent) {
 
-        val telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val telephony = applicationContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         val customPhoneListener = PSTNListener()
         telephony.listen(customPhoneListener, PhoneStateListener.LISTEN_CALL_STATE)
-        val stateStr = intent.extras!!.getString(TelephonyManager.EXTRA_STATE)
+        val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
         var state = 0
         when (stateStr) {
             TelephonyManager.EXTRA_STATE_IDLE -> {

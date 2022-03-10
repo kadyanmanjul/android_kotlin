@@ -9,11 +9,10 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.core.AppObjectController
 import java.util.*
 
-class SoundManager(private val soundType: Int, private val duration: Long = 0) {
+class SoundManager(private val applicationContext: Context,private val soundType: Int, private val duration: Long = 0) {
 
     private var pattern = longArrayOf(0, 1500, 1000)
-    private val context: Context = AppObjectController.joshApplication
-    private var defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(context, soundType)
+    private var defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(applicationContext, soundType)
 
     companion object {
         private var defaultRingtone: Ringtone? = null
@@ -22,8 +21,8 @@ class SoundManager(private val soundType: Int, private val duration: Long = 0) {
 
     private fun getRingtoneInstance(): Ringtone? {
         if (defaultRingtone == null) {
-            vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)
-            defaultRingtone = RingtoneManager.getRingtone(context, defaultRingtoneUri)
+            vibrator = ContextCompat.getSystemService(applicationContext, Vibrator::class.java)
+            defaultRingtone = RingtoneManager.getRingtone(applicationContext, defaultRingtoneUri)
         }
         return defaultRingtone
     }
@@ -39,7 +38,7 @@ class SoundManager(private val soundType: Int, private val duration: Long = 0) {
         if(duration>0 && soundType== SOUND_TYPE_RINGTONE){
             stopSoundTimer(ringtone)
         }
-        vibrateDevice(context)
+        vibrateDevice()
     }
 
     fun stopSound() {
@@ -58,7 +57,7 @@ class SoundManager(private val soundType: Int, private val duration: Long = 0) {
         timer.schedule(task, duration)
     }
 
-    private fun vibrateDevice(context: Context) {
+    private fun vibrateDevice() {
         if (soundType == SOUND_TYPE_NOTIFICATION) {
             vibrator?.let {
                 if (Build.VERSION.SDK_INT >= 26) {
@@ -82,7 +81,7 @@ class SoundManager(private val soundType: Int, private val duration: Long = 0) {
     }
 
     private fun gainAudioFocus() {
-        val mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+        val mAudioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mAudioManager!!.requestAudioFocus(
                 AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)

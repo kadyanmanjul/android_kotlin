@@ -42,10 +42,10 @@ android:exported="false">
 
  */
 
-class AudioController(private val context: Context) : AudioControllerInterface {
+class AudioController(private val applicationContext: Context) : AudioControllerInterface {
 
 
-    private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+    private val audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
 
 
     override fun checkIfSpeakerOn(): Boolean {
@@ -67,8 +67,8 @@ class AudioController(private val context: Context) : AudioControllerInterface {
         val receiverFilter2 = IntentFilter().apply {
             addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
         }
-        context.registerReceiver(HeadsetReceiver(), receiverFilter1)
-        context.registerReceiver(BluetoothReceiver(), receiverFilter2)
+        applicationContext.registerReceiver(HeadsetReceiver(), receiverFilter1)
+        applicationContext.registerReceiver(BluetoothReceiver(), receiverFilter2)
     }
 
     override fun observeAudioRoute(): MutableSharedFlow<AudioRouteConstants> {
