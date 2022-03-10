@@ -472,19 +472,18 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
     }
 
     private fun addReceiverTimeout() {
+        var timeout = 11L
+        if (isGroupCall) timeout = 16L
         compositeDisposable.add(
-            Observable.interval(11, TimeUnit.SECONDS, Schedulers.computation())
+            Observable.interval(timeout, TimeUnit.SECONDS, Schedulers.computation())
                 .timeInterval()
-                .subscribe(
-                    {
-                        if (mBoundService?.isCallConnected() == false) {
-                            mBoundService?.timeoutCaller()
-                        }
-                    },
-                    {
-                        it.printStackTrace()
+                .subscribe({
+                    if (mBoundService?.isCallConnected() == false) {
+                        mBoundService?.timeoutCaller()
                     }
-                )
+                }, {
+                    it.printStackTrace()
+                })
         )
     }
 
