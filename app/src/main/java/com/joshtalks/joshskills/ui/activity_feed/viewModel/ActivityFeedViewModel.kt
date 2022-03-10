@@ -42,6 +42,13 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
                                         currentFeed.value = doc.document.toObject()
                                         currentFeed.value!!.photoUrl =
                                             doc.document.get("photo_url").toString()
+                                        currentFeed.value!!.eventId =
+                                            doc.document.get("event_id").toString()
+                                        currentFeed.value!!.mediaUrl =
+                                            doc.document.get("media_url").toString()
+                                        currentFeed.value!!.mentorId =
+                                            doc.document.get("mentor_id").toString()
+
                                         feedTime = System.currentTimeMillis()
                                     }
                                 } else {
