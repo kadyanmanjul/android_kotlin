@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.ui.activity_feed
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -56,6 +58,22 @@ fun CircleImageView.setImage(url: String?) {
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .into(this)
     }
+}
+@BindingAdapter("updatedImageResource")
+fun ImageView.setImage(url: String?) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
+        .error(R.drawable.ic_call_placeholder)
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(AppObjectController.joshApplication)
+        .load(url)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .into(this)
 }
 fun getColorHexCode(): Int {
     val colorArray = arrayOf(
