@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-/** <add receiver> in manifest
+/** add <receiver> in manifest
 
 <receiver android:name=".pstn_call_indicator.PhoneCallReceiver"
 android:exported="true"
@@ -24,6 +24,7 @@ android:enabled="true">
 <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
 </intent-filter>
 </receiver>
+
  */
 class PSTNCallState : BroadcastReceiver(){
 

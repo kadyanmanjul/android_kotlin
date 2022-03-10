@@ -1,9 +1,9 @@
-package com.joshtalks.joshskills.ui.voip.calling_state
+package com.joshtalks.joshskills.ui.voip.call_details
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-class CallingState() {
+class CallDetails() {
 
     private val mutex = Mutex()
 

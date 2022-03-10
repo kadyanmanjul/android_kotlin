@@ -835,6 +835,17 @@
                 <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED"/>
             </intent-filter>
         </receiver>
+<!--        PSTN module-->
+        <receiver android:name=".ui.voip.pstn_call_indicator.PSTNCallState"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
