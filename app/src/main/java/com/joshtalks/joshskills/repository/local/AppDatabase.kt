@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.local
 
-// import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
@@ -214,7 +213,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_40_41,
                                 MIGRATION_41_42,
                                 MIGRATION_42_43,
-                                MIGRATION_43_44
+                                MIGRATION_43_44,
+                                MIGRATION_44_45
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -593,6 +593,11 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_44_45:Migration = object : Migration(44, 45) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT)")
+            }
+        }
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()

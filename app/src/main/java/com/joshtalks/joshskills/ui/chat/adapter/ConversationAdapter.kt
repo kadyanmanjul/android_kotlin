@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.chat.adapter
 
-// import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.graphics.Color
@@ -426,7 +425,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
             BASE_MESSAGE_TYPE.NEW_CLASS -> {
                 return NEW_CLASS_MESSAGE
             }
-            BASE_MESSAGE_TYPE.SPECIAL_PRACTICE->{
+            BASE_MESSAGE_TYPE.SPECIAL_PRACTICE -> {
                 return SPECIAL_PRACTICE
             }
             else -> {

@@ -244,7 +244,7 @@ interface ChatDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @RewriteQueriesToDropUnusedColumns
-    @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox  where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
+    @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
     suspend fun getRegisterCourseMinimal22(
         conversationId: String,
         typeO: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.Q
@@ -368,7 +368,7 @@ interface ChatDao {
 
             chatModel.lesson = getLesson(chatModel) // Add Lesson
 
-            chatModel.specialPractice = getSpecialPractice(chatModel)
+            chatModel.specialPractice = getSpecialPractice(chatModel) // Add Special
 
             chatModel.question = getQuestion(chatModel) // Add Question
         }
@@ -411,9 +411,7 @@ interface ChatDao {
 
     private fun getSpecialPractice(chatModel: ChatModel): SpecialPractice? {
         if (chatModel.type == BASE_MESSAGE_TYPE.SPECIAL_PRACTICE) {
-            return AppObjectController.appDatabase.specialDao()
-                .getSpecialPracticeFromChatId()
-//                .getSpecialPracticeFromChatId(chatModel.chatId)
+            return AppObjectController.appDatabase.specialDao().getSpecialPractice(chatModel.chatId)
         }
         return null
     }

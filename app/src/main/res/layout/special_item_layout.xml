@@ -32,7 +32,7 @@
                 android:layout_height="@dimen/_49sdp"
                 android:background="@drawable/ic_wave_special_new"
                 android:paddingTop="@dimen/_8sdp"
-                app:srcCompat="@drawable/ic_special_practice" />
+                app:srcCompat="@drawable/ic_frame_stars_new" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt_message"
