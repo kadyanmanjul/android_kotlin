@@ -21,8 +21,8 @@ data class SpecialPractice(
     @ColumnInfo(name = "chat_id")
     @Expose var chatId: String = "",
 
-//    @ColumnInfo(name = "recorded_video")
-//    @Expose var recordedVideo: String = "",
+    @ColumnInfo(name = "recorded_video")
+    @Expose var recordedVideo: String = "",
 
     @ColumnInfo(name = "created")
     @SerializedName("created")

@@ -122,7 +122,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class, SpecialPractice::class
     ],
-    version = 45,
+    version = 46,
     exportSchema = true
 )
 @TypeConverters(
@@ -595,7 +595,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_44_45:Migration = object : Migration(44, 45) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT, `recorded_video` TEXT)")
             }
         }
 

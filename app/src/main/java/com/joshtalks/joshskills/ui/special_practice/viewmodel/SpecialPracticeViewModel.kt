@@ -31,7 +31,7 @@ class SpecialPracticeViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun getSpecialId(specialId:String) {
+    fun getSpecialIdData(specialId:String) {
         viewModelScope.launch(Dispatchers.IO) {
             specialIdData.postValue(
                 AppObjectController.appDatabase.specialDao().getSpecialPracticeFromId(specialId)
