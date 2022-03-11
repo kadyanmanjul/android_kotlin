@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
 import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
