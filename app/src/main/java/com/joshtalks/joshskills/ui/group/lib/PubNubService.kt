@@ -42,6 +42,8 @@ object PubNubService : ChatService {
         }
     }
 
+    override fun initializeChatService() {}
+
     override fun <T> subscribeToChatEvents(groups: List<String>, observer: ChatEventObserver<T>) {
         pubnub.addListener(observer.getObserver() as @NotNull SubscribeCallback)
         pubnub.subscribe()

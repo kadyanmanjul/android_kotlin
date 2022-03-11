@@ -44,7 +44,7 @@ class GroupListFragment : BaseFragment() {
         lifecycleScope.launchWhenStarted {
             vm.setGroupsCount()
             if (vm.isFromVoip.get()) {
-                loadListWhenFromVoid()
+                loadListWhenFromVoip()
             } else {
                 vm.getGroupData().distinctUntilChanged().collectLatest {
                     Log.d(TAG, "onCreate: $it")
@@ -71,7 +71,7 @@ class GroupListFragment : BaseFragment() {
         super.onResume()
         lifecycleScope.launchWhenStarted {
             if (vm.isFromVoip.get())
-                loadListWhenFromVoid()
+                loadListWhenFromVoip()
         }
     }
 
@@ -141,7 +141,7 @@ class GroupListFragment : BaseFragment() {
         popupMenu.show()
     }
 
-    private suspend fun loadListWhenFromVoid() {
+    private suspend fun loadListWhenFromVoip() {
         withContext(Dispatchers.IO) {
             vm.getGroupOnlineCount()
             vm.getGroupLocalData().let {
