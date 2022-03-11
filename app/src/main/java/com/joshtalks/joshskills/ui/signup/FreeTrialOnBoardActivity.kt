@@ -31,6 +31,8 @@ import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
+import com.joshtalks.joshskills.core.FREE_TRIAL_DEFAULT_TEST_ID
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
@@ -63,10 +65,10 @@ import com.truecaller.android.sdk.TrueProfile
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
-const val TEST_ID = "TEST_ID"
 
 class FreeTrialOnBoardActivity : ABTestActivity() {
 
@@ -274,17 +276,6 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         startActivity(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance()
-                .onActivityResultObtained(this, requestCode, resultCode, data)
-            hideProgressBar()
-            return
-        }
-        hideProgressBar()
-    }
-
     private fun openProfileDetailFragment(testId: String = FREE_TRIAL_DEFAULT_TEST_ID) {
         supportFragmentManager.commit(true) {
             addToBackStack(null)
@@ -299,6 +290,17 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance()
+                .onActivityResultObtained(this, requestCode, resultCode, data)
+            hideProgressBar()
+            return
+        }
+        hideProgressBar()
     }
 
     fun showPrivacyPolicyDialog() {

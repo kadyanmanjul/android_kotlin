@@ -14,6 +14,7 @@ import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_ENTER_NAME_TEXT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
@@ -22,14 +23,12 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 
-const val FREE_TRIAL_ENTER_NAME_TEXT = "FREE_TRIAL_ENTER_NAME_TEXT_"
 class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
     private var username = name
     private var isUserVerified = isVerified
-    private var testId = EMPTY
 
     companion object {
         fun newInstance(name: String,isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name,isVerified)
@@ -38,10 +37,6 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
-        testId = if (requireArguments().getString(TEST_ID, EMPTY) == EMPTY)
-                    "784"
-                 else
-                    requireArguments().getString(TEST_ID, EMPTY)
     }
 
     override fun onCreateView(
@@ -64,13 +59,10 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         binding.nameEditText.requestFocus()
-        binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FREE_TRIAL_ENTER_NAME_TEXT + testId)
         initUI()
     }
 
     private fun initUI() {
-
         binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FREE_TRIAL_ENTER_NAME_TEXT + requireArguments().getString(FREE_TRIAL_TEST_ID, FREE_TRIAL_DEFAULT_TEST_ID))
         binding.nameEditText.setText(username)
