@@ -21,11 +21,11 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-class ViewAndShareViewModel (application: Application) :
-    AndroidViewModel(application){
+class ViewAndShareViewModel(application: Application) :
+    AndroidViewModel(application) {
     val specialIdData = MutableLiveData<SpecialPractice>()
 
-    fun submitPractise(localPath:String,specialId:String) {
+    fun submitPractise(localPath: String, specialId: String) {
         var videoUrl = ""
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -35,14 +35,19 @@ class ViewAndShareViewModel (application: Application) :
                         AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
                     val statusCode: Int = uploadOnS3Server(responseObj, localPath)
                     if (statusCode in 200..210) {
-                        val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                        val url =
+                            responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                         videoUrl = url
                     } else {
                         return@launch
                     }
                 }
 
-                val resp = ViewAndShareRepo().saveRecordedVideo(SaveVideoModel(Mentor.getInstance().getId(),videoUrl,specialId))
+                val resp = ViewAndShareRepo().saveRecordedVideo(
+                    SaveVideoModel(
+                        Mentor.getInstance().getId(), videoUrl, specialId
+                    )
+                )
                 if (resp.isSuccessful && resp.body() != null) {
 
                 } else {
@@ -78,5 +83,12 @@ class ViewAndShareViewModel (application: Application) :
             ).execute()
             return@async responseUpload.code()
         }.await()
+    }
+
+    fun updateUserRecordVideo(specialId: String,recordVideo:String) {
+        viewModelScope.launch (Dispatchers.IO){
+            AppObjectController.appDatabase.specialDao()
+                .updateRecordedTable(specialId, recordVideo)
+        }
     }
 }

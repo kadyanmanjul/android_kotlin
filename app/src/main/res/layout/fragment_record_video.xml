@@ -57,6 +57,8 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/_38sdp"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:textStyle="bold"
                     tools:text="ATTACK" />
 
@@ -64,12 +66,13 @@
                     android:id="@+id/word_in_hindi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_2sdp"
                     android:letterSpacing="0.165"
                     android:text="हमला"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_28sdp"
+                    android:singleLine="true"
+                    android:lines="1"
                     android:textStyle="bold"
                     tools:text="हमला" />
 
@@ -82,6 +85,8 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
+                    android:singleLine="true"
+                    android:lines="1"
                     tools:text="रूस ने यूक्रेन पर हमला किया" />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -89,6 +94,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_2sdp"
+                    android:singleLine="true"
+                    android:lines="1"
+                    android:layout_marginBottom="@dimen/_2sdp"
                     android:text="Russia attacked Ukraine"
                     android:textColor="@color/black"
                     tools:text="Russia attacked Ukraine" />
