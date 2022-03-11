@@ -310,6 +310,9 @@ object PermissionUtils {
                 context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
 
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
         } else {
             return ContextCompat.checkSelfPermission(
@@ -326,6 +329,9 @@ object PermissionUtils {
                     ) + ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.READ_EXTERNAL_STORAGE
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
         }
     }

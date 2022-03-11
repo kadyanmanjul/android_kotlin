@@ -7,15 +7,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Outline
+import android.graphics.Point
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewOutlineProvider
+import android.util.Size
+import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -256,10 +256,14 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
 
     private fun addOverLayOnVideo(bitmap: Bitmap?) {
         try {
+            var sizeA = getVideoResolution(videoPathOriginal?: EMPTY)
             var videoPath = getVideoFilePath()
+            Log.e(TAG, "addOverLayOnVideo: ${sizeA?.height} ${sizeA?.width}")
             Log.e("Sagar", "addOverLayOnVideo: $videoPath")
             Mp4Composer(videoPathOriginal ?: EMPTY, videoPath)
-                .size(1080, 1080)
+                .size(getWindowWidth(requireActivity()),
+                    (((sizeA?.height?.times(2))?.minus(130))?:1080)
+                )
                 .fillMode(FillMode.PRESERVE_ASPECT_CROP)
                 .filter(GlWatermarkFilter(bitmap, GlWatermarkFilter.Position.RIGHT_BOTTOM))
                 .listener(object : Mp4Composer.Listener {
@@ -281,6 +285,8 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
                             sharableVideoUrl = videoPath
                             showIntroVideoUi(videoPath)
                         }
+                        viewAndShareViewModel.updateUserRecordVideo(specialId?: EMPTY, EMPTY)
+
                     }
 
                     override fun onCanceled() {
@@ -345,5 +351,39 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
             requireActivity().finish()
         } catch (ex: Exception) {
         }
+    }
+
+    fun getVideoResolution(path: String?): Size? {
+        val retriever = MediaMetadataRetriever()
+        retriever.setDataSource(path)
+        val width = Integer.valueOf(
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+        )
+        val height = Integer.valueOf(
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+        )
+        retriever.release()
+        val rotation: Int = getVideoRotation(path)
+        return if (rotation == 90 || rotation == 270) {
+            Size(height, width)
+        } else Size(width, height)
+    }
+
+    fun getVideoRotation(videoFilePath: String?): Int {
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(videoFilePath)
+        val orientation = mediaMetadataRetriever.extractMetadata(
+            MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION
+        )
+        return Integer.valueOf(orientation)
+    }
+
+
+    fun getWindowWidth(context: Context): Int {
+        val disp =
+            (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        val size = Point()
+        disp.getSize(size)
+        return size.x
     }
 }
