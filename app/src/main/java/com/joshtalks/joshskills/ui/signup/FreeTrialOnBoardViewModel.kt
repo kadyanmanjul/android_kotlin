@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
@@ -18,6 +19,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -25,6 +27,8 @@ import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import timber.log.Timber
 
 class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {
@@ -203,5 +207,13 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 ex.showAppropriateMsg()
             }
         }
+    }
+
+    fun mixPanelEvent() {
+        val prop = JSONObject()
+        prop.put("is_truecaller",true)
+        prop.put("is_name_entered",false)
+        MixPanelTracker().publishEvent("Start_now_button_clicked",prop)
+
     }
 }
