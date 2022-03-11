@@ -65,6 +65,8 @@ import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.entity.VideoEngageDao
 import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.entity.ReadingVideo
+import com.joshtalks.joshskills.repository.local.entity.CompressedVideo
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearchDao
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
