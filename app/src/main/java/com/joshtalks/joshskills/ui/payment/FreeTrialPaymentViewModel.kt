@@ -10,15 +10,20 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.D2pSyllabusPdfResponse
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -29,7 +34,70 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
-    val d2pSyllabusPdfResponse: MutableLiveData<String> = MutableLiveData()
+    val d2pSyllabusPdfResponse: MutableLiveData<Map<String, String?>> = MutableLiveData()
+    val pointsHistoryLiveData: MutableLiveData<PointsHistoryResponse> = MutableLiveData()
+
+    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    val syllabusABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    val abtestNewLayoutLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun get100PCampaignData(campaign: String) {
+         viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                points100ABtestLiveData.postValue(campaign)
+            }
+        }
+    }
+
+    fun getSyllabusCampaignData(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                syllabusABtestLiveData.postValue(campaign)
+            }
+        }
+    }
+
+    fun getNewLayoutCampaignData(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                abtestNewLayoutLiveData.postValue(campaign)
+            }
+        }
+    }
+
+    fun postGoal(goal: String, campaign: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.postGoal(goal)
+            if (campaign != null) {
+                val data = ABTestRepository().getCampaignData(campaign)
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey ?: EMPTY)
+                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put("Campaign", campaign)
+                    props.put("Goal", goal)
+                    MixPanelTracker().publishEvent(goal, props)
+                }
+            }
+        }
+    }
+
+    fun getPointsSummary() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val response = AppObjectController.commonNetworkService.getUserPointsHistory(
+                    Mentor.getInstance().getId()
+                )
+                if (response.isSuccessful && response.body() != null) {
+                    pointsHistoryLiveData.postValue(response.body())
+                }
+            } catch (ex: Exception) {
+                ex.showAppropriateMsg()
+            }
+        }
+    }
 
     fun getD2pSyllabusPdfData() {
         viewModelScope.launch(Dispatchers.IO) {

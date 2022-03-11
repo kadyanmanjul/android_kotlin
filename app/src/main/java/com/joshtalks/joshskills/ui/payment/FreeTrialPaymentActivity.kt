@@ -23,6 +23,9 @@ import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
@@ -80,6 +83,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     var isDiscount = false
     private var isNewFlowActive = true
     private var isSyllabusActive = true
+    private var is100PointsActive = true
     private var currentTime : Long = 0L
 
 
@@ -87,7 +91,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
     lateinit var fileName : String
-   // var isPointsScoredMoreThanEqualTo100 = false
+    var isPointsScoredMoreThanEqualTo100 = false
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -139,10 +143,13 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         currentTime = System.currentTimeMillis()
-        setOldAndNewViews()
+        initABTest()
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
+        if(is100PointsActive){
+            viewModel.getPointsSummary()
+        }
         logNewPaymentPageOpened()
 
         if(isSyllabusActive){
@@ -151,6 +158,13 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
 
     }
+
+    private fun initABTest() {
+        viewModel.getNewLayoutCampaignData(CampaignKeys.BUY_LAYOUT_CHANGED.name)
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
+        viewModel.getSyllabusCampaignData(CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name)
+    }
+
     private fun setOldAndNewViews(){
         if(isNewFlowActive){
             binding.englishCardNew.visibility = View.VISIBLE
@@ -162,6 +176,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             binding.barrierPhone.visibility = View.GONE
             binding.linearLayoutCompat2.visibility = View.GONE
             binding.seeCourseList.visibility = View.GONE
+            binding.syllabusPdfCardOld.visibility = View.GONE
         }else{
             binding.englishCard.visibility = View.VISIBLE
             binding.subscriptionCard.visibility = View.VISIBLE
@@ -214,10 +229,21 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         this,
                         R.drawable.blue_rectangle_with_blue_bound_stroke
                     )
-                binding.materialTextView.text = buttonText.get(index)
+
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.GONE
                 isEnglishCardTapped = true
+
+                    if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false && is100PointsActive){
+                    binding.materialTextView.text = getString(R.string.achieve_100_points_first)
+                    binding.materialTextView.isEnabled = false
+                    binding.materialTextView.alpha = .5f
+                    } else{
+                    binding.materialTextView.text = buttonText.get(index)
+                    binding.materialTextView.isEnabled = true
+                    binding.materialTextView.alpha = 1f
+                  }
+
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -237,6 +263,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.txtLabelHeading.text = headingText.get(index)
                 binding.seeCourseList.visibility = View.VISIBLE
                 isEnglishCardTapped = false
+                if(is100PointsActive){
+                    binding.materialTextView.isEnabled = true
+                    binding.materialTextView.alpha = 1f
+                }
                 scrollToBottom()
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -492,6 +522,16 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 this,
                 R.drawable.white_rectangle_with_blue_bound_stroke
             )
+
+            if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false && is100PointsActive){
+                binding.materialTextView.text = getString(R.string.achieve_100_points_first)
+                binding.materialTextView.isEnabled = false
+                binding.materialTextView.alpha = .5f
+            } else{
+                binding.materialTextView.text = buttonText.get(index)
+                binding.materialTextView.isEnabled = true
+                binding.materialTextView.alpha = 1f
+            }
       //  isEnglishCardTapped = true
 //        if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
 //            binding.materialTextView.text = getString(R.string.achieve_100_points_first)
@@ -562,6 +602,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
             override fun onTimerFinish() {
+                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
         }
@@ -786,6 +827,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         startTimer(it.expireTime.time - System.currentTimeMillis())
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
+                        PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     }
                 } else {
                     binding.freeTrialTimer.visibility = View.GONE
@@ -829,8 +871,49 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         viewModel.d2pSyllabusPdfResponse.observe(this,{
-            pdfUrl = it
+            pdfUrl = it["syllabus"]
         })
+        viewModel.pointsHistoryLiveData.observe(this, {
+            if(it.totalPoints != null && it.totalPoints >= 100){
+                isPointsScoredMoreThanEqualTo100 = true
+            }
+        })
+
+        viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                is100PointsActive =
+                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            }
+        }
+
+        viewModel.syllabusABtestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isSyllabusActive =
+                    (map.variantKey == VariantKeys.ESD_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+
+            if(isSyllabusActive && !isNewFlowActive){
+                binding.syllabusPdfCardOld.visibility = View.VISIBLE
+            }else{
+                binding.syllabusPdfCardOld.visibility = View.GONE
+            }
+            if(isSyllabusActive && isNewFlowActive){
+                binding.syllabusPdfCardNew.visibility = View.VISIBLE
+            }else{
+                binding.syllabusPdfCardNew.visibility = View.GONE
+            }
+
+
+        }
+        viewModel.abtestNewLayoutLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isNewFlowActive =
+                    (map.variantKey == VariantKeys.BUY_LAYOUT_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+
+            setOldAndNewViews()
+
+        }
 
     }
 
@@ -960,10 +1043,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
 
-            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
+            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED) && isSyllabusActive){
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
-            }
+                viewModel.postGoal(GoalKeys.ESD_COURSE_BOUGHT.name, CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name)
 
+            }
+            if(isEnglishCardTapped && isPointsScoredMoreThanEqualTo100 && is100PointsActive){
+                viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
+                viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
+            }
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()

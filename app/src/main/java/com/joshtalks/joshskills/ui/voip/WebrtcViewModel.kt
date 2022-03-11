@@ -6,17 +6,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import java.net.ProtocolException
 import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
 
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val repository: ABTestRepository by lazy { ABTestRepository() }
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -65,4 +70,23 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
+    fun postGoal(goal: String, campaign: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.postGoal(goal)
+            if (campaign != null) {
+                val data = ABTestRepository().getCampaignData(campaign)
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey ?: EMPTY)
+                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put("Campaign", campaign)
+                    props.put("Goal", goal)
+                    MixPanelTracker().publishEvent(goal, props)
+                }
+            }
+        }
+    }
+
+
 }

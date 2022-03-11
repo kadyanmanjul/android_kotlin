@@ -1133,7 +1133,10 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name,
                     CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name,
                     CampaignKeys.ACTIVITY_FEED.name,
-                    CampaignKeys.P2P_IMAGE_SHARING.name
+                    CampaignKeys.P2P_IMAGE_SHARING.name,
+                    CampaignKeys.HUNDRED_POINTS.NAME,
+                    CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name
+
                 )
             )
         } catch (ex: Exception) {

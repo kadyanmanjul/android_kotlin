@@ -160,5 +160,5 @@ interface SignUpNetworkService {
     suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
 
     @GET("$DIR/course/course_syllabus/")
-    suspend fun getD2pSyllabusPdf() : Response<String>
+    suspend fun getD2pSyllabusPdf() : Response<Map<String, String?>>
 }

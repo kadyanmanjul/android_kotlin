@@ -37,6 +37,8 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
@@ -120,6 +122,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
+        initABTest()
         if (testId != 0) {
             getCourseDetails(testId)
             if(testId == ENGLISH_COURSE_TEST_ID && is100PointsActive){
@@ -155,6 +158,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
+    }
+    private fun initABTest() {
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
@@ -334,10 +340,17 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         })
 
         viewModel.pointsHistoryLiveData.observe(this, {
-            if(it.totalPoints != null && it.totalPoints >= 100 && is100PointsActive){
+            if(it.totalPoints != null && it.totalPoints >= 100){
                 isPointsScoredMoreThanEqualTo100 = true
             }
         })
+
+        viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                is100PointsActive =
+                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            }
+        }
 
     }
 

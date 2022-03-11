@@ -37,6 +37,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
@@ -987,6 +989,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         }
         if(PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)){
             viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+            viewModel.postGoal(GoalKeys.SIV_GT_2MIN.name, CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
             PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
         }
         val channelName2 =
