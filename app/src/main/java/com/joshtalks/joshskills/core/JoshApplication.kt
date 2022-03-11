@@ -157,14 +157,14 @@ class JoshApplication :
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
         WorkManagerAdmin.userAppUsage(isAppVisible)
-        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-        //WorkManagerAdmin.removeRepeatingNotificationWorker()
+//        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+//        WorkManagerAdmin.removeRepeatingNotificationWorker()
         val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
         for (i in startIndex..2) {
-            //WorkManagerAdmin.setRepeatingNotificationWorker(i)
+//            WorkManagerAdmin.setRepeatingNotificationWorker(i)
             removeAlarmReminder(i)
         }
-        //  UsageStatsService.activeUserService(this)
+//        UsageStatsService.activeUserService(this)
     }
 
     private fun removeAlarmReminder(delay: Int) {
@@ -194,7 +194,7 @@ class JoshApplication :
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
         WorkManagerAdmin.userAppUsage(isAppVisible)
-        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+//        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         if (getConditionForShowLocalNotifications()) {
             val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
             for (i in startIndex..2) {
@@ -202,7 +202,7 @@ class JoshApplication :
                 setAlarmReminder(i)
             }
         }
-        //  UsageStatsService.inactiveUserService(this)
+//        UsageStatsService.inactiveUserService(this)
         WorkManagerAdmin.setLocalNotificationWorker()
     }
 

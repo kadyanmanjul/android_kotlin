@@ -748,7 +748,7 @@ class StatusCodeInterceptor : Interceptor {
                 }
             }
         }
-        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
+//        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
         Timber.i("Status code: %s", response.code)
         return response
     }

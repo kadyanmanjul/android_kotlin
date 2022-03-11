@@ -258,6 +258,7 @@ object WorkManagerAdmin {
             .enqueue(workRequest)
     }
 
+    //TODO : Remove this function and all code related to it
     fun userActiveStatusWorker(status: Boolean) {
         val data = workDataOf(IS_ACTIVE to status)
         val constraints = Constraints.Builder()

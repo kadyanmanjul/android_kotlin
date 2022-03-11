@@ -231,7 +231,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
-            WorkManagerAdmin.userActiveStatusWorker(true)
+//            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }
     }

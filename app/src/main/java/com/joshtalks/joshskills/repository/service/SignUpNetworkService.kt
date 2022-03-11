@@ -150,8 +150,8 @@ interface SignUpNetworkService {
     @POST("$DIR/engage/inbox/")
     suspend fun logInboxEngageEvent(@Body params: Map<String, String>)
 
-    @POST("$DIR/mentor/last-active")
-    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
+//    @POST("$DIR/mentor/last-active")
+//    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse

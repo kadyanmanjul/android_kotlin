@@ -755,7 +755,7 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
                 Timber.tag("Workers").e("= %s", secDiff)
                 if (secDiff >= minTimeToApiFire || active.not()) {
                     val data = ActiveUserRequest(Mentor.getInstance().getId(), active)
-                    AppObjectController.signUpNetworkService.activeUser(data)
+//                    AppObjectController.signUpNetworkService.activeUser(data)
                     PrefManager.put(LAST_ACTIVE_API_TIME, Date().time)
                 }
                 if (active.not()) {
