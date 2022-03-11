@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.group.repository
 
-import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -10,7 +9,7 @@ private const val TAG = "ABTestRepository"
 class ABTestRepository {
 
     private val apiService by lazy { AppObjectController.abTestNetworkService }
-    private val database = AppObjectController.appDatabase.abCapmaignDao()
+    private val database = AppObjectController.appDatabase.abCampaignDao()
 
     suspend fun getCampaignData(campaign: String): ABTestCampaignData? {
 

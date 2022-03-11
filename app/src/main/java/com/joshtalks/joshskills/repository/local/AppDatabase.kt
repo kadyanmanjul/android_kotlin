@@ -587,7 +587,6 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `assessment_questions_tmp` RENAME TO `assessment_questions`")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_questions_assessmentId` ON `assessment_questions` (`assessmentId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)")
-                database.execSQL("ALTER TABLE course ADD COLUMN paid_test_id TEXT")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `ab_test_campaigns` (`is_campaign_active` INTEGER NOT NULL, `campaign_key` TEXT NOT NULL, `variant_key` TEXT, `variable_map` TEXT, PRIMARY KEY (`campaign_key`))")
             }
         }
@@ -634,7 +633,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun timeTokenDao(): TimeTokenDao
     abstract fun groupChatDao(): GroupChatDao
     abstract fun gameAnalyticsDao(): GameAnalyticsDao
-    abstract fun abCapmaignDao(): ABTestCampaignDao
+    abstract fun abCampaignDao(): ABTestCampaignDao
 }
 
 class MessageTypeConverters {
