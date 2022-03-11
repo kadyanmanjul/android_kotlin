@@ -57,7 +57,7 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("sort_order")
-    val sortOrder: Int,
+    var sortOrder: Int,
 
     @ColumnInfo
     @SerializedName("answer_order")

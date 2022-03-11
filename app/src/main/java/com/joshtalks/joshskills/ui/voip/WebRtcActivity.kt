@@ -29,6 +29,7 @@ import android.view.animation.BounceInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -53,6 +54,7 @@ import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
+
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.joshtalks.joshskills.util.DateUtils
 import com.karumi.dexter.MultiplePermissionsReport
@@ -86,6 +88,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    var audioManager: AudioManager? = null
     private lateinit var sensorManager: SensorManager
     private var proximity: Sensor? = null
     private lateinit var scope: CoroutineScope
@@ -321,6 +324,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        audioManager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
         proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
         powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag")
@@ -562,25 +566,27 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
-        if (isCallFavoritePP() || isCallOnGoing.value == true) {
-            intent= intent.apply {
-                putExtra(CALL_TYPE, WebRtcService.callType)
-                WebRtcService.callData?.apply {
-                    if (mBoundService?.isFavorite() == true) {
-                        put(RTC_IS_FAVORITE, "true")
+        if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
+            if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
+                intent = intent.apply {
+                    putExtra(CALL_TYPE, WebRtcService.callType)
+                    WebRtcService.callData?.apply {
+                        if (mBoundService?.isFavorite() == true) {
+                            put(RTC_IS_FAVORITE, "true")
+                        }
+                        if (mBoundService?.isGroupCall() == true) {
+                            put(RTC_IS_GROUP_CALL, "true")
+                        }
+                        if (isNewUserCall()) {
+                            put(RTC_IS_NEW_USER_CALL, "true")
+                        }
                     }
-                    if (mBoundService?.isGroupCall()==true) {
-                        put(RTC_IS_GROUP_CALL, "true")
-                    }
-                    if (isNewUserCall()) {
-                        put(RTC_IS_NEW_USER_CALL, "true")
-                    }
+                    putExtra(IS_CALL_CONNECTED, mBoundService?.isCallerJoined)
+                    putExtra(CALL_USER_OBJ, WebRtcService.callData)
                 }
-                putExtra(IS_CALL_CONNECTED, isCallOnGoing.value)
-                putExtra(CALL_USER_OBJ, WebRtcService.callData)
+                updateCallInfo()
             }
-            updateCallInfo()
-        } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
+        }/*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
         }*/
         setCallScreenBackground()
@@ -995,7 +1001,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         callerName = userDetailLiveData.value?.get("name"),
                         callerImage = userDetailLiveData.value?.get("profile_pic"),
                         yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                        yourAgoraId = mBoundService?.getUserAgoraId(),
+                        yourAgoraId = callieId.toInt(),
                         activity = this,
                         flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                         callerId = callerId.toInt(),
@@ -1149,12 +1155,10 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-
     override fun onSensorChanged(p0: SensorEvent?) {
-
         if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
 //            face is near to sensor
-            if (mBoundService?.getSpeaker() == false) {
+            if (mBoundService?.getSpeaker() == false && mBoundService?.audioRoute==1 && !audioManager?.isBluetoothScoOn!!) {
                 turnScreenOff()
             }
         } else {

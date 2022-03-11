@@ -110,7 +110,6 @@ const val LESSON_COMPLETED_FOR_NOTIFICATION = "lesson_complete_for_notification"
 const val IS_COURSE_BOUGHT = "is_course_bought"
 const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
-const val IS_ENGLISH_SYLLABUS_PDF_OPENED = "is_english_syllabus_pdf_opened"
 const val BLOCK_ISSUE = "BLOCK_ISSUE"
 const val REPORT_ISSUE = "REPORT_ISSUE"
 const val USER_ACTIVE_IN_GAME = "game_active"
@@ -119,7 +118,6 @@ const val USER_MUTE_OR_NOT = "mute_un_mute"
 const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
 const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
 const val IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN = "is_call_btn_clicked_from_new_screen"
-const val IS_FREE_TRIAL_ENDED = "is_free_trial_ended"
 const val LAST_FAKE_CALL_INVOKE_TIME = "last_fake_call_invoke_time"
 
 object PrefManager {
@@ -280,7 +278,7 @@ object PrefManager {
         LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
-        WorkManagerAdmin.appStartWorker()
+        WorkManagerAdmin.appStartWorker(true)
     }
 
     fun clearUser() {
@@ -289,7 +287,7 @@ object PrefManager {
         AppDatabase.clearDatabase()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
-        WorkManagerAdmin.appStartWorker()
+        WorkManagerAdmin.appStartWorker(true)
     }
 
     fun clearDatabase() {

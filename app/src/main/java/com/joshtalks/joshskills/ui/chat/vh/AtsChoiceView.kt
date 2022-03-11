@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
+import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
@@ -28,13 +29,14 @@ import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import com.nex3z.flowlayout.FlowLayout
+import java.util.ArrayList
+import java.util.HashSet
+import java.util.LinkedList
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.random.Random
 
 class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
 
@@ -49,6 +51,7 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
     var audioManager: ExoAudioPlayer2? = null
     private var unselectMultiple = 0
     private var trackUndoImpressionCallback: TrackUndoImpression? = null
+    private var answerList: LinkedList<String> = LinkedList()
 
     constructor(context: Context) : super(context) {
         init()
@@ -82,6 +85,12 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
     private fun initOptionsFlowLayout() {
         customLayout = CustomLayout(context)
         customLayout.setGravity(Gravity.CENTER)
+        LayoutTransition().also {
+            it.disableTransitionType(LayoutTransition.DISAPPEARING)
+            it.disableTransitionType(LayoutTransition.APPEARING)
+            it.disableTransitionType(LayoutTransition.CHANGE_APPEARING)
+            answerFlowLayout.layoutTransition = it
+        }
         val params = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
@@ -96,7 +105,18 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
         }
         customLayout.removeAllViews()
         answerFlowLayout.removeAllViews()
+        answerList.clear()
         val selectedWords = ArrayList<CustomWord>()
+        val selectedIndices = HashSet<Int>()
+        var i = 0
+        while (i < assessmentQuestion.choiceList.size) {
+            val j = Random.nextInt(assessmentQuestion.choiceList.size)
+            if (selectedIndices.contains(j).not()) {
+                assessmentQuestion.choiceList[i++].sortOrder = j + 1
+                selectedIndices.add(j)
+            }
+        }
+
         assessmentQuestion.choiceList
             .sortedBy { it.sortOrder }
             .forEach {
@@ -104,6 +124,7 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
                 addChoiceToOptionsLayout(wordView)
                 if (it.userSelectedOrder != 0 && it.userSelectedOrder != 100) {
                     selectedWords.add(wordView)
+                    it.text?.let { it1 -> answerList.add(it1) }
                 }
             }
 
@@ -169,42 +190,19 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
             return false
         } else {
             assessmentQuestion?.question?.isAttempted = true
-            val selectedChoices = assessmentQuestion?.choiceList?.filter { it.isSelectedByUser }
-                ?.sortedBy { it.userSelectedOrder }
             var userSelectedString = StringBuilder()
-            selectedChoices?.forEach {
-                userSelectedString = userSelectedString.append(it.text).append(SINGLE_SPACE)
-            }
-            if (assessmentQuestion?.question?.listOfAnswers.isNullOrEmpty()) {
-                assessmentQuestion?.choiceList?.let { list ->
-                    list.forEach { choice ->
-                        if ((choice.correctAnswerOrder == 0 || choice.correctAnswerOrder == 100) &&
-                            (choice.userSelectedOrder != 0 && choice.userSelectedOrder != 100)
-                        ) {
-                            return false
-                        }
-                        if (choice.correctAnswerOrder != 0 &&
-                            choice.correctAnswerOrder != 100 &&
-                            choice.userSelectedOrder != choice.correctAnswerOrder
-                        ) {
-                            return false
-                        }
-                    }
-                }
-
-            } else {
-                assessmentQuestion?.question?.listOfAnswers?.forEach {
-                    if ((userSelectedString.toString().trim()
-                            .toLowerCase(Locale.getDefault())).equals(
-                                it.trim().toLowerCase(Locale.getDefault())
-                            )
-                    ) {
+            for (s in answerList)
+                userSelectedString = userSelectedString.append(s).append(SINGLE_SPACE)
+            assessmentQuestion?.question?.listOfAnswers?.let {
+                for (answer in it) {
+                    if (userSelectedString.trim().toString()
+                            .equals(answer.trim(), ignoreCase = true)
+                    )
                         return true
-                    }
                 }
             }
+            return false
         }
-        return false
     }
 
     fun playAudio(audioUrl: String?, localAudioUrl: String?) {
@@ -277,6 +275,11 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
                         }
                     } else
                         unselectMultiple = 0
+                }
+                if (customWord.parent is CustomLayout) {
+                    customWord.choice.text?.let { answerList.add(it) }
+                } else {
+                    customWord.choice.text?.let { answerList.remove(it) }
                 }
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {

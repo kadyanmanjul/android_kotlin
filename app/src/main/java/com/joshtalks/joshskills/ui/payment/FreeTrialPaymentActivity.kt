@@ -1,22 +1,13 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Activity
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Paint
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.view.Gravity
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import androidx.core.widget.TextViewCompat.setTextAppearance
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
@@ -31,34 +22,26 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
-import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 import java.math.BigDecimal
-import java.util.*
-import kotlinx.android.synthetic.main.fragment_sign_up_profile_for_free_trial.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-import java.io.File
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
@@ -81,30 +64,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var compositeDisposable = CompositeDisposable()
     var isDiscount = false
 
-    var pdfUrl : String?= null
-    private var downloadID: Long = -1
-    private var isEnglishCardTapped = false
-    lateinit var fileName : String
-    var isPointsScoredMoreThanEqualTo100 = false
-
-    private var onDownloadCompleteListener = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            if (downloadID == id) {
-                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + fileName
-                PdfViewerActivity.startPdfActivity(
-                    context = this@FreeTrialPaymentActivity,
-                    pdfId = "788900765",
-                    courseName = "Course Syllabus",
-                    pdfPath = fileDir,
-                    conversationId = this@FreeTrialPaymentActivity.intent.getStringExtra(CONVERSATION_ID)
-                )
-                showToast(getString(R.string.downloaded_syllabus))
-                viewModel.saveImpression(D2P_COURSE_SYLLABUS_OPENED)
-                PrefManager.put(IS_ENGLISH_SYLLABUS_PDF_OPENED, value = true)
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,75 +97,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         setObservers()
         setListeners()
         viewModel.getPaymentDetails(testId.toInt())
-        viewModel.getPointsSummary()
         logNewPaymentPageOpened()
-
-        viewModel.getD2pSyllabusPdfData()
-        binding.syllabusPdfCard.setOnClickListener {
-            if(pdfUrl.isNullOrBlank().not()) {
-                getPermissionAndDownloadSyllabus(pdfUrl!!)
-            }else{
-                showToast("Something Went wrong")
-            }
-        }
-        viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
-    }
-
-    private fun getPermissionAndDownloadSyllabus(url: String) {
-        PermissionUtils.storageReadAndWritePermission(this,
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                                downloadDigitalCopy(url)
-                            return
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(this@FreeTrialPaymentActivity)
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            })
-    }
-
-    private fun downloadDigitalCopy(url: String) {
-        registerDownloadReceiver()
-        fileName = Utils.getFileNameFromURL(url)
-
-        val request: DownloadManager.Request =
-            DownloadManager.Request(Uri.parse(url))
-                .setTitle(getString(R.string.app_name))
-                .setDescription("Downloading syllabus")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                .setAllowedOverMetered(true)
-                .setAllowedOverRoaming(true)
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            request.setRequiresCharging(false)
-                .setRequiresDeviceIdle(false)
-        }
-
-        val downloadManager =
-            AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
-        downloadID = downloadManager.enqueue(request)
-        showToast(getString(R.string.downloading_start))
-    }
-
-    private fun registerDownloadReceiver() {
-        AppObjectController.joshApplication.registerReceiver(
-            onDownloadCompleteListener,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        )
     }
 
     private fun forceDisconnectCall() {
@@ -221,67 +112,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     private fun setListeners() {
-        binding.ivExpand.setOnClickListener {
-            try {
-                showEnglishButtonTextAndCardDecoration()
-                binding.linearLayoutCompatEnglish.visibility = View.VISIBLE
-                binding.ivExpand.visibility = View.GONE
-                binding.ivMinimise.visibility = View.VISIBLE
-                binding.syllabusPdfCard.visibility = View.VISIBLE
-
-                binding.linearLayoutCompatSubscription.visibility = View.GONE
-                binding.ivExpand1.visibility = View.VISIBLE
-                binding.ivMinimise1.visibility = View.GONE
-                binding.seeCourseList.visibility = View.GONE
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-
-        binding.ivMinimise.setOnClickListener {
-            binding.linearLayoutCompatEnglish.visibility = View.GONE
-            binding.ivExpand.visibility = View.VISIBLE
-            binding.ivMinimise.visibility = View.GONE
-            binding.syllabusPdfCard.visibility = View.GONE
-        }
-
-        binding.ivExpand1.setOnClickListener {
-            try {
-                index = 1
-                binding.subscriptionCard.background =
-                    ContextCompat.getDrawable(
-                        this,
-                        R.drawable.blue_rectangle_with_blue_bound_stroke
-                    )
-                binding.englishCard.background =
-                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-                binding.materialTextView.text = buttonText.get(index)
-                binding.materialTextView.isEnabled = true
-                binding.materialTextView.alpha = 1f
-                binding.txtLabelHeading.text = headingText.get(index)
-                isEnglishCardTapped = false
-                scrollToBottom()
-
-                binding.linearLayoutCompatSubscription.visibility = View.VISIBLE
-                binding.ivExpand1.visibility = View.GONE
-                binding.ivMinimise1.visibility = View.VISIBLE
-                binding.seeCourseList.visibility = View.VISIBLE
-
-                binding.linearLayoutCompatEnglish.visibility = View.GONE
-                binding.ivExpand.visibility = View.VISIBLE
-                binding.ivMinimise.visibility = View.GONE
-                binding.syllabusPdfCard.visibility = View.GONE
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-
-        binding.ivMinimise1.setOnClickListener {
-            binding.linearLayoutCompatSubscription.visibility = View.GONE
-            binding.ivExpand1.visibility = View.VISIBLE
-            binding.ivMinimise1.visibility = View.GONE
-            binding.seeCourseList.visibility = View.GONE
-        }
         binding.ivBack.setOnClickListener {
             onBackPressed()
         }
@@ -314,35 +144,14 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.englishCard.background =
                     ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
                 binding.materialTextView.text = buttonText.get(index)
-                binding.materialTextView.isEnabled = true
-                binding.materialTextView.alpha = 1f
                 binding.txtLabelHeading.text = headingText.get(index)
-                isEnglishCardTapped = false
+                binding.seeCourseList.visibility = View.VISIBLE
                 scrollToBottom()
-
-                if(binding.ivExpand1.visibility == View.VISIBLE){
-                    binding.linearLayoutCompatSubscription.visibility = View.VISIBLE
-                    binding.ivExpand1.visibility = View.GONE
-                    binding.ivMinimise1.visibility = View.VISIBLE
-                    binding.seeCourseList.visibility = View.VISIBLE
-
-                    binding.linearLayoutCompatEnglish.visibility = View.GONE
-                    binding.ivExpand.visibility = View.VISIBLE
-                    binding.ivMinimise.visibility = View.GONE
-                    binding.syllabusPdfCard.visibility = View.GONE
-
-                }else if(binding.ivMinimise1.visibility == View.VISIBLE){
-                    binding.linearLayoutCompatSubscription.visibility = View.GONE
-                    binding.ivExpand1.visibility = View.VISIBLE
-                    binding.ivMinimise1.visibility = View.GONE
-                    binding.seeCourseList.visibility = View.GONE
-                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
         binding.seeCourseList.setOnClickListener {
-            viewModel.saveImpression(SEE_COURSE_LIST_BUTTON_CLICKED)
             CourseExploreActivity.startCourseExploreActivity(
                 this,
                 COURSE_EXPLORER_CODE,
@@ -374,27 +183,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         )
     }
 
-    private fun showEnglishButtonTextAndCardDecoration(){
-            index = 0
-            binding.subscriptionCard.background =
-                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-            binding.englishCard.background =
-                ContextCompat.getDrawable(
-                    this,
-                    R.drawable.blue_rectangle_with_blue_bound_stroke
-                )
-            isEnglishCardTapped = true
-            if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
-                binding.materialTextView.text = getString(R.string.achieve_100_points_first)
-                binding.materialTextView.isEnabled = false
-                binding.materialTextView.alpha = .5f
-            }else{
-                binding.materialTextView.text = buttonText.get(index)
-                binding.materialTextView.isEnabled = true
-                binding.materialTextView.alpha = 1f
-            }
-            binding.txtLabelHeading.text = headingText.get(index)
-    }
 
     override fun onStart() {
         super.onStart()
@@ -429,7 +217,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
 
             override fun onTimerFinish() {
-                PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                 binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
             }
         }
@@ -447,31 +234,54 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             try {
                 buttonText = mutableListOf<String>()
                 headingText = mutableListOf<String>()
-                it.subHeadings?.get(0)?.let { list ->
+                it.subHeadings?.let { list ->
                     for (i in list.indices) {
-                        val textViewEnglish = AppCompatTextView(this)
-                        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
-                        textViewEnglish.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                        textViewEnglish.setCompoundDrawablePadding(76)
-                        textViewEnglish.gravity = Gravity.CENTER or Gravity.START
-                        textViewEnglish.setPadding(0, 0, 0, 30)
-                        setTextAppearance(textViewEnglish, R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular)
-                        textViewEnglish.text = list[i]
-                        binding.linearLayoutCompatEnglish.addView(textViewEnglish)
-                    }
-                }
-
-                it.subHeadings?.get(1)?.let { list ->
-                    for (i in list.indices) {
-                        val textViewSubscription = AppCompatTextView(this)
-                        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
-                        textViewSubscription.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                        textViewSubscription.setCompoundDrawablePadding(76)
-                        textViewSubscription.gravity = Gravity.CENTER or Gravity.START
-                        textViewSubscription.setPadding(0, 0, 0, 30)
-                        setTextAppearance(textViewSubscription, R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular)
-                        textViewSubscription.text = list[i]
-                        binding.linearLayoutCompatSubscription.addView(textViewSubscription)
+                        when (i) {
+                            0 -> {
+                                binding.txtPointer1.text = list[i]
+                                binding.txtPointer1.visibility = View.VISIBLE
+                            }
+                            1 -> {
+                                binding.txtPointer2.text = list[i]
+                                binding.txtPointer2.visibility = View.VISIBLE
+                            }
+                            2 -> {
+                                binding.txtPointer3.text = list[i]
+                                binding.txtPointer3.visibility = View.VISIBLE
+                            }
+                            3 -> {
+                                binding.txtPointer4.text = list[i]
+                                binding.txtPointer4.visibility = View.VISIBLE
+                            }
+                            4 -> {
+                                binding.txtPointer5.text = list[i]
+                                binding.txtPointer5.visibility = View.VISIBLE
+                            }
+                            5 -> {
+                                binding.txtPointer6.text = list[i]
+                                binding.txtPointer6.visibility = View.VISIBLE
+                            }
+                            6 -> {
+                                binding.txtPointer7.text = list[i]
+                                binding.txtPointer7.visibility = View.VISIBLE
+                            }
+                            7 -> {
+                                binding.txtPointer8.text = list[i]
+                                binding.txtPointer8.visibility = View.VISIBLE
+                            }
+                            8 -> {
+                                binding.txtPointer9.text = list[i]
+                                binding.txtPointer9.visibility = View.VISIBLE
+                            }
+                            9 -> {
+                                binding.txtPointer10.text = list[i]
+                                binding.txtPointer10.visibility = View.VISIBLE
+                            }
+                            10 -> {
+                                binding.txtPointer11.text = list[i]
+                                binding.txtPointer11.visibility = View.VISIBLE
+                            }
+                        }
                     }
                 }
 
@@ -532,7 +342,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         startTimer(it.expireTime.time - System.currentTimeMillis())
                     } else {
                         binding.freeTrialTimer.text = getString(R.string.free_trial_ended)
-                        PrefManager.put(IS_FREE_TRIAL_ENDED, true)
                     }
                 } else {
                     binding.freeTrialTimer.visibility = View.GONE
@@ -571,14 +380,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
 
-        viewModel.d2pSyllabusPdfResponse.observe(this,{
-            pdfUrl = it.syllabusPdfLink
-        })
-        viewModel.pointsHistoryLiveData.observe(this, {
-            if(it.totalPoints != null && it.totalPoints >= 100){
-                isPointsScoredMoreThanEqualTo100 = true
-            }
-        })
     }
 
     private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
@@ -701,12 +502,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
-            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
-                viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
-            }
-            if(isEnglishCardTapped && isPointsScoredMoreThanEqualTo100){
-                viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
-            }
         }
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
@@ -769,10 +564,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     override fun onDestroy() {
-        try {
-            this.unregisterReceiver(onDownloadCompleteListener)
-        } catch (ex: Exception) {
-        }
         super.onDestroy()
         countdownTimerBack?.stop()
     }

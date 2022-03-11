@@ -36,13 +36,17 @@ object WorkManagerAdmin {
             ).enqueue()
     }
 
-    fun appStartWorker() {
+    fun appStartWorker(isUserLoggingOut: Boolean = false) {
+        val workerList = mutableListOf(
+            OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
+            OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
+        )
+        if (isUserLoggingOut.not()) {
+            workerList.add(OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build())
+        }
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
-                mutableListOf(
-                    OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
-                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
-                )
+                workerList
             )
             .then(
                 mutableListOf(
@@ -66,7 +70,12 @@ object WorkManagerAdmin {
 
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
+            .beginWith(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build(),
+                    OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build()
+                )
+            )
             // .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(

@@ -98,7 +98,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var isFromNewFreeTrial = false
     private var razorpayOrderId = EMPTY
     private var compositeDisposable = CompositeDisposable()
-
     companion object {
         fun startPaymentSummaryActivity(
             activity: Activity,

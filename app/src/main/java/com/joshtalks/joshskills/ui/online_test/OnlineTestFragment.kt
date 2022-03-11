@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +46,9 @@ import com.tonyodev.fetch2.Request
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Type
 
@@ -225,7 +226,6 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             showGrammarCompleteFragment()
             return
         }
-        Timber.d("setupViews(): totalQuestion :$totalQuestion")
         if (totalQuestion != null) {
             binding.questionProgressBar.visibility = View.VISIBLE
             binding.questionProgressBar.max = (totalQuestion ?: 0).times(100)
@@ -363,7 +363,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 override fun onVideoButtonAppear(
                     isClicked: Boolean,
                     wrongAnswerHeading: String?,
-                    wrongAnswerText: String?
+                    wrongAnswerSubHeading: String?,
+                    wrongAnswerText: String?,
+                    wrongAnswerDescription: String?
                 ) {
                     if (isClicked)
                         binding.progressContainer.isVisible = true
@@ -374,7 +376,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         lessonActivityListener?.showVideoToolTip(
                             shouldShow = true,
                             wrongAnswerHeading = wrongAnswerHeading,
+                            wrongAnswerSubHeading = wrongAnswerSubHeading,
                             wrongAnswerText = wrongAnswerText,
+                            wrongAnswerDescription = wrongAnswerDescription,
                             videoClickListener = { buttonView!!.get().viewVideo() }
                         )
                     }
@@ -549,7 +553,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun addObserver() {
-        LessonActivity.isVideoVisible.observe(viewLifecycleOwner, { isVideoVisible ->
+        LessonActivity.isVideoVisible.observe(viewLifecycleOwner) { isVideoVisible ->
             if (!isVideoVisible) {
                 binding.videoPlayer.onPause()
                 if (binding.videoContainer.isVisible)
@@ -578,7 +582,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     })
                     .start()
             }
-        })
+        }
         compositeDisposable.add(
             RxBus2.listen(VideoShowEvent::class.java)
                 .subscribeOn(Schedulers.io())

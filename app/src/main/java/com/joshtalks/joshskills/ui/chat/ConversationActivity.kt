@@ -13,9 +13,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
-import android.view.View.*
-import android.view.animation.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.view.Window
+import android.view.WindowManager
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -35,33 +42,88 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BLOCK_ISSUE
+import com.joshtalks.joshskills.core.CHAT_OPENED_FOR_NOTIFICATION
+import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_ANIMATION
+import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_TOOLTIP
+import com.joshtalks.joshskills.core.HAS_SEEN_LESSON_TOOLTIP
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_ICON
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_MENU
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REPORT_ISSUE
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.extension.*
+import com.joshtalks.joshskills.core.extension.setImageWithPlaceholder
+import com.joshtalks.joshskills.core.extension.setResourceImageDefault
+import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
+import com.joshtalks.joshskills.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.eventbus.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
+import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
-import com.joshtalks.joshskills.repository.server.chat_message.*
+import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedMainActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -88,8 +150,8 @@ import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.video_player.*
-import com.joshtalks.joshskills.ui.view_holders.*
+import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
@@ -106,12 +168,16 @@ import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -184,6 +250,7 @@ class ConversationActivity :
     private var refreshMessageByUser = false
     private var lastLesson: Int? = null
     private var currentTooltipIndex = 0
+    private var activityFeedControl = false
     private val leaderboardTooltipList by lazy {
         listOf(
             "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
@@ -267,6 +334,7 @@ class ConversationActivity :
         initFuture()
         addObservable()
         initFreeTrialTimer()
+        initABTest()
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
@@ -274,18 +342,29 @@ class ConversationActivity :
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
     }
-    private fun addIssuesToSharedPref(){
-        CoroutineScope(Dispatchers.IO).launch(){
 
-            try{
-                PrefManager.putPrefObject(REPORT_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT"))
+    private fun initABTest() {
+        conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED.name)
+    }
 
-            }catch (e:java.lang.Exception){
+    private fun addIssuesToSharedPref() {
+        CoroutineScope(Dispatchers.IO).launch() {
+
+            try {
+                PrefManager.putPrefObject(
+                    REPORT_ISSUE,
+                    AppObjectController.p2pNetworkService.getP2pCallOptions("REPORT")
+                )
+
+            } catch (e: java.lang.Exception) {
             }
-            try{
-                PrefManager.putPrefObject(BLOCK_ISSUE, AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK"))
+            try {
+                PrefManager.putPrefObject(
+                    BLOCK_ISSUE,
+                    AppObjectController.p2pNetworkService.getP2pCallOptions("BLOCK")
+                )
 
-            }catch (e:java.lang.Exception){
+            } catch (e: java.lang.Exception) {
             }
 
         }
@@ -636,7 +715,7 @@ class ConversationActivity :
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
-        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse ){
+        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
         }
 
@@ -645,9 +724,7 @@ class ConversationActivity :
 //            startActivity(intent)
 //        }
         conversationBinding.imgFeedBtn.setOnClickListener {
-
-            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
-
+            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity, this)
         }
         conversationBinding.imgGroupChatBtn.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
@@ -704,7 +781,8 @@ class ConversationActivity :
             )
         }
 
-        conversationBinding.imgGroupChat.visibility = View.GONE//if (inboxEntity.isGroupActive) GONE else GONE
+        conversationBinding.imgGroupChat.visibility =
+            View.GONE//if (inboxEntity.isGroupActive) GONE else GONE
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            utilConversationViewModel.initCometChat()
@@ -1033,10 +1111,9 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if(userProfileData.hasGroupAccess){
+                if (userProfileData.hasGroupAccess) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
-                }
-                else{
+                } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
                 }
                 initScoreCardView(userProfileData)
@@ -1048,10 +1125,9 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if(userProfileData.isGameActive){
+                if (userProfileData.isGameActive) {
                     conversationBinding.imgGameBtn.visibility = VISIBLE
-                }
-                else{
+                } else {
                     conversationBinding.imgGameBtn.visibility = GONE
                 }
                 initScoreCardView(userProfileData)
@@ -1155,6 +1231,15 @@ class ConversationActivity :
             } else {
                 hideProgressBar()
             }
+        }
+
+        conversationViewModel.abTestCampaignliveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                activityFeedControl =
+                    (map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+            if (activityFeedControl) conversationBinding.imgFeedBtn.visibility =
+                VISIBLE else conversationBinding.imgFeedBtn.visibility = GONE
         }
     }
 
