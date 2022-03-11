@@ -250,6 +250,20 @@ class ReadingFragmentWithoutFeedback :
                 binding.mergedVideo.pause()
                 binding.playBtn.visibility = VISIBLE
             }
+//            if(binding.mergedVideo.isPlaying.not()){
+//                binding.playBtn.visibility = VISIBLE
+//            }
+//            if(binding.progressDialog.visibility == VISIBLE){
+//                binding.progressDialog.visibility = GONE
+//            }
+
+//            if(binding.playBtn.visibility == INVISIBLE){
+//                binding.playBtn.visibility = VISIBLE
+//            }
+//            else if(binding.mergedVideo.isPlaying.not()){
+//                binding.mergedVideo.start()
+//                binding.playBtn.visibility = INVISIBLE
+//            }
         }
         binding.mergedVideo.setOnCompletionListener {
             binding.playBtn.visibility = VISIBLE
@@ -877,6 +891,13 @@ class ReadingFragmentWithoutFeedback :
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
             //showToast("video Downloaded")
             videoDownPath = download.file.toString()
+
+//            GlobalScope.launch {
+//                AppObjectController.appDatabase.chatDao().insertCompressedVideo(
+//                    CompressedVideo(currentLessonQuestion!!.questionId, videoDownPath!!)
+//                )
+//            }
+
             var uris = mutableListOf<Uri>()
             uris.add(Uri.parse(videoDownPath))
             processVideo(uris)
@@ -1166,6 +1187,7 @@ class ReadingFragmentWithoutFeedback :
             binding.mergedVideo.visibility = VISIBLE
             binding.subAnswerLayout.visibility = VISIBLE
             binding.ivClose.visibility = VISIBLE
+           // binding.progressDialog.visibility = VISIBLE
         }else{
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioList.visibility = VISIBLE
@@ -1276,13 +1298,28 @@ class ReadingFragmentWithoutFeedback :
 
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
-                            GlobalScope.launch {
-                                audioVideoMuxer()
-                            }
+//                            GlobalScope.launch {
+//                                audioVideoMuxer()
+//                            }
 
 //                            AppDirectory.copy(it.absolutePath, filePath!!)
                             //binding.readingHoldHint.visibility = GONE
                             audioAttachmentInit()
+                            binding.playBtn.visibility = GONE
+                            binding.progressDialog.visibility = VISIBLE
+//                            binding.playBtn.visibility = GONE
+
+                            GlobalScope.launch {
+                                audioVideoMuxer()
+                                binding.progressDialog.visibility = GONE
+                              //  binding.playBtn.visibility = VISIBLE
+                            }
+
+                            //binding.progressDialog.visibility = GONE
+                            binding.playBtn.visibility = VISIBLE
+
+//                            binding.progressDialog.visibility = GONE
+
                             AppObjectController.uiHandler.postDelayed(
                                 {
                                     binding.submitAnswerBtn.parent.requestChildFocus(
@@ -1307,18 +1344,36 @@ class ReadingFragmentWithoutFeedback :
     }
 
     suspend fun audioVideoMuxer(){
+       // binding.progressDialog.visibility = VISIBLE
+
         try {
             val videoExtractor: MediaExtractor  = MediaExtractor()
             val cmpPath: String = AppObjectController.appDatabase.chatDao().getCompressedVideo(currentLessonQuestion!!.questionId)
-            //videoExtractor.setDataSource(videoDownPath!!)
-            videoExtractor.setDataSource(cmpPath)
-            videoExtractor.selectTrack(0)
-            val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
+            //val videoDownPath: String = AppObjectController.appDatabase.chatDao().getCompressedVideo(currentLessonQuestion!!.questionId)
+
 
             val audioExtractor: MediaExtractor  = MediaExtractor()
             audioExtractor.setDataSource(filePath!!)
             audioExtractor.selectTrack(0)
             val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
+
+
+//            if(cmpPath.isNullOrEmpty()){
+//                binding.progressBarVideo.visibility = VISIBLE
+//            }else{
+//                binding.progressBarVideo.visibility = GONE
+//            }
+
+
+           // videoExtractor.setDataSource(videoDownPath!!)
+            videoExtractor.setDataSource(cmpPath)
+            videoExtractor.selectTrack(0)
+            val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
+
+//            val audioExtractor: MediaExtractor  = MediaExtractor()
+//            audioExtractor.setDataSource(filePath!!)
+//            audioExtractor.selectTrack(0)
+//            val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
 
             var muxer: MediaMuxer  = MediaMuxer(
                 outputFile,
@@ -1341,6 +1396,8 @@ class ReadingFragmentWithoutFeedback :
             audioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
 
             muxer.start()
+
+//            binding.progressDialog.visibility = VISIBLE
 
             while (!sawEOS){
                 videoBufferInfo.offset = offset
@@ -1381,9 +1438,18 @@ class ReadingFragmentWithoutFeedback :
 
             }
 
+//            if(outputFile.isNullOrEmpty()){
+//                binding.progressBarVideo.visibility = View.VISIBLE
+//            }
+
             muxer.stop()
+           // binding.progressDialog.visibility = GONE
+
             muxer.release()
+           // binding.progressDialog.visibility = GONE
+           // binding.playBtn.visibility = VISIBLE
             binding.mergedVideo.setVideoPath(outputFile)
+           // binding.progressDialog.visibility = GONE
             binding.mergedVideo.start()
             binding.playBtn.visibility = INVISIBLE
 
@@ -1522,6 +1588,7 @@ class ReadingFragmentWithoutFeedback :
             binding.subAnswerLayout.visibility = GONE
             binding.videoLayout.visibility = GONE
             binding.practiseSubmitLayout.visibility = GONE
+            binding.playBtn.visibility = GONE
             disableSubmitButton()
         }
     }
