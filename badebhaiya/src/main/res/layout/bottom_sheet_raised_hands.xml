@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.joshtalks.badebhaiya.liveroom.bottomsheet.RaisedHandsBottomSheet" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_bottomsheet"
+        android:paddingBottom="@dimen/_80sdp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_18sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_rectangle_line" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/hand_raised_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_9sdp"
+            android:text="@string/raised_hand"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/hand_raised_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/hand_raised_text"
+            android:layout_marginEnd="@dimen/_18sdp"
+            app:thumbTint="#FDF7F7"
+            app:trackTint="#929292" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/raised_hands_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_12sdp"
+            android:maxHeight="@dimen/_260sdp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hand_raised_text"
+            tools:listitem="@layout/li_hand_raised"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/no_auidence_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Hand raises are turned off"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+            android:textColor="#C2C2C2"
+            android:textSize="@dimen/_10sdp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hand_raised_text" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

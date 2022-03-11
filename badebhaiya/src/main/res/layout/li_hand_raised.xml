@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_6sdp">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_profile_pic"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:background="@drawable/user_profile_background"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="@dimen/_20sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+            android:textSize="@dimen/_14ssp"
+            tools:text="Akhand Swarup"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintStart_toEndOf="@id/iv_profile_pic"
+            app:layout_constraintTop_toTopOf="@id/iv_profile_pic"
+            app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/tvName"
+            android:layout_marginEnd="@dimen/_20sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvName"
+            app:srcCompat="@drawable/ic_speaker_requested" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

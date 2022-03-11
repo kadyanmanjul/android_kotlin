@@ -20,4 +20,5 @@
     <string name="verify_otp_for_phone_text">Enter the OTP your received on\n %s</string>
     <string name="skip">Skip</string>
     <string name="add_profile_photo_prompt">Add a profile photo!</string>
+    <string name="raised_hand">Raised Hands</string>
 </resources>
