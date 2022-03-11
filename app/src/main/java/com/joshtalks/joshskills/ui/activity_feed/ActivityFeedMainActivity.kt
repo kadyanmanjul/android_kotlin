@@ -33,7 +33,7 @@ class ActivityFeedMainActivity : BaseActivity() {
     }
     lateinit var recyclerView: RecyclerView
     var feedList = ArrayList<ActivityFeedResponseFirebase>()
-    var adapter = ActivityFeedListAdapter(feedList,this)
+    var adapter = ActivityFeedListAdapter(feedList,this,this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
