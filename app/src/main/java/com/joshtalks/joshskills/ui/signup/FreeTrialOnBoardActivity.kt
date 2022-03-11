@@ -200,7 +200,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             CoroutineScope(Dispatchers.IO).launch {
-                PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true,true)
+                PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)

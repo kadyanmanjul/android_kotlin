@@ -180,13 +180,13 @@ class SpeakingPractiseFragment : ABTestFragment() {
             }
         )
         binding.btnStart.setOnClickListener {
-            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER,true,false))
+            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
         }
 
         binding.btnGroupCall.setOnClickListener {
-            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER,true,false))
+            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
@@ -297,7 +297,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
-            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER,true,false))
+            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (haveAnyFavCaller) {
                 startPractise(favoriteUserCall = true)
