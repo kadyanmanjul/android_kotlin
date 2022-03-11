@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.activity_feed
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -15,11 +16,13 @@ import com.joshtalks.joshskills.repository.server.ProfilePicture
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import com.joshtalks.joshskills.ui.userprofile.PreviousPicsAdapter
 import com.joshtalks.joshskills.ui.userprofile.ProfileImageShowFragment
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import java.util.*
 
 class ActivityFeedListAdapter(
     private val items: ArrayList<ActivityFeedResponseFirebase>,
-    val context:Context
+    val context:Context,
+    val activity: Activity
 ) : RecyclerView.Adapter<ActivityFeedListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,6 +49,9 @@ class ActivityFeedListAdapter(
                 view.updatedPic.visibility=GONE
                 view.updatedPicBorder.visibility= GONE
             }
+            view.rootView.setOnClickListener{
+                activityFeedResponse.mentorId?.let { it1 -> openUserProfileActivity(it1, "RECENT_CALL") }
+            }
             view.updatedPic.setOnClickListener{
                 activityFeedResponse.mentorId?.let { it1 ->
                     ProfileImageShowFragment.newInstance(activityFeedResponse.mediaUrl, null, null,
@@ -53,6 +59,18 @@ class ActivityFeedListAdapter(
                         .show((context as ActivityFeedMainActivity).supportFragmentManager.beginTransaction(), "ImageShow")
                 }
             }
+        }
+    }
+    private fun openUserProfileActivity(id: String, previousPage: String?) {
+        previousPage?.let {
+            UserProfileActivity.startUserProfileActivity(
+                activity,
+                id,
+                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                null,
+                it,
+                conversationId = null
+            )
         }
     }
 }
