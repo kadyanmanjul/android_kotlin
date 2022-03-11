@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.D2pSyllabusPdfResponse
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import java.net.SocketTimeoutException
@@ -28,6 +29,20 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
+    val d2pSyllabusPdfResponse: MutableLiveData<String> = MutableLiveData()
+
+    fun getD2pSyllabusPdfData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.signUpNetworkService.getD2pSyllabusPdf()
+                if (response.isSuccessful) {
+                    d2pSyllabusPdfResponse.postValue(response.body())
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 
     fun getPaymentDetails(testId: Int, couponCode: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {

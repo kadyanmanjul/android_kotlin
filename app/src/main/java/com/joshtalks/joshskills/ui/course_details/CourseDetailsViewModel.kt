@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
+import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,24 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val courseDetailsLiveData: MutableLiveData<CourseDetailsResponseV2> = MutableLiveData()
     val demoCourseDetailsLiveData: MutableLiveData<DemoCourseDetailsResponse> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val pointsHistoryLiveData: MutableLiveData<PointsHistoryResponse> = MutableLiveData()
+
+    fun getPointsSummary() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val response = AppObjectController.commonNetworkService.getUserPointsHistory(
+                    Mentor.getInstance().getId()
+                )
+                if (response.isSuccessful && response.body() != null) {
+                    pointsHistoryLiveData.postValue(response.body())
+                }
+            } catch (ex: Exception) {
+                ex.showAppropriateMsg()
+            }
+        }
+    }
+
     fun fetchCourseDetails(testId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {

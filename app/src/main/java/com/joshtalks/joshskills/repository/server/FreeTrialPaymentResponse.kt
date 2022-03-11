@@ -14,7 +14,9 @@ data class FreeTrialPaymentResponse(
     @SerializedName("sub_headings")
     val subHeadings: List<String>?,
     @SerializedName("coupon_details")
-    val couponDetails: CouponDetails
+    val couponDetails: CouponDetails,
+    @SerializedName("combined_headings")
+    val combinedMessage: List<List<String>>?
 )
 
 

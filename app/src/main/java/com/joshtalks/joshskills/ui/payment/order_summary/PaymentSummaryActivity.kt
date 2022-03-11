@@ -98,18 +98,25 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var isFromNewFreeTrial = false
     private var razorpayOrderId = EMPTY
     private var compositeDisposable = CompositeDisposable()
+    private var is100PointsObtained = false
+    private val ENGLISH_COURSE_TEST_ID = 102
+
     companion object {
         fun startPaymentSummaryActivity(
             activity: Activity,
             testId: String,
             hasFreeTrial: Boolean? = null,
-            isFromNewFreeTrial: Boolean = false
+            isFromNewFreeTrial: Boolean = false,
+            is100PointsObtained : Boolean? = false
         ) {
             Intent(activity, PaymentSummaryActivity::class.java).apply {
                 putExtra(TEST_ID_PAYMENT, testId)
                 putExtra(IS_FROM_NEW_FREE_TRIAL, isFromNewFreeTrial)
                 hasFreeTrial?.run {
                     putExtra(HAS_FREE_7_DAY_TRIAL, hasFreeTrial)
+                }
+                is100PointsObtained?.run {
+                    putExtra(IS_100_POINTS_OBTAINED, is100PointsObtained)
                 }
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
@@ -121,6 +128,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         const val TEST_ID_PAYMENT = "test_ID"
         const val HAS_FREE_7_DAY_TRIAL = "7 day free trial"
         const val IS_FROM_NEW_FREE_TRIAL = "IS_FROM_NEW_FREE_TRIAL"
+        const val IS_100_POINTS_OBTAINED = "IS_100_POINTS_OBTAINED"
 
     }
 
@@ -145,6 +153,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             appAnalytics.addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, temp)
         }
         isFromNewFreeTrial = intent.getBooleanExtra(IS_FROM_NEW_FREE_TRIAL, false)
+        is100PointsObtained = intent.getBooleanExtra(IS_100_POINTS_OBTAINED, false)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
@@ -827,6 +836,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
+            if(is100PointsObtained && testId.toInt() == ENGLISH_COURSE_TEST_ID){
+                viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
+            }
         }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
