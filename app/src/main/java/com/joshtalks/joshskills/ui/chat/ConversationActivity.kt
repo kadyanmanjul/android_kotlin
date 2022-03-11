@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Context
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -134,6 +135,8 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.Award
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedMainActivity
@@ -198,6 +201,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import jp.wasabeef.blurry.Blurry
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -321,6 +332,44 @@ class ConversationActivity :
         init()
         showRestartButton()
     }
+
+    //Setting the animation on the buttons
+    private fun setButtonsAnimation() {
+        with(conversationBinding) {
+            if (!buttonClicked) {
+                conversationBinding.imgActivityFeed.startAnimation(fromBottomAnimation)
+                conversationBinding.imgGameBtn.startAnimation(fromBottomAnimation)
+                conversationBinding.imgGroupChatBtn.startAnimation(fromBottomAnimation)
+                conversationBinding.imgFppRequest.startAnimation(fromBottomAnimation)
+                floatingActionButtonAdd.startAnimation(rotateOpenAnimation)
+
+            } else {
+                conversationBinding.imgActivityFeed.startAnimation(toBottomAnimation)
+                conversationBinding.imgGameBtn.startAnimation(toBottomAnimation)
+                conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
+                conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
+                floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
+
+            }
+        }
+    }
+
+    /*Checking if the add button is clicked
+    private fun buttonSetClickable() {
+        with(conversationBinding) {
+            if (!isExpandableVisible) {
+                imgActivityFeed.isClickable = true
+                imgGameBtn.isClickable = true
+                imgGroupChatBtn.isClickable = true
+                imgFppRequest.isClickable = true
+            } else {
+                imgActivityFeed.isClickable = false
+                imgGameBtn.isClickable = false
+                imgGroupChatBtn.isClickable = false
+                imgFppRequest.isClickable = false
+            }
+        }
+    }*/
 
     //Setting the animation on the buttons
     private fun setButtonsAnimation() {
