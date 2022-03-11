@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_cross"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_22sdp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical|end"
+        android:paddingTop="@dimen/_22sdp"
+        android:paddingBottom="@dimen/_6sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_cross_icon" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_restart_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="27dp"
+        android:paddingTop="@dimen/_22sdp"
+        android:paddingBottom="@dimen/_6sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/image_restart" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/heading_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="94dp"
+        android:layout_marginTop="@dimen/_19sdp"
+        android:layout_marginEnd="87dp"
+        android:textSize="@dimen/_19sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_restart_img"
+        tools:text="Extend Free trial!" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/subheading_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_38sdp"
+        android:singleLine="false"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="@dimen/_13sdp"
+        app:layout_constraintTop_toBottomOf="@+id/heading_text"
+        tools:text="हमने देखा की आपने lesson 1 पूरा नहीं किया है। यह app सिर्फ serious students के लिए है जो English सीखना चाहते हैं।"
+        android:text="हमने देखा की आपने lesson 1 पूरा नहीं किया है। यह app सिर्फ serious students के लिए है जो English सीखना चाहते हैं।"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
