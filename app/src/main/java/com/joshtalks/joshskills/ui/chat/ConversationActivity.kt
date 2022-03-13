@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.chat
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -20,6 +19,7 @@ import android.view.animation.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.NonNull
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -53,6 +53,8 @@ import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
+import com.joshtalks.joshskills.databinding.FppQuickViewListsItemBinding
+import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
@@ -1034,43 +1036,46 @@ class ConversationActivity :
         }
 
         conversationViewModel.pendingRequestsList.observe(this) {
-            if (it.pendingRequestsList.isNullOrEmpty()) {
-                requestCountNumber =0
-                conversationBinding.myRequestsLl.removeAllViews()
-                conversationBinding.quickViewNoRequests.visibility = VISIBLE
-                conversationBinding.fppRequestCountNumber.visibility = GONE
-                conversationBinding.allCountNumber.visibility = GONE
-                conversationBinding.viewAllRequests.text =
-                    "See all requests (${it.pendingRequestsList.size})"
-            } else {
-                requestCountNumber = it.pendingRequestsList.size
-                conversationBinding.quickViewNoRequests.visibility = INVISIBLE
-                conversationBinding.allCountNumber.text = it.pendingRequestsList.size.toString()
-                conversationBinding.myRequestsLl.visibility = VISIBLE
-                conversationBinding.viewAllRequests.text =
-                    "See all requests (${it.pendingRequestsList.size})"
-                conversationBinding.horizontalLineForHeading.visibility = VISIBLE
-                var countRequestsList = 0
-                conversationBinding.myRequestsLl.removeAllViews()
-                it.pendingRequestsList.forEach {
-                    if (countRequestsList < 7) {
-                        val view = getPendingRequestItem(it)
-                        if (view != null) {
-                            conversationBinding.myRequestsLl.addView(view)
-                            countRequestsList++
+            with(conversationBinding) {
+                if (it.pendingRequestsList.isNullOrEmpty()) {
+                    requestCountNumber = 0
+                    myRequestsLl.removeAllViews()
+                    quickViewNoRequests.visibility = VISIBLE
+                    fppRequestCountNumber.visibility = GONE
+                    allCountNumber.visibility = GONE
+                    viewAllRequests.text =
+                        getString(R.string.see_requests,it.pendingRequestsList.size.toString())
+                } else {
+                    requestCountNumber = it.pendingRequestsList.size
+                    quickViewNoRequests.visibility = INVISIBLE
+                    allCountNumber.text = it.pendingRequestsList.size.toString()
+                    myRequestsLl.visibility = VISIBLE
+                    viewAllRequests.text =
+                        getString(R.string.see_requests,it.pendingRequestsList.size.toString())
+                    horizontalLineForHeading.visibility = VISIBLE
+                    var countRequestsList = 0
+                    myRequestsLl.removeAllViews()
+                    it.pendingRequestsList.forEach {
+                        if (countRequestsList < 7) {
+                            val view = getPendingRequestItem(it)
+                            if (view != null) {
+                                conversationBinding.myRequestsLl.addView(view.root)
+                                countRequestsList++
+                            }
                         }
                     }
+                    if (isFirstTime) {
+                        isFirstTime = false
+                        allCountNumber.visibility = VISIBLE
+                    }
+                    fppRequestCountNumber.text =
+                        it.pendingRequestsList.size.toString()
                 }
-                if (isFirstTime) {
-                    isFirstTime = false
-                    conversationBinding.allCountNumber.visibility = VISIBLE
+                viewAllRequests.setOnClickListener {
+                    val intent =
+                        Intent(conversationBinding.root.context, SeeAllRequestsActivity::class.java)
+                    startActivity(intent)
                 }
-                conversationBinding.fppRequestCountNumber.text =
-                    it.pendingRequestsList.size.toString()
-            }
-            conversationBinding.viewAllRequests.setOnClickListener {
-                val intent = Intent(this, SeeAllRequestsActivity::class.java)
-                startActivity(intent)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -1258,60 +1263,46 @@ class ConversationActivity :
     }
 
 
-    @SuppressLint("WrongViewCast")
-    private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): View? {
-        val layoutInflater =
-            AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): FppQuickViewListsItemBinding {
         val view =
-            layoutInflater.inflate(
-                R.layout.fpp_quick_view_lists_item,
+            FppQuickViewListsItemBinding.inflate(
+                LayoutInflater.from(conversationBinding.root.context),
                 conversationBinding.root,
                 false
             )
-        val txtUserName: AppCompatTextView = view.findViewById(R.id.tv_name)
-        val imageUserProfile: CircleImageView = view.findViewById(R.id.profile_image)
-        val txtTotalSpokeTime: AppCompatTextView = view.findViewById(R.id.tv_spoken_time)
-        val btnConfirm: Button = view.findViewById(R.id.btn_confirm_request)
-        val btnNotNow: Button = view.findViewById(R.id.btn_not_now)
-        val itemContainer: ConstraintLayout = view.findViewById(R.id.fpp_request_container)
-        itemContainer.setOnClickListener {
-            openUserProfileActivity(
-                pendingRequestDetail.senderMentorId ?: "",
-                RECENT_CALL
+        with(view) {
+            itemData = pendingRequestDetail
+            fppRequestContainer.setOnClickListener {
+                openUserProfileActivity(
+                    pendingRequestDetail.senderMentorId ?: "",
+                    RECENT_CALL
+                )
+            }
+            profileImage.setUserImageOrInitials(
+                pendingRequestDetail.photoUrl ?: "",
+                pendingRequestDetail.fullName ?: ""
             )
-        }
-        itemContainer.setBackgroundColor(
-            ContextCompat.getColor(
-                this,
-                R.color.white
-            )
-        )
-        txtUserName.text = pendingRequestDetail.fullName ?: ""
-        txtTotalSpokeTime.text = pendingRequestDetail.textToShow
-        imageUserProfile.setUserImageOrInitials(
-            pendingRequestDetail.photoUrl ?: "",
-            pendingRequestDetail.fullName ?: ""
-        )
-        btnConfirm.setOnClickListener {
-            btnConfirm.visibility = GONE
-            btnNotNow.visibility = GONE
-            txtTotalSpokeTime.text = "You are now favorite practice partners"
-            itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-            conversationViewModel.confirmOrRejectFppRequest(
-                pendingRequestDetail.senderMentorId!!,
-                IS_ACCEPTED, QUICK_VIEW
-            )
-        }
-        btnNotNow.setOnClickListener {
-            btnConfirm.visibility = GONE
-            btnNotNow.visibility = GONE
-            txtTotalSpokeTime.text = "Request Removed"
-            itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-            conversationViewModel.confirmOrRejectFppRequest(
-                pendingRequestDetail.senderMentorId!!,
-                IS_REJECTED, QUICK_VIEW
-            )
+            btnConfirmRequest.setOnClickListener {
+                btnConfirmRequest.visibility = GONE
+                btnNotNow.visibility = GONE
+                tvSpokenTime.text = getString(R.string.now_fpp)
+                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
+                conversationViewModel.confirmOrRejectFppRequest(
+                    pendingRequestDetail.senderMentorId!!,
+                    IS_ACCEPTED, QUICK_VIEW
+                )
+            }
+            btnNotNow.setOnClickListener {
+                btnConfirmRequest.visibility = GONE
+                btnNotNow.visibility = GONE
+                tvSpokenTime.text = getString(R.string.request_removed)
+                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
+                conversationViewModel.confirmOrRejectFppRequest(
+                    pendingRequestDetail.senderMentorId!!,
+                    IS_REJECTED, QUICK_VIEW
+                )
 
+            }
         }
         return view
     }

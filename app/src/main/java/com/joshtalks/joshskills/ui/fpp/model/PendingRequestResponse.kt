@@ -2,20 +2,20 @@ package com.joshtalks.joshskills.ui.fpp.model
 
 import com.google.gson.annotations.SerializedName
 
-data class PendingRequestResponse (
+data class PendingRequestResponse(
     @SerializedName("pending_requests")
-    val pendingRequestsList:List<PendingRequestDetail>
-    )
+    val pendingRequestsList: List<PendingRequestDetail>
+)
 
-data class PendingRequestDetail (
+data class PendingRequestDetail(
     @SerializedName("sender_mentor_id")
-    val senderMentorId:String?,
+    val senderMentorId: String?,
     @SerializedName("photo_url")
-    val photoUrl:String?,
+    val photoUrl: String?,
     @SerializedName("full_name")
-    val fullName:String?,
+    val fullName: String?,
     @SerializedName("text")
-    val textToShow:String?,
+    val textToShow: String?,
     @SerializedName("request_status")
-    val requestStatus:String?,
-    )
+    val requestStatus: String?,
+)

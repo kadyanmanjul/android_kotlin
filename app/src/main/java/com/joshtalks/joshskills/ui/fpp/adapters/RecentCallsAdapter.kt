@@ -8,17 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
-import com.joshtalks.joshskills.ui.fpp.*
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import kotlin.collections.ArrayList
 
 class RecentCallsAdapter(
     var lifecycleProvider: LifecycleOwner,
@@ -65,22 +62,17 @@ class RecentCallsAdapter(
 
         @SuppressLint("UseCompatLoadingForColorStateLists")
         fun bind(recentCall: RecentCall, position: Int) {
-            binding.rootView.setOnClickListener {
-                openUserProfileActivity(
-                    recentCall.receiverMentorId,
-                    RECENT_CALL
-                )
-            }
             binding.rootView.setCardBackgroundColor(
                 ContextCompat.getColor(
                     context,
                     R.color.white
                 )
             )
+            initView(recentCall)
+            addListener(recentCall)
+        }
 
-            binding.imgBlock.setOnClickListener {
-                callback.onUserBlock(recentCall.receiverMentorId, recentCall.firstName)
-            }
+        fun initView(recentCall: RecentCall) {
             with(binding) {
                 when (recentCall.fppRequestStatus) {
                     SENT_REQUEST -> {
@@ -136,12 +128,12 @@ class RecentCallsAdapter(
                             )
                         )
                     }
-                    NONE-> {
+                    NONE -> {
                         btnSentRequest.visibility = View.INVISIBLE
                     }
                 }
                 obj = recentCall
-                tvName.text = recentCall.firstName
+                handler = this@RecentCallsAdapter
                 tvSpokenTime.text = SINGLE_SPACE + recentCall.textToShow
                 if (recentCall.callType == "incoming") {
                     tvSpokenTime.setCompoundDrawablesWithIntrinsicBounds(
@@ -158,6 +150,14 @@ class RecentCallsAdapter(
                         0
                     )
                 }
+            }
+        }
+
+        fun addListener(recentCall: RecentCall) {
+            with(binding) {
+                imgBlock.setOnClickListener {
+                    callback.onUserBlock(recentCall.receiverMentorId, recentCall.firstName)
+                }
                 btnSentRequest.setOnClickListener {
                     when (recentCall.fppRequestStatus) {
                         SENT_REQUEST -> {
@@ -165,7 +165,7 @@ class RecentCallsAdapter(
                                 AppObjectController.joshApplication,
                                 R.color.not_now
                             )
-                            btnSentRequest.text = "Requested"
+                            btnSentRequest.text = context.resources.getText(R.string.requested)
                             btnSentRequest.setTextColor(
                                 ContextCompat.getColor(
                                     AppObjectController.joshApplication,
@@ -211,19 +211,19 @@ class RecentCallsAdapter(
                         }
                     }
                 }
+
             }
         }
     }
-    private fun openUserProfileActivity(id: String, previousPage: String?) {
-        previousPage?.let {
-            UserProfileActivity.startUserProfileActivity(
-                activity,
-                id,
-                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                null,
-                it,
-                conversationId = conversationID
-            )
-        }
+
+    fun openUserProfileActivity(id: String) {
+        UserProfileActivity.startUserProfileActivity(
+            activity,
+            id,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            null,
+            RECENT_CALL,
+            conversationId = conversationID
+        )
     }
 }

@@ -8,11 +8,12 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
+import com.joshtalks.joshskills.ui.fpp.repository.RecentCallsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RecentCallViewModel(application: Application) : AndroidViewModel(application) {
-    private val p2pNetworkService = AppObjectController.p2pNetworkService
+    private val recentCallsRepository by lazy { RecentCallsRepository() }
     val recentCallList = MutableLiveData<RecentCallResponse?>()
     val apiCallStatus = MutableLiveData<ApiCallStatus>()
 
@@ -26,11 +27,10 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
-                val response = p2pNetworkService.getRecentCallsList(Mentor.getInstance().getId())
-                if (response.isSuccessful) {
+                val response = recentCallsRepository.fetchRecentCallsFromApi()
+                if (response?.isSuccessful == true) {
                     recentCallList.postValue(response.body())
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)
-                    return@launch
                 }
             } catch (ex: Throwable) {
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
@@ -42,7 +42,7 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
     fun sendFppRequest(receiverMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                p2pNetworkService.sendFppRequest(receiverMentorId)
+                recentCallsRepository.sendFppRequest(receiverMentorId)
                 getFavorites()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
@@ -53,7 +53,7 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
     fun deleteFppRequest(receiverMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                p2pNetworkService.deleteFppRequest(receiverMentorId)
+                recentCallsRepository.deleteFppRequest(receiverMentorId)
                 getFavorites()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
@@ -67,7 +67,7 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
                 val map: HashMap<String, String> = HashMap()
                 map[userStatus] = "true"
                 map["page_type"] = pageType
-                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
+                recentCallsRepository.confirmOrRejectFppRequest(senderMentorId, map)
                 getFavorites()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
@@ -75,15 +75,12 @@ class RecentCallViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    fun blockUser(toMentorId:String){
-        viewModelScope.launch (Dispatchers.IO){
+    fun blockUser(toMentorId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val map: HashMap<String, String> = HashMap()
                 map["to_mentor_id"] = toMentorId
-                var res = p2pNetworkService.blockFppUser(map)
-                if(res.isSuccessful){
-                    getFavorites()
-                }
+                recentCallsRepository.blockUser(map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

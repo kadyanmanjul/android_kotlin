@@ -8,6 +8,9 @@
         <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail" />
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.fpp.adapters.SeeAllRequestsAdapter" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -17,6 +20,7 @@
         android:background="@color/white"
         android:clipToPadding="true"
         android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{()->handler.openUserProfileActivity(itemData.senderMentorId)}"
         app:cardCornerRadius="0dp"
         android:elevation="0dp"
         app:cardBackgroundColor="@color/white"

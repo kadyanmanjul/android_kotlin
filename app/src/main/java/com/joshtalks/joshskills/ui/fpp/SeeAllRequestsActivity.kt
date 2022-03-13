@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.fpp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,18 +31,12 @@ class SeeAllRequestsActivity : AppCompatActivity(), AdapterCallback {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)
         binding.lifecycleOwner = this
-        binding.ivBack.setOnClickListener {
-            onBackPressed()
-        }
+        binding.handler = this
         addObservable()
     }
 
     override fun onStart() {
         super.onStart()
-        getPendingRequests()
-    }
-
-    private fun getPendingRequests() {
         viewModel.getPendingRequestsList()
     }
 
@@ -51,28 +47,27 @@ class SeeAllRequestsActivity : AppCompatActivity(), AdapterCallback {
         viewModel.apiCallStatus.observe(this) {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.progressBar.visibility = GONE
                     if (seeAllRequestsAdapter.itemCount == 0) {
-                        binding.fppNoRequests.visibility = View.VISIBLE
+                        binding.fppNoRequests.visibility = VISIBLE
                     }
                 }
                 ApiCallStatus.FAILED -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.progressBar.visibility = GONE
                     this.finish()
                 }
                 ApiCallStatus.START ->
-                    binding.progressBar.visibility = View.VISIBLE
+                    binding.progressBar.visibility = VISIBLE
             }
         }
 
     }
 
-
     private fun initView(pendingRequestsList: List<PendingRequestDetail>) {
         val recyclerView: RecyclerView = binding.recentListRv
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        seeAllRequestsAdapter = SeeAllRequestsAdapter(pendingRequestsList, this, this)
+        seeAllRequestsAdapter = SeeAllRequestsAdapter(pendingRequestsList, this, this, this)
         recyclerView.adapter = seeAllRequestsAdapter
     }
 

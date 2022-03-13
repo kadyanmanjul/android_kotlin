@@ -42,7 +42,6 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_recent_call)
         binding.handler = this
         recyclerView = binding.recentListRv
-
         setSupportActionBar(binding.toolbar)
         addObservable()
     }
@@ -79,7 +78,7 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
 
     private fun addObservable() {
         viewModel.recentCallList.observe(this) {
-            if (it?.arrayList?.size?:0 <= 0)
+            if (it?.arrayList?.size ?: 0 <= 0)
                 binding.emptyCard.visibility = View.VISIBLE
 
             if (it != null) {

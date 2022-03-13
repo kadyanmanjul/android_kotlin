@@ -1054,6 +1054,9 @@
     <string name="favorite_practice_partner_requests_here">You will be able to see your favorite practice partner requests here.</string>
     <string name="confirm">Confirm</string>
     <string name="not_now">Not Now</string>
+    <string name="now_fpp">You are now favorite practice partners</string>
+    <string name="request_removed">Request Removed</string>
+    <string name="see_requests">See all requests (%s)</string>
 
 
 </resources>
