@@ -12,7 +12,7 @@ import android.content.pm.PackageManager
 
 object PowerManagers {
 
-    const val HUAWEI_SYSTEM_MANAGER = "com.huawei.systemmanager"
+    private const val HUAWEI_SYSTEM_MANAGER = "com.huawei.systemmanager"
 
     private val POWER_MANAGER_INTENTS =
         arrayOf(
@@ -110,7 +110,7 @@ object PowerManagers {
             Intent().setComponent(
                 ComponentName(
                     "com.oneplus.security",
-                    "com.oneplus.security.chainlaunch.view.ChainLaunchAppListAct‌​ivity"
+                    "com.oneplus.security.chainlaunch.view.ChainLaunchAppListActivity"
                 )
             ),
             Intent().setComponent(

@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.core
 
-//import com.uxcam.OnVerificationListener
-//import com.uxcam.UXCam
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.LauncherActivity
@@ -90,7 +88,6 @@ import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import io.sentry.Sentry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -266,34 +263,7 @@ abstract class BaseActivity :
                     ex.printStackTrace()
                 }
                 initNewRelic()
-                setupSentryUser()
-                //UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
-                // UXCam.setUserProperty(String propertyName , String value)
-
-                /*UXCam.addVerificationListener(object : OnVerificationListener {
-                    override fun onVerificationSuccess() {
-                        FirebaseCrashlytics.getInstance()
-                            .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
-                    }
-
-                    override fun onVerificationFailed(errorMessage: String) {
-                        Timber.e(errorMessage)
-                    }
-                })*/
             }
-            /*UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
-            // UXCam.setUserProperty(String propertyName , String value)
-
-            UXCam.addVerificationListener(object : OnVerificationListener {
-                override fun onVerificationSuccess() {
-                    FirebaseCrashlytics.getInstance()
-                        .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
-                }
-
-                override fun onVerificationFailed(errorMessage: String) {
-                    Timber.e(errorMessage)
-                }
-            })*/
         }
     }
 
@@ -481,19 +451,6 @@ abstract class BaseActivity :
         }
     }
 
-    private fun setupSentryUser() {
-        try {
-            val user = io.sentry.protocol.User()
-            user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
-            user.username = User.getInstance().username
-            user.email = User.getInstance().email
-            Sentry.setUser(user)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-
-    }
-
     private fun initNewRelic() {
         //   NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
@@ -607,36 +564,48 @@ abstract class BaseActivity :
             SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
 
-    fun checkForOemNotifications() {
+    fun checkForOemNotifications(event: String) {
         lifecycleScope.launch(Dispatchers.IO) {
-            if (shouldRequireCustomPermission()) {
-                var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
-                if (oemIntent == null) {
-                    oemIntent = Intent(
-                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.parse(
-                                    "package:$packageName"
-                            )
-                    )
-                    oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
-                    oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+            var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
+            if (oemIntent == null) {
+                oemIntent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:$packageName")
+                )
+                oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
+                oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
 
-                lifecycleScope.launch(Dispatchers.Main) {
-                    CustomPermissionDialogFragment.showCustomPermissionDialog(
-                            oemIntent,
-                            supportFragmentManager
-                    )
-                }
+            lifecycleScope.launch(Dispatchers.Main) {
+                CustomPermissionDialogFragment.showCustomPermissionDialog(
+                    oemIntent,
+                    supportFragmentManager,
+                    event
+                )
             }
         }
     }
 
     fun shouldRequireCustomPermission(): Boolean {
         val oemIntent = PowerManagers.getIntentForOEM(this)
-        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        return NotificationManagerCompat.from(this).areNotificationsEnabled()
-                .not() && oemIntent != null && performedAction == EMPTY
+        return isNotificationEnabled() && oemIntent != null
+    }
+
+    fun isNotificationEnabled() =
+        NotificationManagerCompat.from(this).areNotificationsEnabled().not()
+
+    fun pushAnalyticsToServer(eventName: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
     }
 
     fun isUserProfileComplete(): Boolean {
@@ -690,18 +659,20 @@ abstract class BaseActivity :
             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-            val intent =
-                    Intent(
-                            AppObjectController.joshApplication,
-                            SignUpActivity::class.java
-                    )
+            val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra(FLOW_FROM, "CourseExploreActivity")
             }
-            PrefManager.clearUser()
-            AppObjectController.joshApplication.startActivity(intent)
+            try {
+                AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
+                PrefManager.clearUser()
+                AppObjectController.joshApplication.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                showToast("Something went wrong. Please try again.")
+            }
         }
     }
 

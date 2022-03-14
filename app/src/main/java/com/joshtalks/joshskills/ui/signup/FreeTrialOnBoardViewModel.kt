@@ -108,7 +108,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
-            WorkManagerAdmin.userActiveStatusWorker(true)
+//            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }
     }

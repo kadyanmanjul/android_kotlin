@@ -52,6 +52,9 @@ interface SignUpNetworkService {
     @POST("$DIR/user/user_verification/")
     suspend fun userVerification(@Body requestUserVerification: RequestUserVerification): Response<LoginResponse>
 
+    @GET("$DIR/user/sign_out/")
+    suspend fun signoutUser(@Query("mentor_id") mentorId: String): Response<Void>
+
     @GET("$DIR/mentor/{id}/personal_profile/")
     suspend fun getPersonalProfileAsync(@Path("id") id: String): Mentor
 
@@ -103,6 +106,9 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/fcm/")
     suspend fun postFCMToken(@FieldMap params: Map<String, String>): Response<FCMResponse>
 
+    @POST("$DIR/mentor/fcm_verify/")
+    suspend fun checkFCMInServer(@Body params: Map<String, String>): Map<String, String>
+
     @POST("$DIR/mentor/install_source")
     suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
 
@@ -150,8 +156,8 @@ interface SignUpNetworkService {
     @POST("$DIR/engage/inbox/")
     suspend fun logInboxEngageEvent(@Body params: Map<String, String>)
 
-    @POST("$DIR/mentor/last-active")
-    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
+//    @POST("$DIR/mentor/last-active")
+//    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse

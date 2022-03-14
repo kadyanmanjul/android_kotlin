@@ -7,6 +7,7 @@ import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -17,6 +18,7 @@ import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
+import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -57,7 +59,16 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
+//        initServices()
         initGroups()
+    }
+
+    private fun initServices() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            applicationContext.startForegroundService(Intent(applicationContext, BackgroundService::class.java))
+        } else {
+            applicationContext.startService(Intent(applicationContext, BackgroundService::class.java))
+        }
     }
 
     override fun onTerminate() {
@@ -157,14 +168,14 @@ class JoshApplication :
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
         WorkManagerAdmin.userAppUsage(isAppVisible)
-        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-        //WorkManagerAdmin.removeRepeatingNotificationWorker()
+//        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+//        WorkManagerAdmin.removeRepeatingNotificationWorker()
         val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
         for (i in startIndex..2) {
-            //WorkManagerAdmin.setRepeatingNotificationWorker(i)
+//            WorkManagerAdmin.setRepeatingNotificationWorker(i)
             removeAlarmReminder(i)
         }
-        //  UsageStatsService.activeUserService(this)
+//        UsageStatsService.activeUserService(this)
     }
 
     private fun removeAlarmReminder(delay: Int) {
@@ -194,7 +205,7 @@ class JoshApplication :
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
         WorkManagerAdmin.userAppUsage(isAppVisible)
-        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+//        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         if (getConditionForShowLocalNotifications()) {
             val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
             for (i in startIndex..2) {
@@ -202,7 +213,7 @@ class JoshApplication :
                 setAlarmReminder(i)
             }
         }
-        //  UsageStatsService.inactiveUserService(this)
+//        UsageStatsService.inactiveUserService(this)
         WorkManagerAdmin.setLocalNotificationWorker()
     }
 

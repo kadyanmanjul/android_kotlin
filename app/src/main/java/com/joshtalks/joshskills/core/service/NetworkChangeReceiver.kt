@@ -10,7 +10,7 @@ class NetworkChangeReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         try {
             if (Utils.isInternetAvailable() && JoshApplication.isAppVisible) {
-                WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
+//                WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
