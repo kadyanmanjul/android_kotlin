@@ -7,10 +7,21 @@ package com.joshtalks.joshskills.core.notification
 // import com.cometchat.pro.models.TextMessage
 // import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
 // import com.joshtalks.joshskills.ui.groupchat.utils.Utils
-import android.app.*
+import android.app.ActivityManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -29,16 +40,38 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.ApiRespStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.startServiceForWebrtc
+import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.local.model.FCMResponse
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -72,9 +105,6 @@ import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
-import kotlinx.coroutines.*
-import org.json.JSONObject
-import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -82,6 +112,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import kotlin.collections.set
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import timber.log.Timber
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -474,7 +511,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
              }*/
             NotificationAction.ACTION_DELETE_DATA -> {
-                Mentor.deleteUserData()
+                if (User.getInstance().isVerified ) {
+                    Mentor.deleteUserData()
+                }
                 return null
             }
             NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
@@ -486,18 +525,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.ACTION_DELETE_USER -> {
-                Mentor.deleteUserCredentials()
+                if (User.getInstance().isVerified ) {
+                    Mentor.deleteUserCredentials()
+                }
                 return null
             }
             NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
-                if (Mentor.getInstance().hasId()) {
+                if (Mentor.getInstance().hasId() && User.getInstance().isVerified ) {
                     Mentor.deleteUserCredentials()
                     Mentor.deleteUserData()
                 }
                 return null
             }
             NotificationAction.ACTION_LOGOUT_USER -> {
-                if (Mentor.getInstance().hasId()) {
+                if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
                     Mentor.deleteUserCredentials(true)
                     Mentor.deleteUserData()
                 }
