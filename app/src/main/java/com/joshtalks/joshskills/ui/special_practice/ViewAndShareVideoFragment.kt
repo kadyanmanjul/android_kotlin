@@ -1,24 +1,21 @@
 package com.joshtalks.joshskills.ui.special_practice
 
 import android.app.Activity
-import android.content.ContentValues
-import android.content.Context
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Outline
-import android.graphics.Point
-import android.media.MediaMetadataRetriever
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
-import android.util.Size
 import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +23,6 @@ import com.daasuu.mp4compose.FillMode
 import com.daasuu.mp4compose.composer.Mp4Composer
 import com.daasuu.mp4compose.filter.GlWatermarkFilter
 import com.google.android.exoplayer2.Player
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentViewShareVideoBinding
@@ -35,6 +31,7 @@ import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
+import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.ViewAndShareViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import io.branch.indexing.BranchUniversalObject
@@ -43,11 +40,7 @@ import io.branch.referral.util.LinkProperties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
-const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
 class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
     private lateinit var binding: FragmentViewShareVideoBinding
@@ -56,7 +49,8 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
     private var specialId: String? = null
     private var videoPathOriginal: String? = null
     private var imagePath: String? = null
-    lateinit var imageBitmap: Bitmap
+    private var videoName: String? = null
+    private var isVideoProcessing = false
 
     private val viewAndShareViewModel: ViewAndShareViewModel by lazy {
         ViewModelProvider(this).get(ViewAndShareViewModel::class.java)
@@ -80,28 +74,24 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
         arguments?.let {
             videoPathOriginal = it.getString(VIDEO_PATH)
             imagePath = it.getString(IMAGE_PATH)
-            imageBitmap = it.getParcelable(IMAGE_BITMAP)!!
             specialId = it.getString(SPECIAL_ID)
+            videoName = it.getString(IMAGE_NAME)
         }
     }
 
     companion object {
-        private const val VIDEO_PATH = "VIDEO_PATH"
-        private const val IMAGE_PATH = "IMAGE_PATH"
-        private const val IMAGE_BITMAP = "IMAGE_BITMAP"
-        private const val SPECIAL_ID = "SPECIAL_ID"
         fun newInstance(
             videoPath: String,
             imagePath: String,
-            imageBitmap: Bitmap,
-            specialId11: String
+            specialId: String,
+            videoName: String
         ) =
             ViewAndShareVideoFragment().apply {
                 arguments = Bundle().apply {
                     putString(VIDEO_PATH, videoPath)
                     putString(IMAGE_PATH, imagePath)
-                    putParcelable(IMAGE_BITMAP, imageBitmap)
-                    putString(SPECIAL_ID, specialId11)
+                    putString(SPECIAL_ID, specialId)
+                    putString(IMAGE_NAME, videoName)
                 }
             }
     }
@@ -119,7 +109,7 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
         super.onViewCreated(view, savedInstanceState)
 
         binding.progressBar.isVisible = true
-        addOverLayOnVideo(imageBitmap)
+        addOverLayOnVideo(convertImageFilePathIntoBitmap(imagePath ?: EMPTY))
 
         binding.materialCardView.setOnClickListener {
             if (binding.materialCardView.isClickable)
@@ -163,14 +153,10 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
                         dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
                             PrefManager.getStringValue(USER_SHARE_SHORT_URL)
                         else
-                            getAppShareUrl(),
+                            getAppShareUrl(userReferralCode),
                         referralTimestamp = referralTimestamp
                     )
             }
-    }
-
-    private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
@@ -215,7 +201,7 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
         }
     }
 
-    private fun showIntroVideoUi(videoUrl: String) {
+    private fun showVideoUi(videoUrl: String) {
         try {
             binding.videoView.visibility = View.VISIBLE
             binding.videoView.seekToStart()
@@ -256,79 +242,49 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
 
     private fun addOverLayOnVideo(bitmap: Bitmap?) {
         try {
-            var sizeA = getVideoResolution(videoPathOriginal?: EMPTY)
-            var videoPath = getVideoFilePath()
-            Log.e(TAG, "addOverLayOnVideo: ${sizeA?.height} ${sizeA?.width}")
-            Log.e("Sagar", "addOverLayOnVideo: $videoPath")
+            val videoPath = getVideoFilePath()
             Mp4Composer(videoPathOriginal ?: EMPTY, videoPath)
-                .size(getWindowWidth(requireActivity()),
-                    (((sizeA?.height?.times(2))?.minus(130))?:1080)
-                )
+                .size(getWindowWidth(requireContext()), getHeightByPixel(requireContext()))
                 .fillMode(FillMode.PRESERVE_ASPECT_CROP)
                 .filter(GlWatermarkFilter(bitmap, GlWatermarkFilter.Position.RIGHT_BOTTOM))
                 .listener(object : Mp4Composer.Listener {
                     override fun onProgress(progress: Double) {
+                        isVideoProcessing = true
                     }
 
-                    override fun onCurrentWrittenVideoTime(timeUs: Long) {
-                    }
+                    override fun onCurrentWrittenVideoTime(timeUs: Long) {}
 
                     override fun onCompleted() {
-                        exportMp4ToGallery(requireContext(), videoPath)
-                        showToast(videoPath)
-
-                        viewAndShareViewModel.submitPractise(videoPath, specialId ?: EMPTY)
-
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            binding.materialCardView.isClickable = true
-                            binding.progressBar.visibility = View.GONE
-                            sharableVideoUrl = videoPath
-                            showIntroVideoUi(videoPath)
+                        try {
+                            if (isAdded) {
+                                exportMp4ToGallery(requireActivity(), videoPath)
+                                viewAndShareViewModel.submitPractice(videoPath, specialId ?: EMPTY)
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    binding.materialCardView.isClickable = true
+                                    binding.progressBar.visibility = View.GONE
+                                    sharableVideoUrl = videoPath
+                                    showVideoUi(videoPath)
+                                }
+                                viewAndShareViewModel.updateUserRecordVideo(
+                                    specialId ?: EMPTY,
+                                    EMPTY
+                                )
+                                deleteFile(videoName ?: EMPTY)
+                                isVideoProcessing = false
+                            }
+                        } catch (ex: Exception) {
+                            showToast(ex.message ?: EMPTY)
                         }
-                        viewAndShareViewModel.updateUserRecordVideo(specialId?: EMPTY, EMPTY)
-
                     }
 
-                    override fun onCanceled() {
-                    }
+                    override fun onCanceled() {}
 
-                    override fun onFailed(exception: java.lang.Exception?) {
-                        Log.e("Sagar", "onFailed: $exception")
+                    override fun onFailed(exception: Exception) {
+                        Log.e(TAG, "onFailed: $exception")
                     }
-
                 })
                 .start()
         } catch (ex: Exception) {
-        }
-    }
-
-    fun getVideoFilePath(): String {
-        return getAndroidMoviesFolder()?.absolutePath + "/" + SimpleDateFormat("yyyyMM_dd-HHmmss").format(
-            Date()
-        ) + "filter_apply.mp4"
-    }
-
-    fun getAndroidMoviesFolder(): File? {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-    }
-
-    fun exportMp4ToGallery(context: Context, filePath: String) {
-        try {
-            val values = ContentValues(2)
-            values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
-            values.put(MediaStore.Video.Media.DATA, filePath)
-            context.contentResolver.insert(
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                values
-            )
-            context.sendBroadcast(
-                Intent(
-                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                    Uri.parse("file://$filePath")
-                )
-            )
-        } catch (ex: Exception) {
-
         }
     }
 
@@ -337,7 +293,11 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    moveToNewActivity()
+                    showToast(isVideoProcessing.toString())
+                    if (isVideoProcessing)
+                        showDialog()
+                    else
+                        moveToNewActivity()
                 }
             })
     }
@@ -353,37 +313,25 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
         }
     }
 
-    fun getVideoResolution(path: String?): Size? {
-        val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(path)
-        val width = Integer.valueOf(
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
-        )
-        val height = Integer.valueOf(
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
-        )
-        retriever.release()
-        val rotation: Int = getVideoRotation(path)
-        return if (rotation == 90 || rotation == 270) {
-            Size(height, width)
-        } else Size(width, height)
-    }
+    private fun showDialog() {
+        val dialogView = Dialog(requireActivity())
+        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-    fun getVideoRotation(videoFilePath: String?): Int {
-        val mediaMetadataRetriever = MediaMetadataRetriever()
-        mediaMetadataRetriever.setDataSource(videoFilePath)
-        val orientation = mediaMetadataRetriever.extractMetadata(
-            MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION
-        )
-        return Integer.valueOf(orientation)
-    }
+        dialogView.setCancelable(false)
+        dialogView.setContentView(R.layout.custom_k_factor_dialog)
+        dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogView.show()
 
+        val btnConfirm = dialogView.findViewById<AppCompatTextView>(R.id.yes_button)
+        val btnNotNow = dialogView.findViewById<AppCompatTextView>(R.id.not_now)
 
-    fun getWindowWidth(context: Context): Int {
-        val disp =
-            (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        val size = Point()
-        disp.getSize(size)
-        return size.x
+        btnConfirm
+            .setOnClickListener {
+                moveToNewActivity()
+                dialogView.dismiss()
+            }
+        btnNotNow.setOnClickListener {
+            dialogView.dismiss()
+        }
     }
 }

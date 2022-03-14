@@ -5,6 +5,14 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel" />
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity" />
@@ -297,6 +305,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_marginTop="@dimen/_5sdp"
                                 android:padding="@dimen/_5sdp"
+                                android:onClick="@{handler::getDeepLinkAndInviteFriends}"
                                 android:layout_marginRight="@dimen/_12sdp"
                                 android:src="@drawable/ic_special_share"
                                 app:tint="@color/colorAccent"
@@ -354,6 +363,7 @@
                                 android:layout_marginTop="@dimen/_15sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
                                 android:insetTop="0dp"
+                                android:onClick="@{handler::startVideoRecording}"
                                 android:insetBottom="0dp"
                                 android:stateListAnimator="@null"
                                 android:text="@string/record_video"
