@@ -1,11 +1,11 @@
 package com.joshtalks.joshskills.ui.lesson
 
-import android.view.View
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 
 interface LessonActivityListener {
 
     fun onNextTabCall(currentTabNumber: Int)
+    fun showIntroVideo()
 
     fun onQuestionStatusUpdate(
         status: QUESTION_STATUS,
@@ -20,7 +20,9 @@ interface LessonActivityListener {
     fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String? = null,
+        wrongAnswerSubHeading: String? = null,
         wrongAnswerText: String? = null,
+        wrongAnswerDescription: String? = null,
         videoClickListener: (() -> Unit)? = null
     )
 }

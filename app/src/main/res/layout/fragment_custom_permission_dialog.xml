@@ -18,74 +18,81 @@
         android:background="@android:color/transparent"
         tools:background="@color/black">
 
-        <View
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/view"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_250sdp"
+            android:layout_height="wrap_content"
             android:background="@drawable/rectangle_top_rounded"
+            android:elevation="@dimen/_20sdp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
 
-        <ImageButton
-            android:layout_width="@dimen/_24sdp"
-            android:layout_height="@dimen/_24sdp"
-            android:layout_marginTop="@dimen/_22sdp"
-            android:layout_marginEnd="@dimen/_22sdp"
-            android:background="@drawable/ic_cross"
-            android:backgroundTint="@color/black"
-            android:contentDescription="@string/cancel_button"
-            android:onClick="@{()->fragment.cancel()}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view" />
+            <TextView
+                android:id="@+id/popup_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_14sdp"
+                android:text="@string/serious_student_ho"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/view" />
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_60sdp"
-            android:text="@string/permission_dialog_description"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view" />
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_14sdp"
+                android:text="@string/permission_dialog_description"
+                android:textSize="@dimen/_14ssp"
+                android:fontFamily="@font/open_sans"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                android:textColor="@color/black" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/tv_select_address"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginHorizontal="@dimen/_54sdp"
-            android:layout_marginTop="@dimen/_40sdp"
-            android:backgroundTint="@color/button_color"
-            android:gravity="center"
-            android:onClick="@{()->fragment.allow()}"
-            android:paddingTop="@dimen/_10sdp"
-            android:paddingBottom="@dimen/_10sdp"
-            android:text="@string/allow"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            android:textColor="@color/white"
-            app:cornerRadius="@dimen/_20sdp"
-            app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView"
+                android:layout_width="@dimen/_225sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_20sdp"
+                app:srcCompat="@drawable/auto_start" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_14sdp"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="@{() -> fragment.doNotAskAgain()}"
-            android:text="@string/do_not_ask_again"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_select_address" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tv_select_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginHorizontal="@dimen/_28sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:backgroundTint="@color/button_color"
+                android:gravity="center"
+                android:onClick="@{() -> fragment.allow()}"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:text="@string/go_to_settings"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/white"
+                app:cornerRadius="@dimen/_20sdp"
+                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:onClick="@{() -> fragment.cancel()}"
+                android:text="@string/not_now_underline"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                app:layout_constraintEnd_toEndOf="@id/view"
+                app:layout_constraintStart_toStartOf="@id/view"
+                app:layout_constraintTop_toBottomOf="@+id/tv_select_address" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

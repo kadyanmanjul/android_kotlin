@@ -12,7 +12,7 @@ data class FreeTrialPaymentResponse(
     @SerializedName("start_time")
     val startTime: Double?,
     @SerializedName("sub_headings")
-    val subHeadings: List<List<String>>?,
+    val subHeadings: List<String>?,
     @SerializedName("coupon_details")
     val couponDetails: CouponDetails
 )

@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -36,6 +35,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
@@ -102,7 +103,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
-    private var customView: CustomWord? = null
+//    private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
@@ -112,6 +113,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var ruleIdLeftList = ArrayList<Int>()
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
+    private var introVideoControl = false
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -212,8 +214,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
-        setUpVideoProgressListener()
-        viewModel.getVideoData()
     }
 
     override fun onResume() {
@@ -222,63 +222,30 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun subscribeRxBus() {
-        animateAtsOptionViewEvent.observe(this) { event ->
-            event?.let {
-                if (customView == null) {
-                    customView = CustomWord(this, it.customWord.choice)
-                } else {
-                    binding.rootView.removeView(customView)
-                    customView?.updateChoice(it.customWord.choice)
-                    //customView?.choice = event.customWord.choice
-                }
-                customView?.apply {
-                    binding.rootView.addView(this)
-                    this.text = it.customWord.choice.text
-                    post {
-                        this.x = it.fromLocation[0].toFloat()
-                        this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
-                        val toLocation = IntArray(2)
-                        it.customWord.getLocationOnScreen(toLocation)
-                        toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
-                        this.translationAnimationNew(
-                            toLocation,
-                            it.customWord,
-                            it.optionLayout
-                        )
-                        animateAtsOptionViewEvent.postValue(null)
-                    }
-                }
-            }
-        }
-        /* compositeDisposable.add(
+        compositeDisposable.add(
              RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
                  .subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
                  .subscribe { event ->
-                     Log.d(TAG, "subscribeRxBus() returned: $event")
-                     if (customView == null) {
-                         customView = CustomWord(this, event.customWord.choice)
-                     } else {
- //                        binding.rootView.removeView(customView)
-                         customView?.updateChoice(event.customWord.choice)
-                         //customView?.choice = event.customWord.choice
-                     }
-                     customView?.apply {
- //                        binding.rootView.addView(this)
+                    CustomWord(this, event.customWord.choice).apply {
+                        binding.rootView.addView(this)
                          this.text = event.customWord.choice.text
                          this.x = event.fromLocation[0].toFloat()
                          this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
                          val toLocation = IntArray(2)
                          event.customWord.getLocationOnScreen(toLocation)
-                         toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
-                         this.transaltionAnimationNew(
+                        toLocation[1] = toLocation[1] - getStatusBarHeight()
+                        this.translationAnimationNew(
                              toLocation,
                              event.customWord,
-                             event.optionLayout
+                            event.optionLayout,
+                            doOnAnimationEnd = {
+                                binding.rootView.removeView(this)
+                            }
                          )
                      }
                  }
-         )*/
+        )
     }
 
     override fun getConversationId(): String? {
@@ -546,11 +513,31 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    if (introVideoUrl.isNullOrBlank().not()) {
+                    if(introVideoControl){
+                        if (introVideoUrl.isNullOrBlank().not()) {
                         viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
                         viewModel.showHideSpeakingFragmentCallButtons(1)
                         showIntroVideoUi()
+                        }
+                    }else{
+                        binding.overlayLayout.visibility = View.VISIBLE
+                        binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                        binding.spotlightTabVocab.visibility = View.INVISIBLE
+                        binding.spotlightTabReading.visibility = View.INVISIBLE
+                        binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                        binding.lessonSpotlightTooltip.setTooltipText(
+                            resources.getText(R.string.label_speaking_spotlight_2).toString()
+                        )
+                        binding.lessonSpotlightTooltip.post {
+                            slideInAnimation(binding.lessonSpotlightTooltip)
+                        }
+                        binding.spotlightStartGrammarTest.visibility = View.GONE
+                        binding.spotlightCallBtn.visibility = View.VISIBLE
+                        binding.spotlightCallBtnText.visibility = View.VISIBLE
+                        binding.arrowAnimation.visibility = View.VISIBLE
                     }
+
                 }
 
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
@@ -738,10 +725,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
+    override fun showIntroVideo() {
+            introVideoControl  = true
+            setUpVideoProgressListener()
+            viewModel.getVideoData()
+    }
+
     override fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String?,
+        wrongAnswerSubHeading: String?,
         wrongAnswerText: String?,
+        wrongAnswerDescription: String?,
         videoClickListener: (() -> Unit)?
     ) {
         if (shouldShow.not()) PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
@@ -757,7 +752,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
             wrongAnswerTitle.text = wrongAnswerHeading
+            explanationTitle.text = wrongAnswerSubHeading
             wrongAnswerDesc.text = wrongAnswerText
+            explanationText.text = wrongAnswerDescription
         }
     }
 
@@ -1153,7 +1150,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         const val LAST_LESSON_STATUS = "last_lesson_status"
         const val LESSON_SECTION = "lesson_section"
         val isVideoVisible = MutableLiveData(false)
-        val animateAtsOptionViewEvent = MutableLiveData<AnimateAtsOtionViewEvent?>(null)
 
         fun getActivityIntent(
             context: Context,

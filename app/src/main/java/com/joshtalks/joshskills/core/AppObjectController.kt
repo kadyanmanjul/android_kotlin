@@ -31,6 +31,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
+import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -168,6 +169,10 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var conversationRoomsNetworkService: ConversationRoomsNetworkService
+            private set
+
+        @JvmStatic
+        lateinit var abTestNetworkService: ABTestNetworkService
             private set
 
         @JvmStatic
@@ -335,6 +340,7 @@ class AppObjectController {
                 seniorStudentService = retrofit.create(SeniorStudentService::class.java)
                 conversationRoomsNetworkService =
                     retrofit.create(ConversationRoomsNetworkService::class.java)
+                abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
 
                 groupsNetworkService = retrofit.create(GroupApiService::class.java)
                 groupsAnalyticsNetworkService = retrofit.create(GroupsAnalyticsService::class.java)
@@ -383,17 +389,21 @@ class AppObjectController {
             SentryAndroid.init(context) { options ->
                 options.dsn =
                     "https://4eb261d477d3450fba42d8c35d5fa188@o526914.ingest.sentry.io/6109802"
-                var rate = getFirebaseRemoteConfig().getDouble(FirebaseRemoteConfigKey.SENTRY_SAMPLING_RATE) ?: 0.6
-                if (rate <= 0.0 || rate > 1.0){
+                var rate =
+                    getFirebaseRemoteConfig().getDouble(FirebaseRemoteConfigKey.SENTRY_SAMPLING_RATE)
+                        ?: 0.6
+                if (rate <= 0.0 || rate > 1.0) {
                     rate = 0.6
                 }
-                options.sampleRate =  rate
+                options.sampleRate = rate
                 options.environment = BuildConfig.FLAVOR.plus(BuildConfig.BUILD_TYPE)
                 options.serverName = BuildConfig.FLAVOR
                 options.isEnableAutoSessionTracking = true
                 options.isAnrEnabled = true
-                options.anrTimeoutIntervalMillis = getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_ANR_TIME_OUT)
-                options.sessionTrackingIntervalMillis = getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_SESSION_TIMEOUT)
+                options.anrTimeoutIntervalMillis =
+                    getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_ANR_TIME_OUT)
+                options.sessionTrackingIntervalMillis =
+                    getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_SESSION_TIMEOUT)
                 options.addIntegration(
                     FragmentLifecycleIntegration(
                         joshApplication,

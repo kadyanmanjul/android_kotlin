@@ -1,12 +1,5 @@
 package com.joshtalks.joshskills.core.notification
 
-// import com.cometchat.pro.constants.CometChatConstants
-// import com.cometchat.pro.helpers.CometChatHelper
-// import com.cometchat.pro.models.BaseMessage
-// import com.cometchat.pro.models.Group
-// import com.cometchat.pro.models.TextMessage
-// import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
-// import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -92,6 +85,11 @@ const val HAS_LOCAL_NOTIFICATION = "has_local_notification"
 const val NOTIFICATION_ID = "notification_id"
 const val HAS_COURSE_REPORT = "has_course_report"
 const val QUESTION_ID = "question_id"
+
+const val FCM_ACTIVE = "FCM_ACTIVE"
+const val FCM_INACTIVE = "FCM_INACTIVE"
+const val FCM_REFRESH = "FCM_REFRESH"
+const val FCM_NOT_PRESENT = "FCM_NOT_PRESENT"
 
 class FirebaseNotificationService : FirebaseMessagingService() {
 

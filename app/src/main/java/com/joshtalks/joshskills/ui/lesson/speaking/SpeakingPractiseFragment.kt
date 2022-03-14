@@ -17,14 +17,18 @@ import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
 import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
 import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
+import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.ABTestFragment
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
@@ -56,7 +60,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SpeakingPractiseFragment : CoreJoshFragment() {
+class SpeakingPractiseFragment : ABTestFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -66,6 +70,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var questionId: String? = null
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
+    private var isIntroVideoEnabled = true
+    private var lessonNo = 0
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -82,6 +88,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             "कोर्स का सबसे मज़ेदार हिस्सा।",
             "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
         )
+    }
+
+    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+        abTestCampaignData?.let { map->
+            isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
+        }
+        initDemoViews(lessonNo)
+
+    }
+
+    override fun initCampaigns() {
     }
 
     override fun onAttach(context: Context) {
@@ -165,13 +182,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnStart.setOnClickListener {
+            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
         }
 
         binding.btnGroupCall.setOnClickListener {
+            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if(isCallOngoing(R.string.call_engage_initiate_call_message))
+            if (isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, getConversationId())
@@ -305,35 +324,42 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner, {
-            if(it.lessonNo == 1){
-                binding.btnCallDemo.visibility = View.GONE
-                binding.txtHowToSpeak.visibility = View.VISIBLE
-                binding.txtHowToSpeak.setOnClickListener {
-                    viewModel.isHowToSpeakClicked(true)
-                    binding.btnCallDemo.visibility = View.VISIBLE
-                    viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
-                }
-
-                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
-                    if(it == 1){
-                        binding.nestedScrollView.visibility = View.INVISIBLE
-                        binding.btnCallDemo.visibility = View.VISIBLE
-                    }
-                    if(it == 2){
-                        binding.nestedScrollView.visibility = View.VISIBLE
-                        binding.btnCallDemo.visibility = View.GONE
-                    }
-                })
-            }else{
-                binding.btnCallDemo.visibility = View.GONE
-            }
+            lessonNo = it.lessonNo
+            getCampaigns(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
         })
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
-            if(it == true){
+            if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
             }
         })
+    }
+
+    private fun initDemoViews(it: Int) {
+        if (it == 1 && isIntroVideoEnabled) {
+            lessonActivityListener?.showIntroVideo()
+            lessonNo = it
+            binding.btnCallDemo.visibility = View.GONE
+            binding.txtHowToSpeak.visibility = View.VISIBLE
+            binding.txtHowToSpeak.setOnClickListener {
+                viewModel.isHowToSpeakClicked(true)
+                binding.btnCallDemo.visibility = View.VISIBLE
+                viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
+            }
+
+            viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                if (it == 1) {
+                    binding.nestedScrollView.visibility = View.INVISIBLE
+                    binding.btnCallDemo.visibility = View.VISIBLE
+                }
+                if (it == 2) {
+                    binding.nestedScrollView.visibility = View.VISIBLE
+                    binding.btnCallDemo.visibility = View.GONE
+                }
+            })
+        } else {
+            binding.btnCallDemo.visibility = View.GONE
+        }
     }
 
     private fun showTooltip() {

@@ -15,17 +15,20 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.local.model.KFactor
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
+import java.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import retrofit2.Response
-import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
 const val ARG_CALLER_NAME = "caller_name"
@@ -52,6 +55,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
     private var minute = 0
     private var callerImage: String = EMPTY
     private var fppDialogFlag:String?=null
+    private var p2pCallShareControl: Boolean = false
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -82,7 +86,12 @@ class VoipCallFeedbackActivity : BaseActivity(){
         }else{
             closeActivity()
         }
+        initABTest()
 
+    }
+
+    private fun initABTest(){
+        practiceViewModel.getCampaignData(CampaignKeys.P2P_IMAGE_SHARING.name)
     }
 
     override fun onBackPressed() {
@@ -109,6 +118,13 @@ class VoipCallFeedbackActivity : BaseActivity(){
                 }
             }
         )
+
+        practiceViewModel.abTestCampaignliveData.observe(this){abTestCampaignData->
+            abTestCampaignData?.let {map->
+                p2pCallShareControl=(map.variantKey == VariantKeys.P2P_IS_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+        }
+
     }
 
     fun initFun(arguments: Intent) {
@@ -133,7 +149,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
-            callerImage = image!!
+            callerImage = image?: EMPTY
             if (image.isNullOrEmpty()) {
                 binding.cImage.setImageBitmap(
                     callerName.textDrawableBitmap(
@@ -158,6 +174,8 @@ class VoipCallFeedbackActivity : BaseActivity(){
             }
             if (minute > 0) {
                 mTime.append(minute).append(getMinuteString(minute))
+
+                practiceViewModel.postGoal("SIV_GT_2MIN")
             }
             if (second > 0) {
                 mTime.append(second).append(getSecondString(second))
@@ -200,7 +218,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
                     requestParams["response"] = response
                     val apiResponse =
                         AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
-                    startShareActivity(apiResponse)
+                    if(p2pCallShareControl) startShareActivity(apiResponse)
                     WorkManagerAdmin.syncFavoriteCaller()
                     delay(250)
                 } catch (ex: Throwable) {

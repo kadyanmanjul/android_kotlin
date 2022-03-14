@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
@@ -22,6 +23,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -58,6 +60,15 @@ class ConversationViewModel(
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
 
+    val abTestCampaignliveData = MutableLiveData<ABTestCampaignData?>()
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getCampaignData(campaign: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                abTestCampaignliveData.postValue(campaign)
+            }
+        }
+    }
     inner class CheckConnectivity : BroadcastReceiver() {
         override fun onReceive(context: Context, arg1: Intent) {
             if (Utils.isInternetAvailable()) {

@@ -96,8 +96,8 @@ class WebRtcService : BaseWebRtcService() {
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
-
     private var callStartTime: Long = 0
+    var audioRoute: Int = 0
     private var isForceConnect = AtomicBoolean(false)
     private var forceConnectData = hashMapOf<String,String?>()
     private var callForceDisconnect = false
@@ -438,6 +438,7 @@ class WebRtcService : BaseWebRtcService() {
 
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
+            audioRoute=routing
             Timber.tag(TAG).e("onAudioRouteChanged=  $routing")
             executor.submit {
                 if (routing == AUDIO_ROUTE_HEADSET) {

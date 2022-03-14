@@ -10,6 +10,8 @@
     <string name="download">Download</string>
     <string name="downloading_certificate">Downloading your certificate</string>
     <string name="downloading_complete">Downloading complete</string>
+    <string name="not_now">Not Now</string>
+    <string name="not_now_underline"><u>Not Now</u></string>
     <string name="settings">Settings</string>
     <string name="quiz_game">Quiz Game</string>
     <string name="build_your_team">Build your team</string>
@@ -199,9 +201,12 @@
 
     <!--    Custom Permission Dialog-->
     <string name="cancel_button">Cancel Button</string>
-    <string name="permission_dialog_description">Rojana class time par paane ke liye abhi notification on kare</string>
+    <string name="permission_dialog_description"><![CDATA[Agar aap course ko leke serious ho aur <b>Lessons</b> reminder and <b>Practice partner</b> calls miss nahi karna chahate ho to:<br><br><b>Settings</b> me jake <b>Auto Start</b> ko <b>ON</b> kare]]></string>
     <string name="allow">Allow</string>
+    <string name="go_to_settings">Go to Settings</string>
     <string name="do_not_ask_again">Dobara na pooche</string>
+    <string name="allow_autostart">Allow app to Auto Start</string>
+    <string name="serious_student_ho">Kya aap Serious Student ho?</string>
 
     <!--    Payment Failed Dialog-->
     <string name="try_again">Try again</string>
@@ -425,6 +430,7 @@
     <string name="clear_all_downloads">Clear All Downloads</string>
     <string name="sign_out">Sign out</string>
     <string name="notifications">Notifications</string>
+    <string name="autostart">Allow app to Auto Start</string>
     <string name="language">Language</string>
     <string name="english">English</string>
     <string name="low">Low</string>
@@ -434,6 +440,7 @@
     <string name="other">Other</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="auto_start_prompt_message">Please enable Autostart to receive notifications when the app is in the background</string>
     <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
     <string name="start_course_free">Start my Courses For Free</string>
     <string name="buy_pass">Buy All Course Access Pass</string>
@@ -937,9 +944,6 @@
     <string name="enter_your_name">Enter your name</string>
     <string name="test_completed_description">ग्रामर का लेवल चेक करने के लिए आपके सभी जवाबों को रिकॉर्ड कर लिया गया हैं \n \n आपकी ग्रामर के Current Status के आधार पर आपके आगे का कोर्स सेट किया जा रहा हैं</string>
     <string name="enter_name_label">आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</string>
-    <string name="free_trial_dialog_ji_haan_text">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n  \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।
-    </string>
-    <string name="achieve_100_points_first">Achieve 100 points first</string>
     <!--    Lesson Spotlight-->
     <string name="label_lesson_spotlight">हर Lesson में चार भाग होते है</string>
     <string name="label_convo_room_spotlight">इस भाग में हम किसी कन्वर्सेशन में जुड़ सकते है या एक कन्वर्सेशन शुरू कर सकते है </string>
@@ -1018,10 +1022,6 @@
     <string name="hometown_error_toast">Please enter your Hometown</string>
     <string name="delete_popup">This photo will be deleted from your previous profile photos</string>
 
-    <string name="how_to_speak"><u>How To Speak?</u></string>
-    <string name="download_syllabus_23_pages">Download Syllabus<b> • </b>15 pages</string>
-    <string name="the_ultimate_spoken_english_n_course_syllabus">The Ultimate Spoken English \nCourse Syllabus</string>
-
     <!-- p2p image share strings -->
     <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new new persons <b>के साथ</b>
 </string>
@@ -1053,10 +1053,10 @@
     <string name="no_favorite_requests_yet">No favorite requests yet ...</string>
     <string name="favorite_practice_partner_requests_here">You will be able to see your favorite practice partner requests here.</string>
     <string name="confirm">Confirm</string>
-    <string name="not_now">Not Now</string>
     <string name="now_fpp">You are now favorite practice partners</string>
     <string name="request_removed">Request Removed</string>
     <string name="see_requests">See all requests (%s)</string>
 
+    <string name="how_to_speak"><u>How To Speak?</u></string>
 
 </resources>
