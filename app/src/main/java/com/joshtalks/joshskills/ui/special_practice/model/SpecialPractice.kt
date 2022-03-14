@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = "special_table")
@@ -19,10 +20,10 @@ data class SpecialPractice(
     val id: Int,
 
     @ColumnInfo(name = "chat_id")
-    @Expose var chatId: String = "",
+    @Expose var chatId: String = EMPTY,
 
     @ColumnInfo(name = "recorded_video")
-    @Expose var recordedVideo: String = "",
+    @Expose var recordedVideo: String = EMPTY,
 
     @ColumnInfo(name = "created")
     @SerializedName("created")

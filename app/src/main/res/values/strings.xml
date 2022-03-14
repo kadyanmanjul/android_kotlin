@@ -1085,6 +1085,7 @@
     <string name="hometown_error_message">Please Enter Hometown</string>
     <string name="invalid_url_message">Please Enter A Valid YouTube Url</string>
     <string name="spoke_minutes">Spoke for 20 minutes</string>
+    <string name="recording_start_permission_message">"To start recording video, please allow permission"</string>
 
     <string name="download_syllabus_23_pages">Download Syllabus<b> • </b>15 pages</string>
     <string name="the_ultimate_spoken_english_n_course_syllabus">The Ultimate Spoken English \nCourse Syllabus</string>
