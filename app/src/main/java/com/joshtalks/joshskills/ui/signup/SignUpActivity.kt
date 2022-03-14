@@ -131,7 +131,11 @@ class SignUpActivity : BaseActivity() {
         setupTrueCaller()
         if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment(false)
-        } else {
+        }
+        else if(User.getInstance().isVerified && !isRegProfileComplete()) {
+            openProfileDetailFragment(true)
+        }
+        else {
             openSignUpOptionsFragment()
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

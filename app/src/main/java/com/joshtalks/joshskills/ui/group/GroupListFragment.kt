@@ -44,18 +44,7 @@ class GroupListFragment : BaseFragment() {
         lifecycleScope.launchWhenStarted {
             vm.setGroupsCount()
             if (vm.isFromVoip.get()) {
-                withContext(Dispatchers.IO) {
-                    vm.getGroupOnlineCount()
-                    vm.getGroupLocalData().let {
-                        val groupList = it.map { data ->
-                            val countDetails = vm.groupMemberCounts[data.groupId]
-                            data.lastMessage = "${countDetails?.memberCount} members, ${countDetails?.onlineCount} online"
-                            data.unreadCount = "0"
-                            data as GroupItemData
-                        }
-                        withContext(Dispatchers.Main) { vm.adapter.submitData(PagingData.from(groupList)) }
-                    }
-                }
+                loadListWhenFromVoip()
             } else {
                 vm.getGroupData().distinctUntilChanged().collectLatest {
                     Log.d(TAG, "onCreate: $it")
@@ -67,6 +56,22 @@ class GroupListFragment : BaseFragment() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (vm.shouldRefreshGroupList) {
+            vm.shouldRefreshGroupList = false
+            vm.adapter.refresh()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launchWhenStarted {
+            if (vm.isFromVoip.get())
+                loadListWhenFromVoip()
         }
     }
 
@@ -115,14 +120,6 @@ class GroupListFragment : BaseFragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (vm.shouldRefreshGroupList) {
-            vm.shouldRefreshGroupList = false
-            vm.adapter.refresh()
-        }
-    }
-
     override fun setArguments() {}
 
     private fun openPopupMenu() {
@@ -142,5 +139,20 @@ class GroupListFragment : BaseFragment() {
             return@setOnMenuItemClickListener false
         }
         popupMenu.show()
+    }
+
+    private suspend fun loadListWhenFromVoip() {
+        withContext(Dispatchers.IO) {
+            vm.getGroupOnlineCount()
+            vm.getGroupLocalData().let {
+                val groupList = it.map { data ->
+                    val countDetails = vm.groupMemberCounts[data.groupId]
+                    data.lastMessage = "${countDetails?.memberCount} members, ${countDetails?.onlineCount} online"
+                    data.unreadCount = "0"
+                    data as GroupItemData
+                }
+                withContext(Dispatchers.Main) { vm.adapter.submitData(PagingData.from(groupList)) }
+            }
+        }
     }
 }

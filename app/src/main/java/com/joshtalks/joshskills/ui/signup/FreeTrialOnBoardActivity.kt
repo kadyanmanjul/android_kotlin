@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
 import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PrefManager
@@ -199,6 +200,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             CoroutineScope(Dispatchers.IO).launch {
+                PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
