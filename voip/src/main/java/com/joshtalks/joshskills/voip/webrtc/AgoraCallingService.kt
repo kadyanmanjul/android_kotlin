@@ -1,19 +1,15 @@
-package com.joshtalks.joshskills.ui.call.lib
+package com.joshtalks.joshskills.voip.webrtc
 
-import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.ui.call.lib.AgoraCallingService.State.*
+import com.joshtalks.joshskills.voip.BuildConfig
+import com.joshtalks.joshskills.voip.Utils
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-private val USER_ALREADY_JOINED = -17
 
 object AgoraCallingService : CallingService {
     // TODO: Need to change name
@@ -27,9 +23,9 @@ object AgoraCallingService : CallingService {
 
     @Volatile
     private var agoraEngine: RtcEngine? = null
-    private val eventFlow : MutableStateFlow<CallState> = MutableStateFlow(CallState.Idle)
+    private val eventFlow : MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
     private val scope = CoroutineScope(Dispatchers.IO)
-    private var state = IDLE
+    private var state = State.IDLE
     private val agoraEvent by lazy {
         AgoraEventHandler.getAgoraEventObject(scope)
     }
@@ -37,7 +33,7 @@ object AgoraCallingService : CallingService {
 
     init { observeCallbacks() }
 
-    suspend fun initCallingService() {
+    override suspend fun initCallingService() {
         withContext(scope.coroutineContext) {
             if (agoraEngine == null)
                 synchronized(this) {
@@ -45,7 +41,7 @@ object AgoraCallingService : CallingService {
                         agoraEngine
                     else
                         agoraEngine = RtcEngine.create(
-                            AppObjectController.joshApplication,
+                            Utils.context,
                             BuildConfig.AGORA_API_KEY,
                             agoraEvent.handler
                         )
@@ -56,7 +52,7 @@ object AgoraCallingService : CallingService {
     override fun connectCall(request: CallRequest) {
         scope.launch {
             initCallingService()
-            val status = joinChannel()
+            val status = joinChannel(request)
             state = State.JOINING
             // TODO: Need to check status if its unable to join
             // 1. API Call to notify backend Start Listening to Pubnub Channel
@@ -67,7 +63,7 @@ object AgoraCallingService : CallingService {
         }
     }
 
-    private fun joinChannel() : Int? = agoraEngine?.joinChannel("ENTER_TOKEN", "ENTER_CHANNEL_NAME","ENTER_OPTIONAL_INFO",0)
+    private fun joinChannel(request : CallRequest) : Int? = agoraEngine?.joinChannel("${request.getToken()}", "${request.getChannel()}","ENTER_OPTIONAL_INFO",0)
 
     private fun leaveChannel() {
         agoraEngine?.leaveChannel()
@@ -78,7 +74,7 @@ object AgoraCallingService : CallingService {
             // 1. Send DISCONNECTING signal through Pubnub
             // 2. Leave Channel through Agora SDK
             leaveChannel()
-            state = LEAVING
+            state = State.LEAVING
         }
     }
 
@@ -86,13 +82,12 @@ object AgoraCallingService : CallingService {
         scope.launch {
             agoraEvent.callingEvent.collect { callState ->
                     when(callState) {
-                        CallState.CallDisconnected -> state = IDLE
-                        CallState.CallConnected -> state = CONNECTED
-                        CallState.CallInitiated -> state = JOINED
-                        CallState.Idle -> state = IDLE
+                        CallState.CallDisconnected, CallState.Idle -> state = State.IDLE
+                        CallState.CallConnected -> state = State.CONNECTED
+                        CallState.CallInitiated -> state = State.JOINED
+                        else -> {}
                     }
                 eventFlow.emit(callState)
-                eventFlow.collectLatest {  }
             }
         }
     }

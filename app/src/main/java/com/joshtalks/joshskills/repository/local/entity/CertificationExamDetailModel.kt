@@ -25,7 +25,7 @@ data class CertificationExamDetailModel(
     val examStatus: CExamStatus = CExamStatus.NIL,
     @SerializedName("text")
     val text: String = EMPTY
-) : java.io.Serializable
+)
 
 
 enum class CExamStatus {

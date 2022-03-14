@@ -1,19 +1,27 @@
 package com.joshtalks.joshskills.core
 
+import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.AlarmManager
+import android.app.Application
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
+import android.os.Process
 import android.os.StrictMode
+import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
+import androidx.work.impl.background.greedy.GreedyScheduler
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
@@ -22,15 +30,19 @@ import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.joshtalks.joshskills.ui.call.lib.AgoraCallingService
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
+import com.joshtalks.joshskills.voip.webrtc.CallingService
+import com.vanniktech.emoji.EmojiManager
+import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import java.lang.reflect.Method
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.vanniktech.emoji.ios.IosEmojiProvider
-import com.vanniktech.emoji.EmojiManager
+
 
 const val TAG = "JoshSkill"
 
@@ -40,6 +52,9 @@ class JoshApplication :
     ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
+    }
+    val callingService by lazy<CallingService> {
+        AgoraCallingService
     }
 
     companion object {
@@ -54,14 +69,28 @@ class JoshApplication :
 
     override fun onCreate() {
         super.onCreate()
-        turnOnStrictMode()
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-        AppObjectController.init(this)
-        registerBroadcastReceiver()
-        initGroups()
-        CoroutineScope(Dispatchers.IO).launch {
-            AgoraCallingService.initCallingService()
-        }
+        Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
+
+            if(isMainProcess()) {
+                Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
+                turnOnStrictMode()
+                ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
+                AppObjectController.init(this@JoshApplication)
+                registerBroadcastReceiver()
+                initGroups()
+                CoroutineScope(Dispatchers.IO).launch {
+                    callingService.initCallingService()
+                }
+            } else
+                Utils.initUtils(this)
+        
+            Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
+//        Log.d(TAG, "onCreate: $isMainProcess ... $packageName")
+//        if(isMainProcess()) {
+//            CoroutineScope(Dispatchers.IO).launch {
+//
+//            }
+//        }
     }
 
     override fun onTerminate() {
@@ -284,5 +313,63 @@ class JoshApplication :
     fun initGroups() {
         EmojiManager.install(IosEmojiProvider())
         //GroupRepository().subscribeNotifications()
+    }
+
+    @SuppressLint("PrivateApi")
+    private fun getProcName(): String? {
+        if (Build.VERSION.SDK_INT >= 28) {
+            return Application.getProcessName()
+        }
+
+        // Try using ActivityThread to determine the current process name.
+        Log.d(TAG, "getProcName: Trying ActivityThread ...")
+        try {
+            val activityThread = Class.forName(
+                "android.app.ActivityThread",
+                false,
+                GreedyScheduler::class.java.classLoader
+            )
+
+            val packageName = if (Build.VERSION.SDK_INT >= 18) {
+                val currentProcessName: Method =
+                    activityThread.getDeclaredMethod("currentProcessName")
+                currentProcessName.setAccessible(true)
+                currentProcessName.invoke(null)
+            } else {
+                val getActivityThread: Method = activityThread.getDeclaredMethod(
+                    "currentActivityThread"
+                )
+                getActivityThread.setAccessible(true)
+                val getProcessName: Method = activityThread.getDeclaredMethod("getProcessName")
+                getProcessName.setAccessible(true)
+                getProcessName.invoke(getActivityThread.invoke(null))
+            }
+            if (packageName is String) {
+                return packageName
+            }
+        } catch (exception: Throwable) {
+            Log.d("TAG", "Unable to check ActivityThread for processName", exception)
+        }
+
+        // Fallback to the most expensive way
+        Log.d(TAG, "getProcName: Trying expensive way ...")
+        val pid: Int = Process.myPid()
+        val am: ActivityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        if (am != null) {
+            val processes: List<ActivityManager.RunningAppProcessInfo> = am.getRunningAppProcesses()
+            if (processes != null && !processes.isEmpty()) {
+                for (process in processes) {
+                    if (process.pid === pid) {
+                        return process.processName
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    fun isMainProcess(): Boolean {
+        Log.d(TAG, "onCreate: STARTING ...IS MAIN PROCESS")
+        return TextUtils.equals(packageName, getProcName())
     }
 }

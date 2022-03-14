@@ -15,5 +15,4 @@ object GroupItemComparator : DiffUtil.ItemCallback<GroupItemData>() {
                 oldItem.getImageUrl() == newItem.getImageUrl() &&
                 oldItem.getUnreadMsgCount() == newItem.getUnreadMsgCount()
     }
-
 }

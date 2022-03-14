@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.util.*
+import kotlinx.android.parcel.RawValue
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -294,7 +295,7 @@ data class Question(
 
     @Embedded(prefix = "cexam_")
     @Expose
-    var cexamDetail: CertificationExamDetailModel? = null,
+    var cexamDetail: @RawValue CertificationExamDetailModel? = null,
 
     @Expose
     @Ignore

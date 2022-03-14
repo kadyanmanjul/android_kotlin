@@ -118,7 +118,7 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var joshApplication: JoshApplication
-            private set
+            //private set
 
         @JvmStatic
         lateinit var appDatabase: AppDatabase

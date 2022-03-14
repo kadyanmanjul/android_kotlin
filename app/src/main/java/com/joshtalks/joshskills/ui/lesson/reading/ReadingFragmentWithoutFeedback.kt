@@ -1247,6 +1247,7 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onProgressUpdate(progress: Long) {
         binding.practiseSeekbar.progress = progress.toInt()
+        lifecycleScope.launchWhenStarted {  }
     }
 
     override fun onDurationUpdate(duration: Long?) {

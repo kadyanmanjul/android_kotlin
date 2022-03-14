@@ -107,6 +107,15 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".ui.voip.CallActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -163,11 +172,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -808,6 +817,10 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
+        <service
+            android:name=".ui.call.data.WebrtcService"
+            android:process=":joshSkillsCallingService"
+            />
     </application>
 
 </manifest>

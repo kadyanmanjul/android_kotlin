@@ -173,6 +173,8 @@ android {
             buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
+            buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-ca4c4308-ae44-4431-9a31-c4dfdd6b0bf1\""
+            buildConfigField "String", "PUBNUB_SUB_P2P_KEY", "\"sub-c-d19da452-a164-11ec-a074-1a3740267833\""
             /*For Port
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9011\""
             */
@@ -240,7 +242,7 @@ dependencies {
         exclude group: 'com.bumptech.glide'
     })
     implementation project(path: ':joshcamerax')
-
+    implementation project(path: ':voip')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'

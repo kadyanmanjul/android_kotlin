@@ -1,19 +1,12 @@
-package com.joshtalks.joshskills.ui.call.lib
+package com.joshtalks.joshskills.ui.call.webrtc
 
-import android.telecom.Call
 import io.agora.rtc.IRtcEngineEventHandler
-import java.util.PriorityQueue
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+
 // #1
 class AgoraEventHandler private constructor() : IRtcEngineEventHandler() {
     val mutex = Mutex()
@@ -22,8 +15,8 @@ class AgoraEventHandler private constructor() : IRtcEngineEventHandler() {
         @Volatile private lateinit var INSTANCE: AgoraEventHandler
         @Volatile private lateinit var scope : CoroutineScope
 
-        private val callingEvent by lazy<MutableStateFlow<CallState>> {
-            MutableStateFlow(CallState.Idle)
+        private val callingEvent by lazy<MutableSharedFlow<CallState>> {
+            MutableSharedFlow(replay = 0)
         }
 
         fun getAgoraEventObject(scope: CoroutineScope) : AgoraEvent {
@@ -34,7 +27,7 @@ class AgoraEventHandler private constructor() : IRtcEngineEventHandler() {
                     return if (this::INSTANCE.isInitialized)
                         AgoraEvent(INSTANCE, callingEvent)
                     else {
-                        this.scope = scope
+                        Companion.scope = scope
                         AgoraEvent(AgoraEventHandler().also { INSTANCE = it }, callingEvent)
                     }
                 }

@@ -38,3 +38,10 @@ abstract class BaseGroupActivity : WebRtcMiddlewareActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }
+
+/**
+ * 1. Activity (View)
+ * 2. ViewModel
+ * 3. Repository
+ * 4. Data Layer
+ */
