@@ -246,7 +246,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
     private fun startPdfDownload(){
         if(pdfUrl.isNullOrBlank().not()) {
-            getPermissionAndDownloadSyllabus(pdfUrl!!)
+            pdfUrl?.let { getPermissionAndDownloadSyllabus(it) }
         }else{
             showToast("Something Went wrong")
         }
@@ -476,7 +476,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     data1.buttonText?.let { it1 -> buttonText.add(it1) }
                     data1.heading.let { it1 -> headingText.add(it1) }
 
-                    englishCard.title!!.text = data1.courseHeading
+                    englishCard.title.text = data1.courseHeading
                     englishCard.txt_currency.text = data1.discount?.get(0).toString()
                     englishCard.txt_final_price.text = data1.discount?.substring(1)
                     englishCard.txt_og_price.text = getString(R.string.price, data1.actualAmount)
