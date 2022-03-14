@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
@@ -60,6 +61,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.android.synthetic.main.activity_free_trial_payment.view.*
+import kotlinx.android.synthetic.main.price_card.view.*
+import kotlinx.android.synthetic.main.syllabus_pdf_layout.view.*
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
@@ -86,6 +90,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var is100PointsActive = true
     private var currentTime : Long = 0L
 
+    var englishCard: View? = null
+    var subscriptionCard: View? = null
 
     private var pdfUrl : String?= null
     private var downloadID: Long = -1
@@ -145,52 +151,23 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         currentTime = System.currentTimeMillis()
         initABTest()
         setObservers()
-        setListeners()
-        viewModel.getPaymentDetails(testId.toInt())
-        if(is100PointsActive){
-            viewModel.getPointsSummary()
-        }
         logNewPaymentPageOpened()
-
-        if(isSyllabusActive){
-            viewModel.getD2pSyllabusPdfData()
-        }
+        dynamicCardCreation()
+        setListeners()
         viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
+    }
 
+    private fun dynamicCardCreation(){
+        val inflater: LayoutInflater =
+            getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        englishCard = inflater.inflate(R.layout.price_card, null, true)
+        subscriptionCard= inflater.inflate(R.layout.price_card, null, true)
+        binding.cardsContainer.addView(englishCard)
+        binding.cardsContainer.addView(subscriptionCard)
     }
 
     private fun initABTest() {
-        viewModel.getNewLayoutCampaignData(CampaignKeys.BUY_LAYOUT_CHANGED.name)
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
-        viewModel.getSyllabusCampaignData(CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name)
-    }
-
-    private fun setOldAndNewViews(){
-        if(isNewFlowActive){
-            binding.englishCardNew.visibility = View.VISIBLE
-            binding.subscriptionCardNew.visibility = View.VISIBLE
-            binding.barrierPhoneNew.visibility = View.VISIBLE
-
-            binding.englishCard.visibility = View.GONE
-            binding.subscriptionCard.visibility = View.GONE
-            binding.barrierPhone.visibility = View.GONE
-            binding.linearLayoutCompat2.visibility = View.GONE
-            binding.seeCourseList.visibility = View.GONE
-            binding.syllabusPdfCardOld.visibility = View.GONE
-        }else{
-            binding.englishCard.visibility = View.VISIBLE
-            binding.subscriptionCard.visibility = View.VISIBLE
-            binding.barrierPhone.visibility = View.VISIBLE
-            binding.linearLayoutCompat2.visibility = View.VISIBLE
-
-            binding.englishCardNew.visibility = View.GONE
-            binding.subscriptionCardNew.visibility = View.GONE
-            binding.barrierPhoneNew.visibility = View.GONE
-
-            if(isSyllabusActive){
-                binding.syllabusPdfCardOld.visibility = View.VISIBLE
-            }
-        }
+        viewModel.getAllCampaigns()
     }
 
     private fun forceDisconnectCall() {
@@ -208,9 +185,54 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         binding.ivBack.setOnClickListener {
             onBackPressed()
         }
+        englishCard!!.card.setOnClickListener {
+            isEnglishCardTapped = true
+            performActionOnEnglishTapped()
+        }
 
-        oldViewsClickListners()
-        newViewsClickListners()
+        englishCard!!.iv_expand.setOnClickListener {
+            isEnglishCardTapped = true
+            performActionOnEnglishTapped()
+        }
+
+        englishCard!!.iv_minimise.setOnClickListener {
+            performActionOntapped(englishCard!!)
+        }
+
+        subscriptionCard!!.card.setOnClickListener {
+            isEnglishCardTapped = false
+            performActionOnSubscriptionTapped()
+            enableBuyCourseButton()
+        }
+
+        subscriptionCard!!.iv_expand.setOnClickListener {
+            isEnglishCardTapped = false
+            performActionOnSubscriptionTapped()
+            enableBuyCourseButton()
+        }
+
+        binding.seeCourseList.setOnClickListener {
+            openCourseExplorerActivity()
+        }
+        subscriptionCard!!.see_course_list_new.setOnClickListener{
+            viewModel.saveImpression(SEE_COURSE_LIST_BUTTON_CLICKED)
+            openCourseExplorerActivity()
+        }
+
+        subscriptionCard!!.iv_minimise.setOnClickListener {
+            performActionOntapped(subscriptionCard!!)
+            subscriptionCard!!.see_course_list_new.visibility = View.GONE
+            enableBuyCourseButton()
+        }
+
+        englishCard!!.syllabus_layout_new.english_syllabus_pdf.setOnClickListener {
+            startPdfDownload()
+        }
+
+        binding.syllabusLayout.english_syllabus_pdf.setOnClickListener {
+            startPdfDownload()
+        }
+
         binding.applyCoupon.setOnClickListener {
             viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
             val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
@@ -218,238 +240,106 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
-    private fun oldViewsClickListners(){
-        binding.englishCard.setOnClickListener {
-            try {
-                index = 0
-                binding.subscriptionCard.background =
-                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-                binding.englishCard.background =
-                    ContextCompat.getDrawable(
-                        this,
-                        R.drawable.blue_rectangle_with_blue_bound_stroke
-                    )
-
-                binding.txtLabelHeading.text = headingText.get(index)
-                binding.seeCourseList.visibility = View.GONE
-                isEnglishCardTapped = true
-
-                    if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false && is100PointsActive){
-                    binding.materialTextView.text = getString(R.string.achieve_100_points_first)
-                    binding.materialTextView.isEnabled = false
-                    binding.materialTextView.alpha = .5f
-                    } else{
-                    binding.materialTextView.text = buttonText.get(index)
-                    binding.materialTextView.isEnabled = true
-                    binding.materialTextView.alpha = 1f
-                  }
-
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
+    private fun enableBuyCourseButton(){
+        binding.materialTextView.isEnabled = true
+        binding.materialTextView.alpha = 1f
+    }
+    private fun startPdfDownload(){
+        if(pdfUrl.isNullOrBlank().not()) {
+            getPermissionAndDownloadSyllabus(pdfUrl!!)
+        }else{
+            showToast("Something Went wrong")
         }
-
-        binding.subscriptionCard.setOnClickListener {
-            try {
-                index = 1
-                binding.subscriptionCard.background =
-                    ContextCompat.getDrawable(
-                        this,
-                        R.drawable.blue_rectangle_with_blue_bound_stroke
-                    )
-                binding.englishCard.background =
-                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-                binding.materialTextView.text = buttonText.get(index)
-                binding.txtLabelHeading.text = headingText.get(index)
-                binding.seeCourseList.visibility = View.VISIBLE
-                isEnglishCardTapped = false
-                if(is100PointsActive){
-                    binding.materialTextView.isEnabled = true
-                    binding.materialTextView.alpha = 1f
-                }
-                scrollToBottom()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-        binding.seeCourseList.setOnClickListener {
-            CourseExploreActivity.startCourseExploreActivity(
-                this,
-                COURSE_EXPLORER_CODE,
-                null,
-                state = ActivityEnum.FreeTrial,
-                isClickable = false
-            )
-        }
-
-        binding.syllabusPdfCardOld.setOnClickListener {
-            if(pdfUrl.isNullOrBlank().not()) {
-                getPermissionAndDownloadSyllabus(pdfUrl!!)
-            }else{
-                showToast("Something Went wrong")
-            }
-        }
-
     }
 
+    private fun performActionOntapped(card : View){
+        card.iv_minimise.visibility = View.GONE
+        card.course_info.visibility = View.GONE
+        card.iv_expand.visibility = View.VISIBLE
+        card.see_course_list_new.visibility = View.GONE
+        binding.seeCourseList.visibility = View.GONE
+        englishCard!!.syllabus_layout_new.visibility = View.GONE
+    }
 
+    private fun performActionOnEnglishTapped(){
+        try {
+            index = 0
+            subscriptionCard!!.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
 
+            binding.txtLabelHeading.text = headingText.get(index)
+            binding.materialTextView.text = buttonText.get(index)
 
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
 
-    private fun newViewsClickListners(){
-        binding.ivExpand.setOnClickListener {
-            try {
-                showEnglishButtonTextAndCardDecoration()
-                binding.linearLayoutCompatEnglishNew.visibility = View.VISIBLE
-                binding.ivExpand.visibility = View.GONE
-                binding.ivMinimise.visibility = View.VISIBLE
-                if(isSyllabusActive){
-                    binding.syllabusPdfCardNew.visibility = View.VISIBLE
-                }
+        if(isNewFlowActive) {
+            englishCard!!.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
+            if(isSyllabusActive) englishCard!!.syllabus_layout_new.visibility = View.VISIBLE
+        }
+        else englishCard!!.card.background = ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
 
-                binding.linearLayoutCompatSubscriptionNew.visibility = View.GONE
-                binding.ivExpand1.visibility = View.VISIBLE
-                binding.ivMinimise1.visibility = View.GONE
-                binding.seeCourseListNew.visibility = View.GONE
-                isEnglishCardTapped = true
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+        if(is100PointsActive){
+            if(!isPointsScoredMoreThanEqualTo100 && !PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)) {
+                binding.materialTextView.isEnabled = false
+                binding.materialTextView.alpha = .5f
+                binding.materialTextView.text = getString(R.string.achieve_100_points_to_buy)
             }
         }
 
-        binding.ivMinimise.setOnClickListener {
-            binding.linearLayoutCompatEnglishNew.visibility = View.GONE
-            binding.ivExpand.visibility = View.VISIBLE
-            binding.ivMinimise.visibility = View.GONE
-            binding.syllabusPdfCardNew.visibility = View.GONE
+
+        if(englishCard!!.iv_expand.visibility == View.VISIBLE){
+            subscriptionCard!!.iv_expand.visibility = View.VISIBLE
+            subscriptionCard!!.iv_minimise.visibility = View.GONE
+            subscriptionCard!!.course_info.visibility = View.GONE
+
+            englishCard!!.course_info.visibility = View.VISIBLE
+            englishCard!!.iv_minimise.visibility = View.VISIBLE
+            englishCard!!.iv_expand.visibility = View.GONE
+        }else if(englishCard!!.iv_minimise.visibility == View.VISIBLE) performActionOntapped(englishCard!!)
+
+        binding.seeCourseList.visibility = View.GONE
+        subscriptionCard!!.see_course_list_new.visibility = View.GONE
+    }
+
+    private fun performActionOnSubscriptionTapped(){
+        englishCard!!.syllabus_layout_new.visibility = View.GONE
+        try {
+            index = 1
+            englishCard!!.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+            binding.materialTextView.text = buttonText.get(index)
+            binding.txtLabelHeading.text = headingText.get(index)
+            binding.seeCourseList.visibility = View.VISIBLE
+
+            scrollToBottom()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
 
-        binding.ivExpand1.setOnClickListener {
-            try {
-                index = 1
-                binding.subscriptionCardNew.background =
-                    ContextCompat.getDrawable(
-                        this,
-                        R.drawable.white_rectangle_with_blue_bound_stroke
-                    )
-                binding.englishCardNew.background =
-                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-                binding.materialTextView.text = buttonText.get(index)
-                binding.materialTextView.isEnabled = true
-                binding.materialTextView.alpha = 1f
-                binding.txtLabelHeading.text = headingText.get(index)
-                isEnglishCardTapped = false
-                scrollToBottom()
+        if(isNewFlowActive)  subscriptionCard!!.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
+        else subscriptionCard!!.card.background = ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
 
-                binding.linearLayoutCompatSubscriptionNew.visibility = View.VISIBLE
-                binding.ivExpand1.visibility = View.GONE
-                binding.ivMinimise1.visibility = View.VISIBLE
-                binding.seeCourseListNew.visibility = View.VISIBLE
+        if(subscriptionCard!!.iv_expand.visibility == View.VISIBLE ){
+            englishCard!!.course_info.visibility = View.GONE
+            englishCard!!.iv_minimise.visibility = View.GONE
+            englishCard!!.iv_expand.visibility = View.VISIBLE
+            binding.seeCourseList.visibility = View.GONE
 
-                binding.linearLayoutCompatEnglishNew.visibility = View.GONE
-                binding.ivExpand.visibility = View.VISIBLE
-                binding.ivMinimise.visibility = View.GONE
-                binding.syllabusPdfCardNew.visibility = View.GONE
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
+            subscriptionCard!!.iv_expand.visibility = View.GONE
+            subscriptionCard!!.iv_minimise.visibility = View.VISIBLE
+            subscriptionCard!!.course_info.visibility = View.VISIBLE
+            subscriptionCard!!.see_course_list_new.visibility = View.VISIBLE
+        }else if(subscriptionCard!!.iv_minimise.visibility == View.VISIBLE) performActionOntapped(subscriptionCard!!)
+    }
 
-        binding.ivMinimise1.setOnClickListener {
-            binding.linearLayoutCompatSubscriptionNew.visibility = View.GONE
-            binding.ivExpand1.visibility = View.VISIBLE
-            binding.ivMinimise1.visibility = View.GONE
-            binding.seeCourseListNew.visibility = View.GONE
-        }
-
-        binding.ivBack.setOnClickListener {
-            onBackPressed()
-        }
-        binding.englishCardNew.setOnClickListener {
-            try {
-                isEnglishCardTapped = true
-                showEnglishButtonTextAndCardDecoration()
-                if(binding.ivExpand.visibility == View.VISIBLE){
-                    binding.linearLayoutCompatEnglishNew.visibility = View.VISIBLE
-                    binding.ivExpand.visibility = View.GONE
-                    binding.ivMinimise.visibility = View.VISIBLE
-                    if(isSyllabusActive){
-                        binding.syllabusPdfCardNew.visibility = View.VISIBLE
-                    }
-
-                    binding.linearLayoutCompatSubscriptionNew.visibility = View.GONE
-                    binding.ivExpand1.visibility = View.VISIBLE
-                    binding.ivMinimise1.visibility = View.GONE
-                    binding.seeCourseListNew.visibility = View.GONE
-
-                }else if(binding.ivMinimise.visibility == View.VISIBLE){
-                    binding.linearLayoutCompatEnglishNew.visibility = View.GONE
-                    binding.ivExpand.visibility = View.VISIBLE
-                    binding.ivMinimise.visibility = View.GONE
-                    binding.syllabusPdfCardNew.visibility = View.GONE
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-
-        binding.subscriptionCardNew.setOnClickListener {
-            try {
-                index = 1
-                binding.subscriptionCardNew.background =
-                    ContextCompat.getDrawable(
-                        this,
-                        R.drawable.white_rectangle_with_blue_bound_stroke
-                    )
-                binding.englishCardNew.background =
-                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-                binding.materialTextView.text = buttonText.get(index)
-                binding.materialTextView.isEnabled = true
-                binding.materialTextView.alpha = 1f
-                binding.txtLabelHeading.text = headingText.get(index)
-                isEnglishCardTapped = false
-                scrollToBottom()
-
-                if(binding.ivExpand1.visibility == View.VISIBLE){
-                    binding.linearLayoutCompatSubscriptionNew.visibility = View.VISIBLE
-                    binding.ivExpand1.visibility = View.GONE
-                    binding.ivMinimise1.visibility = View.VISIBLE
-                    binding.seeCourseListNew.visibility = View.VISIBLE
-
-                    binding.linearLayoutCompatEnglishNew.visibility = View.GONE
-                    binding.ivExpand.visibility = View.VISIBLE
-                    binding.ivMinimise.visibility = View.GONE
-                    binding.syllabusPdfCardNew.visibility = View.GONE
-
-                }else if(binding.ivMinimise1.visibility == View.VISIBLE){
-                    binding.linearLayoutCompatSubscriptionNew.visibility = View.GONE
-                    binding.ivExpand1.visibility = View.VISIBLE
-                    binding.ivMinimise1.visibility = View.GONE
-                    binding.seeCourseListNew.visibility = View.GONE
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-        binding.seeCourseListNew.setOnClickListener {
-            viewModel.saveImpression(SEE_COURSE_LIST_BUTTON_CLICKED)
-            CourseExploreActivity.startCourseExploreActivity(
-                this,
-                COURSE_EXPLORER_CODE,
-                null,
-                state = ActivityEnum.FreeTrial,
-                isClickable = false
-            )
-        }
-
-        binding.syllabusPdfCardNew.setOnClickListener {
-            if(pdfUrl.isNullOrBlank().not()) {
-                getPermissionAndDownloadSyllabus(pdfUrl!!)
-            }else{
-                showToast("Something Went wrong")
-            }
-        }
-
+    private fun openCourseExplorerActivity(){
+        CourseExploreActivity.startCourseExploreActivity(
+            this,
+            COURSE_EXPLORER_CODE,
+            null,
+            state = ActivityEnum.FreeTrial,
+            isClickable = false
+        )
     }
 
     private fun getPermissionAndDownloadSyllabus(url: String) {
@@ -511,44 +401,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         )
     }
 
-
-
-    private fun showEnglishButtonTextAndCardDecoration(){
-        index = 0
-        binding.subscriptionCardNew.background =
-            ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
-        binding.englishCardNew.background =
-            ContextCompat.getDrawable(
-                this,
-                R.drawable.white_rectangle_with_blue_bound_stroke
-            )
-
-            if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false && is100PointsActive){
-                binding.materialTextView.text = getString(R.string.achieve_100_points_first)
-                binding.materialTextView.isEnabled = false
-                binding.materialTextView.alpha = .5f
-            } else{
-                binding.materialTextView.text = buttonText.get(index)
-                binding.materialTextView.isEnabled = true
-                binding.materialTextView.alpha = 1f
-            }
-      //  isEnglishCardTapped = true
-//        if(PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED) == false && isPointsScoredMoreThanEqualTo100 == false){
-//            binding.materialTextView.text = getString(R.string.achieve_100_points_first)
-//            binding.materialTextView.isEnabled = false
-//            binding.materialTextView.alpha = .5f
-//        }else{
-//            binding.materialTextView.text = buttonText.get(index)
-//            binding.materialTextView.isEnabled = true
-//            binding.materialTextView.alpha = 1f
-//        }
-        binding.materialTextView.text = buttonText.get(index)
-        binding.txtLabelHeading.text = headingText.get(index)
-    }
-
-
-
-
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(PromoCodeSubmitEventBus::class.java)
@@ -568,14 +420,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     override fun onStart() {
         super.onStart()
-        binding.subscriptionCard.performClick()
+        subscriptionCard!!.card.performClick()
     }
 
     override fun onResume() {
         super.onResume()
-        if(isNewFlowActive){
-            binding.seeCourseList.visibility = View.GONE
-        }
         subscribeRXBus()
     }
 
@@ -615,111 +464,56 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
+
     private fun setObservers() {
-        viewModel.paymentDetailsLiveData.observe(this) {
-            if(isNewFlowActive){
-                binding.englishCardNew.elevation = resources.getDimension(R.dimen._15sdp)
-                binding.subscriptionCardNew.elevation = resources.getDimension(R.dimen._15sdp)
-            }
+        viewModel.paymentDetailsLiveData.observe(this) { it ->
             try {
                 buttonText = mutableListOf<String>()
                 headingText = mutableListOf<String>()
-                if (!isNewFlowActive) {
-                    it.subHeadings?.let { list ->
-                        for (i in list.indices) {
-                            when (i) {
-                                0 -> {
-                                    binding.txtPointer1.text = list[i]
-                                    binding.txtPointer1.visibility = View.VISIBLE
-                                }
-                                1 -> {
-                                    binding.txtPointer2.text = list[i]
-                                    binding.txtPointer2.visibility = View.VISIBLE
-                                }
-                                2 -> {
-                                    binding.txtPointer3.text = list[i]
-                                    binding.txtPointer3.visibility = View.VISIBLE
-                                }
-                                3 -> {
-                                    binding.txtPointer4.text = list[i]
-                                    binding.txtPointer4.visibility = View.VISIBLE
-                                }
-                                4 -> {
-                                    binding.txtPointer5.text = list[i]
-                                    binding.txtPointer5.visibility = View.VISIBLE
-                                }
-                                5 -> {
-                                    binding.txtPointer6.text = list[i]
-                                    binding.txtPointer6.visibility = View.VISIBLE
-                                }
-                                6 -> {
-                                    binding.txtPointer7.text = list[i]
-                                    binding.txtPointer7.visibility = View.VISIBLE
-                                }
-                                7 -> {
-                                    binding.txtPointer8.text = list[i]
-                                    binding.txtPointer8.visibility = View.VISIBLE
-                                }
-                                8 -> {
-                                    binding.txtPointer9.text = list[i]
-                                    binding.txtPointer9.visibility = View.VISIBLE
-                                }
-                                9 -> {
-                                    binding.txtPointer10.text = list[i]
-                                    binding.txtPointer10.visibility = View.VISIBLE
-                                }
-                                10 -> {
-                                    binding.txtPointer11.text = list[i]
-                                    binding.txtPointer11.visibility = View.VISIBLE
-                                }
-                            }
-                        }
-                    }
 
                 it.courseData?.let {
-                    val data1 = it.get(0)
-                    if (data1 != null) {
-                        data1.buttonText?.let { it1 -> buttonText.add(it1) }
-                        data1.heading.let { it1 -> headingText.add(it1) }
+                    val data1 = it[0]
+                    data1.buttonText?.let { it1 -> buttonText.add(it1) }
+                    data1.heading.let { it1 -> headingText.add(it1) }
 
-                        binding.title1.text = data1.courseHeading
-                        binding.txtCurrency1.text = data1.discount?.get(0).toString()
-                        binding.txtFinalPrice1.text = data1.discount?.substring(1)
-                        binding.txtOgPrice1.text = getString(R.string.price, data1.actualAmount)
-                        binding.txtOgPrice1.paintFlags =
-                            binding.txtOgPrice1.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                        binding.txtSaving1.text = getString(R.string.savings, data1.savings)
-                        binding.courseRating1.rating = data1.rating?.toFloat() ?: 4f
-                        binding.txtTotalReviews1.text =
-                            "(" + String.format("%,d", data1.ratingsCount) + ")"
-                    } else {
-                        binding.englishCard.visibility = View.GONE
-                    }
+                    englishCard?.title!!.text = data1.courseHeading
+                    englishCard!!.txt_currency.text = data1.discount?.get(0).toString()
+                    englishCard!!.txt_final_price.text = data1.discount?.substring(1)
+                    englishCard!!.txt_og_price.text = getString(R.string.price, data1.actualAmount)
+                    englishCard!!.txt_og_price.paintFlags =
+                        englishCard!!.txt_og_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    englishCard!!.txt_saving.text = getString(R.string.savings, data1.savings)
+                    englishCard!!.course_rating.rating = data1.rating?.toFloat() ?: 4f
+                    englishCard!!.txt_total_reviews.text =
+                        "(" + String.format("%,d", data1.ratingsCount) + ")"
 
-                    val data2 = it.get(1)
-                    if (data2 != null) {
-                        data2.buttonText?.let { it1 -> buttonText.add(it1) }
-                        data2.heading.let { it1 -> headingText.add(it1) }
-                        binding.title2.text = data2.courseHeading
-                        binding.txtCurrency2.text = data2.discount?.get(0).toString()
-                        if (data2.perCoursePrice.isNullOrBlank()) {
-                            binding.perCourseText.visibility = View.GONE
-                        } else {
-                            binding.perCourseText.visibility = View.VISIBLE
-                            binding.perCourseText.text = data2.perCoursePrice
-                        }
-                        binding.txtCurrency2.text = data2.discount?.get(0).toString()
-                        binding.txtFinalPrice2.text = data2.discount?.substring(1)
-                        binding.txtOgPrice2.text = getString(R.string.price, data2.actualAmount)
-                        binding.txtOgPrice2.paintFlags =
-                            binding.txtOgPrice2.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                        binding.txtSaving2.text = getString(R.string.savings, data2.savings)
-                        binding.courseRating2.rating = data2.rating?.toFloat() ?: 4f
-                        binding.txtTotalReviews2.text =
-                            "(" + String.format("%,d", data2.ratingsCount) + ")"
+
+                    val data2 = it[1]
+                    data2.buttonText?.let { it1 -> buttonText.add(it1) }
+                    data2.heading.let { it1 -> headingText.add(it1) }
+                    subscriptionCard!!.title.text = data2.courseHeading
+                    TextViewCompat.setTextAppearance(
+                        subscriptionCard!!.title,
+                        R.style.TextAppearance_JoshTypography_Body_Text_Small_Semi_Bold
+                    )
+                    subscriptionCard!!.title.setTextColor(resources.getColor(R.color.colorPrimary))
+                    subscriptionCard!!.txt_currency.text = data2.discount?.get(0).toString()
+                    if (data2.perCoursePrice.isNullOrBlank()) {
+                        subscriptionCard!!.per_course_text.visibility = View.GONE
                     } else {
-                        binding.subscriptionCard.visibility = View.GONE
+                        subscriptionCard!!.per_course_text.visibility = View.VISIBLE
+                        subscriptionCard!!.per_course_text.text = data2.perCoursePrice
                     }
+                    subscriptionCard!!.txt_currency.text = data2.discount?.get(0).toString()
+                    subscriptionCard!!.txt_final_price.text = data2.discount?.substring(1)
+                    subscriptionCard!!.txt_og_price.text = getString(R.string.price, data2.actualAmount)
+                    subscriptionCard!!.txt_og_price.paintFlags =
+                        subscriptionCard!!.txt_og_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    subscriptionCard!!.txt_saving.text = getString(R.string.savings, data2.savings)
+                    subscriptionCard!!.course_rating.rating = data2.rating?.toFloat() ?: 4f
+                    subscriptionCard!!.txt_total_reviews.text =
+                        "(" + String.format("%,d", data2.ratingsCount) + ")"
+
                     try {
                         binding.materialTextView.text = buttonText.get(index)
                         binding.txtLabelHeading.text = headingText.get(index)
@@ -727,99 +521,47 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         ex.printStackTrace()
                     }
                 }
-            }else{
 
-
+                if(isNewFlowActive){
                     it.combinedMessage?.get(0)?.let { list ->
                         for (i in list.indices) {
-                            val textViewEnglish = AppCompatTextView(this)
-                            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
-                            textViewEnglish.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                            textViewEnglish.setCompoundDrawablePadding(76)
-                            textViewEnglish.gravity = Gravity.CENTER or Gravity.START
-                            textViewEnglish.setPadding(0, 0, 0, 30)
-                            TextViewCompat.setTextAppearance(
-                                textViewEnglish,
-                                R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular
-                            )
-                            textViewEnglish.text = list[i]
-                            binding.linearLayoutCompatEnglishNew.addView(textViewEnglish)
+                            val englishTextView : AppCompatTextView = createTextViewsDynamically()
+                            englishTextView.text = list[i]
+                            englishCard!!.course_info.addView(englishTextView)
                         }
                     }
 
                     it.combinedMessage?.get(1)?.let { list ->
+                        subscriptionCard!!.course_info.visibility = View.VISIBLE
                         for (i in list.indices) {
-                            val textViewSubscription = AppCompatTextView(this)
-                            val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
-                            textViewSubscription.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                            textViewSubscription.setCompoundDrawablePadding(76)
-                            textViewSubscription.gravity = Gravity.CENTER or Gravity.START
-                            textViewSubscription.setPadding(0, 0, 0, 30)
-                            TextViewCompat.setTextAppearance(
-                                textViewSubscription,
-                                R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular
-                            )
-                            textViewSubscription.text = list[i]
-                            binding.linearLayoutCompatSubscriptionNew.addView(textViewSubscription)
+                            val subscriptionTextView : AppCompatTextView = createTextViewsDynamically()
+                            subscriptionTextView.text = list[i]
+                            subscriptionCard!!.course_info.addView(subscriptionTextView)
                         }
                     }
+                    subscriptionCard!!.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
+                    englishCard!!.card.elevation = resources.getDimension(R.dimen._6sdp)
+                    subscriptionCard!!.card.elevation = resources.getDimension(R.dimen._6sdp)
 
-                    it.courseData?.let {
-                        val data1 = it.get(0)
-                        if (data1 != null) {
-                            data1.buttonText?.let { it1 -> buttonText.add(it1) }
-                            data1.heading.let { it1 -> headingText.add(it1) }
-
-                            binding.title1New.text = data1.courseHeading
-                            binding.txtCurrency1New.text = data1.discount?.get(0).toString()
-                            binding.txtFinalPrice1New.text = data1.discount?.substring(1)
-                            binding.txtOgPrice1New.text = getString(R.string.price, data1.actualAmount)
-                            binding.txtOgPrice1New.paintFlags =
-                                binding.txtOgPrice1New.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                            binding.txtSaving1New.text = getString(R.string.savings, data1.savings)
-                            binding.courseRating1New.rating = data1.rating?.toFloat() ?: 4f
-                            binding.txtTotalReviews1New.text =
-                                "(" + String.format("%,d", data1.ratingsCount) + ")"
-                        } else {
-                            binding.englishCardNew.visibility = View.GONE
-                        }
-
-                        val data2 = it.get(1)
-                        if (data2 != null) {
-                            data2.buttonText?.let { it1 -> buttonText.add(it1) }
-                            data2.heading.let { it1 -> headingText.add(it1) }
-                            binding.title2New.text = data2.courseHeading
-                            binding.txtCurrency2New.text = data2.discount?.get(0).toString()
-                            if (data2.perCoursePrice.isNullOrBlank()) {
-                                binding.perCourseTextNew.visibility = View.GONE
-                            } else {
-                                binding.perCourseTextNew.visibility = View.VISIBLE
-                                binding.perCourseTextNew.text = data2.perCoursePrice
-                            }
-                            binding.txtCurrency2New.text = data2.discount?.get(0).toString()
-                            binding.txtFinalPrice2New.text = data2.discount?.substring(1)
-                            binding.txtOgPrice2New.text = getString(R.string.price, data2.actualAmount)
-                            binding.txtOgPrice2New.paintFlags =
-                                binding.txtOgPrice2New.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                            binding.txtSaving2New.text = getString(R.string.savings, data2.savings)
-                            binding.courseRating2New.rating = data2.rating?.toFloat() ?: 4f
-                            binding.txtTotalReviews2New.text =
-                                "(" + String.format("%,d", data2.ratingsCount) + ")"
-                        } else {
-                            binding.subscriptionCardNew.visibility = View.GONE
-                        }
-                        try {
-                            binding.materialTextView.text = buttonText.get(index)
-                            binding.txtLabelHeading.text = headingText.get(index)
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
+                }else {
+                    binding.oldViewCourseInfo.visibility = View.VISIBLE
+                      binding.seeCourseList.visibility = View.VISIBLE
+                    it.subHeadings?.let { list ->
+                        for (i in list.indices) {
+                            val infoTextView : AppCompatTextView = createTextViewsDynamically()
+                            infoTextView.text = list[i]
+                            binding.oldViewCourseInfo.addView(infoTextView)
                         }
                     }
+                      subscriptionCard!!.card.background =
+                          ContextCompat.getDrawable(
+                              this,
+                              R.drawable.blue_rectangle_with_blue_bound_stroke
+                          )
+                }
 
-
-            }
-
-
+                englishCard!!.card.background =
+                    ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
 
                 if (it.expireTime != null) {
                     binding.freeTrialTimer.visibility = View.VISIBLE
@@ -849,6 +591,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         }
                     }
                 }
+                pdfUrl = it.pdfUrl
+                if(it.totalPoints > 100){
+                    isPointsScoredMoreThanEqualTo100 = true
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -863,21 +609,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.progressBar.visibility = View.VISIBLE
             } else {
                 binding.progressBar.visibility = View.GONE
-                if(isNewFlowActive){
-                    binding.englishCardNew.elevation = resources.getDimension(R.dimen._15sdp)
-                    binding.subscriptionCardNew.elevation = resources.getDimension(R.dimen._15sdp)
-                }
             }
         }
-
-        viewModel.d2pSyllabusPdfResponse.observe(this,{
-            pdfUrl = it["syllabus"]
-        })
-        viewModel.pointsHistoryLiveData.observe(this, {
-            if(it.totalPoints != null && it.totalPoints >= 100){
-                isPointsScoredMoreThanEqualTo100 = true
-            }
-        })
 
         viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
@@ -891,30 +624,36 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 isSyllabusActive =
                     (map.variantKey == VariantKeys.ESD_ENABLED.name) && map.variableMap?.isEnabled == true
             }
-
-            if(isSyllabusActive && !isNewFlowActive){
-                binding.syllabusPdfCardOld.visibility = View.VISIBLE
-            }else{
-                binding.syllabusPdfCardOld.visibility = View.GONE
-            }
-            if(isSyllabusActive && isNewFlowActive){
-                binding.syllabusPdfCardNew.visibility = View.VISIBLE
-            }else{
-                binding.syllabusPdfCardNew.visibility = View.GONE
-            }
-
-
         }
+
         viewModel.abtestNewLayoutLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 isNewFlowActive =
                     (map.variantKey == VariantKeys.BUY_LAYOUT_ENABLED.name) && map.variableMap?.isEnabled == true
             }
-
-            setOldAndNewViews()
-
+            viewModel.getPaymentDetails(testId.toInt())
+            if(isNewFlowActive){
+                subscriptionCard!!.iv_minimise.visibility = View.VISIBLE
+                englishCard!!.iv_expand.visibility = View.VISIBLE
+                subscriptionCard!!.see_course_list_new.visibility = View.VISIBLE
+                binding.seeCourseList.visibility = View.GONE
+            }
+            if(!isNewFlowActive && isSyllabusActive) binding.syllabusLayout.visibility = View.VISIBLE
         }
+    }
 
+    private fun createTextViewsDynamically() : AppCompatTextView{
+        val textView = AppCompatTextView(this)
+        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
+        textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+        textView.setCompoundDrawablePadding(76)
+        textView.gravity = Gravity.CENTER or Gravity.START
+        textView.setPadding(0, 0, 0, 30)
+        TextViewCompat.setTextAppearance(
+            textView,
+            R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular
+        )
+        return textView
     }
 
     private fun initializeRazorpayPayment(orderDetails: OrderDetailResponse) {
@@ -959,11 +698,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (Utils.isInternetAvailable().not()) {
             showToast(getString(R.string.internet_not_available_msz))
             return
-        }
-
-        if(isNewFlowActive){
-            binding.englishCardNew.elevation = 0f
-            binding.subscriptionCardNew.elevation = 0f
         }
 
         var phoneNumber = getPhoneNumber()
@@ -1043,11 +777,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
 
-            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED) && isSyllabusActive){
+            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
                 viewModel.postGoal(GoalKeys.ESD_COURSE_BOUGHT.name, CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name)
 
             }
+
             if(isEnglishCardTapped && isPointsScoredMoreThanEqualTo100 && is100PointsActive){
                 viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
                 viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)

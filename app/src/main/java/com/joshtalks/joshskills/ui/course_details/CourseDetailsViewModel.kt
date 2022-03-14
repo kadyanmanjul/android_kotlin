@@ -29,7 +29,6 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val courseDetailsLiveData: MutableLiveData<CourseDetailsResponseV2> = MutableLiveData()
     val demoCourseDetailsLiveData: MutableLiveData<DemoCourseDetailsResponse> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val pointsHistoryLiveData: MutableLiveData<PointsHistoryResponse> = MutableLiveData()
     val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
@@ -41,22 +40,6 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    fun getPointsSummary() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-
-                val response = AppObjectController.commonNetworkService.getUserPointsHistory(
-                    Mentor.getInstance().getId()
-                )
-                if (response.isSuccessful && response.body() != null) {
-                    pointsHistoryLiveData.postValue(response.body())
-                }
-            } catch (ex: Exception) {
-                ex.showAppropriateMsg()
-            }
-        }
-    }
-
     fun fetchCourseDetails(testId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -64,9 +47,8 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 requestParams["test_id"] = testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
-                if (Mentor.getInstance().getId().isNotEmpty() && User.getInstance().isVerified) {
-                    requestParams["mentor_id"] = Mentor.getInstance().getId()
-                }
+//                if (Mentor.getInstance().getId().isNotEmpty()) {
+                requestParams["mentor_id"] = Mentor.getInstance().getId()
                 val response =
                     AppObjectController.commonNetworkService.getCourseDetails(requestParams)
                 if (response.isSuccessful) {

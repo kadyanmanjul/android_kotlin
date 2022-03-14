@@ -838,7 +838,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
-            if(is100PointsObtained && testId.toInt() == ENGLISH_COURSE_TEST_ID){
+            if(is100PointsObtained){
                 viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
                 viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
             }

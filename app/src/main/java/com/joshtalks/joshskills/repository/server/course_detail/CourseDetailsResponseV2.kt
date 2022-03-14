@@ -18,5 +18,8 @@ data class CourseDetailsResponseV2(
     val isFreeTrial: Boolean = false,
 
     @SerializedName("expiry_time")
-    val expiredDate: Date
+    val expiredDate: Date,
+
+    @SerializedName("total_points")
+    val totalPoints: Int
 )

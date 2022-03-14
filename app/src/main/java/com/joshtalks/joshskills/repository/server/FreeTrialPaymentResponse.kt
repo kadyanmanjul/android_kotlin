@@ -15,8 +15,12 @@ data class FreeTrialPaymentResponse(
     val subHeadings: List<String>?,
     @SerializedName("coupon_details")
     val couponDetails: CouponDetails,
-    @SerializedName("combined_sub_heading")
-    val combinedMessage: List<List<String>>?
+    @SerializedName("combined_heading")
+    val combinedMessage: List<List<String>>?,
+    @SerializedName("syllabus")
+    val pdfUrl: String?,
+    @SerializedName("total_points")
+    val totalPoints: Int
 )
 
 

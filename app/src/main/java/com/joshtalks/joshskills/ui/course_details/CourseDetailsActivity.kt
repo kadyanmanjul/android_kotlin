@@ -68,6 +68,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val ENGLISH_COURSE_TEST_ID = 102
+
 class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
@@ -83,7 +85,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var is100PointsActive = true
 
     var expiredTime: Long = 0L
-    private val ENGLISH_COURSE_TEST_ID = 102
     var isPointsScoredMoreThanEqualTo100 = false
 
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
@@ -123,14 +124,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
         initABTest()
-        if (testId != 0) {
-            getCourseDetails(testId)
-            if(testId == ENGLISH_COURSE_TEST_ID && is100PointsActive){
-                viewModel.getPointsSummary()
-            }
-        } else {
-            finish()
-        }
+
         AppAnalytics.create(AnalyticsEvent.LANDING_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -248,21 +242,19 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, { data ->
+            if(data.totalPoints > 100){
+                isPointsScoredMoreThanEqualTo100 = true
+            }
 
-            if(is100PointsActive) {
-                if (data.expiredDate != null) {
-                    expiredTime = data.expiredDate!!.time
-                    if (expiredTime != 0L && expiredTime <= System.currentTimeMillis()) {
-                        binding.btnStartCourse.isEnabled = true
-                        binding.btnStartCourse.alpha = 1f
-                    } else if (isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID) {
-                        binding.btnStartCourse.isEnabled = true
-                        binding.btnStartCourse.alpha = 1f
-                    } else if (testId == ENGLISH_COURSE_TEST_ID && !isPointsScoredMoreThanEqualTo100 && expiredTime != 0L && expiredTime > System.currentTimeMillis()) {
-                        binding.btnStartCourse.text = getString(R.string.achieve_100_points_to_buy)
-                        binding.btnStartCourse.isEnabled = false
-                        binding.btnStartCourse.alpha = .5f
-                    }
+            if(is100PointsActive && testId == ENGLISH_COURSE_TEST_ID ) {
+                expiredTime = data.expiredDate.time
+                if (isPointsScoredMoreThanEqualTo100  || expiredTime <= System.currentTimeMillis()) {
+                    binding.btnStartCourse.isEnabled = true
+                    binding.btnStartCourse.alpha = 1f
+                } else if (!isPointsScoredMoreThanEqualTo100 && expiredTime > System.currentTimeMillis()) {
+                    binding.btnStartCourse.text = getString(R.string.achieve_100_points_to_buy)
+                    binding.btnStartCourse.isEnabled = false
+                    binding.btnStartCourse.alpha = .5f
                 }
             }
 
@@ -339,19 +331,17 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             }
         })
 
-        viewModel.pointsHistoryLiveData.observe(this, {
-            if(it.totalPoints != null && it.totalPoints >= 100){
-                isPointsScoredMoreThanEqualTo100 = true
-            }
-        })
-
         viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 is100PointsActive =
                     (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
             }
+            if (testId != 0) {
+                getCourseDetails(testId)
+            } else {
+                finish()
+            }
         }
-
     }
 
     private fun showMoveToInboxScreen() {

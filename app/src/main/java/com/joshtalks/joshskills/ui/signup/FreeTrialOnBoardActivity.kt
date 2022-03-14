@@ -35,6 +35,10 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
+import com.joshtalks.joshskills.core.abTest.ABTestActivity
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -52,12 +56,13 @@ import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
-class FreeTrialOnBoardActivity : CoreJoshActivity() {
+class FreeTrialOnBoardActivity : ABTestActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
+    private var is100PointsActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +80,14 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
+    }
+
+    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+        is100PointsActive = (abTestCampaignData?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && (abTestCampaignData.variableMap?.isEnabled == true)
+    }
+
+    override fun initCampaigns() {
+        getCampaigns(CampaignKeys.HUNDRED_POINTS.NAME)
     }
 
     override fun onStart() {
@@ -141,8 +154,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-            getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+        if(is100PointsActive){
+            dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_ji_haan_text).replace("\\n", "\n")
+        }
+        else {
+            dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+        }
+
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
