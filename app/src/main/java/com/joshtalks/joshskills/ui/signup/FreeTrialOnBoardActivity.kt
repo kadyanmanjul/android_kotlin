@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
 import com.joshtalks.joshskills.core.FREE_TRIAL_DEFAULT_TEST_ID
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -170,7 +171,10 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         if(is100PointsActive){
-            dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_ji_haan_text).replace("\\n", "\n")
+            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + language.testId)
+                    .replace("\\n", "\n")
         }
         else {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
@@ -193,7 +197,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
                 if (TruecallerSDK.getInstance().isUsable)
                     openTrueCallerBottomSheet()
                 else
-                    openProfileDetailFragment(language.testId)
+                    openProfileDetailFragment()
                 alertDialog.dismiss()
             }
         }
@@ -276,17 +280,13 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         startActivity(intent)
     }
 
-    private fun openProfileDetailFragment(testId: String = FREE_TRIAL_DEFAULT_TEST_ID) {
+    private fun openProfileDetailFragment() {
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
                 SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY,
-                    viewModel.isVerified).apply {
-                    val bundle = Bundle()
-                    bundle.putString(FREE_TRIAL_TEST_ID, testId)
-                    arguments = bundle
-                },
+                    viewModel.isVerified),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }

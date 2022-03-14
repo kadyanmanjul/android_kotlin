@@ -9,15 +9,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.core.interfaces.OnChooseLanguage
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
 
-class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
-
+class ChooseLanguageOnBoardFragment: BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
-    private var languageAdapter = ChooseLanguageAdapter(this)
+    private var languageAdapter = ChooseLanguageAdapter()
 
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
@@ -44,11 +42,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
     override fun setArguments() {}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_choose_language_onboard,
-            container, false
-        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_choose_language_onboard, container, false)
         binding.lifecycleOwner = this
         return binding.root
     }
@@ -68,15 +62,15 @@ class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
     }
 
     private fun initRV() {
-
         val linearLayoutManager = LinearLayoutManager(activity)
+        languageAdapter.setLanguageItemClickListener(this::selectLanguageOnBoard)
         binding.rvChooseLanguage.apply {
             layoutManager = linearLayoutManager
             adapter = languageAdapter
         }
     }
 
-    override fun selectLanguageOnBoard(language: ChooseLanguages) {
+    fun selectLanguageOnBoard(language: ChooseLanguages) {
         (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(language)
     }
 
