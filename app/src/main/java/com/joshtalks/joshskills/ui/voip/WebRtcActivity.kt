@@ -1018,37 +1018,44 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (time <= 0) {
             time = callTime
         }
-        if(PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)){
-            viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
-            PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
-        }
-        val channelName2 =
-            if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
-        if (time > 0 && channelName2.isNullOrEmpty().not()) {
-            runOnUiThread {
-                try {
-                    binding.placeholderBg.visibility = View.VISIBLE
-                    VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                        channelName = channelName2,
-                        callTime = time,
-                        callerName = userDetailLiveData.value?.get("name"),
-                        callerImage = userDetailLiveData.value?.get("profile_pic"),
-                        yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                        yourAgoraId = mBoundService?.getUserAgoraId(),
-                        activity = this,
-                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                        callerId = callerId.toInt(),
-                        currentUserId = callieId.toInt()
-                    )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-                this.finish()
+        Log.d(TAG, "showCallRatingScreen: ${time/1000}")
+        if((time/1000) in 121..1199){
+            this@WebRtcActivity.finish()
+        }else {
+
+            if (PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)) {
+                viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+                PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
             }
-            mBoundService?.setOppositeUserInfo(null)
-            return
+            val channelName2 =
+                if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
+            if (time > 0 && channelName2.isNullOrEmpty().not()) {
+                runOnUiThread {
+                    try {
+                        binding.placeholderBg.visibility = View.VISIBLE
+                        VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                            channelName = channelName2,
+                            callTime = time,
+                            callerName = userDetailLiveData.value?.get("name"),
+                            callerImage = userDetailLiveData.value?.get("profile_pic"),
+                            yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                            yourAgoraId = mBoundService?.getUserAgoraId(),
+                            activity = this,
+                            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                            callerId = callerId.toInt(),
+                            currentUserId = callieId.toInt(),
+                            fppDialogFlag = mBoundService?.fppDialogeFlag ?: EMPTY
+                        )
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                    this.finish()
+                }
+                mBoundService?.setOppositeUserInfo(null)
+                return
+            }
+            this@WebRtcActivity.finishAndRemoveTask()
         }
-        this@WebRtcActivity.finishAndRemoveTask()
     }
 
     fun onStopCall() {
