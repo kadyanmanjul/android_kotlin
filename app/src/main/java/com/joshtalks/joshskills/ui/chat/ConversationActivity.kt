@@ -13,14 +13,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.view.Window
-import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
