@@ -109,11 +109,12 @@ fun setGroupMemberAdapter(
     adapter.setListener(function)
 }
 
-@BindingAdapter("groupChatAdapter", "scrollToBottom")
+@BindingAdapter("groupChatAdapter", "scrollToBottom", "onTitleClick")
 fun setGroupChatAdapter(
     view: RecyclerView,
     adapter: GroupChatAdapter,
-    scrollView: AppCompatImageView
+    scrollView: AppCompatImageView,
+    function: ((GroupMember, View) -> Unit)?
 ) {
     view.layoutManager = LinearLayoutManager(
         view.context,
@@ -133,6 +134,8 @@ fun setGroupChatAdapter(
     })
     view.setHasFixedSize(false)
     view.adapter = adapter
+
+    adapter.setListener(function)
 }
 
 @BindingAdapter("onSearch")
