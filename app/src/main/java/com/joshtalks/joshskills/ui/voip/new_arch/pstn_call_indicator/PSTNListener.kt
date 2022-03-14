@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.pstn_call_indicator
+package com.joshtalks.joshskills.ui.voip.new_arch.pstn_call_indicator
 import android.telephony.PhoneStateListener
 
 class PSTNListener:PhoneStateListener() {

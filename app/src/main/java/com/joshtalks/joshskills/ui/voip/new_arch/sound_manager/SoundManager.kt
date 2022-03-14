@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.sound_manager
+package com.joshtalks.joshskills.ui.voip.new_arch.sound_manager
 
 import android.content.Context
 import android.media.*
@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Vibrator
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import com.joshtalks.joshskills.core.AppObjectController
 import java.util.*
 
 class SoundManager(private val applicationContext: Context,private val soundType: Int, private val duration: Long = 0) {

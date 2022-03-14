@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.notification
+package com.joshtalks.joshskills.ui.voip.new_arch.notification
 
 import androidx.core.app.NotificationCompat
 
