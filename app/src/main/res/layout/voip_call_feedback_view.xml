@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:backgroundTint="@color/white"
+            android:visibility="invisible"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_12sdp">
 

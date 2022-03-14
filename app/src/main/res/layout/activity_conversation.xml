@@ -933,7 +933,7 @@
             <RelativeLayout
                 android:id="@+id/quickCardView"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_356sdp"
+                android:layout_height="@dimen/_325sdp"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_minus1sdp"
                 android:background="@drawable/quick_view_corner"

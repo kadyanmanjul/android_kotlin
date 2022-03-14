@@ -88,6 +88,7 @@ const val RTC_WEB_GROUP_PHOTO = "group_url"
 const val RTC_PARTNER_ID = "partner_id"
 const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 const val IS_CHANNEL_ACTIVE_KEY = "success"
+const val SHOW_FPP_DIALOG = "show_fpp_dialog"
 
 class WebRtcService : BaseWebRtcService() {
     private val TAG = "ABCWebRtcService"
@@ -113,6 +114,7 @@ class WebRtcService : BaseWebRtcService() {
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
     private val timber = Timber.tag(TAG)
+    var fppDialogeFlag:String?=null
     private val audioManager by lazy {
         getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
@@ -2408,6 +2410,7 @@ class WebRtcService : BaseWebRtcService() {
                                         val newChannel = response[RTC_CHANNEL_KEY]
                                         val token = response[RTC_TOKEN_KEY]
                                         val uid = response[RTC_UID_KEY]
+                                        fppDialogeFlag = response[SHOW_FPP_DIALOG]
                                         data[RTC_CHANNEL_KEY] = newChannel
                                         data[RTC_TOKEN_KEY] = token
                                         data[RTC_UID_KEY] = uid
