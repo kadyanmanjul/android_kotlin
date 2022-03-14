@@ -84,9 +84,6 @@
             android:name=".ui.fpp.SeeAllRequestsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity_feed.SeeAllRequestsActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.fpp.RecentCallActivity"
             android:exported="true"
             android:launchMode="singleTop"
