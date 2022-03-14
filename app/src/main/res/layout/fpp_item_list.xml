@@ -5,9 +5,15 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="obj"
             type="com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller" />
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -78,7 +84,7 @@
                 android:background="@drawable/circle"
                 android:backgroundTint="@color/green"
                 android:gravity="center_vertical|start"
-                android:visibility="invisible"
+                android:visibility="@{obj.isOnline ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/parent_img"
                 app:layout_constraintEnd_toEndOf="@+id/parent_img"
                 tools:visibility="invisible" />
@@ -99,6 +105,7 @@
                     android:layout_width="@dimen/_160sdp"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
+                    android:text="@{obj.name}"
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                     android:textColor="@color/pure_black"

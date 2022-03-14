@@ -93,11 +93,7 @@ class FavoriteAdapter(
             with(binding) {
                 obj = favoriteCaller
 
-                tvName.text = favoriteCaller.name
-                if (favoriteCaller.isOnline)
-                    ivOnlineTick.visibility = View.VISIBLE
-
-                binding.groupItemContainer.setOnClickListener{
+                groupItemContainer.setOnClickListener {
                     onClickUserProfile.clickOnProfile(position)
                 }
 
@@ -160,5 +156,4 @@ class FavoriteAdapter(
             return string.toString()
         }
     }
-
 }

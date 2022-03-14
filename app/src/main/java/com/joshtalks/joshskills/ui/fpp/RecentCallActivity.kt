@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
@@ -133,14 +132,7 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
                 }
             }
             HAS_RECIEVED_REQUEST -> {
-                val dialogView = Dialog(this)
-                dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-                dialogView.setCancelable(true)
-                dialogView.setContentView(R.layout.respond_request_alert_dialog)
-                dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dialogView.show()
-
+                val dialogView = showCustomDialog(R.layout.respond_request_alert_dialog)
                 val btnConfirm = dialogView.findViewById<MaterialButton>(R.id.confirm_button)
                 val btnNotNow = dialogView.findViewById<MaterialButton>(R.id.not_now)
                 dialogView.findViewById<TextView>(R.id.text).text =
@@ -169,18 +161,10 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
     }
 
     override fun onUserBlock(toMentorId: String?, name: String?) {
-        val dialogView = Dialog(this)
-        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        dialogView.setCancelable(true)
-        dialogView.setContentView(R.layout.block_user_alert_dialog)
-        dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialogView.show()
-
+        val dialogView = showCustomDialog(R.layout.block_user_alert_dialog)
         val btnConfirm = dialogView.findViewById<AppCompatTextView>(R.id.yes_button)
         val btnNotNow = dialogView.findViewById<AppCompatTextView>(R.id.not_now)
-        dialogView.findViewById<TextView>(R.id.text).text =
-            "Block $name"
+        dialogView.findViewById<TextView>(R.id.text).text = "Block $name"
         btnConfirm
             .setOnClickListener {
                 if (toMentorId != null) {
@@ -191,6 +175,16 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
         btnNotNow.setOnClickListener {
             dialogView.dismiss()
         }
+    }
+
+    private fun showCustomDialog(view: Int): Dialog {
+        val dialogView = Dialog(this)
+        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialogView.setCancelable(true)
+        dialogView.setContentView(view)
+        dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogView.show()
+        return dialogView
     }
 
 }

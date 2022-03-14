@@ -68,8 +68,8 @@
 
         <Button
             android:id="@+id/btn_confirm_request"
-            android:layout_width="@dimen/_67sdp"
-            android:layout_height="@dimen/_27sdp"
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_17sdp"
             android:layout_marginLeft="@dimen/_7sdp"
             android:backgroundTint="@color/colorAccent"
             android:elevation="0dp"
@@ -79,11 +79,12 @@
             android:text="@string/confirm"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+            android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Semi_bold"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:visibility="visible"
             app:elevation="0dp"
+            android:layout_marginEnd="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_not_now"
@@ -94,8 +95,8 @@
 
         <Button
             android:id="@+id/btn_not_now"
-            android:layout_width="@dimen/_67sdp"
-            android:layout_height="@dimen/_27sdp"
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_17sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:backgroundTint="@color/not_now"
             android:elevation="0dp"

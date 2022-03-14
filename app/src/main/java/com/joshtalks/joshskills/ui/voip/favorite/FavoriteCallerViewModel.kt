@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 class FavoriteCallerViewModel(application: Application) : AndroidViewModel(application) {
     private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
-    private val p2pNetworkService = AppObjectController.p2pNetworkService
+    private val favoriteCallerRepository = FavoriteCallerRepository()
     val favoriteCallerList = MutableSharedFlow<List<FavoriteCaller>>()
     val apiCallStatus = MutableSharedFlow<ApiCallStatus>()
     val checkCallOngoing = MutableLiveData<HashMap<String, String>>()
@@ -47,7 +47,7 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
     private fun fetchFavoriteCallersFromApi() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = p2pNetworkService.getFavoriteCallerList(Mentor.getInstance().getId())
+                val response = favoriteCallerRepository.getFavList()
                 favoriteCallerDao.removeAllFavorite()
                 if (response.isNotEmpty()) {
                     favoriteCallerDao.insertFavoriteCallers(response)
@@ -77,11 +77,7 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
                 }
                 val requestParams: HashMap<String, List<Int>> = HashMap()
                 requestParams["mentor_ids"] = list
-                val response =
-                    p2pNetworkService.removeFavoriteCallerList(
-                        Mentor.getInstance().getId(),
-                        requestParams
-                    )
+                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
                 if (response.isSuccessful) {
                     favoriteCallerDao.removeFromFavorite(list)
                 }
@@ -97,7 +93,7 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
                 val map: HashMap<String, String> = HashMap<String, String>()
                 map["from_mentor_id"] = Mentor.getInstance().getId()
                 map["to_mentor_id"] = toMentorId
-                val response = p2pNetworkService.checkUserInCallOrNot(map)
+                val response =  favoriteCallerRepository.userIsCallOrNot(map)
                 if (response.isSuccessful) {
                     if (response.code() == 200) {
                         val intent =
