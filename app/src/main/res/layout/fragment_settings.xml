@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:background="@color/white"
-                android:onClick="@{()->handler.showNotificationSettingPopup()}"
+                android:onClick="@{() -> handler.showNotificationSettingPopup()}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/language_rl">
@@ -145,7 +145,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/notification_discription"
+                android:id="@+id/notification_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -158,6 +158,60 @@
                 tools:text="Note: Apki notification off hai" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/auto_start_rl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@color/white"
+                android:onClick="@{() -> handler.showAutoStartPermissionPopup()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notification_description">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/auto_start_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:drawablePadding="@dimen/_8sdp"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="@dimen/_12sdp"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:text="@string/autostart"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:drawableStartCompat="@drawable/ic_autostart"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/selection_arrow"
+                    android:paddingEnd="@dimen/_8sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_right"
+                    tools:ignore="RtlSymmetry" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/auto_start_description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingHorizontal="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:text="@string/auto_start_prompt_message"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/auto_start_text" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/download_quality_rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -166,7 +220,7 @@
                 android:onClick="@{()->handler.openSelectQualityFragment()}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notification_discription">
+                app:layout_constraintTop_toBottomOf="@+id/auto_start_rl">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/download_quality_tag_tv"

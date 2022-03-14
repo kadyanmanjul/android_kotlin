@@ -273,21 +273,6 @@ class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerPa
         return Result.success()
     }
 }
-private fun updateFromLoginResponse(loginResponse: LoginResponse) {
-    val user = User.getInstance()
-    user.userId = loginResponse.userId
-    user.isVerified = false
-    user.token = loginResponse.token
-    User.update(user)
-    PrefManager.put(API_TOKEN, loginResponse.token)
-    Mentor.getInstance()
-        .setId(loginResponse.mentorId)
-        .setReferralCode(loginResponse.referralCode)
-        .setUserId(loginResponse.userId)
-        .update()
-    AppAnalytics.updateUser()
-    WorkManagerAdmin.requiredTaskAfterLoginComplete()
-}
 */
 
 class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
@@ -310,12 +295,29 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
     }
 }
 
-class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
+class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-//        if (User.getInstance().isVerified) {
-//            regenerateFCM()
-//        } else {
+        return try {
+            val result = AppObjectController.signUpNetworkService.checkFCMInServer(
+                mapOf(
+                    "user_id" to Mentor.getInstance().getId(),
+                    "registration_id" to PrefManager.getStringValue(FCM_TOKEN)
+                )
+            )
+            if (result["message"] != FCM_ACTIVE)
+                WorkManagerAdmin.regenerateFCMWorker()
+
+            Result.success()
+        } catch (ex: Exception) {
+            Result.failure()
+        }
+    }
+}
+
+class RegenerateFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
         try {
             FirebaseInstallations.getInstance().delete().addOnCompleteListener {
                 FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
@@ -326,7 +328,6 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
             ex.printStackTrace()
             return Result.failure()
         }
-//        }
         return Result.success()
     }
 
@@ -334,7 +335,7 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
         FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(
                 OnCompleteListener { task ->
-                    Timber.d("FCMToken asdf : Refreshed")
+                    Timber.d("FCMToken : Refreshed")
                     if (!task.isSuccessful) {
                         task.exception?.run {
                             LogException.catchException(this)
@@ -344,106 +345,12 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                     }
                     task.result.let {
                         PrefManager.put(FCM_TOKEN, it)
-                        //                        val fcmResponse = FCMResponse.getInstance()
-                        //                        fcmResponse?.apiStatus = ApiRespStatus.POST
-                        //                        fcmResponse?.update()
-                        //                        Timber.d("FCMToken asdf : Updated")
-
-                        //                        CoroutineScope(
-                        //                            SupervisorJob() +
-                        //                                    Dispatchers.IO +
-                        //                                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
-                        //                        ).launch {
-                        //                            try {
-                        //                                val userId = Mentor.getInstance().getId()
-                        //                                if (userId.isNotBlank()) {
-                        //                                    val data =
-                        //                                        mutableMapOf(
-                        //                                            "user_id" to userId,
-                        //                                            "registration_id" to it,
-                        //                                            "name" to Utils.getDeviceName(),
-                        //                                            "device_id" to Utils.getDeviceId(),
-                        //                                            "active" to "true",
-                        //                                            "type" to "android",
-                        //                                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID),
-                        //                                            "forceRefreshToken" to "true"
-                        //                                        )
-                        //                                    val resp =
-                        //                                        AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
-                        //                                    if (resp.isSuccessful) {
-                        //                                        Timber.d("FCMToken asdf : Updated on Server")
-                        //                                        resp.body()?.update()
-                        //                                    }
-                        //                                }
-                        //                            } catch (ex: Exception) {
-                        //                                ex.printStackTrace()
-                        //                            }
-                        //                        }
                     }
                 }
             )
         }
     }
 }
-
-//class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
-//    CoroutineWorker(context, workerParams) {
-//    override suspend fun doWork(): Result {
-//        try {
-//            val token = PrefManager.getStringValue(FCM_TOKEN)
-//            if (token.isEmpty()) {
-//                WorkManagerAdmin.forceRefreshFcmToken()
-//                return Result.success()
-//            }
-//            // val fcmResponse = FCMResponse.getInstance()
-//            val status = fcmResponse?.apiStatus ?: ApiRespStatus.EMPTY
-//
-//            if (status == ApiRespStatus.POST || status == ApiRespStatus.PATCH) {
-//                val userId = Mentor.getInstance().getId()
-//                if (userId.isNotBlank()) {
-//                    val data =
-//                        mutableMapOf(
-//                            "user_id" to userId,
-//                            "registration_id" to token,
-//                            "name" to Utils.getDeviceName(),
-//                            "device_id" to Utils.getDeviceId(),
-//                            "active" to "true",
-//                            "type" to "android",
-//                            "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
-//                        )
-//                    val resp =
-//                        AppObjectController.signUpNetworkService.patchFCMToken( data )
-//                    if (resp.isSuccessful) {
-//                        resp.body()?.update()
-//                    }
-//                }
-//            } else {
-//                val data = mutableMapOf(
-//                    "registration_id" to token,
-//                    "name" to Utils.getDeviceName(),
-//                    "device_id" to Utils.getDeviceId(),
-//                    "active" to "true",
-//                    "type" to "android",
-//                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
-//                )
-//                val userId = Mentor.getInstance().getId()
-//                if (userId.isNotEmpty()) {
-//                    data["user_id"] = userId
-//                }
-//                val response = AppObjectController.signUpNetworkService.postFCMToken(data)
-//                response.apiStatus = if (userId.isEmpty()) {
-//                    ApiRespStatus.POST
-//                } else {
-//                    ApiRespStatus.PATCH
-//                }
-//                response.update()
-//            }
-//        } catch (ex: Throwable) {
-//            ex.printStackTrace()
-//        }
-//        return Result.success()
-//    }
-//}
 
 class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -459,7 +366,6 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
         AppObjectController.clearDownloadMangerCallback()
         // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
-        // WorkManagerAdmin.refreshFcmToken()
         WorkManagerAdmin.syncAppCourseUsage()
         AppAnalytics.updateUser()
         return Result.success()
@@ -755,7 +661,7 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
                 Timber.tag("Workers").e("= %s", secDiff)
                 if (secDiff >= minTimeToApiFire || active.not()) {
                     val data = ActiveUserRequest(Mentor.getInstance().getId(), active)
-                    AppObjectController.signUpNetworkService.activeUser(data)
+//                    AppObjectController.signUpNetworkService.activeUser(data)
                     PrefManager.put(LAST_ACTIVE_API_TIME, Date().time)
                 }
                 if (active.not()) {

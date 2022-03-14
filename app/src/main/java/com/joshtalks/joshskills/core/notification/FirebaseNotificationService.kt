@@ -127,6 +127,11 @@ const val NOTIFICATION_ID = "notification_id"
 const val HAS_COURSE_REPORT = "has_course_report"
 const val QUESTION_ID = "question_id"
 
+const val FCM_ACTIVE = "FCM_ACTIVE"
+const val FCM_INACTIVE = "FCM_INACTIVE"
+const val FCM_REFRESH = "FCM_REFRESH"
+const val FCM_NOT_PRESENT = "FCM_NOT_PRESENT"
+
 class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {

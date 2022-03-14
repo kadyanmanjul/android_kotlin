@@ -276,15 +276,23 @@ enum class AnalyticsEvent(val NAME: String) {
 
     API_FAILED("Api Failed V3"),
 
-    PERMISSION_ACCEPT("Permission accept V3"),
-    PERMISSION_DENIED("Permission accept V3"),
     NOTIFICATION_RECEIVED("Notification Received V3"),
     NOTIFICATION_CLICKED("Notification Clicked V3"),
     NOTIFICATION_SEEN("Notification Seen V3"),
+
+    AUTOSTART_CONV_SHOWN("AUTOSTART_CONV_SHOWN"),
+    AUTOSTART_CONV_YES("AUTOSTART_CONV_YES"),
+    AUTOSTART_CONV_NO("AUTOSTART_CONV_NO"),
+    AUTOSTART_SETTINGS_CLICKED("AUTOSTART_SETTINGS_CLICKED"),
+    AUTOSTART_SETTINGS_YES("AUTOSTART_SETTINGS_YES"),
+    AUTOSTART_SETTINGS_NO("AUTOSTART_SETTINGS_NO"),
+    NOTIFICATION_SETTINGS_CLICKED("NOTIFICATION_SETTINGS_CLICKED"),
+    NOTIFICATION_SETTINGS_YES("NOTIFICATION_SETTINGS_YES"),
+    NOTIFICATION_SETTINGS_NO("NOTIFICATION_SETTINGS_NO"),
+
     REGISTRATION_COMPLETED("Registration_completed V3"),
     COURSE_STARTED("Course_Started V3"),
     PURCHASE_COURSE("Purchase Course V3"),
-
 
     TEST_ID_OPENED("Test ID Opened V3"),
     NPS_INITIATED("NPS Initiated V3"),
@@ -315,7 +323,6 @@ enum class AnalyticsEvent(val NAME: String) {
     REFERRAL_CODE("Referral Code V3"),
     REFERRAL_SCREEN_ACTION("Referral Screen Action V3"),
     REFERRAL_PAGE("Referral Page V3"),
-    CUSTOM_PERMISSION_ACTION("Custom Permission Action V3"),
 
     //Payment Summary Events
     INSTANCE_ID("Instance Id V3"),
