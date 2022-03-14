@@ -1047,6 +1047,7 @@
     <string name="special_practice_text"><b>Vedant Maheshwari</b> sir has sent you a special practice for completing total 300 minutes speaking practice</string>
 
     <string name="how_to_speak"><u>How To Speak?</u></string>
+    <string name="recording_start_permission_message">"To start recording video, please allow permission"</string>
 
     <string name="download_syllabus_23_pages">Download Syllabus<b> • </b>15 pages</string>
     <string name="the_ultimate_spoken_english_n_course_syllabus">The Ultimate Spoken English \nCourse Syllabus</string>

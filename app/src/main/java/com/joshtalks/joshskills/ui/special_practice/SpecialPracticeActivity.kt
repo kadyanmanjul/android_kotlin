@@ -22,9 +22,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.databinding.ActivityRecordVideoBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LinkAttribution
@@ -33,6 +33,10 @@ import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
+import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
+import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
+import com.joshtalks.joshskills.ui.special_practice.utils.getAndroidDownloadFolder
+import com.joshtalks.joshskills.ui.special_practice.utils.getAppShareUrl
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -46,9 +50,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.random.Random
 
 class SpecialPracticeActivity : CoreJoshActivity() {
@@ -61,7 +62,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
     private var isVideoDownloaded: MutableLiveData<Boolean> = MutableLiveData(false)
     private var userReferralCode = Mentor.getInstance().referralCode
 
-    private var recordedPathLocal:String?=null
+    private var recordedPathLocal: String? = null
     var videoUrl = EMPTY
     var recordedUrl = EMPTY
     var wordInEnglish: String? = null
@@ -69,7 +70,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
     var wordInHindi: String? = null
     var sentenceInHindi: String? = null
 
-    var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+    var openSampleVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -79,6 +80,20 @@ class SpecialPracticeActivity : CoreJoshActivity() {
             )?.let { progress ->
                 binding.videoView.progress = progress
                 binding.videoView.onResume()
+            }
+        }
+    }
+
+    var openRecordVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getLongExtra(
+                CURRENT_VIDEO_PROGRESS_POSITION,
+                0
+            )?.let { progress ->
+                binding.videoPlayer.progress = progress
+                binding.videoPlayer.onResume()
             }
         }
     }
@@ -95,16 +110,16 @@ class SpecialPracticeActivity : CoreJoshActivity() {
         isVideoDownloadingStarted = true
         specialPracticeViewModel = ViewModelProvider(this).get(SpecialPracticeViewModel::class.java)
 
-        specialPracticeViewModel?.getSpecialIdData(specialId?: EMPTY)
+        specialPracticeViewModel?.getSpecialIdData(specialId ?: EMPTY)
 
         this.let {
-            specialPracticeViewModel?.specialIdData?.observe(it){
+            specialPracticeViewModel?.specialIdData?.observe(it) {
                 recordedPathLocal = it.recordedVideo
             }
         }
 
         if (specialId != null) {
-            val map = hashMapOf<String, String>(
+            val map = hashMapOf(
                 Pair("mentor_id", Mentor.getInstance().getId()),
                 Pair("special_practice_id", specialId ?: EMPTY)
             )
@@ -119,36 +134,29 @@ class SpecialPracticeActivity : CoreJoshActivity() {
                 videoUrl = it.specialPractice?.sampleVideoUrl ?: EMPTY
                 recordedUrl = it.recordedVideoUrl ?: EMPTY
                 if (recordedUrl != EMPTY) {
-                    showRecordedVideoUi()
-                    if (recordedPathLocal == EMPTY || recordedPathLocal==null)
-                            getPermissionAndDownloadFile(recordedUrl)
+                    showRecordedVideoUi(true, binding.videoPlayer, recordedUrl)
+                    if (recordedPathLocal == EMPTY || recordedPathLocal == null)
+                        getPermissionAndDownloadFile(recordedUrl)
                 }
             }
         }
 
         binding.cardSampleVideoPlay.setOnClickListener {
-            showIntroVideoUi()
+            showRecordedVideoUi(false, binding.videoView, videoUrl)
         }
 
-        binding.btnRecord.setOnClickListener {
-            startVideoRecording()
-        }
-
-        binding.imageShare.setOnClickListener {
-            getDeepLinkAndInviteFriends()
-        }
         addObserver()
     }
 
     private fun addObserver() {
         isVideoDownloaded.observe(this, Observer {
             if (it) {
-
+                specialPracticeViewModel?.getSpecialIdData(specialId ?: EMPTY)
             }
         })
     }
 
-    fun getDeepLinkAndInviteFriends() {
+    fun getDeepLinkAndInviteFriends(view: View) {
         val referralTimestamp = System.currentTimeMillis()
         val branchUniversalObject = BranchUniversalObject()
             .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
@@ -180,14 +188,10 @@ class SpecialPracticeActivity : CoreJoshActivity() {
                         dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
                             PrefManager.getStringValue(USER_SHARE_SHORT_URL)
                         else
-                            getAppShareUrl(),
+                            getAppShareUrl(userReferralCode),
                         referralTimestamp = referralTimestamp
                     )
             }
-    }
-
-    private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
@@ -222,7 +226,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
             waIntent.putExtra(
                 Intent.EXTRA_STREAM,
-                Uri.parse(getAndroidMoviesFolder()?.absolutePath + "/" + recordedPathLocal)
+                Uri.parse(getAndroidDownloadFolder()?.absolutePath + "/" + recordedPathLocal)
             )
             waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(Intent.createChooser(waIntent, "Share with"))
@@ -264,7 +268,6 @@ class SpecialPracticeActivity : CoreJoshActivity() {
     }
 
     private fun setData(specialPractice: SpecialPractice?) {
-       // getPermissionAndDownloadFile(recordedUrl)
         binding.wordText.text = specialPractice?.wordText
         binding.instructionText.text = specialPractice?.instructionText
         wordInEnglish = specialPractice?.wordEnglish
@@ -280,7 +283,6 @@ class SpecialPracticeActivity : CoreJoshActivity() {
     }
 
     companion object {
-        private const val SPECIAL_ID = "SPECIAL_ID"
 
         @JvmStatic
         fun start(
@@ -297,43 +299,71 @@ class SpecialPracticeActivity : CoreJoshActivity() {
         }
     }
 
-    private fun showIntroVideoUi() {
+    private fun showRecordedVideoUi(
+        isRecordVideo: Boolean,
+        view: JoshVideoPlayer,
+        videoUrl: String
+    ) {
         try {
-            binding.btnRecord.isClickable = false
-            binding.btnRecord.isEnabled = false
-            binding.videoPopup.visibility = View.VISIBLE
-            binding.videoView.seekToStart()
-            binding.videoView.setUrl(videoUrl)
-            binding.videoPlayer.fitToScreen()
-            binding.videoView.onStart()
-            binding.videoView.setPlayListener {
-                val currentVideoProgressPosition = binding.videoView.progress
-                openVideoPlayerActivity.launch(
-                    VideoPlayerActivity.getActivityIntent(
-                        this,
-                        EMPTY,
-                        null,
-                        videoUrl,
-                        currentVideoProgressPosition,
-                        conversationId = getConversationId()
+            if (isRecordVideo)
+                binding.card3.visibility = View.VISIBLE
+            else {
+                binding.btnRecord.isClickable = false
+                binding.btnRecord.isEnabled = false
+                binding.videoPopup.visibility = View.VISIBLE
+            }
+
+            view.seekToStart()
+            view.setUrl(videoUrl)
+            view.onStart()
+            view.fitToScreen()
+            view.setPlayListener {
+                if (isRecordVideo) {
+                    val currentVideoProgressPosition = view.progress
+                    openRecordVideoPlayerActivity.launch(
+                        VideoPlayerActivity.getActivityIntent(
+                            this,
+                            EMPTY,
+                            null,
+                            recordedUrl,
+                            currentVideoProgressPosition,
+                            conversationId = getConversationId()
+                        )
                     )
-                )
+                } else {
+                    val currentVideoProgressPosition = view.progress
+                    openSampleVideoPlayerActivity.launch(
+                        VideoPlayerActivity.getActivityIntent(
+                            this,
+                            EMPTY,
+                            null,
+                            videoUrl,
+                            currentVideoProgressPosition,
+                            conversationId = getConversationId()
+                        )
+                    )
+                }
             }
 
-            lifecycleScope.launchWhenStarted {
-                binding.videoView.downloadStreamPlay()
+            if (isRecordVideo) {
+                lifecycleScope.launchWhenStarted {
+                    view.downloadStreamButNotPlay()
+                }
+            } else {
+                lifecycleScope.launchWhenStarted {
+                    view.downloadStreamPlay()
+                }
             }
-
             binding.imageViewClose.setOnClickListener {
                 closeIntroVideoPopUpUi()
             }
 
-            binding.videoView.outlineProvider = object : ViewOutlineProvider() {
+            view.outlineProvider = object : ViewOutlineProvider() {
                 override fun getOutline(view: View, outline: Outline) {
                     outline.setRoundRect(0, 0, view.width, view.height, 15f)
                 }
             }
-            binding.videoView.clipToOutline = true
+            view.clipToOutline = true
         } catch (ex: Exception) {
         }
     }
@@ -345,42 +375,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
         binding.videoView.onStop()
     }
 
-    private fun showRecordedVideoUi() {
-        try {
-            binding.card3.visibility = View.VISIBLE
-            binding.videoPlayer.seekToStart()
-            binding.videoPlayer.setUrl(recordedUrl)
-            binding.videoPlayer.onStart()
-            binding.videoPlayer.fitToScreen()
-            binding.videoPlayer.setPlayListener {
-                val currentVideoProgressPosition = binding.videoPlayer.progress
-                openVideoPlayerActivity.launch(
-                    VideoPlayerActivity.getActivityIntent(
-                        this,
-                        EMPTY,
-                        null,
-                        recordedUrl,
-                        currentVideoProgressPosition,
-                        conversationId = getConversationId()
-                    )
-                )
-            }
-
-            lifecycleScope.launchWhenStarted {
-                binding.videoPlayer.downloadStreamButNotPlay()
-            }
-
-            binding.videoPlayer.outlineProvider = object : ViewOutlineProvider() {
-                override fun getOutline(view: View, outline: Outline) {
-                    outline.setRoundRect(0, 0, view.width, view.height, 15f)
-                }
-            }
-            binding.videoPlayer.clipToOutline = true
-        } catch (ex: Exception) {
-        }
-    }
-
-    private fun startVideoRecording() {
+    fun startVideoRecording(view: View) {
         if (PermissionUtils.isCameraPermissionEnabled(this)) {
             if (Utils.isInternetAvailable()) {
                 openRecordingScreen()
@@ -397,7 +392,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(
                                 this@SpecialPracticeActivity,
-                                message = R.string.call_start_permission_message
+                                message = R.string.recording_start_permission_message
                             )
                             return
                         }
@@ -410,7 +405,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
                             }
                         } else {
                             MaterialDialog(this@SpecialPracticeActivity).show {
-                                message(R.string.call_start_permission_message)
+                                message(R.string.recording_start_permission_message)
                                 positiveButton(R.string.ok)
                             }
                         }
@@ -458,15 +453,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
         }
     }
 
-    fun getVideoFilePath(): String {
-        return getAndroidMoviesFolder()?.absolutePath + "/" + "Recorded_video" + "filter_apply.mp4"
-    }
-
-    fun getAndroidMoviesFolder(): File? {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-    }
-
-    protected fun downloadFile(
+    private fun downloadFile(
         url: String,
         message: String = "Downloading file",
         title: String = "Josh Skills"
@@ -479,7 +466,7 @@ class SpecialPracticeActivity : CoreJoshActivity() {
                 }
             }
             videoDownloadPath = fileName
-            registerDownloadReceiver(fileName)
+            registerDownloadReceiver()
 
             val env = Environment.DIRECTORY_DOWNLOADS
 
@@ -504,11 +491,11 @@ class SpecialPracticeActivity : CoreJoshActivity() {
         }
     }
 
-    private fun registerDownloadReceiver(fileName: String) {
+    private fun registerDownloadReceiver() {
         registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
-    protected var onDownloadComplete = object : BroadcastReceiver() {
+    private var onDownloadComplete = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {

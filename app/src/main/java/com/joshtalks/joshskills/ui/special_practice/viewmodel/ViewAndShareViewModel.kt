@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -25,11 +26,11 @@ class ViewAndShareViewModel(application: Application) :
     AndroidViewModel(application) {
     val specialIdData = MutableLiveData<SpecialPractice>()
 
-    fun submitPractise(localPath: String, specialId: String) {
-        var videoUrl = ""
+    fun submitPractice(localPath: String, specialId: String) {
+        var videoUrl = EMPTY
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (localPath.isNullOrEmpty().not()) {
+                if (localPath.isEmpty().not()) {
                     val obj = mapOf("media_path" to File(localPath).name)
                     val responseObj =
                         AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()

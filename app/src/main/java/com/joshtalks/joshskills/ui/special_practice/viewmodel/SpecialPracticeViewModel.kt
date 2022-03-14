@@ -3,10 +3,8 @@ package com.joshtalks.joshskills.ui.special_practice.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
@@ -31,7 +29,7 @@ class SpecialPracticeViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun getSpecialIdData(specialId:String) {
+    fun getSpecialIdData(specialId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             specialIdData.postValue(
                 AppObjectController.appDatabase.specialDao().getSpecialPracticeFromId(specialId)

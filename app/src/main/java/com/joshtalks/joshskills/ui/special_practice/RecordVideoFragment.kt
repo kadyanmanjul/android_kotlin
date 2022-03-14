@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.SystemClock
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,14 +25,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentRecordVideoBinding
+import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.util.getBitMapFromView
-import com.joshtalks.joshskills.util.getNameString
 import com.joshtalks.joshskills.util.toFile
 import com.joshtalks.joshskills.util.uriToFile
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class RecordVideoFragment : CoreJoshFragment() {
@@ -48,7 +45,7 @@ class RecordVideoFragment : CoreJoshFragment() {
     private var sentenceInEnglish: String? = null
     private var sentenceInHindi: String? = null
     private var timer: CountDownTimer? = null
-
+    private var name: String? = EMPTY
 
     enum class UiState {
         IDLE,
@@ -72,11 +69,6 @@ class RecordVideoFragment : CoreJoshFragment() {
     }
 
     companion object {
-        private const val WORD_IN_ENGLISH = "WORD_IN_ENGLISH"
-        private const val SENTENCE_IN_ENGLISH = "SENTENCE_IN_ENGLISH"
-        private const val WORD_IN_HINDI = "WORD_IN_HINDI"
-        private const val SENTENCE_IN_HINDI = "SENTENCE_IN_HINDI"
-        private const val SPECIAL_ID = "SPECIAL_ID"
         fun newInstance(
             wordInEnglish: String,
             sentenceInEnglish: String,
@@ -132,7 +124,6 @@ class RecordVideoFragment : CoreJoshFragment() {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility", "MissingPermission")
     private fun initializeUI() {
         try {
             binding.recordVideoBtn.apply {
@@ -187,7 +178,6 @@ class RecordVideoFragment : CoreJoshFragment() {
                     preview
                 )
             } catch (exc: Exception) {
-                Log.e("Sagar", "Use case binding failed", exc)
             }
         } catch (ex: Exception) {
         }
@@ -197,9 +187,7 @@ class RecordVideoFragment : CoreJoshFragment() {
     private fun startRecording() {
         // create MediaStoreOutputOptions for our recorder: resulting our recording!
         try {
-            val name = "JoshSkill-recording-" +
-                    SimpleDateFormat("ddMMyyyy", Locale.US)
-                        .format(System.currentTimeMillis()) + ".mp4"
+            name = getRecordingFileName()
             val contentValues = ContentValues().apply {
                 put(MediaStore.Video.Media.DISPLAY_NAME, name)
             }
@@ -240,8 +228,8 @@ class RecordVideoFragment : CoreJoshFragment() {
                             imagePath = getBitMapFromView(binding.imageOverlay).toFile(
                                 requireContext()
                             ).absolutePath,
-                            imageBitmap = getBitMapFromView(binding.imageOverlay),
-                            specialId ?: EMPTY
+                            specialId ?: EMPTY,
+                            videoName = name ?: EMPTY
                         )
                     ).commit()
             }
@@ -291,7 +279,6 @@ class RecordVideoFragment : CoreJoshFragment() {
             text = "${text}\nFile saved to: ${event.outputResults.outputUri}"
 
         captureLiveStatus.value = text
-        Log.i("Sagar", "recording event: $text")
     }
 
     fun onBackPress() {
