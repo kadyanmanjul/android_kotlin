@@ -817,10 +817,6 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
-        <service
-            android:name=".ui.call.data.WebrtcService"
-            android:process=":joshSkillsCallingService"
-            />
     </application>
 
 </manifest>
