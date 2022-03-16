@@ -21,4 +21,8 @@
     <string name="skip">Skip</string>
     <string name="add_profile_photo_prompt">Add a profile photo!</string>
     <string name="raised_hand">Raised Hands</string>
+    <string name="please_enter_valid_number">Please enter a valid mobile number!</string>
+    <string name="plz_wait">Please wait&#8230;</string>
+    <string name="please_enter_otp">Please enter OTP</string>
+    <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
 </resources>

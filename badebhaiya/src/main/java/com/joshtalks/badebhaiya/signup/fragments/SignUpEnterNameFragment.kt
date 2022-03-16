@@ -12,11 +12,12 @@ import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterNameBinding
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 
 class SignUpEnterNameFragment: Fragment() {
-
     private lateinit var binding: FragmentSignupEnterNameBinding
-
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+    }
+    companion object {
+        fun newInstance() = SignUpEnterNameFragment()
     }
 
     override fun onCreateView(

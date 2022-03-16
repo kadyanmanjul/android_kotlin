@@ -6,7 +6,7 @@
     <data>
         <variable
             name="handler"
-            type="com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel" />
+            type="com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,6 +49,7 @@
                 android:text="@string/country_code"/>
 
             <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etPhone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toEndOf="@id/country_code_text"
@@ -89,6 +90,7 @@
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
             android:textColor="@color/white"
             android:layout_marginBottom="@dimen/_46sdp"
+            android:onClick="@{() -> handler.loginViaPhoneNumber()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

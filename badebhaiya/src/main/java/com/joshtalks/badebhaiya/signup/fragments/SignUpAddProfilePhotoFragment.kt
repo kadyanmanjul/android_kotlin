@@ -12,11 +12,12 @@ import com.joshtalks.badebhaiya.databinding.FragmentSignupAddProfilePhotoBinding
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 
 class SignUpAddProfilePhotoFragment: Fragment() {
-
     private lateinit var binding: FragmentSignupAddProfilePhotoBinding
-
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+    }
+    companion object {
+        fun newInstance() = SignUpAddProfilePhotoFragment
     }
 
     override fun onCreateView(
