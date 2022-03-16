@@ -75,7 +75,7 @@ class RetrofitInstance {
             if (BuildConfig.DEBUG) {
                 builder.addInterceptor(getOkhttpToolInterceptor())
                 val logging = HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
+                    level = HttpLoggingInterceptor.Level.BODY
                 }
                 builder.addInterceptor(logging)
                 builder.addNetworkInterceptor(getStethoInterceptor())
