@@ -31,6 +31,24 @@
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/_16sdp">
 
+
+<!--                <com.pnikosis.materialishprogress.ProgressWheel-->
+<!--                    android:id="@+id/progress_dialog"-->
+<!--                    android:layout_width="@dimen/_28sdp"-->
+<!--                    android:layout_height="@dimen/_28sdp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:visibility="gone"-->
+<!--                    app:matProg_barWidth="@dimen/_2sdp"-->
+<!--                    tools:visibility="invisible"-->
+<!--                    wheel:matProg_barColor="#ffffff"-->
+<!--                    wheel:matProg_fillRadius="true"-->
+<!--                    wheel:matProg_progressIndeterminate="true"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"/>-->
+
+
                 <FrameLayout
                     android:id="@+id/black_frame_container"
                     android:layout_width="0dp"

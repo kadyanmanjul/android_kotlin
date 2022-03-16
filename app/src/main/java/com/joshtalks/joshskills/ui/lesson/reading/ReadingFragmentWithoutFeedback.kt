@@ -17,6 +17,7 @@ import android.media.MediaFormat
 import android.media.MediaMuxer
 import android.net.Uri
 import android.os.*
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -87,11 +88,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.reading_practice_fragment_without_feedback.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.TimeUnit
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.lang.IllegalStateException
 import java.lang.Runnable
 import java.nio.ByteBuffer
 import java.util.*
@@ -126,14 +130,16 @@ class ReadingFragmentWithoutFeedback :
     private var downloadID: Long = -1
     lateinit var fileName : String
     private var fileDir: String = ""
-
+    private var flag: Boolean = false
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private val mutex = Mutex(false)
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
                 fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + fileName
-                GlobalScope.launch {
+                scope.launch {
                     AppObjectController.appDatabase.chatDao().updateReadingTable(currentLessonQuestion!!.questionId.toString(), fileDir, true)
                 }
                 binding.mergedVideo.setVideoPath(fileDir)
@@ -250,9 +256,9 @@ class ReadingFragmentWithoutFeedback :
                 binding.mergedVideo.pause()
                 binding.playBtn.visibility = VISIBLE
             }
-//            if(binding.mergedVideo.isPlaying.not()){
-//                binding.playBtn.visibility = VISIBLE
-//            }
+            if(binding.mergedVideo.isPlaying.not()){
+                binding.playBtn.visibility = VISIBLE
+            }
 //            if(binding.progressDialog.visibility == VISIBLE){
 //                binding.progressDialog.visibility = GONE
 //            }
@@ -735,16 +741,18 @@ class ReadingFragmentWithoutFeedback :
                 video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
 
                 if(video.isNullOrEmpty().not()) {
-                    GlobalScope.launch {
+                    scope.launch {
                         AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
                             ReadingVideo(currentLessonQuestion!!.questionId, " ", false)
                         )
                     }
                     if (currentLessonQuestion?.videoList?.getOrNull(0)?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                        GlobalScope.launch {
+                        scope.launch {
                             videoDownPath = AppObjectController.appDatabase.chatDao().getCompressedVideo(currentLessonQuestion!!.questionId)
                         }
                     } else {
+                        // binding.progressDialog.visibility = VISIBLE
+                        // TODO: Prone to Error - If
                         download()
                     }
                 }
@@ -761,6 +769,12 @@ class ReadingFragmentWithoutFeedback :
                         binding.submitAnswerBtn.visibility = VISIBLE
                         appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
                         appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
+//                        if(video.isNullOrEmpty().not()){
+//                            binding.progressDialog.visibility = VISIBLE
+//                            CoroutineScope(Dispatchers.IO).launch{
+//                                delay(10000)
+//                            }
+//                        }
                         setViewAccordingExpectedAnswer()
                     } else {
                         if(video.isNullOrBlank().not()){
@@ -769,7 +783,7 @@ class ReadingFragmentWithoutFeedback :
                             binding.ivClose.visibility = GONE
                             binding.ivShare.visibility = VISIBLE
                             if(this.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()){
-                                GlobalScope.launch {
+                                scope.launch {
                                     if(AppObjectController.appDatabase.chatDao().getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao().getDownloadedVideoStatus(currentLessonQuestion!!.questionId)){
                                         var ansVideoPath = AppObjectController.appDatabase.chatDao().getDownloadedVideoPath(currentLessonQuestion!!.questionId)
                                         binding.mergedVideo.setVideoPath(ansVideoPath)
@@ -781,7 +795,7 @@ class ReadingFragmentWithoutFeedback :
                                 binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                             }
                             binding.ivShare.setOnClickListener {
-                                GlobalScope.launch {
+                                scope.launch {
                                     if(currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty().not()){
                                         shareVideoForAudio(currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.toString() )
                                     }else if(AppObjectController.appDatabase.chatDao().getDownloadedVideoStatus(currentLessonQuestion!!.questionId)){
@@ -857,12 +871,19 @@ class ReadingFragmentWithoutFeedback :
         }
     }
     private fun download(){
+        Log.e("tocheck", "start download")
+
         if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
             askStoragePermission(DOWNLOAD_VIDEO_REQUEST_CODE)
             return
         }
+        Log.e("tocheck", "start download $currentLessonQuestion")
+        Log.e("tocheck", "start download ${currentLessonQuestion?.videoList}")
         currentLessonQuestion?.videoList?.let {
             if (it.isNotEmpty()) {
+                flag = false
+                scope.launch { mutex.lock() }
+                Log.e("tocheck", "start download2")
                 DownloadUtils.downloadFile(
                     it[0].video_url!!,
                     AppDirectory.docsReceivedFile(it[0].video_url!!).absolutePath,
@@ -876,6 +897,8 @@ class ReadingFragmentWithoutFeedback :
             }
         }
     }
+
+    // TODO: Handle Error Case
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
         }
@@ -884,6 +907,7 @@ class ReadingFragmentWithoutFeedback :
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             //showToast("download Failed")
+            Log.e("tocheck", "start download8")
         }
 
         override fun onCompleted(download: Download) {
@@ -891,8 +915,19 @@ class ReadingFragmentWithoutFeedback :
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
             //showToast("video Downloaded")
             videoDownPath = download.file.toString()
+            try{
+                Log.e("tocheck", "start download3")
+                mutex.unlock()
+            }catch (e: IllegalStateException){
+                e.printStackTrace()
+                Log.e("tocheck", "start download4")
+            }
+            //mutex.unlock()
+            flag = true
 
-//            GlobalScope.launch {
+            binding.progressDialog.visibility = GONE
+
+//            scope.launch {
 //                AppObjectController.appDatabase.chatDao().insertCompressedVideo(
 //                    CompressedVideo(currentLessonQuestion!!.questionId, videoDownPath!!)
 //                )
@@ -904,6 +939,7 @@ class ReadingFragmentWithoutFeedback :
         }
 
         override fun onDeleted(download: Download) {
+            Log.e("tocheck", "start download9")
         }
 
         override fun onDownloadBlockUpdated(
@@ -917,9 +953,11 @@ class ReadingFragmentWithoutFeedback :
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             //showToast("download error")
+            Log.e("tocheck", "start download10")
         }
 
         override fun onPaused(download: Download) {
+            Log.e("tocheck", "start download11")
         }
 
         override fun onProgress(
@@ -927,12 +965,15 @@ class ReadingFragmentWithoutFeedback :
             etaInMilliSeconds: Long,
             downloadedBytesPerSecond: Long
         ) {
+            Log.e("tocheck", "start download12")
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
+            Log.e("tocheck", "start download13")
         }
 
         override fun onRemoved(download: Download) {
+            Log.e("tocheck", "start download14")
         }
 
         override fun onResumed(download: Download) {
@@ -945,9 +986,11 @@ class ReadingFragmentWithoutFeedback :
         ) {
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
             //showToast("downloading")
+            Log.e("tocheck", "start download15")
         }
 
         override fun onWaitingNetwork(download: Download) {
+            Log.e("tocheck", "start download16")
         }
     }
 
@@ -960,6 +1003,7 @@ class ReadingFragmentWithoutFeedback :
                     report?.areAllPermissionsGranted()?.let {
                         if (report.areAllPermissionsGranted()) {
                             if (requestCode == DOWNLOAD_VIDEO_REQUEST_CODE) {
+                                Log.e("tocheck", "start download permission")
                                 download()
                             }
                         } else if (report.isAnyPermissionPermanentlyDenied) {
@@ -1125,7 +1169,7 @@ class ReadingFragmentWithoutFeedback :
         }else{
             binding.audioList.visibility = VISIBLE
         }
-       // binding.audioList.visibility = VISIBLE
+        // binding.audioList.visibility = VISIBLE
         practiceEngagement?.let { practiceList ->
             if (practiceList.isNullOrEmpty().not()) {
                 practiceList.forEach { practice ->
@@ -1187,7 +1231,7 @@ class ReadingFragmentWithoutFeedback :
             binding.mergedVideo.visibility = VISIBLE
             binding.subAnswerLayout.visibility = VISIBLE
             binding.ivClose.visibility = VISIBLE
-           // binding.progressDialog.visibility = VISIBLE
+            // binding.progressDialog.visibility = VISIBLE
         }else{
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioList.visibility = VISIBLE
@@ -1298,44 +1342,47 @@ class ReadingFragmentWithoutFeedback :
 
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
-//                            GlobalScope.launch {
+                            audioAttachmentInit()
+                            scope.launch {
+                                Log.e("tocheck", "start download5")
+                                mutex.withLock {
+                                    Log.e("tocheck", "start download6")
+                                    audioVideoMuxer()
+                                    Log.e("tocheck", "start download7")
+                                    binding.playBtn.visibility = VISIBLE
+
+                                    AppObjectController.uiHandler.postDelayed(
+                                        {
+                                            binding.submitAnswerBtn.parent.requestChildFocus(
+                                                binding.submitAnswerBtn,
+                                                binding.submitAnswerBtn
+                                            )
+                                        },
+                                        200
+                                    )
+
+                                    val duration = event.eventTime - event.downTime
+
+                                    if (duration < CLICK_OFFSET_PERIOD) {
+                                        AppObjectController.uiHandler.removeCallbacks(longPressAnimationCallback)
+                                        showRecordHintAnimation()
+                                    }
+                                }
+                            }
+//                            if(flag == true){
+//                                Log.e("checkFlag11", flag.toString() )
+//                                scope.launch {
 //                                audioVideoMuxer()
 //                            }
-
-//                            AppDirectory.copy(it.absolutePath, filePath!!)
-                            //binding.readingHoldHint.visibility = GONE
-                            audioAttachmentInit()
-                            binding.playBtn.visibility = GONE
-                            binding.progressDialog.visibility = VISIBLE
-//                            binding.playBtn.visibility = GONE
-
-                            GlobalScope.launch {
-                                audioVideoMuxer()
-                                binding.progressDialog.visibility = GONE
-                              //  binding.playBtn.visibility = VISIBLE
-                            }
-
-                            //binding.progressDialog.visibility = GONE
-                            binding.playBtn.visibility = VISIBLE
-
-//                            binding.progressDialog.visibility = GONE
-
-                            AppObjectController.uiHandler.postDelayed(
-                                {
-                                    binding.submitAnswerBtn.parent.requestChildFocus(
-                                        binding.submitAnswerBtn,
-                                        binding.submitAnswerBtn
-                                    )
-                                },
-                                200
-                            )
+//                            }else{
+//                                while (flag== true){
+//                                    Log.e("checkFlag", flag.toString() )
+//                                    scope.launch {
+//                                        audioVideoMuxer()
+//                                    }
+//                                }
+//                            }
                         }
-                    }
-                    val duration = event.eventTime - event.downTime
-
-                    if (duration < CLICK_OFFSET_PERIOD) {
-                        AppObjectController.uiHandler.removeCallbacks(longPressAnimationCallback)
-                        showRecordHintAnimation()
                     }
                 }
             }
@@ -1344,8 +1391,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     suspend fun audioVideoMuxer(){
-       // binding.progressDialog.visibility = VISIBLE
-
         try {
             val videoExtractor: MediaExtractor  = MediaExtractor()
             val cmpPath: String = AppObjectController.appDatabase.chatDao().getCompressedVideo(currentLessonQuestion!!.questionId)
@@ -1357,16 +1402,24 @@ class ReadingFragmentWithoutFeedback :
             audioExtractor.selectTrack(0)
             val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
 
+            toCheck(videoExtractor, audioFormat, audioExtractor)
 
-//            if(cmpPath.isNullOrEmpty()){
-//                binding.progressBarVideo.visibility = VISIBLE
-//            }else{
-//                binding.progressBarVideo.visibility = GONE
-//            }
+        }catch (e: IOException) {
+            Timber.e(e)
+        } catch (e:Exception) {
+            Timber.e(e)
+        }
 
+    }
+    fun toCheck(
+        videoExtractor: MediaExtractor,
+        audioFormat: MediaFormat,
+        audioExtractor: MediaExtractor
+    ) {
+        try{
 
-           // videoExtractor.setDataSource(videoDownPath!!)
-            videoExtractor.setDataSource(cmpPath)
+            videoExtractor.setDataSource(videoDownPath!!)
+            //  videoExtractor.setDataSource(cmpPath)
             videoExtractor.selectTrack(0)
             val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
 
@@ -1396,9 +1449,6 @@ class ReadingFragmentWithoutFeedback :
             audioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
 
             muxer.start()
-
-//            binding.progressDialog.visibility = VISIBLE
-
             while (!sawEOS){
                 videoBufferInfo.offset = offset
                 videoBufferInfo.size = videoExtractor.readSampleData(videoBuf, offset)
@@ -1438,31 +1488,22 @@ class ReadingFragmentWithoutFeedback :
 
             }
 
-//            if(outputFile.isNullOrEmpty()){
-//                binding.progressBarVideo.visibility = View.VISIBLE
-//            }
-
             muxer.stop()
-           // binding.progressDialog.visibility = GONE
 
             muxer.release()
-           // binding.progressDialog.visibility = GONE
-           // binding.playBtn.visibility = VISIBLE
             binding.mergedVideo.setVideoPath(outputFile)
-           // binding.progressDialog.visibility = GONE
             binding.mergedVideo.start()
             binding.playBtn.visibility = INVISIBLE
 
         }catch (e: IOException) {
-             Timber.e(e)
+            Timber.e(e)
         } catch (e:Exception) {
-             Timber.e(e)
+            Timber.e(e)
         }
-
     }
 
     fun processVideo(uri: List<Uri>){
-        GlobalScope.launch {
+        scope.launch {
             VideoCompressor.start(
                 context = requireActivity().application,
                 uris = uri,
@@ -1480,11 +1521,11 @@ class ReadingFragmentWithoutFeedback :
 
                     override fun onSuccess(index: Int, size: Long, path: String?) {
                         //showToast("successful")
-                        videoDownPath = path
-                        GlobalScope.launch {
-                                AppObjectController.appDatabase.chatDao().insertCompressedVideo(
-                                    CompressedVideo(currentLessonQuestion!!.questionId, path!!)
-                                )
+                        // videoDownPath = path
+                        scope.launch {
+                            AppObjectController.appDatabase.chatDao().insertCompressedVideo(
+                                CompressedVideo(currentLessonQuestion!!.questionId, path!!)
+                            )
                         }
                     }
 
@@ -1854,7 +1895,7 @@ class ReadingFragmentWithoutFeedback :
         var isAudioRecording = false
         private const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
         private const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
-        private const val DOWNLOAD_VIDEO_REQUEST_CODE = 0
+        private const val DOWNLOAD_VIDEO_REQUEST_CODE = 1846
         private val DOCX_FILE_MIME_TYPE = arrayOf(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/msword", "application/vnd.ms-excel",
