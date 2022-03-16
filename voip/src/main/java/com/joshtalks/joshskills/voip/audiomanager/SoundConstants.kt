@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.sound_manager
+package com.joshtalks.joshskills.voip.audiomanager
 
 const val SOUND_TYPE_NOTIFICATION = 2
 const val SOUND_TYPE_RINGTONE = 1

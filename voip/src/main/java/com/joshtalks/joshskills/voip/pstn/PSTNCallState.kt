@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.pstn_call_indicator
+package com.joshtalks.joshskills.voip.pstn
 
 import android.content.BroadcastReceiver
 import android.content.ContentValues.TAG
@@ -35,9 +35,6 @@ class PSTNCallState : BroadcastReceiver(){
         try {
             getCallingState(applicationContext, intent)
         } catch (ex: Exception) {
-            try {
-            } catch (e: Exception) {
-            }
         }
 
     }

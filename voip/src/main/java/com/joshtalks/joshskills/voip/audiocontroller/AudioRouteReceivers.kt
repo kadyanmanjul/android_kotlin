@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.audio_controller
+package com.joshtalks.joshskills.voip.audiocontroller
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothProfile

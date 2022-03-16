@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.audio_controller
+package com.joshtalks.joshskills.voip.audiocontroller
 
 const val HEADSET_CONNECTED = 1
 const val HEADSET_DISCONNECTED = 0

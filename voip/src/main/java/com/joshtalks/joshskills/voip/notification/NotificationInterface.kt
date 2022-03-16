@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.notification
+package com.joshtalks.joshskills.voip.notification
 
 /**
  * notificationData contains the information of notification
@@ -10,7 +10,7 @@ interface NotificationInterface {
     fun getNotificationObject(notificationType: NotificationType, notificationData: NotificationData): NotificationDetails
     fun updateNotification(notificationId: Int, notificationType: NotificationType, notificationData: NotificationData)
 }
-interface NotificationData{
+interface NotificationData {
     fun getCallType(): CallType
     fun getCallDetails():HashMap<String,Any>
 }

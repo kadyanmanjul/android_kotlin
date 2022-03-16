@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.audio_controller
+package com.joshtalks.joshskills.voip.audiocontroller
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 

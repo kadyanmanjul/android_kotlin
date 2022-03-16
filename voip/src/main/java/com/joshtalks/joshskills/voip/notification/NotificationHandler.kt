@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.notification
+package com.joshtalks.joshskills.voip.notification
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -6,12 +6,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import com.joshtalks.joshskills.voip.R
 
 
 class NotificationHandler(private val applicationContext: Context) : NotificationInterface {
@@ -115,8 +113,11 @@ private class NotificationGenerator(private val applicationContext: Context) {
                         applicationContext,
                         applicationContext.getString(R.string.CHANNEL_ID_CALLS)
                     )
-                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_light_focused)
-                        .setContentTitle(notificationObj.getCallDetails()[applicationContext.getString(R.string.notification_title)].toString())
+                        //                            TODO:SET SMALL ICON
+
+//                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_light_focused)
+                        .setContentTitle(notificationObj.getCallDetails()[applicationContext.getString(
+                            R.string.notification_title)].toString())
                         .setContentText(notificationObj.getCallDetails()[applicationContext.getString(R.string.notification_content)].toString())
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setContentIntent(pendingIntent)
@@ -140,7 +141,8 @@ private class NotificationGenerator(private val applicationContext: Context) {
                         applicationContext,
                         applicationContext.getString(R.string.CHANNEL_ID_OTHERS)
                     )
-                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_light_focused)
+//                            TODO:SET SMALL ICON
+//                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_light_focused)
                         .setContentTitle(notificationObj.getCallDetails()[applicationContext.getString(R.string.notification_title)].toString())
                         .setContentText(notificationObj.getCallDetails()[applicationContext.getString(R.string.notification_content)].toString())
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -155,25 +157,30 @@ private class NotificationGenerator(private val applicationContext: Context) {
 
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun getRejectCallIntent(): PendingIntent {
-        val intent = Intent(applicationContext, WebRtcActivity::class.java).apply {
-            action = ACTION_ACCEPT_CALL
-        }
-        return PendingIntent.getActivity(applicationContext, 10001, intent, 0)
+        //        TODO:INTENT ACTION
+
+//        val intent = Intent(applicationContext, WebRtcActivity::class.java).apply {
+//            action = ACTION_ACCEPT_CALL
+//        }
+        return PendingIntent.getActivity(applicationContext, 10001, null, 0)
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun getAcceptCallIntent(): PendingIntent {
-        val intent = Intent(applicationContext, WebRtcActivity::class.java).apply {
-            action = ACTION_REJECT_CALL
-        }
-        return PendingIntent.getActivity(applicationContext, 10001, intent, 0)
+        //        TODO:INTENT ACTION
+
+//        val intent = Intent(applicationContext, WebRtcActivity::class.java).apply {
+//            action = ACTION_REJECT_CALL
+//        }
+        return PendingIntent.getActivity(applicationContext, 10001, null, 0)
     }
 
     private fun getNotificationTapAction(): PendingIntent {
-        val intent = Intent(applicationContext, WebRtcActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        return PendingIntent.getActivity(applicationContext, 10001, intent, FLAG_UPDATE_CURRENT)
+//        TODO:INTENT ACTION
+//        val intent = Intent(applicationContext, WebRtcActivity::class.java).apply {
+//            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        }
+        return PendingIntent.getActivity(applicationContext, 10001, null, FLAG_UPDATE_CURRENT)
     }
 
     private fun showNotification(): Int {

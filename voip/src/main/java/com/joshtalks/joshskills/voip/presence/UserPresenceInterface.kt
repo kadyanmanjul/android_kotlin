@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.user_presence
+package com.joshtalks.joshskills.voip.presence
 
 interface UserPresenceInterface {
     fun setUserPresence(key: String, value: PresenceStatus)

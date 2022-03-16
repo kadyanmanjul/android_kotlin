@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.sound_manager
+package com.joshtalks.joshskills.voip.audiomanager
 
 import android.content.Context
 import android.media.*

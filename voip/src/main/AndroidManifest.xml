@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joshtalks.joshskills.voip">
+
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application>
         <service android:name=".data.WebrtcService"
             android:process=":joshSkillsCallingService"/>
+        <!-- Audio Control Module Receivers -->
+        <receiver
+            android:name="com.joshtalks.joshskills.voip.audiocontroller.HeadsetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.HEADSET_PLUG" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.joshtalks.joshskills.voip.audiocontroller.BluetoothReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <!-- PSTN module -->
+        <receiver
+            android:name="com.joshtalks.joshskills.voip.pstn.PSTNCallState"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

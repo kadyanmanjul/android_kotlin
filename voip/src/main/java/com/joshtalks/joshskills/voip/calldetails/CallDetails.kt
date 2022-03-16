@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.new_arch.call_details
+package com.joshtalks.joshskills.voip.calldetails
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
