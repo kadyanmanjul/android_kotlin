@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.voip.webrtc
 
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,9 +51,12 @@ object AgoraCallingService : CallingService {
     }
 
     override fun connectCall(request: CallRequest) {
+
         scope.launch {
+            voipLog?.log("Connecting Call $agoraEngine")
             initCallingService()
             val status = joinChannel(request)
+            voipLog?.log("Join Channel Status ----> ${status}")
             state = State.JOINING
             // TODO: Need to check status if its unable to join
             // 1. API Call to notify backend Start Listening to Pubnub Channel
@@ -63,34 +67,55 @@ object AgoraCallingService : CallingService {
         }
     }
 
-    private fun joinChannel(request : CallRequest) : Int? = agoraEngine?.joinChannel("${request.getToken()}", "${request.getChannel()}","ENTER_OPTIONAL_INFO",0)
+    private fun joinChannel(request : CallRequest) : Int? {
+        voipLog?.log("Joining Channel")
+        return agoraEngine?.joinChannel(
+            request.getToken(),
+            request.getChannel(),
+            "ENTER_OPTIONAL_INFO",
+            0
+        )
+    }
 
     private fun leaveChannel() {
+        voipLog?.log("Leaving Channel")
         agoraEngine?.leaveChannel()
     }
 
     override fun disconnectCall() {
+        voipLog?.log("Disconnecting Call")
         scope.launch {
             // 1. Send DISCONNECTING signal through Pubnub
             // 2. Leave Channel through Agora SDK
+            voipLog?.log("Coroutine : About to call leaveChannel")
             leaveChannel()
             state = State.LEAVING
+            voipLog?.log("Coroutine : Finishing call leaveChannel Coroutine")
         }
     }
 
     private fun observeCallbacks() {
         scope.launch {
             agoraEvent.callingEvent.collect { callState ->
+                    voipLog?.log("observeCallbacks : CallState = $callState")
                     when(callState) {
                         CallState.CallDisconnected, CallState.Idle -> state = State.IDLE
                         CallState.CallConnected -> state = State.CONNECTED
                         CallState.CallInitiated -> state = State.JOINED
                         else -> {}
                     }
+                voipLog?.log("observeCallbacks : CallState = $callState")
                 eventFlow.emit(callState)
             }
         }
     }
 
-    override fun observeCallingEvents(): Flow<CallState> = eventFlow
+    override fun observeCallingEvents(): Flow<CallState> {
+        voipLog?.log("Setting event")
+        return eventFlow
+    }
+
+    fun showToast(msg : String) {
+        //Log.d(TAG, "showToast : $msg")
+    }
 }

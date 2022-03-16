@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.voip.communication.model.Error
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.MessageData
 import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
+import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
 import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.CallingService
@@ -75,7 +76,11 @@ class PeerToPeerMediator(private val observerFlow : SharedFlow<Int>) : CallServi
                         /**
                          * Join Channel
                          */
-                        val request = PeerToPeerCallRequest()
+                        AgoraCallingService.showToast("Channel Data ${it}")
+                        val request = PeerToPeerCallRequest(
+                            channelName = it.getChannel(),
+                            callToken = it.getCallingToken()
+                        )
                         callingService.connectCall(request)
                     }
                     is MessageData -> {
@@ -104,12 +109,14 @@ class PeerToPeerMediator(private val observerFlow : SharedFlow<Int>) : CallServi
                 when(it) {
                     CallState.CallConnected -> {
                         // Call Connected
+                        voipLog?.log("Call Connected")
                     }
                     CallState.CallDisconnected -> {
-
+                        voipLog?.log("Call Disconnected")
                     }
                     CallState.CallInitiated -> {
                         // CallInitiated
+                        voipLog?.log("Call CallInitiated")
                     }
                     CallState.OnReconnected -> {
 

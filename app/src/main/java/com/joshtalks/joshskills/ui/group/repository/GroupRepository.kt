@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
+import com.joshtalks.joshskills.voip.log.groupsLog
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
@@ -240,7 +241,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     suspend fun joinGroup(groupId: String): Boolean {
-        Log.e(TAG, "Joining group : $groupId")
+        groupsLog?.log("Joining Group 1$groupId")
         val response = apiService.joinGroup(GroupRequest(mentorId = mentorId, groupId = groupId))
         if (response["success"] == true) {
             try {
@@ -258,6 +259,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         adminId = response["admin_id"] as String?
                     )
                 )
+                groupsLog?.log("Joining Group 3$groupId")
                 database.groupChatDao().insertMessage(ChatItem(
                     messageId = "unread_${groupId}",
                     message = "0 Unread Messages",
@@ -267,6 +269,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                     sender = null
                 ))
                 startChatEventListener()
+                groupsLog?.log("Joining Group 2$groupId")
                 val recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = response["group_id"] as String)
                 recentMessageTime?.let {
                     fetchUnreadMessage(it, response["group_id"] as String)

@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.voip.communication.model.NetworkActionData
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.communication.model.UserActionData
+import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -35,8 +36,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-//import com.joshtalks.joshskills.voip.BuildConfig
-
 private const val TAG = "PubNubChannelService"
 
 object PubNubChannelService : EventChannel {
@@ -66,7 +65,9 @@ object PubNubChannelService : EventChannel {
     }
 
     override suspend fun initChannel() {
+        voipLog?.log("Start PubNub Init")
         withContext(scope.coroutineContext) {
+            voipLog?.log("Coroutine Started for PubNub")
             if (pubnub == null)
                 synchronized(this) {
                     if (pubnub != null)
@@ -78,11 +79,12 @@ object PubNubChannelService : EventChannel {
                         pubnub = PubNub(config)
                         pubnub?.addListener(pubNubData.callback)
                         pubnub?.subscribe()
-                            ?.channels(listOf("p2p-new-architecture-testing"))
+                            ?.channels(listOf(channelName))
                             ?.execute()
                         observeIncomingMessage()
                     }
                 }
+            voipLog?.log("Coroutine Ended for PubNub --> $pubnub")
         }
     }
 
@@ -107,7 +109,7 @@ object PubNubChannelService : EventChannel {
     }
 
     override fun observeChannelEvents(): Flow<Communication> {
-        Log.d(TAG, "observeChannelEvents: $pubnub")
+        voipLog?.log("observeChannelEvents: $pubnub")
         return eventFlow
     }
 
@@ -155,7 +157,7 @@ private class PubNubSubscriber : SubscribeCallback() {
 
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         scope.launch {
-            Log.d(TAG, "message: $pnMessageResult")
+            voipLog?.log("message: $pnMessageResult")
             val messageJson = pnMessageResult.message
             try {
                 val message = if (pnMessageResult.userMetadata.asInt == CHANNEL)

@@ -35,6 +35,8 @@ class WebrtcService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Utils.apiToken = intent?.extras?.getString("token")
+        Utils.uuid = intent?.extras?.getString("mentor")
         return super.onStartCommand(intent, flags, startId)
     }
 

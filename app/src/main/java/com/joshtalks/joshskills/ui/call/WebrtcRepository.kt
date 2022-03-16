@@ -25,7 +25,13 @@ class WebrtcRepository {
     private val remoteServiceIntent = Intent(AppObjectController.joshApplication, WebrtcService::class.java)
 
     init {
+        val bundle = Bundle().apply {
+            putString("token", "${PrefManager.getStringValue(API_TOKEN)}")
+            putString("mentor", "${ Mentor.getInstance().getUserId()}")
+        }
+        remoteServiceIntent.putExtras(bundle)
         AppObjectController.joshApplication.startService(remoteServiceIntent)
+
     }
 
     val serviceConnection = object : ServiceConnection {
@@ -42,7 +48,6 @@ class WebrtcRepository {
     }
 
     fun startService() {
-        System.setProperty("NAME", "SERVICE")
         AppObjectController.joshApplication.bindService(remoteServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 

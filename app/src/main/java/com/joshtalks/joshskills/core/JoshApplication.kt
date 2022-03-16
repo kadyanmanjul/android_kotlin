@@ -31,6 +31,8 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.log.Feature
+import com.joshtalks.joshskills.voip.log.JoshLog.Companion.enableLog
 import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
 import com.joshtalks.joshskills.voip.webrtc.CallingService
 import com.vanniktech.emoji.EmojiManager
@@ -69,8 +71,8 @@ class JoshApplication :
 
     override fun onCreate() {
         super.onCreate()
+        enableLog(Feature.VOIP)
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
-
             if(isMainProcess()) {
                 Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
                 turnOnStrictMode()

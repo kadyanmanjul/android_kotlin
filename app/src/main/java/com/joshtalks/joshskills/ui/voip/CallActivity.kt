@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.call.WebrtcRepository
+import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ class CallActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        voipLog?.log("On Create is called")
         setContentView(R.layout.activity_call)
 
         btn_incoming_connect.setOnClickListener {
@@ -27,10 +29,12 @@ class CallActivity : AppCompatActivity() {
 //            call disconnect here
 
         }
+        voipLog?.log("On Create is Ending")
     }
 
     override fun onStart() {
         super.onStart()
+        voipLog?.log("onStart is called")
         webrtc.startService()
     }
 }
