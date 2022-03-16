@@ -69,7 +69,7 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build()
                 )
             )
-            // .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
+            .then(OneTimeWorkRequestBuilder<RegenerateFCMTokenWorker>().build())
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build())
             .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())

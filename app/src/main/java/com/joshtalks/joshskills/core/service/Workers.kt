@@ -90,6 +90,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import retrofit2.HttpException
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
@@ -299,19 +300,29 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
 class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        return try {
+        try {
+            val fcmToken = PrefManager.getStringValue(FCM_TOKEN)
+            if (fcmToken.isBlank()) {
+                WorkManagerAdmin.regenerateFCMWorker()
+                return Result.success()
+            }
+
             val result = AppObjectController.signUpNetworkService.checkFCMInServer(
                 mapOf(
                     "user_id" to Mentor.getInstance().getId(),
-                    "registration_id" to PrefManager.getStringValue(FCM_TOKEN)
+                    "registration_id" to fcmToken
                 )
             )
             if (result["message"] != FCM_ACTIVE)
                 WorkManagerAdmin.regenerateFCMWorker()
 
-            Result.success()
+            return Result.success()
         } catch (ex: Exception) {
-            Result.failure()
+            return if (ex is HttpException && ex.code() == 500) {
+                WorkManagerAdmin.regenerateFCMWorker()
+                Result.success()
+            } else
+                Result.failure()
         }
     }
 }
