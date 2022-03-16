@@ -328,10 +328,10 @@ class GroupChatViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
             val onlineCount = repository.getGroupOnlineCount(groupId)
-            memberCount.set(memberResult.memberCount)
+            memberCount.set(memberResult.size)
             groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
             withContext(Dispatchers.Main){
-                memberAdapter.addMembersToList(memberResult.list)
+                memberAdapter.addMembersToList(memberResult)
                 if (showLoading) fetchingGrpInfo.set(false)
                 else showToast("Removed member from the group", Toast.LENGTH_LONG)
                 dismissProgressDialog()

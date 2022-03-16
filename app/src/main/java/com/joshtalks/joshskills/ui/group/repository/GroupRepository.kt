@@ -53,6 +53,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     fun getGroupListResult(onGroupsLoaded: ((Int) -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
             database.groupListDao().deleteAllGroupItems()
+            database.groupMemberDao().clearMemberTable()
             fetchGroupListFromNetwork()
             withContext(Dispatchers.Main) {
                 onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
@@ -120,17 +121,25 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    fun getGroupMemberList(groupId: String, adminId: String, pageInfo: PageInfo? = null): MemberResult {
-        val memberList = mutableListOf<GroupMember>()
-        var pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
-        do {
-            val pageMembers = pubnubResponse?.getMemberData(adminId)?.list ?: listOf()
-            memberList.addAll(pageMembers)
-            val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
-            pubnubResponse = chatService.getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
-        } while (pageMembers.isNotEmpty())
-        memberList.sortByDescending { it.isAdmin }
-        return MemberResult(memberList, memberList.size)
+    suspend fun fetchMembersFromNetwork(groupId: String, adminId: String, pageInfo: PageInfo? = null) {
+        val pubNubResponse = chatService.getGroupMemberList(groupId, pageInfo)
+        val memberList = pubNubResponse?.getMemberData(groupId, adminId) ?: listOf()
+        if (memberList.isEmpty())
+            return
+
+        database.groupMemberDao().insertMembers(memberList)
+
+        val nextPage = pubNubResponse?.getPageInfo()?.pubNubNext
+        fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
+    }
+
+    suspend fun getGroupMemberList(groupId: String, adminId: String): List<GroupMember> {
+        val memberList = database.groupMemberDao().getMembersFromGroup(groupId)
+        if (memberList.isNotEmpty())
+            return memberList
+        else
+            fetchMembersFromNetwork(groupId, adminId)
+        return database.groupMemberDao().getMembersFromGroup(groupId)
     }
 
     suspend fun getGroupOnlineCount(groupId: String): Int? {

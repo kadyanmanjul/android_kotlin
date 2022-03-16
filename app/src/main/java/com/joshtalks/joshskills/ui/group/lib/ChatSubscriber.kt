@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
@@ -30,7 +31,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 object ChatSubscriber : SubscribeCallback() {
+
+    private const val TAG = "ChatSubscriber"
     private val database = AppObjectController.appDatabase
+    private val chatService: ChatService = PubNubService
 
     override fun status(pubnub: PubNub, pnStatus: PNStatus) {}
 
@@ -90,7 +94,26 @@ object ChatSubscriber : SubscribeCallback() {
 
     override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {}
 
-    override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
+    override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val event = pnMembershipResult.event
+            val groupId = pnMembershipResult.channel
+            val mentorId = pnMembershipResult.data.uuid
+
+            if (event == "set") {
+                database.groupMemberDao().insertMember(GroupMember(
+                    mentorID = mentorId,
+                    memberName = chatService.getUserMetadata(mentorId)?.data?.name ?: "",
+                    memberIcon = "None",
+                    isAdmin = false,
+                    isOnline = false,
+                    groupId = groupId
+                ))
+            } else if (event == "delete") {
+                database.groupMemberDao().deleteMemberFromGroup(groupId, mentorId)
+            }
+        }
+    }
 
     override fun messageAction(pubnub: PubNub, pnMessageActionResult: PNMessageActionResult) {}
 

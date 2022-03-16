@@ -96,9 +96,10 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
                 val groupMember = GroupMember(
                     groupChatData.getMentorId() ?: Mentor.getInstance().getId(),
                     groupChatData.sender!!,
-                    "",
+                    memberIcon = "",
                     isAdmin = true,
-                    isOnline = false
+                    isOnline = false,
+                    groupChatData.groupId
                 )
                 itemClick?.invoke(groupMember, item.textTitle)
             }
