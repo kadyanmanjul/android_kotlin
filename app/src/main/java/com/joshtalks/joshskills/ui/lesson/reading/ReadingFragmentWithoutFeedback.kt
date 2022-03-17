@@ -884,18 +884,15 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    private fun download(){
-        Log.e("tocheck", "Permission")
-            if(ContextCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED) {
-                Log.e("tocheck", "## Permission Granted")
-                downloadVideos()
-            } else {
-                Log.e("tocheck", "## Permission Not-Granted")
-                viewModel.askStoragePermission()
-            }
+    private fun download() {
+        Log.e("tocheck", "start download")
+        if (PermissionUtils.isStoragePermissionEnabled(requireContext())) {
+            downloadVideos()
+        }
+        else {
+            Log.e("tocheck", "## Permission Not-Granted")
+            viewModel.askStoragePermission()
+        }
     }
 
     // TODO: Refactor Data
