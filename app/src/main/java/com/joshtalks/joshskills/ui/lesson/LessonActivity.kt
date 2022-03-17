@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -34,6 +35,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -68,6 +70,10 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -87,7 +93,7 @@ private const val TAG = "LessonActivity"
 const val TOOLTIP_LESSON_GRAMMAR = "TOOLTIP_LESSON_GRAMMAR_"
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
-
+    private val event = EventLiveData
     private lateinit var binding: LessonActivityBinding
     private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 
@@ -163,6 +169,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             R.layout.lesson_activity
         )
         binding.viewbinding = this
+
+        event.observe(this) {
+            when(it.what) {
+                //PERMISSION_FROM_GRAMMER -> askStoragePermission(STORAGE_GRAMMER_REQUEST_CODE)
+                PERMISSION_FROM_READING -> askStoragePermission(STORAGE_READING_REQUEST_CODE)
+            }
+        }
+
         PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY, false)
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         if (lessonId == 0) {
@@ -216,6 +230,37 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
+    }
+
+    private fun askStoragePermission(requestCode: Int) {
+        Log.e("tocheck", "start download -- AC permissionGranted")
+        PermissionUtils.storageReadAndWritePermission1(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let {
+                        if (report.areAllPermissionsGranted()) {
+                            Log.e("tocheck", "start download -- AC MultiplePermissionsListener -- $requestCode")
+                            if (requestCode == STORAGE_READING_REQUEST_CODE)
+                                viewModel.permissionGranted()
+                        } else if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                this@LessonActivity,
+                                R.string.grant_storage_permission
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     override fun onResume() {

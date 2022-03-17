@@ -42,6 +42,7 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -61,6 +62,7 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -113,6 +115,7 @@ class ReadingFragmentWithoutFeedback :
     private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: ReadingPracticeFragmentWithoutFeedbackBinding
+    private val events = EventLiveData
     private var mUserIsSeeking = false
     private var isAudioRecordDone = false
     private var scaleAnimation: Animation? = null
@@ -285,6 +288,12 @@ class ReadingFragmentWithoutFeedback :
             ).not()
         ) {
             binding.playInfoHint.visibility = VISIBLE
+        }
+        events.observe(this) {
+            Log.e("tocheck", "start download -- Fragment ev permissionGranted")
+            when(it.what) {
+                PERMISSION_FROM_READING_GRANTED -> download()
+            }
         }
     }
 
@@ -871,13 +880,15 @@ class ReadingFragmentWithoutFeedback :
             showNextTooltip()
         }
     }
+
     private fun download(){
         Log.e("tocheck", "start download")
-
-        if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
-            askStoragePermission(DOWNLOAD_VIDEO_REQUEST_CODE)
+        if (PermissionUtils.isStoragePermissionEnabled(requireActivity()).not()) {
+            Log.e("tocheck", "start download -- askStoragePermission")
+            viewModel.askStoragePermission()
             return
         }
+
         Log.e("tocheck", "start download $currentLessonQuestion")
         Log.e("tocheck", "start download ${currentLessonQuestion?.videoList}")
         currentLessonQuestion?.videoList?.let {
@@ -996,40 +1007,6 @@ class ReadingFragmentWithoutFeedback :
             Log.e("tocheck", "start download16")
         }
     }
-
-    private fun askStoragePermission(requestCode: Int) {
-
-        PermissionUtils.storageReadAndWritePermission1(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let {
-                        if (report.areAllPermissionsGranted()) {
-                            if (requestCode == DOWNLOAD_VIDEO_REQUEST_CODE) {
-                                Log.e("tocheck", "start download permission")
-                                download()
-                            }
-                        } else if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.grant_storage_permission
-                            )
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            }
-        )
-    }
-
-
 
     private fun showCompletedPractise() {
         hidePracticeInputLayout()

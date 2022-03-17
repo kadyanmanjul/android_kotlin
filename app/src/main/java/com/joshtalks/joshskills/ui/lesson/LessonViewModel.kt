@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.app.Application
+import android.os.Message
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
@@ -44,7 +46,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
+const val PERMISSION_FROM_GRAMMER = 1
+const val PERMISSION_FROM_READING = 2
+const val PERMISSION_FROM_READING_GRANTED = 3
+
+
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
+    private var message = Message()
+    private var singleLiveEvent = EventLiveData
 
     val lessonQuestionsLiveData: MutableLiveData<List<LessonQuestion>> = MutableLiveData()
     val lessonLiveData: MutableLiveData<LessonModel> = MutableLiveData()
@@ -99,6 +108,18 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "${ex.message}")
             }
         }
+    }
+
+    fun permissionGranted() {
+        Log.e("tocheck", "start download -- VM permissionGranted")
+        message.what = PERMISSION_FROM_READING_GRANTED
+        singleLiveEvent.value = message
+    }
+
+    fun askStoragePermission() {
+        Log.e("tocheck", "start download -- VM askStoragePermission")
+        message.what = PERMISSION_FROM_READING
+        singleLiveEvent.value = message
     }
 
     fun getLesson(lessonId: Int) {
