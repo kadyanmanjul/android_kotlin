@@ -139,6 +139,7 @@ class ReadingFragmentWithoutFeedback :
     private var flag: Boolean = false
     private val scope = CoroutineScope(Dispatchers.IO)
     private val mutex = Mutex(false)
+    private var muxerJob : Job? = null
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -885,11 +886,7 @@ class ReadingFragmentWithoutFeedback :
 
     private fun download(){
         Log.e("tocheck", "Permission")
-        if (PermissionUtils.isStoragePermissionEnabled(requireActivity()).not()) {
             if(ContextCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                 requireActivity(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED) {
@@ -899,8 +896,6 @@ class ReadingFragmentWithoutFeedback :
                 Log.e("tocheck", "## Permission Not-Granted")
                 viewModel.askStoragePermission()
             }
-        }
-
     }
 
     // TODO: Refactor Data
@@ -921,7 +916,6 @@ class ReadingFragmentWithoutFeedback :
                     true,
                     currentLessonQuestion
                 )
-            } else if (BuildConfig.DEBUG) {
             }
         }
     }
@@ -934,6 +928,8 @@ class ReadingFragmentWithoutFeedback :
         override fun onCancelled(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
+            muxerJob?.cancel()
+            unlockDownloadLock()
             //showToast("download Failed")
             Log.e("tocheck", "start download8")
         }
@@ -943,16 +939,8 @@ class ReadingFragmentWithoutFeedback :
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
             //showToast("video Downloaded")
             videoDownPath = download.file.toString()
-            try{
-                Log.e("tocheck", "start download3")
-                mutex.unlock()
-            }catch (e: IllegalStateException){
-                e.printStackTrace()
-                Log.e("tocheck", "start download4")
-            }
-            //mutex.unlock()
             flag = true
-
+            unlockDownloadLock()
             binding.progressDialog.visibility = GONE
 
             scope.launch {
@@ -983,6 +971,8 @@ class ReadingFragmentWithoutFeedback :
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             //showToast("download error")
+            muxerJob?.cancel()
+            unlockDownloadLock()
             Log.e("tocheck", "start download10")
         }
 
@@ -1021,6 +1011,16 @@ class ReadingFragmentWithoutFeedback :
 
         override fun onWaitingNetwork(download: Download) {
             Log.e("tocheck", "start download16")
+        }
+    }
+
+    private fun unlockDownloadLock() {
+        try{
+            Log.e("tocheck", "start download3")
+            mutex.unlock()
+        }catch (e: IllegalStateException){
+            e.printStackTrace()
+            Log.e("tocheck", "start download4")
         }
     }
 
@@ -1339,29 +1339,31 @@ class ReadingFragmentWithoutFeedback :
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
-                            scope.launch {
-                                Log.e("tocheck", "start download5")
-                                mutex.withLock {
-                                    Log.e("tocheck", "start download6")
-                                    audioVideoMuxer()
-                                    Log.e("tocheck", "start download7")
-                                    binding.playBtn.visibility = VISIBLE
-
-                                    AppObjectController.uiHandler.postDelayed(
-                                        {
-                                            binding.submitAnswerBtn.parent.requestChildFocus(
-                                                binding.submitAnswerBtn,
-                                                binding.submitAnswerBtn
-                                            )
-                                        },
-                                        200
+                            AppObjectController.uiHandler.postDelayed(
+                                {
+                                    binding.submitAnswerBtn.parent.requestChildFocus(
+                                        binding.submitAnswerBtn,
+                                        binding.submitAnswerBtn
                                     )
+                                },
+                                200
+                            )
 
-                                    val duration = event.eventTime - event.downTime
+                            val duration = event.eventTime - event.downTime
 
-                                    if (duration < CLICK_OFFSET_PERIOD) {
-                                        AppObjectController.uiHandler.removeCallbacks(longPressAnimationCallback)
-                                        showRecordHintAnimation()
+                            if (duration < CLICK_OFFSET_PERIOD) {
+                                AppObjectController.uiHandler.removeCallbacks(longPressAnimationCallback)
+                                showRecordHintAnimation()
+                            }
+
+                            muxerJob = scope.launch {
+                                if(isActive) {
+                                    Log.e("tocheck", "start download launch 6")
+                                    mutex.withLock {
+                                        Log.e("tocheck", "start download6")
+                                        audioVideoMuxer()
+                                        Log.e("tocheck", "start download7")
+                                        binding.playBtn.visibility = VISIBLE
                                     }
                                 }
                             }
