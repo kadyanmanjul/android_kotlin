@@ -1090,6 +1090,12 @@ class ConversationActivity :
                 this@ConversationActivity.userProfileData = userProfileData
                 if (userProfileData.hasGroupAccess) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
+                    if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
+                        && System.currentTimeMillis().minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
+                        && PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
+                        PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
+                        checkForOemNotifications(AUTO_START_POPUP)
+                    }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
                 }
@@ -1291,10 +1297,6 @@ class ConversationActivity :
                             if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
                                 delay(1000)
                                 setOverlayAnimation()
-                            } else if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
-                                && System.currentTimeMillis().minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L) {
-                                PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
-                                checkForOemNotifications(AUTO_START_POPUP)
                             }
                         }
                     }
