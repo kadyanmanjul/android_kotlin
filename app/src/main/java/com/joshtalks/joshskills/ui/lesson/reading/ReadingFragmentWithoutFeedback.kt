@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.*
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import com.joshtalks.joshskills.BuildConfig
@@ -882,13 +884,27 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun download(){
-        Log.e("tocheck", "start download")
+        Log.e("tocheck", "Permission")
         if (PermissionUtils.isStoragePermissionEnabled(requireActivity()).not()) {
-            Log.e("tocheck", "start download -- askStoragePermission")
-            viewModel.askStoragePermission()
-            return
+            if(ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED) {
+                Log.e("tocheck", "## Permission Granted")
+                downloadVideos()
+            } else {
+                Log.e("tocheck", "## Permission Not-Granted")
+                viewModel.askStoragePermission()
+            }
         }
 
+    }
+
+    // TODO: Refactor Data
+    private fun downloadVideos() {
         Log.e("tocheck", "start download $currentLessonQuestion")
         Log.e("tocheck", "start download ${currentLessonQuestion?.videoList}")
         currentLessonQuestion?.videoList?.let {
