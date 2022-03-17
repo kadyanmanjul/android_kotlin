@@ -1,12 +1,16 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.Manifest.*
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Outline
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -22,6 +26,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -34,6 +39,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.Manifest
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
@@ -70,6 +76,7 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -173,7 +180,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         event.observe(this) {
             when(it.what) {
                 //PERMISSION_FROM_GRAMMER -> askStoragePermission(STORAGE_GRAMMER_REQUEST_CODE)
-                PERMISSION_FROM_READING -> askStoragePermission(STORAGE_READING_REQUEST_CODE)
+                PERMISSION_FROM_READING -> requestStoragePermission()
             }
         }
 
@@ -232,37 +239,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
 
-    private fun askStoragePermission(requestCode: Int) {
-        Log.e("tocheck", "start download -- AC permissionGranted")
-        PermissionUtils.storageReadAndWritePermission1(
-            this,
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let {
-                        if (report.areAllPermissionsGranted()) {
-                            Log.e("tocheck", "start download -- AC MultiplePermissionsListener -- $requestCode")
-                            if (requestCode == STORAGE_READING_REQUEST_CODE)
-                                viewModel.permissionGranted()
-                        } else if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                this@LessonActivity,
-                                R.string.grant_storage_permission
-                            )
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            }
-        )
-    }
-
     override fun onResume() {
         super.onResume()
         subscribeRxBus()
@@ -293,6 +269,30 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                      }
                  }
         )
+    }
+
+    private fun requestStoragePermission() {
+        Log.e("tocheck", "Activity requestStoragePermission  ")
+        val permissions = arrayOf(READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE)
+        ActivityCompat.requestPermissions(this, permissions, STORAGE_READING_REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == STORAGE_READING_REQUEST_CODE &&
+            grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.e("tocheck", "Activity requestStoragePermission  GRANTED")
+            viewModel.permissionGranted()
+        } else if(requestCode == STORAGE_READING_REQUEST_CODE) {
+            // TODO: Ask Permission Again
+            Log.e("tocheck", "Activity requestStoragePermission  NOT-GRANTED")
+        }
     }
 
     override fun getConversationId(): String? {

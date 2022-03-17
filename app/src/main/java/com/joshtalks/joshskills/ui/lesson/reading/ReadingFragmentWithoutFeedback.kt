@@ -290,7 +290,7 @@ class ReadingFragmentWithoutFeedback :
             binding.playInfoHint.visibility = VISIBLE
         }
         events.observe(this) {
-            Log.e("tocheck", "start download -- Fragment ev permissionGranted")
+            Log.e("tocheck", "start download -- Fragment ev permissionGranted ")
             when(it.what) {
                 PERMISSION_FROM_READING_GRANTED -> download()
             }
