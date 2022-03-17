@@ -126,6 +126,7 @@ class ReadingFragmentWithoutFeedback :
     private var userReferralCode: String = EMPTY
     private var video: String? = null
     private var videoDownPath : String? = null
+    //lateinit var videoDownPath: String
     private var outputFile : String = ""
     private var downloadID: Long = -1
     lateinit var fileName : String
@@ -927,11 +928,13 @@ class ReadingFragmentWithoutFeedback :
 
             binding.progressDialog.visibility = GONE
 
-//            scope.launch {
-//                AppObjectController.appDatabase.chatDao().insertCompressedVideo(
-//                    CompressedVideo(currentLessonQuestion!!.questionId, videoDownPath!!)
-//                )
-//            }
+            scope.launch {
+                if(videoDownPath.isNullOrEmpty().not()){
+                    AppObjectController.appDatabase.chatDao().insertCompressedVideo(
+                        CompressedVideo(currentLessonQuestion!!.questionId, videoDownPath!!)
+                    )
+                }
+            }
 
             var uris = mutableListOf<Uri>()
             uris.add(Uri.parse(videoDownPath))
@@ -996,7 +999,7 @@ class ReadingFragmentWithoutFeedback :
 
     private fun askStoragePermission(requestCode: Int) {
 
-        PermissionUtils.storageReadAndWritePermission(
+        PermissionUtils.storageReadAndWritePermission1(
             requireActivity(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -1402,7 +1405,84 @@ class ReadingFragmentWithoutFeedback :
             audioExtractor.selectTrack(0)
             val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
 
-            toCheck(videoExtractor, audioFormat, audioExtractor)
+           // toCheck(videoExtractor, audioFormat, audioExtractor)
+            videoDownPath?.let { videoExtractor.setDataSource(it) }
+            //  videoExtractor.setDataSource(cmpPath)
+            videoExtractor.selectTrack(0)
+            val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
+
+//            val audioExtractor: MediaExtractor  = MediaExtractor()
+//            audioExtractor.setDataSource(filePath!!)
+//            audioExtractor.selectTrack(0)
+//            val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
+
+            var muxer: MediaMuxer  = MediaMuxer(
+                outputFile,
+                MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
+            )
+
+            val videoTrack = muxer.addTrack(videoFormat)
+            val audioTrack = muxer.addTrack(audioFormat)
+
+            var sawEOS = false
+            var frameCount = 0
+            val offset = 100
+            val sampleSize = 256 * 1024
+            val videoBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
+            val audioBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
+            val videoBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
+            val audioBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
+
+            videoExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
+            audioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
+
+            muxer.start()
+            while (!sawEOS){
+                videoBufferInfo.offset = offset
+                videoBufferInfo.size = videoExtractor.readSampleData(videoBuf, offset)
+
+                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0)
+                {
+                    sawEOS = true
+                    videoBufferInfo.size = 0
+
+                }else{
+                    videoBufferInfo.presentationTimeUs = videoExtractor.getSampleTime()
+                    videoBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME
+                    muxer.writeSampleData(videoTrack, videoBuf, videoBufferInfo)
+                    videoExtractor.advance()
+
+                    frameCount++
+                }
+            }
+
+            var sawEOS2 = false
+            var frameCount2 = 0
+            while (!sawEOS2){
+                frameCount2++
+
+                audioBufferInfo.offset = offset
+                audioBufferInfo.size = audioExtractor.readSampleData(audioBuf, offset)
+
+                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0){
+                    sawEOS2 = true
+                    audioBufferInfo.size = 0
+                }else{
+                    audioBufferInfo.presentationTimeUs = audioExtractor.getSampleTime()
+                    audioBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
+                    muxer.writeSampleData(audioTrack, audioBuf, audioBufferInfo)
+                    audioExtractor.advance()
+                }
+
+            }
+
+            muxer.stop()
+
+            muxer.release()
+            binding.mergedVideo.setVideoPath(outputFile)
+            binding.mergedVideo.start()
+            binding.playBtn.visibility = INVISIBLE
+
 
         }catch (e: IOException) {
             Timber.e(e)
@@ -1418,7 +1498,7 @@ class ReadingFragmentWithoutFeedback :
     ) {
         try{
 
-            videoExtractor.setDataSource(videoDownPath!!)
+            videoDownPath?.let { videoExtractor.setDataSource(it) }
             //  videoExtractor.setDataSource(cmpPath)
             videoExtractor.selectTrack(0)
             val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
@@ -1522,11 +1602,11 @@ class ReadingFragmentWithoutFeedback :
                     override fun onSuccess(index: Int, size: Long, path: String?) {
                         //showToast("successful")
                         // videoDownPath = path
-                        scope.launch {
-                            AppObjectController.appDatabase.chatDao().insertCompressedVideo(
-                                CompressedVideo(currentLessonQuestion!!.questionId, path!!)
-                            )
-                        }
+//                        scope.launch {
+//                            AppObjectController.appDatabase.chatDao().insertCompressedVideo(
+//                                CompressedVideo(currentLessonQuestion!!.questionId, path!!)
+//                            )
+//                        }
                     }
 
                     override fun onFailure(index: Int, failureMessage: String) {

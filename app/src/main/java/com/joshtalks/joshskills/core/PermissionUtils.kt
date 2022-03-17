@@ -44,6 +44,29 @@ object PermissionUtils {
         }
     }
 
+    fun storageReadAndWritePermission1(
+        context: Context?,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+
+            Dexter.withContext(context)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                .withListener(multiplePermissionsListener).check()
+        } else {
+
+            Dexter.withContext(context)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+                .withListener(multiplePermissionsListener).check()
+        }
+    }
+
+
     fun locationPermission(
         activity: Activity?,
         multiplePermissionsListener: MultiplePermissionsListener
