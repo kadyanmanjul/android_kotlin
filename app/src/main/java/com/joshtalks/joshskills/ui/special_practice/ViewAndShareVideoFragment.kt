@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -22,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import com.daasuu.mp4compose.FillMode
 import com.daasuu.mp4compose.composer.Mp4Composer
 import com.daasuu.mp4compose.filter.GlWatermarkFilter
+import com.joshtalks.joshskills.util.getNewTempFile
 import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -34,6 +36,7 @@ import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.ViewAndShareViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.util.FileFormat
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
 import io.branch.referral.util.LinkProperties
@@ -242,7 +245,13 @@ class ViewAndShareVideoFragment : CoreJoshFragment(), Player.EventListener {
 
     private fun addOverLayOnVideo(bitmap: Bitmap?) {
         try {
-            val videoPath = getVideoFilePath()
+            var videoPath = EMPTY
+            videoPath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                getNewTempFile(requireContext(),FileFormat.VIDEO).absolutePath
+            }else{
+                getVideoFilePath()
+            }
+
             Mp4Composer(videoPathOriginal ?: EMPTY, videoPath)
                 .size(getWindowWidth(requireContext()), getHeightByPixel(requireContext()))
                 .fillMode(FillMode.PRESERVE_ASPECT_CROP)

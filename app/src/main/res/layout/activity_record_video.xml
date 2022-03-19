@@ -16,6 +16,10 @@
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity" />
+
+        <variable
+            name="itemdata"
+            type="com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice" />
     </data>
 
     <FrameLayout
@@ -150,7 +154,8 @@
                                 android:layout_marginRight="@dimen/_10sdp"
                                 android:text="@string/text_temp"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular_Nunito"
-                                android:textColor="@color/pure_black">
+                                android:textColor="@color/pure_black"
+                                tools:text="@string/text_temp">
 
                             </androidx.appcompat.widget.AppCompatTextView>
                         </LinearLayout>
@@ -199,7 +204,9 @@
                                 android:paddingBottom="@dimen/_10sdp"
                                 android:text="@string/instruction_text"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal11_Regular"
-                                android:textColor="@color/pure_black" />
+                                android:textColor="@color/pure_black"
+                                tools:text="@string/instruction_text"/>
+
 
                             <com.google.android.material.card.MaterialCardView
                                 android:id="@+id/card_sample_video_play"
