@@ -391,4 +391,14 @@ class ConversationViewModel(
             mAudioRecording.stopRecording(true)
         }
     }
+
+    fun clearDataForRestart() {
+        viewModelScope.launch(Dispatchers.IO) {
+            LastSyncPrefManager.clear()
+            PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
+            PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
+            appDatabase.chatDao().clearChatTable()
+            appDatabase.lessonDao().clearChatLessonTable()
+        }
+    }
 }

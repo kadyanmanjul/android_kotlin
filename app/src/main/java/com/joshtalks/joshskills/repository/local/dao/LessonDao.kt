@@ -61,4 +61,6 @@ interface LessonDao {
     @Query("SELECT DISTINCT lesson_id FROM lessonmodel WHERE course =:courseId")
     fun getLessonIdsForCourse(courseId: Int): List<Int>
 
+    @Query("DELETE FROM lessonmodel")
+    suspend fun clearChatLessonTable()
 }

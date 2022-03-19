@@ -43,6 +43,7 @@
         android:id="@+id/menu_restart_course"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
+        android:visible="false"
         android:title="@string/restart_course"
         app:showAsAction="collapseActionView" />
 

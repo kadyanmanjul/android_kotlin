@@ -345,6 +345,9 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  message_time > :messageTime AND  is_delete_message=0 ORDER BY message_time ASC,question_id ASC ")
     suspend fun getNewMessages(conversationId: String, messageTime: Double): List<ChatModel>
 
+    @Query("DELETE FROM chat_table")
+    suspend fun clearChatTable()
+
     suspend fun getNewFetchMessages(conversationId: String, messageTime: Double): List<ChatModel> {
         return getLastChatsV2 {
             getNewMessages(

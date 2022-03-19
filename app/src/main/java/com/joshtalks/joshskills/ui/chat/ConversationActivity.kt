@@ -54,6 +54,7 @@ import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
 import com.joshtalks.joshskills.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -153,8 +154,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.activity_payment_summary.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -225,7 +224,6 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
-    private var lastLesson: Int? = null
     private var currentTooltipIndex = 0
     private var activityFeedControl = false
     private val leaderboardTooltipList by lazy {
@@ -525,6 +523,7 @@ class ConversationActivity :
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             profileFeatureActiveView(inboxEntity.isCapsuleCourse)
             showFavtMenuOption(inboxEntity.isCapsuleCourse)
+            showRestartMenuOption()
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
@@ -582,56 +581,54 @@ class ConversationActivity :
     }
 
     fun restartCourse(isFromRestartButton: Boolean) {
-        if(isFromRestartButton) {
+        if(isFromRestartButton)
             conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
-        }
-        var checkIfCourseRestart = false
+
         var phoneNumber = User.getInstance().phoneNumber
         phoneNumber = phoneNumber?.substring(3)
-        var email = User.getInstance().email
-        when {
-            email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()-> {
-                conversationViewModel.restartCourse(phoneNumber.toString(),"MobileNumber")
-                checkIfCourseRestart = true
-            }
-            phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()-> {
-                conversationViewModel.restartCourse(email,"Email")
-                checkIfCourseRestart = true
-            }
-            email.isNullOrEmpty() && phoneNumber.isNullOrEmpty() -> {
-                checkIfCourseRestart = false
-            }
+        val email = User.getInstance().email
+        if(email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
+            showToast("Course can't restart")
         }
-        if(checkIfCourseRestart) {
-            MaterialDialog(this@ConversationActivity).show{
+        else {
+            MaterialDialog(this@ConversationActivity).show {
                 message(R.string.restart_course_message)
                 positiveButton(R.string.restart_now) {
-                    if(isFromRestartButton) {
-                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_SUCCESS_RESTART_90LESSONS)
+                    if(email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
+                        conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
                     }
-                    else {
-                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_SUCCESS_RESTART_COURSE_DOT)
+                    else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
+                        conversationViewModel.restartCourse(email, "Email")
                     }
+
+                    conversationViewModel.clearDataForRestart()
                     conversationBinding.btnRestartCourse.visibility = View.GONE
-                    buildRestartDialog()
+                    startActivity(getInboxActivityIntent())
+
+                    if (isFromRestartButton) {
+                        conversationViewModel.saveRestartCourseImpression(
+                            IMPRESSION_SUCCESS_RESTART_90LESSONS
+                        )
+                    } else {
+                        conversationViewModel.saveRestartCourseImpression(
+                            IMPRESSION_SUCCESS_RESTART_COURSE_DOT
+                        )
+                    }
                 }
                 negativeButton(R.string.cancel) {
                 }
             }
         }
-        else
-            showToast("Course can't restart")
     }
+
     fun showRestartButton() {
         CoroutineScope(Dispatchers.IO).launch {
-            lastLesson= conversationViewModel.getLastLessonForCourse()
+            val lastLesson= conversationViewModel.getLastLessonForCourse()
             if(lastLesson == 90 && inboxEntity.courseId == "151") {
                 conversationBinding.btnRestartCourse.visibility = View.VISIBLE
                 conversationBinding.messageButton.visibility = View.GONE
                 conversationBinding.chatEdit.visibility = View.GONE
             }
-            else
-                conversationBinding.btnRestartCourse.visibility = View.GONE
         }
     }
 
@@ -1276,6 +1273,17 @@ class ConversationActivity :
         } else {
             conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isVisible = false
             conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isEnabled = false
+        }
+    }
+
+    private fun showRestartMenuOption(){
+        if(inboxEntity.isCourseBought && inboxEntity.courseId == "151") {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = true
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = true
+        }
+        else {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = false
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = false
         }
     }
 
