@@ -114,17 +114,9 @@ fun convertImageFilePathIntoBitmap(imageFile: String): Bitmap {
 fun getHeightByPixel(context: Context): Int {
     var height = 0
     height = if ((pxToDp(getWindowHeight(context)) % 2) == 0) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ((pxToDp(getWindowHeight(context))) * 2)
-        } else {
-            ((pxToDp(getWindowHeight(context))) * 2).minus(130)
-        }
+        ((pxToDp(getWindowHeight(context))) * 2).minus(130)
     } else {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ((pxToDp(getWindowHeight(context)) + 1) * 2)
-        } else {
-            (((pxToDp(getWindowHeight(context))) + 1) * 2).minus(130)
-        }
+        ((pxToDp(getWindowHeight(context)) + 1) * 2).minus(130)
     }
     return height
 }
