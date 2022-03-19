@@ -398,4 +398,9 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
+
+    fun mixPanelEvent(eventName:String,obj:JSONObject?=null) {
+        MixPanelTracker().publishEvent(eventName,obj)
+    }
+
 }

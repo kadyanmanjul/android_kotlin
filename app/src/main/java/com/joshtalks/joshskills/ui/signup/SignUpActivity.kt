@@ -81,6 +81,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER_ENROLL
 import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_ALREADYUSER
+import org.json.JSONObject
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -248,6 +249,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun setupFacebookLogin() {
+        var isSuccess = false
         LoginManager.getInstance().logOut()
         LoginManager.getInstance().loginBehavior = LoginBehavior.NATIVE_WITH_FALLBACK
         LoginManager.getInstance().registerCallback(
@@ -255,6 +257,7 @@ class SignUpActivity : BaseActivity() {
             object : FacebookCallback<LoginResult> {
                 override fun onSuccess(loginResult: LoginResult) {
                     if (loginResult.accessToken != null) {
+                        isSuccess = true
                         getUserDetailsFromFB(loginResult.accessToken)
                     } else {
                         showToast(getString(R.string.something_went_wrong))
@@ -272,9 +275,13 @@ class SignUpActivity : BaseActivity() {
                     hideProgressBar()
                 }
             })
+        val obj = JSONObject()
+        obj.put("is success","$isSuccess")
+        viewModel.mixPanelEvent("facebook verification",obj)
     }
 
     private fun setupTrueCaller() {
+        var isSuccess = false
         val trueScope = TruecallerSdkScope.Builder(this, object : ITrueCallback {
             override fun onFailureProfileShared(trueError: TrueError) {
                 hideProgressBar()
@@ -288,9 +295,9 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
+                isSuccess = true
                 viewModel.verifyUserViaTrueCaller(trueProfile)
             }
-
         })
             .consentMode(TruecallerSdkScope.CONSENT_MODE_POPUP)
             .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
@@ -302,6 +309,9 @@ class SignUpActivity : BaseActivity() {
             val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
             TruecallerSDK.getInstance().setLocale(locale)
         }
+        val obj = JSONObject()
+        obj.put("is success","$isSuccess")
+        viewModel.mixPanelEvent("truecaller verification",obj)
     }
 
     private fun openSignUpOptionsFragment() {
@@ -465,11 +475,13 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun handleGoogleSignInResult(account: GoogleSignInAccount) {
+        var isSuccess = false
         if (account.idToken.isNullOrEmpty().not()) {
             val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
             auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
+                        isSuccess = true
                         val accountUser = auth.currentUser
                         handleFirebaseAuth(accountUser)
                     } else {
@@ -481,6 +493,9 @@ class SignUpActivity : BaseActivity() {
         } else {
             showToast(getString(R.string.generic_message_for_error))
         }
+        val obj = JSONObject()
+        obj.put("is success","$isSuccess")
+        viewModel.mixPanelEvent("google verification",obj)
     }
 
     private fun handleFirebaseAuth(
@@ -534,6 +549,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        viewModel.mixPanelEvent("back press")
         supportFragmentManager.popBackStackImmediate()
         if (supportFragmentManager.backStackEntryCount == 0) {
             this@SignUpActivity.finish()

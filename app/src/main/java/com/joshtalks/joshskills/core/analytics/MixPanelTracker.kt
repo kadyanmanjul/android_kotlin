@@ -11,7 +11,7 @@ class MixPanelTracker {
         )
     }
 
-    fun publishEvent(eventName:String,properties:JSONObject){
+    fun publishEvent(eventName:String,properties:JSONObject?=null){
         mixpanel.track(eventName,properties)
         mixpanel.flush()
     }

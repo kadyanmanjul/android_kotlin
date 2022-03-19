@@ -328,8 +328,10 @@ class ReferralActivity : BaseActivity() {
             showToast(getString(R.string.whatsApp_not_installed))
         }
         if (packageString == WHATSAPP_PACKAGE_STRING) {
+            viewModel.mixPanelEvent("share referral whatsapp ")
             viewModel.saveImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
         } else {
+            viewModel.mixPanelEvent("share referral others")
             viewModel.saveImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
         }
     }
@@ -355,6 +357,7 @@ class ReferralActivity : BaseActivity() {
 
     @Synchronized
     private fun copyCodeIntoClipBoard() {
+        viewModel.mixPanelEvent("copy referral")
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         val cManager =
             application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

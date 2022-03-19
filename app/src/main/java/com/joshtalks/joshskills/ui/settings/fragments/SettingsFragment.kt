@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
@@ -27,6 +28,7 @@ import com.joshtalks.joshskills.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import org.json.JSONObject
 
 class SettingsFragment : Fragment() {
 
@@ -108,6 +110,9 @@ class SettingsFragment : Fragment() {
         binding.p2pSetting.isChecked = PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE)
         binding.p2pSetting.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
+            val obj= JSONObject()
+            obj.put("is checked",isChecked)
+            MixPanelTracker().publishEvent("speaking partner notification",obj)
         }
         if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false) && User.getInstance().isVerified.not()){
             binding.personalInfoTv.isEnabled = false
@@ -170,6 +175,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun openSelectQualityFragment() {
+        MixPanelTracker().publishEvent("download quality")
         (requireActivity() as BaseActivity).replaceFragment(
             R.id.settings_container, SelectResolutionFragment(), SelectResolutionFragment.TAG,
             TAG
@@ -177,6 +183,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun openSelectLanguageFragment() {
+        MixPanelTracker().publishEvent("language changed")
         (requireActivity() as BaseActivity).replaceFragment(
             R.id.settings_container, LanguageFragment(), LanguageFragment.TAG, TAG
         )
@@ -199,6 +206,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun showSignoutBottomView() {
+        MixPanelTracker().publishEvent("sign out")
         binding.clearBtn.text = getString(R.string.sign_out)
         action = PopupActions.SIGNOUT
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
@@ -207,6 +215,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun showClearDownloadsView() {
+        MixPanelTracker().publishEvent("clear all downloads")
         binding.clearBtn.text = getString(R.string.clear_all_downloads)
         action = PopupActions.CLEAR_DOWLOADS
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
@@ -235,6 +244,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun onRateUsClicked() {
+        MixPanelTracker().publishEvent("rate us")
         val uri: Uri =
             Uri.parse("market://details?id=${AppObjectController.joshApplication.packageName}")
         val goToMarket = Intent(Intent.ACTION_VIEW, uri)
@@ -258,6 +268,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun onPrivacyPolicyClicked() {
+        MixPanelTracker().publishEvent("privacy policy")
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         (activity as BaseActivity).showWebViewDialog(url)
 

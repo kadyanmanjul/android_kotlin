@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
@@ -13,6 +14,7 @@ import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.json.JSONObject
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -153,116 +155,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-//    fun initCometChat(groupId: String?) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                if (CometChat.isInitialized().not()) {
-//                    // CometChat not initialized
-//                    val appSettings = AppSettings.AppSettingsBuilder()
-//                        .subscribePresenceForAllUsers()
-//                        .setRegion(BuildConfig.COMETCHAT_REGION)
-//                        .build()
-//
-//                    CometChat.init(
-//                        context,
-//                        BuildConfig.COMETCHAT_APP_ID,
-//                        appSettings,
-//                        object : CometChat.CallbackListener<String>() {
-//                            override fun onSuccess(p0: String?) {
-//                                Timber.d("Initialization completed successfully")
-//                                loginUser(groupId)
-//                            }
-//
-//                            override fun onError(p0: CometChatException?) {
-//                                Timber.d("Initialization failed with exception: %s", p0?.message)
-//                            }
-//
-//                        })
-//                } else {
-//                    // CometChat already initialized
-//                    loginUser(groupId)
-//                }
-//            } catch (ex: Exception) {
-//                LogException.catchException(ex)
-//            }
-//
-//        }
-//    }
-
-//    private fun loginUser(groupId: String?) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            when {
-//                CometChat.getLoggedInUser() == null -> {
-//                    // User not logged in
-//                    try {
-//                        CometChat.login(
-//                            Mentor.getInstance().getId(),
-//                            BuildConfig.COMETCHAT_API_KEY,
-//                            object : CometChat.CallbackListener<User>() {
-//                                override fun onSuccess(p0: User?) {
-//                                    Timber.d("Login Successful : %s", p0?.toString())
-//                                    groupId?.let {
-//                                        groupIdLiveData.postValue(it)
-//                                    }
-//                                    registerFCMTokenWithCometChat()
-//                                }
-//
-//                                override fun onError(p0: CometChatException?) {
-//                                    Timber.d("loginUser failed with exception: %s", p0?.message)
-//                                }
-//
-//                            })
-//                    } catch (ex: Exception) {
-//                        ex.printStackTrace()
-//                    }
-//                }
-//                CometChat.getLoggedInUser().uid != Mentor.getInstance().getId() -> {
-//                    // Any other user is logged in. So we have to logout first
-//                    try {
-//                        CometChat.logout(object : CometChat.CallbackListener<String>() {
-//                            override fun onSuccess(p0: String?) {
-//                                loginUser(groupId)
-//                            }
-//
-//                            override fun onError(p0: CometChatException?) {
-//                                Timber.d("loginUser failed with exception: %s", p0?.message)
-//                            }
-//
-//                        })
-//                    } catch (ex: Exception) {
-//                        ex.printStackTrace()
-//                    }
-//                }
-//                else -> {
-//                    // User already logged in
-//                    groupId?.let {
-//                        groupIdLiveData.postValue(it)
-//                    }
-//                    registerFCMTokenWithCometChat()
-//                }
-//            }
-//        }
-//    }
-
-//    fun registerFCMTokenWithCometChat() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                val token = PrefManager.getStringValue(FCM_TOKEN)
-//                CometChat.registerTokenForPushNotification(
-//                    token,
-//                    object : CometChat.CallbackListener<String?>() {
-//                        override fun onSuccess(s: String?) {
-//                            Timber.d("FCM Token $token Registered with CometChat")
-//                        }
-//
-//                        override fun onError(e: CometChatException) {
-//                            Timber.d("Unable to register FCM Token with CometChat")
-//                        }
-//                    })
-//            } catch (ex: Throwable) {
-//                Timber.d(ex)
-//            }
-//        }
-//    }
+    fun mixPanelEvent(eventName:String,obj: JSONObject?=null) {
+        MixPanelTracker().publishEvent(eventName,obj)
+    }
 
 }

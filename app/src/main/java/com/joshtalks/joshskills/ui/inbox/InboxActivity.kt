@@ -148,6 +148,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             courseExploreClick()
         }
         buy_english_course.setOnClickListener {
+            viewModel.mixPanelEvent("buy english course")
             FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
@@ -164,15 +165,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             popupMenu?.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
+                        viewModel.mixPanelEvent("open referral")
                         refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
                         ReferralActivity.startReferralActivity(this@InboxActivity)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_help -> {
+                        viewModel.mixPanelEvent("help")
                         openHelpActivity()
                     }
-                    R.id.menu_settings ->
+                    R.id.menu_settings -> {
+                        viewModel.mixPanelEvent("settings")
                         openSettingActivity()
+                    }
                 }
                 return@setOnMenuItemClickListener false
             }
