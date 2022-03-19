@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
@@ -33,6 +34,7 @@ import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import timber.log.Timber
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
@@ -456,5 +458,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 Timber.e(ex)
             }
         }
+    }
+
+    fun mixPanelEvent(eventName:String,obj:JSONObject?=null) {
+        MixPanelTracker().publishEvent(eventName,obj)
     }
 }

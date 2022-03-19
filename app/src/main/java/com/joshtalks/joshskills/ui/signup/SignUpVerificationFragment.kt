@@ -200,6 +200,7 @@ class SignUpVerificationFragment : Fragment() {
     }
 
     fun verifyOTP() {
+        viewModel.mixPanelEvent("submit otp")
         if (binding.otpView2.otp.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty()
                 .not()
         ) {
@@ -222,6 +223,7 @@ class SignUpVerificationFragment : Fragment() {
     }
 
     fun editNumber() {
+        viewModel.mixPanelEvent("edit number")
         requireActivity().onBackPressed()
     }
 

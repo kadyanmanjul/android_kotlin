@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
+import org.json.JSONObject
 
 class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
@@ -30,6 +31,8 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
     private var username = name
     private var isUserVerified = isVerified
+    private val obj:JSONObject? = null
+    private var isNameEntered = false
 
     companion object {
         fun newInstance(name: String,isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name,isVerified)
@@ -61,6 +64,9 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         addObservers()
         binding.nameEditText.requestFocus()
         initUI()
+        if(binding.nameEditText.text.isNullOrEmpty()) {
+            isNameEntered = false
+        }
     }
 
     private fun initUI() {
@@ -124,11 +130,20 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
             return
         }
         binding.btnLogin.isEnabled = false
+        else {
+            if(!isNameEntered)
+                obj?.put("name entered",true)
+        }
+
+        startProgress()
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
-        if (!username.isNullOrEmpty() && username != name)
+        if (!username.isNullOrEmpty() && username != name) {
+            obj?.put("name changed",true)
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
+        }
+        viewModel.mixPanelEvent("register with name",obj)
     }
 
     fun submitForFreeTrial() {

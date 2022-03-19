@@ -208,12 +208,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
-
-    fun mixPanelEvent() {
-        val prop = JSONObject()
-        prop.put("is_truecaller",true)
-        prop.put("is_name_entered",false)
-        MixPanelTracker().publishEvent("Start_now_button_clicked",prop)
-
+    fun mixPanelEvent(eventName:String) {
+        MixPanelTracker().publishEvent(eventName)
     }
 }

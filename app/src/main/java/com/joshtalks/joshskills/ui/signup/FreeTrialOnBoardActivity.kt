@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.core.abTest.ABTestActivity
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -134,6 +135,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun signUp() {
+        viewModel.mixPanelEvent("log in")
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
                 .addBasicParam()
@@ -149,6 +151,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean) {
+        viewModel.mixPanelEvent("start now")
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
@@ -186,6 +189,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + language.testId)
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
+            viewModel.mixPanelEvent("ji haan")
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
@@ -230,6 +234,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onFailureProfileShared(trueError: TrueError) {
             if(TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
+                viewModel.mixPanelEvent("use another method")
                 hideProgressBar()
                 viewModel.saveTrueCallerImpression(IMPRESSION_TC_USER_ANOTHER)
                 openProfileDetailFragment()
@@ -246,6 +251,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
                 PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
+                viewModel.mixPanelEvent("continue with number")
+                CoroutineScope(Dispatchers.IO).launch {
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 val user = User.getInstance()
                 user.firstName = trueProfile.firstName

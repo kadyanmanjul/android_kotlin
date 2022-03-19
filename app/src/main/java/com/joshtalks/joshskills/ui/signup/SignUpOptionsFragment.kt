@@ -208,6 +208,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
             showToast(getString(R.string.please_enter_valid_number))
             return
         }
+        viewModel.mixPanelEvent("send otp")
         startProgress()
         hideKeyboard(requireActivity(), binding.mobileEt)
         evaluateVerificationService()

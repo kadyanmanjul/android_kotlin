@@ -210,6 +210,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
+            viewModel.mixPanelEvent("back press")
             appAnalytics.addParam(AnalyticsEvent.BACK_PRESSED.NAME, true)
             AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
                 .addParam("name", javaClass.simpleName)
@@ -302,6 +303,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 hideProgressBar()
                 when (paymentSummaryResponse.couponDetails.isPromoCode) {
                     true -> {
+                        val prop = JSONObject()
+                        prop.put("discounted amount",viewModel.getCourseDiscountedAmount())
+                        viewModel.mixPanelEvent("apply coupon",prop)
+
                         showToast("Coupon Applied Successfully")
 
                         val blackColor = ContextCompat.getColor(this, R.color.black)
@@ -323,6 +328,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         applyCouponText.isClickable = false
                     }
                     false -> {
+                        viewModel.mixPanelEvent("apply coupon failed")
                         showToast(getString(R.string.invalid_coupon_code))
                     }
                 }
@@ -382,6 +388,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     )
                 binding.subCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
+                        val obj = JSONObject()
+                        obj.put("test id",viewModel.getPaymentTestId())
+                        viewModel.mixPanelEvent("course upgraded",obj)
+
                         showSubscriptionDetails(
                             true,
                             viewModel.responseSubscriptionPaymentSummary.value
@@ -405,6 +415,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 applyCouponText.text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.APPLY_COUPON_TEXT)
                 applyCouponText.setOnClickListener {
+                    val obj = JSONObject()
+                    obj.put("test id",viewModel.getPaymentTestId())
+                    obj.put("course name",viewModel.getCourseName())
+                    obj.put("course price",viewModel.getCourseDiscountedAmount())
+                    viewModel.mixPanelEvent("apply coupon clicked",obj)
                     openPromoCodeBottomSheet()
                 }
             }
@@ -730,6 +745,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     fun startPayment() {
+        val prop = JSONObject()
+        prop.put("test id",viewModel.getPaymentTestId())
+        prop.put("course name",viewModel.getCourseName())
+        prop.put("course price",viewModel.getCourseActualAmount())
+        prop.put("is coupon applied",viewModel.haveCoupon())
+        prop.put("amount paid",viewModel.getCourseDiscountedAmount())
+        viewModel.mixPanelEvent("payment started",prop)
+
         if (Utils.isInternetAvailable().not()) {
             showToast(getString(R.string.internet_not_available_msz))
             return
@@ -846,6 +869,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
+        val prop = JSONObject()
+        prop.put("test id",viewModel.getPaymentTestId())
+        prop.put("course name",viewModel.getCourseName())
+        prop.put("course price",viewModel.getCourseActualAmount())
+        prop.put("is coupon applied",viewModel.haveCoupon())
+        prop.put("amount paid",viewModel.getCourseDiscountedAmount())
+        viewModel.mixPanelEvent("payment failed",prop)
+
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.FAILED_PARAM.NAME, p1)
         isBackPressDisabled = true
@@ -857,6 +888,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        val prop = JSONObject()
+        prop.put("test id",viewModel.getPaymentTestId())
+        prop.put("course name",viewModel.getCourseName())
+        prop.put("course price",viewModel.getCourseActualAmount())
+        prop.put("is coupon applied",viewModel.haveCoupon())
+        prop.put("amount paid",viewModel.getCourseDiscountedAmount())
+        viewModel.mixPanelEvent("payment success",prop)
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
         }
