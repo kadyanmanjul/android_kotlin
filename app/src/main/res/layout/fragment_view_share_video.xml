@@ -10,86 +10,65 @@
         android:layout_height="match_parent"
         android:background="@android:color/black">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.special_practice.ViewAndShareVideoFragment">
-
-        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-            android:id="@+id/video_view"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/_62sdp"
-            android:focusable="true"
-            android:visibility="invisible"
-            app:controller_layout_id="@layout/layout_live_player_controller"
-            app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            tools:visibility="visible" />
+            tools:context=".ui.special_practice.ViewAndShareVideoFragment">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView"
-            android:layout_width="@dimen/_219sdp"
-            android:layout_height="@dimen/_41sdp"
-            android:layout_marginBottom="@dimen/_15sdp"
-            android:clickable="false"
-            app:cardCornerRadius="@dimen/_80sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <RelativeLayout
+            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                android:id="@+id/video_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/_62sdp"
+                android:focusable="true"
+                android:visibility="invisible"
+                app:controller_layout_id="@layout/layout_live_player_controller"
+                app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/materialCardView"
+                android:layout_width="@dimen/_219sdp"
+                android:layout_height="@dimen/_41sdp"
+                android:layout_margin="16dp"
+                android:clickable="false"
+                android:gravity="center"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:text="@string/share"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/_80sdp"
+                app:icon="@drawable/ic_special_share"
+                app:iconGravity="textEnd"
+                app:iconPadding="10dp"
+                app:iconTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Share" />
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
                 android:layout_gravity="center"
-                android:background="@color/colorAccent"
-                android:gravity="center">
+                app:layout_constraintBottom_toBottomOf="@+id/video_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/video_view"
+                app:layout_constraintTop_toTopOf="parent"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/share_icon"
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="@dimen/_16sdp"
-                    android:layout_centerInParent="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:tint="@color/white"
-                    app:srcCompat="@drawable/ic_special_share" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_3sdp"
-                    android:layout_toLeftOf="@id/share_icon"
-                    android:text="Share"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_18sdp"
-                    android:textStyle="bold">
-
-                </androidx.appcompat.widget.AppCompatTextView>
-            </RelativeLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_82sdp"
-            android:layout_height="@dimen/_82sdp"
-            android:layout_gravity="center"
-            app:layout_constraintBottom_toBottomOf="@+id/video_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/video_view"
-            app:layout_constraintTop_toTopOf="parent"
-            wheel:matProg_barColor="@color/button_color"
-            wheel:matProg_fillRadius="true"
-            wheel:matProg_linearProgress="false"
-            wheel:matProg_progressIndeterminate="true" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
 </layout>
