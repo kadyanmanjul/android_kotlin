@@ -13,7 +13,6 @@ sealed class CallType {
     object FavoritePracticePartner: CallType()
     object GroupCall: CallType()
     object NormalPracticePartner: CallType()
-
 }
 data class NotificationDetails( val notificationBuilder: NotificationCompat.Builder, val notificationId:Int)
 

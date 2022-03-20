@@ -4,7 +4,7 @@ package com.joshtalks.joshskills.voip.notification
  * notificationData contains the information of notification
  * notificationData={CallType(fpp,gp,normal),userDetails
  */
-interface NotificationInterface {
+internal interface NotificationInterface {
     fun addNotification(notificationType: NotificationType, notificationData: NotificationData):Int
     fun removeNotification(notificationId:Int)
     fun getNotificationObject(notificationType: NotificationType, notificationData: NotificationData): NotificationDetails

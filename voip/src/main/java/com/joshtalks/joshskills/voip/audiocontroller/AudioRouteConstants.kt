@@ -6,5 +6,6 @@ const val HEADSET_DISCONNECTED = 0
 sealed class AudioRouteConstants {
     object BluetoothAudio : AudioRouteConstants()
     object HeadsetAudio : AudioRouteConstants()
-    object NormalAudio : AudioRouteConstants()
+    object SpeakerAudio : AudioRouteConstants()
+    object EarpieceAudio : AudioRouteConstants()
 }

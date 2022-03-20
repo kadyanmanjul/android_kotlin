@@ -23,7 +23,7 @@
         </receiver>
         <!-- PSTN module -->
         <receiver
-            android:name="com.joshtalks.joshskills.voip.pstn.PSTNCallState"
+            android:name="com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

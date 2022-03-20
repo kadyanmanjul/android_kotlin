@@ -6,12 +6,17 @@ import android.os.Build
 import android.os.Vibrator
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import com.joshtalks.joshskills.voip.Utils
 import java.util.*
 
-class SoundManager(private val applicationContext: Context,private val soundType: Int, private val duration: Long = 0) {
-
+class SoundManager(
+    private val soundType: Int,
+    private val duration: Long = 0
+) {
+    private val applicationContext=Utils.context
     private var pattern = longArrayOf(0, 1500, 1000)
-    private var defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(applicationContext, soundType)
+    private var defaultRingtoneUri =
+        RingtoneManager.getActualDefaultRingtoneUri(applicationContext, soundType)
 
     companion object {
         private var defaultRingtone: Ringtone? = null
@@ -20,7 +25,7 @@ class SoundManager(private val applicationContext: Context,private val soundType
 
     private fun getRingtoneInstance(): Ringtone? {
         if (defaultRingtone == null) {
-            vibrator = ContextCompat.getSystemService(applicationContext, Vibrator::class.java)
+            vibrator = applicationContext?.let { ContextCompat.getSystemService(it, Vibrator::class.java) }
             defaultRingtone = RingtoneManager.getRingtone(applicationContext, defaultRingtoneUri)
         }
         return defaultRingtone
@@ -30,11 +35,11 @@ class SoundManager(private val applicationContext: Context,private val soundType
     fun playSound() {
         gainAudioFocus()
         val ringtone = getRingtoneInstance()
-        if(soundType== SOUND_TYPE_RINGTONE) {
+        if (soundType == SOUND_TYPE_RINGTONE) {
             ringtone?.isLooping = true
         }
         ringtone?.play()
-        if(duration>0 && soundType== SOUND_TYPE_RINGTONE){
+        if (duration > 0 && soundType == SOUND_TYPE_RINGTONE) {
             stopSoundTimer(ringtone)
         }
         vibrateDevice()
@@ -80,7 +85,8 @@ class SoundManager(private val applicationContext: Context,private val soundType
     }
 
     private fun gainAudioFocus() {
-        val mAudioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+        val mAudioManager =
+            applicationContext?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mAudioManager!!.requestAudioFocus(
                 AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
