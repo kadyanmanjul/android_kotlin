@@ -859,6 +859,15 @@
     <string name="practise_uploading">Practice Uploading &#8230; </string>
     <string name="how_to_pronounce">How to pronounce:</string>
 
+    <!-- Groups -->
+    <string name="admin_responsibilities">
+        <li>Be Kind to all members who join and who don\'t join</li>\n
+        <li>Help other members every time</li>\n
+        <li>No spamming anything as you are admin</li>\n
+        <li>Respect everyone</li>\n
+        <li>Remove members who misbehave and other things</li>\n
+        <li>No self promotion</li>
+    </string>
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>

@@ -11,5 +11,8 @@ data class AddGroupRequest(
 	val groupName: String,
 
 	@field:SerializedName("group_icon")
-	var groupIcon: String
+	var groupIcon: String,
+
+	@field:SerializedName("group_type")
+	val groupType: String
 )

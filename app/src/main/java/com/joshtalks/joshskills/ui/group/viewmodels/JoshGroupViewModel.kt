@@ -122,9 +122,14 @@ class JoshGroupViewModel : BaseViewModel() {
             message.what = SAVE_GROUP_INFO
             singleLiveEvent.value = message
         } else {
-            message.what = ADD_GROUP_TO_SERVER
+            message.what = CREATE_GROUP_VALIDATION
             singleLiveEvent.value = message
         }
+    }
+
+    fun createGroup(view: View) {
+        message.what = ADD_GROUP_TO_SERVER
+        singleLiveEvent.value = message
     }
 
     fun showProgressDialog(loadingMsg: String) {

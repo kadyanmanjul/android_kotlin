@@ -67,6 +67,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_GROUP_INFO -> openGroupInfoFragment()
                 EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
                 SEARCH_GROUP -> openGroupSearchFragment()
+                OPEN_ADMIN_RESPONSIBILITY -> openAdminResponseFragment()
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
@@ -230,6 +231,16 @@ class JoshGroupActivity : BaseGroupActivity() {
             addToBackStack(GROUPS_STACK)
         }
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
+    }
+
+    private fun openAdminResponseFragment() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = GroupAdminFragment()
+            replace(R.id.group_fragment_container, fragment, ADMIN_RESPONSE_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
     }
 
     private fun setNewGroupVisibility(data: Bundle) {
