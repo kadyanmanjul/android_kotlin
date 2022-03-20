@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.ImageView
 
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
@@ -59,6 +60,20 @@ fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
 
 @BindingAdapter("groupImage")
 fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
+
+@BindingAdapter("groupImage", "defaultImage")
+fun AppCompatImageView.setGroupImage(imageUrl: String, defaultImage: DefaultImage) {
+    if (imageUrl.isNotBlank())
+        Glide.with(this)
+            .load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(this)
+    else
+        Glide.with(this)
+            .load(defaultImage.drwRes)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(this)
+}
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {

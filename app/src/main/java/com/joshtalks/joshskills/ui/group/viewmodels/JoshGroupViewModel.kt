@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -10,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.showToast
@@ -21,6 +24,7 @@ import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 
+import kotlinx.android.synthetic.main.group_type_dialog.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -132,6 +136,23 @@ class JoshGroupViewModel : BaseViewModel() {
     fun dismissProgressDialog() {
         message.what = DISMISS_PROGRESS_BAR
         singleLiveEvent.value = message
+    }
+
+    fun openTypeChooser(view: View) {
+        val groupTypeDialog = AlertDialog.Builder(view.context)
+            .setView(R.layout.group_type_dialog)
+            .setCancelable(false)
+            .create()
+
+        groupTypeDialog.show()
+
+        groupTypeDialog.select_group_type.setOnClickListener {
+            if (groupTypeDialog.open_group_radio.isChecked)
+                (view as TextView).text = "Open Group"
+            else
+                (view as TextView).text = "Closed Group"
+            groupTypeDialog.dismiss()
+        }
     }
 
     fun addGroup(request: AddGroupRequest) {
