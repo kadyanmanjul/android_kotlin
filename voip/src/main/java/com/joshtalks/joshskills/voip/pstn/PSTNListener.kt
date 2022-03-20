@@ -1,14 +1,15 @@
 package com.joshtalks.joshskills.voip.pstn
-import android.telephony.PhoneStateListener
 
-class PSTNListener:PhoneStateListener() {
+import kotlinx.coroutines.flow.MutableSharedFlow
 
-    override fun onCallStateChanged(state: Int, phoneNumber: String?) {
-        super.onCallStateChanged(state, phoneNumber)
-    }
-    sealed class PSTNState(){
-        object Idle: PSTNState()
-        object Ringing: PSTNState()
-        object OnCall: PSTNState()
+/**
+ * Require Receiver in Manifest @PSTNStateReceiver with following filters-
+ * 1.PHONE_STATE
+ * 2.NEW_OUTGOING_CALL
+ */
+
+class PSTNListener:PSTNInterface {
+    override fun observePSTNState(): MutableSharedFlow<PSTNState> {
+       return PSTNStateReceiver.pstnFlow
     }
 }
