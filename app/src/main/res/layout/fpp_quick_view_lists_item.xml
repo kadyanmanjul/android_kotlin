@@ -63,7 +63,6 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:textColor="@color/dark_text_color"
                 tools:text="Spoke for 20 minutes" />
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <Button

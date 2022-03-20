@@ -98,7 +98,6 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recent_list_rv"
-            adapter="@{handler.seeAllRequestsAdapter}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/appbar"
@@ -106,7 +105,7 @@
             android:paddingTop="10dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:itemCount="10"
-            tools:listitem="@layout/fpp_requests_list_item" />
+            tools:listitem="@layout/fpp_requests_list_item"/>
 
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/progress_bar"

@@ -70,7 +70,6 @@ class SeeAllRequestsActivity : AppCompatActivity(), AdapterCallback {
         seeAllRequestsAdapter = SeeAllRequestsAdapter(pendingRequestsList, this, this, this)
         recyclerView.adapter = seeAllRequestsAdapter
     }
-
     override fun onClickCallback(
         requestStatus: String?,
         mentorId: String?,
