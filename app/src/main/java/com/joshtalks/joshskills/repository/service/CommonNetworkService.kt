@@ -330,7 +330,7 @@ interface CommonNetworkService {
     suspend fun saveIntroVideoFlowImpression(@Body params: Map<String, Any?>): Response<Any>
 
     @POST("$DIR/mentor/restart_course/")
-    suspend fun restartCourse(@Body params: Map<String, String>) : Response<Any>
+    suspend fun restartCourse(@Body params: Map<String, String>) : Response<RestartCourseResponse>
 
     @POST("$DIR/impression/restart_course_track_impressions/")
     suspend fun restartCourseImpression(@Body params: Map<String, String>): Response<Void>

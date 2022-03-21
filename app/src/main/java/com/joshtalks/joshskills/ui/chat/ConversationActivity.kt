@@ -596,15 +596,16 @@ class ConversationActivity :
                 positiveButton(R.string.restart_now) {
                     if(email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
                         conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
+                        conversationViewModel.clearDataForRestart()
+                        conversationBinding.btnRestartCourse.visibility = View.GONE
+                        startActivity(getInboxActivityIntent())
                     }
                     else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
                         conversationViewModel.restartCourse(email, "Email")
+                        conversationViewModel.clearDataForRestart()
+                        conversationBinding.btnRestartCourse.visibility = View.GONE
+                        startActivity(getInboxActivityIntent())
                     }
-
-                    conversationViewModel.clearDataForRestart()
-                    conversationBinding.btnRestartCourse.visibility = View.GONE
-                    startActivity(getInboxActivityIntent())
-
                     if (isFromRestartButton) {
                         conversationViewModel.saveRestartCourseImpression(
                             IMPRESSION_SUCCESS_RESTART_90LESSONS
