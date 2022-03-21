@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.group.SHOW_NEW_INFO
+import com.joshtalks.joshskills.ui.group.constants.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.group
+package com.joshtalks.joshskills.ui.group.constants
 
 const val LIST_FRAGMENT = "GROUP_LIST_FRAGMENT"
 const val SEARCH_FRAGMENT = "GROUP_SEARCH_FRAGMENT"
@@ -10,7 +10,6 @@ const val ADMIN_RESPONSE_FRAGMENT = "ADMIN_RESPONSE_FRAGMENT"
 const val IS_FROM_GROUP_INFO = "IS_FROM_GROUP_INFO"
 const val GROUPS_STACK = "GROUPS_BACK_STACK"
 const val GROUPS_CREATOR = "GROUPS_CREATOR"
-const val GROUPS_CREATED_TIME = "GROUPS_CREATED_TIME"
 const val GROUPS_TITLE = "GROUPS_TITLE"
 const val GROUPS_CHAT_SUB_TITLE = "GROUPS_CHAT_SUB_TITLE"
 const val GROUP_CHAT_UNREAD = "GROUP_CHAT_UNREAD"

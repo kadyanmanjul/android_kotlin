@@ -53,9 +53,6 @@ data class GroupsItem(
 
     override fun getImageUrl() = groupIcon ?: ""
 
-    override fun getCreatedTime() =
-        if (createdAt == null) "" else Utils.getMessageTime(createdAt * 1000L, timeNeeded = false)
-
     override fun getCreator() = createdBy ?: ""
 
     override fun getCreatorId() = adminId ?: ""

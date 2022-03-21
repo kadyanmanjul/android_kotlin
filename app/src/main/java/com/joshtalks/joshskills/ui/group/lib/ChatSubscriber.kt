@@ -6,7 +6,7 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
+import com.joshtalks.joshskills.ui.group.constants.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.model.ChatItem

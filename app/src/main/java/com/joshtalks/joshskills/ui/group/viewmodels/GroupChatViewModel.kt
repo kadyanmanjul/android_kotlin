@@ -25,7 +25,7 @@ import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
-import com.joshtalks.joshskills.ui.group.constants.MESSAGE
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.GroupMember
@@ -53,7 +53,6 @@ class GroupChatViewModel : BaseViewModel() {
     var groupHeader = ObservableField("")
     var imageUrl = ObservableField("")
     val groupCreator = ObservableField("")
-    val groupCreatedAt = ObservableField("")
     var memberCount = ObservableField(0)
     val memberAdapter = GroupMemberAdapter()
     val groupSubHeader = ObservableField("")

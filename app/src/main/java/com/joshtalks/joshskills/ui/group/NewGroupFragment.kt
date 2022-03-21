@@ -20,6 +20,10 @@ import com.joshtalks.joshskills.constants.OPEN_ADMIN_RESPONSIBILITY
 import com.joshtalks.joshskills.constants.SAVE_GROUP_INFO
 import com.joshtalks.joshskills.databinding.FragmentNewGroupBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_IMAGE
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_TITLE
+import com.joshtalks.joshskills.ui.group.constants.IS_FROM_GROUP_INFO
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel

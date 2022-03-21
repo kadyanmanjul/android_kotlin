@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
@@ -124,7 +125,9 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(
+            GROUPS_ID
+        ) ?: "")
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -164,7 +167,6 @@ class JoshGroupActivity : BaseGroupActivity() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
-                putString(GROUPS_CREATED_TIME, data?.getCreatedTime())
                 putString(GROUPS_CREATOR, data?.getCreator())
                 putString(GROUPS_TITLE, data?.getTitle())
                 putString(GROUPS_IMAGE, data?.getImageUrl())

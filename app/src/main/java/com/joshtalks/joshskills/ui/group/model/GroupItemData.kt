@@ -5,7 +5,6 @@ interface GroupItemData {
     fun getSubTitle() : String
     fun getUniqueId() : String
     fun getImageUrl() : String
-    fun getCreatedTime() : String
     fun getCreator() : String
     fun getCreatorId() : String
     fun getLastMessageTime() : String

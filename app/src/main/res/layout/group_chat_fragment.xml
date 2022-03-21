@@ -44,57 +44,11 @@
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/date_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:backgroundTint="#D5EAF5"
-            android:elevation="@dimen/_8sdp"
-            android:visibility="gone"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/_4sdp"
-                android:paddingVertical="@dimen/_2sdp"
-                android:text="@{vm.groupCreatedAt}"
-                android:textColor="@color/group_coming_soon" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/group_creater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:backgroundTint="#D5EAF5"
-            android:elevation="@dimen/_8sdp"
-            android:visibility="gone"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_card"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/_4sdp"
-                android:paddingVertical="@dimen/_2sdp"
-                android:text="@{vm.groupCreator}"
-                android:textColor="@color/group_coming_soon" />
-        </com.google.android.material.card.MaterialCardView>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_chat_rv"
             groupChatAdapter="@{vm.chatAdapter}"
-            scrollToBottom="@{scrollToEndButton}"
             onTitleClick="@{vm.openMemberPopup}"
+            scrollToBottom="@{scrollToEndButton}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="4dp"
@@ -288,7 +242,6 @@
                 android:text="Tap anywhere to continue"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/white" />
-
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
