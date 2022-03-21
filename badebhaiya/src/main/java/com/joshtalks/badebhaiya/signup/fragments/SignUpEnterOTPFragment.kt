@@ -94,7 +94,7 @@ class SignUpEnterOTPFragment: Fragment() {
     fun verifyOTP() {
         if (binding.otpView.otp.isNullOrEmpty().not()) {
             startProgress()
-            viewModel.verifyOTP(binding.otpView.otp, "")
+            viewModel.verifyOTP(binding.otpView.otp, "9013207656")
         } else {
             showToast(getString(R.string.please_enter_otp))
         }

@@ -14,30 +14,78 @@ android {
     defaultConfig {
         applicationId "com.joshtalks.badebhaiya"
         minSdk 21
-        targetSdk 32
-        versionCode 1
-        versionName "1.0"
-
+        targetSdk 30
+        versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
+        versionName "${majorVersion}.${minorVersion}.${patchVersion}"
+        vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "AGORA_API_KEY", "\"6b72a762c0584871bf00b220c5cd0b33\""
+        manifestPlaceholders = [file_provider: "com.joshtalks.badebhaiya"]
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation"  : "$projectDir/schemas".toString(),
+                        "room.incremental"     : "true",
+                        "room.expandProjection": "true"]
+            }
+        }
+        resConfigs "en,hi"
         multiDexEnabled true
+        if (project.hasProperty("devBuild")) {
+            splits.abi.enable = false
+            splits.density.enable = false
+        }
     }
 
     buildFeatures {
         dataBinding = true
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    configurations.all {
+        resolutionStrategy.force "org.antlr:antlr4-runtime:4.7.1"
+        resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
+    }
+
+    /*signingConfigs {
+        debug {
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+
+        release {
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
+        }
+    }*/
+
+    buildTypes {
+        debug {
+            versionNameSuffix "_Debug"
+            debuggable true
+/*
+            signingConfig signingConfigs.debug
+*/
+            minifyEnabled false
+            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
+            resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
+            crunchPngs false
+            ext.enableCrashlytics = true
+        }
+        release {
+            resValue("string", "branch_id", "key_live_hk0NAoI7iiZt62YMAeLuZnakuuexFWqk")
+            resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+/*
+            signingConfig signingConfigs.release
+*/
+        }
     }
 
     flavorDimensions "version"
@@ -47,9 +95,6 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://bbapp-stg.joshtalks.org\""
-            /*For Port */
-//            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9010\""
-
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -68,16 +113,31 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    dexOptions {
+        maxProcessCount 8
+        preDexLibraries true
+    }
 }
 
 dependencies {
 
     implementation project(path: ':joshlibrary')
-
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.0.2'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -87,6 +147,8 @@ dependencies {
     api 'com.intuit.sdp:sdp-android:1.0.6'
     api 'com.intuit.ssp:ssp-android:1.0.6'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    //Branch for deeplink
+    implementation 'io.branch.sdk.android:library:5.1.2'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
