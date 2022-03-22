@@ -1,26 +1,33 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import android.content.Context
-import android.content.Intent
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.core.API_TOKEN
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.PrefManager
-import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.text.DateFormat
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
+import okhttp3.Cache
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 const val KEY_AUTHORIZATION = "Authorization"
 private const val READ_TIMEOUT = 30L
@@ -91,6 +98,10 @@ class RetrofitInstance {
         private fun cache() = Cache(File(AppObjectController.joshApplication.cacheDir, "api_cache"), cacheSize)
 
         val signUpNetworkService by lazy {
+            retrofit.create(SignUpNetworkService::class.java)
+        }
+
+        val commonNetworkService by lazy {
             retrofit.create(SignUpNetworkService::class.java)
         }
     }
