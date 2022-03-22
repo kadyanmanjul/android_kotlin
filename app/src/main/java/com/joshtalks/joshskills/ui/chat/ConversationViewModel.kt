@@ -393,12 +393,25 @@ class ConversationViewModel(
     }
 
     fun clearDataForRestart() {
-        viewModelScope.launch(Dispatchers.IO) {
-            LastSyncPrefManager.clear()
-            PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
-            PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
-            appDatabase.chatDao().clearChatTable()
-            appDatabase.lessonDao().clearChatLessonTable()
+            deleteConversationData(inboxEntity.courseId)
+    }
+
+    private fun deleteConversationData(courseId: String) {
+        try {
+            AppObjectController.appDatabase.run {
+                val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
+                conversationId?.let {
+                    PrefManager.removeKey(it)
+                    LastSyncPrefManager.removeKey(it)
+                }
+                val lessons = lessonDao().getLessonIdsForCourse(courseId.toInt())
+                lessons.forEach {
+                    LastSyncPrefManager.removeKey(it.toString())
+                }
+                commonDao().deleteConversationData(courseId.toInt())
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
     }
 }

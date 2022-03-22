@@ -598,13 +598,15 @@ class ConversationActivity :
                         conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
                         conversationViewModel.clearDataForRestart()
                         conversationBinding.btnRestartCourse.visibility = View.GONE
-                        startActivity(getInboxActivityIntent())
+                        logout()
+                        showToast("Course Restarted Successfully")
                     }
                     else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
                         conversationViewModel.restartCourse(email, "Email")
                         conversationViewModel.clearDataForRestart()
                         conversationBinding.btnRestartCourse.visibility = View.GONE
-                        startActivity(getInboxActivityIntent())
+                        logout()
+                        showToast("Course Restarted Successfully")
                     }
                     if (isFromRestartButton) {
                         conversationViewModel.saveRestartCourseImpression(
