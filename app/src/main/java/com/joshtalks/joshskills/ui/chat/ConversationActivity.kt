@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.chat
 
 import android.animation.ValueAnimator
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -13,21 +12,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
+import android.view.View.*
 import android.view.animation.AccelerateInterpolator
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.annotation.NonNull
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -44,27 +35,7 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BLOCK_ISSUE
-import com.joshtalks.joshskills.core.CHAT_OPENED_FOR_NOTIFICATION
-import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_ANIMATION
-import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_TOOLTIP
-import com.joshtalks.joshskills.core.HAS_SEEN_LESSON_TOOLTIP
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_ICON
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_MENU
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REPORT_ISSUE
-import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -80,45 +51,17 @@ import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
 import com.joshtalks.joshskills.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.databinding.FppQuickViewListsItemBinding
-import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
-import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
-import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
+import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -137,8 +80,8 @@ import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
-import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
+import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
@@ -177,20 +120,13 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
-import java.util.Timer
-import java.util.TimerTask
-import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -335,23 +271,6 @@ class ConversationActivity :
             }
         }
     }
-
-    /*Checking if the add button is clicked
-    private fun buttonSetClickable() {
-        with(conversationBinding) {
-            if (!isExpandableVisible) {
-                imgActivityFeed.isClickable = true
-                imgGameBtn.isClickable = true
-                imgGroupChatBtn.isClickable = true
-                imgFppRequest.isClickable = true
-            } else {
-                imgActivityFeed.isClickable = false
-                imgGameBtn.isClickable = false
-                imgGroupChatBtn.isClickable = false
-                imgFppRequest.isClickable = false
-            }
-        }
-    }*/
 
     override fun getConversationId(): String {
         return inboxEntity.conversation_id
@@ -1115,14 +1034,14 @@ class ConversationActivity :
                     fppRequestCountNumber.visibility = GONE
                     allCountNumber.visibility = GONE
                     viewAllRequests.text =
-                        getString(R.string.see_requests,it.pendingRequestsList.size.toString())
+                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
                 } else {
                     requestCountNumber = it.pendingRequestsList.size
                     quickViewNoRequests.visibility = INVISIBLE
                     allCountNumber.text = it.pendingRequestsList.size.toString()
                     myRequestsLl.visibility = VISIBLE
                     viewAllRequests.text =
-                        getString(R.string.see_requests,it.pendingRequestsList.size.toString())
+                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
                     horizontalLineForHeading.visibility = VISIBLE
                     var countRequestsList = 0
                     myRequestsLl.removeAllViews()
@@ -1251,8 +1170,8 @@ class ConversationActivity :
                 activityFeedControl =
                     (map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
             }
-            if (activityFeedControl) conversationBinding.imgFeedBtn.visibility =
-                VISIBLE else conversationBinding.imgFeedBtn.visibility = GONE
+            if (activityFeedControl) conversationBinding.imgActivityFeed .visibility =
+                VISIBLE else conversationBinding.imgActivityFeed.visibility = GONE
         }
     }
 
@@ -1458,12 +1377,23 @@ class ConversationActivity :
                             AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
                         Log.d(TAG, "initScoreCardView: $status")
                         withContext(Dispatchers.Main) {
-                            if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
+                            if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(
+                                    HAS_SEEN_UNLOCK_CLASS_ANIMATION
+                                )
+                            ) {
                                 delay(1000)
                                 setOverlayAnimation()
-                            } else if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
-                                && System.currentTimeMillis().minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L) {
-                                PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
+                            } else if (PrefManager.getBoolValue(
+                                    SHOULD_SHOW_AUTOSTART_POPUP,
+                                    defValue = true
+                                )
+                                && System.currentTimeMillis()
+                                    .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
+                            ) {
+                                PrefManager.put(
+                                    LAST_TIME_AUTOSTART_SHOWN,
+                                    System.currentTimeMillis()
+                                )
                                 checkForOemNotifications(AUTO_START_POPUP)
                             }
                         }

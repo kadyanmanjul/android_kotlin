@@ -5,9 +5,13 @@
 
     <data>
 
+        <import type="com.joshtalks.joshskills.R" />
+
+        <import type="android.view.View" />
+
         <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity" />
+            name="vm"
+            type="com.joshtalks.joshskills.ui.fpp.viewmodels.SeeAllRequestsViewModel" />
     </data>
 
     <RelativeLayout
@@ -66,8 +70,8 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:onClick="@{()->handler.onBackPressed()}"
                         android:gravity="center_vertical|start"
+                        android:onClick="@{vm::onBackPress}"
                         android:paddingTop="@dimen/_6sdp"
                         android:paddingBottom="@dimen/_6sdp"
                         android:visibility="visible"
@@ -98,6 +102,8 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recent_list_rv"
+            onFppItemClick="@{vm.onItemClick}"
+            seeAllRequestAdapter="@{vm.adapter}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/appbar"
@@ -114,6 +120,7 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:elevation="@dimen/_5sdp"
+            android:visibility="@{vm.fetchingAllPendingRequestInfo ? View.VISIBLE : View.GONE}"
             app:cpb_background_progressbar_color="@android:color/transparent"
             app:cpb_background_progressbar_width="0dp"
             app:cpb_indeterminate_mode="true"
@@ -129,7 +136,7 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:src="@drawable/ic_quick_view_no_requests"
-            android:visibility="invisible" />
+            android:visibility="@{vm.hasSeeAllRequest ? View.GONE : View.VISIBLE}" />
 
     </RelativeLayout>
 </layout>

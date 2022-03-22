@@ -5,9 +5,12 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity" />
+            name="vm"
+            type="com.joshtalks.joshskills.ui.voip.favorite.FavoriteCallerViewModel" />
+
     </data>
 
     <RelativeLayout
@@ -70,7 +73,7 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center_vertical|start"
-                            android:onClick="@{()->handler.onBackPressed()}"
+                            android:onClick="@{vm.onBackPress}"
                             android:paddingTop="@dimen/_6sdp"
                             android:paddingBottom="@dimen/_6sdp"
                             android:visibility="visible"
@@ -103,6 +106,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/tab_layout_"
+            favouriteListAdapter="@{vm.adapter}"
+            onFavouriteItemClick="@{vm.onItemClick}"
             android:paddingTop="@dimen/_10sdp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:listitem="@layout/fpp_item_list" />
@@ -113,6 +118,7 @@
             android:layout_height="@dimen/_60sdp"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
+            android:visibility="@{vm.isProgressBarShow ? View.VISIBLE : View.GONE}"
             app:cpb_background_progressbar_color="@android:color/transparent"
             app:cpb_background_progressbar_width="0dp"
             app:cpb_indeterminate_mode="true"
@@ -128,7 +134,7 @@
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="@dimen/_41sdp"
             android:clipToPadding="true"
-            android:visibility="gone"
+            android:visibility="@{vm.isEmptyCardShow ? View.VISIBLE : View.GONE}"
             app:cardCornerRadius="@dimen/_5sdp"
             app:cardElevation="0dp"
             tools:cardBackgroundColor="@color/white"
@@ -180,6 +186,7 @@
                     android:elevation="0dp"
                     android:gravity="center"
                     android:insetTop="0dp"
+                    android:onClick="@{vm.onClickOpenRecentCall}"
                     android:insetBottom="0dp"
                     android:stateListAnimator="@null"
                     android:text="@string/view_recent_calls"

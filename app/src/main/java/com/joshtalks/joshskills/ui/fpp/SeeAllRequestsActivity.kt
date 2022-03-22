@@ -1,88 +1,60 @@
 package com.joshtalks.joshskills.ui.fpp
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.databinding.ActivitySeeAllRequestsBinding
-import com.joshtalks.joshskills.ui.fpp.adapters.AdapterCallback
 import com.joshtalks.joshskills.ui.fpp.adapters.SeeAllRequestsAdapter
+import com.joshtalks.joshskills.ui.fpp.constants.FPP_SEE_ALL_BACK_PRESSED
+import com.joshtalks.joshskills.ui.fpp.constants.FPP_OPEN_USER_PROFILE
 import com.joshtalks.joshskills.ui.fpp.constants.REQUESTS_SCREEN
-import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
 import com.joshtalks.joshskills.ui.fpp.viewmodels.SeeAllRequestsViewModel
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
-class SeeAllRequestsActivity : AppCompatActivity(), AdapterCallback {
-    lateinit var binding: ActivitySeeAllRequestsBinding
+class SeeAllRequestsActivity : BaseFppActivity() {
+
+    val binding by lazy<ActivitySeeAllRequestsBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)
+    }
     lateinit var seeAllRequestsAdapter: SeeAllRequestsAdapter
-    private val viewModel by lazy {
-        ViewModelProvider(this).get(
-            SeeAllRequestsViewModel::class.java
-        )
+
+    val viewModel by lazy {
+        ViewModelProvider(this).get(SeeAllRequestsViewModel::class.java)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)
-        binding.lifecycleOwner = this
-        binding.handler = this
-        addObservable()
+    override fun setIntentExtras() {}
+
+    override fun initViewBinding() {
+        binding.vm = viewModel
+        binding.executePendingBindings()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onCreated() {
         viewModel.getPendingRequestsList()
     }
 
-    private fun addObservable() {
-        viewModel.pendingRequestsList.observe(this) {
-            initView(it.pendingRequestsList)
-        }
-        viewModel.apiCallStatus.observe(this) {
-            when (it) {
-                ApiCallStatus.SUCCESS -> {
-                    binding.progressBar.visibility = GONE
-                    if (seeAllRequestsAdapter.itemCount == 0) {
-                        binding.fppNoRequests.visibility = VISIBLE
-                    }
-                }
-                ApiCallStatus.FAILED -> {
-                    binding.progressBar.visibility = GONE
-                    this.finish()
-                }
-                ApiCallStatus.START ->
-                    binding.progressBar.visibility = VISIBLE
-            }
-        }
-
-    }
-
-    private fun initView(pendingRequestsList: List<PendingRequestDetail>) {
-        val recyclerView: RecyclerView = binding.recentListRv
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
-        seeAllRequestsAdapter = SeeAllRequestsAdapter(pendingRequestsList, this, this, this)
-        recyclerView.adapter = seeAllRequestsAdapter
-    }
-
-    override fun onClickCallback(
-        requestStatus: String?,
-        mentorId: String?,
-        position: Int,
-        name: String?
-    ) {
-        if (requestStatus != null) {
-            if (mentorId != null) {
-                viewModel.confirmOrRejectFppRequest(mentorId, requestStatus, REQUESTS_SCREEN)
+    override fun initViewState() {
+        event.observe(this) {
+            when (it.what) {
+                FPP_SEE_ALL_BACK_PRESSED -> popBackStack()
+                FPP_OPEN_USER_PROFILE -> openUserProfile(it.obj.toString())
             }
         }
     }
 
-    override fun onUserBlock(toMentorId: String?, name: String?) {}
+    private fun openUserProfile(senderMentorId: String) {
+        UserProfileActivity.startUserProfileActivity(
+            this,
+            senderMentorId,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            null,
+            REQUESTS_SCREEN,
+            conversationId = null
+        )
+    }
+
+    private fun popBackStack() {
+        onBackPressed()
+    }
 }

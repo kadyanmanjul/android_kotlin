@@ -13,7 +13,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter" />
+            type="com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -37,6 +37,7 @@
             android:layout_gravity="center_vertical"
             android:background="@color/white"
             android:clipToPadding="true"
+            android:backgroundTint="@{obj.selected ? @color/select_bg_color : @color/white}"
             android:foreground="?android:attr/selectableItemBackground"
             android:longClickable="true">
 
@@ -69,6 +70,7 @@
                 android:layout_width="@dimen/_15sdp"
                 android:layout_height="@dimen/_15sdp"
                 android:elevation="@dimen/_10sdp"
+                android:visibility="@{obj.selected ? View.VISIBLE : View.GONE}"
                 android:gravity="center_vertical|start"
                 app:layout_constraintBottom_toBottomOf="@+id/parent_img"
                 app:layout_constraintEnd_toEndOf="@+id/parent_img"

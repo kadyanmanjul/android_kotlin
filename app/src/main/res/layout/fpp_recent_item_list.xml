@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="obj"
+            name="itemData"
             type="com.joshtalks.joshskills.ui.fpp.model.RecentCall" />
         <variable
             name="handler"
@@ -18,10 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:backgroundTint="@color/white"
         android:clipToPadding="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@color/white"
-        android:onClick="@{()->handler.openUserProfileActivity(obj.receiverMentorId)}"
         app:cardElevation="0dp"
         android:elevation="0dp"
         app:cardCornerRadius="0dp"
@@ -50,7 +50,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/title_container"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/title_container"
-                app:recentCallImage="@{obj}"
+                recentCallImage="@{itemData}"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:text="@{obj.firstName}"
+                    android:text="@{itemData.firstName}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                     android:textColor="@color/pure_black"
                     tools:text="Harsh Gupta" />
@@ -82,6 +82,7 @@
                     android:layout_centerVertical="true"
                     android:singleLine="true"
                     android:layout_marginTop="@dimen/_2sdp"
+                    android:text="@{itemData.textToShow}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                     android:textColor="@color/dark_text_color"
                     tools:text="Spoke for 20 minutes" />

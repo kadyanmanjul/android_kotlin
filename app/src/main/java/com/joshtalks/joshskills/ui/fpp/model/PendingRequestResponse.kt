@@ -17,5 +17,5 @@ data class PendingRequestDetail(
     @SerializedName("text")
     val textToShow: String?,
     @SerializedName("request_status")
-    val requestStatus: String?,
+    val requestStatus: String?
 )

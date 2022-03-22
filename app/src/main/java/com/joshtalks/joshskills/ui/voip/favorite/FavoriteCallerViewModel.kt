@@ -1,37 +1,44 @@
 package com.joshtalks.joshskills.ui.voip.favorite
 
-import android.app.Activity
-import android.app.Application
-import android.content.Intent
+import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.voip.WebRtcActivity
-import java.util.HashMap
+import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
-class FavoriteCallerViewModel(application: Application) : AndroidViewModel(application) {
+class FavoriteCallerViewModel : BaseViewModel() {
     private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
     private val favoriteCallerRepository = FavoriteCallerRepository()
-    val favoriteCallerList = MutableSharedFlow<List<FavoriteCaller>>()
-    val apiCallStatus = MutableSharedFlow<ApiCallStatus>()
+    val favoriteCallerList = MutableLiveData<List<FavoriteCaller>>()
     val checkCallOngoing = MutableLiveData<HashMap<String, String>>()
+    val adapter = FppFavoriteAdapter()
+    val isProgressBarShow = ObservableBoolean(false)
+    val isEmptyCardShow = ObservableBoolean(false)
+    val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
+    val deleteRecords: MutableSet<FavoriteCaller> = mutableSetOf()
 
     fun getFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                getFavoriteUsersDB()
                 fetchFavoriteCallersFromApi()
                 deleteFavoriteUsers()
-            }catch (ex:Exception){}
+            } catch (ex: Exception) {
+                Timber.d(ex)
+            }
         }
     }
 
@@ -40,32 +47,44 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
             try {
                 favoriteCallerDao.updateFavoriteCallerStatus(list.map { it.id })
                 deleteFavoriteUsers()
-            }catch (ex:Exception){}
+            } catch (ex: Exception) {
+                Timber.d(ex)
+            }
         }
     }
 
     private fun fetchFavoriteCallersFromApi() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                isProgressBarShow.set(true)
                 val response = favoriteCallerRepository.getFavList()
                 favoriteCallerDao.removeAllFavorite()
                 if (response.isNotEmpty()) {
                     favoriteCallerDao.insertFavoriteCallers(response)
-                    getFavoriteUsersDB()
-                    return@launch
+
+                    withContext(dispatcher) {
+                        adapter.addItems(response)
+                        isProgressBarShow.set(false)
+                        isEmptyCardShow.set(false)
+                    }
+                    if (adapter.itemCount <= 0) {
+                        withContext(dispatcher) {
+                            isProgressBarShow.set(false)
+                            isEmptyCardShow.set(true)
+                        }
+                    }
+                } else {
+                    withContext(dispatcher) {
+                        isProgressBarShow.set(false)
+                        isEmptyCardShow.set(true)
+                    }
                 }
-                apiCallStatus.emit(ApiCallStatus.SUCCESS)
             } catch (ex: Throwable) {
-                apiCallStatus.emit(ApiCallStatus.SUCCESS)
+                isProgressBarShow.set(false)
+                isEmptyCardShow.set(false)
                 ex.printStackTrace()
             }
         }
-    }
-
-    private suspend fun getFavoriteUsersDB() {
-        try {
-            favoriteCallerList.emit(favoriteCallerDao.getFavoriteCallers())
-        } catch (ex: Exception){}
     }
 
     private fun deleteFavoriteUsers() {
@@ -87,28 +106,116 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun getCallOnGoing(toMentorId: String, uid: Int, activity: Activity) {
+    fun getCallOnGoing(toMentorId: String, uid: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val map: HashMap<String, String> = HashMap<String, String>()
+                val map: HashMap<String, String> = HashMap()
                 map["from_mentor_id"] = Mentor.getInstance().getId()
                 map["to_mentor_id"] = toMentorId
-                val response =  favoriteCallerRepository.userIsCallOrNot(map)
+                val response = favoriteCallerRepository.userIsCallOrNot(map)
                 if (response.isSuccessful) {
                     if (response.code() == 200) {
-                        val intent =
-                            WebRtcActivity.getFavMissedCallbackIntent(uid, activity).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                        activity.startActivity(intent)
+                        withContext(dispatcher) {
+                            message.what = OPEN_CALL_SCREEN
+                            message.obj = uid
+                            singleLiveEvent.value = message
+                        }
                     } else {
                         showToast(response.body()?.getValue("message") ?: "", Toast.LENGTH_LONG)
                     }
+                }
+                if (response.code() == 400){
+                    showToast(response.body()?.get("message")?: EMPTY, Toast.LENGTH_LONG)
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
+    }
+
+    fun onBackPress(view: View) {
+        message.what = FAV_LIST_SCREEN_BACK_PRESSED
+        singleLiveEvent.value = message
+    }
+
+    val onItemClick: (FavoriteCaller, Int, Int) -> Unit = { it, type, position ->
+        when (type) {
+            FAV_CLICK_ON_PROFILE -> {
+                message.what = FAV_CLICK_ON_PROFILE
+                message.obj = it.mentorId
+                singleLiveEvent.value = message
+            }
+            FAV_CLICK_ON_CALL -> {
+                clickOnPhoneCall(it)
+            }
+            FAV_USER_LONG_PRESS_CLICK -> {
+                updateListRow(position)
+            }
+        }
+    }
+
+    fun onClickOpenRecentCall(view: View) {
+        message.what = OPEN_RECENT_SCREEN
+        singleLiveEvent.value = message
+    }
+
+    fun clickOnPhoneCall(favoriteCaller: FavoriteCaller) {
+        if (WebRtcService.isCallOnGoing.value == false) {
+            getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
+        } else {
+            showToast(
+                "You can't place a new call while you're already in a call.",
+                Toast.LENGTH_LONG
+            )
+        }
+    }
+
+    fun updateListRow(position: Int) {
+        enableActionMode(position)
+    }
+
+    fun enableActionMode(position: Int) {
+        message.what = ENABLE_ACTION_MODE
+        message.obj = position
+        singleLiveEvent.value = message
+        toggleSelection(position)
+    }
+
+    fun toggleSelection(position: Int) {
+        val item = adapter.getItemAtPosition(position)
+        if (deleteRecords.contains(item)) {
+            item.selected = false
+            deleteRecords.remove(item)
+        } else {
+            item.selected = true
+            deleteRecords.add(item)
+        }
+        adapter.updateItem(item, position)
+        if (deleteRecords.isEmpty()) {
+            message.what = FINISH_ACTION_MODE
+            singleLiveEvent.value = message
+            deleteRecords.clear()
+            adapter.clearSelections()
+        } else {
+            message.what = SET_TEXT_ON_ENABLE_ACTION_MODE
+            message.obj = deleteRecords.size.toString()
+            singleLiveEvent.value = message
+        }
+    }
+
+    fun deleteFavoriteUserFromList() {
+        showToast(getDeleteMessage())
+        adapter.removeAndUpdated()
+        deleteUsersFromFavoriteList(deleteRecords.toMutableList())
+        if (adapter.getItemSize() <= 0) {
+            isEmptyCardShow.set(true)
+        }
+    }
+
+    private fun getDeleteMessage(): String {
+        if (deleteRecords.size > 1) {
+            return "${deleteRecords.size} practice partners removed"
+        }
+        return "${deleteRecords.size} practice partner removed"
     }
 }

@@ -5,12 +5,12 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail" />
-        <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.fpp.adapters.SeeAllRequestsAdapter" />
+
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -18,122 +18,128 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:backgroundTint="@color/white"
         android:clipToPadding="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{()->handler.openUserProfileActivity(itemData.senderMentorId)}"
-        app:cardCornerRadius="0dp"
         android:elevation="0dp"
+        android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="0dp"
         app:cardElevation="0dp"
         tools:cardBackgroundColor="@color/white"
         tools:cardPreventCornerOverlap="false">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/group_item_container"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_46sdp"
-        android:layout_gravity="center_vertical"
-        android:background="@color/white"
-        android:clipToPadding="true">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/group_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_46sdp"
+            android:layout_gravity="center_vertical"
+            android:clipToPadding="true">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
-            android:layout_width="@dimen/_32sdp"
-            android:layout_height="@dimen/_32sdp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/_13sdp"
-            android:gravity="center_vertical|start"
-            android:src="@drawable/img_5"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@id/title_container"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/title_container"
-            app:recentCallImage="@{itemData}"
-            tools:visibility="visible" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                userImage="@{itemData}"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_13sdp"
+                android:gravity="center_vertical|start"
+                android:src="@drawable/img_5"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@id/title_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/title_container"
+                tools:visibility="visible" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/title_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_9sdp"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/profile_image"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_name"
-                android:layout_width="@dimen/_85sdp"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/title_container"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="@{itemData.fullName}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                android:textColor="@color/pure_black"
-                tools:text="Harsh Gupta" />
+                android:layout_marginStart="@dimen/_9sdp"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/profile_image"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_spoken_time"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="@dimen/_85sdp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@{itemData.fullName}"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                    android:textColor="@color/pure_black"
+                    tools:text="Harsh Gupta" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_spoken_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:singleLine="true"
+                    android:text="@{itemData.textToShow}"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:textColor="@color/dark_text_color"
+                    tools:text="Spoke for 20 minutes" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_confirm_request"
+                android:layout_width="@dimen/_65sdp"
+                android:layout_height="@dimen/_17sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:backgroundTint="@color/colorAccent"
+                android:elevation="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:stateListAnimator="@null"
+                android:text="@string/confirm"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Semi_bold"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/_2sdp"
+                app:elevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_not_now"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/title_container"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_not_now"
+                android:layout_width="@dimen/_65sdp"
+                android:layout_height="@dimen/_17sdp"
+                android:layout_marginEnd="@dimen/_14sdp"
+                android:backgroundTint="@color/not_now"
+                android:elevation="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:stateListAnimator="@null"
+                android:text="@string/not_now"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                android:textColor="@color/pure_black"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/_2sdp"
+                app:elevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/white" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/after_accepted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:singleLine="true"
-                android:text="@{itemData.textToShow}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/dark_text_color"
-                tools:text="Spoke for 20 minutes" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_confirm_request"
-            android:layout_width="@dimen/_59sdp"
-            android:layout_height="@dimen/_17sdp"
-            android:layout_marginEnd="@dimen/_6sdp"
-            android:backgroundTint="@color/colorAccent"
-            android:elevation="0dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:stateListAnimator="@null"
-            android:text="@string/confirm"
-            android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Semi_bold"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:cornerRadius="@dimen/_2sdp"
-            app:elevation="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_not_now"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@+id/title_container"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@color/white" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_not_now"
-            android:layout_width="@dimen/_59sdp"
-            android:layout_height="@dimen/_17sdp"
-            android:layout_marginEnd="@dimen/_14sdp"
-            android:backgroundTint="@color/not_now"
-            android:elevation="0dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:stateListAnimator="@null"
-            android:text="@string/not_now"
-            android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
-            android:textColor="@color/pure_black"
-            android:textStyle="bold"
-            app:cornerRadius="@dimen/_2sdp"
-            app:elevation="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@color/white" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                app:constraint_referenced_ids="btn_confirm_request,btn_not_now"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </layout>
