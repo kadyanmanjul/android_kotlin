@@ -610,7 +610,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     fun callPracticePartner() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
-        closeIntroVideoPopUpUi()
+        if(introVideoControl) closeIntroVideoPopUpUi()
     }
 
     private fun setUpNewGrammarLayouts(
@@ -1106,7 +1106,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     override fun onPause() {
-        binding.videoView.onPause()
+        if(introVideoControl) binding.videoView.onPause()
         super.onPause()
     }
 

@@ -154,7 +154,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         logNewPaymentPageOpened()
         dynamicCardCreation()
         setListeners()
-        viewModel.saveImpression(BUY_ENGLISH_COURSE_BUTTON_CLICKED)
     }
 
     private fun dynamicCardCreation(){
