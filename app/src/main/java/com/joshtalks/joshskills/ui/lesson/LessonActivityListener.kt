@@ -5,7 +5,6 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 interface LessonActivityListener {
 
     fun onNextTabCall(currentTabNumber: Int)
-    fun showIntroVideo()
 
     fun onQuestionStatusUpdate(
         status: QUESTION_STATUS,
