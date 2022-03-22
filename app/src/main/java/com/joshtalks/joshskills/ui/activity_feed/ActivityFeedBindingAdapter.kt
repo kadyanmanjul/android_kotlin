@@ -1,15 +1,18 @@
 package com.joshtalks.joshskills.ui.activity_feed
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -19,6 +22,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import de.hdodenhof.circleimageview.CircleImageView
 
 @BindingAdapter("partialTextColor")
@@ -59,6 +63,7 @@ fun CircleImageView.setImage(url: String?) {
             .into(this)
     }
 }
+
 @BindingAdapter("updatedImageResource")
 fun ImageView.setImage(url: String?) {
     val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
@@ -75,6 +80,7 @@ fun ImageView.setImage(url: String?) {
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
+
 fun getColorHexCode(): Int {
     val colorArray = arrayOf(
         "#f83a7e", "#2213fa", "#d5857a",
@@ -89,4 +95,26 @@ fun getColorHexCode(): Int {
     )
     var colorInt = Color.parseColor(colorArray[++FirstTimeUser.idx % colorArray.size])
     return colorInt
+}
+
+@BindingAdapter("feedListAdapter", "onFeedItemClick","scrollToEnd")
+fun setSeeAllRequestMemberAdapter(
+    view: RecyclerView,
+    adapter: ActivityFeedListAdapter,
+    function: ((ActivityFeedResponseFirebase, Int) -> Unit)?,
+    scrollView: AppCompatImageView
+) {
+    val layoutManager1 = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+    view.layoutManager = layoutManager1
+    if(layoutManager1.findFirstCompletelyVisibleItemPosition()==0){
+        scrollView.visibility = View.GONE
+        view.layoutManager?.scrollToPosition(0)
+    }else{
+        scrollView.visibility = View.VISIBLE
+    }
+
+    view.setHasFixedSize(false)
+    view.adapter = adapter
+
+    adapter.setListener(function)
 }

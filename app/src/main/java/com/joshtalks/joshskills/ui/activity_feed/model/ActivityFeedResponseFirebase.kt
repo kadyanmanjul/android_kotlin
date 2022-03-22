@@ -6,7 +6,7 @@ data class ActivityFeedResponseFirebase(
     @SerializedName("date")
     var date: String? = null,
     @SerializedName("event_id")
-    var eventId: String? = null,
+    var eventId: Int? = null,
     @SerializedName("media_url")
     var mediaUrl: String? = null,
     @SerializedName("mentor_id")

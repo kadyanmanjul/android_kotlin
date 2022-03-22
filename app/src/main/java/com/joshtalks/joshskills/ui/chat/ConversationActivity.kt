@@ -698,7 +698,17 @@ class ConversationActivity :
 //            startActivity(intent)
 //        }
         conversationBinding.imgFeedBtn.setOnClickListener {
-            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity, this)
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(SINGLE_SPACE)
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(getString(R.string.feature_locked, firstName))
+            } else {
+                val intent = Intent(this, ActivityFeedMainActivity::class.java)
+                startActivity(intent)
+            }
         }
         conversationBinding.imgGroupChatBtn.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
