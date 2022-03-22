@@ -2,6 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    <import type="android.view.View" />
+
+    <variable
+        name="vm"
+        type="com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel" />
+    </data>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -40,6 +48,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
+                    android:onClick="@{vm::onBackPress}"
                     android:gravity="center_vertical|start"
                     android:paddingTop="@dimen/_4sdp"
                     android:paddingBottom="@dimen/_4sdp"
@@ -66,6 +75,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:rotation="180"
+                onFeedItemClick="@{vm.onItemClick}"
+                feedListAdapter="@{vm.adapter}"
+                scrollToEnd="@{scrollToEndButton}"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginBottom="@dimen/_14sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -86,10 +98,27 @@
             android:adjustViewBounds="true"
             android:padding="@dimen/_4sdp"
             android:scaleType="centerInside"
-            android:visibility="gone"
+            android:visibility="@{vm.isScrollToEndButtonVisible ? View.VISIBLE : View.GONE}"
+            android:onClick="@{vm.onScrollToEnd}"
             app:elevation="@dimen/_4sdp"
             app:srcCompat="@drawable/ic_down_arrow"
             tools:visibility="visible" />
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_5sdp"
+            android:visibility="@{vm.fetchingAllFeed ? View.VISIBLE : View.GONE}"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_left"
+            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_width="@dimen/_4sdp"
+            app:cpb_round_border="true" />
+
     </FrameLayout>
 
 </layout>

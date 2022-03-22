@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
+        <import type="android.view.View" />
+
         <import type="com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser"/>
         <variable
             name="itemData"
@@ -58,6 +60,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="@{itemData.eventId == 5 ? View.VISIBLE : View.GONE}"
                     android:src="@drawable/ic_img_border" />
 
                 <ImageView
@@ -70,6 +73,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
+                    android:visibility="@{itemData.eventId == 5 ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

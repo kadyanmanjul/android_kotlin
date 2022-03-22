@@ -1,32 +1,46 @@
 package com.joshtalks.joshskills.ui.activity_feed.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.view.View
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.ktx.toObject
+import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.server.ActivityFeedList
+import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedListAdapter
 import com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import com.joshtalks.joshskills.ui.activity_feed.repository.FirestoreFeedRepository
+import com.joshtalks.joshskills.ui.activity_feed.utils.*
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ActivityFeedViewModel(application: Application) : AndroidViewModel(application) {
+class ActivityFeedViewModel:BaseViewModel() {
     val firebaseRepository = FirestoreFeedRepository()
     var currentFeed: MutableLiveData<ActivityFeedResponseFirebase> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val feedDataList: MutableLiveData<ActivityFeedList> = MutableLiveData()
     private var feedTime = System.currentTimeMillis()
     private var localFlag = false
+
+    val adapter = ActivityFeedListAdapter()
+    val isScrollToEndButtonVisible = ObservableBoolean(false)
+    val updateProfilePicOrBorder = ObservableBoolean(false)
+    val fetchingAllFeed = ObservableBoolean(false)
+    var startTime = System.currentTimeMillis()
+    var impressionId = ObservableField(EMPTY)
+
+
     fun getFeed() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                apiCallStatus.postValue(ApiCallStatus.START)
+                fetchingAllFeed.set(true)
                 val collectionRef = firebaseRepository.getActivityFeed()
                 collectionRef.addSnapshotListener { value, e ->
                     if (e != null) {
@@ -36,14 +50,14 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
                         for (doc in value!!.documentChanges) {
                             if (doc.type == DocumentChange.Type.ADDED) {
                                 if (localFlag) {
-                                    var timeGap = (System.currentTimeMillis() - feedTime).div(1000)
+                                    val timeGap = (System.currentTimeMillis() - feedTime).div(1000)
                                     if (timeGap >= 0.05) {
-                                        apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                                        fetchingAllFeed.set(false)
                                         currentFeed.value = doc.document.toObject()
                                         currentFeed.value!!.photoUrl =
                                             doc.document.get("photo_url").toString()
                                         currentFeed.value!!.eventId =
-                                            doc.document.get("event_id").toString()
+                                            Integer.parseInt(doc.document.get("event_id").toString())
                                         currentFeed.value!!.mediaUrl =
                                             doc.document.get("media_url").toString()
                                         currentFeed.value!!.mentorId =
@@ -52,11 +66,13 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
                                         feedTime = System.currentTimeMillis()
                                     }
                                 } else {
-                                    apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                                    fetchingAllFeed.set(false)
                                     currentFeed.value = doc.document.toObject()
                                     currentFeed.value!!.photoUrl =
                                         doc.document.get("photo_url").toString()
                                 }
+                                currentFeed.value?.let { adapter.items.add(0, it) }
+                                adapter.notifyItemChanged(0)
                             }
                         }
                     }
@@ -65,7 +81,7 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
-                apiCallStatus.postValue(ApiCallStatus.FAILED)
+                fetchingAllFeed.set(false)
             }
         }
 
@@ -76,11 +92,11 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
             try {
                 val response = AppObjectController.commonNetworkService.getActivityFeedData()
                 if (response.isSuccessful && response.body() != null) {
-                    feedDataList.postValue(response.body()!!)
+                    impressionId.set(response.body()?.impressionId)
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
-                apiCallStatus.postValue(ApiCallStatus.FAILED)
+                fetchingAllFeed.set(false)
             }
         }
     }
@@ -88,7 +104,7 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
     fun engageActivityFeedTime(impressionId: String, startTime: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (impressionId.isNullOrBlank())
+                if (impressionId.isBlank())
                     return@launch
 
                 AppObjectController.commonNetworkService.engageActivityFeedTime(
@@ -100,6 +116,39 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
                 ex.printStackTrace()
             }
         }
+    }
+
+    val onItemClick: (ActivityFeedResponseFirebase, Int) -> Unit = { it, type ->
+        when (type) {
+            OPEN_FEED_USER_PROFILE -> {
+                message.what =OPEN_FEED_USER_PROFILE
+                message.obj = it
+                singleLiveEvent.value = message
+            }
+            OPEN_PROFILE_IMAGE_FRAGMENT -> {
+                message.what =OPEN_PROFILE_IMAGE_FRAGMENT
+                message.obj = it
+                singleLiveEvent.value = message
+            }
+        }
+    }
+
+    fun onBackPress(view: View) {
+        saveEngageTime()
+    }
+
+    fun onScrollToEnd(view: View){
+        message.what = FEED_SCROLL_TO_END
+        singleLiveEvent.value = message
+    }
+
+    fun saveEngageTime(){
+        startTime = System.currentTimeMillis().minus(startTime).div(1000)
+        if (startTime > 0 && impressionId.get()?.isNotBlank() == true) {
+            engageActivityFeedTime(impressionId.get()?: EMPTY, startTime)
+        }
+        message.what = ON_FEED_BACK_PRESSED
+        singleLiveEvent.value = message
     }
 
 }
