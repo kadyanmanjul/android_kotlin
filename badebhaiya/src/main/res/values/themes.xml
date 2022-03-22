@@ -42,4 +42,15 @@
         <item name="fontFamily">@font/nunito_sans_regular</item>
         <item name="android:textColor">@color/name_scree_text_color</item>
     </style>
+
+    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.9</item>
+    </style>
+
+    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_rounded_bottom_sheet</item>
+    </style>
 </resources>

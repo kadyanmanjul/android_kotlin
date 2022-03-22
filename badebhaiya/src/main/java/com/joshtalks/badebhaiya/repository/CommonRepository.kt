@@ -8,4 +8,5 @@ class CommonRepository {
     private val service = RetrofitInstance.commonNetworkService
     suspend fun postFCMToken(requestParams: Map<String, String>) = service.sendNumberForOTP(requestParams)
     suspend fun patchFCMToken(verifyOTPRequest: VerifyOTPRequest) = service.verityOTP(verifyOTPRequest)
+    suspend fun requestUploadMediaAsync(requestParams: Map<String, String>) = service.requestUploadMedia(requestParams)
 }

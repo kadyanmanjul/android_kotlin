@@ -47,6 +47,7 @@ class SignUpEnterOTPFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.tvPhoneNumberText.text = getString(R.string.verify_otp_for_phone_text)
         processOTP()
         addOTPObserver()
     }
@@ -94,10 +95,11 @@ class SignUpEnterOTPFragment: Fragment() {
     fun verifyOTP() {
         if (binding.otpView.otp.isNullOrEmpty().not()) {
             startProgress()
-            viewModel.verifyOTP(binding.otpView.otp, "9013207656")
+            viewModel.verifyOTP(binding.otpView.otp, "6266868454")
         } else {
             showToast(getString(R.string.please_enter_otp))
         }
+
     }
 
     private fun startProgress() {

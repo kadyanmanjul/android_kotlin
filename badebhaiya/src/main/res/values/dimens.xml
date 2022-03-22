@@ -2,4 +2,8 @@
 <resources>
     <dimen name="dp8">8dp</dimen>
     <dimen name="dp2">2dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadius">16dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusTopPadding">6dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusLeftPadding">6dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusRightPadding">6dp</dimen>
 </resources>

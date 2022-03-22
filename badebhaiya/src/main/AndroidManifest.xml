@@ -23,9 +23,6 @@
     <activity
             android:name="com.joshtalks.badebhaiya.profile.ProfileActivity"
             android:exported="true"/>
-        <activity
-            android:name=".ui.L"
-            android:exported="true"/>
         <activity android:name=".signup.SignUpActivity"
             android:exported="true">
             <intent-filter>

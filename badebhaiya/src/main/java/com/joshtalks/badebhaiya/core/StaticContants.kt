@@ -4,7 +4,7 @@ enum class SignUpStepStatus {
     SignUpStepFirst, SignUpStepSecond, SignUpCompleted,
     RequestForOTP, ReGeneratedOTP, ProfileCompleted,ProfilePicUploaded,StartAfterPicUploaded,ProfilePicSkipped,
     ProfileInCompleted, SignUpResendOTP, SignUpWithoutRegister,
-    WRONG_OTP, ERROR, NameMissing, ProfilePicMissing
+    WRONG_OTP, ERROR, NameMissing, ProfilePicMissing, NameEntered
 }
 
 const val EMPTY = ""

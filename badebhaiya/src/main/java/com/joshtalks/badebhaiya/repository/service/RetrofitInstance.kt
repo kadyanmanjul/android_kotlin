@@ -28,6 +28,7 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 
 const val KEY_AUTHORIZATION = "Authorization"
 private const val READ_TIMEOUT = 30L
@@ -103,6 +104,40 @@ class RetrofitInstance {
 
         val commonNetworkService by lazy {
             retrofit.create(SignUpNetworkService::class.java)
+        }
+
+        val mediaDUNetworkService by lazy {
+                val mediaOkhttpBuilder = OkHttpClient().newBuilder()
+                mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
+                    .writeTimeout(45, TimeUnit.SECONDS)
+                    .readTimeout(45, TimeUnit.SECONDS)
+                    .followRedirects(true)
+                //                .addInterceptor(StatusCodeInterceptor())
+
+                if (BuildConfig.DEBUG) {
+                    val logging =
+                        HttpLoggingInterceptor { message ->
+                            Timber.tag("OkHttp").d(message)
+                        }.apply {
+                            level = HttpLoggingInterceptor.Level.BODY
+
+                        }
+                    mediaOkhttpBuilder.addInterceptor(logging)
+                    mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
+                    mediaOkhttpBuilder.addInterceptor(getOkhttpToolInterceptor())
+                }
+
+                mediaOkhttpBuilder.addInterceptor(Interceptor { chain ->
+                    val original = chain.request()
+                    val newRequest: Request.Builder = original.newBuilder()
+                    newRequest.addHeader("Connection", "close")
+                    chain.proceed(newRequest.build())
+                })
+
+                Retrofit.Builder()
+                    .baseUrl(BuildConfig.BASE_URL)
+                    .client(mediaOkhttpBuilder.build())
+                    .build().create(MediaDUNetworkService::class.java)
         }
     }
 }

@@ -8,11 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.core.API_TOKEN
 import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
+import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.repository.BBRepository
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
+import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
+import com.joshtalks.badebhaiya.utils.Utils
+import id.zelory.compressor.Compressor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val repository = BBRepository()
@@ -54,18 +67,141 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     }
 
     private fun updateUserFromLoginResponse(loginResponse: LoginResponse) {
-        try {
-            viewModelScope.launch {
+        val user = User.getInstance()
+        user.userId = loginResponse.userId
+        user.token = loginResponse.token
+        PrefManager.put(API_TOKEN, loginResponse.token)
+        user.update()
+        fetchUser()
+    }
+
+    private fun fetchUser() {
+        viewModelScope.launch {
+            try {
                 val response = repository.getUserDetailsForSignUp(User.getInstance().userId)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         User.getInstance().updateFromResponse(it)
+                        analyzeUserProfile()
                     }
-                    PrefManager.put(API_TOKEN, loginResponse.token)
                 }
-            }
-        } catch (ex: Exception) {
+                return@launch
+            } catch (ex: Exception) {
 
+            }
+        }
+    }
+
+    private fun analyzeUserProfile() {
+        val user = User.getInstance()
+        if (user.firstName.isNullOrEmpty()) {
+            return signUpStatus.postValue(SignUpStepStatus.NameMissing)
+        }
+        if (user.profilePicUrl.isNullOrEmpty()) {
+            return signUpStatus.postValue(SignUpStepStatus.ProfilePicMissing)
+        }
+        signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+    }
+
+    fun completeProfile(requestMap: MutableMap<String, String?>) {
+        viewModelScope.launch {
+            try {
+                val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        User.getInstance().updateFromResponse(it)
+                        signUpStatus.postValue(SignUpStepStatus.NameEntered)
+                    }
+                }
+            } catch (ex: Exception) {
+
+            }
+        }
+    }
+
+    fun changeSignUpStepStatusToSkip() {
+        signUpStatus.postValue(SignUpStepStatus.ProfilePicSkipped)
+    }
+
+    fun uploadMedia(mediaPath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val compressImagePath = getCompressImage(mediaPath)
+            uploadCompressedMedia(compressImagePath)
+        }
+    }
+
+    private suspend fun getCompressImage(path: String): String {
+        return viewModelScope.async(Dispatchers.IO) {
+            try {
+                AppDirectory.copy(
+                    Compressor(getApplication()).setQuality(75).setMaxWidth(720).setMaxHeight(1280)
+                        .compressToFile(File(path)).absolutePath, path)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+            return@async path
+        }.await()
+    }
+
+
+    private fun uploadCompressedMedia(mediaPath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val obj = mapOf("media_path" to File(mediaPath).name)
+                val responseObj =
+                    CommonRepository().requestUploadMediaAsync(obj).await()
+                val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
+                if (statusCode in 200..210) {
+                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                    saveProfileInfo(url)
+                } else {
+//                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+                }
+
+            } catch (ex: Exception) {
+//                apiCallStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private suspend fun uploadOnS3Server(responseObj: AmazonPolicyResponse, mediaPath: String): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val parameters = emptyMap<String, RequestBody>().toMutableMap()
+            for (entry in responseObj.fields) {
+                parameters[entry.key] = Utils.createPartFromString(entry.value)
+            }
+
+            val requestFile = File(mediaPath).asRequestBody("*".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData(
+                "file",
+                responseObj.fields["key"],
+                requestFile
+            )
+            val responseUpload = RetrofitInstance.mediaDUNetworkService.uploadMediaAsync(
+                responseObj.url,
+                parameters,
+                body
+            ).execute()
+            return@async responseUpload.code()
+        }.await()
+    }
+
+    private fun saveProfileInfo(url: String?) {
+        viewModelScope.launch {
+            try {
+                val requestMap = mutableMapOf<String, String?>()
+                requestMap["profile_url"] = url
+                val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        User.getInstance().updateFromResponse(it)
+                        signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
+                    }
+                }
+            } catch (ex: Exception) {
+
+            }
         }
     }
 }

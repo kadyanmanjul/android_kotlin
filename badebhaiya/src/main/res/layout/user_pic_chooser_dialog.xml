@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.joshtalks.badebhaiya.signup.UserPicChooserFragment" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_top_rounded">
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_16sdp"
+            android:backgroundTint="@color/black"
+            android:onClick="@{()->fragment.dismiss()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/black"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:text="@{fragment.header}"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/delete_icon"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#E95454"
+            android:onClick="@{()->fragment.delete()}"
+            android:padding="@dimen/_6sdp"
+            android:tint="@color/white"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/heading"
+            app:srcCompat="@drawable/recv_ic_delete"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/gallery_icon"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#5490E9"
+            android:onClick="@{()->fragment.change()}"
+            android:padding="@dimen/_9sdp"
+            app:layout_constraintStart_toEndOf="@id/delete_icon"
+            app:layout_constraintTop_toBottomOf="@id/heading"
+            app:srcCompat="@drawable/ic_vector_gallery" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/camera_icon"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#EAAA1E"
+            android:onClick="@{()->fragment.captureImage()}"
+            android:padding="@dimen/_6sdp"
+            android:foregroundGravity="center"
+            app:layout_constraintStart_toEndOf="@id/gallery_icon"
+            app:layout_constraintTop_toBottomOf="@id/heading"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_inbox_camera" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/remove_text"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_24sdp"
+            android:gravity="center"
+            android:onClick="@{()->fragment.delete()}"
+            android:text="Remove Photo"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            android:textSize="@dimen/_9ssp"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/delete_icon"
+            app:layout_constraintTop_toBottomOf="@id/delete_icon"
+            app:layout_constraintVertical_bias="0"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/gallery_text"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_24sdp"
+            android:gravity="center"
+            android:onClick="@{()->fragment.change()}"
+            android:text="Gallery"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            android:textSize="@dimen/_9ssp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/gallery_icon"
+            app:layout_constraintTop_toBottomOf="@id/gallery_icon"
+            app:layout_constraintVertical_bias="0" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/camera_text"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_24sdp"
+            android:gravity="center"
+            android:onClick="@{()->fragment.captureImage()}"
+            android:text="Camera"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            android:textSize="@dimen/_9ssp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/camera_icon"
+            app:layout_constraintTop_toBottomOf="@id/camera_icon"
+            app:layout_constraintVertical_bias="0" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

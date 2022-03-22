@@ -6,7 +6,7 @@
     <data>
         <variable
             name="handler"
-            type="com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel" />
+            type="com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +27,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/tvFirstName"
+            android:id="@+id/etFirstName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -46,7 +46,7 @@
             app:layout_constraintVertical_bias="0.4" />
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/tvLastName"
+            android:id="@+id/etLastName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -57,11 +57,11 @@
             android:paddingBottom="@dimen/_8sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
             android:textSize="@dimen/_14ssp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvFirstName"
+            app:layout_constraintBottom_toBottomOf="@+id/etFirstName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0364683301"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/tvFirstName" />
+            app:layout_constraintTop_toTopOf="@+id/etFirstName" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvFirstName" />
+            app:layout_constraintTop_toBottomOf="@+id/etFirstName" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnNext"
@@ -88,6 +88,7 @@
             android:layout_marginBottom="@dimen/_46sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:onClick="@{handler::submitProfile}"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline

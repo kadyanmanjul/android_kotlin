@@ -184,5 +184,7 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:4.3.0'
     implementation 'com.zlc.glide:webpdecoder:1.6.4.9.0'
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
+    implementation 'id.zelory:compressor:2.1.0'
 
 }

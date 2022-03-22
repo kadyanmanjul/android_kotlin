@@ -8,11 +8,11 @@ import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 const val USER_PERSISTENT_KEY = "USER_PERSISTENT_KEY"
 
 data class User(
-    @SerializedName("first_name") var firstName: String = EMPTY,
-    @SerializedName("last_name") var lastName: String = EMPTY,
+    @SerializedName("first_name") var firstName: String? = null,
+    @SerializedName("last_name") var lastName: String? = null,
     @SerializedName("user_id") var userId: String = EMPTY,
     @SerializedName("token") var token: String = EMPTY,
-    @SerializedName("profile_url") var profilePicUrl: String = EMPTY,
+    @SerializedName("profile_url") var profilePicUrl: String? = null,
     @SerializedName("mobile") var mobile: String = EMPTY
 ) {
     companion object {
@@ -22,10 +22,11 @@ data class User(
         @JvmStatic
         fun getInstance(): User {
             return try {
-                RetrofitInstance.gsonMapper.fromJson(
+                instance = RetrofitInstance.gsonMapper.fromJson(
                     PrefManager.getStringValue(USER_PERSISTENT_KEY),
                     User::class.java
                 )
+                instance!!
             } catch (ex: Exception) {
                 User()
             }
@@ -41,7 +42,13 @@ data class User(
         return RetrofitInstance.gsonMapper.toJson(this)
     }
 
-    fun updateFromResponse(body: User) {
-
+    fun updateFromResponse(user: User) {
+        this.firstName = user.firstName
+        this.lastName = user.lastName
+        this.mobile = user.mobile
+        this.profilePicUrl = user.profilePicUrl
+        if (this.userId.isEmpty()) this.userId = user.userId
+        if (this.token.isEmpty()) this.token = user.token
+        update()
     }
 }

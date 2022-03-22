@@ -6,7 +6,7 @@
     <data>
         <variable
             name="handler"
-            type="com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel" />
+            type="com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_10sdp"
             android:text="@string/skip"
+            android:onClick="@{() -> handler.onSkipPressed()}"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/skip_button_color"
             android:textSize="@dimen/_12ssp"
@@ -63,6 +64,7 @@
             android:padding="@dimen/_30sdp"
             android:background="@drawable/add_photo_background"
             android:translationZ="@dimen/_10sdp"
+            android:onClick="@{()->handler.submitProfilePic()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.496"

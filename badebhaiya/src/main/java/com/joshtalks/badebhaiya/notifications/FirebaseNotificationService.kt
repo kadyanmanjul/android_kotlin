@@ -1,5 +1,5 @@
 package com.joshtalks.badebhaiya.notifications
-
+/*
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.joshtalks.badebhaiya.core.AppObjectController
@@ -66,4 +66,4 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         Timber.tag(FirebaseNotificationService::class.java.name).e("fcm")
     }
-}
+}*/
