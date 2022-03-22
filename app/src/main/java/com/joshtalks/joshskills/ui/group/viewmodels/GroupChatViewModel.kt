@@ -230,6 +230,11 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    fun openRequestList(view: View) {
+        message.what = OPEN_GROUP_REQUESTS
+        singleLiveEvent.value = message
+    }
+
     fun editGroupInfo() {
         message.what = EDIT_GROUP_INFO
         message.data = Bundle().apply {
