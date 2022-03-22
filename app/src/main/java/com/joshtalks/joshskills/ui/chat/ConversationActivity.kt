@@ -588,7 +588,7 @@ class ConversationActivity :
         phoneNumber = phoneNumber?.substring(3)
         val email = User.getInstance().email
         if(email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
-            showToast("Course can't restart")
+            showToast("${R.string.course_restart_fail}")
         }
         else {
             MaterialDialog(this@ConversationActivity).show {
@@ -596,17 +596,15 @@ class ConversationActivity :
                 positiveButton(R.string.restart_now) {
                     if(email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
                         conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
-                        conversationViewModel.clearDataForRestart()
                         conversationBinding.btnRestartCourse.visibility = View.GONE
                         logout()
-                        showToast("Course Restarted Successfully")
+                        showToast("${R.string.course_restart_success}")
                     }
                     else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
                         conversationViewModel.restartCourse(email, "Email")
-                        conversationViewModel.clearDataForRestart()
                         conversationBinding.btnRestartCourse.visibility = View.GONE
                         logout()
-                        showToast("Course Restarted Successfully")
+                        showToast("${R.string.course_restart_success}")
                     }
                     if (isFromRestartButton) {
                         conversationViewModel.saveRestartCourseImpression(
@@ -627,7 +625,7 @@ class ConversationActivity :
     fun showRestartButton() {
         CoroutineScope(Dispatchers.IO).launch {
             val lastLesson= conversationViewModel.getLastLessonForCourse()
-            if(lastLesson == 90 && inboxEntity.courseId == "151") {
+            if(lastLesson == 90 && inboxEntity.isCapsuleCourse) {
                 conversationBinding.btnRestartCourse.visibility = View.VISIBLE
                 conversationBinding.messageButton.visibility = View.GONE
                 conversationBinding.chatEdit.visibility = View.GONE
@@ -1280,7 +1278,7 @@ class ConversationActivity :
     }
 
     private fun showRestartMenuOption(){
-        if(inboxEntity.isCourseBought && inboxEntity.courseId == "151") {
+        if(inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = true
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = true
         }

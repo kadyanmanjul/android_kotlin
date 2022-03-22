@@ -355,6 +355,7 @@ class ConversationViewModel(
                 ex.showAppropriateMsg()
             }
         }
+         deleteConversationData(inboxEntity.courseId)
     }
 
     fun saveRestartCourseImpression(eventName: String) {
@@ -390,10 +391,6 @@ class ConversationViewModel(
         if (isRecordingStarted) {
             mAudioRecording.stopRecording(true)
         }
-    }
-
-    fun clearDataForRestart() {
-            deleteConversationData(inboxEntity.courseId)
     }
 
     private fun deleteConversationData(courseId: String) {
