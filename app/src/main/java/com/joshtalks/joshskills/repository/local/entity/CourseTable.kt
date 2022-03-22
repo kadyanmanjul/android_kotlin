@@ -71,7 +71,10 @@ data class Course(
     @SerializedName("expire_date") val expiryDate: Date? = null,
 
     @ColumnInfo(name="paid_test_id")
-    @SerializedName("paid_test_id") val paidTestId: String? = null
+    @SerializedName("paid_test_id") val paidTestId: String? = null,
+
+    @ColumnInfo(name = "speaking_status")
+    @SerializedName("speaking_status") val speakingStatus: String
 
 ) : Serializable
 

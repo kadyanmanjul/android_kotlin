@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.inbox.ExtendFreeTrialActivity" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.inbox.ExtendFreeTrialActivity">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_cross"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_22sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical|end"
+            android:paddingTop="@dimen/_22sdp"
+            android:onClick="@{()->handler.openConversationActivity()}"
+            android:paddingBottom="@dimen/_6sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_cross_icon" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_restart_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_21sdp"
+            android:layout_marginTop="@dimen/_34sdp"
+            android:layout_marginEnd="@dimen/_21sdp"
+            android:paddingTop="@dimen/_22sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/image_restart" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/heading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_240sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textSize="@dimen/_19sdp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Extend Free trial!" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/subheading_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_30sdp"
+            android:singleLine="false"
+            android:gravity="center_horizontal"
+            android:textColor="#000000"
+            android:alpha="0.7"
+            tools:visibility="visible"
+            android:text="हमने देखा की आपने lesson 1 पूरा नहीं किया है। यह app सिर्फ serious students के लिए है जो English सीखना चाहते हैं।"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading_text"
+            tools:text="हमने देखा की आपने lesson 1 पूरा नहीं किया है। यह app सिर्फ serious students के लिए है जो English सीखना चाहते हैं।" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_circle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_36sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_266sdp"
+            android:paddingTop="@dimen/_22sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subheading_text"
+            app:srcCompat="@drawable/ic_restart_img1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text1"
+            android:layout_width="@dimen/_210sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_34sdp"
+            android:singleLine="false"
+            android:textColor="#000000"
+            android:alpha="0.7"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_circle1"
+            app:layout_constraintTop_toBottomOf="@+id/subheading_text"
+            android:text="@string/extend_free_trial1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_circle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_36sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_266sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text1"
+            app:srcCompat="@drawable/ic_restart_img2" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text2"
+            android:layout_width="@dimen/_210sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_34sdp"
+            android:singleLine="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="#000000"
+            android:alpha="0.7"
+            app:layout_constraintStart_toEndOf="@+id/iv_circle1"
+            app:layout_constraintTop_toBottomOf="@+id/text1"
+            android:text="@string/extend_free_trial2" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text3"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_45sdp"
+            android:singleLine="false"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text2"
+            android:text="@string/extend_free_trial3" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/extend_free_trial_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:backgroundTint="@color/button_color"
+            android:gravity="center"
+            android:background="@drawable/round_rectangle"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingBottom="@dimen/_12sdp"
+            android:text="@string/extend_free_trial_btn_text"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_13sdp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text3"
+            app:rippleColor="@color/white"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

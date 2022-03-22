@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
@@ -369,7 +371,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        ConversationActivity.startConversionActivity(this, inboxEntity)
+       // Log.d("dfg", "onclick : inbox" + inboxEntity.toString())
+        val str : String = "NO"
+
+//                && inboxEntity.expiryDate?.time ?:  < System.currentTimeMillis()
+        val time = inboxEntity.expiryDate?.time
+        val currentTime = System.currentTimeMillis()
+
+            if(inboxEntity.isCourseBought.not() && inboxEntity.courseId == "151" && (inboxEntity.speakingStatus == "NO" ||  inboxEntity.speakingStatus == "AT") && time != null && time < currentTime){
+                ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
+            }else{
+                ConversationActivity.startConversionActivity(this, inboxEntity)
+            }
+
     }
 
     companion object {
