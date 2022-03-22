@@ -1,10 +1,9 @@
 package com.joshtalks.badebhaiya.notifications
-/*
+
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.PrefManager
-import com.joshtalks.badebhaiya.repository.BBRepository
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.ApiRespStatus
@@ -38,22 +37,33 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun postFCMToken(token: String) {
         CoroutineScope(SupervisorJob() + Dispatchers.IO +
-                    CoroutineExceptionHandler { _, _ -> }).launch {
+                CoroutineExceptionHandler { _, _ -> }).launch {
             val userId = User.getInstance().userId
             if (userId.isNotBlank()) {
                 try {
-                    val data = mutableMapOf(
-                        "name" to Utils.getDeviceName(),
-                        "registration_id" to token,
-                        "device_id" to Utils.getDeviceId(),
-                        "active" to "true",
-                        "user_id" to userId,
-                        "type" to "android"
-                    )
-                    val resp = BBRepository()
-                    val resp = AppObjectController.signUpNetworkService.postFCMToken(data.toMap())
-                    if (resp.isSuccessful) {
-                        resp.body()?.update()
+                    if (PrefManager.hasKey(FCM_TOKEN)) {
+                        val data = mutableMapOf(
+                            "registration_id" to token
+                        )
+                        val resp = CommonRepository().patchFCMToken(userId,data)
+                        if (resp.isSuccessful) {
+                            resp.body()?.update()
+                            Timber.tag(FCMData::class.java.name).e("patch data : ${resp.body()}")
+                        }
+                    } else {
+                        val data = mutableMapOf(
+                            "name" to Utils.getDeviceName(),
+                            "registration_id" to token,
+                            "device_id" to Utils.getDeviceId(),
+                            "active" to "true",
+                            "user_id" to userId,
+                            "type" to "android"
+                        )
+                        val resp = CommonRepository().postFCMToken(data)
+                        if (resp.isSuccessful) {
+                            resp.body()?.update()
+                            Timber.tag(FCMData::class.java.name).e("post data : ${resp.body()}")
+                        }
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
@@ -66,4 +76,4 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         Timber.tag(FirebaseNotificationService::class.java.name).e("fcm")
     }
-}*/
+}

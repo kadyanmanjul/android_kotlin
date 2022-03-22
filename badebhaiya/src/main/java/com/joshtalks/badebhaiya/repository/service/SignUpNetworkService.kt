@@ -6,7 +6,14 @@ import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.QueryMap
 
 const val DIR = "api/bbapp/v1"
 interface SignUpNetworkService {
@@ -22,7 +29,7 @@ interface SignUpNetworkService {
 
     @FormUrlEncoded
     @PATCH("$DIR/user/{id}/")
-    suspend fun updateUserProfile(@Path("id")userId: String, @FieldMap params: Map<String, String?>): Response<User>
+    suspend fun updateUserProfile(@Path("id")userId: String, @FieldMap params: Map<String, String>): Response<User>
 
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")

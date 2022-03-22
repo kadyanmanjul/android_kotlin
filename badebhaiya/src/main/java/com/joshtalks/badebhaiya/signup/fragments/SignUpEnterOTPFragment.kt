@@ -84,7 +84,7 @@ class SignUpEnterOTPFragment: Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.i("ayushg", "onReceive: otp: $it")
+                    Log.i("BadeBhaiya", "onReceive: otp: $it")
                     binding.otpView.otp = it.otp
                 }, {
                     it.printStackTrace()
@@ -95,11 +95,10 @@ class SignUpEnterOTPFragment: Fragment() {
     fun verifyOTP() {
         if (binding.otpView.otp.isNullOrEmpty().not()) {
             startProgress()
-            viewModel.verifyOTP(binding.otpView.otp, "6266868454")
+            viewModel.verifyOTP(binding.otpView.otp, "9013207656")
         } else {
             showToast(getString(R.string.please_enter_otp))
         }
-
     }
 
     private fun startProgress() {

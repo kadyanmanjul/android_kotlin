@@ -10,12 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.showProgress
+import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.hideKeyboard
 import com.joshtalks.badebhaiya.core.isValidFullNumber
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterPhoneBinding
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+
 
 class SignUpEnterPhoneFragment: Fragment() {
     private lateinit var binding: FragmentSignupEnterPhoneBinding
@@ -53,7 +55,20 @@ class SignUpEnterPhoneFragment: Fragment() {
         startProgress()
         hideKeyboard(requireActivity(), binding.etPhone)
         viewModel.sendPhoneNumberForOTP(binding.etPhone.text.toString(), "+91")
+        startSmsListener()
     }
+
+        private fun startSmsListener(){
+            val client = SmsRetriever.getClient(requireActivity() /* context */)
+            val task = client.startSmsRetriever()
+            task.addOnSuccessListener {
+                showToast("Waiting for the OTP")
+            }
+
+            task.addOnFailureListener {
+                showToast("Cannot Start SMS Retriever")
+            }
+        }
 
     private fun startProgress() {
         binding.btnNext.showProgress {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-var MESSAGE_START_FORMAT = "<#>"
+var MESSAGE_START_FORMAT = "<#> "
 var MESSAGE_END_FORMAT = "is your OTP verification code for Josh Skills."
 class SMSReadBroadcastReceiver : BroadcastReceiver() {
 
@@ -30,19 +30,16 @@ class SMSReadBroadcastReceiver : BroadcastReceiver() {
                                     Log.i("ayushg", "onReceive: message: $message")
 
                                     if (message != null) {
-                                        val signature =
-                                            AppSignatureHelper(AppObjectController.joshApplication).appSignatures[0]
-
                                         var otp =
                                             message.replace(MESSAGE_START_FORMAT, EMPTY).replace(
                                                 MESSAGE_END_FORMAT, EMPTY
                                             ).split("\n".toRegex())
                                                 .dropLastWhile { it.isEmpty() }
                                                 .toTypedArray()[0]
-                                        otp = otp.replace(signature, EMPTY).trimStart().trimEnd()
-                                            .trim()
-                                        Log.i("ayushg", "onReceive: otp: $otp")
-                                        RxBus2.publish(OTPReceivedEventBus(otp))
+                                        val single = otp.split(" ")[0]
+                                        RxBus2.publish(OTPReceivedEventBus(single))
+                                    } else {
+
                                     }
                                 }
                                 CommonStatusCodes.TIMEOUT -> {

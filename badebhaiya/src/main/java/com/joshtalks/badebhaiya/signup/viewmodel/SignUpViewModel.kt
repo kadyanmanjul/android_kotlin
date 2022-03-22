@@ -48,7 +48,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
             try {
                 val reqObj = VerifyOTPRequest("+91", phoneNumber, otp)
                 val response = repository.verifyOTP(reqObj)
-                Log.i("ayushg", "verifyOTP: $response")
+                Log.i("BadeBhaiya", "verifyOTP: $response")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         updateUserFromLoginResponse(it)
