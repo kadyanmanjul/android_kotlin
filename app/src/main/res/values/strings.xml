@@ -1043,7 +1043,6 @@
         <font color ="@android:color/black">from ...</font>
     </string>
 
-
 <!--    Notification Module-->
     <string name="channel_name_calls">Calls</string>
     <string name="channel__calls_description">Calls Notification</string>
@@ -1056,4 +1055,6 @@
     <string name="notification_content" >Notification Content</string>
     <string name="accept_call">Accept</string>
     <string name="reject_call">Reject</string>
+
+    <string name="submit_report_btn">Submit</string>
 </resources>

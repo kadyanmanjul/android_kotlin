@@ -10,7 +10,7 @@ import androidx.preference.PreferenceManager
  * 1. import @View
  * 2. add variable @callBar of type CallBar class
  * 3. add @CallBarLayout in xml with required attributes
- * 4. use binding adapters setters @startCallTimer (callBar::startTimer) & @onCallBarClick (callBar::intentToCallActivity)
+ * 4. use binding adapters setters @onCallBarClick (callBar::intentToCallActivity)
  * 5. toggle visibility using @isCallONGoing ObservableBoolean
  *  Required to set Variable @callBar in Activity as "binding.callBar= CallBar(this)"
  */
@@ -35,9 +35,6 @@ class CallBar(val context: Context) : SharedPreferences.OnSharedPreferenceChange
         }
     }
 
-    fun startTimer(){
-
-    }
     fun intentToCallActivity(){
 //       TODO: INTENT TO CALL ACTIVITY
     }

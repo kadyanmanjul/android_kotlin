@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="issue"
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.OptionModel" />
+    </data>
+
+    <TextView
+        android:id="@+id/issueItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/white_button_round_enabled"
+        android:paddingLeft="@dimen/_12sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingRight="@dimen/_12sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:text="@{issue.option}"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+        android:textColor="@color/report_black" />
+</layout>

@@ -24,6 +24,7 @@ constructor(context: Context, attributes: AttributeSet? = null) : FrameLayout(co
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        startCallTimer()
     }
 
     fun onCallBarClick(function: () -> Unit) {
@@ -32,7 +33,7 @@ constructor(context: Context, attributes: AttributeSet? = null) : FrameLayout(co
         }
     }
 
-    fun startCallTimer(function: () -> Unit) {
+    fun startCallTimer() {
         callTimer.start()
     }
 }
