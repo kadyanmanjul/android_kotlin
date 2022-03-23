@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.adapter
 
 import android.view.LayoutInflater
 import android.view.View

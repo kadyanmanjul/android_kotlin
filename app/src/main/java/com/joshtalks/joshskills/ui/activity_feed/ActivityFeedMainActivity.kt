@@ -14,11 +14,8 @@ import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityFeedMainBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.ProfilePicture
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
-import com.joshtalks.joshskills.ui.userprofile.PreviousPicsAdapter
-import com.joshtalks.joshskills.ui.userprofile.ProfileImageShowFragment
 
 class ActivityFeedMainActivity : BaseActivity() {
     lateinit var binding: ActivityFeedMainBinding

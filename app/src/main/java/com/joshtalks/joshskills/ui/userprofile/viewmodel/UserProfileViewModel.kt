@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -47,14 +48,14 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val animatedLeaderBoardData: MutableLiveData<AnimatedLeaderBoardResponse> = MutableLiveData()
     val previousProfilePics: MutableLiveData<PreviousProfilePictures> = MutableLiveData()
+    val userProfileRepo = UserProfileRepo()
 
     var context: JoshApplication = getApplication()
 
     fun getMentorData(mentorId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response =
-                    AppObjectController.commonNetworkService.getAnimatedLeaderBoardData(mentorId)
+                val response = userProfileRepo.getAnimatedLeaderBoardData(mentorId)
                 if (response.isSuccessful && response.body() != null) {
                     animatedLeaderBoardData.postValue(response.body())
                 }
@@ -70,7 +71,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             try {
                 val extras: HashMap<String, List<Int>> = HashMap()
                 extras["award_mentor_list"] = awardIds
-                AppObjectController.commonNetworkService.patchAwardDetails(extras)
+                userProfileRepo.patchAwardDetails(extras)
 
             } catch (ex: Exception) {
                 //ex.showAppropriateMsg()
@@ -105,8 +106,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val obj = mapOf("media_path" to File(mediaPath).name)
-                val responseObj =
-                    AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
+                val responseObj = userProfileRepo.requestMediaRequest(obj)
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
@@ -143,10 +143,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 if (homeTown.isNotEmpty()) {
                     requestMap["hometown"] = homeTown
                 }
-                val response =
-                    AppObjectController.signUpNetworkService.updateUserProfile(
-                        Mentor.getInstance().getUserId(), requestMap
-                    )
+                val response = userProfileRepo.updateUserProfile(requestMap)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         userProfileUrl.postValue(profilePicUrl)
@@ -172,8 +169,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
-                val response =
-                    AppObjectController.signUpNetworkService.updateProfilePicFromPreviousProfile(imageId)
+                val response = userProfileRepo.updateProfilePicFromPreviousProfile(imageId)
                 if (response.isSuccessful) {
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                     return@launch
@@ -191,8 +187,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
-                val response =
-                    AppObjectController.signUpNetworkService.deletePreviousProfilePic(imageId)
+                val response = userProfileRepo.deletePreviousProfilePic(imageId)
                 if (response.isSuccessful) {
                     apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                     return@launch
@@ -250,7 +245,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getUserProfileDataV3(
+                val response = userProfileRepo.getUserProfileDataV3(
                     mentorId,
                     intervalType,
                     previousPage
@@ -296,9 +291,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 if (impressionId.isNullOrBlank())
                     return@launch
 
-                AppObjectController.commonNetworkService.engageUserProfileTime(
+                userProfileRepo.engageUserProfileTime(
                     impressionId,
-                    mapOf("time_spent" to startTime)
+                    startTime
                 )
 
             } catch (ex: Throwable) {
@@ -325,8 +320,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
-                val response =
-                    AppObjectController.signUpNetworkService.getPreviousProfilePics()
+                val response = userProfileRepo.getPreviousProfilePics()
                 if (response.isSuccessful) {
                     response.body()?.let {
                         previousProfilePics.postValue(it)

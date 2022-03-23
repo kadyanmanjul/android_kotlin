@@ -16,6 +16,8 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.databinding.FragmentPreviousProfilePicsBinding
 import com.joshtalks.joshskills.repository.server.ProfilePicture
 import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
+import com.joshtalks.joshskills.ui.userprofile.adapter.PreviousPicsAdapter
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
 class PreviousProfilePicsFragment : DialogFragment() {
     lateinit var binding: FragmentPreviousProfilePicsBinding

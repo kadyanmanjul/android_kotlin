@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import kotlinx.coroutines.CoroutineScope

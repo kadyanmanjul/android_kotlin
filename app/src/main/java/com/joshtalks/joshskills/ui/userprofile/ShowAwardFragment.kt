@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.service.DIR
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
 class ShowAwardFragment : DialogFragment() {
 

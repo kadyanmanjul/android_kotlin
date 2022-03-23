@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import kotlinx.android.synthetic.main.fragment_image_show.big_image_view
 
 const val IMAGE_SOURCE = "image_source"

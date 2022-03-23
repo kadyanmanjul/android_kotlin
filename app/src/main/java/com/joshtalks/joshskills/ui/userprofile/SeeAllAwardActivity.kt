@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventB
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.userprofile.viewholder.AwardItemViewHolder
 import com.mindorks.placeholderview.PlaceHolderView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile
+package com.joshtalks.joshskills.ui.userprofile.viewholder
 
 import android.content.Context
 import android.widget.ImageView
@@ -6,10 +6,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.server.Award
-import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
@@ -41,12 +38,5 @@ class AwardItemViewHolder(var award: Award,var dateText:String?,  var context: C
             image.setImage(it, context)
         }
     }
-
-//    @Click(R.id.root_view)
-//    fun onClick() {
-//        RxBus2.publish(
-//            AwardItemClickedEventBus(award)
-//        )
-//    }
 }
 

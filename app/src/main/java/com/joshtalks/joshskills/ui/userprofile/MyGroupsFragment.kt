@@ -15,6 +15,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.databinding.FragmentMyGroupsBinding
 import com.joshtalks.joshskills.repository.server.GroupInfo
+import com.joshtalks.joshskills.ui.userprofile.adapter.MyGroupsListAdapter
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
 class MyGroupsFragment : DialogFragment() {
     lateinit var binding: FragmentMyGroupsBinding

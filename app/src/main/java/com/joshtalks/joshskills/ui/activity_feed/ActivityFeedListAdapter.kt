@@ -10,11 +10,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivityFeedRowItemBinding
-import com.joshtalks.joshskills.repository.server.ProfilePicture
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
-import com.joshtalks.joshskills.ui.userprofile.PreviousPicsAdapter
 import com.joshtalks.joshskills.ui.userprofile.ProfileImageShowFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import java.util.*
