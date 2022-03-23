@@ -13,14 +13,14 @@
 
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
+            type="com.joshtalks.joshskills.ui.group.viewmodels.GroupRequestViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_shade_of_gray"
-        tools:context=".ui.group.GroupInfoFragment">
+        tools:context=".ui.group.GroupRequestFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout2"
@@ -46,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:elevation="@dimen/_2sdp"
+            groupRequestAdapter="@{vm.requestAdapter}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

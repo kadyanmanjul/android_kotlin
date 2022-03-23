@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.ImageView
 
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
@@ -18,10 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
-import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
-import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
-import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
+import com.joshtalks.joshskills.ui.group.adapters.*
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.model.GroupMember
@@ -122,6 +118,16 @@ fun setGroupMemberAdapter(
     view.adapter = adapter
 
     adapter.setListener(function)
+}
+
+@BindingAdapter("groupRequestAdapter")
+fun setGroupRequestAdapter(
+    view: RecyclerView,
+    adapter: GroupRequestAdapter
+) {
+    view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+    view.setHasFixedSize(false)
+    view.adapter = adapter
 }
 
 @BindingAdapter("groupChatAdapter", "scrollToBottom", "onTitleClick")

@@ -223,7 +223,12 @@ class JoshGroupActivity : BaseGroupActivity() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
 
-            val fragment = GroupRequestFragment()
+            val bundle = Bundle().apply {
+                putString(CONVERSATION_ID, vm.conversationId)
+            }
+            val fragment = GroupRequestFragment().apply {
+                arguments = bundle
+            }
 
             replace(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
             addToBackStack(GROUPS_STACK)

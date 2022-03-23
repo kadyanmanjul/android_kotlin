@@ -15,7 +15,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -57,13 +57,14 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_12sdp"
                 android:layout_marginBottom="@dimen/_6sdp"
-                android:text="@string/loremIpsumShort"
+                android:text="@{itemData.answer}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/gray_6F"
                 app:layout_constraintBottom_toTopOf="@id/allow_to_join"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/member_name"
-                app:layout_constraintTop_toBottomOf="@+id/member_name" />
+                app:layout_constraintTop_toBottomOf="@+id/member_name"
+                tools:text="@string/loremIpsumShort" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/allow_to_join"
@@ -71,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_14sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
                 android:letterSpacing="0"
                 android:text="Allow to join"
                 app:cornerRadius="@dimen/_6sdp"
@@ -84,7 +85,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_14sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
                 android:backgroundTint="@color/white"
                 android:letterSpacing="0"
                 android:text="Decline"
