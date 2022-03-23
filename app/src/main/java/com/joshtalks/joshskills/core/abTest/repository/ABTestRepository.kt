@@ -12,8 +12,8 @@ class ABTestRepository {
     private val database = AppObjectController.appDatabase.abCampaignDao()
 
     suspend fun getCampaignData(campaign: String): ABTestCampaignData? {
-
-        if (database.getABTestCampaign(campaign) != null) {
+        return database.getABTestCampaign(campaign)
+        /*if (database.getABTestCampaign(campaign) != null) {
             return database.getABTestCampaign(campaign)!!
         } else {
             try {
@@ -26,7 +26,7 @@ class ABTestRepository {
                 ex.showAppropriateMsg()
             }
             return null
-        }
+        }*/
     }
 
     suspend fun updateAllCampaigns(list: List<String>) {
