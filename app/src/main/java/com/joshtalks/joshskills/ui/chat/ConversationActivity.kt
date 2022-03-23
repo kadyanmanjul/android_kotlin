@@ -4,8 +4,6 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Context
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -16,16 +14,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
-import android.view.Window
-import android.view.WindowManager
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.AnimationUtils
 import android.view.*
 import android.view.View.*
 import android.view.animation.*
@@ -41,7 +29,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.Player
 import com.google.android.material.button.MaterialButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -51,90 +38,30 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BLOCK_ISSUE
-import com.joshtalks.joshskills.core.CHAT_OPENED_FOR_NOTIFICATION
-import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_ANIMATION
-import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_TOOLTIP
-import com.joshtalks.joshskills.core.HAS_SEEN_LESSON_TOOLTIP
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_ICON
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_MENU
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REPORT_ISSUE
-import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.extension.setImageWithPlaceholder
-import com.joshtalks.joshskills.core.extension.setResourceImageDefault
-import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
-import com.joshtalks.joshskills.core.extension.slideOutAnimation
+import com.joshtalks.joshskills.core.extension.*
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
-import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
-import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
+import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
-import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
-import com.joshtalks.joshskills.ui.userprofile.models.Award
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
@@ -168,8 +95,8 @@ import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
-import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.video_player.*
+import com.joshtalks.joshskills.ui.view_holders.*
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
@@ -186,21 +113,6 @@ import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.blurry.Blurry
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import java.lang.ref.WeakReference
-import java.util.Timer
-import java.util.TimerTask
-import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.*
@@ -305,9 +217,8 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
-    private var lastLesson: Int? = null
+
     private var currentTooltipIndex = 0
-    private var activityFeedControl = false
     private val leaderboardTooltipList by lazy {
         listOf(
             "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
@@ -330,46 +241,7 @@ class ConversationActivity :
             return
         }
         init()
-        showRestartButton()
     }
-
-    //Setting the animation on the buttons
-    private fun setButtonsAnimation() {
-        with(conversationBinding) {
-            if (!buttonClicked) {
-                conversationBinding.imgActivityFeed.startAnimation(fromBottomAnimation)
-                conversationBinding.imgGameBtn.startAnimation(fromBottomAnimation)
-                conversationBinding.imgGroupChatBtn.startAnimation(fromBottomAnimation)
-                conversationBinding.imgFppRequest.startAnimation(fromBottomAnimation)
-                floatingActionButtonAdd.startAnimation(rotateOpenAnimation)
-
-            } else {
-                conversationBinding.imgActivityFeed.startAnimation(toBottomAnimation)
-                conversationBinding.imgGameBtn.startAnimation(toBottomAnimation)
-                conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
-                conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
-                floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
-
-            }
-        }
-    }
-
-    /*Checking if the add button is clicked
-    private fun buttonSetClickable() {
-        with(conversationBinding) {
-            if (!isExpandableVisible) {
-                imgActivityFeed.isClickable = true
-                imgGameBtn.isClickable = true
-                imgGroupChatBtn.isClickable = true
-                imgFppRequest.isClickable = true
-            } else {
-                imgActivityFeed.isClickable = false
-                imgGameBtn.isClickable = false
-                imgGroupChatBtn.isClickable = false
-                imgFppRequest.isClickable = false
-            }
-        }
-    }*/
 
     //Setting the animation on the buttons
     private fun setButtonsAnimation() {
@@ -466,20 +338,12 @@ class ConversationActivity :
         initFuture()
         addObservable()
         initFreeTrialTimer()
-        initABTest()
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
-    }
-
-    private fun addIssuesToSharedPref() {
-        CoroutineScope(Dispatchers.IO).launch() {
-
-    private fun initABTest() {
-        conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED.name)
     }
 
     private fun addIssuesToSharedPref() {
@@ -715,81 +579,11 @@ class ConversationActivity :
                             inboxEntity.conversation_id
                         )
                     }
-                    R.id.menu_restart_course -> {
-                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_COURSE_DOT)
-                        restartCourse(false)
-                    }
                 }
                 return@setOnMenuItemClickListener true
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
-        }
-    }
-
-    fun buildRestartDialog() {
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.restart_course_dialog, null)
-        dialogBuilder.setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create()
-        val width = AppObjectController.screenWidth * .9
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        alertDialog.show()
-        alertDialog.window?.setLayout(width.toInt(), height)
-    }
-
-    fun restartCourse(isFromRestartButton: Boolean) {
-        if(isFromRestartButton) {
-            conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
-        }
-        var checkIfCourseRestart = false
-        var phoneNumber = User.getInstance().phoneNumber
-        phoneNumber = phoneNumber?.substring(3)
-        var email = User.getInstance().email
-        when {
-            email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()-> {
-                conversationViewModel.restartCourse(phoneNumber.toString(),"MobileNumber")
-                checkIfCourseRestart = true
-            }
-            phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()-> {
-                conversationViewModel.restartCourse(email,"Email")
-                checkIfCourseRestart = true
-            }
-            email.isNullOrEmpty() && phoneNumber.isNullOrEmpty() -> {
-                checkIfCourseRestart = false
-            }
-        }
-        if(checkIfCourseRestart) {
-            MaterialDialog(this@ConversationActivity).show{
-                message(R.string.restart_course_message)
-                positiveButton(R.string.restart_now) {
-                    if(isFromRestartButton) {
-                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_SUCCESS_RESTART_90LESSONS)
-                    }
-                    else {
-                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_SUCCESS_RESTART_COURSE_DOT)
-                    }
-                    conversationBinding.btnRestartCourse.visibility = View.GONE
-                    buildRestartDialog()
-                }
-                negativeButton(R.string.cancel) {
-                }
-            }
-        }
-        else
-            showToast("Course can't restart")
-    }
-    fun showRestartButton() {
-        CoroutineScope(Dispatchers.IO).launch {
-            lastLesson= conversationViewModel.getLastLessonForCourse()
-            if(lastLesson == 90 && inboxEntity.courseId == "151") {
-                conversationBinding.btnRestartCourse.visibility = View.VISIBLE
-                conversationBinding.messageButton.visibility = View.GONE
-                conversationBinding.chatEdit.visibility = View.GONE
-            }
-            else
-                conversationBinding.btnRestartCourse.visibility = View.GONE
         }
     }
 
@@ -919,8 +713,7 @@ class ConversationActivity :
             )
         }
 
-        conversationBinding.imgGroupChat.visibility =
-            View.GONE//if (inboxEntity.isGroupActive) GONE else GONE
+        conversationBinding.imgGroupChat.visibility = GONE
 
         conversationBinding.refreshLayout.setOnRefreshListener {
             if (internetAvailableFlag) {
@@ -1012,24 +805,6 @@ class ConversationActivity :
         onlyChatView()
         initSnackBar()
     }
-
-//    private fun groupChatHintLogic() {
-//        CoroutineScope(Dispatchers.Main).launch {
-//            val isGroupChatHintAlreadySeen = PrefManager.getBoolValue(IS_GROUP_CHAT_HINT_SEEN, true)
-//            if (inboxEntity.isGroupActive && isGroupChatHintAlreadySeen.not()) {
-//                val lesson = conversationAdapter.getLastLesson()
-//                lesson?.let {
-//                    if (it.lessonNo > 3 || (it.lessonNo == 3 && it.status != LESSON_STATUS.NO)) {
-//                        conversationBinding.balloonText.text =
-//                            AppObjectController.getFirebaseRemoteConfig()
-//                                .getString(FirebaseRemoteConfigKey.GROUP_CHAT_TAGLINE)
-//                        conversationBinding.overlayLayout.visibility = VISIBLE
-//                        PrefManager.put(IS_GROUP_CHAT_HINT_SEEN, true, true)
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private fun onlyChatView() {
         inboxEntity.chat_type?.let {
@@ -1278,22 +1053,6 @@ class ConversationActivity :
                 }
             }
         }
-
-
-        lifecycleScope.launchWhenResumed {
-            utilConversationViewModel.userData.collectLatest { userProfileData ->
-                this@ConversationActivity.userProfileData = userProfileData
-                if (userProfileData.isGameActive) {
-                    conversationBinding.imgGameBtn.visibility = VISIBLE
-                } else {
-                    conversationBinding.imgGameBtn.visibility = GONE
-                }
-                initScoreCardView(userProfileData)
-                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
-                    profileFeatureActiveView(true)
-            }
-        }
-
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userUnreadCourseChat.collectLatest { items ->
                 //  Start Add new Message UI add logic
@@ -1389,15 +1148,6 @@ class ConversationActivity :
             } else {
                 hideProgressBar()
             }
-        }
-
-        conversationViewModel.abTestCampaignliveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                activityFeedControl =
-                    (map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
-            }
-            if (activityFeedControl) conversationBinding.imgFeedBtn.visibility =
-                VISIBLE else conversationBinding.imgFeedBtn.visibility = GONE
         }
     }
 
