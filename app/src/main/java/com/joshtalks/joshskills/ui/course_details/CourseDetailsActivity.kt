@@ -82,7 +82,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var buySubscription: Boolean = false
     private var flowFrom: String? = null
     private var downloadID: Long = -1
-    private var is100PointsActive = true
+    private var is100PointsActive = false
 
     var expiredTime: Long = 0L
     var isPointsScoredMoreThanEqualTo100 = false
@@ -123,7 +123,15 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
-        initABTest()
+        if(testId == ENGLISH_COURSE_TEST_ID){
+            initABTest()
+        }else{
+            if (testId != 0) {
+                getCourseDetails(testId)
+            } else {
+                finish()
+            }
+        }
 
         AppAnalytics.create(AnalyticsEvent.LANDING_SCREEN.NAME)
             .addBasicParam()
@@ -154,7 +162,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         subscribeLiveData()
     }
     private fun initABTest() {
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, testId.toString())
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
@@ -335,11 +343,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             abTestCampaignData?.let { map ->
                 is100PointsActive =
                     (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
-            if (testId != 0) {
-                getCourseDetails(testId)
-            } else {
-                finish()
             }
         }
     }

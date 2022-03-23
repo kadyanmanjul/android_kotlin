@@ -32,11 +32,12 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun get100PCampaignData(campaign: String) {
+    fun get100PCampaignData(campaign: String, testId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
                 points100ABtestLiveData.postValue(campaign)
             }
+            fetchCourseDetails(testId)
         }
     }
 
