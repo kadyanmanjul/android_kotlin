@@ -36,20 +36,65 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
+import com.joshtalks.joshskills.core.STARTED_FROM
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.*
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadSyllabusEvent
+import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.GotoCourseCard
+import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
-import com.joshtalks.joshskills.repository.server.course_detail.*
+import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
+import com.joshtalks.joshskills.repository.server.course_detail.Card
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
+import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
+import com.joshtalks.joshskills.repository.server.course_detail.DemoLesson
+import com.joshtalks.joshskills.repository.server.course_detail.FAQData
+import com.joshtalks.joshskills.repository.server.course_detail.Guidelines
+import com.joshtalks.joshskills.repository.server.course_detail.LocationStats
+import com.joshtalks.joshskills.repository.server.course_detail.LongDescription
+import com.joshtalks.joshskills.repository.server.course_detail.OtherInfo
+import com.joshtalks.joshskills.repository.server.course_detail.Reviews
+import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
+import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
+import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
-import com.joshtalks.joshskills.ui.course_details.viewholder.*
+import com.joshtalks.joshskills.ui.course_details.viewholder.AboutJoshViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.CourseDetailsBaseCell
+import com.joshtalks.joshskills.ui.course_details.viewholder.CourseOverviewViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.DemoLessonViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.GuidelineViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.LocationStatViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.LongDescriptionViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.MasterFaqViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.OtherInfoViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.ReviewRatingViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.StudentFeedbackViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.SyllabusViewHolder
+import com.joshtalks.joshskills.ui.course_details.viewholder.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.subscription.TRIAL_TEST_ID
@@ -154,7 +199,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         subscribeLiveData()
     }
     private fun initABTest() {
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
+        if (testId != 0) {
+            viewModel.initAPIs(testId)
+        } else {
+            finish()
+        }
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
@@ -336,11 +385,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 is100PointsActive =
                     (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
             }
-            if (testId != 0) {
-                getCourseDetails(testId)
-            } else {
-                finish()
-            }
         }
     }
 
@@ -350,8 +394,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     private fun getCourseDetails(testId: Int) {
-        viewModel.fetchCourseDetails(testId.toString())
-
+        //viewModel.fetchCourseDetails(testId.toString())
     }
 
     private fun getViewHolder(card: Card): CourseDetailsBaseCell? {

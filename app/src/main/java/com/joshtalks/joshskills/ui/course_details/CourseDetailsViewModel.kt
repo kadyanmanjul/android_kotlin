@@ -10,17 +10,16 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
-import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -32,16 +31,13 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun get100PCampaignData(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun get100PCampaignData(campaign: String) {
             repository.getCampaignData(campaign)?.let { campaign ->
                 points100ABtestLiveData.postValue(campaign)
             }
-        }
     }
 
-    fun fetchCourseDetails(testId: String) {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
+    suspend fun fetchCourseDetails(testId: String) {
             try {
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["test_id"] = testId
@@ -54,14 +50,13 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     courseDetailsLiveData.postValue(response.body())
-                    return@launch
+                    return
                 }
 
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-        }
     }
 
     fun fetchDemoCourseDetails() {
@@ -105,6 +100,13 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun initAPIs(testId:Int) {
+        viewModelScope.launch {
+            async {get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME) }.await()
+            async { fetchCourseDetails(testId.toString()) }.await()
         }
     }
 }
