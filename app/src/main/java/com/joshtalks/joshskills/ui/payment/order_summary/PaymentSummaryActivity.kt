@@ -429,6 +429,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                             prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
                         )
                     if (User.getInstance().isVerified) {
+                        viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER_STARTED)
                         startActivity(getInboxActivityIntent())
                         this.finish()
                     } else {

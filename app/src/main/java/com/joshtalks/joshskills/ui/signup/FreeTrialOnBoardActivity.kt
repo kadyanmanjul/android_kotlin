@@ -136,6 +136,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
                 .addUserDetails()
                 .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
                 .push()
+            viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER)
             val intent = Intent(this@FreeTrialOnBoardActivity, SignUpActivity::class.java).apply {
                 putExtra(FLOW_FROM, "free trial onboarding journey")
             }
@@ -186,8 +187,10 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
                 if (TruecallerSDK.getInstance().isUsable)
                     openTrueCallerBottomSheet()
-                else
+                else {
+                    viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED)
                     openProfileDetailFragment()
+                }
                 alertDialog.dismiss()
             }
         }
@@ -223,6 +226,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         override fun onFailureProfileShared(trueError: TrueError) {
             if(TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
                 hideProgressBar()
+                viewModel.saveTrueCallerImpression(IMPRESSION_TC_USER_ANOTHER)
                 openProfileDetailFragment()
             }
 
