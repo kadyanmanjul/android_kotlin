@@ -174,9 +174,9 @@ android {
             buildConfigField "String", "ACTIVITY_FEED_COLLECTION", "\"activity_feed_staging\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
-            /*For Port */
-//            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9010\""
-
+            /*For Port
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9011\""
+            */
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"

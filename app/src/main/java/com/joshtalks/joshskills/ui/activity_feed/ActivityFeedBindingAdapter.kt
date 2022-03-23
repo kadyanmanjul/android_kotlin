@@ -21,9 +21,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import de.hdodenhof.circleimageview.CircleImageView
 
-@BindingAdapter("partialTextColor")
-fun TextView.setColorize(subStringToColorize: String) {
-    val spannable: Spannable = SpannableString(text)
+@BindingAdapter("partialTextColor","fullText")
+fun TextView.setColorize(subStringToColorize: String, fullText:String) {
+    val spannable: Spannable = SpannableString(fullText)
     spannable.setSpan(
         ForegroundColorSpan(getColorHexCode()),
         0,

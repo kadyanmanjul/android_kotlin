@@ -109,7 +109,6 @@ class ActivityFeedMainActivity : BaseActivity() {
     }
     companion object {
         fun startActivityFeedMainActivity(inboxEntity: InboxEntity, activity:Activity) {
-
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()

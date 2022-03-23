@@ -11,13 +11,13 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.server.ActivityFeedList
 import com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
-import com.joshtalks.joshskills.ui.activity_feed.repository.FirestoreFeedRepository
+import com.joshtalks.joshskills.ui.activity_feed.repository.ActivityFeedRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ActivityFeedViewModel(application: Application) : AndroidViewModel(application) {
-    val firebaseRepository = FirestoreFeedRepository()
+    val firebaseRepository = ActivityFeedRepository()
     var currentFeed: MutableLiveData<ActivityFeedResponseFirebase> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val feedDataList: MutableLiveData<ActivityFeedList> = MutableLiveData()
@@ -42,13 +42,19 @@ class ActivityFeedViewModel(application: Application) : AndroidViewModel(applica
                                         currentFeed.value = doc.document.toObject()
                                         currentFeed.value!!.photoUrl =
                                             doc.document.get("photo_url").toString()
-                                        currentFeed.value!!.eventId =
-                                            doc.document.get("event_id").toString()
+                                        if(doc.document.get("event_id").toString()!="null") {
+                                            currentFeed.value!!.eventId =
+                                                doc.document.get("event_id").toString().toInt()
+                                        }
                                         currentFeed.value!!.mediaUrl =
                                             doc.document.get("media_url").toString()
                                         currentFeed.value!!.mentorId =
                                             doc.document.get("mentor_id").toString()
-
+                                        if(doc.document.get("media_duration").toString()!="null") {
+                                            currentFeed.value!!.duration =
+                                                doc.document.get("media_duration").toString()
+                                                    .toInt()
+                                        }
                                         feedTime = System.currentTimeMillis()
                                     }
                                 } else {

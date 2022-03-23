@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 44,
-    "identityHash": "01a8f2d82e65ee2086efaf7b250cdef6",
+    "identityHash": "666e4baf4c242c32edae3c7b602d6710",
     "entities": [
       {
         "tableName": "course",
@@ -122,7 +122,7 @@
       },
       {
         "tableName": "chat_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chat_id` TEXT NOT NULL, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `is_seen` INTEGER NOT NULL, `text` TEXT, `type` TEXT, `url` TEXT, `duration` INTEGER NOT NULL, `message_deliver_status` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, `chat_local_id` TEXT, `is_delete_message` INTEGER NOT NULL, `download_progress` INTEGER NOT NULL, `status` TEXT, `question_id` INTEGER, `content_download_date` INTEGER NOT NULL, `message_time` REAL NOT NULL, `last_use_time` INTEGER, `award_mentor_id` INTEGER NOT NULL, `award_user_id` INTEGER, `sharableVideoDownloadedLocalPath` TEXT, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, `id` TEXT, `user` TEXT, `user_type` TEXT, PRIMARY KEY(`chat_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chat_id` TEXT NOT NULL, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `is_seen` INTEGER NOT NULL, `text` TEXT, `type` TEXT, `url` TEXT, `duration` INTEGER NOT NULL, `message_deliver_status` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, `chat_local_id` TEXT, `is_delete_message` INTEGER NOT NULL, `download_progress` INTEGER NOT NULL, `status` TEXT, `question_id` INTEGER, `content_download_date` INTEGER NOT NULL, `message_time` REAL NOT NULL, `last_use_time` INTEGER, `award_mentor_id` INTEGER NOT NULL, `award_user_id` INTEGER, `video_id` INTEGER, `sharableVideoDownloadedLocalPath` TEXT, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, `id` TEXT, `user` TEXT, `user_type` TEXT, PRIMARY KEY(`chat_id`))",
         "fields": [
           {
             "fieldPath": "chatId",
@@ -247,6 +247,12 @@
           {
             "fieldPath": "awardUserId",
             "columnName": "award_user_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sharingVideoId",
+            "columnName": "video_id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -962,7 +968,7 @@
       },
       {
         "tableName": "video_watch_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`graph` TEXT NOT NULL, `videoId` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL, `course_id` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mentorId` TEXT, `gID` TEXT, `is_sync` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`graph` TEXT NOT NULL, `videoId` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL, `course_id` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mentorId` TEXT, `gID` TEXT, `is_sync` INTEGER NOT NULL, `is_sharable_video` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "graph",
@@ -1009,6 +1015,12 @@
           {
             "fieldPath": "isSync",
             "columnName": "is_sync",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSharableVideo",
+            "columnName": "is_sharable_video",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -1203,7 +1215,7 @@
       },
       {
         "tableName": "assessment_questions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT NOT NULL, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "localId",
@@ -1227,7 +1239,7 @@
             "fieldPath": "text",
             "columnName": "text",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "subText",
@@ -1764,7 +1776,7 @@
       },
       {
         "tableName": "LessonModel",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER NOT NULL, `chat_id` TEXT NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `status` TEXT, `grammarStatus` TEXT, `vocabularyStatus` TEXT, `readingStatus` TEXT, `speakingStatus` TEXT, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `show_new_grammar_screen` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` INTEGER NOT NULL, `chat_id` TEXT NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, `status` TEXT, `grammarStatus` TEXT, `vocabularyStatus` TEXT, `readingStatus` TEXT, `speakingStatus` TEXT, `conversationStatus` TEXT, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `show_new_grammar_screen` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -1835,6 +1847,12 @@
           {
             "fieldPath": "speakingStatus",
             "columnName": "speakingStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversationStatus",
+            "columnName": "conversationStatus",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -2173,7 +2191,7 @@
       },
       {
         "tableName": "lesson_question",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `lessonId` INTEGER NOT NULL, `qText` TEXT, `type` TEXT NOT NULL, `materialType` TEXT NOT NULL, `isDeleted` INTEGER NOT NULL, `title` TEXT, `practice_word` TEXT, `practice_engagements` TEXT, `expectedEngageType` TEXT, `interval` INTEGER NOT NULL, `assessment_id` INTEGER, `topic_id` TEXT, `chat_type` TEXT, `status` TEXT NOT NULL, `vp_sort_order` INTEGER NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `lessonId` INTEGER NOT NULL, `qText` TEXT, `type` TEXT NOT NULL, `materialType` TEXT NOT NULL, `isDeleted` INTEGER NOT NULL, `title` TEXT, `practice_word` TEXT, `practice_engagements` TEXT, `expectedEngageType` TEXT, `conversation_question_id` INTEGER, `interval` INTEGER NOT NULL, `assessment_id` INTEGER, `topic_id` TEXT, `chat_type` TEXT, `status` TEXT NOT NULL, `vp_sort_order` INTEGER NOT NULL, `created` INTEGER NOT NULL, `modified` INTEGER NOT NULL, `questionId` TEXT NOT NULL, `downloadStatus` TEXT NOT NULL, `downloadedLocalPath` TEXT, `lastDownloadStartTime` INTEGER NOT NULL, `thumbnailUrl` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -2233,6 +2251,12 @@
             "fieldPath": "expectedEngageType",
             "columnName": "expectedEngageType",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "conversation_question_id",
+            "columnName": "conversation_question_id",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -2703,8 +2727,34 @@
         "foreignKeys": []
       },
       {
+        "tableName": "group_chat_analytics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupId` TEXT NOT NULL, `lastSentMsgTime` INTEGER NOT NULL, PRIMARY KEY(`groupId`))",
+        "fields": [
+          {
+            "fieldPath": "groupId",
+            "columnName": "groupId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSentMsgTime",
+            "columnName": "lastSentMsgTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "groupId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
         "tableName": "group_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, `lastSentMsgTime` INTEGER NOT NULL, PRIMARY KEY(`groupId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, PRIMARY KEY(`groupId`))",
         "fields": [
           {
             "fieldPath": "groupIcon",
@@ -2765,12 +2815,6 @@
             "columnName": "adminId",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "lastSentMsgTime",
-            "columnName": "lastSentMsgTime",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -2863,12 +2907,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "game_analytics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "event",
+            "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mentorId",
+            "columnName": "mentorId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01a8f2d82e65ee2086efaf7b250cdef6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '666e4baf4c242c32edae3c7b602d6710')"
     ]
   }
 }
