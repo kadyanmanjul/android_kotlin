@@ -147,6 +147,7 @@
             android:singleLine="false"
             android:gravity="center_horizontal"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textStyle="bold"
             android:textSize="@dimen/_13sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

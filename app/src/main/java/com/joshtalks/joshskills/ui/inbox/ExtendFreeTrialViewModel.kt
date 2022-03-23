@@ -1,8 +1,8 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
@@ -15,7 +15,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 import java.util.HashMap
 
 class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(application)  {
@@ -23,6 +22,7 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
     private val _extendedFreeTrialCourseNetworkData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
     val extendedFreeTrialCourseNetworkData: SharedFlow<List<InboxEntity>>
         get() = _extendedFreeTrialCourseNetworkData
+    var isDataObtainedProcessRunninng : MutableLiveData<Boolean> = MutableLiveData()
 
     fun extendFreeTrial() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -33,9 +33,11 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 if(response.isSuccessful){
                     getCourseFromServer()
                }else{
-                   if(response.code() == 500) showToast("Free Trial can't be extended")
+                    isDataObtainedProcessRunninng.postValue(false)
+                    showToast("Free Trial can't be extended")
                 }
             } catch (ex: Exception) {
+                isDataObtainedProcessRunninng.postValue(false)
                 ex.showAppropriateMsg()
             }
         }
@@ -57,6 +59,7 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                     )
                 }
             } catch (ex: Exception) {
+                isDataObtainedProcessRunninng.postValue(false)
                 ex.printStackTrace()
             }
         }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -371,19 +370,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-       // Log.d("dfg", "onclick : inbox" + inboxEntity.toString())
-        val str : String = "NO"
-
-//                && inboxEntity.expiryDate?.time ?:  < System.currentTimeMillis()
-        val time = inboxEntity.expiryDate?.time
+        val expiredTime = inboxEntity.expiryDate?.time
         val currentTime = System.currentTimeMillis()
+        val isValidSpeakingStatus = (inboxEntity.speakingStatus == "NO" ||  inboxEntity.speakingStatus == "AT")
 
-            if(inboxEntity.isCourseBought.not() && inboxEntity.courseId == "151" && (inboxEntity.speakingStatus == "NO" ||  inboxEntity.speakingStatus == "AT") && time != null && time < currentTime){
-                ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
-            }else{
-                ConversationActivity.startConversionActivity(this, inboxEntity)
-            }
-
+        if(inboxEntity.isCourseBought.not() && inboxEntity.isCapsuleCourse && expiredTime != null && expiredTime < currentTime && isValidSpeakingStatus && inboxEntity.isFreeTrialExtended){
+            ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
+        }else{
+            ConversationActivity.startConversionActivity(this, inboxEntity)
+        }
     }
 
     companion object {
