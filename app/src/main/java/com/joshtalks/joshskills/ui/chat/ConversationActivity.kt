@@ -590,7 +590,7 @@ class ConversationActivity :
         phoneNumber = phoneNumber?.substring(3)
         val email = User.getInstance().email
         if(email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
-            showToast("Course Can Not Restart")
+            showToast(getString(R.string.course_restart_fail))
         }
         else {
             MaterialDialog(this@ConversationActivity).show {
@@ -1954,10 +1954,10 @@ class ConversationActivity :
                 when (it.what) {
                     COURSE_RESTART_SUCCESS -> {
                         logout()
-                        showToast("Course Restarted Successfully")
+                        showToast(getString(R.string.course_restart_success))
                     }
                     COURSE_RESTART_FAILURE -> {
-                        showToast("Course Can Not Restart")
+                        showToast(getString(R.string.course_restart_fail))
                     }
                 }
             }

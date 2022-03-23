@@ -14,20 +14,6 @@ class ABTestRepository {
     suspend fun getCampaignData(campaign: String): ABTestCampaignData? {
 
         return database.getABTestCampaign(campaign)
-//        if (database.getABTestCampaign(campaign) != null) {
-//            return database.getABTestCampaign(campaign)!!
-//        } else {
-//            try {
-//                val apiResponse = apiService.getCampaignData(campaign)
-//                if (apiResponse.isSuccessful && apiResponse.body() != null) {
-//                    database.insertCampaign(apiResponse.body()!!)
-//                    return database.getABTestCampaign(campaign)!!
-//                }
-//            } catch (ex: Throwable) {
-//                ex.showAppropriateMsg()
-//            }
-//            return null
-//        }
     }
 
     suspend fun updateAllCampaigns(list: List<String>) {
