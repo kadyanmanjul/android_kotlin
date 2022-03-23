@@ -1,18 +1,21 @@
 package com.joshtalks.joshskills.voip.notification
 
-import android.app.Application
-import com.joshtalks.joshskills.voip.Utils
+import android.content.Context
+import android.widget.RemoteViews
 
-
-class NotificationHandler : NotificationInterface {
-    private val applicationContext= Utils.context?: Application()
-    override fun addNotification(
-        notificationType: NotificationType,
-        notificationData: NotificationData
-    ): Int {
+class NotificationHandler(private val applicationContext: Context
+) : NotificationInterface {
+    override fun addNotification(notificationData: NotificationData): Int {
         return NotificationGenerator(applicationContext).initiateNotification(
-            notificationData,
-            notificationType
+            notificationData = notificationData,
+            remoteView = null
+        )
+    }
+
+    override fun addNotification(remoteView: RemoteViews): Int {
+        return NotificationGenerator(applicationContext).initiateNotification(
+            notificationData = null,
+            remoteView = remoteView
         )
     }
 
@@ -21,25 +24,37 @@ class NotificationHandler : NotificationInterface {
     }
 
     override fun getNotificationObject(
-        notificationType: NotificationType,
         notificationData: NotificationData
     ): NotificationDetails {
         return NotificationGenerator(applicationContext).getNotificationObject(
-            notificationType,
-            notificationData
+            remoteView= null,notificationData=notificationData
+        )
+    }
+
+    override fun getNotificationObject(
+        remoteView: RemoteViews
+    ): NotificationDetails {
+        return NotificationGenerator(applicationContext).getNotificationObject(
+            remoteView= remoteView,notificationData=null
         )
     }
 
     override fun updateNotification(
         notificationId: Int,
-        notificationType: NotificationType,
-        notificationData: NotificationData
+        notificationData: NotificationData,
     ) {
         NotificationGenerator(applicationContext).updateNotification(
             notificationId,
-            notificationData,
-            notificationType
+            remoteView= null,notificationData=notificationData
+        )
+    }
+    override fun updateNotification(
+        notificationId: Int,
+        remoteView: RemoteViews
+    ) {
+        NotificationGenerator(applicationContext).updateNotification(
+            notificationId,
+            remoteView= remoteView,notificationData=null
         )
     }
 }
-

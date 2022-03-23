@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat.getDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.textColorSet
-import com.joshtalks.joshskills.databinding.ItemReportLayoutBinding
+import com.joshtalks.joshskills.databinding.LayoutReportItemBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.OptionModel
 
 class ReportAdapter(
@@ -20,7 +20,7 @@ class ReportAdapter(
     var optionIdUpdate:((Int)->Unit)?=null
     var optionId: Int = 0
 
-    inner class ViewHolder(val binding: ItemReportLayoutBinding) :
+    inner class ViewHolder(val binding: LayoutReportItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: OptionModel) {
             binding.issue = item
@@ -29,7 +29,7 @@ class ReportAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val listItemBinding = ItemReportLayoutBinding.inflate(inflater, parent, false)
+        val listItemBinding = LayoutReportItemBinding.inflate(inflater, parent, false)
         return ViewHolder(listItemBinding)
     }
 
