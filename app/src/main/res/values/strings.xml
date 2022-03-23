@@ -1046,6 +1046,4 @@
     </string>
     <string name="achieve_100_points_first">Achieve 100 points first</string>
 
-    <string name="course_restart_success">Course Restarted Successfully</string>
-    <string name="course_restart_fail">Course Can Not Restart</string>
 </resources>
