@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
@@ -50,7 +51,12 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
-        viewModel.getAvailableLanguages()
+        if (Utils.isInternetAvailable().not()) {
+            binding.noInternetContainer.visibility = View.VISIBLE
+        } else {
+            binding.noInternetContainer.visibility = View.GONE
+            viewModel.getAvailableLanguages()
+        }
     }
 
     private fun addObservers() {

@@ -104,6 +104,21 @@
             android:layout_marginTop="@dimen/_22sdp"
             app:layout_constraintTop_toBottomOf="@id/text_view_name" />
 
+        <FrameLayout
+            android:id="@+id/noInternetContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout"
+            android:background="@color/white"
+            android:visibility="gone">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_no_internet"/>
+        </FrameLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
