@@ -47,6 +47,7 @@
             android:layout_height="0dp"
             android:elevation="@dimen/_2sdp"
             groupRequestAdapter="@{vm.requestAdapter}"
+            btnOnClick="@{vm.requestBtnResponse}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

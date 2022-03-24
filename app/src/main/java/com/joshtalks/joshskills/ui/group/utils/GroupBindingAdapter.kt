@@ -120,14 +120,17 @@ fun setGroupMemberAdapter(
     adapter.setListener(function)
 }
 
-@BindingAdapter("groupRequestAdapter")
+@BindingAdapter("groupRequestAdapter", "btnOnClick")
 fun setGroupRequestAdapter(
     view: RecyclerView,
-    adapter: GroupRequestAdapter
+    adapter: GroupRequestAdapter,
+    function: (Boolean) -> Unit
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)
     view.adapter = adapter
+
+    adapter.setListener(function)
 }
 
 @BindingAdapter("groupChatAdapter", "scrollToBottom", "onTitleClick")

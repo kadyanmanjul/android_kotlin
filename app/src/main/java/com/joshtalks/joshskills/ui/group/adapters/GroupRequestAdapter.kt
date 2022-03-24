@@ -11,10 +11,18 @@ import com.joshtalks.joshskills.ui.group.model.GroupMemberRequest
 class GroupRequestAdapter(var requestList: List<GroupMemberRequest> = listOf()):
     RecyclerView.Adapter<GroupRequestAdapter.RequestViewHolder>() {
 
+    var itemClick: ((Boolean) -> Unit)? = null
+
     inner class RequestViewHolder(private val item: GroupRequestItemBinding) :
         RecyclerView.ViewHolder(item.root) {
         fun onBind(request: GroupMemberRequest) {
             item.itemData = request
+            item.declineJoin.setOnClickListener {
+                itemClick?.invoke(false)
+            }
+            item.allowToJoin.setOnClickListener {
+                itemClick?.invoke(true)
+            }
         }
     }
 
@@ -34,6 +42,10 @@ class GroupRequestAdapter(var requestList: List<GroupMemberRequest> = listOf()):
 
     override fun getItemCount(): Int {
         return requestList.size
+    }
+
+    fun setListener(function: ((Boolean) -> Unit)?) {
+        itemClick = function
     }
 
     fun addRequestsToList(requests: List<GroupMemberRequest>) {
