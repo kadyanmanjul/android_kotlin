@@ -38,6 +38,7 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
@@ -200,6 +201,7 @@ class ConversationActivity :
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
     private lateinit var unlockClassViewModel: UnlockClassViewModel
+    val event = EventLiveData
     private val conversationAdapter: ConversationAdapter by lazy {
         ConversationAdapter(
             WeakReference(
@@ -588,23 +590,19 @@ class ConversationActivity :
         phoneNumber = phoneNumber?.substring(3)
         val email = User.getInstance().email
         if(email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
-            showToast("${R.string.course_restart_fail}")
+            showToast(getString(R.string.course_restart_fail))
         }
         else {
             MaterialDialog(this@ConversationActivity).show {
                 message(R.string.restart_course_message)
                 positiveButton(R.string.restart_now) {
                     if(email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
-                        conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
                         conversationBinding.btnRestartCourse.visibility = View.GONE
-                        logout()
-                        showToast("${R.string.course_restart_success}")
+                        conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
                     }
                     else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
-                        conversationViewModel.restartCourse(email, "Email")
                         conversationBinding.btnRestartCourse.visibility = View.GONE
-                        logout()
-                        showToast("${R.string.course_restart_success}")
+                        conversationViewModel.restartCourse(email, "Email")
                     }
                     if (isFromRestartButton) {
                         conversationViewModel.saveRestartCourseImpression(
@@ -1951,7 +1949,22 @@ class ConversationActivity :
 
     override fun onStart() {
         super.onStart()
-        //showLessonTooltip()
+        try {
+            event.observe(this) {
+                when (it.what) {
+                    COURSE_RESTART_SUCCESS -> {
+                        logout()
+                        showToast(getString(R.string.course_restart_success))
+                    }
+                    COURSE_RESTART_FAILURE -> {
+                        showToast(getString(R.string.course_restart_fail))
+                    }
+                }
+            }
+        }
+        catch (ex:Exception) {
+            ex.printStackTrace()
+        }
     }
 
     override fun onResume() {
