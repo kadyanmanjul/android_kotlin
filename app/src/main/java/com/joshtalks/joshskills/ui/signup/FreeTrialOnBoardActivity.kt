@@ -39,6 +39,10 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
+import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER
+import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED_JI_HAAN
+import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED
+import com.joshtalks.joshskills.core.IMPRESSION_TC_USER_ANOTHER
 import com.joshtalks.joshskills.core.abTest.ABTestActivity
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
