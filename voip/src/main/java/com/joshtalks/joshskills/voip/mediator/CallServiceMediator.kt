@@ -4,7 +4,13 @@ import kotlinx.coroutines.flow.SharedFlow
 
 internal interface CallServiceMediator {
     fun observeEvents() : SharedFlow<Int>
-    fun connectCall()
+    fun connectCall(callType: CallType)
     fun switchAudio()
     fun disconnectCall()
+}
+
+enum class CallType {
+    PEER_TO_PEER,
+    FPP,
+    GROUP
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object AgoraCallingService : CallingService {
+internal object AgoraCallingService : CallingService {
     // TODO: Need to change name
     private enum class State {
         IDLE,
@@ -51,7 +51,6 @@ object AgoraCallingService : CallingService {
     }
 
     override fun connectCall(request: CallRequest) {
-
         scope.launch {
             voipLog?.log("Connecting Call $agoraEngine")
             initCallingService()
@@ -67,21 +66,6 @@ object AgoraCallingService : CallingService {
         }
     }
 
-    private fun joinChannel(request : CallRequest) : Int? {
-        voipLog?.log("Joining Channel")
-        return agoraEngine?.joinChannel(
-            request.getToken(),
-            request.getChannel(),
-            "ENTER_OPTIONAL_INFO",
-            0
-        )
-    }
-
-    private fun leaveChannel() {
-        voipLog?.log("Leaving Channel")
-        agoraEngine?.leaveChannel()
-    }
-
     override fun disconnectCall() {
         voipLog?.log("Disconnecting Call")
         scope.launch {
@@ -94,28 +78,39 @@ object AgoraCallingService : CallingService {
         }
     }
 
-    private fun observeCallbacks() {
-        scope.launch {
-            agoraEvent.callingEvent.collect { callState ->
-                    voipLog?.log("observeCallbacks : CallState = $callState")
-                    when(callState) {
-                        CallState.CallDisconnected, CallState.Idle -> state = State.IDLE
-                        CallState.CallConnected -> state = State.CONNECTED
-                        CallState.CallInitiated -> state = State.JOINED
-                        else -> {}
-                    }
-                voipLog?.log("observeCallbacks : CallState = $callState")
-                eventFlow.emit(callState)
-            }
-        }
-    }
-
     override fun observeCallingEvents(): Flow<CallState> {
         voipLog?.log("Setting event")
         return eventFlow
     }
 
-    fun showToast(msg : String) {
-        //Log.d(TAG, "showToast : $msg")
+    private fun joinChannel(request : CallRequest) : Int? {
+        voipLog?.log("Joining Channel")
+        return agoraEngine?.joinChannel(
+            request.getToken(),
+            request.getChannel(),
+            "new_p2p_arch",
+            request.getAgoraUId()
+        )
+    }
+
+    private fun leaveChannel() {
+        voipLog?.log("Leaving Channel")
+        agoraEngine?.leaveChannel()
+    }
+
+    private fun observeCallbacks() {
+        scope.launch {
+            agoraEvent.callingEvent.collect { callState ->
+                voipLog?.log("observeCallbacks : CallState = $callState")
+                when(callState) {
+                    CallState.CallDisconnected, CallState.Idle -> state = State.IDLE
+                    CallState.CallConnected -> state = State.CONNECTED
+                    CallState.CallInitiated -> state = State.JOINED
+                    else -> {}
+                }
+                voipLog?.log("observeCallbacks : CallState = $callState")
+                eventFlow.emit(callState)
+            }
+        }
     }
 }

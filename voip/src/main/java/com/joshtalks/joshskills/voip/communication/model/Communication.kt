@@ -40,6 +40,7 @@ interface ChannelData : IncomingData {
     fun getCallingTopic() : String
     fun getCallingId() : Int
     fun getCallingToken() : String
+    fun getAgoraUid() : Int
 }
 
 class IncorrectCommunicationDataException(message: String) : Exception(message)

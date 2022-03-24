@@ -22,9 +22,8 @@ class WebrtcRepository {
     private var mService : Messenger? = null
     private var handler : Messenger? = null
 
-    private val remoteServiceIntent = Intent(AppObjectController.joshApplication, WebrtcService::class.java)
-
     init {
+        val remoteServiceIntent = Intent(AppObjectController.joshApplication, WebrtcService::class.java)
         val bundle = Bundle().apply {
             putString("token", "${PrefManager.getStringValue(API_TOKEN)}")
             putString("mentor", "${ Mentor.getInstance().getUserId()}")
@@ -48,6 +47,7 @@ class WebrtcRepository {
     }
 
     fun startService() {
+        val remoteServiceIntent = Intent(AppObjectController.joshApplication, WebrtcService::class.java)
         AppObjectController.joshApplication.bindService(remoteServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 

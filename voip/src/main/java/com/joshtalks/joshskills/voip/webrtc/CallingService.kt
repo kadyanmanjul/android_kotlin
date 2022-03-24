@@ -2,19 +2,20 @@ package com.joshtalks.joshskills.voip.webrtc
 
 import kotlinx.coroutines.flow.Flow
 
-interface CallingService {
+internal interface CallingService {
     suspend fun initCallingService()
     fun connectCall(request: CallRequest) // Need Arguments
     fun disconnectCall() // Might Need Arguments
     fun observeCallingEvents() : Flow<CallState> // Will return value
 }
 
-interface CallRequest {
+internal interface CallRequest {
     fun getChannel() : String
     fun getToken() : String
+    fun getAgoraUId() : Int
 }
 
-sealed class CallState {
+internal sealed class CallState {
     object Idle : CallState()
     object OnHold : CallState()
     object OnUnHold : CallState()

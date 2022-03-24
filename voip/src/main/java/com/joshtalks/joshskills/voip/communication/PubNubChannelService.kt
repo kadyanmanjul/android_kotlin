@@ -75,7 +75,7 @@ object PubNubChannelService : EventChannel {
                     else {
                         config.publishKey = BuildConfig.PUBNUB_PUB_P2P_KEY
                         config.subscribeKey = BuildConfig.PUBNUB_SUB_P2P_KEY
-                        config.uuid = "Mentor.getInstance().getId()"
+                        //config.uuid = "Mentor.getInstance().getId()"
                         pubnub = PubNub(config)
                         pubnub?.addListener(pubNubData.callback)
                         pubnub?.subscribe()
