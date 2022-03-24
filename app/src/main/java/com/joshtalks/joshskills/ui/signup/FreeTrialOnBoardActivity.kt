@@ -188,7 +188,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
                 if (TruecallerSDK.getInstance().isUsable)
                     openTrueCallerBottomSheet()
                 else {
-                    viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED)
+                    viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED_JI_HAAN)
                     openProfileDetailFragment()
                 }
                 alertDialog.dismiss()
@@ -213,6 +213,9 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance().setLocale(Locale(PrefManager.getStringValue(USER_LOCALE)))
+        }
+        else {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED)
         }
     }
 
