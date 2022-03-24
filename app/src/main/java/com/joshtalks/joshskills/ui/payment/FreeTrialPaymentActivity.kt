@@ -85,9 +85,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var couponApplied = false
     private var compositeDisposable = CompositeDisposable()
     var isDiscount = false
-    private var isNewFlowActive = true
-    private var isSyllabusActive = true
-    private var is100PointsActive = true
+    private var isNewFlowActive = false
+    private var isSyllabusActive = false
+    private var is100PointsActive = false
     private var currentTime : Long = 0L
 
     lateinit var englishCard: View
@@ -166,7 +166,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     private fun initABTest() {
-        viewModel.getAllCampaigns()
+        viewModel.getAllCampaigns(testId)
     }
 
     private fun forceDisconnectCall() {
@@ -630,7 +630,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 isNewFlowActive =
                     (map.variantKey == VariantKeys.BUY_LAYOUT_ENABLED.name) && map.variableMap?.isEnabled == true
             }
-            viewModel.getPaymentDetails(testId.toInt())
             if(isNewFlowActive){
                 subscriptionCard.iv_minimise.visibility = View.VISIBLE
                 englishCard.iv_expand.visibility = View.VISIBLE

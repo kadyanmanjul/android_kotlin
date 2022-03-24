@@ -39,11 +39,11 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     val abtestNewLayoutLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun getAllCampaigns() {
+    fun getAllCampaigns(testId : String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getAllCampaigns()?.let {list->
-                for(data in list){
-                    when(data.campaignKey){
+            repository.getAllCampaigns()?.let { list ->
+                for (data in list) {
+                    when (data.campaignKey) {
                         CampaignKeys.BUY_LAYOUT_CHANGED.name ->
                             abtestNewLayoutLiveData.postValue(data)
                         CampaignKeys.HUNDRED_POINTS.NAME ->
@@ -53,6 +53,9 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                     }
                 }
             }
+
+            getPaymentDetails(testId.toInt())
+
         }
     }
 
