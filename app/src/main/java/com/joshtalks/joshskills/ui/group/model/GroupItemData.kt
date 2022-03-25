@@ -9,6 +9,7 @@ interface GroupItemData {
     fun getCreatorId() : String
     fun getLastMessageTime() : String
     fun getUnreadMsgCount() : String
+    fun getGroupCategory() : String
 
     //TODO: Need to remove
     fun hasJoined() : Boolean

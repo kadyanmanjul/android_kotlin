@@ -22,3 +22,6 @@ const val IS_FROM_VOIP = "IS_FROM_VOIP"
 const val IS_FROM_KEYBOARD = "isFromKeyboard"
 const val ADMIN_ID = "GROUP_ADMIN_ID"
 const val FROM_BACKEND_MSG_TIME = "from_backend_message_time"
+
+const val OPENED_GROUP = "OPENED_GROUP"
+const val CLOSED_GROUP = "CLOSED_GROUP"

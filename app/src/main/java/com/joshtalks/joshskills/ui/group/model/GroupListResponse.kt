@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 
 data class GroupListResponse(
 
@@ -40,7 +41,10 @@ data class GroupsItem(
     @field:SerializedName("total_calls")
     val totalCalls: String? = null,
 
-    val adminId: String? = null
+    val adminId: String? = null,
+
+    @field:SerializedName("group_type")
+    val groupType: String? = OPENED_GROUP
 
 ) : GroupItemData {
 
@@ -70,4 +74,6 @@ data class GroupsItem(
 
     override fun getUnreadMsgCount() =
         unreadCount ?: "0"
+
+    override fun getGroupCategory() = groupType ?: OPENED_GROUP
 }

@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.util.Log
 import com.google.gson.JsonObject
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.model.GroupListResponse
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -38,7 +39,8 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
                     groupIcon = customMap["image_url"],
                     createdAt = customMap["created_at"]?.toLongOrNull(),
                     createdBy = customMap["created_by"],
-                    adminId = customMap["admin_id"]
+                    adminId = customMap["admin_id"],
+                    groupType = customMap["group_type"] ?: OPENED_GROUP
                 )
                 groupList.add(response)
             } catch (e: Exception) {
@@ -62,6 +64,7 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
         map["created_by"] = json["created_by"].asString
         map["image_url"] = json["image_url"].asString
         map["admin_id"] = json["mentor_id"].asString
+        map["group_type"] = json["group_type"].asString
         return map
     }
 

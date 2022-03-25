@@ -168,7 +168,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         name = response["group_name"] as String?,
                         createdBy = response["created_by"] as String?,
                         totalCalls = null,
-                        adminId = response["admin_id"] as String?
+                        adminId = response["admin_id"] as String?,
+                        groupType = response["group_type"] as String?
                     )
                 )
                 database.groupChatDao().insertMessage(ChatItem(
@@ -225,7 +226,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         name = request.groupName,
                         createdBy = response["created_by"] as String?,
                         totalCalls = null,
-                        adminId = Mentor.getInstance().getId()
+                        adminId = Mentor.getInstance().getId(),
+                        groupType = response["group_type"] as String?
                     )
                 )
                 database.groupChatDao().insertMessage(ChatItem(
