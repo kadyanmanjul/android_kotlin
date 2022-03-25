@@ -10,14 +10,14 @@ import androidx.lifecycle.ViewModelProvider
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.databinding.GroupRequestFragmentBinding
+import com.joshtalks.joshskills.databinding.RequestListFragmentBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupRequestViewModel
 
-private const val TAG = "GroupRequestFragment"
+private const val TAG = "RequestListFragment"
 
-class GroupRequestFragment : BaseFragment() {
-    lateinit var binding: GroupRequestFragmentBinding
+class RequestListFragment : BaseFragment() {
+    lateinit var binding: RequestListFragmentBinding
 
     val vm by lazy {
         ViewModelProvider(this)[GroupRequestViewModel::class.java]
@@ -28,7 +28,7 @@ class GroupRequestFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.group_request_fragment, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.request_list_fragment, container, false)
         return binding.root
     }
 

@@ -226,11 +226,11 @@ class JoshGroupActivity : BaseGroupActivity() {
             val bundle = Bundle().apply {
                 putString(CONVERSATION_ID, vm.conversationId)
             }
-            val fragment = GroupRequestFragment().apply {
+            val fragment = RequestListFragment().apply {
                 arguments = bundle
             }
 
-            replace(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
+            replace(R.id.group_fragment_container, fragment, REQUEST_LIST_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }

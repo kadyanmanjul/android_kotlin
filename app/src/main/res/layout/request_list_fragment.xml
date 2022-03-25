@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_shade_of_gray"
-        tools:context=".ui.group.GroupRequestFragment">
+        tools:context=".ui.group.RequestListFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout2"
