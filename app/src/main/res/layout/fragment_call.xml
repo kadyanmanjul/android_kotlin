@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.assessment.AssessmentActivity">
 <data>
+    <import type="android.view.View"/>
     <variable
         name="vm"
         type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
@@ -51,7 +52,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_14sdp"
             android:textStyle="bold"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/caller_name"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
@@ -261,17 +262,17 @@
             android:id="@+id/group_for_incoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="@{vm.callStatus ==`incoming` ? View.VISIBLE : View.GONE }"
             app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_outgoing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="@{vm.callStatus ==`outgoing` ? View.VISIBLE : View.GONE }"
             app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action,txt_speaker,txt_mute"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/placeholder_bg"

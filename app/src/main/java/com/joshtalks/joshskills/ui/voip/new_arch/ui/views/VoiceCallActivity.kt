@@ -27,7 +27,7 @@ class VoiceCallActivity : BaseVoiceCallActivity() {
 
     private fun addSearchingUserFragment() {
         supportFragmentManager.commit {
-            add(R.id.voice_call_container, SearchingUserFragment(), "SearchingUserFragment")
+            add(R.id.voice_call_container, CallFragment(), "SearchingUserFragment")
         }
     }
 }

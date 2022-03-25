@@ -34,10 +34,8 @@ class CallFragment : BaseFragment() {
     }
 
     override fun initViewState() {
-        TODO("Not yet implemented")
     }
 
     override fun setArguments() {
-        TODO("Not yet implemented")
     }
 }

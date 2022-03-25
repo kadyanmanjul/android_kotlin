@@ -5,12 +5,13 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
 
 class VoiceCallViewModel: BaseViewModel() {
 
     val isSpeakerOn = ObservableBoolean(false)
     val isMute = ObservableBoolean(false)
-    val callStatus = ObservableField("")
+    val callStatus = ObservableField("outgoing")
     val callType = ObservableField("")
 
     fun initiateCall(v: View){
@@ -50,34 +51,35 @@ class VoiceCallViewModel: BaseViewModel() {
     }
 
     fun observeCallStatus(v: View){
-//       set Callstatus here-> callStatus.set("")
+//        observe data and publsih status
+       callStatus.set("ongoing")
     }
     fun getCallData():CallData{
         return CallDataObj
     }
 }
 object CallDataObj:CallData{
-    override fun getProfileImage(): String {
-        TODO("Not yet implemented")
+    override fun getProfileImage(): String? {
+        return null
     }
 
     override fun getCallerName(): String {
-        TODO("Not yet implemented")
+       return "bhaskaru"
     }
 
     override fun getTopicHeader(): String {
-        TODO("Not yet implemented")
+        return "hey"
     }
 
     override fun getTopicName(): String {
-        TODO("Not yet implemented")
+        return "p2p test"
     }
 
-    override fun getCallType(): com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType {
-        TODO("Not yet implemented")
+    override fun getCallType():CallType {
+        return CallType.NormalPracticePartner
     }
 
     override fun getCallTypeHeader(): String {
-        TODO("Not yet implemented")
+        return "FPP"
     }
 }

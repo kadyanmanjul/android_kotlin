@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
 import de.hdodenhof.circleimageview.CircleImageView
 
 @BindingAdapter("setProfileImage")
-fun CircleImageView.setProfileImage(imageUrl: String) {
-    if (imageUrl.isNotBlank())
+fun CircleImageView.setProfileImage(imageUrl: String?) {
+    if (!imageUrl.isNullOrEmpty())
         Glide.with(this)
             .load(imageUrl)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
@@ -25,16 +25,20 @@ fun CircleImageView.setProfileImage(imageUrl: String) {
 }
 
 @BindingAdapter("setCallBackground")
-fun ConstraintLayout.setCallBackground(callType: CallType) {
-    when (callType) {
-        is CallType.FavoritePracticePartner -> {
-            this.setBackgroundResource(R.drawable.voip_bg)
-        }
-        is CallType.NormalPracticePartner -> {
+fun ConstraintLayout.setCallBackground(callType: CallType?) {
+    if (callType != null) {
+        when (callType) {
+            is CallType.FavoritePracticePartner -> {
+                this.setBackgroundResource(R.drawable.voip_bg)
+            }
+            is CallType.NormalPracticePartner -> {
+                this.setBackgroundResource(R.drawable.voip_bg)
 
-        }
-        is CallType.GroupCall -> {
+            }
+            is CallType.GroupCall -> {
+                this.setBackgroundResource(R.drawable.voip_bg)
 
+            }
         }
     }
 }

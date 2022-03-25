@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.voip.presence
 
 import com.google.firebase.database.FirebaseDatabase
 
-class UserPresence : UserPresenceInterface {
+object UserPresence : UserPresenceInterface {
     private val userStatusMap:HashMap<String,Any> = HashMap()
     private val pathString:String="OnlineStatus"
     private var status:Boolean=false
