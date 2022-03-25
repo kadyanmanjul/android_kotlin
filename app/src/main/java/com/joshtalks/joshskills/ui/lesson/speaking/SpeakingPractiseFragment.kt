@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -163,8 +164,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnStart.setOnClickListener {
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            startPractise(favoriteUserCall = false)
+//            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+//            startPractise(favoriteUserCall = false)
+            startActivity(Intent(activity,VoiceCallActivity::class.java))
         }
 
         binding.btnGroupCall.setOnClickListener {
