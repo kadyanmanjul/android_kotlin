@@ -69,6 +69,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val ENGLISH_COURSE_TEST_ID = 102
+const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
 
 class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
@@ -123,7 +124,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
-        if(testId == ENGLISH_COURSE_TEST_ID){
+        if(testId == ENGLISH_COURSE_TEST_ID || testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
             initABTest()
         }else{
             if (testId != 0) {
@@ -709,7 +710,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 )
             } else {
                 logStartCourseAnalyticEvent(testId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial, is100PointsObtained = isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID && is100PointsActive)
+                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial, is100PointsObtained = isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID && is100PointsActive, isHundredPointsActive = is100PointsActive)
             }
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }
