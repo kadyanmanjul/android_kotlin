@@ -130,18 +130,6 @@ class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceM
         }
     }
 
-    private fun setCallType(callType: CallType) {
-        when(callType) {
-            CallType.PEER_TO_PEER -> {}
-            CallType.FPP -> {}
-            CallType.GROUP -> {}
-        }
-    }
-
-    private fun updateCallDirection(direction: CallDirection) {
-        callDirection = direction
-    }
-
     private fun handleWebrtcEvent() {
         scope.launch {
             callingService.observeCallingEvents().collectLatest {
@@ -172,6 +160,18 @@ class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceM
                 }
             }
         }
+    }
+
+    private fun setCallType(callType: CallType) {
+        when(callType) {
+            CallType.PEER_TO_PEER -> {}
+            CallType.FPP -> {}
+            CallType.GROUP -> {}
+        }
+    }
+
+    private fun updateCallDirection(direction: CallDirection) {
+        callDirection = direction
     }
 }
 
