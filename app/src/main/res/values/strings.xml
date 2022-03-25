@@ -864,13 +864,23 @@
 
     <!-- Groups -->
     <string name="admin_responsibilities">
-        <li>Be Kind to all members who join and who don\'t join</li>\n
-        <li>Help other members every time</li>\n
-        <li>No spamming anything as you are admin</li>\n
-        <li>Respect everyone</li>\n
-        <li>Remove members who misbehave and other things</li>\n
-        <li>No self promotion</li>
+        1. Be Kind to all members who join and who don\'t join\n
+        2. Help other members every time\n
+        3. No spamming anything as you are admin\n
+        4. Respect everyone\n
+        5. Remove members who misbehave and other things\n
+        6. No self promotion
     </string>
+
+    <string name="group_rules_list">
+        1. Be Kind\n
+        2. Help other members\n
+        3. No spam\n
+        4. Respect everyone\n
+        5. No self promotion
+    </string>
+
+    <string name="closed_group_desc">Ye group ek closed group h. Iss group ko join karne k liye Admin ko aapko Allow karna hoga. En Questions k answers de dijiye taki aapko group  me allow kiya jaye </string>
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>

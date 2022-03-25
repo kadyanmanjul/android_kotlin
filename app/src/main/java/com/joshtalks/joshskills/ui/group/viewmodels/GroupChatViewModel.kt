@@ -65,6 +65,7 @@ class GroupChatViewModel : BaseViewModel() {
     var adminId: String = ""
     var conversationId: String = ""
     var chatSendText: String = ""
+    var groupType: String = OPENED_GROUP
 
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -134,6 +135,15 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
+        if (groupType == CLOSED_GROUP) {
+            message.what = OPEN_GROUP_REQUEST
+            singleLiveEvent.value = message
+            return
+        }
+        joinPublicGroup()
+    }
+
+    fun joinPublicGroup() {
         showProgressDialog("Joining Group...")
         viewModelScope.launch {
             try {
@@ -159,6 +169,13 @@ class GroupChatViewModel : BaseViewModel() {
                 showToast("Error joining group")
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun joinPrivateGroup(view: View) {
+        showProgressDialog("Sending Request to join...")
+        viewModelScope.launch {
+
         }
     }
 
@@ -231,7 +248,7 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openRequestList(view: View) {
-        message.what = OPEN_GROUP_REQUESTS
+        message.what = OPEN_GROUP_REQUESTS_LIST
         singleLiveEvent.value = message
     }
 

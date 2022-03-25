@@ -64,7 +64,7 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
         map["created_by"] = json["created_by"].asString
         map["image_url"] = json["image_url"].asString
         map["admin_id"] = json["mentor_id"].asString
-        map["group_type"] = json["group_type"].asString
+        map["group_type"] = json["group_type"]?.asString ?: OPENED_GROUP
         return map
     }
 

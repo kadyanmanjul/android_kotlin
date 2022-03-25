@@ -79,8 +79,6 @@
             android:background="@drawable/rounded_rectangle_grey"
             android:backgroundTint="@color/blue33"
             android:onClick="@{vm::createGroup}"
-            android:scaleType="centerInside"
-            android:src="@drawable/add_groups"
             android:text="Accept"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"

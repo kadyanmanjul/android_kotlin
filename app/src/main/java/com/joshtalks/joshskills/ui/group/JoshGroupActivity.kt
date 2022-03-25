@@ -67,10 +67,11 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 OPEN_GROUP_INFO -> openGroupInfoFragment()
                 EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
-                OPEN_GROUP_REQUESTS -> openRequestsFragment()
+                OPEN_GROUP_REQUESTS_LIST -> openRequestsFragment()
                 SEARCH_GROUP -> openGroupSearchFragment()
                 OPEN_ADMIN_RESPONSIBILITY -> openAdminResponseFragment()
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
+                OPEN_GROUP_REQUEST -> openGroupRequestFragment()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
@@ -175,6 +176,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_ID, data?.getUniqueId())
                 putString(CONVERSATION_ID, vm.conversationId)
                 putString(ADMIN_ID, data?.getCreatorId())
+                putString(GROUP_TYPE, data?.getGroupCategory())
                 data?.hasJoined()?.let {
                     if (it) {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
@@ -198,6 +200,16 @@ class JoshGroupActivity : BaseGroupActivity() {
 
             val fragment = GroupInfoFragment()
             add(R.id.group_fragment_container, fragment, GROUP_INFO_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openGroupRequestFragment() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = GroupRequestFragment()
+            replace(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }
