@@ -36,8 +36,12 @@ class ViewPagerAdapter(
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view === `object` as LinearLayout
     }
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+
+    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
         callback.onSwipeCallback(position)
+    }
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val itemView: View = mLayoutInflater.inflate(R.layout.previous_pic_resource_layout, container, false)
 
         val imageView = itemView.findViewById<View>(R.id.imageViewMain) as ZoomageView
@@ -64,15 +68,12 @@ class ViewPagerAdapter(
         imageView.setGestureDetectorInterface {
             dismissAllowingStateLoss()
         }
-
-
-
         Objects.requireNonNull(container).addView(itemView)
         return itemView
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object` as LinearLayout)
+        container.removeViewAt(position)
     }
 }
 interface AdapterCallback {
