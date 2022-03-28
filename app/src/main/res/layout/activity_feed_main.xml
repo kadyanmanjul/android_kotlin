@@ -77,7 +77,6 @@
                 android:rotation="180"
                 onFeedItemClick="@{vm.onItemClick}"
                 feedListAdapter="@{vm.adapter}"
-                scrollToEnd="@{scrollToEndButton}"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginBottom="@dimen/_14sdp"
                 app:layout_constraintBottom_toBottomOf="parent"

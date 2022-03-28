@@ -25,9 +25,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
 import de.hdodenhof.circleimageview.CircleImageView
 
-@BindingAdapter("partialTextColor")
-fun TextView.setColorize(subStringToColorize: String) {
-    val spannable: Spannable = SpannableString(text)
+@BindingAdapter("partialTextColor","fullText")
+fun TextView.setColorize(subStringToColorize: String, fullText:String) {
+    val spannable: Spannable = SpannableString(fullText)
     spannable.setSpan(
         ForegroundColorSpan(getColorHexCode()),
         0,
@@ -97,21 +97,15 @@ fun getColorHexCode(): Int {
     return colorInt
 }
 
-@BindingAdapter("feedListAdapter", "onFeedItemClick","scrollToEnd")
+@BindingAdapter("feedListAdapter", "onFeedItemClick")
 fun setSeeAllRequestMemberAdapter(
     view: RecyclerView,
     adapter: ActivityFeedListAdapter,
-    function: ((ActivityFeedResponseFirebase, Int) -> Unit)?,
-    scrollView: AppCompatImageView
+    function: ((ActivityFeedResponseFirebase, Int) -> Unit)?
 ) {
     val layoutManager1 = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.layoutManager = layoutManager1
-    if(layoutManager1.findFirstCompletelyVisibleItemPosition()==0){
-        scrollView.visibility = View.GONE
-        view.layoutManager?.scrollToPosition(0)
-    }else{
-        scrollView.visibility = View.VISIBLE
-    }
+
 
     view.setHasFixedSize(false)
     view.adapter = adapter
