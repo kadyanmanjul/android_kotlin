@@ -7,68 +7,46 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.graphics.Outline
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.os.Environment
-import android.view.View
-import android.view.ViewOutlineProvider
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.databinding.ActivityRecordVideoBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.LinkAttribution
-import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.group.BaseGroupActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
-import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
-import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
-import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
-import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
-import com.joshtalks.joshskills.ui.special_practice.utils.getAndroidDownloadFolder
-import com.joshtalks.joshskills.ui.special_practice.utils.getAppShareUrl
+import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.random.Random
+import java.util.*
 
-class SpecialPracticeActivity : CoreJoshActivity() {
-    lateinit var binding: ActivityRecordVideoBinding
-    var specialPracticeViewModel: SpecialPracticeViewModel? = null
-    var specialId: String? = null
-    var videoDownloadPath: String? = null
-    private var downloadID: Long = -1
-    private var isVideoDownloadingStarted: Boolean = false
-    private var isVideoDownloaded: MutableLiveData<Boolean> = MutableLiveData(false)
-    private var userReferralCode = Mentor.getInstance().referralCode
+class SpecialPracticeActivity : BaseGroupActivity() {
 
-    private var recordedPathLocal: String? = null
-    var videoUrl = EMPTY
-    var recordedUrl = EMPTY
-    var wordInEnglish: String? = null
-    var sentenceInEnglish: String? = null
-    var wordInHindi: String? = null
-    var sentenceInHindi: String? = null
+    private val binding by lazy<ActivityRecordVideoBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_record_video)
+    }
+
+    private val spviewModel by lazy {
+        ViewModelProvider(this).get(SpecialPracticeViewModel::class.java)
+    }
 
     var openSampleVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -98,284 +76,87 @@ class SpecialPracticeActivity : CoreJoshActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_record_video)
-        binding.lifecycleOwner = this
-        binding.handler = this
-        specialId = intent.getStringExtra(SPECIAL_ID)
-        binding.ivBack.setOnClickListener {
-            onBackPressed()
-        }
-        isVideoDownloadingStarted = true
-        specialPracticeViewModel = ViewModelProvider(this).get(SpecialPracticeViewModel::class.java)
+    override fun setIntentExtras() {
+        spviewModel.specialId.set(intent.getStringExtra(SPECIAL_ID))
+    }
 
-        specialPracticeViewModel?.getSpecialIdData(specialId ?: EMPTY)
+    override fun initViewBinding() {
+        binding.vm = spviewModel
+        binding.executePendingBindings()
+    }
 
-        this.let {
-            specialPracticeViewModel?.specialIdData?.observe(it) {
-                recordedPathLocal = it.recordedVideo
-            }
-        }
+    override fun onCreated() {
+        spviewModel.isVideoDownloadingStarted.set(true)
+        spviewModel.getSpecialIdData(spviewModel.specialId.get() ?: EMPTY)
 
-        if (specialId != null) {
+        if (spviewModel.specialId.get() != null) {
             val map = hashMapOf(
                 Pair("mentor_id", Mentor.getInstance().getId()),
-                Pair("special_practice_id", specialId ?: EMPTY)
+                Pair("special_practice_id", spviewModel.specialId.get() ?: EMPTY)
             )
-            specialPracticeViewModel?.fetchSpecialPracticeData(map)
+            spviewModel.fetchSpecialPracticeData(map)
         }
-
-        this.let {
-            specialPracticeViewModel?.specialPracticeData?.observe(it) {
-                setData(it.specialPractice)
-                binding.textMessageTitle.text =
-                    "Special Practice - ${it.specialPractice?.practiceNo}"
-                videoUrl = it.specialPractice?.sampleVideoUrl ?: EMPTY
-                recordedUrl = it.recordedVideoUrl ?: EMPTY
-                if (recordedUrl != EMPTY) {
-                    showRecordedVideoUi(true, binding.videoPlayer, recordedUrl)
-                    if (recordedPathLocal == EMPTY || recordedPathLocal == null)
-                        getPermissionAndDownloadFile(recordedUrl)
-                }
-            }
-        }
-
-        binding.cardSampleVideoPlay.setOnClickListener {
-            showRecordedVideoUi(false, binding.videoView, videoUrl)
-        }
-
-        addObserver()
     }
 
-    private fun addObserver() {
-        isVideoDownloaded.observe(this, Observer {
-            if (it) {
-                specialPracticeViewModel?.getSpecialIdData(specialId ?: EMPTY)
+    override fun initViewState() {
+        event.observe(this) {
+            when (it.what) {
+                K_FACTOR_ON_BACK_PRESSED -> popBackState()
+                CALL_INVITE_FRIENDS_METHOD -> inviteFriends(it.obj as Intent)
+                SHOW_RECORD_VIDEO -> spviewModel.showRecordedVideoUi(
+                    it.obj as Boolean,
+                    binding.videoPlayer,
+                    spviewModel.recordedUrl
+                )
+                DOWNLOAD_VIDEO -> getPermissionAndDownloadFile(spviewModel.recordedUrl)
+                SHOW_SAMPLE_VIDEO -> spviewModel.showRecordedVideoUi(
+                    it.obj as Boolean,
+                    binding.videoView,
+                    spviewModel.videoUrl
+                )
+                SHOW_RECORDED_SPECIAL_VIDEO -> playRecordedVideo()
+                SHOW_SAMPLE_SPECIAL_VIDEO -> playSampleVideo()
+                CLOSE_SAMPLE_VIDEO -> closeIntroVideoPopUpUi()
+                START_VIDEO_RECORDING -> startVideoRecording()
+                DOWNLOAD_ID_DATA -> setDownloadId(it.obj as DownloadManager.Request)
+                OPEN_VIEW_AND_SHARE -> openViewAndShare()
+                MOVE_TO_ACTIVITY -> moveToNewActivity()
+               // CHECK_DOWNLOAD_PERMISSION_EXIST -> checkDownloadPermissionExist()
             }
-        })
+        }
     }
 
-    fun getDeepLinkAndInviteFriends(view: View) {
-        val referralTimestamp = System.currentTimeMillis()
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign(userReferralCode.plus(referralTimestamp))
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(
-                Defines.Jsonkey.UTMCampaign.key,
-                userReferralCode.plus(referralTimestamp)
-            )
-            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
-
-        branchUniversalObject
-            .generateShortUrl(this, lp) { url, error ->
-                if (error == null)
-                    inviteFriends(
-                        WHATSAPP_PACKAGE_STRING,
-                        dynamicLink = url,
-                        referralTimestamp = referralTimestamp
-                    )
-                else
-                    inviteFriends(
-                        WHATSAPP_PACKAGE_STRING,
-                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl(userReferralCode),
-                        referralTimestamp = referralTimestamp
-                    )
+    private fun popBackState() {
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            try {
+                supportFragmentManager.popBackStackImmediate()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
+        } else
+            onBackPressed()
     }
 
-    fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
-        var referralText =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(REFERRAL_SHARE_TEXT_SHARABLE_VIDEO)
-        referralText = referralText.plus("\n").plus(dynamicLink)
+    fun inviteFriends(waIntent: Intent) {
         try {
-            lifecycleScope.launch {
-                try {
-                    val requestData = LinkAttribution(
-                        mentorId = Mentor.getInstance().getId(),
-                        contentId = userReferralCode.plus(
-                            referralTimestamp
-                        ),
-                        sharedItem = "User Video",
-                        sharedItemType = "VI",
-                        deepLink = dynamicLink
-                    )
-                    val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
-                    Timber.i(res.body().toString())
-                } catch (ex: Exception) {
-                    Timber.e(ex)
-                }
-            }
-
-            val waIntent = Intent(Intent.ACTION_SEND)
-            waIntent.type = "*/*"
-            if (packageString.isNullOrEmpty().not()) {
-                waIntent.setPackage(packageString)
-            }
-            waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
-            waIntent.putExtra(
-                Intent.EXTRA_STREAM,
-                Uri.parse(getAndroidDownloadFolder()?.absolutePath + "/" + recordedPathLocal)
-            )
-            waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(Intent.createChooser(waIntent, "Share with"))
-
         } catch (e: PackageManager.NameNotFoundException) {
             showToast(getString(R.string.whatsApp_not_installed))
         }
     }
 
-    override fun onBackPressed() {
-        val count = supportFragmentManager.backStackEntryCount
-        if (count == 0) {
-            super.onBackPressed()
-            // additional code
-        } else {
-            supportFragmentManager.popBackStack()
-        }
-    }
-
-    private fun openRecordingScreen() {
-        try {
-            binding.videoView.onPause()
-            binding.videoPlayer.onPause()
-            binding.card3.visibility = View.GONE
-            supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.parent_container,
-                    RecordVideoFragment.newInstance(
-                        wordInEnglish ?: EMPTY,
-                        sentenceInEnglish ?: EMPTY,
-                        wordInHindi ?: EMPTY,
-                        sentenceInHindi ?: EMPTY,
-                        specialId ?: EMPTY
-                    ),
-                    "Special"
-                ).commit()
-        } catch (ex: Exception) {
-        }
-    }
-
-    private fun setData(specialPractice: SpecialPractice?) {
-        binding.wordText.text = specialPractice?.wordText
-        binding.instructionText.text = specialPractice?.instructionText
-        wordInEnglish = specialPractice?.wordEnglish
-        sentenceInEnglish = specialPractice?.sentenceEnglish
-        wordInHindi = specialPractice?.wordHindi
-        sentenceInHindi = specialPractice?.sentenceHindi
-    }
-
     override fun onPause() {
-        binding.videoView.onPause()
-        binding.videoPlayer.onPause()
+        pauseVideo()
         super.onPause()
     }
 
-    companion object {
-
-        @JvmStatic
-        fun start(
-            context: Context,
-            conversationId: String? = null,
-            specialId: String?
-        ) {
-            Intent(context, SpecialPracticeActivity::class.java).apply {
-                putExtra(SPECIAL_ID, specialId)
-                putExtra(CONVERSATION_ID, conversationId)
-            }.run {
-                context.startActivity(this)
-            }
-        }
-    }
-
-    private fun showRecordedVideoUi(
-        isRecordVideo: Boolean,
-        view: JoshVideoPlayer,
-        videoUrl: String
-    ) {
-        try {
-            if (isRecordVideo)
-                binding.card3.visibility = View.VISIBLE
-            else {
-                binding.btnRecord.isClickable = false
-                binding.btnRecord.isEnabled = false
-                binding.videoPopup.visibility = View.VISIBLE
-            }
-
-            view.seekToStart()
-            view.setUrl(videoUrl)
-            view.onStart()
-            view.fitToScreen()
-            view.setPlayListener {
-                if (isRecordVideo) {
-                    val currentVideoProgressPosition = view.progress
-                    openRecordVideoPlayerActivity.launch(
-                        VideoPlayerActivity.getActivityIntent(
-                            this,
-                            EMPTY,
-                            null,
-                            recordedUrl,
-                            currentVideoProgressPosition,
-                            conversationId = getConversationId()
-                        )
-                    )
-                } else {
-                    val currentVideoProgressPosition = view.progress
-                    openSampleVideoPlayerActivity.launch(
-                        VideoPlayerActivity.getActivityIntent(
-                            this,
-                            EMPTY,
-                            null,
-                            videoUrl,
-                            currentVideoProgressPosition,
-                            conversationId = getConversationId()
-                        )
-                    )
-                }
-            }
-
-            if (isRecordVideo) {
-                lifecycleScope.launchWhenStarted {
-                    view.downloadStreamButNotPlay()
-                }
-            } else {
-                lifecycleScope.launchWhenStarted {
-                    view.downloadStreamPlay()
-                }
-            }
-            binding.imageViewClose.setOnClickListener {
-                closeIntroVideoPopUpUi()
-            }
-
-            view.outlineProvider = object : ViewOutlineProvider() {
-                override fun getOutline(view: View, outline: Outline) {
-                    outline.setRoundRect(0, 0, view.width, view.height, 15f)
-                }
-            }
-            view.clipToOutline = true
-        } catch (ex: Exception) {
-        }
-    }
-
     private fun closeIntroVideoPopUpUi() {
-        binding.btnRecord.isClickable = true
-        binding.btnRecord.isEnabled = true
-        binding.videoPopup.visibility = View.GONE
+        spviewModel.isRecordButtonClick.set(true)
+        spviewModel.isVideoPopUpShow.set(false)
         binding.videoView.onStop()
     }
 
-    fun startVideoRecording(view: View) {
+    fun startVideoRecording() {
         if (PermissionUtils.isCameraPermissionEnabled(this)) {
             if (Utils.isInternetAvailable()) {
                 openRecordingScreen()
@@ -424,14 +205,14 @@ class SpecialPracticeActivity : CoreJoshActivity() {
 
     private fun getPermissionAndDownloadFile(videoUrl: String) {
         if (PermissionUtils.isStoragePermissionEnabled(this)) {
-            downloadFile(videoUrl)
+            spviewModel.downloadFile(videoUrl)
         } else {
             PermissionUtils.storageReadAndWritePermission(this,
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
-                                downloadFile(videoUrl)
+                                spviewModel.downloadFile(videoUrl)
                                 return
 
                             }
@@ -453,69 +234,85 @@ class SpecialPracticeActivity : CoreJoshActivity() {
         }
     }
 
-    private fun downloadFile(
-        url: String,
-        message: String = "Downloading file",
-        title: String = "Josh Skills"
-    ) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            var fileName = Utils.getFileNameFromURL(url)
-            if (fileName.isEmpty()) {
-                url.let {
-                    fileName = it + Random(5).nextInt().toString().plus(it.getExtension())
-                }
+    fun setDownloadId(request: DownloadManager.Request) {
+        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
+        spviewModel.downloadID.set(downloadManager.enqueue(request))
+        registerDownloadReceiver()
+    }
+
+    fun registerDownloadReceiver() {
+        registerReceiver(
+            spviewModel.onDownloadComplete,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        )
+    }
+
+    private fun pauseVideo() {
+        binding.videoView.onPause()
+        binding.videoPlayer.onPause()
+    }
+
+    private fun openRecordingScreen() {
+        try {
+            spviewModel.isVideoPlay.set(false)
+            pauseVideo()
+            spviewModel.isRecordButtonClick.set(false)
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                val fragment = RecordVideoFragment()
+                replace(R.id.parent_container, fragment, RECORD_VIEW_FRAGMENT)
+                addToBackStack(K_FACTOR_STACK)
             }
-            videoDownloadPath = fileName
-            registerDownloadReceiver()
-
-            val env = Environment.DIRECTORY_DOWNLOADS
-
-            val request: DownloadManager.Request =
-                DownloadManager.Request(Uri.parse(url))
-                    .setTitle(title)
-                    .setDescription(message)
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                    .setAllowedOverMetered(true)
-                    .setAllowedOverRoaming(true)
-                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                    .setDestinationInExternalPublicDir(env, fileName)
-
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                request.setRequiresCharging(false).setRequiresDeviceIdle(false)
-            }
-
-            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
-            downloadID = downloadManager.enqueue(request)
+        } catch (ex: Exception) {
+            Timber.d(ex)
         }
     }
 
-    private fun registerDownloadReceiver() {
-        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    fun openViewAndShare() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = ViewAndShareVideoFragment()
+            replace(R.id.parent_container, fragment, VIEW_AND_SHARE_FRAGMENT)
+            addToBackStack(K_FACTOR_STACK)
+        }
     }
 
-    private var onDownloadComplete = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            if (downloadID == id) {
-                try {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        AppObjectController.appDatabase.specialDao()
-                            .updateRecordedTable(specialId ?: EMPTY, videoDownloadPath ?: EMPTY)
-                    }
+    fun playRecordedVideo() {
+        val currentVideoProgressPosition = binding.videoPlayer.progress
+        openRecordVideoPlayerActivity.launch(
+            VideoPlayerActivity.getActivityIntent(
+                this,
+                EMPTY,
+                null,
+                spviewModel.recordedUrl,
+                currentVideoProgressPosition,
+                conversationId = getConversationId()
+            )
+        )
+    }
 
-                    if (isVideoDownloadingStarted.not()) {
-                        showToast(getString(R.string.downloading_complete))
-                    } else {
-                        isVideoDownloaded.postValue(true)
-                    }
-                    isVideoDownloadingStarted = false
-                } catch (Ex: Exception) {
-                    showToast(getString(R.string.something_went_wrong))
-                }
+    fun playSampleVideo() {
+        val currentVideoProgressPosition = binding.videoView.progress
+        openSampleVideoPlayerActivity.launch(
+            VideoPlayerActivity.getActivityIntent(
+                this,
+                EMPTY,
+                null,
+                spviewModel.videoUrl,
+                currentVideoProgressPosition,
+                conversationId = getConversationId()
+            )
+        )
+    }
 
-            }
+    fun moveToNewActivity() {
+        try {
+            val i = Intent(this, SpecialPracticeActivity::class.java)
+            i.putExtra(SPECIAL_ID, spviewModel.specialId.get())
+            startActivity(i)
+            overridePendingTransition(0, 0)
+            finish()
+        } catch (ex: Exception) {
         }
     }
 }

@@ -3,6 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel" />
+
+    </data>
+
     <FrameLayout
         android:id="@+id/fragment_record_container"
         android:layout_width="match_parent"
@@ -53,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.165"
-                    android:text="ATTACK"
+                    android:text="@{vm.wordInEnglish}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/_38sdp"
@@ -67,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.165"
-                    android:text="हमला"
+                    android:text="@{vm.wordInHindi}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_28sdp"
@@ -81,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_2sdp"
-                    android:text="रूस ने यूक्रेन पर हमला किया"
+                    android:text="@{vm.sentenceInHindi}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
@@ -97,7 +108,7 @@
                     android:singleLine="true"
                     android:lines="1"
                     android:layout_marginBottom="@dimen/_2sdp"
-                    android:text="Russia attacked Ukraine"
+                    android:text="@{vm.sentenceInEnglish}"
                     android:textColor="@color/black"
                     tools:text="Russia attacked Ukraine" />
 
