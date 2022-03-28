@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityFeedMainBinding
-import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.*
 import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
 import com.joshtalks.joshskills.ui.group.BaseGroupActivity
@@ -39,8 +39,8 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         event.observe(this) {
             when (it.what) {
                 ON_FEED_BACK_PRESSED -> popBackStack()
-                OPEN_FEED_USER_PROFILE -> openUserProfileActivity(it.obj as ActivityFeedResponseFirebase)
-                OPEN_PROFILE_IMAGE_FRAGMENT -> openProfileImageFragment(it.obj as ActivityFeedResponseFirebase)
+                OPEN_FEED_USER_PROFILE -> openUserProfileActivity(it.obj as ActivityFeedResponse)
+                OPEN_PROFILE_IMAGE_FRAGMENT -> openProfileImageFragment(it.obj as ActivityFeedResponse)
                 FEED_SCROLL_TO_END -> scrollToEnd()
                 ON_ITEM_ADDED->setScrollToEndBtn()
             }
@@ -56,10 +56,10 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         onBackPressed()
     }
 
-    private fun openUserProfileActivity(activityFeedResponseFirebase: ActivityFeedResponseFirebase) {
+    private fun openUserProfileActivity(activityFeedResponse: ActivityFeedResponse) {
         UserProfileActivity.startUserProfileActivity(
             this,
-            activityFeedResponseFirebase.mentorId ?: EMPTY,
+            activityFeedResponse.mentorId ?: EMPTY,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             null,
             "RECENT_CALL",
@@ -67,12 +67,12 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         )
     }
 
-    private fun openProfileImageFragment(activityFeedResponseFirebase: ActivityFeedResponseFirebase) {
+    private fun openProfileImageFragment(activityFeedResponse: ActivityFeedResponse) {
         ProfileImageShowFragment.newInstance(
-            activityFeedResponseFirebase.mediaUrl,
+            activityFeedResponse.mediaUrl,
             null,
             null,
-            activityFeedResponseFirebase.mentorId ?: EMPTY,
+            activityFeedResponse.mentorId ?: EMPTY,
             false
         )
             .show((this).supportFragmentManager.beginTransaction(), "ImageShow")

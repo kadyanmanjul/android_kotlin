@@ -9,7 +9,7 @@
         <import type="com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser"/>
         <variable
             name="itemData"
-            type="com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase"/>
+            type="com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse"/>
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.activity_feed.ActivityFeedListAdapter.ViewHolder" />

@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.ui.activity_feed.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ActivityFeedResponseFirebase(
+data class ActivityFeedResponse(
     @SerializedName("date")
     var date: String? = null,
     @SerializedName("event_id")
@@ -20,4 +20,3 @@ data class ActivityFeedResponseFirebase(
     @SerializedName("media_duration")
     var duration: Int = 0
 )
-

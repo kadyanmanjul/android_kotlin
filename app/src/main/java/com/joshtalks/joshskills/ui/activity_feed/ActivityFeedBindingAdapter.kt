@@ -6,10 +6,8 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +20,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import de.hdodenhof.circleimageview.CircleImageView
 
 @BindingAdapter("partialTextColor","fullText")
@@ -101,7 +99,7 @@ fun getColorHexCode(): Int {
 fun setSeeAllRequestMemberAdapter(
     view: RecyclerView,
     adapter: ActivityFeedListAdapter,
-    function: ((ActivityFeedResponseFirebase, Int) -> Unit)?
+    function: ((ActivityFeedResponse, Int) -> Unit)?
 ) {
     val layoutManager1 = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.layoutManager = layoutManager1

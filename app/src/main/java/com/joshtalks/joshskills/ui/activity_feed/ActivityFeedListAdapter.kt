@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityFeedRowItemBinding
-import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.OPEN_FEED_USER_PROFILE
 import com.joshtalks.joshskills.ui.activity_feed.utils.OPEN_PROFILE_IMAGE_FRAGMENT
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
@@ -18,8 +18,8 @@ import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 
 class ActivityFeedListAdapter :
     RecyclerView.Adapter<ActivityFeedListAdapter.ViewHolder>() {
-    var itemClick: ((ActivityFeedResponseFirebase, Int) -> Unit)? = null
-    var items: ArrayList<ActivityFeedResponseFirebase> = arrayListOf()
+    var itemClick: ((ActivityFeedResponse, Int) -> Unit)? = null
+    var items: ArrayList<ActivityFeedResponse> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = DataBindingUtil.inflate<ActivityFeedRowItemBinding>(
@@ -35,7 +35,7 @@ class ActivityFeedListAdapter :
         holder.bind(items[position])
     }
 
-    fun setListener(function: ((ActivityFeedResponseFirebase, Int) -> Unit)?) {
+    fun setListener(function: ((ActivityFeedResponse, Int) -> Unit)?) {
         itemClick = function
     }
 
@@ -53,7 +53,7 @@ class ActivityFeedListAdapter :
         private var lastPosition: Long = 0L
         private var duration: Int = 0
 
-        fun bind(activityFeedResponse: ActivityFeedResponseFirebase) {
+        fun bind(activityFeedResponse: ActivityFeedResponse) {
             view.itemData = activityFeedResponse
             view.handler = this
             if(duration!=0) {

@@ -3,18 +3,15 @@ package com.joshtalks.joshskills.ui.activity_feed.viewModel
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.ktx.toObject
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.server.ActivityFeedList
 import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedListAdapter
 import com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser
-import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import com.joshtalks.joshskills.ui.activity_feed.repository.ActivityFeedRepository
 import com.joshtalks.joshskills.ui.activity_feed.utils.*
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -23,7 +20,8 @@ import kotlinx.coroutines.launch
 
 class ActivityFeedViewModel:BaseViewModel() {
     val firebaseRepository = ActivityFeedRepository()
-    var currentFeed: ActivityFeedResponseFirebase = ActivityFeedResponseFirebase()
+    var currentFeed: ActivityFeedResponse =
+        ActivityFeedResponse()
     private var feedTime = System.currentTimeMillis()
     private var localFlag = false
 
@@ -112,7 +110,7 @@ class ActivityFeedViewModel:BaseViewModel() {
     fun getActivityFeed() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getActivityFeedData()
+                val response = AppObjectController.commonNetworkService.getActivityFeedData("1648450111")
                 if (response.isSuccessful && response.body() != null) {
                     impressionId.set(response.body()?.impressionId)
                 }
@@ -140,7 +138,7 @@ class ActivityFeedViewModel:BaseViewModel() {
         }
     }
 
-    val onItemClick: (ActivityFeedResponseFirebase, Int) -> Unit = { it, type ->
+    val onItemClick: (ActivityFeedResponse, Int) -> Unit = { it, type ->
         when (type) {
             OPEN_FEED_USER_PROFILE -> {
                 message.what =OPEN_FEED_USER_PROFILE
