@@ -2,8 +2,7 @@ package com.joshtalks.joshskills.ui.fpp.utils;
 
 import android.graphics.Color;
 
-class BlurFactor {
-
+public class BlurFactor {
     public static final int DEFAULT_RADIUS = 25;
     public static final int DEFAULT_SAMPLING = 1;
 

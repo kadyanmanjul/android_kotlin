@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -141,6 +142,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
             fppDialogFlag = it.getStringExtra(SHOW_FPP_DIALOG)
             binding.txtMessage.text = msz.replaceFirst("#", callerName)
 
+            Log.e(TAG, "initFun: $fppDialogFlag", )
             if (fppDialogFlag=="true"){
                 binding.rootView.visibility  = View.VISIBLE
             }else{
@@ -172,6 +174,10 @@ class VoipCallFeedbackActivity : BaseActivity(){
                     closeActivity()
                 }
             }
+            if(totalSecond >1200 ){
+                submitFeedback("20_min_call")
+            }
+
             if (minute > 0) {
                 mTime.append(minute).append(getMinuteString(minute))
 
@@ -248,7 +254,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
                     }
                     }
                 }
-
         }
     }
 
@@ -306,6 +311,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
             currentUserId:Int,
             fppDialogFlag:String
         ) {
+            Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogFlag")
 
             Intent(activity, VoipCallFeedbackActivity::class.java).apply {
                 putExtra(ARG_CHANNEL_NAME, channelName)

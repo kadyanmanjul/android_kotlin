@@ -88,7 +88,6 @@ import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
 import com.joshtalks.joshskills.ui.fpp.constants.QUICK_VIEW
 import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
-import com.joshtalks.joshskills.ui.fpp.utils.Blurry
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON

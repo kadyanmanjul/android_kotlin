@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
@@ -131,10 +132,10 @@ class RecentCallViewModel : BaseViewModel() {
                 singleLiveEvent.value = message
             }
             RECENT_CALL_SENT_REQUEST -> {
-                sendFppRequest(it.receiverMentorId)
+                sendFppRequest(it.receiverMentorId?: EMPTY)
             }
             RECENT_CALL_REQUESTED -> {
-                deleteFppRequest(it.receiverMentorId)
+                deleteFppRequest(it.receiverMentorId?: EMPTY)
             }
             RECENT_CALL_HAS_RECIEVED_REQUESTED -> {
                 message.what = RECENT_CALL_HAS_RECIEVED_REQUESTED

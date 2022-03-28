@@ -1022,7 +1022,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             time = callTime
         }
         Log.d(TAG, "showCallRatingScreen: ${time/1000}")
-        if((time/1000) in 121..1199){
+        if((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag ?: EMPTY=="false"){
             this@WebRtcActivity.finish()
         }else {
 

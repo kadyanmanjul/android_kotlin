@@ -113,11 +113,11 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
             map[REPORTED_AGAINST_ID] = callerId1
             vm.submitReportOption(map)
             closeDialog()
-            function.invoke()
         }
     }
 
     private fun closeDialog() {
+        Log.e("Sagar", "closeDialog: $fppDialogFlag")
         if(fppDialogFlag=="false"){
             function.invoke()
         }else{

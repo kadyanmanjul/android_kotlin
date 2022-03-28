@@ -99,14 +99,14 @@ class RecentCallActivity : BaseFppActivity() {
         btnConfirm
             .setOnClickListener {
                 viewModel.confirmOrRejectFppRequest(
-                    recentCall.receiverMentorId,
+                    recentCall.receiverMentorId?: EMPTY,
                     IS_ACCEPTED,
                     RECENT_CALL
                 )
                 dialogView.dismiss()
             }
         btnNotNow.setOnClickListener {
-            viewModel.confirmOrRejectFppRequest(recentCall.receiverMentorId, IS_REJECTED, RECENT_CALL)
+            viewModel.confirmOrRejectFppRequest(recentCall.receiverMentorId?: EMPTY, IS_REJECTED, RECENT_CALL)
             dialogView.dismiss()
         }
     }
@@ -118,7 +118,7 @@ class RecentCallActivity : BaseFppActivity() {
         dialogView.findViewById<TextView>(R.id.text).text = "Block ${recentCall.firstName}"
         btnConfirm
             .setOnClickListener {
-                viewModel.blockUser(recentCall.receiverMentorId)
+                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY)
                 dialogView.dismiss()
             }
         btnNotNow.setOnClickListener {

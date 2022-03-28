@@ -2415,6 +2415,7 @@ class WebRtcService : BaseWebRtcService() {
                                         data[RTC_CHANNEL_KEY] = newChannel
                                         data[RTC_TOKEN_KEY] = token
                                         data[RTC_UID_KEY] = uid
+                                        Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogeFlag $newChannel $token")
                                         val oldState = CurrentCallDetails.state()
                                         VoipAnalytics.push(
                                             VoipAnalytics.Event.RECEIVE_TIMER_STOP,
