@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.TemporaryFeedActivity
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.io.AppDirectory
@@ -46,7 +47,7 @@ class SignUpActivity: AppCompatActivity() {
                 SignUpStepStatus.ProfilePicMissing, SignUpStepStatus.NameEntered -> {
                     openUploadProfilePicFragment()
                 }
-                SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.SignUpCompleted, SignUpStepStatus.ProfilePicUploaded -> {
+                SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.ProfileCompleted, SignUpStepStatus.ProfilePicUploaded -> {
                     openFeedActivity()
                     this@SignUpActivity.finishAffinity()
                 }
@@ -83,7 +84,7 @@ class SignUpActivity: AppCompatActivity() {
     }
 
     private fun openFeedActivity() {
-
+        TemporaryFeedActivity.openFeedActivity(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

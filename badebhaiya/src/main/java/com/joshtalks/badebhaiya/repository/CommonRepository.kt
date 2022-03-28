@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.repository
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
 import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 
 class CommonRepository {
 
@@ -13,9 +14,7 @@ class CommonRepository {
 
     suspend fun patchFCMToken(userId: String, requestParams: Map<String, String>) =
         service.patchFCMToken(userId, requestParams)
-
-    suspend fun requestUploadMediaAsync(requestParams: Map<String, String>) =
-        service.requestUploadMedia(requestParams)
+    fun requestUploadMediaAsync(requestParams: Map<String, String>) = service.requestUploadMediaAsync(requestParams)
 
     suspend fun getInstallReferrerAsync(obj: InstallReferrerModel) =
         service.getInstallReferrerAsync(obj)

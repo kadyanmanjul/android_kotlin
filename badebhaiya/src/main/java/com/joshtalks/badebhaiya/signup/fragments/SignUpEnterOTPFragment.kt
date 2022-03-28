@@ -47,7 +47,7 @@ class SignUpEnterOTPFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.tvPhoneNumberText.text = getString(R.string.verify_otp_for_phone_text)
+        binding.tvPhoneNumberText.text = getString(R.string.verify_otp_for_phone_text, viewModel.mobileNumber)
         processOTP()
         addOTPObserver()
     }

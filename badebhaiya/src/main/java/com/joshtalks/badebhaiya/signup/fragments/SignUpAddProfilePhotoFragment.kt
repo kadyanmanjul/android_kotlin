@@ -12,6 +12,7 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.ApiCallStatus
 import com.joshtalks.badebhaiya.databinding.FragmentSignupAddProfilePhotoBinding
 import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
@@ -33,6 +34,20 @@ class SignUpAddProfilePhotoFragment: Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_add_profile_photo, container, false)
         binding.handler = this
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addObservers()
+    }
+
+    private fun addObservers() {
+        viewModel.profilePicUploadApiCallStatus.observe(viewLifecycleOwner) {
+            when(it) {
+                ApiCallStatus.START -> { startProgress() }
+                ApiCallStatus.FAILED -> { hideProgress() }
+            }
+        }
     }
 
     fun submitProfilePic() {

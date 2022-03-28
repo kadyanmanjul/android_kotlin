@@ -7,4 +7,8 @@ enum class SignUpStepStatus {
     WRONG_OTP, ERROR, NameMissing, ProfilePicMissing, NameEntered
 }
 
+enum class ApiCallStatus {
+    START, SUCCESS, FAILED, RETRY, FAILED_PERMANENT, INVALIDED
+}
+
 const val EMPTY = ""

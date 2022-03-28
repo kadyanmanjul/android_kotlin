@@ -27,9 +27,8 @@ interface SignUpNetworkService {
     @GET("$DIR/user/{id}/")
     suspend fun getUserProfile(@Path("id")userId: String): Response<User>
 
-    @FormUrlEncoded
     @PATCH("$DIR/user/{id}/")
-    suspend fun updateUserProfile(@Path("id")userId: String, @FieldMap params: Map<String, String>): Response<User>
+    suspend fun updateUserProfile(@Path("id")userId: String, @Body params: Map<String, String?>): Response<User>
 
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")

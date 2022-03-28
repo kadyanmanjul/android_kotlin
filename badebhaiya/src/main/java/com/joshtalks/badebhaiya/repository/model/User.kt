@@ -14,7 +14,7 @@ data class User(
     @SerializedName("last_name") var lastName: String? = null,
     @SerializedName("user_id") var userId: String = EMPTY,
     @SerializedName("token") var token: String = EMPTY,
-    @SerializedName("profile_url") var profilePicUrl: String? = null,
+    @SerializedName("photo_url") var profilePicUrl: String? = null,
     @SerializedName("mobile") var mobile: String = EMPTY
 ) {
     companion object {
@@ -47,7 +47,7 @@ data class User(
         this.firstName = user.firstName
         this.lastName = user.lastName
         this.mobile = user.mobile
-        this.profilePicUrl = user.profilePicUrl
+        if (this.profilePicUrl.isNullOrEmpty()) this.profilePicUrl = user.profilePicUrl
         if (this.userId.isEmpty()) this.userId = user.userId
         if (this.token.isEmpty()) this.token = user.token
         update()

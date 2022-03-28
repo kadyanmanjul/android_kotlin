@@ -12,6 +12,8 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.FieldMap
 
 interface CommonNetworkService {
 
@@ -24,8 +26,9 @@ interface CommonNetworkService {
         @Body params: Map<String, String>
     ): Response<FCMData>
 
+    @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
-    suspend fun requestUploadMedia(requestParams: Map<String, String>): Deferred<AmazonPolicyResponse>
+    fun requestUploadMediaAsync(@FieldMap requestParams: Map<String, String>): Deferred<AmazonPolicyResponse>
 
     @POST("$DIR/user/source/")
     suspend fun getInstallReferrerAsync(requestParams: InstallReferrerModel): Response<InstallReferrerModel>

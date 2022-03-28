@@ -6,9 +6,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.core.API_TOKEN
+import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.io.AppDirectory
+import com.joshtalks.badebhaiya.core.ApiCallStatus
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
@@ -30,10 +32,13 @@ import java.io.File
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val repository = BBRepository()
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
+    var mobileNumber = EMPTY
+    val profilePicUploadApiCallStatus = MutableLiveData<ApiCallStatus>()
 
     fun sendPhoneNumberForOTP(phoneNumber: String, countryCode: String) {
         viewModelScope.launch {
             try {
+                mobileNumber = phoneNumber
                 val reqObj = mapOf("country_code" to countryCode, "mobile" to phoneNumber)
                 repository.sendPhoneNumberForOTP(reqObj)
                 signUpStatus.value = SignUpStepStatus.RequestForOTP
@@ -100,7 +105,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         if (user.profilePicUrl.isNullOrEmpty()) {
             return signUpStatus.postValue(SignUpStepStatus.ProfilePicMissing)
         }
-        signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+        signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
     }
 
     fun completeProfile(requestMap: MutableMap<String, String?>) {
@@ -125,6 +130,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
 
     fun uploadMedia(mediaPath: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            profilePicUploadApiCallStatus.postValue(ApiCallStatus.START)
             val compressImagePath = getCompressImage(mediaPath)
             uploadCompressedMedia(compressImagePath)
         }
@@ -147,6 +153,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     private fun uploadCompressedMedia(mediaPath: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                profilePicUploadApiCallStatus.postValue(ApiCallStatus.START)
                 val obj = mapOf("media_path" to File(mediaPath).name)
                 val responseObj =
                     CommonRepository().requestUploadMediaAsync(obj).await()
@@ -155,11 +162,11 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     saveProfileInfo(url)
                 } else {
-//                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+                    profilePicUploadApiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
 
             } catch (ex: Exception) {
-//                apiCallStatus.postValue(ApiCallStatus.FAILED)
+                profilePicUploadApiCallStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
             }
         }
@@ -171,15 +178,13 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
             for (entry in responseObj.fields) {
                 parameters[entry.key] = Utils.createPartFromString(entry.value)
             }
-
             val requestFile = File(mediaPath).asRequestBody("*".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData(
                 "file",
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = CommonRepository().requestUploadMediaAsync(obj).await()
-                RetrofitInstance.mediaDUNetworkService.uploadMediaAsync(
+            val responseUpload = RetrofitInstance.mediaDUNetworkService.uploadMediaAsync(
                 responseObj.url,
                 parameters,
                 body
@@ -192,7 +197,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 val requestMap = mutableMapOf<String, String?>()
-                requestMap["profile_url"] = url
+                requestMap["photo_url"] = url
                 val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
                 if (response.isSuccessful) {
                     response.body()?.let {
