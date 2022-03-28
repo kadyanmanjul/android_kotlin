@@ -1,33 +1,38 @@
 package com.joshtalks.joshskills.ui.userprofile.viewmodel
 
 import android.app.Application
+import android.os.Message
+import android.view.View
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.*
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
+import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
+import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
+import com.joshtalks.joshskills.ui.userprofile.adapters.MyGroupsListAdapter
 import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
+import com.joshtalks.joshskills.ui.userprofile.utils.COURSE_LIST_DATA
+import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP_LIST_DATA
+import com.joshtalks.joshskills.ui.userprofile.utils.ON_BACK_PRESS
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
-import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
-class UserProfileViewModel(application: Application) : AndroidViewModel(application) {
+open class UserProfileViewModel(application: Application) : AndroidViewModel(application) {
 
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
@@ -38,10 +43,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val previousProfilePics: MutableLiveData<PreviousProfilePictures> = MutableLiveData()
     val fppList: MutableLiveData<List<FppDetails>> = MutableLiveData()
     val fppRequest: MutableLiveData<FppRequest> = MutableLiveData()
-    val groupsList: MutableLiveData<GroupsList> = MutableLiveData()
-    val apiCallStatusForGroupsList: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val coursesList: MutableLiveData<EnrolledCoursesList> = MutableLiveData()
-    val apiCallStatusForCoursesList: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val awardsList: MutableLiveData<List<AwardCategory>> = MutableLiveData()
     val apiCallStatusForAwardsList: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val sectionImpressionResponse: MutableLiveData<UserProfileSectionResponse> = MutableLiveData()
@@ -50,15 +51,28 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     private var mentorId: String = EMPTY
     private var intervalType: String? = EMPTY
     private var previousPage: String? = EMPTY
+    val userProfileRepo = UserProfileRepo()
 
+    val isProgressBarShow = ObservableBoolean(false)
+    val fetchingGroupList = ObservableBoolean(false)
+    val fetchingEnrolledCourseList = ObservableBoolean(false)
+    val enrolledAdapter = EnrolledCoursesListAdapter()
+    val myGroupAdapter = MyGroupsListAdapter()
+
+    private var startTime = System.currentTimeMillis()
+    private var impressionId: String? = null
+
+
+    private var message = Message()
+
+    private var singleLiveEvent = EventLiveData
 
     var context: JoshApplication = getApplication()
 
     fun getMentorData(mentorId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response =
-                    AppObjectController.commonNetworkService.getAnimatedLeaderBoardData(mentorId)
+                val response = userProfileRepo.getAnimatedLeaderBoardData(mentorId)
                 if (response.isSuccessful && response.body() != null) {
                     animatedLeaderBoardData.postValue(response.body())
                 }
@@ -74,7 +88,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             try {
                 val extras: HashMap<String, List<Int>> = HashMap()
                 extras["award_mentor_list"] = awardIds
-                AppObjectController.commonNetworkService.patchAwardDetails(extras)
+                userProfileRepo.patchAwardDetails(extras)
 
             } catch (ex: Exception) {
                 //ex.showAppropriateMsg()
@@ -109,30 +123,29 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val obj = mapOf("media_path" to File(mediaPath).name)
-                val responseObj =
-                    AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
+                val responseObj = userProfileRepo.requestMediaRequest(obj)
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     var updateProfilePayload = UpdateProfilePayload()
                     updateProfilePayload.apply {
                         val date = DD_MM_YYYY.parse(userData.value?.dateOfBirth)
-                        basicDetails?.apply{
-                            photoUrl= url
-                            firstName= userData.value?.name
-                            dateOfBirth= DATE_FORMATTER.format(date)
-                            homeTown= userData.value?.hometown
-                            futureGoals= userData.value?.futureGoals
-                            favouriteJoshTalk= userData.value?.favouriteJoshTalk
+                        basicDetails?.apply {
+                            photoUrl = url
+                            firstName = userData.value?.name
+                            dateOfBirth = DATE_FORMATTER.format(date)
+                            homeTown = userData.value?.hometown
+                            futureGoals = userData.value?.futureGoals
+                            favouriteJoshTalk = userData.value?.favouriteJoshTalk
                         }
                         educationDetails?.apply {
-                            degree=userData.value?.educationDetails?.degree
-                            college=userData.value?.educationDetails?.college
-                            year=userData.value?.educationDetails?.year
+                            degree = userData.value?.educationDetails?.degree
+                            college = userData.value?.educationDetails?.college
+                            year = userData.value?.educationDetails?.year
                         }
                         occupationDetails?.apply {
-                            designation=userData.value?.occupationDetails?.designation
-                            company=userData.value?.occupationDetails?.company
+                            designation = userData.value?.occupationDetails?.designation
+                            company = userData.value?.occupationDetails?.company
                         }
                     }
                     saveProfileInfo(updateProfilePayload)
@@ -181,7 +194,8 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
-    fun updateProfilePicFromPreviousProfile(imageId : String,mentorId: String){
+
+    fun updateProfilePicFromPreviousProfile(imageId: String, mentorId: String) {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -204,13 +218,13 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
-    fun deletePreviousProfilePic(imageId : String,mentorId: String){
+
+    fun deletePreviousProfilePic(imageId: String, mentorId: String) {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatus.postValue(ApiCallStatus.START)
-                val response =
-                    AppObjectController.signUpNetworkService.deletePreviousProfilePic(imageId)
+                val response = userProfileRepo.deletePreviousProfilePic(imageId)
                 if (response.isSuccessful) {
                     getPreviousProfilePics(mentorId)
                     getProfileData(mentorId, intervalType, previousPage)
@@ -270,7 +284,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         apiCallStatusForAwardsList.postValue(ApiCallStatus.START)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getProfileAwards(mentorId)
+                val response = userProfileRepo.getProfileAwards(mentorId)
                 if (response.isSuccessful && response.body() != null) {
                     apiCallStatusForAwardsList.postValue(ApiCallStatus.SUCCESS)
                     val newList: List<AwardCategory>? =
@@ -292,41 +306,60 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
 
     }
-    fun getProfileGroups(mentorId: String){
-        apiCallStatusForGroupsList.postValue(ApiCallStatus.START)
+
+    fun getProfileGroups(mentorId: String) {
+        fetchingGroupList.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getProfileGroups(mentorId)
+                val response = userProfileRepo.getProfileGroups(mentorId)
+                isProgressBarShow.set(true)
                 if (response.isSuccessful && response.body()?.groupsList?.myGroupsList != null) {
-                    apiCallStatusForGroupsList.postValue(ApiCallStatus.SUCCESS)
-                    groupsList.postValue(response.body()!!.groupsList)
+                    fetchingGroupList.set(false)
+                    isProgressBarShow.set(false)
+                    withContext(Dispatchers.Main) {
+                        message.what = MY_GROUP_LIST_DATA
+                        message.obj = response.body()!!.groupsList
+                        singleLiveEvent.value = message
+                        myGroupAdapter.addMyGroupToList(response.body()?.groupsList?.myGroupsList)
+                    }
                 } else {
-                    apiCallStatusForGroupsList.postValue(ApiCallStatus.FAILED)
+                    fetchingGroupList.set(false)
+                    isProgressBarShow.set(false)
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
 
             } catch (ex: Throwable) {
-                apiCallStatusForGroupsList.postValue(ApiCallStatus.FAILED)
+                fetchingGroupList.set(false)
+                isProgressBarShow.set(false)
                 ex.showAppropriateMsg()
             }
         }
     }
-    fun getProfileCourses(mentorId: String){
-        apiCallStatusForCoursesList.postValue(ApiCallStatus.START)
+
+    fun getProfileCourses(mentorId: String) {
+        fetchingEnrolledCourseList.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getProfileCourses(mentorId)
+                val response = userProfileRepo.getProfileCourses(mentorId)
+                isProgressBarShow.set(true)
                 if (response.isSuccessful && response.body() != null) {
-                    apiCallStatusForCoursesList.postValue(ApiCallStatus.SUCCESS)
-                    coursesList.postValue(response.body()!!.enrolledCoursesList)
-
+                    isProgressBarShow.set(false)
+                    fetchingEnrolledCourseList.set(false)
+                    withContext(Dispatchers.Main) {
+                        message.what = COURSE_LIST_DATA
+                        message.obj = response.body()!!.enrolledCoursesList
+                        singleLiveEvent.value = message
+                        enrolledAdapter.addEnrolledCoursesToList(response.body()?.enrolledCoursesList?.courses)
+                    }
                 } else {
-                    apiCallStatusForCoursesList.postValue(ApiCallStatus.FAILED)
+                    fetchingEnrolledCourseList.set(false)
+                    isProgressBarShow.set(false)
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
 
             } catch (ex: Throwable) {
-                apiCallStatusForCoursesList.postValue(ApiCallStatus.FAILED)
+                fetchingEnrolledCourseList.set(false)
+                isProgressBarShow.set(false)
                 ex.showAppropriateMsg()
             }
         }
@@ -339,7 +372,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getUserProfileDataV3(
+                val response = userProfileRepo.getUserProfileDataV3(
                     mentorId,
                     intervalType,
                     previousPage
@@ -371,11 +404,11 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
     }
+
     fun getFppStatusInProfile(mentorId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response =
-                    AppObjectController.commonNetworkService.getFppStatusInProfile(mentorId)
+                val response = userProfileRepo.getFppStatusInProfile(mentorId)
                 if (response.isSuccessful && response.body() != null) {
                     if (response.body()!!.fppList.isNullOrEmpty()) {
                         response.body()!!.fppRequest?.let {
@@ -406,41 +439,40 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 if (impressionId.isNullOrBlank())
                     return@launch
 
-                AppObjectController.commonNetworkService.engageUserProfileTime(
-                    impressionId,
-                    mapOf("time_spent" to startTime)
-                )
+                userProfileRepo.engageUserProfileTime(impressionId, startTime)
 
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
     }
-    fun userProfileSectionImpression(mentorId : String,sectionType:String) {
+
+    fun userProfileSectionImpression(mentorId: String, sectionType: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val map: HashMap<String, String> = HashMap<String, String>()
                 map["mentor_id"] = mentorId
                 map["section_type"] = sectionType
-                val response =
-                    AppObjectController.commonNetworkService.userProfileSectionImpression(map)
+                val response = userProfileRepo.userProfileSectionImpression(map)
                 if (response.success == true && response.sectionImpressionId != null) {
                     sectionImpressionResponse.postValue(response)
+                    impressionId = response.sectionImpressionId
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
     }
+
     fun engageUserProfileSectionTime(impressionId: String, timeSpent: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 if (impressionId == null)
                     return@launch
-                val map: HashMap<String, String> = HashMap<String, String>()
+                val map: HashMap<String, String> = HashMap()
                 map["section_impression_id"] = impressionId
                 map["time_spent"] = timeSpent
-                AppObjectController.commonNetworkService.engageUserProfileSectionTime(map)
+                userProfileRepo.engageUserProfileSectionTime(map)
 
             } catch (ex: Throwable) {
                 ex.printStackTrace()
@@ -461,31 +493,34 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
-     fun sendFppRequest(receiverMentorId:String) {
+
+    fun sendFppRequest(receiverMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                p2pNetworkService.sendFppRequest(receiverMentorId)
+                userProfileRepo.sendFppRequest(receiverMentorId)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
     }
-     fun deleteFppRequest(receiverMentorId:String) {
+
+    fun deleteFppRequest(receiverMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                p2pNetworkService.deleteFppRequest(receiverMentorId)
+                userProfileRepo.deleteFppRequest(receiverMentorId)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
     }
-    fun confirmOrRejectFppRequest(senderMentorId:String,userStatus:String,pageType:String) {
+
+    fun confirmOrRejectFppRequest(senderMentorId: String, userStatus: String, pageType: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val map: HashMap<String, String> = HashMap<String, String>()
                 map[userStatus] = "true"
                 map["page_type"] = pageType
-                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
+                userProfileRepo.confirmOrRejectFppRequest(senderMentorId, map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -511,6 +546,30 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 ex.showAppropriateMsg()
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
             }
+        }
+    }
+
+    fun onBackPress(view: View) {
+        message.what = ON_BACK_PRESS
+        singleLiveEvent.value = message
+    }
+
+    fun saveImpression() {
+        startTime = System.currentTimeMillis().minus(startTime).div(1000)
+        if (startTime > 0 && impressionId!!.isBlank().not()) {
+            engageUserProfileSectionTime(impressionId!!, startTime.toString())
+        }
+    }
+
+    val onItemClick: (CourseEnrolled, Int) -> Unit = { it, type ->
+        when (type) {
+            //TODO()
+        }
+    }
+
+    val onGroupItemClick: (GroupInfo, Int) -> Unit = { it, type ->
+        when (type) {
+            //TODO()
         }
     }
 

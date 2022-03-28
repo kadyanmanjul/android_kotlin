@@ -28,6 +28,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -38,22 +39,27 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.quizgame.ui.main.view.fragment.ChoiceFragment
+import com.joshtalks.joshskills.quizgame.util.CHOICE_FRAGMENT
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.*
+import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.userprofile.fragments.*
 import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.utils.*
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
@@ -92,6 +98,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     var isExpanded = true
     var isFirstTimeToGetProfileData=true
     var resp = StringBuilder()
+    private val liveData = EventLiveData
+
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -363,13 +371,20 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             .show(supportFragmentManager, "PreviousProfilePics")
     }
     fun openMyGroupsScreen() {
-        MyGroupsFragment.newInstance()
-            .show(supportFragmentManager, "MyGroups")
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = MyGroupsFragment()
+            replace(R.id.user_root_container, fragment, MY_GROUP)
+            addToBackStack(USER_PROFILE_BACK_STACK)
+        }
     }
     fun openEnrolledCoursesScreen(){
-        EnrolledCoursesFragement.newInstance()
-            .show(supportFragmentManager, "EnrolledCourses")
-
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = EnrolledCoursesFragement()
+            replace(R.id.user_root_container, fragment, COURSE)
+            addToBackStack(USER_PROFILE_BACK_STACK)
+        }
     }
 
     /* private fun initRecyclerView() {
@@ -462,49 +477,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             }
         }
-        viewModel.groupsList.observe(this){
-            if (it.myGroupsList.isNullOrEmpty()) {
-                binding.myGroupsLayout.visibility = GONE
-                binding.myGroupsLl.visibility = GONE
-            } else {
-                binding.myGroupsLayout.visibility = VISIBLE
-                binding.myGroupsLl.visibility = VISIBLE
-                binding.labelMyGroups.text= getString(R.string.group_title)
-                binding.myGroupsLl.removeAllViews()
-                var countGroups = 0
-                it.myGroupsList.forEach {
-                    if (countGroups < 3) {
-                        val view = getMyGroupsLayoutItem(it)
-                        if (view != null) {
-                            binding.myGroupsLl.addView(view)
-                            countGroups++
-                        }
-                    }
-                }
-            }
-        }
-        viewModel.coursesList.observe(this){
-            if (it == null) {
-                binding.enrolledCoursesLayout.visibility = View.GONE
-                binding.enrolledCoursesLl.visibility = View.GONE
-            } else {
-                binding.enrolledCoursesLayout.visibility = View.VISIBLE
-                binding.enrolledCoursesLl.visibility = View.VISIBLE
-                binding.labelEnrolledCourses.text =getString(R.string.courses_title)
-                binding.enrolledCoursesLl.removeAllViews()
-                var countCourses = 0
-                it.courses.forEach { course ->
-                    if (countCourses < 3) {
-                        val view = getEnrolledCourseLayoutItem(course)
-                        if (view != null) {
-                            binding.enrolledCoursesLl.addView(view)
-                            countCourses++
-                        }
-                    }
-                }
-            }
-
-        }
+//
         viewModel.fppRequest.observe(this) {
             when (it.requestStatus) {
                 SENT_REQUEST -> {
@@ -603,43 +576,29 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 binding.awardsShimmer.startShimmer()
             }
         }
-        viewModel.apiCallStatusForCoursesList.observe(this){
-            if (it == ApiCallStatus.SUCCESS) {
-                binding.coursesShimmer.stopShimmer()
-                binding.coursesShimmer.visibility= GONE
-                binding.enrolledCoursesLayout.visibility= VISIBLE
-
-            } else if (it == ApiCallStatus.FAILED) {
-//                binding.coursesShimmer.visibility= GONE
-//                binding.coursesShimmer.stopShimmer()
-//                this.finish()
-            } else if (it == ApiCallStatus.START) {
-                binding.coursesShimmer.visibility= VISIBLE
-                binding.enrolledCoursesLayout.visibility= GONE
-                binding.coursesShimmer.startShimmer()
-            }
 
 
+        if (viewModel.fetchingEnrolledCourseList.get()){
+            binding.coursesShimmer.visibility= VISIBLE
+            binding.enrolledCoursesLayout.visibility= GONE
+            binding.coursesShimmer.startShimmer()
+
+        }else{
+            binding.coursesShimmer.stopShimmer()
+            binding.coursesShimmer.visibility= GONE
+            binding.enrolledCoursesLayout.visibility= VISIBLE
         }
-        viewModel.apiCallStatusForGroupsList.observe(this){
-            if (it == ApiCallStatus.SUCCESS) {
-                binding.grpShimmer.visibility= GONE
-                binding.myGroupsLayout.visibility= VISIBLE
-//                binding.coursesShimmer.stopShimmer()
-//                binding.coursesShimmer.visibility= GONE
-                binding.grpShimmer.stopShimmer()
-            } else if (it == ApiCallStatus.FAILED) {
-//                binding.highlightsShimmer.visibility= GONE
-//                binding.highlightsShimmer.stopShimmer()
-//                this.finish()
-            } else if (it == ApiCallStatus.START) {
-                binding.grpShimmer.visibility= VISIBLE
-                binding.myGroupsLayout.visibility= GONE
-                binding.grpShimmer.startShimmer()
-//                binding.coursesShimmer.visibility= VISIBLE
-//                binding.coursesShimmer.startShimmer()
-            }
 
+
+        if (viewModel.fetchingGroupList.get()){
+            binding.grpShimmer.visibility= VISIBLE
+            binding.myGroupsLayout.visibility= GONE
+            binding.grpShimmer.startShimmer()
+
+        }else{
+            binding.grpShimmer.visibility= GONE
+            binding.myGroupsLayout.visibility= VISIBLE
+            binding.grpShimmer.stopShimmer()
         }
 
         viewModel.userProfileUrl.observe(this) {
@@ -1179,23 +1138,23 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         super.onStop()
     }
 
-    override fun onBackPressed() {
-        val count = supportFragmentManager.backStackEntryCount
-        if (isAnimationVisible) {
-            hideOverlayAnimation()
-            return
-        }
-        if (count == 0) {
-            startTime = System.currentTimeMillis().minus(startTime).div(1000)
-            if (startTime > 0 && impressionId.isBlank().not()) {
-                viewModel.engageUserProfileTime(impressionId, startTime)
-            }
-            super.onBackPressed()
-            // additional code
-        } else {
-            supportFragmentManager.popBackStack()
-        }
-    }
+//    override fun onBackPressed() {
+//        val count = supportFragmentManager.backStackEntryCount
+//        if (isAnimationVisible) {
+//            hideOverlayAnimation()
+//            return
+//        }
+//        if (count == 0) {
+//            startTime = System.currentTimeMillis().minus(startTime).div(1000)
+//            if (startTime > 0 && impressionId.isBlank().not()) {
+//                viewModel.engageUserProfileTime(impressionId, startTime)
+//            }
+//            super.onBackPressed()
+//            // additional code
+//        } else {
+//            supportFragmentManager.popBackStack()
+//        }
+//    }
 
     private fun addUserImageInView(imagePath: String) {
         val imageUpdatedPath = AppDirectory.getImageSentFilePath()
@@ -1267,6 +1226,64 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         super.onStart()
         if (!PrefManager.getBoolValue(HAS_SEEN_PROFILE_ANIMATION))
             showOverlayAnimation()
+
+        liveData.observe(this) {
+            when (it.what) {
+                ON_BACK_PRESS -> {
+                    popBackStack()
+                }
+                COURSE_LIST_DATA ->{
+                    showCourseList(it.obj as EnrolledCoursesList)
+                }
+                MY_GROUP_LIST_DATA ->{
+                    showGroupList(it.obj as GroupsList)
+                }
+            }
+        }
+    }
+
+    private fun showCourseList(courseEnrolled:EnrolledCoursesList) {
+        if (courseEnrolled.courses.isNullOrEmpty()){
+            binding.enrolledCoursesLayout.visibility = GONE
+            binding.enrolledCoursesLl.visibility = GONE
+        }else {
+            binding.enrolledCoursesLayout.visibility = View.VISIBLE
+            binding.enrolledCoursesLl.visibility = View.VISIBLE
+            binding.labelEnrolledCourses.text = getString(R.string.courses_title)
+            binding.enrolledCoursesLl.removeAllViews()
+            var countCourses = 0
+            courseEnrolled.courses.forEach { course ->
+                if (countCourses < 3) {
+                    val view = getEnrolledCourseLayoutItem(course)
+                    if (view != null) {
+                        binding.enrolledCoursesLl.addView(view)
+                        countCourses++
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showGroupList(myGroup:GroupsList){
+        if (myGroup.myGroupsList.isNullOrEmpty()) {
+            binding.myGroupsLayout.visibility = GONE
+            binding.myGroupsLl.visibility = GONE
+        } else {
+            binding.myGroupsLayout.visibility = VISIBLE
+            binding.myGroupsLl.visibility = VISIBLE
+            binding.labelMyGroups.text= getString(R.string.group_title)
+            binding.myGroupsLl.removeAllViews()
+            var countGroups = 0
+            myGroup.myGroupsList.forEach {
+                if (countGroups < 3) {
+                    val view = getMyGroupsLayoutItem(it)
+                    if (view != null) {
+                        binding.myGroupsLl.addView(view)
+                        countGroups++
+                    }
+                }
+            }
+        }
     }
 
     /*private fun stopPointAnimation() {
@@ -1368,6 +1385,26 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             viewModel.userData.value?.expiryDate?.time
         )
         // finish()
+    }
+
+    private fun popBackStack() {
+        if (isAnimationVisible) {
+            hideOverlayAnimation()
+            return
+        }
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            try {
+                supportFragmentManager.popBackStackImmediate()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        } else{
+            startTime = System.currentTimeMillis().minus(startTime).div(1000)
+            if (startTime > 0 && impressionId.isBlank().not()) {
+                viewModel.engageUserProfileTime(impressionId, startTime)
+            }
+            onBackPressed()
+        }
     }
 
 }

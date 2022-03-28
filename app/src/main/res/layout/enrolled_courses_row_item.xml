@@ -1,61 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:id="@+id/group_item_container"
-android:layout_width="match_parent"
-android:layout_height="@dimen/_46sdp"
-android:background="@color/white">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-<de.hdodenhof.circleimageview.CircleImageView
-    android:id="@+id/profile_image"
-    android:layout_width="@dimen/_34sdp"
-    android:layout_height="@dimen/_34sdp"
-    android:layout_centerVertical="true"
-    android:layout_marginStart="@dimen/_14sdp"
-    android:background="@drawable/white_button_round_enabled"
-    android:gravity="center_vertical|start"
-    android:src="@drawable/img_5"
-    android:visibility="visible"
-    app:layout_constraintBottom_toBottomOf="@id/title_container"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="@id/title_container"
-    tools:visibility="visible" />
+    <data>
 
-<androidx.appcompat.widget.LinearLayoutCompat
-    android:id="@+id/title_container"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/_9sdp"
-    android:gravity="center_vertical"
-    android:layout_marginTop="@dimen/_3sdp"
-    android:orientation="vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/profile_image"
-    app:layout_constraintTop_toTopOf="parent">
+        <import type="android.view.View" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_course_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-        android:textColor="@color/black_quiz"
-        tools:text="Course Name"/>
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled" />
+    </data>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_students_enrolled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-        android:textColor="@color/dark_text_color"
-        tools:text="29123 students enrolled" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/group_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_46sdp"
+        android:background="@color/white">
 
-</androidx.appcompat.widget.LinearLayoutCompat>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            imageResource="@{itemData.courseImage}"
+            android:layout_width="@dimen/_34sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:background="@drawable/white_button_round_enabled"
+            android:gravity="center_vertical|start"
+            android:src="@drawable/img_5"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/title_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title_container"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/title_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_course_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@{itemData.courseName}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                android:textColor="@color/black_quiz"
+                tools:text="Course Name" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_students_enrolled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:singleLine="true"
+                android:text="@{itemData.noOfStudents + ` students enrolled`}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textColor="@color/dark_text_color"
+                tools:text="29123 students enrolled" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
 
 
 

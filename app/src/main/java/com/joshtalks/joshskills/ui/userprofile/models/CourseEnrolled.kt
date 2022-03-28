@@ -24,5 +24,5 @@ data class EnrolledCoursesList(
     @SerializedName("label")
     val label: String = EMPTY,
     @SerializedName("courses")
-    val courses: List<CourseEnrolled> = listOf()
+    val courses: ArrayList<CourseEnrolled> = arrayListOf()
 )

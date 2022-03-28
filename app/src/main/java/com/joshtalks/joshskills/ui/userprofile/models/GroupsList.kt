@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class GroupsList(
     @SerializedName("groups")
-    val myGroupsList: List<GroupInfo>?,
+    val myGroupsList: ArrayList<GroupInfo>?,
     @SerializedName("label")
     val label: String?
 )

@@ -1,48 +1,47 @@
 package com.joshtalks.joshskills.ui.userprofile.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatTextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.databinding.EnrolledCoursesRowItemBinding
 import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
-import de.hdodenhof.circleimageview.CircleImageView
 
 class EnrolledCoursesListAdapter(
-    private val items: List<CourseEnrolled> = emptyList()
+    var items: ArrayList<CourseEnrolled>? = arrayListOf()
 ) : RecyclerView.Adapter<EnrolledCoursesListAdapter.ViewHolder>() {
+    var itemClick: ((CourseEnrolled, Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.enrolled_courses_row_item, parent, false)
-
+        val view = DataBindingUtil.inflate<EnrolledCoursesRowItemBinding>(
+            LayoutInflater.from(parent.context),
+            R.layout.enrolled_courses_row_item,
+            parent,
+            false
+        )
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items?.get(position)!!)
     }
 
-    override fun getItemCount(): Int = items.size
+    fun setListener(function: ((CourseEnrolled, Int) -> Unit)?) {
+        itemClick = function
+    }
 
-    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        var courseIcon: CircleImageView = view.findViewById(R.id.profile_image)
-        var courseName: AppCompatTextView = view.findViewById(R.id.tv_course_name)
-        var courseText: AppCompatTextView = view.findViewById(R.id.tv_students_enrolled)
+    override fun getItemCount(): Int = items?.size?:0
+
+    inner class ViewHolder(val view: EnrolledCoursesRowItemBinding) :
+        RecyclerView.ViewHolder(view.root) {
         fun bind(courseEnrolled: CourseEnrolled) {
-            courseName.text=courseEnrolled.courseName
-            courseText.text=AppObjectController.joshApplication.getString(R.string.enrolled_student_text,courseEnrolled.noOfStudents.toString())
-            if(courseEnrolled.courseImage==null){
-                courseIcon.setImageResource(R.drawable.group_default_icon)
-            }else{
-                courseIcon.setImage(courseEnrolled.courseImage,view.context)
-
-            }
-
+            view.itemData = courseEnrolled
         }
-
     }
 
+    fun addEnrolledCoursesToList(enrolledCourseList: ArrayList<CourseEnrolled>?) {
+        items = enrolledCourseList
+        notifyDataSetChanged()
+    }
 }
