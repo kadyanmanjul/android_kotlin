@@ -47,7 +47,7 @@ android {
         resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
     }
 
-    /*signingConfigs {
+    signingConfigs {
         debug {
             storeFile file("JoshSkill.jks")
             storePassword "app@joshskill"
@@ -61,31 +61,27 @@ android {
             keyAlias "joshskill"
             keyPassword "app@joshskill"
         }
-    }*/
+    }
 
     buildTypes {
         debug {
             versionNameSuffix "_Debug"
             debuggable true
-/*
             signingConfig signingConfigs.debug
-*/
             minifyEnabled false
             resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
-            resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
+            resValue("string", "truecaller_key", "kVht21c4b4c0aa0f04e55aa76bac5b056ddd7")
             crunchPngs false
             ext.enableCrashlytics = true
         }
         release {
             resValue("string", "branch_id", "key_live_hk0NAoI7iiZt62YMAeLuZnakuuexFWqk")
-            resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
+            resValue("string", "truecaller_key", "kVht21c4b4c0aa0f04e55aa76bac5b056ddd7")
             debuggable false
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-/*
             signingConfig signingConfigs.release
-*/
         }
     }
 
@@ -187,5 +183,9 @@ dependencies {
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
     implementation 'com.github.dhaval2404:imagepicker:2.1'
     implementation 'id.zelory:compressor:2.1.0'
+
+    //treucaller
+    implementation "com.truecaller.android.sdk:truecaller-sdk:2.6.0"
+
 
 }
