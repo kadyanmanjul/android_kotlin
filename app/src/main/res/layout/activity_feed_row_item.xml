@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
@@ -9,6 +10,9 @@
         <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase"/>
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.activity_feed.ActivityFeedListAdapter.ViewHolder" />
     </data>
 
     <LinearLayout
@@ -17,13 +21,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="@dimen/_10sdp"
-        android:rotation="180">
+        android:rotation="180"
+        tools:rotation="0">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_icon"
             imageResource="@{itemData.photoUrl}"
-            android:layout_width="@dimen/_26sdp"
-            android:layout_height="@dimen/_26sdp"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             tools:src="@color/button_color" />
@@ -34,41 +39,35 @@
             android:layout_weight="5">
             <TextView
                 android:id="@+id/feed_text"
+                partialTextColor="@{itemData.name}"
+                fullText="@{itemData.name +' '+ itemData.text}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:text="@{itemData.name+' '+itemData.text}"
                 android:maxLines="2"
-                partialTextColor="@{itemData.name}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:visibility="visible"
                 tools:text="Mohit updated a profile picture" />
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true">
-
-                <ImageView
+            <LinearLayout
                     android:id="@+id/updated_pic_border"
-                    android:layout_width="@dimen/_64sdp"
-                    android:layout_height="@dimen/_64sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:visibility="@{itemData.eventId == 5 ? View.VISIBLE : View.GONE}"
-                    android:src="@drawable/ic_img_border" />
+                    android:background="@drawable/ic_img_border">
 
                 <ImageView
                     android:id="@+id/updated_pic"
                     android:layout_width="@dimen/_58sdp"
                     android:layout_height="@dimen/_58sdp"
                     android:layout_margin="@dimen/_2sdp"
-                    updatedImageResource="@{itemData.mediaUrl}"
+                    updatedImageResource="@{itemData.photoUrl}"
                     android:scaleType="centerCrop"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
@@ -79,7 +78,54 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@color/button_color" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/audio_view_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:backgroundTint="#F2F2F2"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="@dimen/_6sdp"
+                    android:visibility="@{itemData.duration==0? View.GONE : View.VISIBLE}"
+                    tools:visibility="visible">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="@dimen/_6sdp"
+                        android:paddingVertical="@dimen/_6sdp">
+
+
+                    <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+                    android:id="@+id/btn_play_pause"
+                    android:layout_width="@dimen/_22sdp"
+                    android:layout_height="@dimen/_22sdp"
+                    android:backgroundTint="#F2F2F2"
+                    android:contentDescription="@string/play_button_description"
+                    android:onClick="@{()->handler.onPlayPauseBtnClick()}"
+                    android:padding="@dimen/_1sdp"
+                    android:theme="?actionBarTheme"
+                    android:tint="#65767E"
+                        app:circularflow_radiusInDP="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SeekBar
+                    android:id="@+id/seek_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:progressBackgroundTint="#65767E"
+                    android:progressDrawable="@drawable/seek_bar_draw"
+                    android:thumb="@drawable/seek_thumb"
+                    android:thumbTint="#65767E"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_play_pause"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/btn_play_pause"
+                    app:layout_constraintTop_toTopOf="@id/btn_play_pause" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
         </LinearLayout>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/feed_time"

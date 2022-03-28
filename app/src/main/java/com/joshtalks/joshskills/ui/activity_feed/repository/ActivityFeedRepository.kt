@@ -4,7 +4,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 
-class FirestoreFeedRepository {
+class ActivityFeedRepository {
     val firestoreDB = FirebaseFirestore.getInstance()
 
     fun getActivityFeed(): CollectionReference {

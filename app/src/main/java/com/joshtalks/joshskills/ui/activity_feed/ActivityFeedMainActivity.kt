@@ -4,22 +4,17 @@ import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityFeedMainBinding
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
-import com.joshtalks.joshskills.ui.activity_feed.utils.FEED_SCROLL_TO_END
-import com.joshtalks.joshskills.ui.activity_feed.utils.ON_FEED_BACK_PRESSED
-import com.joshtalks.joshskills.ui.activity_feed.utils.OPEN_FEED_USER_PROFILE
-import com.joshtalks.joshskills.ui.activity_feed.utils.OPEN_PROFILE_IMAGE_FRAGMENT
+import com.joshtalks.joshskills.ui.activity_feed.utils.*
 import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
 import com.joshtalks.joshskills.ui.group.BaseGroupActivity
 import com.joshtalks.joshskills.ui.userprofile.ProfileImageShowFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
 class ActivityFeedMainActivity : BaseGroupActivity() {
-    lateinit var layoutManager: LinearLayoutManager
 
     val binding by lazy<ActivityFeedMainBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_feed_main)
@@ -28,7 +23,6 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
     val viewModel: ActivityFeedViewModel by lazy {
         ViewModelProvider(this).get(ActivityFeedViewModel::class.java)
     }
-    lateinit var recyclerView: RecyclerView
 
     override fun setIntentExtras() {}
 
@@ -48,6 +42,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
                 OPEN_FEED_USER_PROFILE -> openUserProfileActivity(it.obj as ActivityFeedResponseFirebase)
                 OPEN_PROFILE_IMAGE_FRAGMENT -> openProfileImageFragment(it.obj as ActivityFeedResponseFirebase)
                 FEED_SCROLL_TO_END -> scrollToEnd()
+                ON_ITEM_ADDED->setScrollToEndBtn()
             }
         }
     }
@@ -82,9 +77,17 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         )
             .show((this).supportFragmentManager.beginTransaction(), "ImageShow")
     }
-
+    fun setScrollToEndBtn(){
+        val layout=binding.rvFeeds.layoutManager as LinearLayoutManager
+        if(layout.findFirstCompletelyVisibleItemPosition()==0){
+            viewModel.isScrollToEndButtonVisible.set(false)
+            binding.rvFeeds.layoutManager?.scrollToPosition(0)
+        }else{
+            viewModel.isScrollToEndButtonVisible.set(true)
+        }
+    }
     fun scrollToEnd() {
-        recyclerView.layoutManager?.scrollToPosition(0)
+        binding.rvFeeds.layoutManager?.scrollToPosition(0)
         viewModel.isScrollToEndButtonVisible.set(false)
     }
 }

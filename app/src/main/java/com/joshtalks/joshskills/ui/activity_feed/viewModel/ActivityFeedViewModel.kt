@@ -15,17 +15,15 @@ import com.joshtalks.joshskills.repository.server.ActivityFeedList
 import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedListAdapter
 import com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponseFirebase
-import com.joshtalks.joshskills.ui.activity_feed.repository.FirestoreFeedRepository
+import com.joshtalks.joshskills.ui.activity_feed.repository.ActivityFeedRepository
 import com.joshtalks.joshskills.ui.activity_feed.utils.*
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ActivityFeedViewModel:BaseViewModel() {
-    val firebaseRepository = FirestoreFeedRepository()
-    var currentFeed: MutableLiveData<ActivityFeedResponseFirebase> = MutableLiveData()
-    val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val feedDataList: MutableLiveData<ActivityFeedList> = MutableLiveData()
+    val firebaseRepository = ActivityFeedRepository()
+    var currentFeed: ActivityFeedResponseFirebase = ActivityFeedResponseFirebase()
     private var feedTime = System.currentTimeMillis()
     private var localFlag = false
 
@@ -51,28 +49,52 @@ class ActivityFeedViewModel:BaseViewModel() {
                             if (doc.type == DocumentChange.Type.ADDED) {
                                 if (localFlag) {
                                     val timeGap = (System.currentTimeMillis() - feedTime).div(1000)
-                                    if (timeGap >= 0.05) {
+                                    if (timeGap >= 0.5) {
                                         fetchingAllFeed.set(false)
-                                        currentFeed.value = doc.document.toObject()
-                                        currentFeed.value!!.photoUrl =
+                                        currentFeed = doc.document.toObject()
+                                        currentFeed.photoUrl =
                                             doc.document.get("photo_url").toString()
-                                        currentFeed.value!!.eventId =
-                                            Integer.parseInt(doc.document.get("event_id").toString())
-                                        currentFeed.value!!.mediaUrl =
+                                        if(doc.document.get("event_id").toString()!="null") {
+                                            currentFeed.eventId =
+                                                doc.document.get("event_id").toString().toInt()
+                                        }
+                                        currentFeed.mediaUrl =
                                             doc.document.get("media_url").toString()
-                                        currentFeed.value!!.mentorId =
+                                        currentFeed.mentorId =
                                             doc.document.get("mentor_id").toString()
-
+                                        if(doc.document.get("media_duration").toString()!="null") {
+                                            currentFeed.duration =
+                                                doc.document.get("media_duration").toString()
+                                                    .toInt()
+                                        }
                                         feedTime = System.currentTimeMillis()
+                                        currentFeed?.let { adapter.items.add(0, it) }
+                                        adapter.notifyItemInserted(0)
+                                        message.what= ON_ITEM_ADDED
+                                        singleLiveEvent.value=message
                                     }
                                 } else {
                                     fetchingAllFeed.set(false)
-                                    currentFeed.value = doc.document.toObject()
-                                    currentFeed.value!!.photoUrl =
+                                    currentFeed = doc.document.toObject()
+                                    currentFeed.photoUrl =
                                         doc.document.get("photo_url").toString()
+                                    if(doc.document.get("event_id").toString()!="null") {
+                                        currentFeed.eventId =
+                                            doc.document.get("event_id").toString().toInt()
+                                    }
+                                    currentFeed.mediaUrl =
+                                        doc.document.get("media_url").toString()
+                                    currentFeed.mentorId =
+                                        doc.document.get("mentor_id").toString()
+                                    if(doc.document.get("media_duration").toString()!="null") {
+                                        currentFeed.duration =
+                                            doc.document.get("media_duration").toString()
+                                                .toInt()
+                                    }
+                                    currentFeed?.let { adapter.items.add(0, it) }
+                                    adapter.notifyItemInserted(0)
                                 }
-                                currentFeed.value?.let { adapter.items.add(0, it) }
-                                adapter.notifyItemChanged(0)
+
                             }
                         }
                     }
