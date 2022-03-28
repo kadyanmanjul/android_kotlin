@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
+import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
@@ -69,7 +70,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
                 OPEN_GROUP_REQUESTS_LIST -> openRequestsFragment()
                 SEARCH_GROUP -> openGroupSearchFragment()
-                OPEN_ADMIN_RESPONSIBILITY -> openAdminResponseFragment()
+                OPEN_ADMIN_RESPONSIBILITY -> openAdminResponseFragment(it.obj as AddGroupRequest)
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
                 OPEN_GROUP_REQUEST -> openGroupRequestFragment()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
@@ -264,11 +265,14 @@ class JoshGroupActivity : BaseGroupActivity() {
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
     }
 
-    private fun openAdminResponseFragment() {
+    private fun openAdminResponseFragment(addGroupRequest: AddGroupRequest) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
 
             val fragment = GroupAdminFragment()
+            fragment.arguments = Bundle().apply {
+                putParcelable(ADD_GROUP_REQUEST, addGroupRequest)
+            }
             replace(R.id.group_fragment_container, fragment, ADMIN_RESPONSE_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }

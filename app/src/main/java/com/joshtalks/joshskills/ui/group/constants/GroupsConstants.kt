@@ -23,6 +23,7 @@ const val IS_FROM_VOIP = "IS_FROM_VOIP"
 const val IS_FROM_KEYBOARD = "isFromKeyboard"
 const val ADMIN_ID = "GROUP_ADMIN_ID"
 const val GROUP_TYPE = "GROUP_TYPE"
+const val ADD_GROUP_REQUEST = "ADD_GROUP_REQUEST"
 const val FROM_BACKEND_MSG_TIME = "from_backend_message_time"
 
 const val OPENED_GROUP = "open"

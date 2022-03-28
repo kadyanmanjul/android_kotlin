@@ -128,66 +128,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_select_group_type" />
 
-        <TextView
-            android:id="@+id/tv_group_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_14sdp"
-            android:layout_marginTop="@dimen/_18sdp"
-            android:text="Group Icon"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_group_type_hint" />
-
-        <TextView
-            android:id="@+id/tv_group_icon_hint"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_14sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
-            android:text="Icon is Optional and also can be edited later."
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-            app:layout_constraintEnd_toStartOf="@+id/add_group_image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_group_icon" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/add_group_image"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_24sdp"
-            android:layout_marginEnd="@dimen/_18sdp"
-            android:background="@drawable/rounded_rectangle_grey"
-            android:backgroundTint="@color/blue33"
-            android:onClick="@{vm::openImageChooser}"
-            android:padding="0dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/add_groups"
-            android:text="Add Image"
-            android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Small"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_group_icon_hint"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_group_icon" />
-
-        <androidx.appcompat.widget.AppCompatImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_group"
             defaultImage="@{DefaultImage.NO_IMAGE}"
             groupImage="@{vm.isFromGroupInfo ? vm.groupImageUrl : ` `}"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_160sdp"
+            android:layout_width="@dimen/_42sdp"
+            android:layout_height="@dimen/_42sdp"
             android:layout_centerVertical="true"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_18sdp"
-            android:background="@drawable/white_rectangle_with_grey_stroke"
-            android:backgroundTint="@color/grey_shade_new"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:background="@drawable/white_button_round_enabled"
             android:elevation="1dp"
             android:gravity="center_vertical|start"
+            android:onClick="@{vm::openImageChooser}"
             android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_group_icon_hint" />
+            app:layout_constraintTop_toBottomOf="@id/tv_group_type_hint"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:text="Provide an optional group icon "
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            app:layout_constraintStart_toEndOf="@id/img_group"
+            app:layout_constraintTop_toTopOf="@id/img_group"
+            app:layout_constraintBottom_toBottomOf="@id/img_group"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/submit_add_group"

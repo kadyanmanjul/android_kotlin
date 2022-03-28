@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.ADD_GROUP_TO_SERVER
 import com.joshtalks.joshskills.databinding.FragmentGroupAdminBinding
+import com.joshtalks.joshskills.ui.group.constants.ADD_GROUP_REQUEST
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 
@@ -19,6 +20,7 @@ private const val TAG = "GroupAdminFragment"
 
 class GroupAdminFragment : BaseFragment() {
     lateinit var binding: FragmentGroupAdminBinding
+    private lateinit var addGroupRequest: AddGroupRequest
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[JoshGroupViewModel::class.java]
@@ -41,16 +43,20 @@ class GroupAdminFragment : BaseFragment() {
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 ADD_GROUP_TO_SERVER -> {
-                    if (binding.adminCheck.isChecked)
-                        vm.addGroup(it.obj as AddGroupRequest)
-                    else
+                    if (binding.adminCheck.isChecked) {
+                        vm.addGroup(addGroupRequest)
+                    } else
                         showToast("Please accept the admin responsibilities")
                 }
             }
         }
     }
 
-    override fun setArguments() {}
+    override fun setArguments() {
+        arguments?.let {
+            addGroupRequest = it.getParcelable(ADD_GROUP_REQUEST)!!
+        }
+    }
 
     override fun getConversationId(): String? {
         return if (vm.conversationId.isBlank()) null else vm.conversationId

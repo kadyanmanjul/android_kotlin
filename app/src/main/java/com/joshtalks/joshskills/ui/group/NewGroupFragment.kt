@@ -24,6 +24,8 @@ import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.constants.IS_FROM_GROUP_INFO
+import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
@@ -66,7 +68,10 @@ class NewGroupFragment : BaseFragment() {
                 }
                 CREATE_GROUP_VALIDATION -> {
                     val groupName = binding.etGroupName.text.toString()
-                    val groupType = binding.tvSelectGroupType.text.toString()
+                    var groupType = OPENED_GROUP
+                    if (binding.tvSelectGroupType.text.toString().contains(CLOSED_GROUP, true))
+                        groupType = CLOSED_GROUP
+
                     if (groupName.isNotBlank() && groupName.length <= 25 && groupType.isNotEmpty()) {
                         val request = AddGroupRequest(
                             mentorId = Mentor.getInstance().getId(),

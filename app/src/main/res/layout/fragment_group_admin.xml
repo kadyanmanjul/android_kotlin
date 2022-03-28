@@ -41,34 +41,52 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="As Admin you have the following Responsibilities"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+            android:text="Admin Guide"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
-
-        <TextView
-            android:id="@+id/textView12"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_20sdp"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:text="@string/admin_responsibilities"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
         <CheckBox
             android:id="@+id/admin_check"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_8sdp"
-            android:text="I ready to become Admin"
+            android:button="@null"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            android:text="I am ready to become the Group Admin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12" />
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:background="@color/gray_e6"
+            app:layout_constraintTop_toBottomOf="@id/admin_check" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:text="@string/admin_responsibilities"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/admin_check" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:background="@color/gray_e6"
+            app:layout_constraintTop_toBottomOf="@id/textView12" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_add_group"
