@@ -111,13 +111,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun permissionGranted() {
-        Log.e("tocheck", "start download -- VM permissionGranted")
         message.what = PERMISSION_FROM_READING_GRANTED
         singleLiveEvent.value = message
     }
 
     fun askStoragePermission() {
-        Log.e("tocheck", "start download -- VM askStoragePermission")
         message.what = PERMISSION_FROM_READING
         singleLiveEvent.value = message
     }

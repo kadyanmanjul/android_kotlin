@@ -1,13 +1,11 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
-import android.Manifest
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.*
-import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import com.joshtalks.joshskills.BuildConfig
@@ -36,8 +34,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -72,10 +70,6 @@ import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
-import com.joshtalks.videocompressor.CompressionListener
-import com.joshtalks.videocompressor.VideoCompressor
-import com.joshtalks.videocompressor.VideoQuality
-import com.joshtalks.videocompressor.config.Configuration
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -104,6 +98,9 @@ import java.lang.Runnable
 import java.nio.ByteBuffer
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.android.synthetic.main.fragment_record_practise.view.*
 
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
@@ -132,8 +129,6 @@ class ReadingFragmentWithoutFeedback :
     private var userReferralCode: String = EMPTY
     private var video: String? = null
     private var videoDownPath: String? = null
-
-    //lateinit var videoDownPath: String
     private var outputFile: String = ""
     private var downloadID: Long = -1
     lateinit var fileName: String
@@ -270,20 +265,6 @@ class ReadingFragmentWithoutFeedback :
                 binding.mergedVideo.pause()
                 binding.playBtn.visibility = VISIBLE
             }
-            if (binding.mergedVideo.isPlaying.not()) {
-                binding.playBtn.visibility = VISIBLE
-            }
-//            if(binding.progressDialog.visibility == VISIBLE){
-//                binding.progressDialog.visibility = GONE
-//            }
-
-//            if(binding.playBtn.visibility == INVISIBLE){
-//                binding.playBtn.visibility = VISIBLE
-//            }
-//            else if(binding.mergedVideo.isPlaying.not()){
-//                binding.mergedVideo.start()
-//                binding.playBtn.visibility = INVISIBLE
-//            }
         }
         binding.mergedVideo.setOnCompletionListener {
             binding.playBtn.visibility = VISIBLE
@@ -300,7 +281,6 @@ class ReadingFragmentWithoutFeedback :
             binding.playInfoHint.visibility = VISIBLE
         }
         events.observe(this) {
-            Log.e("tocheck", "start download -- Fragment ev permissionGranted ")
             when (it.what) {
                 PERMISSION_FROM_READING_GRANTED -> download()
             }
@@ -309,7 +289,6 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onResume() {
         super.onResume()
-        //fetchVideo()
         showRecordHintAnimation()
         subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -761,8 +740,10 @@ class ReadingFragmentWithoutFeedback :
             {
                 currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
                 video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
-                lifecycleScope.launchWhenResumed {
-                    fetchVideo()
+                lifecycleScope.launch {
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                        fetchVideo()
+                    }
                 }
                 currentLessonQuestion?.run {
 
@@ -776,12 +757,6 @@ class ReadingFragmentWithoutFeedback :
                         binding.submitAnswerBtn.visibility = VISIBLE
                         appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
                         appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
-//                        if(video.isNullOrEmpty().not()){
-//                            binding.progressDialog.visibility = VISIBLE
-//                            CoroutineScope(Dispatchers.IO).launch{
-//                                delay(10000)
-//                            }
-//                        }
                         setViewAccordingExpectedAnswer()
                     } else {
                         if (video.isNullOrBlank().not()) {
@@ -795,9 +770,9 @@ class ReadingFragmentWithoutFeedback :
                                             .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
                                     ) {
-                                        var ansVideoPath = AppObjectController.appDatabase.chatDao()
+                                        val submittedVideoPath = AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
-                                        binding.mergedVideo.setVideoPath(ansVideoPath)
+                                        binding.mergedVideo.setVideoPath(submittedVideoPath)
                                     } else if (AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) == false
@@ -919,24 +894,18 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun download() {
-        Log.e("tocheck", "start download")
         if (PermissionUtils.isStoragePermissionEnabled(requireContext())) {
             downloadVideos()
         } else {
-            Log.e("tocheck", "## Permission Not-Granted")
             viewModel.askStoragePermission()
         }
     }
 
-    // TODO: Refactor Data
     private fun downloadVideos() {
-        Log.e("tocheck", "start download $currentLessonQuestion")
-        Log.e("tocheck", "start download ${currentLessonQuestion?.videoList}")
         currentLessonQuestion?.videoList?.let {
             if (it.isNotEmpty()) {
                 flag = false
                 scope.launch { mutex.lock() }
-                Log.e("tocheck", "start download2")
                 DownloadUtils.downloadFile(
                     it[0].video_url!!,
                     AppDirectory.docsReceivedFile(it[0].video_url!!).absolutePath,
@@ -950,7 +919,6 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    // TODO: Handle Error Case
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
         }
@@ -960,14 +928,11 @@ class ReadingFragmentWithoutFeedback :
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             muxerJob?.cancel()
             unlockDownloadLock()
-            //showToast("download Failed")
-            Log.e("tocheck", "start download8")
         }
 
         override fun onCompleted(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-            //showToast("video Downloaded")
             videoDownPath = download.file.toString()
             flag = true
             unlockDownloadLock()
@@ -980,14 +945,9 @@ class ReadingFragmentWithoutFeedback :
                     )
                 }
             }
-
-            var uris = mutableListOf<Uri>()
-            uris.add(Uri.parse(videoDownPath))
-            processVideo(uris)
         }
 
         override fun onDeleted(download: Download) {
-            Log.e("tocheck", "start download9")
         }
 
         override fun onDownloadBlockUpdated(
@@ -1000,14 +960,11 @@ class ReadingFragmentWithoutFeedback :
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
-            //showToast("download error")
             muxerJob?.cancel()
             unlockDownloadLock()
-            Log.e("tocheck", "start download10")
         }
 
         override fun onPaused(download: Download) {
-            Log.e("tocheck", "start download11")
         }
 
         override fun onProgress(
@@ -1015,15 +972,12 @@ class ReadingFragmentWithoutFeedback :
             etaInMilliSeconds: Long,
             downloadedBytesPerSecond: Long
         ) {
-            Log.e("tocheck", "start download12")
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-            Log.e("tocheck", "start download13")
         }
 
         override fun onRemoved(download: Download) {
-            Log.e("tocheck", "start download14")
         }
 
         override fun onResumed(download: Download) {
@@ -1035,22 +989,17 @@ class ReadingFragmentWithoutFeedback :
             totalBlocks: Int
         ) {
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-            //showToast("downloading")
-            Log.e("tocheck", "start download15")
         }
 
         override fun onWaitingNetwork(download: Download) {
-            Log.e("tocheck", "start download16")
         }
     }
 
     private fun unlockDownloadLock() {
         try {
-            Log.e("tocheck", "start download3")
             mutex.unlock()
         } catch (e: IllegalStateException) {
             e.printStackTrace()
-            Log.e("tocheck", "start download4")
         }
     }
 
@@ -1085,6 +1034,10 @@ class ReadingFragmentWithoutFeedback :
         binding.continueBtn.visibility = VISIBLE
         if (currentLessonQuestion?.videoList?.getOrNull(0)?.video_url.isNullOrEmpty().not()) {
             binding.ivClose.visibility = GONE
+            binding.ivShare.visibility = VISIBLE
+            binding.ivShare.setOnClickListener {
+                shareVideoForAudio(outputFile)
+            }
         }
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -1159,7 +1112,6 @@ class ReadingFragmentWithoutFeedback :
             } else {
                 filePath = practiseEngagement?.answerUrl
             }
-            //filePath = practiseEngagement?.answerUrl
 
             // initializePractiseSeekBar()
         }
@@ -1195,7 +1147,6 @@ class ReadingFragmentWithoutFeedback :
         } else {
             binding.audioList.visibility = VISIBLE
         }
-        // binding.audioList.visibility = VISIBLE
         practiceEngagement?.let { practiceList ->
             if (practiceList.isNullOrEmpty().not()) {
                 practiceList.forEach { practice ->
@@ -1252,12 +1203,7 @@ class ReadingFragmentWithoutFeedback :
         showPracticeSubmitLayout()
         binding.practiseSubmitLayout.visibility = VISIBLE
         if (video.isNullOrEmpty().not()) {
-            binding.practiseSubmitLayout.visibility = VISIBLE
-            binding.videoLayout.visibility = VISIBLE
-            binding.mergedVideo.visibility = VISIBLE
-            binding.subAnswerLayout.visibility = VISIBLE
-            binding.ivClose.visibility = VISIBLE
-            // binding.progressDialog.visibility = VISIBLE
+            addVideoView()
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioList.visibility = VISIBLE
@@ -1270,6 +1216,15 @@ class ReadingFragmentWithoutFeedback :
             initializePractiseSeekBar()
         }
         enableSubmitButton()
+    }
+    private fun addVideoView(){
+        binding.practiseSubmitLayout.visibility = VISIBLE
+        binding.videoLayout.visibility = VISIBLE
+        binding.mergedVideo.visibility = VISIBLE
+        binding.subAnswerLayout.visibility = VISIBLE
+        binding.ivClose.visibility = VISIBLE
+        binding.progressDialog.visibility = VISIBLE
+        binding.playBtn.visibility = GONE
     }
 
     private fun recordPermission() {
@@ -1392,28 +1347,15 @@ class ReadingFragmentWithoutFeedback :
 
                             muxerJob = scope.launch {
                                 if (isActive) {
-                                    Log.e("tocheck", "start download launch 6")
                                     mutex.withLock {
-                                        Log.e("tocheck", "start download6")
                                         audioVideoMuxer()
-                                        Log.e("tocheck", "start download7")
-                                        binding.playBtn.visibility = VISIBLE
+                                        requireActivity().runOnUiThread(Runnable {
+                                            binding.progressDialog.visibility = GONE
+                                            binding.playBtn.visibility = VISIBLE
+                                        })
                                     }
                                 }
                             }
-//                            if(flag == true){
-//                                Log.e("checkFlag11", flag.toString() )
-//                                scope.launch {
-//                                audioVideoMuxer()
-//                            }
-//                            }else{
-//                                while (flag== true){
-//                                    Log.e("checkFlag", flag.toString() )
-//                                    scope.launch {
-//                                        audioVideoMuxer()
-//                                    }
-//                                }
-//                            }
                         }
                     }
                 }
@@ -1425,26 +1367,13 @@ class ReadingFragmentWithoutFeedback :
     suspend fun audioVideoMuxer() {
         try {
             val videoExtractor: MediaExtractor = MediaExtractor()
-            val cmpPath: String = AppObjectController.appDatabase.chatDao()
-                .getCompressedVideo(currentLessonQuestion!!.questionId)
-            //val videoDownPath: String = AppObjectController.appDatabase.chatDao().getCompressedVideo(currentLessonQuestion!!.questionId)
-
-
             val audioExtractor: MediaExtractor = MediaExtractor()
             audioExtractor.setDataSource(filePath!!)
             audioExtractor.selectTrack(0)
             val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
-
-            // toCheck(videoExtractor, audioFormat, audioExtractor)
             videoDownPath?.let { videoExtractor.setDataSource(it) }
-            //  videoExtractor.setDataSource(cmpPath)
             videoExtractor.selectTrack(0)
             val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
-
-//            val audioExtractor: MediaExtractor  = MediaExtractor()
-//            audioExtractor.setDataSource(filePath!!)
-//            audioExtractor.selectTrack(0)
-//            val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
 
             var muxer: MediaMuxer = MediaMuxer(
                 outputFile,
@@ -1502,103 +1431,9 @@ class ReadingFragmentWithoutFeedback :
                     muxer.writeSampleData(audioTrack, audioBuf, audioBufferInfo)
                     audioExtractor.advance()
                 }
-
             }
 
             muxer.stop()
-
-            muxer.release()
-            binding.mergedVideo.setVideoPath(outputFile)
-            binding.mergedVideo.start()
-            binding.playBtn.visibility = INVISIBLE
-
-
-        } catch (e: IOException) {
-            Timber.e(e)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-
-    }
-
-    fun toCheck(
-        videoExtractor: MediaExtractor,
-        audioFormat: MediaFormat,
-        audioExtractor: MediaExtractor
-    ) {
-        try {
-
-            videoDownPath?.let { videoExtractor.setDataSource(it) }
-            //  videoExtractor.setDataSource(cmpPath)
-            videoExtractor.selectTrack(0)
-            val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
-
-//            val audioExtractor: MediaExtractor  = MediaExtractor()
-//            audioExtractor.setDataSource(filePath!!)
-//            audioExtractor.selectTrack(0)
-//            val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
-
-            var muxer: MediaMuxer = MediaMuxer(
-                outputFile,
-                MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
-            )
-
-            val videoTrack = muxer.addTrack(videoFormat)
-            val audioTrack = muxer.addTrack(audioFormat)
-
-            var sawEOS = false
-            var frameCount = 0
-            val offset = 100
-            val sampleSize = 256 * 1024
-            val videoBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
-            val audioBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
-            val videoBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
-            val audioBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
-
-            videoExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
-            audioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
-
-            muxer.start()
-            while (!sawEOS) {
-                videoBufferInfo.offset = offset
-                videoBufferInfo.size = videoExtractor.readSampleData(videoBuf, offset)
-
-                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
-                    sawEOS = true
-                    videoBufferInfo.size = 0
-
-                } else {
-                    videoBufferInfo.presentationTimeUs = videoExtractor.getSampleTime()
-                    videoBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME
-                    muxer.writeSampleData(videoTrack, videoBuf, videoBufferInfo)
-                    videoExtractor.advance()
-
-                    frameCount++
-                }
-            }
-
-            var sawEOS2 = false
-            var frameCount2 = 0
-            while (!sawEOS2) {
-                frameCount2++
-
-                audioBufferInfo.offset = offset
-                audioBufferInfo.size = audioExtractor.readSampleData(audioBuf, offset)
-
-                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
-                    sawEOS2 = true
-                    audioBufferInfo.size = 0
-                } else {
-                    audioBufferInfo.presentationTimeUs = audioExtractor.getSampleTime()
-                    audioBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
-                    muxer.writeSampleData(audioTrack, audioBuf, audioBufferInfo)
-                    audioExtractor.advance()
-                }
-
-            }
-
-            muxer.stop()
-
             muxer.release()
             binding.mergedVideo.setVideoPath(outputFile)
             binding.mergedVideo.start()
@@ -1608,57 +1443,10 @@ class ReadingFragmentWithoutFeedback :
             Timber.e(e)
         } catch (e: Exception) {
             Timber.e(e)
-        }
-    }
-
-    fun processVideo(uri: List<Uri>) {
-        scope.launch {
-            VideoCompressor.start(
-                context = requireActivity().application,
-                uris = uri,
-                isStreamable = true,
-                saveAt = Environment.DIRECTORY_MOVIES,
-                listener = object : CompressionListener {
-
-                    override fun onStart(index: Int) {
-                        //showToast("started")
-                    }
-
-                    override fun onProgress(index: Int, percent: Float) {
-                        //showToast("in progress")
-                    }
-
-                    override fun onSuccess(index: Int, size: Long, path: String?) {
-                        //showToast("successful")
-                        // videoDownPath = path
-//                        scope.launch {
-//                            AppObjectController.appDatabase.chatDao().insertCompressedVideo(
-//                                CompressedVideo(currentLessonQuestion!!.questionId, path!!)
-//                            )
-//                        }
-                    }
-
-                    override fun onFailure(index: Int, failureMessage: String) {
-                        //showToast("failed")
-                    }
-
-                    override fun onCancelled(index: Int) {
-                        //showToast("canceled")
-                    }
-
-                },
-                configureWith = Configuration(
-                    quality = VideoQuality.MEDIUM,
-                    isMinBitrateCheckEnabled = false,
-                    disableAudio = false,
-                    keepOriginalResolution = false,
-                )
-            )
         }
     }
 
     fun shareVideoForAudio(path: String) {
-
         userReferralCode = Mentor.getInstance().referralCode
         val branchUniversalObject = BranchUniversalObject()
             .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
@@ -1691,18 +1479,6 @@ class ReadingFragmentWithoutFeedback :
                         path = path
                     )
             }
-
-//            val destination = path!!
-//            val waIntent = Intent(Intent.ACTION_SEND)
-//            waIntent.type = "*/*"
-//            waIntent.putExtra(Intent.EXTRA_TEXT, "")
-//            waIntent.putExtra(
-//                Intent.EXTRA_STREAM,
-//                Uri.parse(destination)
-//            )
-//            waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//            startActivity(Intent.createChooser(waIntent, "Share with"))
-
     }
 
     fun inviteFriends(dynamicLink: String, path: String) {
@@ -1731,7 +1507,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun closeRecordedView() {
-        binding.ivClose.setOnClickListener {
             if (binding.mergedVideo.isPlaying) {
                 binding.mergedVideo.stopPlayback()
             }
@@ -1740,7 +1515,6 @@ class ReadingFragmentWithoutFeedback :
             binding.practiseSubmitLayout.visibility = GONE
             binding.playBtn.visibility = GONE
             disableSubmitButton()
-        }
     }
 
     fun playVideo() {
@@ -1904,7 +1678,6 @@ class ReadingFragmentWithoutFeedback :
                     } else {
                         requestEngage.localPath = filePath
                     }
-//                    requestEngage.localPath = filePath
                     requestEngage.duration =
                         Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
                     // requestEngage.feedbackRequire = currentLessonQuestion.feedback_require

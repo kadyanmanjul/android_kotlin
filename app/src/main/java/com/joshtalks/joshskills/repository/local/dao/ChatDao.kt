@@ -72,7 +72,7 @@ interface ChatDao {
     @Query("SELECT isDownloaded FROM reading_video where id= :questionId")
     suspend fun getDownloadedVideoStatus(questionId: String): Boolean
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCompressedVideo(compressedVideo: CompressedVideo)
 
     @Query("SELECT path FROM compressed_video where id= :questionId")

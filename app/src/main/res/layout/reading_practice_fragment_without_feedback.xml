@@ -31,24 +31,6 @@
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/_16sdp">
 
-
-<!--                <com.pnikosis.materialishprogress.ProgressWheel-->
-<!--                    android:id="@+id/progress_dialog"-->
-<!--                    android:layout_width="@dimen/_28sdp"-->
-<!--                    android:layout_height="@dimen/_28sdp"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:visibility="gone"-->
-<!--                    app:matProg_barWidth="@dimen/_2sdp"-->
-<!--                    tools:visibility="invisible"-->
-<!--                    wheel:matProg_barColor="#ffffff"-->
-<!--                    wheel:matProg_fillRadius="true"-->
-<!--                    wheel:matProg_progressIndeterminate="true"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"/>-->
-
-
                 <FrameLayout
                     android:id="@+id/black_frame_container"
                     android:layout_width="0dp"
@@ -495,9 +477,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/practise_text_info_layout"
                     card_view:cardElevation="0dp"
+                    card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardUseCompatPadding="false"
                     tools:visibility="visible">
-<!--                    android:minHeight="@dimen/_56sdp"-->
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/sub_answer_layout"
@@ -545,7 +527,6 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:srcCompat="@drawable/ic_share"
                             tools:visibility="invisible" />
-
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -556,26 +537,19 @@
                         android:layout_marginTop="@dimen/_28sdp"
                         android:visibility="gone"
                         tools:visibility="visible">
-<!--                        android:layout_marginVertical="@dimen/_40sdp"-->
-<!--                        android:layout_marginTop="@dimen/_62ssp"-->
-<!--                        android:layout_marginVertical="@dimen/_50sdp"-->
-<!--                        android:layout_marginBottom="@dimen/_42ssp"-->
 
                         <VideoView
                             android:id="@+id/merged_video"
-                            android:layout_width="@dimen/_145sdp"
+                            android:layout_width="@dimen/_141sdp"
                             android:layout_height="@dimen/_250sdp"
                             android:layout_gravity="center"
                             android:layout_marginHorizontal="@dimen/_24sdp"
-
                             android:focusable="true"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:visibility="visible" />
-<!--                        android:layout_width="@dimen/_190sdp"
-                            android:layout_height="@dimen/_260sdp"-->
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/play_btn"
@@ -584,7 +558,7 @@
                             android:visibility="visible"
                             android:onClick="@{()->handler.playVideo()}"
                             app:srcCompat="@drawable/ic__play_video"
-                            android:elevation="@dimen/_6sdp"
+                            android:elevation="@dimen/_10sdp"
                             tools:layout_editor_absoluteX="150dp"
                             tools:layout_editor_absoluteY="101dp"
                             app:layout_constraintHorizontal_bias="0.5"
@@ -593,32 +567,6 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-<!--                        <FrameLayout-->
-<!--                            android:id="@+id/progress_bar_video"-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="0dp"-->
-<!--                            android:background="@color/transparent_black_alpha_70"-->
-<!--                            android:elevation="@dimen/_2sdp"-->
-<!--                            android:visibility="gone"-->
-<!--                            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                            app:layout_constraintEnd_toEndOf="parent"-->
-<!--                            app:layout_constraintStart_toStartOf="parent"-->
-<!--                            app:layout_constraintTop_toTopOf="parent">-->
-
-<!--                            <com.pnikosis.materialishprogress.ProgressWheel-->
-<!--                                android:layout_width="@dimen/_32sdp"-->
-<!--                                android:layout_height="@dimen/_32sdp"-->
-<!--                                android:layout_gravity="center"-->
-<!--                                wheel:matProg_barColor="@color/button_color"-->
-<!--                                wheel:matProg_fillRadius="true"-->
-<!--                                wheel:matProg_linearProgress="false"-->
-<!--                                wheel:matProg_progressIndeterminate="true"-->
-<!--                                wheel:matProg_rimColor="#33128C7E"-->
-<!--                                wheel:matProg_rimWidth="@dimen/_2sdp" />-->
-
-<!--                        </FrameLayout>-->
 
                         <com.pnikosis.materialishprogress.ProgressWheel
                             android:id="@+id/progress_dialog"
@@ -635,43 +583,8 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"/>
-<!--                        wheel:matProg_barColor="#878A91"-->
-
-<!--                        <com.pnikosis.materialishprogress.ProgressWheel-->
-<!--                            android:id="@+id/progress_bar_video"-->
-<!--                            android:layout_width="@dimen/_82sdp"-->
-<!--                            android:layout_height="@dimen/_82sdp"-->
-<!--                            android:layout_gravity="center"-->
-<!--                            wheel:matProg_barColor="@color/button_color"-->
-<!--                            wheel:matProg_fillRadius="true"-->
-<!--                            wheel:matProg_linearProgress="false"-->
-<!--                            wheel:matProg_progressIndeterminate="true"-->
-<!--                            wheel:matProg_rimColor="#33128C7E"-->
-<!--                            wheel:matProg_rimWidth="@dimen/_2sdp"-->
-<!--                            android:visibility="gone"-->
-<!--                            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                            app:layout_constraintEnd_toEndOf="parent"-->
-<!--                            app:layout_constraintStart_toStartOf="parent"-->
-<!--                            app:layout_constraintTop_toTopOf="parent"/>-->
-
-
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
-<!--                                        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer-->
-<!--                                            android:id="@+id/merged_video"-->
-<!--                                            android:layout_width="@dimen/_180sdp"-->
-<!--                                            android:layout_height="@dimen/_320sdp"-->
-<!--                                            android:layout_gravity="center"-->
-<!--                                            android:background="#000"-->
-<!--                                            android:focusable="true"-->
-<!--                                            app:controller_layout_id="@layout/layout_live_player_controller"-->
-<!--                                            tools:visibility="visible"-->
-<!--                                            android:visibility="visible"-->
-<!--                                            android:layout_marginVertical="@dimen/_50sdp"-->
-<!--                                            app:layout_constraintVertical_bias="1.0"-->
-<!--                                            android:layout_marginHorizontal="@dimen/_24sdp"-->
-<!--                                            android:layout_marginTop="@dimen/_62ssp"-->
-<!--                                            android:layout_marginBottom="@dimen/_42ssp"/>-->
 
                     <LinearLayout
                         android:id="@+id/sub_practise_submit_layout"

@@ -1,1 +1,1 @@
-include ':app', ':joshlibrary', ':recordview', ':mediapicker', ':joshcamerax', ':videocompressor'
+include ':app', ':joshlibrary', ':recordview', ':mediapicker', ':joshcamerax'

@@ -44,7 +44,7 @@ object PermissionUtils {
         }
     }
 
-    fun storageReadAndWritePermission1(
+    fun storageReadAndWritePermissionReading(
         context: Context?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
