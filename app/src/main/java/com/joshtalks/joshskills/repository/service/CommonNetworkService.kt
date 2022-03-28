@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -206,8 +207,8 @@ interface CommonNetworkService {
         @Query("interval_type") intervalType: String? = null,
         @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
-    @GET("$DIR/activity_feed/fetch_all/")
-    suspend fun getActivityFeedData(): Response<ActivityFeedList>
+    @GET("$DIR/activity_feed/fetch_all/{time_stamp}")
+    suspend fun getActivityFeedData(@Path("time_stamp") id: String): Response<ActivityFeedList>
 
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(

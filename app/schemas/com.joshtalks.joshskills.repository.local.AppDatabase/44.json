@@ -2754,7 +2754,7 @@
       },
       {
         "tableName": "group_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, `lastSentMsgTime` INTEGER NOT NULL, PRIMARY KEY(`groupId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, PRIMARY KEY(`groupId`))",
         "fields": [
           {
             "fieldPath": "groupIcon",
