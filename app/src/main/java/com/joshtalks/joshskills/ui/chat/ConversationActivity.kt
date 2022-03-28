@@ -102,6 +102,7 @@ import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.special_practice.SpecialPracticeActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
@@ -1711,11 +1712,12 @@ class ConversationActivity :
                 .subscribeOn(Schedulers.computation())
                 .subscribe(
                     {
-                        SpecialPracticeActivity.start(
-                            this,
-                            conversationId = inboxEntity.conversation_id,
-                            it.specialId
-                        )
+                        Intent(this, SpecialPracticeActivity::class.java).apply {
+                            putExtra(SPECIAL_ID, it.specialId)
+                            putExtra(CONVERSATION_ID, inboxEntity.conversation_id)
+                        }.run {
+                            startActivity(this)
+                        }
                     },
                     {
                         it.printStackTrace()

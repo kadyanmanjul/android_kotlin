@@ -9,15 +9,15 @@ import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.WindowManager
 import androidx.camera.video.VideoRecordEvent
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.AppObjectController
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 fun doesVideoHaveAudio(path: String): Boolean {
     val retriever = MediaMetadataRetriever()
@@ -45,17 +45,17 @@ fun VideoRecordEvent.getNameString(): String {
     }
 }
 
-fun getWindowWidth(context: Context): Int {
+fun getWindowWidth(): Int {
     val display =
-        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        (AppObjectController.joshApplication .getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
     val size = Point()
     display.getSize(size)
     return size.x
 }
 
-fun getWindowHeight(context: Context): Int {
+fun getWindowHeight(): Int {
     val display =
-        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        (AppObjectController.joshApplication.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
     val size = Point()
     display.getSize(size)
     return size.y
@@ -69,6 +69,7 @@ fun getVideoFilePath(): String {
 }
 
 fun getAndroidDownloadFolder(): File? {
+    Environment.getExternalStorageDirectory().path + "/Download/RecordVideo_" + System.currentTimeMillis()
     return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 }
 
@@ -111,12 +112,12 @@ fun convertImageFilePathIntoBitmap(imageFile: String): Bitmap {
     return BitmapFactory.decodeFile(imageFile)
 }
 
-fun getHeightByPixel(context: Context): Int {
+fun getHeightByPixel(): Int {
     var height = 0
-    height = if ((pxToDp(getWindowHeight(context)) % 2) == 0) {
-        ((pxToDp(getWindowHeight(context))) * 2).minus(130)
+    height = if ((pxToDp(getWindowHeight()) % 2) == 0) {
+        ((pxToDp(getWindowHeight())) * 2).minus(130)
     } else {
-        ((pxToDp(getWindowHeight(context)) + 1) * 2).minus(130)
+        ((pxToDp(getWindowHeight()) + 1) * 2).minus(130)
     }
     return height
 }

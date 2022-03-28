@@ -76,6 +76,7 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center_vertical|start"
+                            android:onClick="@{vm.onBackPress}"
                             android:paddingTop="@dimen/_4sdp"
                             android:paddingBottom="@dimen/_4sdp"
                             app:srcCompat="@drawable/ic_arrow_back"
@@ -93,7 +94,7 @@
                             android:foreground="?android:attr/selectableItemBackground"
                             android:gravity="start|center"
                             android:singleLine="true"
-                            android:text="Special Practice - 1"
+                            android:text="@{`Special Practice - ` + vm.textMessageTitle}"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                             android:textColor="@color/white"
                             android:textStyle="bold"
@@ -112,6 +113,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -152,7 +154,7 @@
                                 android:layout_marginStart="@dimen/_10sdp"
                                 android:layout_marginTop="@dimen/_10sdp"
                                 android:layout_marginRight="@dimen/_10sdp"
-                                android:text="@string/text_temp"
+                                android:text="@{vm.wordText}"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular_Nunito"
                                 android:textColor="@color/pure_black"
                                 tools:text="@string/text_temp">
@@ -202,10 +204,10 @@
                                 android:lines="3"
                                 android:paddingEnd="@dimen/_10sdp"
                                 android:paddingBottom="@dimen/_10sdp"
-                                android:text="@string/instruction_text"
+                                android:text="@{vm.instructionText}"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal11_Regular"
                                 android:textColor="@color/pure_black"
-                                tools:text="@string/instruction_text"/>
+                                tools:text="@string/instruction_text" />
 
 
                             <com.google.android.material.card.MaterialCardView
@@ -216,6 +218,7 @@
                                 android:layout_marginBottom="@dimen/_11sdp"
                                 android:insetTop="0dp"
                                 android:insetBottom="0dp"
+                                android:onClick="@{vm.onCardSampleVideoPlayer}"
                                 app:cardCornerRadius="@dimen/_15sdp">
 
                                 <RelativeLayout
@@ -257,7 +260,7 @@
                         android:layout_marginHorizontal="@dimen/_5sdp"
                         android:layout_marginVertical="@dimen/_6sdp"
                         android:elevation="0dp"
-                        android:visibility="gone"
+                        android:visibility="@{vm.isVideoPlay?View.VISIBLE:View.GONE}"
                         app:cardCornerRadius="@dimen/_4sdp"
                         app:cardElevation="0dp"
                         app:cardMaxElevation="0dp"
@@ -311,12 +314,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_marginTop="@dimen/_5sdp"
-                                android:padding="@dimen/_5sdp"
-                                android:onClick="@{handler::getDeepLinkAndInviteFriends}"
                                 android:layout_marginRight="@dimen/_12sdp"
+                                android:onClick="@{vm.getDeepLinkAndInviteFriends}"
+                                android:padding="@dimen/_5sdp"
                                 android:src="@drawable/ic_special_share"
-                                app:tint="@color/colorAccent"
-                                 />
+                                app:tint="@color/colorAccent" />
                         </RelativeLayout>
 
                     </com.google.android.material.card.MaterialCardView>
@@ -369,9 +371,12 @@
                                 android:layout_gravity="center_horizontal"
                                 android:layout_marginTop="@dimen/_15sdp"
                                 android:layout_marginBottom="@dimen/_10sdp"
+                                android:clickable="@{vm.isRecordButtonClick ? true:false}"
+                                android:enabled="@{vm.isRecordButtonClick ? true:false}"
+                                android:focusable="true"
                                 android:insetTop="0dp"
-                                android:onClick="@{handler::startVideoRecording}"
                                 android:insetBottom="0dp"
+                                android:onClick="@{vm.startRecording}"
                                 android:stateListAnimator="@null"
                                 android:text="@string/record_video"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal11_Regular"
@@ -386,7 +391,7 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:background="@color/transparent_black"
-                        android:visibility="gone"
+                        android:visibility="@{vm.isVideoPopUpShow ? View.VISIBLE : View.GONE}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -400,6 +405,7 @@
                             android:layout_marginTop="@dimen/_minus12sdp"
                             android:layout_marginEnd="@dimen/_minus12sdp"
                             android:elevation="@dimen/_10sdp"
+                            android:onClick="@{vm.closeIntroVideoPopUpUi}"
                             android:src="@drawable/ic_cancel_black_24dp__4__1"
                             app:layout_constraintEnd_toEndOf="@id/video_view"
                             app:layout_constraintTop_toTopOf="@id/video_view" />
