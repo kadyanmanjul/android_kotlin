@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -94,13 +95,16 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
             when (it) {
                 ApiCallStatus.START -> {
                     startProgress()
+                    handleOnBackPressed(true)
                 }
                 ApiCallStatus.SUCCESS -> {
                     hideProgress()
                     moveToInboxScreen()
+                    handleOnBackPressed(false)
                 }
                 else -> {
                     hideProgress()
+                    handleOnBackPressed(false)
                 }
             }
         })
@@ -113,6 +117,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     }
 
     fun submitProfile() {
+        handleOnBackPressed(true)
         activity?.let { hideKeyboard(it, binding.nameEditText) }
         if (binding.nameEditText.text.isNullOrEmpty()) {
             showToast(getString(R.string.name_error_toast))
@@ -172,6 +177,15 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     fun showPrivacyPolicyDialog() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         (activity as BaseActivity).showWebViewDialog(url)
+    }
+
+    private fun handleOnBackPressed(enabled: Boolean) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(enabled){
+                override fun handleOnBackPressed() {
+
+                }
+            })
     }
 
 }

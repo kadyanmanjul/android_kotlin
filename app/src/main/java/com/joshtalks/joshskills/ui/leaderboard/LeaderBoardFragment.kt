@@ -338,18 +338,14 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
         )
 
         if (type == "TODAY") {
-            liveUserPosition =
-                leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
-            if (liveUserPosition < 0 || liveUserPosition >= 3) {
-                liveUserPosition = 2
-                if (leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)
-                        ?.hasNext() == true
-                ) {
-                    leaderboardResponse1.top_50_mentor_list.listIterator(liveUserPosition)
-                        .next().isOnline = true
+            leaderboardResponse1.top_50_mentor_list?.let { list ->
+                liveUserPosition = list.indexOfFirst { it.isOnline }
+                if (liveUserPosition < 0 || liveUserPosition >= 3) {
+                    liveUserPosition = 2
+                    if (liveUserPosition < list.size && list.listIterator(liveUserPosition).hasNext()) {
+                        list.listIterator(liveUserPosition).next().isOnline = true
+                    }
                 }
-                liveUserPosition = liveUserPosition.plus(2)
-            } else {
                 liveUserPosition = liveUserPosition.plus(2)
             }
         }
