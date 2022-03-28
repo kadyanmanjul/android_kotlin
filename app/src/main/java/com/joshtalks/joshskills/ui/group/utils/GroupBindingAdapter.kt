@@ -50,12 +50,13 @@ fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, boolean: Boo
     this.setGroupSubTitle(subHeader, header, boolean)
 
 @BindingAdapter("secondIcon")
-fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
-    this.secondIcon(drawableRes)
-}
+fun GroupsAppBar.setSecondIcon(drawableRes: Int) = this.secondIcon(drawableRes)
 
 @BindingAdapter("groupImage")
 fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
+
+@BindingAdapter("groupType")
+fun GroupsAppBar.setLockVisibility(groupType: String) = this.setLockVisibility(groupType)
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {

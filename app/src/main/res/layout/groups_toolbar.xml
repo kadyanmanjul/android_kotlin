@@ -85,7 +85,7 @@
                 tools:text="Spoken English Course"
                 tools:visibility="gone" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/title_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -107,11 +107,20 @@
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_reminder"
-                    app:layout_constraintStart_toEndOf="@+id/image_view_logo"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Hello" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/closed_grp_img"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    app:layout_constraintBottom_toBottomOf="@id/title"
+                    app:layout_constraintStart_toEndOf="@id/title"
+                    app:layout_constraintTop_toTopOf="@+id/title"
+                    app:srcCompat="@drawable/ic_lock"
+                    app:tint="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/sub_title"
@@ -124,12 +133,11 @@
                     android:text="tap here for group info"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_reminder"
-                    app:layout_constraintStart_toEndOf="@+id/image_view_logo"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/title"
                     tools:text="tap here for group info" />
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/first_right_icon"

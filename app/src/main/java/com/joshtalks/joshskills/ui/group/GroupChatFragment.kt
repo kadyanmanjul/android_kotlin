@@ -128,7 +128,7 @@ class GroupChatFragment : BaseFragment() {
             vm.groupCreator.set(args.getString(GROUPS_CREATOR, ""))
             vm.conversationId = args.getString(CONVERSATION_ID, "") ?: ""
             vm.adminId = args.getString(ADMIN_ID, "")
-            vm.groupType = args.getString(GROUP_TYPE, OPENED_GROUP)
+            vm.groupType.set(args.getString(GROUP_TYPE, OPENED_GROUP))
             args.getInt(GROUP_CHAT_UNREAD, 0).let {
                 vm.unreadCount = it
                 if (it != 0) {

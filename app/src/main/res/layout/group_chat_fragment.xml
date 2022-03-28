@@ -36,6 +36,7 @@
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
                 groupSubHeader="@{vm.groupSubHeader}"
+                groupType="@{vm.groupType}"
                 onBackPressed="@{vm::onBackPress}"
                 onSecondIconPressed="@{vm::callGroup}"
                 onToolbarPressed="@{vm::openGroupInfo}"
@@ -48,9 +49,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:orientation="horizontal"
             android:elevation="@dimen/_2sdp"
             android:onClick="@{vm::openRequestList}"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout">

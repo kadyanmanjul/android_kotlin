@@ -52,6 +52,7 @@ class GroupChatViewModel : BaseViewModel() {
     val hasJoinedGroup = ObservableBoolean(false)
     var groupHeader = ObservableField("")
     var imageUrl = ObservableField("")
+    var groupType = ObservableField("")
     val groupCreator = ObservableField("")
     var memberCount = ObservableField(0)
     val memberAdapter = GroupMemberAdapter()
@@ -65,7 +66,6 @@ class GroupChatViewModel : BaseViewModel() {
     var adminId: String = ""
     var conversationId: String = ""
     var chatSendText: String = ""
-    var groupType: String = OPENED_GROUP
 
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -135,7 +135,7 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
-        if (groupType == CLOSED_GROUP) {
+        if (groupType.get() == CLOSED_GROUP) {
             message.what = OPEN_GROUP_REQUEST
             singleLiveEvent.value = message
             return
