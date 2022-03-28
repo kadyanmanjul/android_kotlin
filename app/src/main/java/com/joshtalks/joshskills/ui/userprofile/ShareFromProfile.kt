@@ -21,6 +21,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.databinding.ActivityShareFromProfileBinding
 import com.joshtalks.joshskills.ui.referral.*
 import io.branch.indexing.BranchUniversalObject
@@ -66,7 +68,7 @@ class ShareFromProfile : AppCompatActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
 
-        referralCount = intent.getIntExtra(VIEWER_REFERRAL, 0)!!
+        referralCount = intent.getIntExtra(VIEWER_REFERRAL, 0)
         if(referralCount != 0){
             binding.helpTv.text = getString(R.string.referCntText, referralCount.toString())
             var substr:String = referralCount.toString() + " people"
@@ -135,10 +137,6 @@ class ShareFromProfile : AppCompatActivity() {
                 userReferralCode.plus(System.currentTimeMillis())
             )
 
-            val imageFile: File = getImageFile()
-            val imagePath: String = imageFile.path
-            val uri = Uri.parse("file://$imagePath")
-
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "image/*"
             if (packageString.isNullOrEmpty().not()) {
@@ -149,6 +147,7 @@ class ShareFromProfile : AppCompatActivity() {
             waIntent.putExtra(Intent.EXTRA_TEXT, "Mai har roz angrezi mei baat karke angrezi seekh rha hu. Mai chahta hu aap bhi mere saath angrezi seekhe. Is link ko click karke yeh app download kare -\n" + dynamicLink)
             waIntent.type = "text/plain"
             startActivity(Intent.createChooser(waIntent, "Share with"))
+            viewModel.postGoal(GoalKeys.HELP_COUNT.name, CampaignKeys.PEOPLE_HELP_COUNT.name)
 
         } catch (e: PackageManager.NameNotFoundException) {
             showToast(getString(R.string.whatsApp_not_installed))
@@ -159,24 +158,4 @@ class ShareFromProfile : AppCompatActivity() {
         return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
-    private fun getImageFile(): File{
-        val bitmap = BitmapFactory.decodeResource(
-            resources, R.drawable.for_testing
-        )
-        val path: String =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                .toString() + "/Share.jpg"
-        var out: OutputStream? = null
-        val file = File(path)
-
-        try {
-            out = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-            out.flush()
-            out.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return file
-    }
 }

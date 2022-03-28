@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Html
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.ScrollView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
@@ -33,6 +31,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -42,7 +42,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEven
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.activity_feed.setColorize
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
@@ -79,6 +78,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private val TAG = "UserProfileActivity"
     private var isAnimationVisible = false
     private var viewerReferral: Int = 0
+    private var helpCountControl: Boolean = false
 
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
@@ -103,8 +103,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         addObserver()
         startTime = System.currentTimeMillis()
         initToolbar()
-        getProfileData(intervalType, previousPage)
+        initABTest(mentorId, intervalType, previousPage)
         setOnClickListeners()
+    }
+
+    private fun initABTest(mentorId: String, intervalType: String?, previousPage: String?) {
+        viewModel.getHelpCountCampaignData(CampaignKeys.PEOPLE_HELP_COUNT.name, mentorId, intervalType, previousPage)
     }
 
     override fun getConversationId(): String? {
@@ -290,9 +294,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     hideProgressBar()
                     initView(it)
                 }
-                viewerReferral = it.referralOfViewer!!
+                viewerReferral = it.referralOfViewer
 
-//                binding.referralInfoText.text = it.numberOfReferral
             }
         )
 
@@ -345,6 +348,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 .subscribe {
                     getProfileData(intervalType, previousPage)
                 })
+
+        viewModel.helpCountAbTestliveData.observe(this){helpCountAbTestliveData->
+            helpCountAbTestliveData?.let { map->
+                helpCountControl = (map.variantKey == VariantKeys.PHC_IS_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+        }
 
     }
 
@@ -542,28 +551,29 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
 
-        if(mentorId == Mentor.getInstance().getId()){
-            binding.referralInfoText.visibility = VISIBLE
-            if(userData.numberOfReferral != 0){
-                val text = SpannableStringBuilder()
-                    .append("You have helped ")
-                    .bold { append(userData.numberOfReferral.toString() + " people") }
-                    .append(" start learning English")
-                binding.referralInfoText.text = text
-            }else{
-                binding.referralInfoText.text = getString(R.string.help_text_me)
-            }
-        }else{
-            if(userData.numberOfReferral != 0){
+        if(helpCountControl) {
+            if (mentorId == Mentor.getInstance().getId()) {
+                binding.referralInfoText.visibility = VISIBLE
+                if (userData.numberOfReferral != 0) {
+                    val text = SpannableStringBuilder()
+                        .append("You have helped ")
+                        .bold { append(userData.numberOfReferral.toString() + " people") }
+                        .append(" start learning English")
+                    binding.referralInfoText.text = text
+                } else {
+                    binding.referralInfoText.text = getString(R.string.help_text_me)
+                }
+            } else {
+                if (userData.numberOfReferral != 0) {
                     binding.referralInfoText.visibility = VISIBLE
-                val text = SpannableStringBuilder()
-                    .append(resp.trim().split(" ")[0] + " has helped ")
-                    .bold { append(userData.numberOfReferral.toString() + " people") }
-                    .append(" start learning English")
-                binding.referralInfoText.text = text
-            }
-            else{
-                binding.referralInfoText.visibility = GONE
+                    val text = SpannableStringBuilder()
+                        .append(resp.trim().split(" ")[0] + " has helped ")
+                        .bold { append(userData.numberOfReferral.toString() + " people") }
+                        .append(" start learning English")
+                    binding.referralInfoText.text = text
+                } else {
+                    binding.referralInfoText.visibility = GONE
+                }
             }
         }
 

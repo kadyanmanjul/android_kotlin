@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -24,6 +25,7 @@ import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.PreviousProfilePictures
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -49,6 +51,17 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val previousProfilePics: MutableLiveData<PreviousProfilePictures> = MutableLiveData()
 
     var context: JoshApplication = getApplication()
+
+    val helpCountAbTestliveData = MutableLiveData<ABTestCampaignData?>()
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getHelpCountCampaignData(campaign: String, mentorId:String, intervalType: String?, previousPage: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                helpCountAbTestliveData.postValue(campaign)
+            }
+            getProfileData(mentorId, intervalType, previousPage)
+        }
+    }
 
     fun getMentorData(mentorId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
