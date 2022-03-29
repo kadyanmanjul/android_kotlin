@@ -8,7 +8,6 @@ import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
-import java.util.HashMap
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -85,4 +84,7 @@ interface P2PNetworkService {
 
     @POST("$DIR/fpp/block/")
     suspend fun blockFppUser(@Body params : Map<String,String>) : Response<Any>
+
+    @POST("$DIR/fpp/fpp_dialog/")
+    suspend fun showFppDialog(@Body params: HashMap<String, String?>) : Response<HashMap<String,String>>
 }

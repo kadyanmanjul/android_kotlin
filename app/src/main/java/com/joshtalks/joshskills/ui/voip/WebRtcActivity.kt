@@ -29,7 +29,6 @@ import android.view.animation.BounceInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -100,6 +99,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private var callType: CallType? = null
     private var callieId: String = ""
     private var callerId: String = ""
+    private var fppDialog:String = EMPTY
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -565,6 +565,13 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
+        val map: HashMap<String, String?> = HashMap()
+        map["agora_channel_name"] = mBoundService?.channelName
+        CoroutineScope(Dispatchers.IO).launch {
+            val resp =
+                AppObjectController.p2pNetworkService.showFppDialog(map)
+            fppDialog = resp.body()?.get("show_fpp_dialog") ?: EMPTY
+        }
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
                 intent = intent.apply {
@@ -1047,7 +1054,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                             flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                             callerId = callerId.toInt(),
                             currentUserId = callieId.toInt(),
-                            fppDialogFlag = mBoundService?.fppDialogeFlag ?: EMPTY
+                            fppDialogFlag = fppDialog
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

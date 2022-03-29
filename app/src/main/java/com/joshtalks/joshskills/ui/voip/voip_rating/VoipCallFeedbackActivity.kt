@@ -142,7 +142,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
             fppDialogFlag = it.getStringExtra(SHOW_FPP_DIALOG)
             binding.txtMessage.text = msz.replaceFirst("#", callerName)
 
-            Log.e(TAG, "initFun: $fppDialogFlag", )
+            Log.e("Sagar", "initFun: $fppDialogFlag", )
             if (fppDialogFlag=="true"){
                 binding.rootView.visibility  = View.VISIBLE
             }else{
