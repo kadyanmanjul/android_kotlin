@@ -178,7 +178,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = RetrofitInstance.mediaDUNetworkService.uploadMediaAsync(
+            val responseUpload = CommonRepository().requestUploadMediaAsync(obj).await()
+                RetrofitInstance.mediaDUNetworkService.uploadMediaAsync(
                 responseObj.url,
                 parameters,
                 body

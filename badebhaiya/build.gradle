@@ -186,6 +186,8 @@ dependencies {
 
     //treucaller
     implementation "com.truecaller.android.sdk:truecaller-sdk:2.6.0"
+    // crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
 
 
 }
