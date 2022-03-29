@@ -46,4 +46,5 @@
     <string name="time_ago_months">%1$d m ago</string>
     <string name="empty_name">First name or last name cannot be empty!</string>
     <string name="profile_photo">Profile photo</string>
+    <string name="full_name_concatenated">%s %s</string>
 </resources>

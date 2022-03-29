@@ -4,7 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View"/>
+        <variable
+            name="handler"
+            type="com.joshtalks.badebhaiya.profile.ProfileActivity" />
+        <variable
+            name="viewModel"
+            type="com.joshtalks.badebhaiya.profile.ProfileViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,6 +39,8 @@
             android:background="@drawable/follow_button_background"
             android:gravity="center"
             android:text="@string/follow"
+            android:onClick="@{() -> handler.updateFollowStatus()}"
+            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
             android:textColor="@color/follow_button_stroke"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textSize="@dimen/_12ssp"
@@ -47,8 +55,9 @@
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_12sdp"
             android:textColor="@color/profile_font_color"
+            android:textSize="@dimen/_14ssp"
             android:textAppearance="@style/BB_Typography_Nunito_Bold"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/iv_profile_pic"
@@ -58,7 +67,8 @@
             android:id="@+id/tvFollowers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:textSize="@dimen/_14ssp"
             android:textColor="@color/profile_font_color"
             app:layout_constraintStart_toStartOf="@id/tvUserName"
             app:layout_constraintTop_toBottomOf="@id/tvUserName"
@@ -69,8 +79,10 @@
             android:id="@+id/tvProfileBio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
             android:textColor="@color/profile_font_color"
+            android:textSize="@dimen/_14ssp"
             app:layout_constraintStart_toStartOf="@id/tvFollowers"
             android:textAppearance="@style/BB_Typography_Nunito_Regular"
             app:layout_constraintTop_toBottomOf="@id/tvFollowers"
@@ -85,7 +97,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="#C4C4C4"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_12sdp"
             app:layout_constraintTop_toBottomOf="@id/tvProfileBio" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -93,7 +105,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_regular"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
             android:textSize="@dimen/_14ssp"
             android:textColor="@color/profile_font_color"
             app:layout_constraintStart_toStartOf="@id/tvFollowers"
@@ -101,9 +114,11 @@
             android:text="@string/upcoming_rooms" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSpeakerRoomList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
+            android:layout_marginTop="@dimen/_12sdp"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             app:layout_constraintTop_toBottomOf="@+id/tvSpeakerRoomHeading"

@@ -11,11 +11,11 @@ import retrofit2.http.Path
 
 interface ProfileNetworkService {
 
-    @GET("$DIR")
-    suspend fun getProfileForUser(@Path("") userId: String): Response<ProfileResponse>
+    @GET("$DIR/user/personal_profile/{id}/")
+    suspend fun getProfileForUser(@Path("id") userId: String): Response<ProfileResponse>
 
     @POST("$DIR/user/follow/")
-    suspend fun follow(@Body followRequest: FollowRequest): Response<Any>
+    suspend fun updateFollowStatus(@Body followRequest: FollowRequest): Response<Any>
 
     @POST("$DIR/reminder/set_reminder/")
     suspend fun setReminderForRoom(@Body reminderRequest: ReminderRequest): Response<Any>

@@ -12,3 +12,4 @@ enum class ApiCallStatus {
 }
 
 const val EMPTY = ""
+const val USER_ID = "USER_ID"
