@@ -1,22 +1,19 @@
 package com.joshtalks.joshskills.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.AssetFileDescriptor
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Environment
-import android.provider.OpenableColumns
-import android.util.Log
 import android.view.View
 import com.joshtalks.joshskills.util.Utils.DATE_FORMAT
 import java.io.*
 import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+import java.util.Date
 
 enum class FileFormat(val extension: String) {
     VIDEO(".mp4"),
