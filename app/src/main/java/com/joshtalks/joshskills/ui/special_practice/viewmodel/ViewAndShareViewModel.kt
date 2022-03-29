@@ -24,7 +24,7 @@ import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
-import com.joshtalks.joshskills.ui.special_practice.repo.ViewAndShareRepo
+import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
@@ -65,7 +65,7 @@ class ViewAndShareViewModel : BaseViewModel() {
                     }
                 }
 
-                val resp = ViewAndShareRepo().saveRecordedVideo(
+                val resp = SpecialPracticeRepo().saveRecordedVideo(
                     SaveVideoModel(
                         Mentor.getInstance().getId(), videoUrl, specialId
                     )
