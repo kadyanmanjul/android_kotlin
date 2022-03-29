@@ -41,7 +41,7 @@
                 android:background="@drawable/round_both_bottom_bg"
                 android:paddingHorizontal="@dimen/_6sdp"
                 android:paddingVertical="@dimen/_4sdp"
-                android:backgroundTint="#F8F8F8"
+                android:backgroundTint="@color/special_card_color"
                 android:text="@string/special_practice_text"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:textColor="@color/pure_black" />

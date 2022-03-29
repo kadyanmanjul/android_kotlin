@@ -44,7 +44,7 @@
                 android:id="@+id/materialCardView"
                 android:layout_width="@dimen/_219sdp"
                 android:layout_height="@dimen/_41sdp"
-                android:layout_margin="16dp"
+                android:layout_margin="@dimen/_14sdp"
                 android:clickable="@{vm.isShareCardClickable ? true : false}"
                 android:onClick="@{vm.getDeepLinkAndInviteFriends}"
                 android:gravity="center"

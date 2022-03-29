@@ -15,14 +15,15 @@ import android.view.WindowManager
 import androidx.camera.video.VideoRecordEvent
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.util.FileFormat
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 fun doesVideoHaveAudio(path: String): Boolean {
     val retriever = MediaMetadataRetriever()
     retriever.setDataSource(path)
-    return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) == "yes"
+    return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) == YES
 }
 
 fun getVideoDuration(context: Context, file: File): Long {
@@ -36,11 +37,11 @@ fun getVideoDuration(context: Context, file: File): Long {
 
 fun VideoRecordEvent.getNameString(): String {
     return when (this) {
-        is VideoRecordEvent.Status -> "Status"
-        is VideoRecordEvent.Start -> "Started"
-        is VideoRecordEvent.Finalize -> "Finalized"
-        is VideoRecordEvent.Pause -> "Paused"
-        is VideoRecordEvent.Resume -> "Resumed"
+        is VideoRecordEvent.Status -> STATUS
+        is VideoRecordEvent.Start -> STARTED
+        is VideoRecordEvent.Finalize -> FINALIZED
+        is VideoRecordEvent.Pause -> PAUSED
+        is VideoRecordEvent.Resume -> RESUME
         else -> throw IllegalArgumentException("Unknown VideoRecordEvent: $this")
     }
 }
@@ -62,14 +63,14 @@ fun getWindowHeight(): Int {
 }
 
 fun getVideoFilePath(): String {
-    return getAndroidDownloadFolder()?.absolutePath + "/" + "JoshSkill-" + SimpleDateFormat(
+    return getAndroidDownloadFolder()?.absolutePath + "/" + JOSH_SKILL + SimpleDateFormat(
         "ddMMyyyy",
         Locale.US
-    ).format(System.currentTimeMillis()) + ".mp4"
+    ).format(System.currentTimeMillis()) + FileFormat.VIDEO
 }
 
 fun getAndroidDownloadFolder(): File? {
-    Environment.getExternalStorageDirectory().path + "/Download/RecordVideo_" + System.currentTimeMillis()
+    Environment.getExternalStorageDirectory().path + DOWNLOAD_RECORD_PATH + System.currentTimeMillis()
     return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 }
 
@@ -123,7 +124,7 @@ fun getHeightByPixel(): Int {
 }
 
 fun getRecordingFileName(): String {
-    return "JoshSkill-Recording-" +
+    return JOSH_SKILL_RECORDING +
             SimpleDateFormat("ddMMyyyy", Locale.US)
-                .format(System.currentTimeMillis()) + ".mp4"
+                .format(System.currentTimeMillis()) + FileFormat.VIDEO
 }

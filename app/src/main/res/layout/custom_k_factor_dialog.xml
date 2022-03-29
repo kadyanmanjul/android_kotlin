@@ -63,7 +63,7 @@
             android:layout_marginTop="@dimen/_7sdp"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_22sdp"
-            android:backgroundTint="#E4E4E4"
+            android:backgroundTint="@color/dialog_no_color"
             android:clickable="true"
             android:focusable="true"
             android:insetTop="0dp"

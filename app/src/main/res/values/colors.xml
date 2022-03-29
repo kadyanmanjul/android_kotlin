@@ -210,5 +210,7 @@
     <color name="progess_color_quiz">#13B673</color>
     <color name="report_white">#F5F5F5</color>
     <color name="gray_color_special">#33D8D8D8</color>
+    <color name="special_card_color">#F8F8F8</color>
+    <color name="dialog_no_color">#E4E4E4</color>
 
 </resources>
