@@ -24,6 +24,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
@@ -86,6 +87,7 @@ import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import com.joshtalks.joshskills.voip.*
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
 import io.branch.referral.Defines
@@ -679,7 +681,6 @@ abstract class BaseActivity :
         }
         return true
     }
-
     fun logout() {
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
@@ -695,6 +696,12 @@ abstract class BaseActivity :
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra(FLOW_FROM, "CourseExploreActivity")
             }
+            val broadcastIntent=Intent().apply {
+                action = CALLING_SERVICE_ACTION
+                putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+            }
+            LocalBroadcastManager.getInstance(this@BaseActivity).sendBroadcast(broadcastIntent)
+
             PrefManager.clearUser()
             AppObjectController.joshApplication.startActivity(intent)
         }

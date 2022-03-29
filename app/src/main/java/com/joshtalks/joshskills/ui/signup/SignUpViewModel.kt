@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
+import android.content.Intent
 import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
 import com.joshtalks.joshskills.core.*
@@ -26,6 +28,9 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import com.joshtalks.joshskills.voip.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.voip.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.voip.START_SERVICE
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import java.util.*
@@ -232,6 +237,16 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fetchMentor()
             WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
+            if (PrefManager.getBoolValue(
+                    IS_COURSE_BOUGHT,
+                    false
+                )) {
+                val broadcastIntent = Intent().apply {
+                    action = CALLING_SERVICE_ACTION
+                    putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
+                }
+                LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent)
+            }
         }
     }
 

@@ -33,6 +33,12 @@
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".CallingServiceReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.joshtalks.joshskills.CALLING_SERVICE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
