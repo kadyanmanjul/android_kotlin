@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.core.workers
 
 import android.content.Context
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.android.gms.tasks.OnCompleteListener
@@ -19,6 +20,7 @@ import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.ApiRespStatus
+import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -81,7 +83,7 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
         FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(
                 OnCompleteListener { task ->
-                    Timber.d("FCMToken asdf : Refreshed")
+                    Timber.d(TAG+" : Refreshed")
                     if (!task.isSuccessful) {
                         task.exception?.run {
                             LogException.catchException(this)
@@ -93,7 +95,7 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                         val fcmResponse = FCMData.getInstance()
                         fcmResponse?.apiStatus = ApiRespStatus.POST
                         fcmResponse?.update()
-                        Timber.d("FCMToken asdf : Updated")
+                        Timber.d(TAG+" : Updated")
                         CoroutineScope(
                             SupervisorJob() +
                                     Dispatchers.IO +
@@ -151,6 +153,7 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
+            Log.d(TAG, "doWork() called")
             val device = DeviceDetailsResponse.getInstance()
             val status = device?.apiStatus ?: ApiRespStatus.EMPTY
             val deviceId = device?.id ?: 0

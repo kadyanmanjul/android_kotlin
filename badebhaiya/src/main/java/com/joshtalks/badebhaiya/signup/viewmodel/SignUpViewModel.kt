@@ -6,11 +6,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.core.API_TOKEN
+import com.joshtalks.badebhaiya.core.ApiCallStatus
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.io.AppDirectory
-import com.joshtalks.badebhaiya.core.ApiCallStatus
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
@@ -18,8 +18,10 @@ import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
+import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
 import id.zelory.compressor.Compressor
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -27,7 +29,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val repository = BBRepository()
@@ -53,7 +54,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
             try {
                 val reqObj = VerifyOTPRequest("+91", phoneNumber, otp)
                 val response = repository.verifyOTP(reqObj)
-                Log.i("BadeBhaiya", "verifyOTP: $response")
+                Log.i(TAG, "verifyOTP: $response")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         updateUserFromLoginResponse(it)

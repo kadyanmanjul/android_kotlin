@@ -20,6 +20,7 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterOtpBinding
 import com.joshtalks.badebhaiya.repository.eventbus.OTPReceivedEventBus
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.codeinputview.OTPListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -84,7 +85,7 @@ class SignUpEnterOTPFragment: Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.i("BadeBhaiya", "onReceive: otp: $it")
+                    Log.i(TAG, "onReceive: otp: $it")
                     binding.otpView.otp = it.otp
                 }, {
                     it.printStackTrace()
