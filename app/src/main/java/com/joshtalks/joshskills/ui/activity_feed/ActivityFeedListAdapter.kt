@@ -56,16 +56,15 @@ class ActivityFeedListAdapter :
         fun bind(activityFeedResponse: ActivityFeedResponse) {
             view.itemData = activityFeedResponse
             view.handler = this
-            if(duration!=0) {
-                seekbar = view.seekBar
-                playPauseButton = view.btnPlayPause
-                seekbar.progress = 0
-                exoAudioManager = ExoAudioPlayer2()
-                id = System.currentTimeMillis().toString()
-                this.url = activityFeedResponse.mediaUrl.toString()
-                this.duration = activityFeedResponse.duration
-                seekbar.max = duration
-            }
+            seekbar = view.seekBar
+                        playPauseButton = view.btnPlayPause
+                        seekbar.progress = 0
+                        exoAudioManager = ExoAudioPlayer2()
+                        id = System.currentTimeMillis().toString()
+                        this.url = activityFeedResponse.mediaUrl.toString()
+                        this.duration = activityFeedResponse.duration
+                        seekbar.max = duration
+
             view.feedText.setOnClickListener {
                     itemClick?.invoke(activityFeedResponse, OPEN_FEED_USER_PROFILE)
                 }

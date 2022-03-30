@@ -7,7 +7,7 @@ data class ActivityFeedList(
     @SerializedName("activity_feed_impression_id")
     val impressionId:String?,
     @SerializedName("activites")
-    val activityList:List<ActivityFeedResponse>?,
+    val activityList:ArrayList<ActivityFeedResponse>?,
     @SerializedName("latest_timestamp")
     val timestamp:String?
 )
