@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.voip.mediator
 
+import android.telecom.Call
+import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
 import com.joshtalks.joshskills.voip.communication.constants.MessageConstants
@@ -7,7 +9,9 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.Error
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.MessageData
+import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
+import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
@@ -17,6 +21,9 @@ import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.mediator.CallDirection.*
+import com.joshtalks.joshskills.voip.pstn.PSTNInterface
+import com.joshtalks.joshskills.voip.pstn.PSTNListener
+import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
 import com.joshtalks.joshskills.voip.webrtc.CallState
@@ -33,18 +40,20 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
-    private val callingService : CallingService by lazy { AgoraCallingService }
-    private val networkEventChannel : EventChannel by lazy { PubNubChannelService }
+    private val callingService: CallingService by lazy { AgoraCallingService }
+    private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
+
     // AudioRouter
-    // Call Details
     //
-    private lateinit var callDirection : CallDirection
+    private val pstnService: PSTNInterface = PSTNListener()
+    private lateinit var callDirection: CallDirection
     private var calling = PeerToPeerCalling()
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
     private val callingMutex = Mutex(false)
 
     init {
         scope.launch {
+            observerPstnService()
             callingService.initCallingService()
             networkEventChannel.initChannel()
             handleWebrtcEvent()
@@ -60,16 +69,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     override fun connectCall(callType: CallType, callData: HashMap<String, Any>) {
         scope.launch {
             voipLog?.log("CallData Before Mutex --> $callData")
-            callingMutex.withLock {
-                try {
+            try {
+                //callingMutex.withLock {
                     setCallType(callType)
                     // TODO: Need to Handle when Error Occurred
                     voipLog?.log("Coroutine CallData --> $callData")
                     calling.onPreCallConnect(callData)
-                } catch (e : Exception) {
-                    voipLog?.log("Connect Call API Failed")
-                    e.printStackTrace()
-                }
+               // }
+            } catch (e: Exception) {
+                voipLog?.log("Connect Call API Failed")
+                e.printStackTrace()
             }
         }
     }
@@ -84,9 +93,35 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private fun observerCallingState() {
         scope.launch {
             callingService.observeCallingState().collectLatest {
-                when(it) {
+                when (it) {
                     State.IDLE -> unlockMutex()
                     State.JOINING -> lockMutex()
+                }
+            }
+        }
+    }
+
+    private fun observerPstnService() {
+        voipLog?.log("Listining PSTN")
+        scope.launch {
+            pstnService.observePSTNState().collect {
+                when (it) {
+                    PSTNState.Idle -> {
+                        voipLog?.log("IDEL")
+                        val data =
+                            UserAction(type = MessageConstants.RESUME, callId = CallDetails.callId)
+                        networkEventChannel.emitEvent(data)
+                        flow.emit(UNHOLD)
+                    }
+                    PSTNState.OnCall, PSTNState.Ringing -> {
+                        voipLog?.log("ON CALL")
+                        val data = UserAction(
+                            type = MessageConstants.ONHOLD,
+                            callId = CallDetails.callId
+                        )
+                        networkEventChannel.emitEvent(data)
+                        flow.emit(HOLD)
+                    }
                 }
             }
         }
@@ -95,7 +130,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private fun unlockMutex() {
         try {
             callingMutex.unlock()
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             voipLog?.log("Mutex Unlock Error")
         }
@@ -103,9 +138,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private suspend fun lockMutex() {
         try {
-            if(callingMutex.isLocked.not())
+            if (callingMutex.isLocked.not())
                 callingMutex.lock()
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             voipLog?.log("Mutex Lock Error")
         }
@@ -114,7 +149,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private fun handlePubnubEvent() {
         scope.launch {
             networkEventChannel.observeChannelEvents().collectLatest {
-                when(it) {
+                when (it) {
                     is Error -> {
                         /**
                          * Reset Webrtc
@@ -136,10 +171,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             agoraUId = it.getAgoraUid()
                         )
                         callingService.connectCall(request)
+                        CallDetails.reset()
+                        CallDetails.set(it)
                     }
                     is MessageData -> {
                         voipLog?.log("Message Data -> $it")
-                        when(it.getType()) {
+                        when (it.getType()) {
                             MessageConstants.ONHOLD -> {
                                 // Transfer to Service
                                 flow.emit(HOLD)
@@ -156,7 +193,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                     is IncomingCall -> {
                         voipLog?.log("Incoming Call -> $it")
-                        updateCallDirection(INCOMING)
+                        updateCallDirection(CallDirection.INCOMING)
                         calling.notificationLayout()
                         /**
                          * Show Incoming Call Notification
@@ -170,7 +207,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private fun handleWebrtcEvent() {
         scope.launch {
             callingService.observeCallingEvents().collectLatest {
-                when(it) {
+                when (it) {
                     CallState.CallConnected -> {
                         // Call Connected
                         flow.emit(CALL_CONNECTED_EVENT)
@@ -204,7 +241,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     private fun setCallType(callType: CallType) {
-        when(callType) {
+        when (callType) {
             CallType.PEER_TO_PEER -> {}
             CallType.FPP -> {}
             CallType.GROUP -> {}

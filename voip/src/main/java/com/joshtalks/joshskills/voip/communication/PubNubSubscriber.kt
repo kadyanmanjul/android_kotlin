@@ -53,6 +53,9 @@ internal class PubNubSubscriber : SubscribeCallback() {
             voipLog?.log("message: $pnMessageResult")
             val messageJson = pnMessageResult.message
             try {
+                // So that we will ignore our own message
+                if(pnMessageResult.userMetadata == null)
+                    return@launch
                 val message = if (pnMessageResult.userMetadata.asInt == CHANNEL)
                     Gson().fromJson(messageJson, Channel::class.java)
                 else
@@ -62,7 +65,6 @@ internal class PubNubSubscriber : SubscribeCallback() {
                 e.printStackTrace()
                 messageFlow.emit(Error())
             }
-
         }
     }
 

@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.os.Messenger
+import android.os.RemoteException
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_CONNECT_CALL
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
@@ -21,10 +22,15 @@ internal class CallingRemoteServiceHandler private constructor(val scope : Corou
     private var clientMessageChannel: Messenger? = null
 
     fun sendMessageToRepository(message: Int) {
-        voipLog?.log("Events form Service to Handler : $message")
-        val msg = Message()
-        msg.what = message
-        clientMessageChannel?.send(msg)
+        try {
+            voipLog?.log("Events form Service to Handler : $message")
+            val msg = Message()
+            msg.what = message
+            clientMessageChannel?.send(msg)
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+            voipLog?.log("REMOTE CLOSED UI")
+        }
     }
 
     companion object {

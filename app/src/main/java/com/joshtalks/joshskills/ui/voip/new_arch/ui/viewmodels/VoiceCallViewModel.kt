@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTING_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
+import com.joshtalks.joshskills.voip.constant.HOLD
 import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.delay
@@ -48,8 +49,12 @@ class VoiceCallViewModel : BaseViewModel() {
                         voipLog?.log("CALL_INITIATED_EVENT")
                     }
                     CALL_CONNECTED_EVENT -> {
-                        callStatusTest.set("Call Connected...")
+                        callStatusTest.set("Call Connected")
                         voipLog?.log("CALL_CONNECTED_EVENT")
+                    }
+                    HOLD -> {
+                        callStatusTest.set("Call on Hold")
+                        voipLog?.log("HOLD")
                     }
                     ERROR -> {
                         voipLog?.log("Error Occurred")
@@ -89,6 +94,7 @@ class VoiceCallViewModel : BaseViewModel() {
     fun connectCall() {
         viewModelScope.launch {
             mutex.withLock {
+                voipLog?.log("$callData")
                 repository.connectCall(callData)
             }
         }

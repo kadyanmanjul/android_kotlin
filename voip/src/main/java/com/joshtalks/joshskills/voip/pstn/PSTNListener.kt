@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
  * 2.NEW_OUTGOING_CALL
  */
 
-class PSTNListener:PSTNInterface {
+class PSTNListener : PSTNInterface {
     override fun observePSTNState(): MutableSharedFlow<PSTNState> {
        return PSTNStateReceiver.pstnFlow
     }

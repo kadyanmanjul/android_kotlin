@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.Message
 import android.os.Messenger
+import android.os.RemoteException
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_CONNECT_CALL
@@ -71,7 +72,7 @@ class WebrtcRepository() {
                 replyTo = handler
             }
             voipLog?.log("Connection Establish")
-            sendMessageToHandler(msg)
+            sendMessageToRemoteService(msg)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -100,8 +101,8 @@ class WebrtcRepository() {
                 putSerializable(INTENT_DATA_CONNECT_CALL, callData)
             }
         }
-        voipLog?.log("Call Connect --> $msg")
-        sendMessageToHandler(msg)
+        voipLog?.log("Call Connect --> $msg Call Data --> $callData")
+        sendMessageToRemoteService(msg)
     }
 
     fun disconnectCall() {
@@ -109,17 +110,22 @@ class WebrtcRepository() {
         val msg = Message().apply {
             what = CALL_DISCONNECT_REQUEST
         }
-        sendMessageToHandler(msg)
+        sendMessageToRemoteService(msg)
     }
 
-    private fun sendMessageToHandler(msg : Message) {
-        val data = Message()
-        data.copyFrom(msg)
-        voipLog?.log("$data  $mService")
-        mService?.send(data)
-        if(data.what == IPC_CONNECTION_ESTABLISHED)
-            scope.launch {
-                repositoryToVMFlow.emit(IPC_CONNECTION_ESTABLISHED)
-            }
+    private fun sendMessageToRemoteService(msg : Message) {
+        try {
+            val data = Message()
+            data.copyFrom(msg)
+            voipLog?.log("$data  $mService")
+            mService?.send(data)
+            if (data.what == IPC_CONNECTION_ESTABLISHED)
+                scope.launch {
+                    repositoryToVMFlow.emit(IPC_CONNECTION_ESTABLISHED)
+                }
+        } catch (e : RemoteException) {
+            e.printStackTrace()
+            voipLog?.log("Remote Closed")
+        }
     }
 }

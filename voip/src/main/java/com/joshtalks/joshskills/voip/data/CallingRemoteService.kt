@@ -2,10 +2,17 @@ package com.joshtalks.joshskills.voip.data
 
 import android.app.Service
 import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.os.DeadObjectException
 import android.os.IBinder
 import android.os.Messenger
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
@@ -14,6 +21,7 @@ import com.joshtalks.joshskills.voip.mediator.CallType
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationHandler
+import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +33,7 @@ class CallingRemoteService : Service() {
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private val handler by lazy { CallingRemoteServiceHandler.getInstance(ioScope) }
     private var isMediatorInitialise = false
+    private var pstnReceiver = PSTNStateReceiver()
 
     // For Testing Purpose
     private val notificationData = TestNotification()
@@ -35,6 +44,7 @@ class CallingRemoteService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        registerPstnCall()
         voipLog?.log("Creating Service")
         showNotification()
         //hideNotification()
@@ -42,6 +52,11 @@ class CallingRemoteService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         voipLog?.log("StartService --- OnStartCommand")
+        val shouldStopService = (intent?.action == SERVICE_ACTION_STOP_SERVICE)
+        if(shouldStopService) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
         Utils.apiHeader = intent?.getParcelableExtra(INTENT_DATA_API_HEADER)
         Utils.uuid = intent?.getStringExtra(INTENT_DATA_MENTOR_ID)
         voipLog?.log("API Header --> ${Utils.apiHeader}")
@@ -52,7 +67,7 @@ class CallingRemoteService : Service() {
             ioScope.launch {
                 mediator.observeEvents().collect {
                     voipLog?.log("Sending Event to client")
-                    handler.sendMessageToRepository(it)
+                        handler.sendMessageToRepository(it)
                 }
             }
         }
@@ -118,6 +133,14 @@ class CallingRemoteService : Service() {
 
     private fun showNotification() {
         startForeground(notification.notificationId, notification.notificationBuilder.build())
+    }
+
+    private fun registerPstnCall() {
+        val filter = IntentFilter().apply {
+            addAction("android.intent.action.PHONE_STATE")
+            addAction("android.intent.action.NEW_OUTGOING_CALL")
+        }
+        registerReceiver(pstnReceiver, filter)
     }
 
 }

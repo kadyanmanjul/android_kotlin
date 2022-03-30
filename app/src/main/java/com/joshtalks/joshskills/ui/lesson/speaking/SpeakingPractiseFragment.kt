@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.voipLog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -168,7 +169,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnStart.setOnClickListener {
 //            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
 //            startPractise(favoriteUserCall = false)
-            startActivity(Intent(activity,VoiceCallActivity::class.java))
+            val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(INTENT_DATA_COURSE_ID, courseId)
+                putExtra(INTENT_DATA_TOPIC_ID, topicId)
+            }
+            voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
+            startActivity(callIntent)
+            //startActivity(Intent(activity,VoiceCallActivity::class.java))
         }
 
         binding.btnGroupCall.setOnClickListener {
@@ -428,6 +436,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             putExtra(INTENT_DATA_COURSE_ID, courseId)
             putExtra(INTENT_DATA_TOPIC_ID, topicId)
         }
+        voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
         startActivity(callIntent)
 //        viewModel.speakingTopicLiveData.value?.run {
 //            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {

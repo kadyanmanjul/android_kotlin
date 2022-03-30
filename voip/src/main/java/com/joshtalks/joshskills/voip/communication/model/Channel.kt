@@ -26,7 +26,10 @@ data class Channel(
 	private val callId: Int? = null,
 
 	@field:SerializedName("agora_uid")
-	private val agoraUId: Int? = null
+	private val agoraUId: Int? = null,
+
+	@field:SerializedName("parter_uid")
+	private val partnerUid: Int?
 ) : ChannelData {
 	override fun getCallingPartnerName(): String {
 		return partnerName ?: "Unable to fetch Name"
@@ -50,6 +53,10 @@ data class Channel(
 
 	override fun getAgoraUid(): Int {
 		return agoraUId ?: throw IncorrectCommunicationDataException("Agora UID is NULL")
+	}
+
+	override fun getPartnerUid(): Int {
+		return partnerUid ?: throw IncorrectCommunicationDataException("Partner UID is NULL")
 	}
 
 	override fun getType(): Int {

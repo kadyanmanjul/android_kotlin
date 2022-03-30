@@ -14,3 +14,6 @@ const val INTENT_DATA_MENTOR_ID = "josh_intent_data_mentor_id"
 const val INTENT_DATA_TOPIC_ID = "josh_intent_data_topic_id"
 const val INTENT_DATA_COURSE_ID = "josh_intent_data_course_id"
 const val INTENT_DATA_CONNECT_CALL = "josh_intent_data_connect_call"
+
+// Service Action
+const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"

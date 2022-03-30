@@ -8,12 +8,13 @@ import android.content.Intent
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
+import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-internal class PSTNStateReceiver : BroadcastReceiver() {
+class PSTNStateReceiver : BroadcastReceiver() {
 
     companion object {
         val pstnFlow = MutableSharedFlow<PSTNState>()
@@ -22,6 +23,7 @@ internal class PSTNStateReceiver : BroadcastReceiver() {
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(applicationContext: Context, intent: Intent) {
         try {
+            voipLog?.log("On Receive")
             getCallingState(applicationContext, intent)
         } catch (ex: Exception) {
             print(ex)
@@ -43,7 +45,7 @@ internal class PSTNStateReceiver : BroadcastReceiver() {
                 CoroutineScope(Dispatchers.IO).launch {
                     pstnFlow.emit(PSTNState.Idle)
                 }
-                Log.d(TAG, "getCallingState: Idle $state")
+                voipLog?.log("getCallingState: Idle $state")
             }
             TelephonyManager.EXTRA_STATE_OFFHOOK -> {
                 state = TelephonyManager.CALL_STATE_OFFHOOK

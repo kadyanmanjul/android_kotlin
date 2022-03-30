@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewMode
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
+import com.joshtalks.joshskills.voip.voipLog
 
 class VoiceCallActivity : BaseActivity() {
 
@@ -27,6 +28,7 @@ class VoiceCallActivity : BaseActivity() {
     override fun getArguments() {
         val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
         val courseId = intent?.getStringExtra(INTENT_DATA_COURSE_ID)
+        voipLog?.log("Call Data --> $intent")
         vm.callData[INTENT_DATA_COURSE_ID] = courseId ?: "0"
         vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
     }

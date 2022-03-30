@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.chat
 
+import android.Manifest
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
@@ -17,6 +19,7 @@ import android.view.View.*
 import android.view.animation.*
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -287,6 +290,35 @@ class ConversationActivity :
             }
 
         }
+    }
+
+    private fun checkAndRequestPermissions(): Boolean {
+        val readPhoneState =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+        val read_call_log =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG)
+        val listPermissionsNeeded: MutableList<String> = ArrayList()
+        if (readPhoneState != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE)
+        }
+        if (read_call_log != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_CALL_LOG)
+        }
+        if (read_call_log != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.PROCESS_OUTGOING_CALLS)
+        }
+        if (read_call_log != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.INTERNET)
+        }
+        if (listPermissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                (listPermissionsNeeded.toTypedArray() as Array<String?>),
+                1
+            )
+            return false
+        }
+        return true
     }
 
     private fun initFreeTrialTimer() {
@@ -1805,6 +1837,7 @@ class ConversationActivity :
     override fun onStart() {
         super.onStart()
         //showLessonTooltip()
+        checkAndRequestPermissions()
     }
 
     override fun onResume() {
