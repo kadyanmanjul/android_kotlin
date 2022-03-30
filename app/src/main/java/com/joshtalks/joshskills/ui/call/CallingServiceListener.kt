@@ -6,6 +6,7 @@ import android.content.Intent
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
@@ -26,6 +27,7 @@ class CallingServiceReceiver: BroadcastReceiver(){
         if(p1?.action == CALLING_SERVICE_ACTION) {
             when (p1.getBooleanExtra(SERVICE_BROADCAST_KEY, false)) {
                 true -> {
+                    voipLog?.log("onReceive: start service")
                     val remoteServiceIntent =
                         Intent(AppObjectController.joshApplication, CallingRemoteService::class.java)
                     val apiHeader = ApiHeader(
@@ -40,7 +42,10 @@ class CallingServiceReceiver: BroadcastReceiver(){
                     AppObjectController.joshApplication.startService(remoteServiceIntent)                }
                 false -> {
                     voipLog?.log("onReceive: stop service")
-                }
+                    val remoteServiceIntent =
+                        Intent(AppObjectController.joshApplication, CallingRemoteService::class.java)
+                remoteServiceIntent.action = SERVICE_ACTION_STOP_SERVICE
+                    AppObjectController.joshApplication.startService(remoteServiceIntent)                }
             }
         }
     }
