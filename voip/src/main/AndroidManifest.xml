@@ -3,7 +3,7 @@
     package="com.joshtalks.joshskills.voip">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application>
-        <service android:name=".data.WebrtcService"
+        <service android:name=".data.CallingRemoteService"
             android:process=":joshSkillsCallingService"
             android:stopWithTask="false"
             android:foregroundServiceType="phoneCall"/>

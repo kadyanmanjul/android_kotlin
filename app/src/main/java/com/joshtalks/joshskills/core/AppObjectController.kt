@@ -30,8 +30,14 @@ import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.KEY_APP_ACCEPT_LANGUAGE
+import com.joshtalks.joshskills.base.constants.KEY_APP_USER_AGENT
+import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_CODE
+import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_NAME
+import com.joshtalks.joshskills.base.constants.KEY_AUTHORIZATION
 import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
@@ -95,12 +101,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-
-const val KEY_AUTHORIZATION = "Authorization"
-const val KEY_APP_VERSION_CODE = "app-version-code"
-const val KEY_APP_VERSION_NAME = "app-version-name"
-const val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
-const val KEY_APP_ACCEPT_LANGUAGE = "Accept-Language"
 
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
 private const val READ_TIMEOUT = 30L
@@ -726,6 +726,10 @@ class StatusCodeInterceptor : Interceptor {
                 )
             ) {
                 PrefManager.logoutUser()
+                LastSyncPrefManager.clear()
+                WorkManagerAdmin.instanceIdGenerateWorker()
+                WorkManagerAdmin.appInitWorker()
+                WorkManagerAdmin.appStartWorker()
                 if (JoshApplication.isAppVisible) {
                     val intent =
                         Intent(AppObjectController.joshApplication, SignUpActivity::class.java)

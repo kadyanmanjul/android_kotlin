@@ -23,6 +23,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.getHostOfUrl
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
@@ -31,7 +32,6 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.service.DIR
 
 class ShowAwardFragment : DialogFragment() {
 

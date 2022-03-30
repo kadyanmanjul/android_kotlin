@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.senior_student.data
 
-import com.joshtalks.joshskills.repository.server.ResponseChatMessage
-import com.joshtalks.joshskills.repository.service.DIR
+import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.ui.senior_student.model.SeniorStudentModel
 import retrofit2.http.GET
 

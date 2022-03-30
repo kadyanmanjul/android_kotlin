@@ -109,10 +109,10 @@
         <activity
             android:name=".ui.voip.CallActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
@@ -175,11 +175,11 @@
                 <action android:name="com.joshtalks.joshskills.voip.CallActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -535,6 +535,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
+        <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity" />
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"

@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.ui.group.data
 
-import com.joshtalks.joshskills.repository.service.DIR
+import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.ui.group.model.*
 import org.json.JSONArray
 import retrofit2.Response

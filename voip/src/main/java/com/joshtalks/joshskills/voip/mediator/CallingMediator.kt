@@ -8,11 +8,11 @@ import com.joshtalks.joshskills.voip.communication.model.Error
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.MessageData
 import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED
+import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED
+import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
-import com.joshtalks.joshskills.voip.constant.MUTE
 import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
@@ -21,15 +21,18 @@ import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
 import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.CallingService
+import com.joshtalks.joshskills.voip.webrtc.State
+import java.lang.Exception
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
-class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceMediator {
+class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService : CallingService by lazy { AgoraCallingService }
     private val networkEventChannel : EventChannel by lazy { PubNubChannelService }
     // AudioRouter
@@ -37,21 +40,15 @@ class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceM
     //
     private lateinit var callDirection : CallDirection
     private var calling = PeerToPeerCalling()
-    private val scope = CoroutineScope(Dispatchers.IO)
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
+    private val callingMutex = Mutex(false)
 
     init {
         scope.launch {
-            observerFlow.collect {
-
-            }
-        }
-        scope.launch {
             callingService.initCallingService()
-            handleWebrtcEvent()
-        }
-        scope.launch {
             networkEventChannel.initChannel()
+            handleWebrtcEvent()
+            observerCallingState()
             handlePubnubEvent()
         }
     }
@@ -60,18 +57,58 @@ class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceM
         return flow
     }
 
-    override fun connectCall(callType: CallType) {
-        setCallType(callType)
-        calling.onPreCallConnect()
-
+    override fun connectCall(callType: CallType, callData: HashMap<String, Any>) {
+        scope.launch {
+            voipLog?.log("CallData Before Mutex --> $callData")
+            callingMutex.withLock {
+                try {
+                    setCallType(callType)
+                    // TODO: Need to Handle when Error Occurred
+                    voipLog?.log("Coroutine CallData --> $callData")
+                    calling.onPreCallConnect(callData)
+                } catch (e : Exception) {
+                    voipLog?.log("Connect Call API Failed")
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
-    override fun switchAudio() {
-
-    }
+    override fun switchAudio() {}
 
     override fun disconnectCall() {
+        voipLog?.log("Disconnect Call")
         callingService.disconnectCall()
+    }
+
+    private fun observerCallingState() {
+        scope.launch {
+            callingService.observeCallingState().collectLatest {
+                when(it) {
+                    State.IDLE -> unlockMutex()
+                    State.JOINING -> lockMutex()
+                }
+            }
+        }
+    }
+
+    private fun unlockMutex() {
+        try {
+            callingMutex.unlock()
+        } catch (e : Exception) {
+            e.printStackTrace()
+            voipLog?.log("Mutex Unlock Error")
+        }
+    }
+
+    private suspend fun lockMutex() {
+        try {
+            if(callingMutex.isLocked.not())
+                callingMutex.lock()
+        } catch (e : Exception) {
+            e.printStackTrace()
+            voipLog?.log("Mutex Lock Error")
+        }
     }
 
     private fun handlePubnubEvent() {
@@ -136,7 +173,7 @@ class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceM
                 when(it) {
                     CallState.CallConnected -> {
                         // Call Connected
-                        flow.emit(CALL_CONNECTED)
+                        flow.emit(CALL_CONNECTED_EVENT)
                         voipLog?.log("Call Connected")
                     }
                     CallState.CallDisconnected -> {
@@ -145,7 +182,7 @@ class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceM
                     }
                     CallState.CallInitiated -> {
                         // CallInitiated
-                        flow.emit(CALL_INITIATED)
+                        flow.emit(CALL_INITIATED_EVENT)
                         voipLog?.log("Call CallInitiated")
                     }
                     CallState.OnReconnected -> {
@@ -156,6 +193,10 @@ class CallingMediator(private val observerFlow : SharedFlow<Int>) : CallServiceM
                     CallState.OnReconnecting -> {
                         flow.emit(RECONNECTING)
                         voipLog?.log("OnReconnecting")
+                    }
+                    CallState.Error -> {
+                        flow.emit(ERROR)
+                        voipLog?.log("Error")
                     }
                 }
             }

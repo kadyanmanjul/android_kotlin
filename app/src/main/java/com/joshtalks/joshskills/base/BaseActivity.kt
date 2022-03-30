@@ -12,6 +12,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getArguments()
         initViewBinding()
         onCreated()
         initViewState()
@@ -20,6 +21,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected abstract fun initViewBinding()
     protected abstract fun onCreated()
     protected abstract fun initViewState()
+    protected open fun getArguments(){}
 
     protected fun showToast(msg : String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()

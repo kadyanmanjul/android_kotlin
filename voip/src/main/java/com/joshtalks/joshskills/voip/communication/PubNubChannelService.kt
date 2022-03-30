@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.voip.communication
 
 import android.util.Log
 import com.joshtalks.joshskills.voip.BuildConfig
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.Communication
 import com.joshtalks.joshskills.voip.communication.model.Error
@@ -30,19 +31,16 @@ object PubNubChannelService : EventChannel {
         INACTIVE
     }
 
-    private var state = State.INACTIVE
     private var pubnub: PubNub? = null
-    private val channelName = "p2p-new-architecture-testing"
+    private val channelName = Utils.uuid
 
     private val eventFlow = MutableSharedFlow<Communication>(replay = 0)
 
     private val pubNubData by lazy {
-        PubNubSubscriber.getSubscribeCallback(scope)
+        PubNubSubscriber.getSubscribeCallback(ioScope)
     }
 
-    private val scope by lazy {
-        CoroutineScope(Dispatchers.IO)
-    }
+    private val ioScope by lazy { CoroutineScope(Dispatchers.IO) }
 
     private val config by lazy {
         PNConfiguration().apply {
@@ -52,7 +50,7 @@ object PubNubChannelService : EventChannel {
 
     override suspend fun initChannel() {
         voipLog?.log("Start PubNub Init")
-        withContext(scope.coroutineContext) {
+        withContext(ioScope.coroutineContext) {
             voipLog?.log("Coroutine Started for PubNub")
             if (pubnub == null)
                 synchronized(this) {
@@ -75,7 +73,7 @@ object PubNubChannelService : EventChannel {
     }
 
     override fun emitEvent(event: OutgoingData) {
-        scope.launch {
+        ioScope.launch {
             try {
                 val message = when (event) {
                     is NetworkActionData -> event as NetworkAction
@@ -100,7 +98,7 @@ object PubNubChannelService : EventChannel {
     }
 
     private fun observeIncomingMessage() {
-        scope.launch {
+        ioScope.launch {
             pubNubData.event.collect {
                 //if (state == State.ACTIVE)
                 Log.d(TAG, "observeIncomingMessage: $it")

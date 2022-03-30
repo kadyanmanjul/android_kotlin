@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.ui.group.analytics.data.network
 
-import com.joshtalks.joshskills.repository.service.DIR
+import com.joshtalks.joshskills.base.constants.DIR
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

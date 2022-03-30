@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 
-private const val TAG = "AgoraEventHandler"
 internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler() {
-    val mutex = Mutex()
 
     companion object {
         @Volatile private lateinit var INSTANCE: AgoraEventHandler
@@ -59,6 +57,7 @@ internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler(
     // Reports an error during SDK runtime
     override fun onError(errorCode: Int) {
         voipLog?.log("$errorCode")
+        emitEvent(CallState.Error)
     }
 
     // Occurs when the local user joins a specified channel (#joinChannel)

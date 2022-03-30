@@ -16,6 +16,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
@@ -41,6 +43,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -388,10 +391,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             return
                         }
                         if (flag) {
-                            startPractiseSearchScreen(
-                                favoriteUserCall = favoriteUserCall,
-                                isNewUserCall = isNewUserCall
-                            )
+                            val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
+                            startActivity(callIntent)
+//                            startPractiseSearchScreen(
+//                                favoriteUserCall = favoriteUserCall,
+//                                isNewUserCall = isNewUserCall
+//                            )
                             return
                         } else {
                             MaterialDialog(requireActivity()).show {
@@ -416,21 +421,28 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         favoriteUserCall: Boolean = false,
         isNewUserCall: Boolean = false,
     ) {
-        viewModel.speakingTopicLiveData.value?.run {
-            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
-                openCallActivity.launch(
-                    SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                        requireActivity(),
-                        courseId = courseId,
-                        topicId = id,
-                        topicName = topicName,
-                        favoriteUserCall = favoriteUserCall,
-                        isNewUserCall = isNewUserCall,
-                        conversationId = getConversationId()
-                    )
-                )
-            }
+        // P2P Call
+        val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
+        callIntent.apply {
+            putExtra(INTENT_DATA_COURSE_ID, courseId)
+            putExtra(INTENT_DATA_TOPIC_ID, topicId)
         }
+        startActivity(callIntent)
+//        viewModel.speakingTopicLiveData.value?.run {
+//            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
+//                openCallActivity.launch(
+//                    SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+//                        requireActivity(),
+//                        courseId = courseId,
+//                        topicId = id,
+//                        topicName = topicName,
+//                        favoriteUserCall = favoriteUserCall,
+//                        isNewUserCall = isNewUserCall,
+//                        conversationId = getConversationId()
+//                    )
+//                )
+//            }
+//        }
     }
 
     fun showSeniorStudentScreen() {

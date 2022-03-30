@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
+
 const val ACCEPT_REQUEST_CODE = 6943
 
 interface Calling {
@@ -11,7 +13,7 @@ interface Calling {
         return null
     }
 
-    fun onPreCallConnect() {
+    suspend fun onPreCallConnect(callData: HashMap<String, Any>) {
         // API Call
     }
 

@@ -33,8 +33,6 @@ import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.log.Feature
 import com.joshtalks.joshskills.voip.log.JoshLog.Companion.enableLog
-import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
-import com.joshtalks.joshskills.voip.webrtc.CallingService
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -54,9 +52,6 @@ class JoshApplication :
     ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
-    }
-    val callingService by lazy<CallingService> {
-        AgoraCallingService
     }
 
     companion object {
@@ -80,11 +75,10 @@ class JoshApplication :
                 AppObjectController.init(this@JoshApplication)
                 registerBroadcastReceiver()
                 initGroups()
-                CoroutineScope(Dispatchers.IO).launch {
-                    callingService.initCallingService()
-                }
-            } else
+            } else {
+                Timber.plant(Timber.DebugTree())
                 Utils.initUtils(this)
+            }
         
             Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
 //        Log.d(TAG, "onCreate: $isMainProcess ... $packageName")

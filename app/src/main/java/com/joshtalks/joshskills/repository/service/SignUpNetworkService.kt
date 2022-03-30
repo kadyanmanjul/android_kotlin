@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
@@ -14,8 +15,6 @@ import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
-
-const val DIR = "api/skill/v1"
 
 @JvmSuppressWildcards
 interface SignUpNetworkService {

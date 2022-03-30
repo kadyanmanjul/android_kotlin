@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 internal interface CallServiceMediator {
     fun observeEvents() : SharedFlow<Int>
-    fun connectCall(callType: CallType)
+    fun connectCall(callType: CallType, callData : HashMap<String, Any>)
     fun switchAudio()
     fun disconnectCall()
 }

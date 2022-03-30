@@ -11,3 +11,5 @@ class MessageConstants {
         val UNMUTE = 6
     }
 }
+
+const val CLOSE_CALLING_FRAGMENT = 100
