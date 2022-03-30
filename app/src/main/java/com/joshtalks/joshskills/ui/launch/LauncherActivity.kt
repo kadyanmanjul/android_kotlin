@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -12,9 +13,11 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -29,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
+import com.joshtalks.joshskills.voip.*
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import java.lang.ref.WeakReference
@@ -237,9 +241,20 @@ class LauncherActivity : CoreJoshActivity() {
         handleIntent()
     }
 
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this@LauncherActivity)
+            .registerReceiver(CallingServiceReceiver(), IntentFilter(CALLING_SERVICE_ACTION))
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT,false) && User.getInstance().isVerified) {
+            val broadcastIntent=Intent().apply {
+                action = CALLING_SERVICE_ACTION
+                putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
+            }
+            LocalBroadcastManager.getInstance(this@LauncherActivity).sendBroadcast(broadcastIntent)
+        }
+    }
     override fun onStop() {
         super.onStop()
-
         Branch.sessionBuilder(null)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
     }

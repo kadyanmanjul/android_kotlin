@@ -24,7 +24,6 @@ class GroupSearchFragment : BaseFragment() {
         ViewModelProvider(this)[GroupSearchViewModel::class.java]
     }
 
-    @FlowPreview
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenStarted {
@@ -47,7 +46,6 @@ class GroupSearchFragment : BaseFragment() {
         binding.executePendingBindings()
     }
     // TODO: Might Changes Flow Signature
-    @FlowPreview
     override fun initViewState() {
         liveData.observe(viewLifecycleOwner) {
             when(it.what) {
@@ -70,7 +68,6 @@ class GroupSearchFragment : BaseFragment() {
         }
     }
 
-    @FlowPreview
     override fun onStart() {
         super.onStart()
         vm.adapter.refresh()

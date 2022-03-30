@@ -166,8 +166,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnStart.setOnClickListener {
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            startPractise(favoriteUserCall = false)
+//            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+//            startPractise(favoriteUserCall = false)
+            startActivity(Intent(activity,VoiceCallActivity::class.java))
         }
 
         binding.btnGroupCall.setOnClickListener {

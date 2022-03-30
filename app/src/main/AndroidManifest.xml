@@ -61,10 +61,12 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" /> <!-- For devices running Android 10.0 or later, you also need to add the following permission: -->
     <uses-permission
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
-        tools:ignore="ProtectedPermissions" />
-
+        tools:ignore="ProtectedPermissions" /> <!-- for API level below 22 -->
+    <!-- For Audio Control Module -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/> <!-- for API level below 22-->
-
     <application
         android:name=".core.JoshApplication"
         android:allowBackup="true"
@@ -100,8 +102,7 @@
         <activity
             android:name=".ui.group.JoshGroupActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
             android:exported="true">
@@ -680,7 +681,12 @@
                 <action android:name="android.intent.action. ACTION_LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
+        <receiver android:name=".voip.CallingServiceReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.joshtalks.joshskills.CALLING_SERVICE"/>
+            </intent-filter>
+        </receiver>
         <service
             android:name=".ui.voip.WebRtcService"
             android:enabled="true"
