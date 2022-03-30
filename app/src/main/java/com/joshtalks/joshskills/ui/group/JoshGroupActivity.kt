@@ -178,6 +178,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(CONVERSATION_ID, vm.conversationId)
                 putString(ADMIN_ID, data?.getCreatorId())
                 putString(GROUP_TYPE, data?.getGroupCategory())
+                putString(GROUP_STATUS, data?.getJoinedStatus())
                 data?.hasJoined()?.let {
                     if (it) {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")

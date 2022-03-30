@@ -193,7 +193,7 @@
             android:onClick="@{vm::joinGroup}"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
-            android:text="JOIN GROUP"
+            android:text="@{vm.groupJoinStatus}"
             android:textColor="@color/join_group"
             android:textSize="@dimen/_14ssp"
             android:visibility="@{vm.hasJoinedGroup ? View.GONE : View.VISIBLE}"

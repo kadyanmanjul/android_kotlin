@@ -54,6 +54,7 @@ class GroupChatViewModel : BaseViewModel() {
     var imageUrl = ObservableField("")
     var groupType = ObservableField("")
     val groupCreator = ObservableField("")
+    val groupJoinStatus = ObservableField("")
     var memberCount = ObservableField(0)
     val memberAdapter = GroupMemberAdapter()
     val groupSubHeader = ObservableField("")
@@ -135,12 +136,11 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
-        if (groupType.get() == CLOSED_GROUP) {
+        if (groupType.get() == CLOSED_GROUP && groupJoinStatus.get() == "REQUEST TO JOIN") {
             message.what = OPEN_GROUP_REQUEST
             singleLiveEvent.value = message
-            return
-        }
-        joinPublicGroup()
+        } else if (groupType.get() == OPENED_GROUP)
+            joinPublicGroup()
     }
 
     fun joinPublicGroup() {
@@ -175,7 +175,7 @@ class GroupChatViewModel : BaseViewModel() {
     fun joinPrivateGroup(view: View) {
         showProgressDialog("Sending Request to join...")
         viewModelScope.launch {
-
+            //TODO : Implement the API for the request
         }
     }
 
@@ -424,5 +424,14 @@ class GroupChatViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.setUnreadChatLabel(count, groupId)
         }
+    }
+
+    fun getGroupJoinText(status: String): String {
+        return if (status == REQUESTED_GROUP)
+            "REQUEST SENT"
+        else if (status == NOT_JOINED_GROUP && groupType.get() == CLOSED_GROUP)
+            "REQUEST TO JOIN"
+        else
+            "JOIN GROUP"
     }
 }

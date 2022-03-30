@@ -605,6 +605,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_member_table` (`mentorID` TEXT NOT NULL, `memberName` TEXT NOT NULL, `memberIcon` TEXT NOT NULL, `isAdmin` INTEGER NOT NULL, `isOnline` INTEGER NOT NULL, `groupId` TEXT NOT NULL, PRIMARY KEY (`mentorId`, `groupId`))")
                 database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupType` TEXT")
+                database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupStatus` TEXT")
             }
         }
 
