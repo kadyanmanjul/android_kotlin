@@ -5,3 +5,4 @@ enum class ApiRespStatus {
 }
 
 const val TAG = "Manjul"
+const val DEFAULT_NAME = "User"

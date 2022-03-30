@@ -25,4 +25,12 @@
     <color name="colorPrimaryDark">#0D63B9</color>
     <color name="colorAccent">#107BE5</color>
     <color name="status_bar_color">@color/colorPrimaryDark</color>
+    <color name="conversation_room_color">#F1EFE5</color>
+    <color name="feed_button_color">#55AB67</color>
+    <color name="pure_black">#000000</color>
+    <color name="notification_red_color">#EC5858</color>
+    <color name="notification_green_color">#27AE61</color>
+    <color name="notification_orange_color">#F3792B</color>
+    <color name="conversation_room_gray">#ACA9A9</color>
+
 </resources>

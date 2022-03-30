@@ -1,0 +1,47 @@
+package com.joshtalks.badebhaiya.feed.model
+
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
+
+data class RoomListResponseItem(
+    @SerializedName("id")
+    val roomId: String,
+    @SerializedName("audience_count")
+    var audienceCount: String?,
+    @SerializedName("channel_name")
+    val channelId: String?,
+    @SerializedName("speaker_count")
+    var speakerCount: String?,
+    @SerializedName("started_by")
+    val startedBy: Int?,
+    @SerializedName("top_user_list")
+    var liveRoomUserList: ArrayList<LiveRoomUser>?,
+    @SerializedName("topic")
+    val topic: String?,
+    var conversationRoomQuestionId:Int?=null
+)
+@Parcelize
+data class LiveRoomUser(
+    @SerializedName("id")
+    var id: Int?,
+    @SerializedName("is_speaker")
+    var isSpeaker: Boolean?,
+    @SerializedName("name")
+    var name: String?,
+    @SerializedName("photo_url")
+    var photoUrl: String?,
+    @SerializedName("sort_order")
+    var sortOrder: Int?,
+    @SerializedName("is_moderator")
+    var isModerator: Boolean = false,
+    @SerializedName("is_mic_on")
+    var isMicOn: Boolean = false,
+    @SerializedName("is_speaking")
+    var isSpeaking: Boolean = false,
+    @SerializedName("is_hand_raised")
+    var isHandRaised: Boolean = false,
+    @SerializedName("mentor_id")
+    var mentorId: String,
+    var isInviteSent: Boolean = false
+) : Parcelable

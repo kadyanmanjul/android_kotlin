@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notification_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/_12sdp"
+    tools:background="@color/notification_green_color"
+    tools:visibility="visible">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="👋 User invited you to join as a speaker" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/action_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/heading">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/rejectButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_marginLeft="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_13sdp"
+            android:background="@drawable/background_rejected_btn"
+            android:gravity="center"
+            android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/acceptButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Dismiss" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/acceptButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_13sdp"
+            android:background="@drawable/background_accepted_btn"
+            android:gravity="center"
+            android:letterSpacing="0.02"
+            android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+            android:textColor="#27AE61"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/rejectButton"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Join as speaker" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
