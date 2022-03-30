@@ -429,4 +429,13 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             return true
         return false
     }
+
+    suspend fun fetchRequestList(groupId: String): List<GroupMemberRequest>? {
+        return try {
+            apiService.getRequestsList(groupId).requestList
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }

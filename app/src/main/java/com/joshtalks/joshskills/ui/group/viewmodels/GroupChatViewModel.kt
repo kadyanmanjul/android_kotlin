@@ -270,6 +270,7 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun openRequestList(view: View) {
         message.what = OPEN_GROUP_REQUESTS_LIST
+        message.obj = groupId
         singleLiveEvent.value = message
     }
 
@@ -372,7 +373,7 @@ class GroupChatViewModel : BaseViewModel() {
             val onlineCount = repository.getGroupOnlineCount(groupId)
             memberCount.set(memberResult.size)
             groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 memberAdapter.addMembersToList(memberResult)
                 if (showLoading) fetchingGrpInfo.set(false)
                 else showToast("Removed member from the group", Toast.LENGTH_LONG)

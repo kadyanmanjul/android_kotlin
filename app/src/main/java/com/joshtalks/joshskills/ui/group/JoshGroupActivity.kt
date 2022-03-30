@@ -68,7 +68,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 OPEN_GROUP_INFO -> openGroupInfoFragment()
                 EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
-                OPEN_GROUP_REQUESTS_LIST -> openRequestsFragment()
+                OPEN_GROUP_REQUESTS_LIST -> openRequestsFragment(it.obj as String)
                 SEARCH_GROUP -> openGroupSearchFragment()
                 OPEN_ADMIN_RESPONSIBILITY -> openAdminResponseFragment(it.obj as AddGroupRequest)
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
@@ -233,11 +233,12 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openRequestsFragment() {
+    private fun openRequestsFragment(groupId: String) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
 
             val bundle = Bundle().apply {
+                putString(GROUPS_ID, groupId)
                 putString(CONVERSATION_ID, vm.conversationId)
             }
             val fragment = RequestListFragment().apply {

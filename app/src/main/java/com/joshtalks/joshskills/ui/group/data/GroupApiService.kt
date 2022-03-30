@@ -11,6 +11,7 @@ import retrofit2.http.Query
 import retrofit2.http.Path
 
 interface GroupApiService {
+
     @GET("$DIR/group/list_groups/")
     suspend fun getGroupList(@Query("page") pageNo : Int, @Query("mentor_id") mentorId : String): GroupListResponse
 
@@ -40,4 +41,7 @@ interface GroupApiService {
 
     @POST("$DIR/group/group_request/")
     suspend fun sendJoinRequest(@Body request: GroupJoinRequest): Response<Unit>
+
+    @GET("$DIR/group/list_group_requests/")
+    suspend fun getRequestsList(@Query("group_id") groupId: String): GroupRequestList
 }

@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.RequestListFragmentBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupRequestViewModel
 
 private const val TAG = "RequestListFragment"
@@ -41,8 +42,10 @@ class RequestListFragment : BaseFragment() {
 
     override fun setArguments() {
         arguments.let { args ->
+            vm.groupId = args?.getString(GROUPS_ID, "") ?: ""
             vm.conversationId = args?.getString(CONVERSATION_ID, "") ?: ""
         }
+        vm.getRequestList()
     }
 
     override fun getConversationId(): String? {
