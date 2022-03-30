@@ -37,4 +37,7 @@ interface GroupApiService {
 
     @GET("$DIR/group/group_online_members/{group_id}/")
     suspend fun getGroupOnlineCount(@Path("group_id") groupId: String): Map<String, Any?>
+
+    @POST("$DIR/group/group_request/")
+    suspend fun sendJoinRequest(@Body request: GroupJoinRequest): Response<Unit>
 }

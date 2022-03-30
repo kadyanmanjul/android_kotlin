@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.MessageItem
@@ -143,6 +144,11 @@ class GroupChatViewModel : BaseViewModel() {
             joinPublicGroup()
     }
 
+    fun validateJoinRequest(view: View) {
+        message.what = REQUEST_GROUP_VALIDATION
+        singleLiveEvent.value = message
+    }
+
     fun joinPublicGroup() {
         showProgressDialog("Joining Group...")
         viewModelScope.launch {
@@ -172,10 +178,25 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
-    fun joinPrivateGroup(view: View) {
+    fun joinPrivateGroup(request: GroupJoinRequest) {
         showProgressDialog("Sending Request to join...")
         viewModelScope.launch {
-            //TODO : Implement the API for the request
+            try {
+                val response = repository.sendJoinGroupRequest(request)
+                if (response) {
+                    onBackPress()
+                    onBackPress()
+                    message.what = CLEAR_SEARCH
+                    singleLiveEvent.value = message
+                    showToast("Request sent! Please wait for the admin to accept")
+                } else
+                    showToast("Error in sending request")
+                dismissProgressDialog()
+            } catch (e: Exception) {
+                dismissProgressDialog()
+                showToast("Error in sending request")
+                e.printStackTrace()
+            }
         }
     }
 

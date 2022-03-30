@@ -422,4 +422,11 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             null
         }
     }
+
+    suspend fun sendJoinGroupRequest(request: GroupJoinRequest): Boolean {
+        val response = apiService.sendJoinRequest(request)
+        if (response.isSuccessful)
+            return true
+        return false
+    }
 }
