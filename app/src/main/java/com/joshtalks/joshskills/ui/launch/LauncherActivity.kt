@@ -245,7 +245,7 @@ class LauncherActivity : CoreJoshActivity() {
         super.onStart()
         LocalBroadcastManager.getInstance(this@LauncherActivity)
             .registerReceiver(CallingServiceReceiver(), IntentFilter(CALLING_SERVICE_ACTION))
-        if (!PrefManager.getBoolValue(IS_COURSE_BOUGHT,false) && User.getInstance().isVerified) {
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT,false) && User.getInstance().isVerified) {
             val broadcastIntent=Intent().apply {
                 action = CALLING_SERVICE_ACTION
                 putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
