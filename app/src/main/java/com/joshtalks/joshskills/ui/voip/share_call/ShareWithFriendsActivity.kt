@@ -17,11 +17,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
-import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.databinding.ActivityShareWithFriendsBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
@@ -38,12 +36,14 @@ const val ARG_CALLER_CITY = "ARG_CALLER_CITY"
 const val ARG_CALLER_STATE = "ARG_CALLER_STATE"
 const val ARG_RECEIVER_CITY = "ARG_RECEIVER_CITY"
 const val ARG_RECEIVER_STATE = "ARG_RECEIVER_STATE"
+const val P2P_CALL_SHARE_TEXT = "P2P_CALL_SHARE_TEXT_"
 
 class ShareWithFriendsActivity : AppCompatActivity() {
     private val binding by lazy<ActivityShareWithFriendsBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_share_with_friends)
     }
 
+    private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
     private val viewModel: ShareWithFriendsViewModel by lazy {
         ViewModelProvider(this).get(ShareWithFriendsViewModel::class.java)
     }
@@ -101,6 +101,9 @@ class ShareWithFriendsActivity : AppCompatActivity() {
     }
 
     fun inviteFriends(dynamicLink: String) {
+        var shareText = AppObjectController.getFirebaseRemoteConfig().getString(P2P_CALL_SHARE_TEXT + courseId)
+        shareText = shareText.plus("\nLink: \n").plus(dynamicLink)
+
         viewModel.getDeepLink(
             dynamicLink,
             userReferralCode.plus(System.currentTimeMillis())
@@ -109,7 +112,8 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         val bitmapCreated = getBitMapFromView(view)
         try {
             saveBitMapToFile(bitmapCreated)
-            shareFile(bitmapCreated, dynamicLink)
+           // shareFile(bitmapCreated, dynamicLink)
+            shareFile(bitmapCreated, shareText)
             viewModel.postGoal(GoalKeys.P2P_IS_GT_20MIN.name, CampaignKeys.P2P_IMAGE_SHARING.name)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -221,7 +225,7 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         file.setReadable(true, false)
     }
 
-    private fun shareFile(bitmap: Bitmap, dynamicLink: String) {
+    private fun shareFile(bitmap: Bitmap, shareText: String) {
         val intent = Intent(Intent.ACTION_SEND)
         intent.apply {
             type = "image/*"
@@ -233,10 +237,7 @@ class ShareWithFriendsActivity : AppCompatActivity() {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             type = "text/plain"
             putExtra(
-                Intent.EXTRA_TEXT,
-                "मैं English सीख रहा हूँ ,जहाँ enviroment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.\n" +
-                        "Link :\n" + dynamicLink
-            )
+                Intent.EXTRA_TEXT,shareText)
         }.run {
             startActivity(Intent.createChooser(this, "Share image via"))
         }

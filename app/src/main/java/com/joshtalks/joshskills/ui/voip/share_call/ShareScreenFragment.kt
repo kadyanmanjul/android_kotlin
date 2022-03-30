@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentSharePreviewBinding
 
 const val BUNDLE_ARG_MINUTES_TALKED = "BUNDLE_ARG_MINUTES_TALKED"
@@ -18,10 +18,13 @@ const val BUNDLE_ARG_RECEIVER_IMAGE = "BUNDLE_ARG_RECEIVER_IMAGE"
 const val BUNDLE_ARG_CALLER_IMAGE = "BUNDLE_ARG_CALLER_IMAGE"
 const val BUNDLE_ARG_CALLER_DETAILS = "BUNDLE_ARG_CALLER_DETAILS"
 const val BUNDLE_ARG_RECEIVER_DETAILS = "BUNDLE_ARG_RECEIVER_DETAILS"
+const val P2P_IMAGE_SHARE_TEXT = "P2P_IMAGE_SHARE_TEXT_"
 
 class ShareScreenFragment: Fragment() {
 
     private lateinit var binding: FragmentSharePreviewBinding
+    private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,6 +48,7 @@ class ShareScreenFragment: Fragment() {
 
             tvCallerDetails.text = arguments?.getString(BUNDLE_ARG_CALLER_DETAILS)
             tvReceiverDetails.text = arguments?.getString(BUNDLE_ARG_RECEIVER_DETAILS)
+            tvNewPerson.text = AppObjectController.getFirebaseRemoteConfig().getString(P2P_IMAGE_SHARE_TEXT + courseId)
         }
     }
 
