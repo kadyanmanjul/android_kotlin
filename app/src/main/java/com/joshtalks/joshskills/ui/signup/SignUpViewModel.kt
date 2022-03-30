@@ -27,10 +27,10 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
+import com.joshtalks.joshskills.ui.call.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.ui.call.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.ui.call.START_SERVICE
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.joshtalks.joshskills.voip.CALLING_SERVICE_ACTION
-import com.joshtalks.joshskills.voip.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.voip.START_SERVICE
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import java.util.*
