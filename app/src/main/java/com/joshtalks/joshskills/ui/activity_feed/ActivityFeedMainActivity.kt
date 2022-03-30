@@ -48,8 +48,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
     }
 
     private fun getData() {
-        viewModel.getFeed()
-        viewModel.getActivityFeed()
+        viewModel.getActivityFeed("")
     }
 
     private fun popBackStack() {
@@ -69,7 +68,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
 
     private fun openProfileImageFragment(activityFeedResponse: ActivityFeedResponse) {
         ProfileImageShowFragment.newInstance(
-            activityFeedResponse.mediaUrl,
+            activityFeedResponse.photoUrl,
             null,
             null,
             activityFeedResponse.mentorId ?: EMPTY,
