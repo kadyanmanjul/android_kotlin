@@ -60,6 +60,10 @@ class VoiceCallViewModel : BaseViewModel() {
                         voipLog?.log("Error Occurred")
                         showToast("Error Occoured")
                     }
+                    CALL_DISCONNECT_REQUEST -> {
+                        voipLog?.log("Call Disconnect")
+                        showToast("Call Disconnect")
+                    }
                 }
                 singleLiveEvent.value = message
             }
@@ -87,8 +91,6 @@ class VoiceCallViewModel : BaseViewModel() {
     fun disconnectCall(v: View) {
         voipLog?.log("Disconnect Call")
         repository.disconnectCall()
-        val msg = Message().apply { what = CLOSE_CALLING_FRAGMENT }
-        singleLiveEvent.value = msg
     }
 
     fun connectCall() {

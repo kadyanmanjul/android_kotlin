@@ -119,10 +119,18 @@ class WebrtcRepository() {
             data.copyFrom(msg)
             voipLog?.log("$data  $mService")
             mService?.send(data)
-            if (data.what == IPC_CONNECTION_ESTABLISHED)
-                scope.launch {
-                    repositoryToVMFlow.emit(IPC_CONNECTION_ESTABLISHED)
+            when(data.what) {
+                IPC_CONNECTION_ESTABLISHED -> {
+                    scope.launch {
+                        repositoryToVMFlow.emit(IPC_CONNECTION_ESTABLISHED)
+                    }
                 }
+                CALL_DISCONNECT_REQUEST -> {
+                    scope.launch {
+                        repositoryToVMFlow.emit(CALL_DISCONNECT_REQUEST)
+                    }
+                }
+            }
         } catch (e : RemoteException) {
             e.printStackTrace()
             voipLog?.log("Remote Closed")

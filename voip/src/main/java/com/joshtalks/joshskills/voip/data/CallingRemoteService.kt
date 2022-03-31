@@ -79,6 +79,7 @@ class CallingRemoteService : Service() {
                 mediator.observeEvents().collect {
                     when(it) {
                         CALL_CONNECTED_EVENT -> updateStartCallTime(SystemClock.elapsedRealtime())
+                        CALL_DISCONNECT_REQUEST -> updateStartCallTime(0)
                     }
                     voipLog?.log("Sending Event to client")
                         handler.sendMessageToRepository(it)

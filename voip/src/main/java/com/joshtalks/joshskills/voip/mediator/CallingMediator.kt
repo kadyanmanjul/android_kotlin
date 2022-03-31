@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
+import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
@@ -188,6 +189,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
                             MessageConstants.DISCONNECTED -> {
                                 callingService.disconnectCall()
+                                flow.emit(CALL_DISCONNECT_REQUEST)
                             }
                         }
                     }
