@@ -3,18 +3,12 @@ package com.joshtalks.joshskills.ui.userprofile
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.Typeface
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -28,11 +22,6 @@ import com.joshtalks.joshskills.ui.referral.*
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
 import io.branch.referral.util.LinkProperties
-import kotlinx.android.synthetic.main.activity_gif.view.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.lang.Exception
 
 const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
@@ -44,8 +33,8 @@ class ShareFromProfile : AppCompatActivity() {
     private val viewModel: ShareFromProfileViewModel by lazy {
         ViewModelProvider(this).get(ShareFromProfileViewModel::class.java)
     }
-    private var referralCount: Int = 0
 
+    private var referralCount: Int = 0
     private var userReferralCode: String = EMPTY
 
     companion object{
@@ -132,10 +121,7 @@ class ShareFromProfile : AppCompatActivity() {
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String) {
         try {
-            viewModel.getDeepLink(
-                dynamicLink,
-                userReferralCode.plus(System.currentTimeMillis())
-            )
+            viewModel.deepLink(dynamicLink, userReferralCode.plus(System.currentTimeMillis()))
 
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "image/*"

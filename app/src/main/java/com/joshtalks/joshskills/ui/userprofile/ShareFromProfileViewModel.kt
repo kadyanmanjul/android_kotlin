@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.ui.userprofile.repository.ShareFromProfileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -16,9 +17,10 @@ import timber.log.Timber
 
 class ShareFromProfileViewModel(application: Application): AndroidViewModel(application) {
 
+    val profileRepository: ShareFromProfileRepository by lazy { ShareFromProfileRepository() }
     val repository: ABTestRepository by lazy { ABTestRepository() }
 
-    fun getDeepLink(deepLink: String, contentId: String) {
+    fun deepLink(deepLink: String, contentId: String){
         viewModelScope.launch {
             try {
                 val requestData = LinkAttribution(
@@ -28,8 +30,7 @@ class ShareFromProfileViewModel(application: Application): AndroidViewModel(appl
                     sharedItemType = "IM",
                     deepLink = deepLink
                 )
-                val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
-                Timber.i(res.body().toString())
+                profileRepository.getDeepLink(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
