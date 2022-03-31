@@ -34,10 +34,10 @@ class CallBar : SharedPreferences.OnSharedPreferenceChangeListener {
             callBar = CallBar()
         }
 
-        fun update(timestamp : String) {
+        fun update(timestamp : Long) {
             Log.d(TAG, "update: $timestamp")
             val editor = preferenceManager.edit()
-            editor.putString(CALL_BAR_SHARED_PREF_KEY, timestamp)
+            editor.putLong(CALL_BAR_SHARED_PREF_KEY, timestamp)
             editor.apply()
         }
     }
@@ -49,13 +49,12 @@ class CallBar : SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         Log.d(TAG, "onSharedPreferenceChanged: $key")
         if (key == CALL_BAR_SHARED_PREF_KEY) {
-            val callStatus=sharedPreferences?.getString(CALL_BAR_SHARED_PREF_KEY, "0")
-            if(callStatus== CALL_ON_GOING_TRUE){
-                Log.d(TAG, "onSharedPreferenceChanged: $callStatus")
+            val callStartTimestamp = sharedPreferences?.getLong(CALL_BAR_SHARED_PREF_KEY, 0)
+            if(callStartTimestamp != 0L){
+                Log.d(TAG, "onSharedPreferenceChanged: $callStartTimestamp")
                 isCallOnGoing.set(true)
-            }
-            if(callStatus==CALL_ON_GOING_FALSE) {
-                Log.d(TAG, "onSharedPreferenceChanged: $callStatus")
+            } else {
+                Log.d(TAG, "onSharedPreferenceChanged: $callStartTimestamp")
                 isCallOnGoing.set(false)
             }
         }

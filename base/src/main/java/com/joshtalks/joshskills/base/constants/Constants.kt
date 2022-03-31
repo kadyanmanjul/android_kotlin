@@ -22,8 +22,12 @@ const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
 const val UPDATE_START_CALL_TIME = "/start_call_time"
 const val API_HEADER = "/api_header"
+// Content Values
+const val CALL_START_TIME = "josh_call_start_time"
 
 // Call Bar
 const val CALL_BAR_SHARED_PREF_KEY = "callOnGoing"
 const val CALL_ON_GOING_TRUE = "true"
 const val CALL_ON_GOING_FALSE = "false"
+
+

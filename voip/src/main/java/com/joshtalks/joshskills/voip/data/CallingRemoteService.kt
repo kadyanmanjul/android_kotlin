@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.voip.data
 
 import android.app.Service
 import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -10,16 +11,19 @@ import android.net.Uri
 import android.os.DeadObjectException
 import android.os.IBinder
 import android.os.Messenger
+import android.os.SystemClock
 import android.provider.UserDictionary
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.base.constants.API_HEADER
+import com.joshtalks.joshskills.base.constants.CALL_START_TIME
 import com.joshtalks.joshskills.base.constants.CONTENT_URI
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.UPDATE_START_CALL_TIME
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
@@ -73,6 +77,9 @@ class CallingRemoteService : Service() {
             isMediatorInitialise = true
             ioScope.launch {
                 mediator.observeEvents().collect {
+                    when(it) {
+                        CALL_CONNECTED_EVENT -> updateStartCallTime(SystemClock.elapsedRealtime())
+                    }
                     voipLog?.log("Sending Event to client")
                         handler.sendMessageToRepository(it)
                 }
@@ -85,13 +92,6 @@ class CallingRemoteService : Service() {
         voipLog?.log("Binding ....")
         val messenger = Messenger(handler)
         observeHandlerEvents(handler)
-        ioScope.launch {
-            voipLog?.log("Waiting for CP")
-            accessContentProvider(API_HEADER)
-            delay(10000)
-            accessContentProvider(UPDATE_START_CALL_TIME)
-            voipLog?.log("Completed for accessContentProvider")
-        }
         return messenger.binder
     }
 
@@ -117,6 +117,7 @@ class CallingRemoteService : Service() {
                     CALL_DISCONNECT_REQUEST -> {
                         voipLog?.log("Disconnect Call")
                         mediator.disconnectCall()
+                        updateStartCallTime(0)
                     }
                 }
                 voipLog?.log("observeHandlerEvents: $it")
@@ -157,16 +158,16 @@ class CallingRemoteService : Service() {
         registerReceiver(pstnReceiver, filter)
     }
 
-    fun accessContentProvider(path : String) {
+    private fun updateStartCallTime(timeStamp : Long) {
         voipLog?.log("QUERY")
-        val data = contentResolver.query(
-            Uri.parse(CONTENT_URI + path),
-            null,
-            null,
-            null,
-            null
+        val values = ContentValues(1).apply {
+            put(CALL_START_TIME, timeStamp)
+        }
+        val data = contentResolver.insert(
+            Uri.parse(CONTENT_URI + UPDATE_START_CALL_TIME),
+            values
         )
-        data?.close()
+        voipLog?.log("Data --> $data")
     }
 
 }

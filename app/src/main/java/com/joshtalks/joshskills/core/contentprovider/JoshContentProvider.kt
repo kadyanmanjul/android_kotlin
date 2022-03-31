@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.API_HEADER
+import com.joshtalks.joshskills.base.constants.CALL_START_TIME
 import com.joshtalks.joshskills.base.constants.UPDATE_START_CALL_TIME
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.voip.voipLog
@@ -26,16 +27,6 @@ class JoshContentProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
-        Log.d(TAG, "query: $uri  ${uri.path}")
-        when(uri.path) {
-            API_HEADER -> {
-                CallBar.update(false)
-            }
-            UPDATE_START_CALL_TIME -> {
-                CallBar.update(true)
-            }
-        }
-        voipLog?.log("On Create Content Provider")
         return null
     }
 
@@ -44,7 +35,13 @@ class JoshContentProvider : ContentProvider() {
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         voipLog?.log("INSERT")
         Log.d(TAG, "insert: ")
-        return null
+        when(uri.path) {
+            UPDATE_START_CALL_TIME -> {
+                val startCallTimestamp = values?.getAsLong(CALL_START_TIME) ?: 0L
+                CallBar.update(startCallTimestamp)
+            }
+        }
+        return uri
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
