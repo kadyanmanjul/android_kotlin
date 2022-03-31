@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ApiRespStatus
@@ -88,6 +87,7 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
+import com.userexperior.a.a.b.a.t.S
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import retrofit2.HttpException
@@ -1032,11 +1032,15 @@ class LocalNotificationWorker(
 
 
 fun getGoogleAdId(context: Context): String? {
-    try {
-        MobileAds.initialize(context)
-        val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
-        return adInfo.id
-    } catch (e: Exception) {
+    if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+        try {
+            MobileAds.initialize(context)
+            val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
+            return adInfo.id
+        } catch (e: Exception) {
+
+        }
+    } else {
 
     }
     return null
