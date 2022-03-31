@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.chat
 import android.Manifest
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -10,6 +12,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
@@ -18,6 +21,7 @@ import android.view.*
 import android.view.View.*
 import android.view.animation.*
 import android.widget.ImageView
+import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -93,8 +97,12 @@ import com.joshtalks.joshskills.ui.video_player.*
 import com.joshtalks.joshskills.ui.view_holders.*
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
+import com.joshtalks.joshskills.voip.notification.NotificationData
+import com.joshtalks.joshskills.voip.notification.NotificationHandler
 import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
@@ -202,6 +210,7 @@ class ConversationActivity :
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
+        conversationBinding.callBar= CallBar()
         activityRef = WeakReference(this)
         initIntentObject()
         if (::inboxEntity.isInitialized.not()) {
@@ -1837,10 +1846,34 @@ class ConversationActivity :
 
     override fun onStart() {
         super.onStart()
-        //showLessonTooltip()
-        checkAndRequestPermissions()
-    }
+        Log.d("naman", "remote View 0: ")
 
+        checkAndRequestPermissions()
+//        val obj=object :NotificationData{
+//            override fun setTitle(): String {
+//                return "naman"
+//            }
+//
+//            override fun setContent(): String {
+//                return "ananannaan"
+//            }
+//
+//            override fun setTapAction(): PendingIntent? {
+//
+//                val tapIntent=Intent(this@ConversationActivity,VoiceCallActivity::class.java)
+//                val pendingIntent=PendingIntent.getActivity(this@ConversationActivity,1011,tapIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+//                return pendingIntent
+//            }
+//        }
+//        val remoteView=RemoteViews(packageName,R.layout.call_notification)
+//        val tapIntent=Intent(this@ConversationActivity,VoiceCallActivity::class.java)
+//        val pendingIntent=PendingIntent.getActivity(this@ConversationActivity,1011,tapIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+//        remoteView.setOnClickPendingIntent(R.id.answer_text,pendingIntent)
+//        Handler().postDelayed({
+//            NotificationHandler(this@ConversationActivity).addNotification(remoteView)
+//        },10000)
+        //showLessonTooltip()
+    }
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
