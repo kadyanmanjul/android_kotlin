@@ -1364,7 +1364,7 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    suspend fun audioVideoMuxer() {
+    fun audioVideoMuxer() {
         try {
             val videoExtractor: MediaExtractor = MediaExtractor()
             val audioExtractor: MediaExtractor = MediaExtractor()
@@ -1375,7 +1375,7 @@ class ReadingFragmentWithoutFeedback :
             videoExtractor.selectTrack(0)
             val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
 
-            var muxer: MediaMuxer = MediaMuxer(
+            val muxer: MediaMuxer = MediaMuxer(
                 outputFile,
                 MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
             )
