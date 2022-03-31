@@ -17,3 +17,13 @@ const val INTENT_DATA_CONNECT_CALL = "josh_intent_data_connect_call"
 
 // Service Action
 const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
+
+// Content Provider UI
+const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
+const val UPDATE_START_CALL_TIME = "/start_call_time"
+const val API_HEADER = "/api_header"
+
+// Call Bar
+const val CALL_BAR_SHARED_PREF_KEY = "callOnGoing"
+const val CALL_ON_GOING_TRUE = "true"
+const val CALL_ON_GOING_FALSE = "false"

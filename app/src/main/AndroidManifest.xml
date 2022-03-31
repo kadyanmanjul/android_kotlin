@@ -819,7 +819,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
+        <provider
+            android:authorities="com.joshtalks.joshskills.contentprovider"
+            android:name=".core.contentprovider.JoshContentProvider"
+            android:permission="com.joshtalks.permission.READ_WRITE_CONTENT"
+            android:enabled="true"
+            android:exported="true"/>
         <service
             android:name=".core.notification.HeadsUpNotificationService"
             android:enabled="true"
@@ -828,5 +833,8 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
     </application>
-
+    <queries>
+        <provider
+            android:authorities="com.joshtalks.joshskills.contentprovider" />
+    </queries>
 </manifest>

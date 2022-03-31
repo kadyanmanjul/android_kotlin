@@ -1,18 +1,24 @@
 package com.joshtalks.joshskills.voip.data
 
 import android.app.Service
+import android.content.ContentResolver
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.DeadObjectException
 import android.os.IBinder
 import android.os.Messenger
+import android.provider.UserDictionary
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.joshtalks.joshskills.base.constants.API_HEADER
+import com.joshtalks.joshskills.base.constants.CONTENT_URI
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
+import com.joshtalks.joshskills.base.constants.UPDATE_START_CALL_TIME
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
@@ -25,6 +31,7 @@ import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -78,6 +85,13 @@ class CallingRemoteService : Service() {
         voipLog?.log("Binding ....")
         val messenger = Messenger(handler)
         observeHandlerEvents(handler)
+        ioScope.launch {
+            voipLog?.log("Waiting for CP")
+            accessContentProvider(API_HEADER)
+            delay(10000)
+            accessContentProvider(UPDATE_START_CALL_TIME)
+            voipLog?.log("Completed for accessContentProvider")
+        }
         return messenger.binder
     }
 
@@ -141,6 +155,18 @@ class CallingRemoteService : Service() {
             addAction("android.intent.action.NEW_OUTGOING_CALL")
         }
         registerReceiver(pstnReceiver, filter)
+    }
+
+    fun accessContentProvider(path : String) {
+        voipLog?.log("QUERY")
+        val data = contentResolver.query(
+            Uri.parse(CONTENT_URI + path),
+            null,
+            null,
+            null,
+            null
+        )
+        data?.close()
     }
 
 }
