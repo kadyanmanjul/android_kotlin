@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.feed
 
+import android.util.Log
 import android.view.View
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +14,7 @@ private const val TAG = "GroupBindingAdapter"
 fun setFeedAdapter(
     view: RecyclerView,
     adapter: FeedAdapter,
-    function: (RoomListResponseItem,View) -> Unit
+    function: ((RoomListResponseItem,View) -> Unit)?
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)

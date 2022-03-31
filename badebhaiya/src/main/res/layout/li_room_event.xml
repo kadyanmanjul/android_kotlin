@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="2dp"
-        android:layout_marginBottom="@dimen/_14sdp"
+
+        android:layout_margin="@dimen/_8sdp"
         app:cardCornerRadius="@dimen/_12sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,6 +23,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCardHeader"
+                android:text="@{roomData.speakersData.name}"
                 android:layout_width="wrap_content"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
                 android:layout_height="wrap_content"
@@ -43,6 +45,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCardTopic"
+                android:text="@{roomData.topic}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/profile_feed_item_font_color"

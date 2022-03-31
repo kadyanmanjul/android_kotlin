@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.joshtalks.badebhaiya.feed.FeedViewModel" />
+
+        <variable
+            name="callback"
+            type="com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom.CreateRoomCallback" />
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_bottomsheet"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/_20sdp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_rectangle_line" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/create_room_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_24sdp"
+            android:text="@string/create_your_room"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_18ssp" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:text="@string/name_your_room"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
+            android:textSize="@dimen/_12sdp" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/topic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:hint="What do you want to talk about?"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular" />
+
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/should_start_now"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/nunito_sans_semi_bold"
+            android:text="Start Right Now"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="@id/hand_raised_text"
+            app:thumbTint="#FDF7F7"
+            app:trackTint="#929292" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/date_btn"
+            style="@style/GreyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:backgroundTint="#EFF3F2"
+            android:drawableLeft="@drawable/ic_calendar"
+            android:drawablePadding="@dimen/_8sdp"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:textAlignment="viewStart"
+            android:visibility="gone"
+            tools:text="@tools:sample/date/ddmmyy" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/time_btn"
+            style="@style/GreyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:backgroundTint="#EFF3F2"
+            android:drawableLeft="@drawable/ic_clock"
+            android:drawablePadding="@dimen/_8sdp"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:textAlignment="viewStart"
+            android:visibility="gone"
+            tools:text="@tools:sample/date/hhmm" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_btn"
+            style="@style/GreenButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="@dimen/_17sdp"
+            android:onClick="@{()->viewModel.createRoom(topic.getText().toString(), callback)}"
+            android:text="@string/start_room"
+            tools:text="Start Room" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

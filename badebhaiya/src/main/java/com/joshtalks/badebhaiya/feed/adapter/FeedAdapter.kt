@@ -4,20 +4,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 
 class FeedAdapter :
-    RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
+    ListAdapter<RoomListResponseItem, FeedAdapter.FeedViewHolder>(DIFF_CALLBACK) {
+
+    companion object DIFF_CALLBACK : DiffUtil.ItemCallback<RoomListResponseItem>() {
+        override fun areItemsTheSame(
+            oldItem: RoomListResponseItem,
+            newItem: RoomListResponseItem
+        ): Boolean {
+            return oldItem.roomId == newItem.roomId
+        }
+
+        override fun areContentsTheSame(
+            oldItem: RoomListResponseItem,
+            newItem: RoomListResponseItem
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
 
     var itemClick: ((RoomListResponseItem, View) -> Unit)? = null
-    var roomList: List<RoomListResponseItem> = listOf()
 
-    fun updateRoomList(roomList: List<RoomListResponseItem>){
-        this.roomList = roomList
-    }
     inner class FeedViewHolder(private val item: LiRoomEventBinding) :
         RecyclerView.ViewHolder(item.root) {
         fun onBind(room: RoomListResponseItem) {
@@ -43,8 +57,6 @@ class FeedAdapter :
     }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
-        holder.onBind(roomList[position])
+        holder.onBind(getItem(position))
     }
-
-    override fun getItemCount() = roomList.size
 }

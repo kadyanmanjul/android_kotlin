@@ -4,6 +4,15 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
+data class RoomListResponse(
+    @SerializedName("live_room")
+    val liveRoomList: List<RoomListResponseItem>?,
+
+    /*@SerializedName("schedule_room")
+    val scheduledRoomList: List<RoomListResponseItem>?*/
+)
+
+
 data class RoomListResponseItem(
     @SerializedName("id")
     val roomId: String,
@@ -19,8 +28,28 @@ data class RoomListResponseItem(
     var liveRoomUserList: ArrayList<LiveRoomUser>?,
     @SerializedName("topic")
     val topic: String?,
-    var conversationRoomQuestionId:Int?=null
+    @SerializedName("start_time")
+    val startTime: String?,
+    @SerializedName("ended")
+    val endTime: String?,
+    @SerializedName("is_scheduled")
+    val isScheduled: Boolean?,
+    @SerializedName("speakers_data")
+    val speakersData: SpeakerData?,
+    var conversationRoomQuestionId: Int? = null
 )
+
+data class SpeakerData(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("user_id")
+    val userId: String?,
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("photo_url")
+    val photoUrl: String?,
+)
+
 @Parcelize
 data class LiveRoomUser(
     @SerializedName("id")
