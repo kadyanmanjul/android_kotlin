@@ -40,8 +40,7 @@
             android:layout_marginHorizontal="@dimen/_9sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:paddingBottom="@dimen/_60sdp"
-            feedAdapter="@{viewModel.adapter}"
-            onFeedItemClick="@{viewModel.onFeedItemClicked}"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_iv"

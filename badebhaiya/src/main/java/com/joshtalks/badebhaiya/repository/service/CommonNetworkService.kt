@@ -8,17 +8,16 @@ import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.QueryMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.FieldMap
 
 interface CommonNetworkService {
 
     @POST("$DIR/user/fcm/")
-    suspend fun postFCMToken(@QueryMap params: Map<String, String>): Response<FCMData>
+    suspend fun postFCMToken(@Body params: Map<String, String>): Response<FCMData>
 
     @POST("$DIR/user/fcm/{id}")
     suspend fun patchFCMToken(

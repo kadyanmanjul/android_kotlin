@@ -37,6 +37,10 @@
             android:name=".signup.SignUpActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".feed.FeedActivity"
+            android:exported="true">
+        </activity>
         <activity android:name=".TemporaryFeedActivity"
             android:exported="true"/>
         <receiver

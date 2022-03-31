@@ -20,7 +20,7 @@
     </style>
 
     <style name="BB_Typography_OpenSans_Semi_Bold_Button" parent="TextAppearance.MaterialComponents.Button">
-        <item name="fontFamily">@font/OpenSans-SemiBold</item>
+        <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
     </style>
 
     <style name="BB_Typography_Nunito_Sans_Semi_Bold">
