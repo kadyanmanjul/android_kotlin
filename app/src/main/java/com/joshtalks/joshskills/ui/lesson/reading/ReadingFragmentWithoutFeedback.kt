@@ -1510,10 +1510,7 @@ class ReadingFragmentWithoutFeedback :
             if (binding.mergedVideo.isPlaying) {
                 binding.mergedVideo.stopPlayback()
             }
-            binding.subAnswerLayout.visibility = GONE
-            binding.videoLayout.visibility = GONE
             binding.practiseSubmitLayout.visibility = GONE
-            binding.playBtn.visibility = GONE
             disableSubmitButton()
     }
 
