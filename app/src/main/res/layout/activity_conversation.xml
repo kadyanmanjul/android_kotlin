@@ -299,7 +299,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/_6sdp"
-                    android:paddingBottom="@dimen/_4sdp"
                     tools:itemCount="1"
                     tools:listitem="@layout/lesson_progress_stub" />
             </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
@@ -409,6 +408,27 @@
             android:background="#00000000"
             android:visibility="visible">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_restart_course"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:backgroundTint="@color/button_color"
+                android:elevation="@dimen/_4sdp"
+                android:onClick="@{()->handler.restartCourse(true)}"
+                android:padding="@dimen/_8sdp"
+                android:text="Restart Course"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/white"
+                app:cornerRadius="@dimen/_32sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8" />
 
             <LinearLayout
                 android:id="@+id/inputLL"
@@ -701,7 +721,7 @@
             android:gravity="center"
             android:padding="@dimen/_18sdp"
             android:visibility="gone"
-            app:tooltipText="आपके सहपाठी कौन है आप यहाँ से देख सकते है"
+            app:tooltipText="@{handler.getConversationTooltip()}"
             tools:visibility="gone" />
 
         <FrameLayout

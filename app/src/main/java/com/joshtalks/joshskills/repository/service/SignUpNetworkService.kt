@@ -163,12 +163,18 @@ interface SignUpNetworkService {
     @POST("$DIR/engage/inbox/")
     suspend fun logInboxEngageEvent(@Body params: Map<String, String>)
 
-    @POST("$DIR/mentor/last-active")
-    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
+//    @POST("$DIR/mentor/last-active")
+//    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
 
     @GET("$DIR/user/profile_pictures//")
     suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
+
+    @GET("$DIR/course/course_syllabus/")
+    suspend fun getD2pSyllabusPdf() : Response<Map<String, String?>>
+
+    @GET("$DIR/course/language/")
+    suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>
 }

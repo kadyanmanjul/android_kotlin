@@ -157,7 +157,9 @@ class GrammarButtonView : FrameLayout {
             if (isAnswerChecked) {
                 callback?.nextQuestion()
             } else {
-                grammarBtn.text = context.getString(R.string.grammar_btn_text_continue)
+                grammarBtn.text = AppObjectController.getFirebaseRemoteConfig().getString(
+                    FirebaseRemoteConfigKey.GRAMMAR_CONTINUE_BUTTON_TEXT +
+                            PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                 callback?.let { callback ->
                     val result = callback.checkQuestionCallBack()
                     if (result != null) {
@@ -272,7 +274,9 @@ class GrammarButtonView : FrameLayout {
 
         grammarBtn.isEnabled = false
         grammarBtn.isClickable = false
-        grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
+        grammarBtn.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.GRAMMAR_CHECK_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        )
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
         currentState = GrammarButtonState.DISABLED
         updateGrammarButtonDrawable(grammarBtn, R.drawable.gray_btn_pressed_state)
@@ -418,7 +422,9 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setAlreadyAttemptedView(isCorrect: Boolean) {
-        grammarBtn.text = context.getString(R.string.grammar_btn_text_continue)
+        grammarBtn.text = AppObjectController.getFirebaseRemoteConfig().getString(
+            FirebaseRemoteConfigKey.GRAMMAR_CONTINUE_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        )
         isAnswerChecked = true
         enableBtn()
         if (isCorrect) {

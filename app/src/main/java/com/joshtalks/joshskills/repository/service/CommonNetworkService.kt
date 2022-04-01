@@ -77,6 +77,9 @@ interface CommonNetworkService {
     @POST("$DIR/payment/verify_v2/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
 
+    @GET("$DIR/payment/verify_razorpay_order/")
+    suspend fun verifyErrorPayment(@Body params:Map<String,String>): Any
+
     @POST("$DIR/course/certificate/generate/")
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
 
@@ -228,12 +231,14 @@ interface CommonNetworkService {
 
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
-        @Query("mentor_id") id: String
+        @Query("mentor_id") id: String,
+        @Query("course_id") courseId: String
     ): Response<PointsHistoryResponse>
 
     @GET("$DIR/reputation/get_spoken_history_v2/")
     suspend fun getUserSpokenMinutesHistory(
-        @Query("mentor_id") id: String
+        @Query("mentor_id") id: String,
+        @Query("course_id") courseId: String
     ): Response<SpokenMinutesHistoryResponse>
 
     @Headers(
@@ -329,13 +334,15 @@ interface CommonNetworkService {
     suspend fun searchLeaderboardMember(
         @Query("key") word: String,
         @Query("page") page: Int,
-        @Query("interval_type") intervalType: LeaderboardType
+        @Query("interval_type") intervalType: LeaderboardType,
+        @Query("course_id") courseId: String
     ): Response<List<LeaderboardMentor>>
 
     @GET("$DIR/leaderboard/get_previous_leaderboard/")
     suspend fun getPreviousLeaderboardData(
         @Query("mentor_id") mentorId: String,
-        @Query("interval_type") intervalType: String
+        @Query("interval_type") intervalType: String,
+        @Query("course_id") courseId: String
     ): Response<PreviousLeaderboardResponse>
 
     @POST("$DIR/course/free_trial_register_course/")
@@ -357,7 +364,7 @@ interface CommonNetworkService {
     suspend fun saveIntroVideoFlowImpression(@Body params: Map<String, Any?>): Response<Any>
 
     @POST("$DIR/mentor/restart_course/")
-    suspend fun restartCourse(@Body params: Map<String, String>) : Response<Any>
+    suspend fun restartCourse(@Body params: Map<String, String>) : Response<RestartCourseResponse>
 
     @POST("$DIR/impression/restart_course_track_impressions/")
     suspend fun restartCourseImpression(@Body params: Map<String, String>): Response<Void>

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.chat
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -12,7 +13,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -28,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
@@ -38,7 +42,28 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BLOCK_ISSUE
+import com.joshtalks.joshskills.core.CHAT_OPENED_FOR_NOTIFICATION
+import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_ANIMATION
+import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_TOOLTIP
+import com.joshtalks.joshskills.core.HAS_SEEN_LESSON_TOOLTIP
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_ICON
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_MENU
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REPORT_ISSUE
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -54,6 +79,7 @@ import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
 import com.joshtalks.joshskills.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -83,6 +109,7 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
@@ -146,6 +173,7 @@ const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
 const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
+const val TOOLTIP_CONVERSAITON = "TOOLTIP_CONVERSAITON_"
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -204,6 +232,7 @@ class ConversationActivity :
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
     private lateinit var unlockClassViewModel: UnlockClassViewModel
+    val event = EventLiveData
     private val conversationAdapter: ConversationAdapter by lazy {
         ConversationAdapter(
             WeakReference(
@@ -228,7 +257,6 @@ class ConversationActivity :
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
     private var refreshMessageByUser = false
-
     private var currentTooltipIndex = 0
     private var activityFeedControl = false
     private val leaderboardTooltipList by lazy {
@@ -253,6 +281,7 @@ class ConversationActivity :
             return
         }
         init()
+        showRestartButton()
     }
 
     //Setting the animation on the buttons
@@ -551,6 +580,7 @@ class ConversationActivity :
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             profileFeatureActiveView(inboxEntity.isCapsuleCourse)
             showFavtMenuOption(inboxEntity.isCapsuleCourse)
+            showRestartMenuOption()
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
@@ -583,11 +613,76 @@ class ConversationActivity :
                             inboxEntity.conversation_id
                         )
                     }
+                    R.id.menu_restart_course -> {
+                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_COURSE_DOT)
+                        restartCourse(false)
+                    }
                 }
                 return@setOnMenuItemClickListener true
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+    }
+
+    fun buildRestartDialog() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.restart_course_dialog, null)
+        dialogBuilder.setView(dialogView)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        val width = AppObjectController.screenWidth * .9
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        alertDialog.show()
+        alertDialog.window?.setLayout(width.toInt(), height)
+    }
+
+    fun restartCourse(isFromRestartButton: Boolean) {
+        if(isFromRestartButton)
+            conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
+
+        var phoneNumber = User.getInstance().phoneNumber
+        phoneNumber = phoneNumber?.substring(3)
+        val email = User.getInstance().email
+        if(email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
+            showToast(getString(R.string.course_restart_fail))
+        }
+        else {
+            MaterialDialog(this@ConversationActivity).show {
+                message(R.string.restart_course_message)
+                positiveButton(R.string.restart_now) {
+                    if(email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
+                        conversationBinding.btnRestartCourse.visibility = View.GONE
+                        conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
+                    }
+                    else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
+                        conversationBinding.btnRestartCourse.visibility = View.GONE
+                        conversationViewModel.restartCourse(email, "Email")
+                    }
+                    if (isFromRestartButton) {
+                        conversationViewModel.saveRestartCourseImpression(
+                            IMPRESSION_SUCCESS_RESTART_90LESSONS
+                        )
+                    } else {
+                        conversationViewModel.saveRestartCourseImpression(
+                            IMPRESSION_SUCCESS_RESTART_COURSE_DOT
+                        )
+                    }
+                }
+                negativeButton(R.string.cancel) {
+                }
+            }
+        }
+    }
+
+    fun showRestartButton() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val lastLesson= conversationViewModel.getLastLessonForCourse()
+            if(lastLesson == 90 && inboxEntity.isCapsuleCourse) {
+                conversationBinding.btnRestartCourse.visibility = View.VISIBLE
+                conversationBinding.messageButton.visibility = View.GONE
+                conversationBinding.chatEdit.visibility = View.GONE
+            }
         }
     }
 
@@ -669,7 +764,7 @@ class ConversationActivity :
             ) {
                 val nameArr = User.getInstance().firstName?.split(" ")
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
+                showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
             } else {
                 val intent = Intent(this, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, getConversationId())
@@ -686,7 +781,7 @@ class ConversationActivity :
             ) {
                 val nameArr = User.getInstance().firstName?.split(" ")
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
+                showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
             } else {
                 val intent = Intent(this, StartActivity::class.java)
                 GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
@@ -1028,6 +1123,17 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
+                if (userProfileData.hasGroupAccess) {
+                    conversationBinding.imgGroupChatBtn.visibility = VISIBLE
+                    if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
+                        && System.currentTimeMillis().minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
+                        && PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
+                        PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
+                        checkForOemNotifications(AUTO_START_POPUP)
+                    }
+                } else {
+                    conversationBinding.imgGroupChatBtn.visibility = GONE
+                }
                 conversationBinding.floatingActionButtonAdd.visibility = VISIBLE
                 getAllPendingRequest()
                 blurViewOnClickListeners(userProfileData)
@@ -1372,6 +1478,17 @@ class ConversationActivity :
         }
     }
 
+    private fun showRestartMenuOption(){
+        if(inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = true
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = true
+        }
+        else {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = false
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = false
+        }
+    }
+
     private fun initScoreCardView(userData: UserProfileResponse) {
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
@@ -1387,12 +1504,15 @@ class ConversationActivity :
                         delay(1000)
                         val status =
                             AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
+                        val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
                         Log.d(TAG, "initScoreCardView: $status")
                         withContext(Dispatchers.Main) {
                             if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(
                                     HAS_SEEN_UNLOCK_CLASS_ANIMATION
                                 )
                             ) {
+                                delay(1000)
+                            if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
                                 delay(1000)
                                 setOverlayAnimation()
                             } else if (PrefManager.getBoolValue(
@@ -1407,6 +1527,7 @@ class ConversationActivity :
                                     System.currentTimeMillis()
                                 )
                                 checkForOemNotifications(AUTO_START_POPUP)
+                            }
                             }
                         }
                     }
@@ -1852,7 +1973,7 @@ class ConversationActivity :
                         ) {
                             val nameArr = User.getInstance().firstName?.split(" ")
                             val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                            showToast(getString(R.string.feature_locked, firstName))
+                            showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
                         } else {
                             startActivityForResult(
                                 LessonActivity.getActivityIntent(
@@ -2052,6 +2173,26 @@ class ConversationActivity :
                 }
             }
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        try {
+            event.observe(this) {
+                when (it.what) {
+                    COURSE_RESTART_SUCCESS -> {
+                        logout()
+                        showToast(getString(R.string.course_restart_success))
+                    }
+                    COURSE_RESTART_FAILURE -> {
+                        showToast(getString(R.string.course_restart_fail))
+                    }
+                }
+            }
+        }
+        catch (ex:Exception) {
+            ex.printStackTrace()
+        }
     }
 
     override fun onResume() {
@@ -2467,4 +2608,11 @@ class ConversationActivity :
         Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
+
+    fun getConversationTooltip() : String {
+        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        return AppObjectController
+            .getFirebaseRemoteConfig().getString(TOOLTIP_CONVERSAITON + courseId)
+    }
+
 }

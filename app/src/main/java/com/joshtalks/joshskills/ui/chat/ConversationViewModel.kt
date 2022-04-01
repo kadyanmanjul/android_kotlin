@@ -4,7 +4,10 @@ import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Message
+import android.util.Log
 import androidx.lifecycle.*
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
@@ -58,7 +61,9 @@ class ConversationViewModel(
     val pagingMessagesChat = MutableSharedFlow<List<ChatModel>>()
     val updateChatMessage = MutableSharedFlow<ChatModel?>()
     val newMessageAddFlow = MutableSharedFlow<Boolean>()
-
+    private val singleLiveEvent = EventLiveData
+    val msg = Message()
+    val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
@@ -379,11 +384,18 @@ class ConversationViewModel(
                 requestParams["mobile"] = mobile
                 requestParams["course_id"] = inboxEntity.courseId
                 requestParams["is_api"] = true.toString()
-
                 AppObjectController.commonNetworkService.restartCourse(requestParams)
-                return@launch
+                deleteConversationData(inboxEntity.courseId)
+                withContext(dispatcher) {
+                    msg.what = COURSE_RESTART_SUCCESS
+                    singleLiveEvent.value = msg
+                }
             } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
+                withContext(dispatcher) {
+                    msg.what = COURSE_RESTART_FAILURE
+                    singleLiveEvent.value = msg
+                }
+                ex.printStackTrace()
             }
         }
     }
@@ -420,6 +432,25 @@ class ConversationViewModel(
         super.onCleared()
         if (isRecordingStarted) {
             mAudioRecording.stopRecording(true)
+        }
+    }
+
+    private fun deleteConversationData(courseId: String) {
+        try {
+            AppObjectController.appDatabase.run {
+                val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
+                conversationId?.let {
+                    PrefManager.removeKey(it)
+                    LastSyncPrefManager.removeKey(it)
+                }
+                val lessons = lessonDao().getLessonIdsForCourse(courseId.toInt())
+                lessons.forEach {
+                    LastSyncPrefManager.removeKey(it.toString())
+                }
+                commonDao().deleteConversationData(courseId.toInt())
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
     }
 }

@@ -27,6 +27,9 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.playSnackbarSound
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_CONTINUE_BUTTON_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_TEST_COMPLETE_DESCRIPTION
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -45,6 +48,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 
 private const val TAG = "GrammarOnlineTest"
 
@@ -156,7 +161,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                     ) == lessonNumber
                 ) {
                     binding.description.text = getString(R.string.grammar_continue_test_text)
-                    binding.startBtn.text = getString(R.string.grammar_btn_text_continue)
+                    binding.startBtn.text = getContinueButtonText()
                 }
             }
             (PrefManager.getIntValue(
@@ -516,6 +521,18 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         val titleBarHeight = contentViewTop - statusBarHeight
         return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }*/
+
+    fun getStartButtonText() = AppObjectController.getFirebaseRemoteConfig().getString(
+        GRAMMAR_START_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+    )
+
+    fun getContinueButtonText() = AppObjectController.getFirebaseRemoteConfig().getString(
+        GRAMMAR_CONTINUE_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+    )
+
+    fun getTestCompletedDescription() = AppObjectController.getFirebaseRemoteConfig().getString(
+        GRAMMAR_TEST_COMPLETE_DESCRIPTION + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+    ).replace("\\n", "\n")
 
 }
 

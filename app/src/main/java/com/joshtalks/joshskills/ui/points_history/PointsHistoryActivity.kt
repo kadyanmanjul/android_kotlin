@@ -24,6 +24,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -46,6 +48,7 @@ import kotlinx.coroutines.withContext
 
 const val MENTOR_ID = "mentor_id"
 private const val TAG = "PointsHistoryActivity"
+const val TOOLTIP_POINTS_HISTORY_SCREEN = "TOOLTIP_POINTS_HISTORY_SCREEN_"
 
 class PointsHistoryActivity : WebRtcMiddlewareActivity() {
     private val viewModel: PointsViewModel by lazy {
@@ -195,6 +198,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         val tooltipView = binding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
         val tapToDismissView =
             binding.overlayView.findViewById<AppCompatTextView>(R.id.label_tap_to_dismiss)
+        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayImageView.x = overlayItem.x.toFloat()
         overlayImageView.y = overlayItem.y.toFloat() - STATUS_BAR_HEIGHT
@@ -207,7 +211,11 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
             arrowView.requestLayout()
             arrowView.visibility = View.VISIBLE
             binding.overlayView.visibility = View.VISIBLE
-            tooltipView.setTooltipText("इस student ने points कैसे कमाए हम यहाँ से देख सकते हैं")
+            tooltipView.setTooltipText(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(TOOLTIP_POINTS_HISTORY_SCREEN + courseId)
+            )
+
             slideInAnimation(tooltipView)
             PrefManager.put(HAS_SEEN_POINTS_HISTORY_ANIMATION, true)
             isAnimationVisible = true

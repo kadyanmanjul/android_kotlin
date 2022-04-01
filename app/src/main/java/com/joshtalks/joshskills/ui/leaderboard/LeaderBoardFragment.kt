@@ -45,6 +45,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+const val TOOLTIP_ONLINE_STATUS = "TOOLTIP_ONLINE_STATUS_"
+
 class LeaderBoardFragment : Fragment(), ViewInflated {
     private val TAG = "LeaderBoardFragment"
     private lateinit var binding: FragmentLeaderboardViewPagerBinding
@@ -340,18 +342,14 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
         )
 
         if (type == "TODAY") {
-            liveUserPosition =
-                leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
-            if (liveUserPosition < 0 || liveUserPosition >= 3) {
-                liveUserPosition = 2
-                if (leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)
-                        ?.hasNext() == true
-                ) {
-                    leaderboardResponse1.top_50_mentor_list.listIterator(liveUserPosition)
-                        .next().isOnline = true
+            leaderboardResponse1.top_50_mentor_list?.let { list ->
+                liveUserPosition = list.indexOfFirst { it.isOnline }
+                if (liveUserPosition < 0 || liveUserPosition >= 3) {
+                    liveUserPosition = 2
+                    if (liveUserPosition < list.size && list.listIterator(liveUserPosition).hasNext()) {
+                        list.listIterator(liveUserPosition).next().isOnline = true
+                    }
                 }
-                liveUserPosition = liveUserPosition.plus(2)
-            } else {
                 liveUserPosition = liveUserPosition.plus(2)
             }
         }
@@ -487,7 +485,10 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                         val item =
                             binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
                         val balloon = Balloon.Builder(requireContext())
-                            .setText(getString(R.string.online_tooltip))
+                            .setText(
+                                AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(TOOLTIP_ONLINE_STATUS + (requireActivity() as LeaderBoardViewPagerActivity).getCourseId())
+                            )
                             .setTextSize(15F)
                             .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                             .setDismissWhenTouchOutside(true)

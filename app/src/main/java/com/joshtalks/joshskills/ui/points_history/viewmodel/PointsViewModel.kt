@@ -6,6 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
 import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
@@ -25,7 +28,8 @@ class PointsViewModel(application: Application) : AndroidViewModel(application) 
             try {
 
                 val response = AppObjectController.commonNetworkService.getUserPointsHistory(
-                    mentorId ?: Mentor.getInstance().getId()
+                    mentorId ?: Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                 )
                 if (response.isSuccessful && response.body() != null) {
                     pointsHistoryLiveData.postValue(response.body())
@@ -43,7 +47,8 @@ class PointsViewModel(application: Application) : AndroidViewModel(application) 
             try {
 
                 val response = AppObjectController.commonNetworkService.getUserSpokenMinutesHistory(
-                    mentorId ?: Mentor.getInstance().getId()
+                    mentorId ?: Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                 )
                 if (response.isSuccessful && response.body() != null) {
                     spokenHistoryLiveData.postValue(response.body())

@@ -19,28 +19,3 @@
         </clip>
     </item>
 </layer-list>
-<!--
-
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-<item android:id="@android:id/background">
-    <shape>
-        <corners android:radius="@dimen/_52sdp" />
-        <solid android:color="@color/light_shade_of_gray" />
-
-    </shape>
-</item>
-<item android:id="@android:id/secondaryProgress">
-    <shape>
-        <corners android:radius="@dimen/_52sdp" />
-        <solid android:color="@color/light_shade_of_gray" />
-
-    </shape>
-</item>
-
-<item
-    android:id="@android:id/progress"
-    android:drawable="@drawable/grammar_progress_drawable">
-
-</item>
-</layer-list>-->

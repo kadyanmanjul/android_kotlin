@@ -69,7 +69,7 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build()
                 )
             )
-            // .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
+            .then(OneTimeWorkRequestBuilder<RegenerateFCMTokenWorker>().build())
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build())
             .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
@@ -252,6 +252,7 @@ object WorkManagerAdmin {
             .enqueue(workRequest)
     }
 
+    //TODO : Remove this function and all code related to it
     fun userActiveStatusWorker(status: Boolean) {
         val data = workDataOf(IS_ACTIVE to status)
         val constraints = Constraints.Builder()

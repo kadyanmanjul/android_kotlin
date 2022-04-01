@@ -231,7 +231,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
-            WorkManagerAdmin.userActiveStatusWorker(true)
+//            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }
     }
@@ -424,7 +424,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                             "is_verified" to User.getInstance().isVerified.toString(),
                             "mentor_id" to mentorId,
                             "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
-                            "event_name" to IMPRESSION_REGISTER_FREE_TRIAL
+                            "event_name" to IMPRESSION_REGISTER_FREE_TRIAL,
+                            "test_id" to PrefManager.getStringValue(FREE_TRIAL_TEST_ID, false, FREE_TRIAL_DEFAULT_TEST_ID)
                         )
                     )
 

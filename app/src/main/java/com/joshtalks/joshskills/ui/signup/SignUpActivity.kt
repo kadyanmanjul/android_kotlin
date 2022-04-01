@@ -123,7 +123,6 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
         addViewModelObserver()
@@ -780,6 +779,7 @@ class SignUpActivity : BaseActivity() {
         appAnalytics.push()
         super.onStop()
     }
+
 
     override fun onDestroy() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

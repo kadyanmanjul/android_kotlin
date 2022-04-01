@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ui.payment.FreeTrialPaymentActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_marginBottom="13dp"
+            android:background="@drawable/white_rectangle_with_grey_stroke"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.447"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_expand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginEnd="@dimen/_30sdp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingBottom="@dimen/_7ssp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/validity"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/txt_total_reviews"
+                    app:srcCompat="@drawable/ic_expand" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_minimise"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginEnd="@dimen/_30sdp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/txt_total_reviews"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/txt_total_reviews"
+                    app:srcCompat="@drawable/ic_minimize" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Buy The Ultimate Spoken English Course" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_currency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:text="₹"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/txt_final_price"
+                    app:layout_constraintEnd_toStartOf="@id/txt_final_price"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_final_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toEndOf="@+id/txt_currency"
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    app:layout_constraintVertical_bias="1"
+                    tools:text="499" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/per_course_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textColor="#6C706E"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/txt_final_price"
+                    app:layout_constraintStart_toEndOf="@id/txt_final_price"
+                    tools:text="(₹15/course)"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_og_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="#515151"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_final_price"
+                    tools:text="@string/price" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_saving"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular_Italic"
+                    android:textColor="#A62E2D"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="@id/txt_og_price"
+                    app:layout_constraintStart_toEndOf="@id/txt_og_price"
+                    app:layout_constraintTop_toTopOf="@id/txt_og_price"
+                    tools:text="@string/savings" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_total_reviews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="#888888"
+                    app:layout_constraintStart_toEndOf="@+id/course_rating"
+                    app:layout_constraintTop_toTopOf="@+id/course_rating"
+                    tools:text="(44,000)" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/validity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:text="1 Year Validity"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="#888888"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/course_rating" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/course_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/validity" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/syllabus_layout_new"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/course_info">
+
+                        <include
+                            layout="@layout/syllabus_pdf_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/see_course_list_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_40ssp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:background="@drawable/rectangle_with_blue_bound_stroke"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_25sdp"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:text="@string/see_course_list"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                    android:textColor="@color/colorPrimary"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/course_info"
+                    app:rippleColor="@color/white"
+                    tools:visibility="visible" />
+
+                <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+                    android:id="@+id/course_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_12sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    android:progressDrawable="@drawable/ratingbar_selector_v2"
+                    android:rating="3.5"
+                    android:stepSize="0.5"
+                    app:layout_constraintBottom_toTopOf="@id/validity"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/txt_saving"
+                    app:layout_constraintVertical_bias="1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>zz
+</androidx.constraintlayout.widget.ConstraintLayout>

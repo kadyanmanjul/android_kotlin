@@ -64,11 +64,6 @@ import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
-import io.sentry.Sentry
-import io.sentry.SentryLevel
-import io.sentry.android.core.SentryAndroid
-import io.sentry.android.fragment.FragmentLifecycleIntegration
-import io.sentry.android.okhttp.SentryOkHttpInterceptor
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -285,9 +280,6 @@ class AppObjectController {
                     // .retryOnConnectionFailure(true)
                     .followSslRedirects(true)
                     .addInterceptor(StatusCodeInterceptor())
-                    .addInterceptor(SentryOkHttpInterceptor())
-                    //   .addInterceptor(NewRelicHttpMetricsLogger())
-                    //.addNetworkInterceptor(SmartlookOkHttpInterceptor())
                     .addInterceptor(HeaderInterceptor())
                     .hostnameVerifier { _, _ -> true }
                     //  .addInterceptor(OfflineInterceptor())
@@ -352,7 +344,6 @@ class AppObjectController {
                             .writeTimeout(5L, TimeUnit.SECONDS)
                             .readTimeout(5L, TimeUnit.SECONDS)
                             .callTimeout(5L, TimeUnit.SECONDS)
-                            .addInterceptor(SentryOkHttpInterceptor())
                             .build()
                     )
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
@@ -371,10 +362,6 @@ class AppObjectController {
                 com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
-                //initUXCam()
-                //initBugsee()
-                //initSmartLookCam()
-                initSentry(joshApplication)
                 initUserExperionCam()
                 initFacebookService(joshApplication)
                 initRtcEngine(joshApplication)
@@ -382,38 +369,6 @@ class AppObjectController {
                     PrefManager.put(USER_LOCALE, "en")
                 }
                 Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
-            }
-        }
-
-        private fun initSentry(context: Context) {
-            SentryAndroid.init(context) { options ->
-                options.dsn =
-                    "https://4eb261d477d3450fba42d8c35d5fa188@o526914.ingest.sentry.io/6109802"
-                var rate =
-                    getFirebaseRemoteConfig().getDouble(FirebaseRemoteConfigKey.SENTRY_SAMPLING_RATE)
-                        ?: 0.6
-                if (rate <= 0.0 || rate > 1.0) {
-                    rate = 0.6
-                }
-                options.sampleRate = rate
-                options.environment = BuildConfig.FLAVOR.plus(BuildConfig.BUILD_TYPE)
-                options.serverName = BuildConfig.FLAVOR
-                options.isEnableAutoSessionTracking = true
-                options.isAnrEnabled = true
-                options.anrTimeoutIntervalMillis =
-                    getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_ANR_TIME_OUT)
-                options.sessionTrackingIntervalMillis =
-                    getFirebaseRemoteConfig().getLong(FirebaseRemoteConfigKey.SENTRY_SESSION_TIMEOUT)
-                options.addIntegration(
-                    FragmentLifecycleIntegration(
-                        joshApplication,
-                        enableFragmentLifecycleBreadcrumbs = true, // enabled by default
-                        enableAutoFragmentLifecycleTracing = true  // disabled by default
-                    )
-                )
-            }
-            if (BuildConfig.DEBUG) {
-                Sentry.setLevel(SentryLevel.ERROR)
             }
         }
 
@@ -748,7 +703,7 @@ class StatusCodeInterceptor : Interceptor {
                 }
             }
         }
-        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
+//        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
         Timber.i("Status code: %s", response.code)
         return response
     }

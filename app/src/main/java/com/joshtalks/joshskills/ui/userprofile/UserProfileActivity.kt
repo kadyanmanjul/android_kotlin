@@ -84,6 +84,8 @@ import java.util.*
 const val FOR_BASIC_DETAILS="For_Basic_Details"
 const val FOR_REST="For_Rest"
 const val FOR_EDIT_SCREEN="For_Edit_Screen"
+const val TOOLTIP_USER_PROFILE_SCREEN = "TOOLTIP_USER_PROFILE_SCREEN_"
+
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
@@ -1410,4 +1412,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
     }
 
+    fun getUserProfileTooltip() :String {
+        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        return AppObjectController.getFirebaseRemoteConfig()
+            .getString(TOOLTIP_USER_PROFILE_SCREEN + courseId)
+    }
 }

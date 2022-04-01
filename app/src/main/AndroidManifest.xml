@@ -63,6 +63,8 @@
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
         tools:ignore="ProtectedPermissions" />
 
+    <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/> <!-- for API level below 22-->
+
     <application
         android:name=".core.JoshApplication"
         android:allowBackup="true"
@@ -130,13 +132,6 @@
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
-        <activity
-            android:name=".ui.introduction.IntroductionActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.introduction.ReadyForDemoClassActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -605,9 +600,6 @@
         <meta-data
             android:name="FCM_SENDER_ID"
             android:value="id:359106841538" />
-        <meta-data
-            android:name="io.sentry.auto-init"
-            android:value="false" />
 
         <receiver
             android:name=".core.chrome.BrowserActionsReceiver"

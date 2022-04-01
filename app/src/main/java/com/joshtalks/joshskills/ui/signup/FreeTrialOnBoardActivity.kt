@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -27,6 +26,11 @@ import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -35,6 +39,10 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
+import com.joshtalks.joshskills.core.abTest.ABTestActivity
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -45,6 +53,7 @@ import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
@@ -52,12 +61,13 @@ import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
-class FreeTrialOnBoardActivity : CoreJoshActivity() {
+class FreeTrialOnBoardActivity : ABTestActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
+    private var is100PointsActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +85,14 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
+    }
+
+    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+        is100PointsActive = (abTestCampaignData?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && (abTestCampaignData.variableMap?.isEnabled == true)
+    }
+
+    override fun initCampaigns() {
+        getCampaigns(CampaignKeys.HUNDRED_POINTS.NAME)
     }
 
     override fun onStart() {
@@ -125,9 +143,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun showStartTrialPopup() {
+    fun showStartTrialPopup(language: ChooseLanguages) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
+        PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
         layout.btnStartTrial.pauseAnimation()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
@@ -141,8 +160,26 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-            getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+        if(is100PointsActive){
+            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + language.testId)
+                    .replace("\\n", "\n")
+        }
+        else {
+            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
+                    .replace("\\n", "\n")
+        }
+        dialogView.findViewById<TextView>(R.id.add_a_topic).text =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FREE_TRIAL_POPUP_TITLE_TEXT + language.testId)
+
+        dialogView.findViewById<TextView>(R.id.yes).text =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + language.testId)
+
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
@@ -233,19 +270,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         startActivity(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance()
-                .onActivityResultObtained(this, requestCode, resultCode, data)
-            hideProgressBar()
-            return
-        }
-        hideProgressBar()
-    }
-
     private fun openProfileDetailFragment() {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
@@ -255,6 +280,17 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance()
+                .onActivityResultObtained(this, requestCode, resultCode, data)
+            hideProgressBar()
+            return
+        }
+        hideProgressBar()
     }
 
     fun showPrivacyPolicyDialog() {
@@ -270,4 +306,15 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         super.onBackPressed()
     }
 
+    fun openChooseLanguageFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                ChooseLanguageOnBoardFragment.newInstance(),
+                ChooseLanguageOnBoardFragment::class.java.name
+            )
+        }
+    }
 }

@@ -66,6 +66,7 @@ import com.bumptech.glide.request.target.Target
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.tabs.TabLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_ENDED_FEATURE_LOCKED
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.TouchableSpan
@@ -142,6 +143,20 @@ const val IMPRESSION_CLICKED_APPLY_COUPON = "APPLY_COUPON"
 const val IMPRESSION_APPLY_COUPON_SUCCESS = "APPLY_COUPON_SUCCESS"
 const val IMPRESSION_PAY_FULL_FEES = "PAY_FULL"
 const val IMPRESSION_PAY_DISCOUNT = "PAY_DISCOUNT"
+const val SEE_COURSE_LIST_BUTTON_CLICKED = "SEE_COURSE_LIST_BUTTON_CLICKED"
+
+const val BUY_ENGLISH_COURSE_BUTTON_CLICKED = "BUY_ENGLISH_COURSE_BUTTON_CLICKED"
+const val D2P_COURSE_SYLLABUS_OPENED = "D2P_COURSE_SYLLABUS_OPENED"
+const val SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT = "SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT"
+
+const val POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT = "POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT"
+const val IMPRESSION_CLICK_RESTART_COURSE_DOT = "CLICK_RESTART_COURSE_DOT"
+const val IMPRESSION_SUCCESS_RESTART_COURSE_DOT = "SUCCESS_RESTART_COURSE_DOT"
+const val IMPRESSION_CLICK_RESTART_90LESSONS = "CLICK_RESTART_90LESSONS"
+const val IMPRESSION_SUCCESS_RESTART_90LESSONS = "SUCCESS_RESTART_90LESSONS"
+
+const val FREE_TRIAL_TEST_ID = "FREE_TRIAL_TEST_ID"
+const val FREE_TRIAL_DEFAULT_TEST_ID = "784"
 const val IMPRESSION_CLICK_RESTART_COURSE_DOT = "CLICK_RESTART_COURSE_DOT"
 const val IMPRESSION_SUCCESS_RESTART_COURSE_DOT = "SUCCESS_RESTART_COURSE_DOT"
 const val IMPRESSION_CLICK_RESTART_90LESSONS = "CLICK_RESTART_90LESSONS"
@@ -1518,3 +1533,5 @@ fun getDefaultCountryIso(context: Context): String {
     val simState: Int? = telephoneManager?.simState
     return if (simState == 5) telephoneManager.simCountryIso.uppercase(Locale.ROOT) else Locale.getDefault().country
 }
+
+fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"

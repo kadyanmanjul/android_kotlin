@@ -59,7 +59,12 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.changeLocale
 import com.joshtalks.joshskills.core.getDefaultCountryIso
-import com.joshtalks.joshskills.core.notification.*
+import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
+import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -85,6 +90,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import retrofit2.HttpException
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.streams.toList
@@ -294,19 +300,29 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
 class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        return try {
+        try {
+            val fcmToken = PrefManager.getStringValue(FCM_TOKEN)
+            if (fcmToken.isBlank()) {
+                WorkManagerAdmin.regenerateFCMWorker()
+                return Result.success()
+            }
+
             val result = AppObjectController.signUpNetworkService.checkFCMInServer(
                 mapOf(
                     "user_id" to Mentor.getInstance().getId(),
-                    "registration_id" to PrefManager.getStringValue(FCM_TOKEN)
+                    "registration_id" to fcmToken
                 )
             )
             if (result["message"] != FCM_ACTIVE)
                 WorkManagerAdmin.regenerateFCMWorker()
 
-            Result.success()
+            return Result.success()
         } catch (ex: Exception) {
-            Result.failure()
+            return if (ex is HttpException && ex.code() == 500) {
+                WorkManagerAdmin.regenerateFCMWorker()
+                Result.success()
+            } else
+                Result.failure()
         }
     }
 }
@@ -657,7 +673,7 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
                 Timber.tag("Workers").e("= %s", secDiff)
                 if (secDiff >= minTimeToApiFire || active.not()) {
                     val data = ActiveUserRequest(Mentor.getInstance().getId(), active)
-                    AppObjectController.signUpNetworkService.activeUser(data)
+//                    AppObjectController.signUpNetworkService.activeUser(data)
                     PrefManager.put(LAST_ACTIVE_API_TIME, Date().time)
                 }
                 if (active.not()) {
@@ -1033,9 +1049,12 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
             ABTestRepository().updateAllCampaigns(
                 listOf(
                     CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name,
-                    CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name,
                     CampaignKeys.ACTIVITY_FEED.name,
-                    CampaignKeys.P2P_IMAGE_SHARING.name
+                    CampaignKeys.P2P_IMAGE_SHARING.name,
+                    CampaignKeys.HUNDRED_POINTS.NAME,
+                    CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name,
+                    CampaignKeys.BUY_LAYOUT_CHANGED.name
+
                 )
             )
         } catch (ex: Exception) {

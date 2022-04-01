@@ -10,14 +10,19 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -28,6 +33,48 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
+
+    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    val syllabusABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    val abtestNewLayoutLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getAllCampaigns(testId : String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getAllCampaigns()?.let { list ->
+                for (data in list) {
+                    when (data.campaignKey) {
+                        CampaignKeys.BUY_LAYOUT_CHANGED.name ->
+                            abtestNewLayoutLiveData.postValue(data)
+                        CampaignKeys.HUNDRED_POINTS.NAME ->
+                            points100ABtestLiveData.postValue(data)
+                        CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name ->
+                            syllabusABtestLiveData.postValue(data)
+                    }
+                }
+            }
+
+            getPaymentDetails(testId.toInt())
+
+        }
+    }
+
+    fun postGoal(goal: String, campaign: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.postGoal(goal)
+            if (campaign != null) {
+                val data = ABTestRepository().getCampaignData(campaign)
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey ?: EMPTY)
+                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put("Campaign", campaign)
+                    props.put("Goal", goal)
+                    MixPanelTracker().publishEvent(goal, props)
+                }
+            }
+        }
+    }
 
     fun getPaymentDetails(testId: Int, couponCode: String = EMPTY) {
         viewModelScope.launch(Dispatchers.IO) {

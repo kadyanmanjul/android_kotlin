@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -27,6 +28,9 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
     val service = AppObjectController.signUpNetworkService
+    val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
+    val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
     var userName: String? = null
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
@@ -107,7 +111,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
-            WorkManagerAdmin.userActiveStatusWorker(true)
+//            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }
     }
@@ -155,5 +159,17 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             return signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
         signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+    }
+
+    fun getAvailableLanguages() {
+        viewModelScope.launch {
+            try {
+                val response = service.getAvailableLanguageCourses()
+                if (response.isSuccessful && response.code() in 200..203)
+                    availableLanguages.value = response.body()
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+        }
     }
 }

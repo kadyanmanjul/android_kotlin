@@ -9,11 +9,14 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
+import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +29,18 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val courseDetailsLiveData: MutableLiveData<CourseDetailsResponseV2> = MutableLiveData()
     val demoCourseDetailsLiveData: MutableLiveData<DemoCourseDetailsResponse> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun get100PCampaignData(campaign: String, testId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                points100ABtestLiveData.postValue(campaign)
+            }
+            fetchCourseDetails(testId)
+        }
+    }
+
     fun fetchCourseDetails(testId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -33,9 +48,8 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 requestParams["test_id"] = testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
-                if (Mentor.getInstance().getId().isNotEmpty() && User.getInstance().isVerified) {
-                    requestParams["mentor_id"] = Mentor.getInstance().getId()
-                }
+//                if (Mentor.getInstance().getId().isNotEmpty()) {
+                requestParams["mentor_id"] = Mentor.getInstance().getId()
                 val response =
                     AppObjectController.commonNetworkService.getCourseDetails(requestParams)
                 if (response.isSuccessful) {

@@ -715,20 +715,195 @@
         <key>SHOW_LOCAL_NOTIFICATIONS</key>
         <value>true</value>
     </entry>
-
     <entry>
-        <key>SENTRY_SAMPLING_RATE</key>
-        <value>0.6</value>
+        <key>TOOLTIP_CONVERSAITON_151</key>
+        <value>आपके सहपाठी कौन है आप यहाँ से देख सकते है</value>
     </entry>
-
     <entry>
-        <key>SENTRY_ANR_TIME_OUT</key>
-        <value>4000</value>
+        <key>TOOLTIP_CONVERSAITON_1203</key>
+        <value>তোমার সহপাঠি কে? এখানে দেখতে পারবেন</value>
     </entry>
-
     <entry>
-        <key>SENTRY_SESSION_TIMEOUT</key>
-        <value>30000</value>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_151</key>
+        <value>हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै</value>
     </entry>
-
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_1203</key>
+        <value>আমরা যত বেশি পরিশ্রম করব, তত বেশি পয়েন্ট পাব</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_151</key>
+        <value>आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_1203</key>
+        <value>আজ এই ভাগে আমরা আমাদের গ্রামার এর লেভেল কে চেক করব</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_151</key>
+        <value>इस student ने points कैसे कमाए हम यहाँ से देख सकते है</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1203</key>
+        <value>এই ছাত্র কিভাবে পয়েন্ট অর্জন করেছে আমরা এখান থেকে দেখতে পারি</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_151</key>
+        <value>आप किसी की भी Profile खोल सकते हैं</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_1203</key>
+        <value>আপনি যে কারোর Profile খুলে দেখতে পারবেন</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_ONLINE_STATUS_151</key>
+        <value>अब हम जान सकते हैं कि कौन से स्टूडेंट्स ऑनलाइन हैं |</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_ONLINE_STATUS_1203</key>
+        <value>এবার আমরা জানতে পারব কি কোন কোন স্টুডেন্ট অনলাইন আছে</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTD_151</key>
+        <value>जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTD_1203</key>
+        <value>যেই স্টুডেন্ট এক দিনে সব থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা ডে বানানো হয়।
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTW_151</key>
+        <value>जो student एक हफ्ते में सबसे ज़्यादा मेहनत करता है वह Student of the Week बनता है
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTW_1203</key>
+        <value>যে শিক্ষার্থী এক সপ্তাহে সবার থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা উইক বানানো
+            হয়।
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTM_151</key>
+        <value>जो student एक महीने में सबसे ज़्यादा मेहनत करता है वह Student of the Month बनता है
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTM_1203</key>
+        <value>যে শিক্ষার্থী এক মাসে সবার থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা মান্থ বানানো
+            হয়।
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_SEARCH_ANYONE_151</key>
+        <value>यहाँ से हम अपने दोस्तों और बाकी स्टूडेंट्स को सर्च कर सकते हैं |</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_SEARCH_ANYONE_1203</key>
+        <value>এখান থেকে আমরা নিজের বন্ধুদের আর বাকি ছাত্র দেড় কে সার্চ করতে পারবো।</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_784</key>
+        <value>आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1880</key>
+        <value>আপনার টিচার আর সহপাঠী রা আপনাকে এই নামে ডাকবেন ।</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_784</key>
+        <value>102</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1880</key>
+        <value>1884</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_151</key>
+        <value>जारी रखें</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1203</key>
+        <value>চালিয়ে যান</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_151</key>
+        <value>शुरू करें</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_1203</key>
+        <value>এবার শুরু করা যাক</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_151</key>
+        <value>चेक करें</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_1203</key>
+        <value>চেক করুন</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_784</key>
+        <value>जरुरी जानकारी</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_1880</key>
+        <value>গুরুত্বপূর্ণ তথ্য</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_784</key>
+        <value>यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹499 में खरीद सकते
+            हैं\n \nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1880</key>
+        <value>এটি একটি 90 দিনের কোর্স আর\n এটা try করার পর আপনি চাইলে এই কোর্স টি ₹499 এ কিনে
+            subscribe করতে পারেন।\n \nআপনি কি এই কোর্স টা একদিনের জন্য বিনামূল্যে try করতে চান?
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_784</key>
+        <value>जी हाँ</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1880</key>
+        <value>হ্যাঁ</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_784</key>
+        <value>1 दिन के लिए मुफ्त में प्रयोग करें</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1880</key>
+        <value>১ দিনের জন্য বিনামূল্যে প্রয়োগ করুন।</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_151</key>
+        <value>ग्रामर का लेवल चेक करने के लिए आपके सभी जवाबों को रिकॉर्ड कर लिया गया हैं \n \n आपकी
+            ग्रामर के Current Status के आधार पर आपके आगे का कोर्स सेट किया जा रहा हैंं
+        </value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1203</key>
+        <value>গ্রামার এর লেবেল চেক করার জন্য আপনার সব উত্তর গুলো ক রেকর্ড করা হয়েছ। \n \n আপনার
+            গ্রামার এর Current Status এর আধার এ আপনার কোর্স সেট করা হয়েছে।
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_151</key>
+        <value>आपका free trial खतम हो गया है. Please course में admission लें.</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1203</key>
+        <value>আপনার free trial শেষ হয়ে গেছে. Please course এ admission নিন.</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_784</key>
+        <value>Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n  \nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1880</key>
+        <value>Josh Skills সেই students দের  পরিবার যারা serious নিজের life এ, যারা পরিশ্রম করতে চায় আর জীবনে এগিয়ে যেতে চায়।  এই কোর্স এ enroll হওয়ার পর আপনাকে এক দিন এই কোর্স টি use করতে হবে একদম  বিনামূল্যে ।\n  \n আমি দেখতে চাই যে, আপনি ইংলিশ শেখার জন্য serious কিনা । আপনাকে আজ 100  points earn করতে হবে। যদি আপনি 24 ঘন্টায়ে 100 points earn করেন তাহলে আপনি এই কোর্স এ অ্যাডমিশন নিতে পারবেন।</value>
+    </entry>
 </defaultsMap>

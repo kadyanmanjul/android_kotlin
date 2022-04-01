@@ -217,5 +217,6 @@
     <color name="link_color">#0000FF</color>
     <color name="blur_color">#666666</color>
     <color name="empty_card_bg_color">#F3F3F3</color>
+    <color name="language_item_bg">#7A7A7A</color>
 
 </resources>

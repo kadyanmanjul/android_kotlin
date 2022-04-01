@@ -71,6 +71,11 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+const val TOOLTIP_OPEN_PROFILE = "TOOLTIP_OPEN_PROFILE_"
+const val TOOLTIP_SEARCH_ANYONE = "TOOLTIP_SEARCH_ANYONE_"
+const val TOOLTIP_LEADERBOARD_SOTD = "TOOLTIP_LEADERBOARD_SOTD_"
+const val TOOLTIP_LEADERBOARD_SOTW = "TOOLTIP_LEADERBOARD_SOTW_"
+const val TOOLTIP_LEADERBOARD_SOTM = "TOOLTIP_LEADERBOARD_SOTM_"
 
 class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     private val TAG = "LeaderBoardViewPagerAct"
@@ -110,6 +115,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         initToolbar()
         initViewPager()
         addObserver()
+        addLeaderboardTooltips()
         /*PrefManager.put(HAS_SEEN_TODAYS_WINNER_ANIMATION, false)
         PrefManager.put(HAS_SEEN_WEEKS_WINNER_ANIMATION, false)
         PrefManager.put(HAS_SEEN_MONTHS_WINNER_ANIMATION, false)
@@ -117,6 +123,16 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         PrefManager.put(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, false)*/
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
+
+    private fun addLeaderboardTooltips() {
+        tooltipTextList[0] =
+            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTD + getCourseId())
+        tooltipTextList[1] =
+            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTW + getCourseId())
+        tooltipTextList[2] =
+            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTM + getCourseId())
+    }
+
 
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
@@ -264,7 +280,10 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         val isLastCall = PrefManager.getBoolValue(P2P_LAST_CALL)
         if (lbOpenCount >= 4 || isLastCall) {
             val balloon = Balloon.Builder(this)
-                .setText(getString(R.string.search_tooltip))
+                .setText(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(TOOLTIP_SEARCH_ANYONE + getCourseId())
+                )
                 .setTextSize(15F)
                 .setTextColor(ContextCompat.getColor(this, R.color.black))
                 .setArrowOrientation(ArrowOrientation.TOP)
@@ -937,7 +956,11 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         binding.itemTabOverlay.visibility = VISIBLE
         arrowView.visibility = VISIBLE
         itemImageView.visibility = VISIBLE
-        tooltipView.setTooltipText("आप किसी की भी Profile खोल सकते हैं")
+        tooltipView.setTooltipText(
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(TOOLTIP_OPEN_PROFILE + getCourseId())
+        )
+
         slideInAnimation(tooltipView)
         CoroutineScope(Dispatchers.IO).launch {
             showTapToDismiss(tapToDismissView, arrowView, tooltipView)
