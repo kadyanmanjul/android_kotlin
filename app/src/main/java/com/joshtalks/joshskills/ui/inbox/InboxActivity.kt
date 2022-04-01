@@ -388,7 +388,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
         val expiredTime = inboxEntity.expiryDate?.time
         val currentTime = System.currentTimeMillis()
-        val isValidSpeakingStatus = (inboxEntity.speakingStatus == "NO" ||  inboxEntity.speakingStatus == "AT")
 
         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, isExtendFreeTrialActive && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought.not() && inboxEntity.isFreeTrialExtendable.not())
         if(isExtendFreeTrialActive && inboxEntity.isCourseBought.not() && inboxEntity.courseId.equals(HINDI_TO_ENGLISH_COURSE_ID) && expiredTime != null && expiredTime < currentTime && inboxEntity.isFreeTrialExtendable){
