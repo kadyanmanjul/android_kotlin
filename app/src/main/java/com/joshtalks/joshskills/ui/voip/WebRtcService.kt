@@ -88,6 +88,7 @@ const val RTC_WEB_GROUP_PHOTO = "group_url"
 const val RTC_PARTNER_ID = "partner_id"
 const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 const val IS_CHANNEL_ACTIVE_KEY = "success"
+const val SHOW_FPP_DIALOG = "show_fpp_dialog"
 
 class WebRtcService : BaseWebRtcService() {
     private val TAG = "ABCWebRtcService"
@@ -113,6 +114,7 @@ class WebRtcService : BaseWebRtcService() {
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
     private val timber = Timber.tag(TAG)
+    var fppDialogeFlag:String?=null
     private val audioManager by lazy {
         getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
@@ -1237,6 +1239,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallForceDisconnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callForceDisconnect = true
                                     if (JoshApplication.isAppVisible.not()) {
                                         addNotification(CallDisconnect().action, null)
@@ -1249,6 +1252,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallDeclineDisconnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callForceDisconnect = true
                                     if (JoshApplication.isAppVisible.not()) {
                                         addNotification(CallDisconnect().action, null)
@@ -1261,6 +1265,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallForceConnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callStartTime = 0L
                                     cancelCallieDisconnectTimer()
                                     compositeDisposable.clear()
@@ -1866,6 +1871,7 @@ class WebRtcService : BaseWebRtcService() {
         }
         RtcEngine.destroy()
         stopRing()
+        stopPlaying()
         userDetailMap = null
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
@@ -1946,6 +1952,7 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun incomingCallNotification(incomingData: HashMap<String, String?>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")
+        stopPlaying()
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
         val pendingIntent = PendingIntent.getActivity(
             this,
@@ -2404,9 +2411,11 @@ class WebRtcService : BaseWebRtcService() {
                                         val newChannel = response[RTC_CHANNEL_KEY]
                                         val token = response[RTC_TOKEN_KEY]
                                         val uid = response[RTC_UID_KEY]
+                                        fppDialogeFlag = response[SHOW_FPP_DIALOG]
                                         data[RTC_CHANNEL_KEY] = newChannel
                                         data[RTC_TOKEN_KEY] = token
                                         data[RTC_UID_KEY] = uid
+                                        Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogeFlag $newChannel $token")
                                         val oldState = CurrentCallDetails.state()
                                         VoipAnalytics.push(
                                             VoipAnalytics.Event.RECEIVE_TIMER_STOP,

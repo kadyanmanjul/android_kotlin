@@ -92,7 +92,8 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                             activity = this@WebRtcMiddlewareActivity,
                             flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                             callerId = mBoundService?.getOppositeCallerId()?: -1,
-                            currentUserId=mBoundService?.getUserAgoraId()?: -1
+                            currentUserId=mBoundService?.getUserAgoraId()?: -1,
+                            fppDialogFlag = mBoundService?.fppDialogeFlag?: EMPTY
                         )
                     } catch (ex:Exception){
                         ex.printStackTrace()

@@ -29,7 +29,6 @@ import android.view.animation.BounceInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -54,7 +53,6 @@ import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
-
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.joshtalks.joshskills.util.DateUtils
 import com.karumi.dexter.MultiplePermissionsReport
@@ -101,6 +99,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private var callType: CallType? = null
     private var callieId: String = ""
     private var callerId: String = ""
+    private var fppDialog:String = EMPTY
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -566,14 +565,13 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
-        setCallScreenBackground()
-        updateButtonStatus()
-        callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
-
-        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false){
-            mBoundService?.startPlaying()
+        val map: HashMap<String, String?> = HashMap()
+        map["agora_channel_name"] = mBoundService?.channelName
+        CoroutineScope(Dispatchers.IO).launch {
+            val resp =
+                AppObjectController.p2pNetworkService.showFppDialog(map)
+            fppDialog = resp.body()?.get("show_fpp_dialog") ?: EMPTY
         }
-
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
                 intent = intent.apply {
@@ -593,13 +591,44 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                     putExtra(CALL_USER_OBJ, WebRtcService.callData)
                 }
                 updateCallInfo()
+            }else if (isCallFavoritePP()){
+                updateCallInfo()
             }
-        }/*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
-            updateCallInfo()
-        }*/
+        }
         setCallScreenBackground()
         updateButtonStatus()
         callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+
+//        if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
+//            updateCallInfo()
+//        }
+
+//        if (isCallFavoritePP() || isCallOnGoing.value == true) {
+//            intent= intent.apply {
+//                putExtra(CALL_TYPE, WebRtcService.callType)
+//                WebRtcService.callData?.apply {
+//                    if (mBoundService?.isFavorite() == true) {
+//                        put(RTC_IS_FAVORITE, "true")
+//                    }
+//                    if (mBoundService?.isGroupCall()==true) {
+//                        put(RTC_IS_GROUP_CALL, "true")
+//                    }
+//                    if (isNewUserCall()) {
+//                        put(RTC_IS_NEW_USER_CALL, "true")
+//                    }
+//                }
+//                putExtra(IS_CALL_CONNECTED, isCallOnGoing.value)
+//                putExtra(CALL_USER_OBJ, WebRtcService.callData)
+//            }
+//            updateCallInfo()
+//        } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
+         //   updateCallInfo()
+        //}*/
+
+        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false && callType!=CallType.INCOMING){
+            mBoundService?.startPlaying()
+        }
+
         callType?.run {
             updateStatusLabel()
             if (CallType.OUTGOING == this) {
@@ -673,8 +702,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 intent.getIntExtra(RTC_PARTNER_ID,1).toString()
             else
                 map?.get("caller_uid")?: mBoundService?.getOppositeCallerId().toString()
-            callieId = CurrentCallDetails.callieUid
-
+            callieId = map?.get("uid") ?: mBoundService?.getUserAgoraId().toString()
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -1000,41 +1028,49 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (time <= 0) {
             time = callTime
         }
-        if(PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)){
-            viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
-            PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
-        }
-        val channelName2 =
-            if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
-        if (time > 0 && channelName2.isNullOrEmpty().not()) {
-            runOnUiThread {
-                try {
-                    binding.placeholderBg.visibility = View.VISIBLE
-                    VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                        channelName = channelName2,
-                        callTime = time,
-                        callerName = userDetailLiveData.value?.get("name"),
-                        callerImage = userDetailLiveData.value?.get("profile_pic"),
-                        yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                        yourAgoraId = mBoundService?.getUserAgoraId(),
-                        activity = this,
-                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                        callerId = callerId.toInt(),
-                        currentUserId = callieId.toInt()
-                    )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-                this.finish()
+        Log.d(TAG, "showCallRatingScreen: ${time/1000}")
+        if((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag ?: EMPTY=="false"){
+            this@WebRtcActivity.finish()
+        }else {
+
+            if (PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)) {
+                viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+                PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
             }
-            mBoundService?.setOppositeUserInfo(null)
-            return
+            val channelName2 =
+                if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
+            if (time > 0 && channelName2.isNullOrEmpty().not()) {
+                runOnUiThread {
+                    try {
+                        binding.placeholderBg.visibility = View.VISIBLE
+                        VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                            channelName = channelName2,
+                            callTime = time,
+                            callerName = userDetailLiveData.value?.get("name"),
+                            callerImage = userDetailLiveData.value?.get("profile_pic"),
+                            yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                            yourAgoraId = mBoundService?.getUserAgoraId(),
+                            activity = this,
+                            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                            callerId = callerId.toInt(),
+                            currentUserId = callieId.toInt(),
+                            fppDialogFlag = fppDialog
+                        )
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                    this.finish()
+                }
+                mBoundService?.setOppositeUserInfo(null)
+                return
+            }
+            this@WebRtcActivity.finishAndRemoveTask()
         }
-        this@WebRtcActivity.finishAndRemoveTask()
     }
 
     fun onStopCall() {
         //     SoundPoolManager.getInstance(this).release()
+        mBoundService?.stopPlaying()
         AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()

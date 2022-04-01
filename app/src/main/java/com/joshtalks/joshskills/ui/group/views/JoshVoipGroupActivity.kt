@@ -13,6 +13,9 @@ import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_GROUP
 import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.constants.SEARCH_GROUP
+import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
+import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
+import com.joshtalks.joshskills.constants.REFRESH_GRP_LIST_HIDE_INFO
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -64,6 +67,13 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
                 }
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 SEARCH_GROUP -> openGroupSearchFragment()
+                SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
+                DISMISS_PROGRESS_BAR -> dismissProgressDialog()
+                REFRESH_GRP_LIST_HIDE_INFO -> {
+                    vm.hasGroupData.set(it.data.getBoolean(SHOW_NEW_INFO))
+                    vm.hasGroupData.notifyChange()
+                    vm.setGroupsCount()
+                }
             }
         }
     }

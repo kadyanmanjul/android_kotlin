@@ -215,5 +215,7 @@
     <color name="request_respond">#FFF9D7</color>
     <color name="edit_profile_bg">#EEEEEE</color>
     <color name="link_color">#0000FF</color>
+    <color name="blur_color">#666666</color>
+    <color name="empty_card_bg_color">#F3F3F3</color>
 
 </resources>

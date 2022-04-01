@@ -1,9 +1,7 @@
 package com.joshtalks.joshskills.ui.chat
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -15,13 +13,14 @@ import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.view.View.*
-import android.view.animation.*
-import android.widget.Button
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -30,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
@@ -40,19 +40,25 @@ import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.extension.*
+import com.joshtalks.joshskills.core.extension.setImageWithPlaceholder
+import com.joshtalks.joshskills.core.extension.setResourceImageDefault
+import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
+import com.joshtalks.joshskills.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
+import com.joshtalks.joshskills.databinding.FppQuickViewListsItemBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
@@ -62,9 +68,10 @@ import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.userprofile.models.Award
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.repository.server.chat_message.*
+import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedMainActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -74,11 +81,15 @@ import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
+import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.fpp.ISACCEPTED
-import com.joshtalks.joshskills.ui.fpp.ISREJECTED
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
+import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
+import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
+import com.joshtalks.joshskills.ui.fpp.constants.QUICK_VIEW
+import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
+import com.joshtalks.joshskills.ui.fpp.utils.Blurry
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
@@ -95,8 +106,10 @@ import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.video_player.*
-import com.joshtalks.joshskills.ui.view_holders.*
+import com.joshtalks.joshskills.ui.userprofile.models.Award
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
@@ -110,16 +123,12 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.blurry.Blurry
-import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
 import java.lang.ref.WeakReference
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -189,6 +198,8 @@ class ConversationActivity :
             R.anim.to_bottom_animation
         )
     }
+    private var isFirstTime: Boolean = true
+    private var requestCountNumber = 0
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
@@ -219,6 +230,7 @@ class ConversationActivity :
     private var refreshMessageByUser = false
 
     private var currentTooltipIndex = 0
+    private var activityFeedControl = false
     private val leaderboardTooltipList by lazy {
         listOf(
             "English सीखने के लिए आप जितनी मेहनत करेंगे आपको उतने points मिलेंगे",
@@ -259,27 +271,9 @@ class ConversationActivity :
                 conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
                 conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
                 floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
-
             }
         }
     }
-
-    /*Checking if the add button is clicked
-    private fun buttonSetClickable() {
-        with(conversationBinding) {
-            if (!isExpandableVisible) {
-                imgActivityFeed.isClickable = true
-                imgGameBtn.isClickable = true
-                imgGroupChatBtn.isClickable = true
-                imgFppRequest.isClickable = true
-            } else {
-                imgActivityFeed.isClickable = false
-                imgGameBtn.isClickable = false
-                imgGroupChatBtn.isClickable = false
-                imgFppRequest.isClickable = false
-            }
-        }
-    }*/
 
     override fun getConversationId(): String {
         return inboxEntity.conversation_id
@@ -332,18 +326,28 @@ class ConversationActivity :
 
     private fun init() {
         initToolbar()
+        //  groupChatHintLogic()    //Group chat hint UI
         // initCourseProgressTooltip()    // course progress tooltip
         initRV()
         initView()
         initFuture()
         addObservable()
         initFreeTrialTimer()
+        initABTest()
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
+    }
+
+    private fun initABTest() {
+        conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED.name)
+    }
+
+    private fun getAllPendingRequest() {
+        conversationViewModel.getPendingRequestsList()
     }
 
     private fun addIssuesToSharedPref() {
@@ -374,7 +378,7 @@ class ConversationActivity :
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
         ) {
-            conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            conversationBinding.freeTrialContainer.visibility = VISIBLE
             conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
         } else if (inboxEntity.isCourseBought.not() &&
@@ -383,7 +387,7 @@ class ConversationActivity :
         ) {
             PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
             PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
-            conversationBinding.freeTrialContainer.visibility = View.VISIBLE
+            conversationBinding.freeTrialContainer.visibility = VISIBLE
             conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
@@ -532,7 +536,7 @@ class ConversationActivity :
 
             conversationBinding.ivBack.setOnClickListener {
                 val resultIntent = Intent()
-                setResult(Activity.RESULT_OK, resultIntent)
+                setResult(RESULT_OK, resultIntent)
                 finish()
             }
             conversationBinding.ivIconReferral.setOnClickListener {
@@ -715,6 +719,13 @@ class ConversationActivity :
 
         conversationBinding.imgGroupChat.visibility = GONE
 
+//        conversationBinding.imgGroupChat.setOnClickListener {
+//            utilConversationViewModel.initCometChat()
+//        }
+//        conversationBinding.imgGroupChatOverlay.setOnClickListener {
+//            conversationBinding.overlayLayout.visibility = GONE
+//            utilConversationViewModel.initCometChat()
+//        }
         conversationBinding.refreshLayout.setOnRefreshListener {
             if (internetAvailableFlag) {
                 conversationBinding.refreshLayout.isRefreshing = true
@@ -764,7 +775,7 @@ class ConversationActivity :
             showNextTooltip()
         }
         conversationBinding.trialClose.setOnClickListener {
-            conversationBinding.freeTrialContainer.visibility = View.GONE
+            conversationBinding.freeTrialContainer.visibility = GONE
             countdownTimerBack?.stop()
         }
 
@@ -1017,9 +1028,9 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                conversationBinding.imgMain.visibility = VISIBLE
-                //setExpandableButtons(userProfileData)
-                clickFabButton(userProfileData)
+                conversationBinding.floatingActionButtonAdd.visibility = VISIBLE
+                getAllPendingRequest()
+                blurViewOnClickListeners(userProfileData)
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)
@@ -1027,29 +1038,45 @@ class ConversationActivity :
         }
 
         conversationViewModel.pendingRequestsList.observe(this) {
-            if (it.pendingRequestsList.isNullOrEmpty()) {
-                conversationBinding.quickViewNoRequests.visibility = VISIBLE
-            } else {
-                conversationBinding.myRequestsLl.visibility = VISIBLE
-                conversationBinding.viewAllRequests.visibility = VISIBLE
-                conversationBinding.viewAllRequests.text =
-                    "See all requests (${it.pendingRequestsList.size})"
-                conversationBinding.viewAllRequests.isClickable = true
-                conversationBinding.horizontalLineForHeading.visibility = VISIBLE
-                conversationBinding.viewAllRequests.setOnClickListener {
-                    val intent = Intent(this, SeeAllRequestsActivity::class.java)
-                    startActivity(intent)
-                }
-                var countRequestsList = 0
-                conversationBinding.myRequestsLl.removeAllViews()
-                it.pendingRequestsList.forEach {
-                    if (countRequestsList < 7) {
-                        val view = getPendingRequestItem(it)
-                        if (view != null) {
-                            conversationBinding.myRequestsLl.addView(view)
-                            countRequestsList++
+            with(conversationBinding) {
+                if (it.pendingRequestsList.isNullOrEmpty()) {
+                    requestCountNumber = 0
+                    myRequestsLl.removeAllViews()
+                    quickViewNoRequests.visibility = VISIBLE
+                    fppRequestCountNumber.visibility = GONE
+                    allCountNumber.visibility = GONE
+                    viewAllRequests.text =
+                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
+                } else {
+                    requestCountNumber = it.pendingRequestsList.size
+                    quickViewNoRequests.visibility = INVISIBLE
+                    allCountNumber.text = it.pendingRequestsList.size.toString()
+                    myRequestsLl.visibility = VISIBLE
+                    viewAllRequests.text =
+                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
+                    horizontalLineForHeading.visibility = VISIBLE
+                    var countRequestsList = 0
+                    myRequestsLl.removeAllViews()
+                    it.pendingRequestsList.forEach {
+                        if (countRequestsList < 7) {
+                            val view = getPendingRequestItem(it)
+                            if (view != null) {
+                                conversationBinding.myRequestsLl.addView(view.root)
+                                countRequestsList++
+                            }
                         }
                     }
+                    if (isFirstTime) {
+                        isFirstTime = false
+                        allCountNumber.visibility = VISIBLE
+                    }
+                    fppRequestCountNumber.text =
+                        it.pendingRequestsList.size.toString()
+                }
+                viewAllRequests.setOnClickListener {
+                    val intent =
+                        Intent(conversationBinding.root.context, SeeAllRequestsActivity::class.java)
+                    startActivity(intent)
                 }
             }
         }
@@ -1149,13 +1176,26 @@ class ConversationActivity :
                 hideProgressBar()
             }
         }
+
+        conversationViewModel.abTestCampaignliveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                activityFeedControl =
+                    (map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+            if (activityFeedControl) conversationBinding.imgActivityFeed .visibility =
+                VISIBLE else conversationBinding.imgActivityFeed.visibility = GONE
+        }
     }
 
-    private fun clickFabButton(userProfileData: UserProfileResponse) {
+    private fun blurViewOnClickListeners(userProfileData: UserProfileResponse) {
         conversationBinding.floatingActionButtonAdd.setOnClickListener {
             setExpandableButtons(userProfileData)
             setButtonsAnimation()
-            conversationViewModel.getPendingRequestsList()
+        }
+
+        conversationBinding.blurView.setOnClickListener {
+            setExpandableButtons(userProfileData)
+            setButtonsAnimation()
         }
     }
 
@@ -1163,35 +1203,20 @@ class ConversationActivity :
     private fun setExpandableButtons(userProfileData: UserProfileResponse) {
         with(conversationBinding) {
             if (buttonClicked) {
-                //we can remove elevation if ui will lack
-                lifecycleScope.launchWhenCreated {
-                    Blurry.with(this@ConversationActivity).radius(25).sampling(1)
-                        .onto(conversationBinding.rootView)
-                }
-                buttonClicked = false
-                conversationBinding.quickCardView.visibility = VISIBLE
+                getAllPendingRequest()
+                conversationBinding.root.setOnClickListener {}
+                showBlurOrQuickView()
                 imgActivityFeed.visibility = VISIBLE
                 imgFppRequest.visibility = VISIBLE
 
-                if (userProfileData.isGameActive) {
+                if (userProfileData.isGameActive)
                     imgGameBtn.visibility = VISIBLE
-                }
 
-                if (userProfileData.hasGroupAccess) {
+                if (userProfileData.hasGroupAccess)
                     imgGroupChatBtn.visibility = VISIBLE
-                }
-
-                if (userProfileData.isGameActive && userProfileData.hasGroupAccess) {
-                    img1.visibility = VISIBLE
-                } else if (userProfileData.isGameActive || userProfileData.hasGroupAccess) {
-                    img2.visibility = VISIBLE
-                } else {
-                    img3.visibility = VISIBLE
-                }
             } else {
-                Blurry.delete(conversationBinding.rootView)
-                buttonClicked = true
-                conversationBinding.quickCardView.visibility = INVISIBLE
+                conversationBinding.root.onFocusChangeListener = null
+                hideBlurOrQuickView()
                 imgActivityFeed.visibility = GONE
                 imgFppRequest.visibility = GONE
 
@@ -1200,56 +1225,95 @@ class ConversationActivity :
 
                 if (userProfileData.hasGroupAccess)
                     imgGroupChatBtn.visibility = GONE
-
-                img1.visibility = INVISIBLE
-                img2.visibility = INVISIBLE
-                img3.visibility = INVISIBLE
             }
         }
     }
 
-    @SuppressLint("WrongViewCast")
-    private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): View? {
-        val layoutInflater =
-            AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    private fun showBlurOrQuickView() {
+        conversationBinding.allCountNumber.visibility = GONE
+        conversationBinding.userPointContainer.elevation = 0f
+        conversationBinding.imgMain.visibility = VISIBLE
+        conversationBinding.imgPointer.visibility = VISIBLE
+        conversationBinding.root.setOnClickListener { }
+        lifecycleScope.launchWhenCreated {
+            conversationBinding.blurView.visibility = VISIBLE
+            Blurry.with(this@ConversationActivity).radius(25).sampling(3)
+                .onto(conversationBinding.blurView, conversationBinding.rootView)
+        }
+
+        buttonClicked = false
+        conversationBinding.quickCardView.visibility = VISIBLE
+
+        if (requestCountNumber > 0) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                delay(200)
+                conversationBinding.fppRequestCountNumber.visibility = VISIBLE
+            }
+        }
+    }
+
+    private fun hideBlurOrQuickView() {
+        conversationBinding.root.setOnClickListener(null)
+        Blurry.delete(conversationBinding.blurView)
+        conversationBinding.imgPointer.visibility = INVISIBLE
+        conversationBinding.userPointContainer.elevation = 3f
+        conversationBinding.blurView.visibility = GONE
+        buttonClicked = true
+        conversationBinding.quickCardView.visibility = GONE
+        conversationBinding.imgMain.visibility = GONE
+        conversationBinding.imgMain.setOnClickListener(null)
+        conversationBinding.root.onFocusChangeListener = null
+        conversationBinding.fppRequestCountNumber.visibility = GONE
+        if (requestCountNumber > 0) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                delay(350)
+                conversationBinding.allCountNumber.visibility = VISIBLE
+            }
+        }
+
+    }
+
+
+    private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): FppQuickViewListsItemBinding {
         val view =
-            layoutInflater.inflate(
-                R.layout.fpp_quick_view_lists_item,
+            FppQuickViewListsItemBinding.inflate(
+                LayoutInflater.from(conversationBinding.root.context),
                 conversationBinding.root,
                 false
             )
-        val txtUserName: AppCompatTextView = view.findViewById(R.id.tv_name)
-        val imageUserProfile: CircleImageView = view.findViewById(R.id.profile_image)
-        val txtTotalSpokeTime: AppCompatTextView = view.findViewById(R.id.tv_spoken_time)
-        val btnConfirm: Button = view.findViewById(R.id.btn_confirm_request)
-        val btnNotNow: Button = view.findViewById(R.id.btn_not_now)
-        val itemContainer: ConstraintLayout = view.findViewById(R.id.fpp_request_container)
-        txtUserName.text = pendingRequestDetail.fullName ?: ""
-        txtTotalSpokeTime.text = pendingRequestDetail.textToShow
-        imageUserProfile.setUserImageOrInitials(
-            pendingRequestDetail.photoUrl ?: "",
-            pendingRequestDetail.fullName ?: ""
-        )
-        btnConfirm.setOnClickListener {
-            btnConfirm.visibility = GONE
-            btnNotNow.visibility = GONE
-            txtTotalSpokeTime.text = "You are now favorite practice partners"
-            itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-            conversationViewModel.confirmOrRejectFppRequest(
-                pendingRequestDetail.senderMentorId!!,
-                ISACCEPTED, "QUICK_VIEW"
+        with(view) {
+            itemData = pendingRequestDetail
+            fppRequestContainer.setOnClickListener {
+                openUserProfileActivity(
+                    pendingRequestDetail.senderMentorId ?: "",
+                    RECENT_CALL
+                )
+            }
+            profileImage.setUserImageOrInitials(
+                pendingRequestDetail.photoUrl ?: "",
+                pendingRequestDetail.fullName ?: ""
             )
-        }
-        btnNotNow.setOnClickListener {
-            btnConfirm.visibility = GONE
-            btnNotNow.visibility = GONE
-            txtTotalSpokeTime.text = "Request Removed"
-            itemContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-            conversationViewModel.confirmOrRejectFppRequest(
-                pendingRequestDetail.senderMentorId!!,
-                ISREJECTED, "QUICK_VIEW"
-            )
+            btnConfirmRequest.setOnClickListener {
+                btnConfirmRequest.visibility = GONE
+                btnNotNow.visibility = GONE
+                tvSpokenTime.text = getString(R.string.now_fpp)
+                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
+                conversationViewModel.confirmOrRejectFppRequest(
+                    pendingRequestDetail.senderMentorId!!,
+                    IS_ACCEPTED, QUICK_VIEW
+                )
+            }
+            btnNotNow.setOnClickListener {
+                btnConfirmRequest.visibility = GONE
+                btnNotNow.visibility = GONE
+                tvSpokenTime.text = getString(R.string.request_removed)
+                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
+                conversationViewModel.confirmOrRejectFppRequest(
+                    pendingRequestDetail.senderMentorId!!,
+                    IS_REJECTED, QUICK_VIEW
+                )
 
+            }
         }
         return view
     }
@@ -1318,19 +1382,35 @@ class ConversationActivity :
                 // showLeaderBoardTooltip()
                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
                     showLeaderBoardSpotlight()
-                else
+                else {
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(1000)
-                        val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
+                        val status =
+                            AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
                         Log.d(TAG, "initScoreCardView: $status")
                         withContext(Dispatchers.Main) {
                             if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(
                                     HAS_SEEN_UNLOCK_CLASS_ANIMATION
                                 )
-                            )
+                            ) {
+                                delay(1000)
                                 setOverlayAnimation()
+                            } else if (PrefManager.getBoolValue(
+                                    SHOULD_SHOW_AUTOSTART_POPUP,
+                                    defValue = true
+                                )
+                                && System.currentTimeMillis()
+                                    .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
+                            ) {
+                                PrefManager.put(
+                                    LAST_TIME_AUTOSTART_SHOWN,
+                                    System.currentTimeMillis()
+                                )
+                                checkForOemNotifications(AUTO_START_POPUP)
+                            }
                         }
                     }
+                }
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 //conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
@@ -1394,7 +1474,11 @@ class ConversationActivity :
                 .subscribe(
                     {
                         Utils.fileUrl(it.localPath, it.serverPath)?.run {
-                            ImageShowFragment.newInstance(this, inboxEntity.course_name, it.imageId)
+                            ImageShowFragment.newInstance(
+                                this,
+                                inboxEntity.course_name,
+                                it.imageId
+                            )
                                 .show(supportFragmentManager, "ImageShow")
                         }
                     },
@@ -1428,7 +1512,7 @@ class ConversationActivity :
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
+                        if (it.state == Download.STATE_COMPLETED) {
                             refreshViewAtPos(
                                 AppObjectController.gsonMapperForLocal.fromJson(
                                     it.id,
@@ -1466,7 +1550,8 @@ class ConversationActivity :
                                                 return@let
                                             }
                                             val chatModel = it.chatModel
-                                            chatModel?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                                            chatModel?.downloadStatus =
+                                                DOWNLOAD_STATUS.DOWNLOADING
                                             chatModel?.let {
                                                 conversationAdapter.updateItem(it)
                                             }
@@ -1744,7 +1829,10 @@ class ConversationActivity :
                 .subscribe(
                     {
                         it.id?.let { id ->
-                            openUserProfileActivity(id, USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
+                            openUserProfileActivity(
+                                id,
+                                USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value
+                            )
                         }
                     },
                     {
@@ -1866,7 +1954,7 @@ class ConversationActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         try {
-            if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == RESULT_OK) {
                 data?.let { intent ->
                     when {
                         intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
@@ -1886,7 +1974,7 @@ class ConversationActivity :
                         else -> return
                     }
                 }
-            } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == RESULT_OK) {
                 showToast(getString(R.string.answer_submitted))
                 (data?.getParcelableExtra(PRACTISE_OBJECT) as ChatModel?)?.let {
                     conversationViewModel.refreshMessageObject(it.chatId)
@@ -1899,7 +1987,7 @@ class ConversationActivity :
                 (data?.getParcelableExtra(VIDEO_OBJECT) as ChatModel?)?.let {
                     unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
                 }
-            } else if (resultCode == Activity.RESULT_OK) {
+            } else if (resultCode == RESULT_OK) {
                 when (requestCode) {
                     ASSESSMENT_REQUEST_CODE,
                     LESSON_REQUEST_CODE,
@@ -1982,6 +2070,9 @@ class ConversationActivity :
     }
 
     override fun onStop() {
+        hideBlurOrQuickView()
+        conversationBinding.imgMain.visibility = GONE
+        setButtonsAnimation()
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
@@ -2002,10 +2093,10 @@ class ConversationActivity :
         if (conversationBinding.overlayLayout.visibility == VISIBLE) {
             hideLeaderBoardSpotlight()
         } else if (conversationBinding.overlayView.visibility == VISIBLE)
-            conversationBinding.overlayView.visibility = View.INVISIBLE
+            conversationBinding.overlayView.visibility = INVISIBLE
         else {
             val resultIntent = Intent()
-            setResult(Activity.RESULT_OK, resultIntent)
+            setResult(RESULT_OK, resultIntent)
             this@ConversationActivity.finishAndRemoveTask()
         }
     }
@@ -2276,16 +2367,16 @@ class ConversationActivity :
                             conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
                         val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
                         val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
-                        overlayImageView.visibility = View.INVISIBLE
-                        overlayButtonImageView.visibility = View.INVISIBLE
+                        overlayImageView.visibility = INVISIBLE
+                        overlayButtonImageView.visibility = INVISIBLE
                         conversationBinding.overlayView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = View.INVISIBLE
+                            conversationBinding.overlayView.visibility = INVISIBLE
                         }
                         overlayImageView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = View.INVISIBLE
+                            conversationBinding.overlayView.visibility = INVISIBLE
                         }
                         overlayButtonImageView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = View.INVISIBLE
+                            conversationBinding.overlayView.visibility = INVISIBLE
                             unlockBtnView.performClick()
                         }
                         overlayButtonItem?.let {
@@ -2311,9 +2402,9 @@ class ConversationActivity :
         overlayButtonImageView: ImageView,
     ) {
         val STATUS_BAR_HEIGHT = getStatusBarHeight()
-        conversationBinding.overlayView.visibility = View.INVISIBLE
+        conversationBinding.overlayView.visibility = INVISIBLE
         conversationBinding.overlayView.setOnClickListener {
-            conversationBinding.overlayView.visibility = View.INVISIBLE
+            conversationBinding.overlayView.visibility = INVISIBLE
         }
         val arrowView =
             conversationBinding.overlayView.findViewById<ImageView>(R.id.arrow_animation_unlock_class)
@@ -2333,10 +2424,10 @@ class ConversationActivity :
         overlayImageView.requestLayout()
         overlayButtonImageView.requestLayout()
         arrowView.requestLayout()
-        conversationBinding.overlayView.visibility = View.VISIBLE
+        conversationBinding.overlayView.visibility = VISIBLE
         arrowView.visibility = VISIBLE
-        overlayImageView.visibility = View.VISIBLE
-        overlayButtonImageView.visibility = View.VISIBLE
+        overlayImageView.visibility = VISIBLE
+        overlayButtonImageView.visibility = VISIBLE
         PrefManager.put(HAS_SEEN_UNLOCK_CLASS_ANIMATION, true)
         tooltipView.setTooltipText("बस ना? नहीं अभी भी नहीं. और तेज़ी से आगे बड़ने के लिए आप कल का lesson भी अभी कर सकते हैं")
         slideInAnimation(tooltipView)

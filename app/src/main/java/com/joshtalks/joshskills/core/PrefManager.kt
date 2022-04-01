@@ -112,6 +112,9 @@ const val COURSE_EXPIRY_TIME_IN_MS = "course_expiry_time_in_ms"
 const val ONBOARDING_STAGE = "onboarding_stage"
 const val BLOCK_ISSUE = "BLOCK_ISSUE"
 const val REPORT_ISSUE = "REPORT_ISSUE"
+const val LAST_TIME_AUTOSTART_SHOWN = "LAST_TIME_AUTOSTART_SHOWN"
+const val SHOULD_SHOW_AUTOSTART_POPUP = "SHOULD_SHOW_AUTOSTART_POPUP"
+
 const val USER_ACTIVE_IN_GAME = "game_active"
 const val USER_LEAVE_THE_GAME = "game_left"
 const val USER_MUTE_OR_NOT = "mute_un_mute"
@@ -119,6 +122,7 @@ const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
 const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"
 const val IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN = "is_call_btn_clicked_from_new_screen"
 const val LAST_FAKE_CALL_INVOKE_TIME = "last_fake_call_invoke_time"
+const val IS_LOGIN_VIA_TRUECALLER = "is_login_via_truecaller"
 
 object PrefManager {
 

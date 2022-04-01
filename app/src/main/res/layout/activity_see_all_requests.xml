@@ -4,9 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <import type="android.view.View" />
+
         <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity" />
+            name="vm"
+            type="com.joshtalks.joshskills.ui.fpp.viewmodels.SeeAllRequestsViewModel" />
     </data>
 
     <RelativeLayout
@@ -48,7 +53,7 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-                app:titleTextColor="#FFFFFF">
+                app:titleTextColor="@color/white">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -66,6 +71,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center_vertical|start"
+                        android:onClick="@{vm::onBackPress}"
                         android:paddingTop="@dimen/_6sdp"
                         android:paddingBottom="@dimen/_6sdp"
                         android:visibility="visible"
@@ -86,28 +92,51 @@
                         android:text="@string/favorite_requests"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                         android:textColor="@color/white"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
                 </RelativeLayout>
 
             </com.google.android.material.appbar.MaterialToolbar>
 
 
         </com.google.android.material.appbar.AppBarLayout>
-        <LinearLayout
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recent_list_rv"
+            onFppItemClick="@{vm.onItemClick}"
+            seeAllRequestAdapter="@{vm.adapter}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/appbar"
-            android:orientation="vertical">
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/_8sdp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:itemCount="10"
+            tools:listitem="@layout/fpp_requests_list_item" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recent_list_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingTop="10dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:listitem="@layout/fpp_requests_list_item"
-                tools:itemCount="10"/>
-        </LinearLayout>
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_5sdp"
+            android:visibility="@{vm.fetchingAllPendingRequestInfo ? View.VISIBLE : View.GONE}"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_left"
+            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_width="@dimen/_4sdp"
+            app:cpb_round_border="true" />
+
+        <ImageView
+            android:id="@+id/fpp_no_requests"
+            android:layout_width="@dimen/_217sdp"
+            android:layout_height="@dimen/_93sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_quick_view_no_requests"
+            android:visibility="@{vm.hasSeeAllRequest ? View.GONE : View.VISIBLE}" />
+
     </RelativeLayout>
 </layout>

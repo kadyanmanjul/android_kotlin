@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LanguageItem
+import com.joshtalks.joshskills.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -78,27 +79,26 @@ class SettingsFragment : Fragment() {
                     binding.blackShadowIv.visibility = View.VISIBLE
             }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
 
-        }
-        )
-
-        if ((requireActivity() as BaseActivity).shouldRequireCustomPermission()) {
+        if ((requireActivity() as BaseActivity).isNotificationEnabled()) {
             binding.notificationStatusTv.setText(R.string.off)
-            binding.notificationDiscription.text = AppObjectController.getFirebaseRemoteConfig()
+            binding.notificationDescription.text = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_DISABLED)
             binding.notificationStatusTv.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.rounded_grey_bg_2dp)
         } else {
             binding.notificationRightIv.visibility = View.GONE
             binding.notificationStatusTv.setText(R.string.on)
-            binding.notificationDiscription.text = AppObjectController.getFirebaseRemoteConfig()
+            binding.notificationDescription.text = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_ENABLED)
             binding.notificationStatusTv.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.rounded_primary_bg_2dp)
         }
 
+        if (PowerManagers.getIntentForOEM(requireContext() as BaseActivity) == null)
+            binding.autoStartRl.visibility = View.GONE
 
         return binding.root
     }
@@ -178,8 +178,7 @@ class SettingsFragment : Fragment() {
 
     fun openSelectLanguageFragment() {
         (requireActivity() as BaseActivity).replaceFragment(
-            R.id.settings_container, LanguageFragment(), LanguageFragment.TAG,
-            TAG
+            R.id.settings_container, LanguageFragment(), LanguageFragment.TAG, TAG
         )
     }
 
@@ -187,8 +186,7 @@ class SettingsFragment : Fragment() {
         logEvent(AnalyticsEvent.PERSONAL_PROFILE_CLICKED.name)
         if (User.getInstance().isVerified) {
             (requireActivity() as BaseActivity).replaceFragment(
-                R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG,
-                TAG
+                R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG, TAG
             )
         } else {
             showLoginPopup()
@@ -225,7 +223,11 @@ class SettingsFragment : Fragment() {
     }
 
     fun showNotificationSettingPopup() {
-        (requireActivity() as BaseActivity).checkForOemNotifications()
+        (requireActivity() as SettingsActivity).openAppNotificationSettings()
+    }
+
+    fun showAutoStartPermissionPopup() {
+        (requireActivity() as BaseActivity).checkForOemNotifications(AUTO_START_SETTINGS_POPUP)
     }
 
     fun hideBottomView() {

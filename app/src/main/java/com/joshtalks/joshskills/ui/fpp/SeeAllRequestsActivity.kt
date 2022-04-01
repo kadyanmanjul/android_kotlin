@@ -1,87 +1,60 @@
 package com.joshtalks.joshskills.ui.fpp
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.View
+import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivitySeeAllRequestsBinding
-import com.joshtalks.joshskills.ui.fpp.adapters.AdapterCallback
 import com.joshtalks.joshskills.ui.fpp.adapters.SeeAllRequestsAdapter
-import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
+import com.joshtalks.joshskills.ui.fpp.constants.FPP_SEE_ALL_BACK_PRESSED
+import com.joshtalks.joshskills.ui.fpp.constants.FPP_OPEN_USER_PROFILE
+import com.joshtalks.joshskills.ui.fpp.constants.REQUESTS_SCREEN
 import com.joshtalks.joshskills.ui.fpp.viewmodels.SeeAllRequestsViewModel
-val ISACCEPTED ="is_accepted"
-val ISREJECTED = "is_rejected"
-class SeeAllRequestsActivity : AppCompatActivity() ,AdapterCallback{
-    lateinit var binding: ActivitySeeAllRequestsBinding
-    private val viewModel by lazy {
-        ViewModelProvider(this).get(
-            SeeAllRequestsViewModel::class.java
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+
+class SeeAllRequestsActivity : BaseFppActivity() {
+
+    val binding by lazy<ActivitySeeAllRequestsBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)
+    }
+    lateinit var seeAllRequestsAdapter: SeeAllRequestsAdapter
+
+    val viewModel by lazy {
+        ViewModelProvider(this).get(SeeAllRequestsViewModel::class.java)
+    }
+
+    override fun setIntentExtras() {}
+
+    override fun initViewBinding() {
+        binding.vm = viewModel
+        binding.executePendingBindings()
+    }
+
+    override fun onCreated() {
+        viewModel.getPendingRequestsList()
+    }
+
+    override fun initViewState() {
+        event.observe(this) {
+            when (it.what) {
+                FPP_SEE_ALL_BACK_PRESSED -> popBackStack()
+                FPP_OPEN_USER_PROFILE -> openUserProfile(it.obj.toString())
+            }
+        }
+    }
+
+    private fun openUserProfile(senderMentorId: String) {
+        UserProfileActivity.startUserProfileActivity(
+            this,
+            senderMentorId,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            null,
+            REQUESTS_SCREEN,
+            conversationId = null
         )
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_see_all_requests)
-        binding.lifecycleOwner = this
-        binding.ivBack.setOnClickListener{
-            onBackPressed()
-        }
-        addObserver()
-    }
 
-    override fun onStart() {
-        super.onStart()
-        getPendingRequests()
-    }
-
-    private fun getPendingRequests() {
-       viewModel.getPendingRequestsList()
-    }
-
-    private fun addObserver() {
-        viewModel.apiCallStatus.observe(this) {
-            when(it){
-                ApiCallStatus.SUCCESS->
-                    FullScreenProgressDialog.hideProgressBar(this)
-                ApiCallStatus.FAILED-> {
-                    FullScreenProgressDialog.hideProgressBar(this)
-                    this.finish()
-                }
-                ApiCallStatus.START->
-                    FullScreenProgressDialog.showProgressBar(this)
-            }
-        }
-        viewModel.pendingRequestsList.observe(this){
-
-            initView(it.pendingRequestsList)
-        }
-    }
-
-    private fun initView(pendingRequestsList: List<PendingRequestDetail>) {
-        if(pendingRequestsList.isNullOrEmpty()){
-        }else {
-            var recyclerView: RecyclerView = binding.recentListRv
-            recyclerView.layoutManager = LinearLayoutManager(this)
-            recyclerView.setHasFixedSize(true)
-            recyclerView.adapter = SeeAllRequestsAdapter(pendingRequestsList, this, this)
-        }
-    }
-
-    override fun onClickCallback(
-        requestStatus: String?,
-        mentorId: String?,
-        position: Int,
-        name: String?
-    ) {
-        if (requestStatus != null) {
-            if (mentorId != null) {
-                viewModel.confirmOrRejectFppRequest(mentorId,requestStatus,"REQUESTS_SCREEN")
-            }
-        }
+    private fun popBackStack() {
+        onBackPressed()
     }
 }

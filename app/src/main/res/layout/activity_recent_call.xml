@@ -5,9 +5,12 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.fpp.RecentCallActivity" />
+            name="vm"
+            type="com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel" />
+
     </data>
 
     <RelativeLayout
@@ -51,7 +54,7 @@
                     app:layout_scrollFlags="scroll|enterAlways"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                     app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-                    app:titleTextColor="#FFFFFF">
+                    app:titleTextColor="@color/white">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -69,7 +72,7 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center_vertical|start"
-                            android:onClick="@{()->handler.onBackPressed()}"
+                            android:onClick="@{vm::onBackPress}"
                             android:paddingTop="@dimen/_6sdp"
                             android:paddingBottom="@dimen/_6sdp"
                             android:visibility="visible"
@@ -102,11 +105,13 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recent_list_rv"
+            onFppRecentItemClick="@{vm.onItemClick}"
+            recentAllRequestAdapter="@{vm.adapter}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/tab_layout_"
             android:clipToPadding="false"
-            android:paddingTop="10dp"
+            android:paddingTop="@dimen/_8sdp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:listitem="@layout/fpp_recent_item_list" />
 
@@ -118,6 +123,7 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:elevation="@dimen/_5sdp"
+            android:visibility="@{vm.fetchingAllRecentCall ? View.VISIBLE : View.GONE}"
             app:cpb_background_progressbar_color="@android:color/transparent"
             app:cpb_background_progressbar_width="0dp"
             app:cpb_indeterminate_mode="true"
@@ -133,7 +139,7 @@
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="@dimen/_41sdp"
             android:clipToPadding="true"
-            android:visibility="gone"
+            android:visibility="@{vm.isListEmpty ? View.VISIBLE : View.GONE}"
             app:cardCornerRadius="@dimen/_5sdp"
             app:cardElevation="0dp"
             tools:cardBackgroundColor="@color/white"
@@ -142,7 +148,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#F3F3F3">
+                android:background="@color/empty_card_bg_color">
 
 
                 <TextView

@@ -7,14 +7,15 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.view.Gravity
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
@@ -27,6 +28,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -50,9 +52,10 @@ import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventB
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.*
-import com.joshtalks.joshskills.ui.group.*
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
@@ -266,7 +269,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         binding.btnConfirmRequest.setOnClickListener{
-            viewModel.confirmOrRejectFppRequest(mentorId, ISACCEPTED,"USER_PROFILE")
+            viewModel.confirmOrRejectFppRequest(mentorId, IS_ACCEPTED,"USER_PROFILE")
             binding.btnConfirmRequest.visibility= GONE
             binding.btnNotNowRequest.visibility= GONE
             binding.profileText.text= userName+ " and you are now favorite practice partners"
@@ -282,7 +285,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
 
         binding.btnNotNowRequest.setOnClickListener{
-            viewModel.confirmOrRejectFppRequest(mentorId, ISREJECTED,"USER_PROFILE")
+            viewModel.confirmOrRejectFppRequest(mentorId, IS_REJECTED,"USER_PROFILE")
             binding.btnConfirmRequest.visibility= GONE
             binding.btnNotNowRequest.visibility= GONE
             var layoutParams: RelativeLayout.LayoutParams =
@@ -300,16 +303,16 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     private fun initToolbar() {
         with(iv_back) {
-            visibility = View.VISIBLE
+            visibility = VISIBLE
             setOnClickListener {
                 onBackPressed()
             }
         }
         with(iv_help) {
             if (mentorId == Mentor.getInstance().getId()) {
-                visibility = View.GONE
+                visibility = GONE
             } else {
-                visibility = View.VISIBLE
+                visibility = VISIBLE
                 setOnClickListener {
                     openHelpActivity()
                 }
@@ -317,12 +320,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         with(iv_edit) {
             if (mentorId == Mentor.getInstance().getId()) {
-                visibility = View.VISIBLE
+                visibility = VISIBLE
                 setOnClickListener {
                     EditProfileFragment.newInstance(FOR_EDIT_SCREEN).show(supportFragmentManager, "EditProfile")
                 }
             } else {
-                visibility = View.GONE
+                visibility = GONE
             }
         }
         with(iv_setting) {
@@ -337,9 +340,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 //            }
         }
         if (mentorId == Mentor.getInstance().getId()) {
-            binding.editPic.visibility = View.VISIBLE
+            binding.editPic.visibility = VISIBLE
         } else {
-            binding.editPic.visibility = View.GONE
+            binding.editPic.visibility = GONE
         }
     }
 
@@ -670,7 +673,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         binding.joinedOn.text = userData.joinedOn
         if (userData.isOnline == true) {
-            binding.onlineStatusIv.visibility = View.VISIBLE
+            binding.onlineStatusIv.visibility = VISIBLE
         }
         if(!userData.futureGoals.isNullOrBlank()){
             binding.seperatorBasicDetails.visibility= VISIBLE
@@ -1012,7 +1015,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         when (index) {
             0 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award1)
-                v.visibility = View.VISIBLE
+                v.visibility = VISIBLE
 
                 setViewToLayout(
                     award,
@@ -1024,7 +1027,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
             1 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award2)
-                v.visibility = View.VISIBLE
+                v.visibility = VISIBLE
 
                 setViewToLayout(
                     award,
@@ -1036,7 +1039,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
             2 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award3)
-                v.visibility = View.VISIBLE
+                v.visibility = VISIBLE
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award3),
@@ -1064,19 +1067,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     ) {
         title.text = award.awardText
         if (award.dateText.isNullOrBlank()) {
-            date.visibility = View.INVISIBLE
+            date.visibility = INVISIBLE
         } else {
-            date.visibility = View.VISIBLE
+            date.visibility = VISIBLE
             date.text = award.dateText
         }
         award.imageUrl?.let {
             image.setImage(it, this)
         }
         if (award.count > 1) {
-            count.visibility = View.VISIBLE
+            count.visibility = VISIBLE
             count.text = award.count.toString()
         } else {
-            count.visibility = View.GONE
+            count.visibility = GONE
         }
     }
 
@@ -1317,10 +1320,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             })*/
             binding.arrowAnimation.playAnimation()
-            binding.toolbarOverlay.visibility = View.VISIBLE
+            binding.toolbarOverlay.visibility = VISIBLE
             //animatePoints()
-            binding.labelTapToDismiss.visibility = View.INVISIBLE
-            binding.overlayProfileTooltip.visibility = View.VISIBLE
+            binding.labelTapToDismiss.visibility = INVISIBLE
+            binding.overlayProfileTooltip.visibility = VISIBLE
             PrefManager.put(HAS_SEEN_PROFILE_ANIMATION, true)
             isAnimationVisible = true
             binding.overlayProfileTooltip.startAnimation(
@@ -1364,11 +1367,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.toolbarOverlay.setOnClickListener(null)
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
         //stopPointAnimation()
-        binding.arrowAnimation.visibility = View.GONE
-        binding.contentOverlay.visibility = View.GONE
-        binding.toolbarOverlay.visibility = View.GONE
-        binding.labelTapToDismiss.visibility = View.INVISIBLE
-        binding.overlayProfileTooltip.visibility = View.GONE
+        binding.arrowAnimation.visibility = GONE
+        binding.contentOverlay.visibility = GONE
+        binding.toolbarOverlay.visibility = GONE
+        binding.labelTapToDismiss.visibility = INVISIBLE
+        binding.overlayProfileTooltip.visibility = GONE
         isAnimationVisible = false
     }
 

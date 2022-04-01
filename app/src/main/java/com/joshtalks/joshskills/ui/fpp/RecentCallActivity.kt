@@ -1,78 +1,68 @@
 package com.joshtalks.joshskills.ui.fpp
 
 import android.app.Activity
-import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.view.ViewGroup
+import android.view.Window
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textview.MaterialTextView
+import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityRecentCallBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.fpp.adapters.AdapterCallback
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
-import kotlinx.coroutines.delay
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
-val SENT_REQUEST = "send_request"
-val IS_ALREADY_FPP = "is_already_fpp"
-val ALREADY_FPP = "already_fpp"
-val REQUESTED = "requested"
-val HAS_RECIEVED_REQUEST = "has_recieved_request"
+class RecentCallActivity : BaseFppActivity() {
 
-class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
-    private lateinit var binding: ActivityRecentCallBinding
-    lateinit var recentCallAdapter: RecentCallsAdapter
-    var recyclerView: RecyclerView? = null
-    var itemPosition: Int = 0
-    var isFirstTime = true
+    val binding by lazy<ActivityRecentCallBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_recent_call)
+    }
+
     private val viewModel: RecentCallViewModel by lazy {
         ViewModelProvider(this).get(RecentCallViewModel::class.java)
     }
-    var flag: Boolean = true
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_recent_call)
-        binding.handler = this
-        recyclerView = binding.recentListRv
 
-        setSupportActionBar(binding.toolbar)
-        addObservable()
+    var conversationId1 = EMPTY
+    lateinit var recentCallAdapter: RecentCallsAdapter
+
+    override fun setIntentExtras() {
+        conversationId1 = intent.extras?.get(CONVERSATION_ID) as String
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.getFavorites()
+    override fun initViewBinding() {
+        binding.vm = viewModel
+        binding.executePendingBindings()
     }
 
-    private fun initView(recentCallList: ArrayList<RecentCall>?) {
-        recyclerView?.layoutManager = LinearLayoutManager(applicationContext).apply {
-            isSmoothScrollbarEnabled = true
+    override fun onCreated() {
+        viewModel.getRecentCall()
+    }
+
+    override fun initViewState() {
+        event.observe(this) {
+            when (it.what) {
+                FPP_RECENT_CALL_ON_BACK_PRESS -> popBackStack()
+                RECENT_OPEN_USER_PROFILE -> openUserProfileActivity(it.obj.toString())
+                SCROLL_TO_POSITION -> {
+                    binding.recentListRv.layoutManager?.scrollToPosition(it.obj as Int)
+                }
+                RECENT_CALL_USER_BLOCK -> {
+                    onUserBlock(it.obj as RecentCall)
+                }
+                RECENT_CALL_HAS_RECIEVED_REQUESTED -> {
+                    onRecentCallHasRequest(it.obj as RecentCall)
+                }
+            }
         }
-        recyclerView?.setHasFixedSize(true)
-        recentCallAdapter = RecentCallsAdapter(
-            this,
-            this,
-            this,
-            intent.getStringExtra(CONVERSATION_ID),
-            recentCallList
-        )
-        recyclerView?.adapter = recentCallAdapter
     }
 
     companion object {
@@ -85,93 +75,65 @@ class RecentCallActivity : WebRtcMiddlewareActivity(), AdapterCallback {
         }
     }
 
-    private fun addObservable() {
-        viewModel.recentCallList.observe(this) {
-            if (it != null) {
-                if (isFirstTime){
-                    initView(it.arrayList)
-                    isFirstTime = false
-                }else{
-                    recentCallAdapter.updateList(it.arrayList,recyclerView,itemPosition)
-                }
-            }
-        }
-
-        viewModel.apiCallStatus.observe(this) {
-            if (flag) {
-                when (it) {
-                    ApiCallStatus.SUCCESS -> {
-                        binding.progressBar.visibility = View.GONE
-                        if (recentCallAdapter.itemCount == 0) {
-                            binding.emptyCard.visibility = View.VISIBLE
-                        }
-                        flag = false
-                    }
-                    ApiCallStatus.FAILED -> {
-                        binding.progressBar.visibility = View.GONE
-                        this.finish()
-                    }
-                    ApiCallStatus.START ->
-                        binding.progressBar.visibility = View.VISIBLE
-                }
-
-            }
-        }
-
+    private fun popBackStack() {
+        onBackPressed()
     }
 
-    override fun onClickCallback(
-        requestStatus: String?,
-        mentorId: String?,
-        position: Int,
-        name: String?
-    ) {
-        itemPosition = position
-        when (requestStatus) {
-            SENT_REQUEST -> {
-                if (mentorId != null) {
-                    viewModel.sendFppRequest(mentorId)
-                }
-            }
-            REQUESTED -> {
-                if (mentorId != null) {
-                    viewModel.deleteFppRequest(mentorId)
-                }
-            }
-            HAS_RECIEVED_REQUEST -> {
-                val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-                val inflater = this.layoutInflater
-                val dialogView: View =
-                    inflater.inflate(R.layout.respond_request_alert_dialog, null)
-                dialogBuilder.setView(dialogView)
-                val alertDialog: AlertDialog = dialogBuilder.create()
-                val width = AppObjectController.screenWidth * .9
-                val height = ViewGroup.LayoutParams.WRAP_CONTENT
-                alertDialog.show()
-                alertDialog.window?.setLayout(width.toInt(), height)
-                alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dialogView.findViewById<TextView>(R.id.text).text =
-                    name + " has requested to be your favorite practice partner"
-                dialogView.findViewById<MaterialTextView>(R.id.confirm_button)
-                    .setOnClickListener {
-                        if (mentorId != null) {
-                            viewModel.confirmOrRejectFppRequest(
-                                mentorId,
-                                ISACCEPTED,
-                                "RECENT_CALL"
-                            )
-                            alertDialog.dismiss()
-                        }
-                    }
-                dialogView.findViewById<MaterialTextView>(R.id.not_now).setOnClickListener {
-                    if (mentorId != null) {
-                        viewModel.confirmOrRejectFppRequest(mentorId, ISREJECTED, "RECENT_CALL")
-                        alertDialog.dismiss()
-                    }
-                }
+    fun openUserProfileActivity(id: String) {
+        UserProfileActivity.startUserProfileActivity(
+            this,
+            id,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            null,
+            RECENT_CALL,
+            conversationId = conversationId1
+        )
+    }
 
+    fun onRecentCallHasRequest(recentCall: RecentCall) {
+        val dialogView = showCustomDialog(R.layout.respond_request_alert_dialog)
+        val btnConfirm = dialogView.findViewById<MaterialButton>(R.id.confirm_button)
+        val btnNotNow = dialogView.findViewById<MaterialButton>(R.id.not_now)
+        dialogView.findViewById<TextView>(R.id.text).text =
+            "${recentCall.firstName} has requested to be your favorite practice partner"
+        btnConfirm
+            .setOnClickListener {
+                viewModel.confirmOrRejectFppRequest(
+                    recentCall.receiverMentorId?: EMPTY,
+                    IS_ACCEPTED,
+                    RECENT_CALL
+                )
+                dialogView.dismiss()
             }
-
+        btnNotNow.setOnClickListener {
+            viewModel.confirmOrRejectFppRequest(recentCall.receiverMentorId?: EMPTY, IS_REJECTED, RECENT_CALL)
+            dialogView.dismiss()
         }
     }
+
+    fun onUserBlock(recentCall: RecentCall) {
+        val dialogView = showCustomDialog(R.layout.block_user_alert_dialog)
+        val btnConfirm = dialogView.findViewById<AppCompatTextView>(R.id.yes_button)
+        val btnNotNow = dialogView.findViewById<AppCompatTextView>(R.id.not_now)
+        dialogView.findViewById<TextView>(R.id.text).text = "Block ${recentCall.firstName}"
+        btnConfirm
+            .setOnClickListener {
+                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY)
+                dialogView.dismiss()
+            }
+        btnNotNow.setOnClickListener {
+            dialogView.dismiss()
+        }
+    }
+
+    private fun showCustomDialog(view: Int): Dialog {
+        val dialogView = Dialog(this)
+        dialogView.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialogView.setCancelable(true)
+        dialogView.setContentView(view)
+        dialogView.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogView.show()
+        return dialogView
+    }
+
 }

@@ -4,29 +4,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.interfaces.OnClickUserProfile
 import com.joshtalks.joshskills.databinding.FppItemListBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
 import com.joshtalks.joshskills.ui.inbox.adapter.FavoriteCallerDiffCallback
-import java.util.*
 
-
-class FavoriteAdapter(
-    private var lifecycleProvider: LifecycleOwner,
-    private val onClickUserProfile: OnClickUserProfile,
-) :
-    RecyclerView.Adapter<FavoriteAdapter.FavoriteItemViewHolder>() {
+class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemViewHolder>() {
     private var items: ArrayList<FavoriteCaller> = arrayListOf()
     private val context = AppObjectController.joshApplication
-
-    init {
-        setHasStableIds(true)
-    }
+    var itemClick: ((FavoriteCaller, Int, Int) -> Unit)? = null
 
     fun addItems(newList: List<FavoriteCaller>) {
         if (newList.isEmpty()) {
@@ -56,6 +48,10 @@ class FavoriteAdapter(
         notifyDataSetChanged()
     }
 
+    fun setListener(function: ((FavoriteCaller, Int, Int) -> Unit)?) {
+        itemClick = function
+    }
+
     fun getItemSize() = items.size
 
 
@@ -65,9 +61,6 @@ class FavoriteAdapter(
     ): FavoriteItemViewHolder {
         val binding =
             FppItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        binding.apply {
-            lifecycleOwner = lifecycleProvider
-        }
         return FavoriteItemViewHolder(binding)
     }
 
@@ -93,27 +86,28 @@ class FavoriteAdapter(
             with(binding) {
                 obj = favoriteCaller
 
-                tvName.text = favoriteCaller.name
-                if (favoriteCaller.isOnline)
-                    ivOnlineTick.visibility = View.VISIBLE
+                groupItemContainer.setOnClickListener {
+                    itemClick?.invoke(favoriteCaller, FAV_CLICK_ON_PROFILE, position)
+                }
 
                 profileImage.setOnClickListener {
-                    onClickUserProfile.clickOnProfile(position)
+                    itemClick?.invoke(favoriteCaller, FAV_CLICK_ON_PROFILE, position)
                 }
 
                 fppCallIcon.setOnClickListener {
-                    onClickUserProfile.clickOnPhoneCall(position)
+                    itemClick?.invoke(favoriteCaller, FAV_CLICK_ON_CALL, position)
                 }
 
                 groupItemContainer.setOnLongClickListener {
-                    onClickUserProfile.clickLongPressDelete(position)
+                    itemClick?.invoke(favoriteCaller, FAV_USER_LONG_PRESS_CLICK, position)
                     true
                 }
 
                 tvSpokenTime.text = spokenTimeText(favoriteCaller.minutesSpoken)
+
                 if (favoriteCaller.selected) {
                     fppCallIcon.setOnClickListener {
-                        onClickUserProfile.clickLongPressDelete(position)
+                        itemClick?.invoke(favoriteCaller, FAV_USER_LONG_PRESS_CLICK, position)
                         rootView.setCardBackgroundColor(
                             ContextCompat.getColor(
                                 context,
@@ -123,24 +117,10 @@ class FavoriteAdapter(
                         ivTick.visibility = View.GONE
                     }
                     groupItemContainer.setOnClickListener {
-                        onClickUserProfile.clickLongPressDelete(position)
+                        itemClick?.invoke(favoriteCaller, FAV_USER_LONG_PRESS_CLICK, position)
                     }
-                    groupItemContainer.setBackgroundColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.select_bg_color
-                        )
-                    )
-                    ivTick.visibility = View.VISIBLE
                 } else {
                     fppCallIcon.isEnabled = true
-                    groupItemContainer.setBackgroundColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.white
-                        )
-                    )
-                    ivTick.visibility = View.GONE
                 }
             }
         }
@@ -156,5 +136,4 @@ class FavoriteAdapter(
             return string.toString()
         }
     }
-
 }
