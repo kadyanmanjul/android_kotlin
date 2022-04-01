@@ -2,15 +2,17 @@ package com.joshtalks.joshskills.voip.notification
 
 import android.app.PendingIntent
 import android.widget.RemoteViews
+import androidx.core.app.NotificationCompat
 
 internal interface NotificationInterface {
-    fun addNotification(notificationData:NotificationData):Int
-    fun addNotification(remoteView: RemoteViews):Int
-    fun removeNotification(notificationId:Int)
-    fun getNotificationObject(notificationData:NotificationData):NotificationDetails
-    fun getNotificationObject(remoteView: RemoteViews):NotificationDetails
-    fun updateNotification(notificationId: Int,remoteView: RemoteViews)
-    fun updateNotification(notificationId: Int,notificationData:NotificationData)
+    fun buildNotification()
+    fun removeNotification()
+    fun getNotificationObject(): NotificationCompat.Builder
+    fun updateTitle(title:String)
+    fun updateContent(content:String)
+    fun updateUI(remoteView: RemoteViews)
+    fun show()
+
 }
 
 interface NotificationData{
