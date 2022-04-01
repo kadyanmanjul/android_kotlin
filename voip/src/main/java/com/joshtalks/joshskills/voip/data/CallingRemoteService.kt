@@ -22,10 +22,14 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.UPDATE_START_CALL_TIME
+import com.joshtalks.joshskills.base.constants.UPDATE_VOIP_STATE
+import com.joshtalks.joshskills.base.constants.VOIP_STATE
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
+import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallType
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
@@ -55,10 +59,10 @@ class CallingRemoteService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        updateStartCallTime(0)
         registerPstnCall()
         voipLog?.log("Creating Service")
         showNotification()
-        //hideNotification()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -83,6 +87,20 @@ class CallingRemoteService : Service() {
                     }
                     voipLog?.log("Sending Event to client")
                         handler.sendMessageToRepository(it)
+                }
+            }
+
+            ioScope.launch {
+                mediator.observeState().collect {
+                    when(it) {
+                        IDLE -> {
+
+                        }
+                        LEAVING -> {
+
+                        }
+                    }
+                    voipLog?.log("State --> $it")
                 }
             }
         }
@@ -166,6 +184,18 @@ class CallingRemoteService : Service() {
         }
         val data = contentResolver.insert(
             Uri.parse(CONTENT_URI + UPDATE_START_CALL_TIME),
+            values
+        )
+        voipLog?.log("Data --> $data")
+    }
+
+    private fun updateVoipState(state : Int) {
+        voipLog?.log("QUERY")
+        val values = ContentValues(1).apply {
+            put(VOIP_STATE, state)
+        }
+        val data = contentResolver.insert(
+            Uri.parse(CONTENT_URI + UPDATE_VOIP_STATE),
             values
         )
         voipLog?.log("Data --> $data")

@@ -22,3 +22,10 @@ const val RECONNECTED = 114
 const val CALL_CONNECT_REQUEST = 115
 const val CALL_DISCONNECT_REQUEST = 116
 const val IPC_CONNECTION_ESTABLISHED = 117
+
+const val IDLE = 118 // // Doing Nothing - Can make Call
+const val JOINING = 119 // Join Channel Called and Success Returned but haven't joined the channel
+const val JOINED = 120 // Local User Joined the Channel
+const val CONNECTED = 121 // Remote User Joined the Channel and can Talk
+const val LEAVING = 122 // LeaveChannel Called but haven't left the channel
+

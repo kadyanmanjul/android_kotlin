@@ -179,6 +179,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             //startActivity(Intent(activity,VoiceCallActivity::class.java))
         }
 
+        viewModel.observerVoipState().observe(viewLifecycleOwner) {
+            voipLog?.log("VOIP State --> $it")
+        }
+
         binding.btnGroupCall.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if(isCallOngoing(R.string.call_engage_initiate_call_message))

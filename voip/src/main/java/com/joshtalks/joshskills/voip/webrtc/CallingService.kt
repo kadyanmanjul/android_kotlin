@@ -1,13 +1,14 @@
 package com.joshtalks.joshskills.voip.webrtc
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 internal interface CallingService {
     suspend fun initCallingService()
     fun connectCall(request: CallRequest) // Need Arguments
     fun disconnectCall() // Might Need Arguments
-    fun observeCallingEvents() : Flow<CallState> // Will return value
-    fun observeCallingState() : Flow<State> // Will Return State
+    fun observeCallingEvents() : SharedFlow<CallState> // Will return value
+    fun observeCallingState() : SharedFlow<Int> // Will Return State
 }
 
 internal interface CallRequest {
@@ -30,10 +31,10 @@ internal sealed class CallState {
     object Error : CallState()
 }
 
-internal enum class State {
-    IDLE, // Doing Nothing - Can make Call
-    JOINING, // Join Channel Called and Success Returned but haven't joined the channel
-    JOINED, // Local User Joined the Channel
-    CONNECTED, // Remote User Joined the Channel and can Talk
-    LEAVING // LeaveChannel Called but haven't left the channel
-}
+//internal enum class State {
+//    IDLE, // Doing Nothing - Can make Call
+//    JOINING, // Join Channel Called and Success Returned but haven't joined the channel
+//    JOINED, // Local User Joined the Channel
+//    CONNECTED, // Remote User Joined the Channel and can Talk
+//    LEAVING // LeaveChannel Called but haven't left the channel
+//}

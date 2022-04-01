@@ -6,9 +6,6 @@
     <data>
         <import type="android.view.View"/>
         <variable
-            name="callBar"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar" />
-        <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.chat.ConversationActivity" />
 
@@ -53,9 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/call_bar_layout"
-                onCallBarClick="@{callBar::intentToCallActivity}"
-                android:visibility="@{callBar.isCallOnGoing ? View.VISIBLE : View.GONE}"
-                tools:ignore="MissingConstraints" />
+                android:visibility="@{viewmodel.isCallOnGoing ? View.VISIBLE : View.GONE}" />
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

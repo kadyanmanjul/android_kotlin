@@ -30,7 +30,7 @@ import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.log.Feature
 import com.joshtalks.joshskills.voip.log.JoshLog.Companion.enableLog
@@ -74,7 +74,7 @@ class JoshApplication :
                 turnOnStrictMode()
                 ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
                 AppObjectController.init(this@JoshApplication)
-                CallBar.initVoipPref(this)
+                VoipPref.initVoipPref(this)
                 registerBroadcastReceiver()
                 initGroups()
             } else {

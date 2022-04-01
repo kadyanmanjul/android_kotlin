@@ -9,21 +9,21 @@ import android.util.Log
 
 class JoshLog private constructor(private val feature: Feature) {
 
-//    fun log(msg: String) {
-//        val stack = Throwable().fillInStackTrace()
-//        val trace = stack.stackTrace
-//        val classname = trace[1].className
-//        val methodName = trace[1].methodName
-//        val number = trace[1].lineNumber
-//        println("${feature.tag} [$classname : $methodName : $number] : ${msg}")
-//    }
-
     fun log(msg: String) {
         val stack = Throwable().fillInStackTrace()
         val trace = stack.stackTrace
         val classname = trace[1].className
-        Log.d(feature.tag, "$classname : ${msg}")
+        val methodName = trace[1].methodName
+        val number = trace[1].lineNumber
+        println("${feature.tag} [$classname : $methodName : $number] : ${msg}")
     }
+
+//    fun log(msg: String) {
+//        val stack = Throwable().fillInStackTrace()
+//        val trace = stack.stackTrace
+//        val classname = trace[1].className
+//        Log.d(feature.tag, "$classname : ${msg}")
+//    }
 
     companion object {
         private val objectHolder = mutableMapOf<Feature, JoshLog>()

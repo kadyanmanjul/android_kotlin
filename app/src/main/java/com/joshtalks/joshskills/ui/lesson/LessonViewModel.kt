@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.lesson
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingDat
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -78,6 +80,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
+    val voipState by lazy {
+        CallBar()
+    }
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) = practicePartnerCallDurationLiveData.postValue(time)
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
@@ -96,6 +101,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 Log.e(TAG, "${ex.message}")
             }
         }
+    }
+
+    fun observerVoipState() : LiveData<Int> {
+        return voipState.observerVoipState()
     }
 
     fun getLesson(lessonId: Int) {

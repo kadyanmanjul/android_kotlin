@@ -50,7 +50,7 @@ internal class PubNubSubscriber : SubscribeCallback() {
 
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         scope.launch {
-            voipLog?.log("message: $pnMessageResult")
+            voipLog?.log("Incoming message --> : $pnMessageResult")
             val messageJson = pnMessageResult.message
             try {
                 // So that we will ignore our own message

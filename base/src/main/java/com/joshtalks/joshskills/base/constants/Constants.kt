@@ -21,13 +21,15 @@ const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
 const val UPDATE_START_CALL_TIME = "/start_call_time"
+const val UPDATE_VOIP_STATE = "/voip_state"
 const val API_HEADER = "/api_header"
 // Content Values
 const val CALL_START_TIME = "josh_call_start_time"
+const val VOIP_STATE = "josh_voip_state"
 
-// Call Bar
-const val CALL_BAR_SHARED_PREF_KEY = "callOnGoing"
-const val CALL_ON_GOING_TRUE = "true"
-const val CALL_ON_GOING_FALSE = "false"
+
+// Pref Keys
+const val CALL_BAR_SHARED_PREF_KEY = "josh_call_bar_is_callOnGoing"
+const val PREF_KEY_WEBRTC_CURRENT_STATE = "josh_webrtc_current_state"
 
 

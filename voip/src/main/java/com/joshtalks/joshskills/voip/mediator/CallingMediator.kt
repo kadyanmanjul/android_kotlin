@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import android.telecom.Call
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
@@ -18,6 +17,8 @@ import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
+import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
@@ -29,7 +30,6 @@ import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
 import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.CallingService
-import com.joshtalks.joshskills.voip.webrtc.State
 import java.lang.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,14 +43,12 @@ import kotlinx.coroutines.sync.withLock
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
     private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
-
     // AudioRouter
     //
     private val pstnService: PSTNInterface = PSTNListener()
     private lateinit var callDirection: CallDirection
     private var calling = PeerToPeerCalling()
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
-    private val callingMutex = Mutex(false)
 
     init {
         scope.launch {
@@ -58,7 +56,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             callingService.initCallingService()
             networkEventChannel.initChannel()
             handleWebrtcEvent()
-            observerCallingState()
             handlePubnubEvent()
         }
     }
@@ -71,12 +68,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             voipLog?.log("CallData Before Mutex --> $callData")
             try {
-                //callingMutex.withLock {
-                    setCallType(callType)
-                    // TODO: Need to Handle when Error Occurred
-                    voipLog?.log("Coroutine CallData --> $callData")
-                    calling.onPreCallConnect(callData)
-               // }
+                setCallType(callType)
+                // TODO: Need to Handle when Error Occurred
+                voipLog?.log("Coroutine CallData --> $callData")
+                calling.onPreCallConnect(callData)
             } catch (e: Exception) {
                 voipLog?.log("Connect Call API Failed")
                 e.printStackTrace()
@@ -91,15 +86,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         callingService.disconnectCall()
     }
 
-    private fun observerCallingState() {
-        scope.launch {
-            callingService.observeCallingState().collectLatest {
-                when (it) {
-                    State.IDLE -> unlockMutex()
-                    State.JOINING -> lockMutex()
-                }
-            }
-        }
+    override fun observeState(): SharedFlow<Int> {
+        return callingService.observeCallingState()
     }
 
     private fun observerPstnService() {
@@ -125,25 +113,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                 }
             }
-        }
-    }
-
-    private fun unlockMutex() {
-        try {
-            callingMutex.unlock()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            voipLog?.log("Mutex Unlock Error")
-        }
-    }
-
-    private suspend fun lockMutex() {
-        try {
-            if (callingMutex.isLocked.not())
-                callingMutex.lock()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            voipLog?.log("Mutex Lock Error")
         }
     }
 

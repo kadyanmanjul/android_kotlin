@@ -10,7 +10,7 @@
         android:focusable="true"
         android:paddingHorizontal="@dimen/_14sdp"
         android:paddingVertical="@dimen/_8sdp"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatTextView

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.WebrtcRepository
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
 import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGMENT
@@ -18,6 +19,7 @@ import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
+import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.delay
@@ -34,9 +36,11 @@ class VoiceCallViewModel : BaseViewModel() {
     val callStatus = ObservableField("outgoing")
     val callType = ObservableField("")
     val callStatusTest = ObservableField("")
+    private var isConnectionRequestSent = false
     private val repository = WebrtcRepository()
     val callData = HashMap<String, Any>()
-    val mutex = Mutex(true)
+    val mutex = Mutex(false)
+    val callBar = CallBar()
 
     init {
         voipLog?.log("Before scope")
@@ -44,7 +48,7 @@ class VoiceCallViewModel : BaseViewModel() {
             repository.observeCallEvents().collect {
                 message.copyFrom(it)
                 voipLog?.log("observeCallEvents =-> $it")
-                when(it.what) {
+                when (it.what) {
                     CALL_INITIATED_EVENT -> {
                         voipLog?.log("CALL_INITIATED_EVENT")
                     }
@@ -69,37 +73,32 @@ class VoiceCallViewModel : BaseViewModel() {
             }
         }
         viewModelScope.launch {
-            // TODO: Handle the case when it will rebind
             repository.getRepositoryEvents().collect {
                 voipLog?.log("getRepository --> $it")
-                when(it) {
+                when (it) {
                     IPC_CONNECTION_ESTABLISHED -> {
-                        try {
-                            mutex.unlock()
-                        } catch (e : Exception) {
-                            e.printStackTrace()
-                            voipLog?.log("Mutex Unlock Error")
-                        }
+                        connectCall()
                     }
                 }
             }
         }
     }
 
-    fun initiateCall(v: View){}
+    private suspend fun connectCall() {
+        mutex.withLock {
+            if (callBar.observerVoipState().value == IDLE && isConnectionRequestSent.not()) {
+                voipLog?.log("$callData")
+                repository.connectCall(callData)
+                isConnectionRequestSent = true
+            }
+        }
+    }
+
+    fun initiateCall(v: View) {}
 
     fun disconnectCall(v: View) {
         voipLog?.log("Disconnect Call")
         repository.disconnectCall()
-    }
-
-    fun connectCall() {
-        viewModelScope.launch {
-            mutex.withLock {
-                voipLog?.log("$callData")
-                repository.connectCall(callData)
-            }
-        }
     }
 
     fun boundService() {
@@ -112,54 +111,57 @@ class VoiceCallViewModel : BaseViewModel() {
         repository.stopService()
     }
 
-    fun acceptCall(v: View){}
+    fun acceptCall(v: View) {}
 
-    fun switchSpeaker(v: View){
-        if(isSpeakerOn.get()){
+    fun switchSpeaker(v: View) {
+        if (isSpeakerOn.get()) {
             switchSpeakerOff()
             isSpeakerOn.set(false)
-        }else{
+        } else {
             switchSpeakerOn()
             isSpeakerOn.set(true)
         }
     }
 
-    fun switchMic(v: View){
-        if(isMute.get()){
+    fun switchMic(v: View) {
+        if (isMute.get()) {
             switchMicOn()
             isMute.set(false)
-        }else{
+        } else {
             switchMicOff()
             isMute.set(true)
         }
     }
 
-    private fun switchSpeakerOn(){
+    private fun switchSpeakerOn() {
     }
-    private fun switchSpeakerOff(){
+
+    private fun switchSpeakerOff() {
     }
+
     private fun switchMicOn() {
     }
+
     private fun switchMicOff() {
     }
 
     fun observeCallStatus(v: View) {
 //        observe data and publsih status
-       callStatus.set("ongoing")
+        callStatus.set("ongoing")
     }
 
-    fun getCallData():CallData {
+    fun getCallData(): CallData {
         return CallDataObj
     }
 }
 
-object CallDataObj:CallData{
+object CallDataObj : CallData {
     override fun getProfileImage(): String? {
         return null
     }
 
     override fun getCallerName(): String {
-       return "Testing Name"
+        return "Testing Name"
     }
 
     override fun getTopicHeader(): String {
@@ -170,7 +172,7 @@ object CallDataObj:CallData{
         return "p2p test"
     }
 
-    override fun getCallType():CallType {
+    override fun getCallType(): CallType {
         return CallType.NormalPracticePartner
     }
 
