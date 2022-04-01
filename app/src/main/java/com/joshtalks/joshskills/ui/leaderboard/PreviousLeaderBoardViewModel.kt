@@ -4,7 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
