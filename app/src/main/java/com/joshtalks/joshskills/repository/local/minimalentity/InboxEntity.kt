@@ -57,7 +57,7 @@ data class InboxEntity constructor(
     @ColumnInfo(name = "speaking_status")
     @SerializedName("speaking_status") val speakingStatus: String = " ",
     @ColumnInfo(name = "is_extend_ft_applicable")
-    @SerializedName("is_extend_ft_applicable") val isFreeTrialExtended: Boolean = false
+    @SerializedName("is_extend_ft_applicable") val isFreeTrialExtendable: Boolean = false
 
 ) : Parcelable {
     override fun hashCode(): Int {

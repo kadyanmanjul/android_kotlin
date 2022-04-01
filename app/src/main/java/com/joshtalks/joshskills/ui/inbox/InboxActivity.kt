@@ -16,6 +16,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
@@ -70,6 +72,7 @@ const val USER_DETAILS_CODE = 1001
 const val TRIAL_COURSE_ID = "76"
 const val SUBSCRIPTION_COURSE_ID = "60"
 const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
+const val HINDI_TO_ENGLISH_COURSE_ID = "151"
 
 class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListener {
 
@@ -79,6 +82,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     var isPermissionRequired: Boolean = true
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
+    private var isExtendFreeTrialActive = false
 
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
@@ -93,7 +97,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         setContentView(R.layout.activity_inbox)
         initView()
         addLiveDataObservable()
+        initABTest()
         addAfterTime()
+    }
+
+    private fun initABTest(){
+        viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
     }
 
     private fun addAfterTime() {
@@ -203,6 +212,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseLocalData.collect {
                 addCourseInRecyclerView(it)
+            }
+        }
+
+        viewModel.extendFreeTrialAbTestLiveData.observe(this){ abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isExtendFreeTrialActive =
+                    (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
             }
         }
     }
@@ -374,7 +390,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         val currentTime = System.currentTimeMillis()
         val isValidSpeakingStatus = (inboxEntity.speakingStatus == "NO" ||  inboxEntity.speakingStatus == "AT")
 
-        if(inboxEntity.isCourseBought.not() && inboxEntity.isCapsuleCourse && expiredTime != null && expiredTime < currentTime && isValidSpeakingStatus && inboxEntity.isFreeTrialExtended){
+        PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, isExtendFreeTrialActive && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought.not() && inboxEntity.isFreeTrialExtendable.not())
+        if(isExtendFreeTrialActive && inboxEntity.isCourseBought.not() && inboxEntity.courseId.equals(HINDI_TO_ENGLISH_COURSE_ID) && expiredTime != null && expiredTime < currentTime && inboxEntity.isFreeTrialExtendable){
+            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         }else{
             ConversationActivity.startConversionActivity(this, inboxEntity)

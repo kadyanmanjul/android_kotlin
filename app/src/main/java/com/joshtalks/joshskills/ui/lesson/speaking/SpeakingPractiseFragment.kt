@@ -31,6 +31,8 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -58,6 +60,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+const val LESSON_ONE_TOPIC_ID = "5"
 class SpeakingPractiseFragment : ABTestFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
@@ -70,6 +73,9 @@ class SpeakingPractiseFragment : ABTestFragment() {
     private var isAnimationShown = false
     private var isIntroVideoEnabled = true
     private var lessonNo = 0
+    private var beforeTwoMinTalked = -1
+    private var afterTwoMinTalked = -1
+    private val twoMinutes: Int = 2
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -212,6 +218,20 @@ class SpeakingPractiseFragment : ABTestFragment() {
                     showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
                 } else {
                     try {
+                        if(response.alreadyTalked < twoMinutes){
+                            beforeTwoMinTalked = 0
+                            afterTwoMinTalked = 0
+                        }else if(response.alreadyTalked >= twoMinutes){
+                            beforeTwoMinTalked = afterTwoMinTalked
+                            afterTwoMinTalked = 1
+                        }
+
+                        if(beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
+                                IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+                            )){
+                            viewModel.postGoal(GoalKeys.EFT_GT_2MIN.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
+                        }
+
                         binding.tvTodayTopic.text = response.topicName
                         binding.tvPractiseTime.text =
                             response.alreadyTalked.toString().plus(" / ")

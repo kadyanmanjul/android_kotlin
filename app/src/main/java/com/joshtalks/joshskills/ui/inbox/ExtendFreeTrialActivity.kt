@@ -10,22 +10,20 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.view.animation.AlphaAnimation
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.databinding.ActivityExtendFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
-import kotlinx.coroutines.flow.collect
 
-const val INBOX_ENTITY = "inbox_entity"
 class ExtendFreeTrialActivity : AppCompatActivity() {
     private lateinit var inboxEntity: InboxEntity
     private lateinit var inboxEntityExtended: InboxEntity
@@ -47,26 +45,27 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
         addObserver()
         binding.extendFreeTrialBtn.setOnClickListener {
             extendFreeTrialBtnClicked = true
-            startProgress()
             viewModel.extendFreeTrial()
         }
         binding.text1.setColorize()
+        viewModel.postGoal(GoalKeys.EFT_SCREEN_SEEN.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
+
     }
 
     private fun addObserver() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.extendedFreeTrialCourseNetworkData.collect {
-                inboxEntityExtended = it[0]
+            viewModel.extendedFreeTrialCourseNetworkData.observe(this@ExtendFreeTrialActivity) { list ->
+                inboxEntityExtended = list[0]
                 if(extendFreeTrialBtnClicked){
-                    hideProgress()
                     ConversationActivity.startConversionActivity(this@ExtendFreeTrialActivity, inboxEntityExtended)
                     this@ExtendFreeTrialActivity.finish()
                 }
-            }
         }
 
         viewModel.isDataObtainedProcessRunninng.observe(this) { isSuccess->
-            if(isSuccess == false) hideProgress()
+            if(isSuccess)
+                startProgress()
+            else if(!isSuccess)
+                hideProgress()
         }
     }
 
@@ -87,27 +86,23 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
     }
 
     fun TextView.setColorize() {
-            val spannable: Spannable = SpannableString(text)
-            spannable.setSpan(
-                ForegroundColorSpan(Color.parseColor("#107BE5")),
-                7,
-                31,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            spannable.setSpan(
-                StyleSpan(Typeface.BOLD),
-                7,
-                31,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            spannable.setSpan(
-                AlphaAnimation(0.7f, 1f),
-                7,
-                31,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            setText(spannable, TextView.BufferType.SPANNABLE)
-        }
+          val spannable: Spannable = SpannableString(text)
+
+        spannable.setSpan(
+            ForegroundColorSpan(Color.parseColor("#107BE5")),
+            7,
+            31,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannable.setSpan(
+            StyleSpan(Typeface.BOLD),
+            7,
+            31,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        setText(spannable, TextView.BufferType.SPANNABLE)
+    }
 
     private fun startProgress() {
         binding.extendFreeTrialBtn.showProgress {
@@ -127,7 +122,9 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
 
 
         companion object {
-        fun startExtendFreeTrialActivity(activity: Activity, inboxEntity: InboxEntity) {
+            const val INBOX_ENTITY = "inbox_entity"
+
+            fun startExtendFreeTrialActivity(activity: Activity, inboxEntity: InboxEntity) {
             val intent = Intent(activity, ExtendFreeTrialActivity::class.java).apply {
                 putExtra(INBOX_ENTITY, inboxEntity)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -136,4 +133,4 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
             activity.overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
         }
     }
-    }
+}

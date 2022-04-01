@@ -1054,10 +1054,11 @@
         <font color ="@android:color/black">from ...</font>
     </string>
     <string name="extend_free_trial1">हम आपको एक और दिन का free trial देना चाहते हैं।</string>
-    <string name="extend_free_trial1_sub">एक और दिन का free trial</string>
-
     <string name="extend_free_trial2">आप free trial को एक ही बार बढ़ा सकते हैं।</string>
     <string name="extend_free_trial3">क्या आप serious हैं अपनी English improve करने के लिए?</string>
     <string name="extend_free_trial_btn_text">Extend free trial now</string>
+    <string name="extend_free_trial">Extend Free trial!</string>
+    <string name="extend_free_trial_subheading">हमने देखा की आपने lesson 1 पूरा नहीं किया है। यह app सिर्फ serious students के लिए है जो English सीखना चाहते हैं।</string>
+    <string name="free_trial_can_not_be_extended">Free Trial can not be extended</string>
 
 </resources>
