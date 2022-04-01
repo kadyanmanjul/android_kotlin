@@ -127,13 +127,6 @@
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
         <activity
-            android:name=".ui.introduction.IntroductionActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
             android:name=".ui.introduction.ReadyForDemoClassActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTask"
@@ -594,7 +587,7 @@
             android:value="@bool/branch_test" />
         <meta-data
             android:name="com.truecaller.android.sdk.PartnerKey"
-            android:value="@string/partnerKey" />
+            android:value="@string/truecaller_key" />
         <meta-data
             android:name="CLEVERTAP_BACKGROUND_SYNC"
             android:value="1" /> <!-- replace below value with your FCM project number. -->
