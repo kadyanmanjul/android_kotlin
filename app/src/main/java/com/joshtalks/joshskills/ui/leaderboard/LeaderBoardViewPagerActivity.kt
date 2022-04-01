@@ -76,8 +76,6 @@ const val TOOLTIP_SEARCH_ANYONE = "TOOLTIP_SEARCH_ANYONE_"
 const val TOOLTIP_LEADERBOARD_SOTD = "TOOLTIP_LEADERBOARD_SOTD_"
 const val TOOLTIP_LEADERBOARD_SOTW = "TOOLTIP_LEADERBOARD_SOTW_"
 const val TOOLTIP_LEADERBOARD_SOTM = "TOOLTIP_LEADERBOARD_SOTM_"
-const val TOOLTIP_LEADERBOARD_LIFETIME = "TOOLTIP_LEADERBOARD_LIFETIME_"
-
 
 class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     private val TAG = "LeaderBoardViewPagerAct"
@@ -127,9 +125,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     }
 
     private fun addLeaderboardTooltips() {
-
-
-
         tooltipTextList[0] =
             AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTD + getCourseId())
         tooltipTextList[1] =
@@ -961,8 +956,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         binding.itemTabOverlay.visibility = VISIBLE
         arrowView.visibility = VISIBLE
         itemImageView.visibility = VISIBLE
-
-        //show open profile tooltip
         tooltipView.setTooltipText(
             AppObjectController.getFirebaseRemoteConfig()
                 .getString(TOOLTIP_OPEN_PROFILE + getCourseId())

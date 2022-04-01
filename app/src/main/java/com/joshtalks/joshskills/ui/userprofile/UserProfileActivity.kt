@@ -999,5 +999,4 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         return AppObjectController.getFirebaseRemoteConfig()
             .getString(TOOLTIP_USER_PROFILE_SCREEN + courseId)
     }
-
 }

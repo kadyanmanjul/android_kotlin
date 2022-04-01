@@ -731,7 +731,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
-    override fun onPaymentError(p0: Int, p1: String?) { //check if the payment is success (again)
+    override fun onPaymentError(p0: Int, p1: String?) {
         // isBackPressDisabled = true
         viewModel.mentorPaymentStatus.observe(this, {
             when(it) {
