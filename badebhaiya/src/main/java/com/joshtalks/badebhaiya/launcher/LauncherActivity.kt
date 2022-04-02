@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.launcher
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
@@ -14,6 +15,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_PROFILE_ACTIVITY
 import io.branch.referral.Branch
+import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -56,6 +58,13 @@ class LauncherActivity : AppCompatActivity() {
                 startActivityForState()
             }
         }.withData(this.intent.data).init()
+        lifecycleScope.launch(Dispatchers.IO) {
+            WorkManager.getInstance(applicationContext).cancelAllWork()
+            WorkManagerAdmin.appInitWorker()
+            //Branch.getInstance().resetUserSession()
+            delay(1000)
+            startActivity(getIntentForState())
+        }
     }
 
     private fun startActivityForState(viewUserId: String? = null) {

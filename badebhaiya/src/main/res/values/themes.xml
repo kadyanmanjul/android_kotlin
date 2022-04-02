@@ -19,10 +19,6 @@
         <item name="fontFamily">@font/nunito_semi_bold</item>
     </style>
 
-    <style name="BB_Typography_OpenSans_Semi_Bold_Button" parent="TextAppearance.MaterialComponents.Button">
-        <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
-    </style>
-
     <style name="BB_Typography_Nunito_Sans_Semi_Bold">
         <item name="fontFamily">@font/nunito_sans_semi_bold</item>
         <item name="android:textSize">@dimen/_10ssp</item>

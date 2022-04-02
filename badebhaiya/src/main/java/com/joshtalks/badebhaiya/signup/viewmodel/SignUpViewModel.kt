@@ -16,10 +16,12 @@ import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import com.joshtalks.badebhaiya.signup.UserPicChooserFragment.Companion.TAG
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
-import com.joshtalks.badebhaiya.utils.TAG
+//import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.VerificationStatus
 import id.zelory.compressor.Compressor
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +33,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
+    val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val repository = BBRepository()
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
     var mobileNumber = EMPTY

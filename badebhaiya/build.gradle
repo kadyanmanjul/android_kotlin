@@ -126,6 +126,13 @@ android {
         maxProcessCount 8
         preDexLibraries true
     }
+    sourceSets {
+        main {
+            assets {
+                srcDirs 'src/main/assets'
+            }
+        }
+    }
 }
 
 dependencies {

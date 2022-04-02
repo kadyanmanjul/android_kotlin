@@ -13,6 +13,7 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.AppSignatureHelper.TAG
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.RxBus2
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
@@ -20,7 +21,6 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterOtpBinding
 import com.joshtalks.badebhaiya.repository.eventbus.OTPReceivedEventBus
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
-import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.codeinputview.OTPListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

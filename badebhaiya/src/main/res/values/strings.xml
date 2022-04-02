@@ -88,5 +88,6 @@
     <string name="cancel_button">Cancel Button</string>
     <string name="open_to_everyone">Open to Everyone</string>
     <string name="no_raised_hand_text">No one has their hand raised yet</string>
+    <string name="wait_for_second">Wait for %s seconds</string>
 
 </resources>

@@ -36,11 +36,6 @@ class SignUpActivity : AppCompatActivity() {
         binding.handler = viewModel
         openEnterPhoneNumberFragment()
         addObservers()
-        initTrueCaller()
-    }
-
-    private fun initTrueCaller() {
-        TODO("Not yet implemented")
     }
 
     private fun addObservers() {
