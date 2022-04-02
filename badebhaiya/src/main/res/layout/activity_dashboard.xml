@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".signup.DashboardActivity">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Verification Successfull"
+        android:textSize="25sp" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/create_room"
+        android:layout_width="200dp"
+        android:layout_height="2dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="start"
+        android:layout_marginTop="623dp"
+        android:layout_marginBottom="67dp"
+        android:background="@drawable/round_rectangle"
+        android:backgroundTint="@color/feed_button_color"
+        android:drawableStart="@drawable/ic_plus"
+        android:drawablePadding="@dimen/_3sdp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:minLines="1"
+        android:paddingHorizontal="@dimen/_13sdp"
+        android:paddingVertical="@dimen/_8sdp"
+        android:text="@string/start_a_room"
+        android:textAlignment="center"
+        android:textAppearance="@style/BB_Typography_Nunito_Bold"
+
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        app:cornerRadius="@dimen/_16sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:rippleColor="@color/white" />
+</RelativeLayout>
