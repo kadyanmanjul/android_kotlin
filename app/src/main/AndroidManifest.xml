@@ -83,9 +83,6 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
-            android:name=".ui.userprofile.ShareFromProfile"
-            android:exported="false" />
-        <activity
             android:name=".ui.activity_feed.ActivityFeedMainActivity"
             android:exported="false" />
         <activity

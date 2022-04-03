@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -30,6 +31,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.constants.ON_BACK_PRESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -51,8 +53,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
-import java.util.*
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.base_toolbar.*
@@ -61,8 +61,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.DecimalFormat
+import java.util.*
 
 const val TOOLTIP_USER_PROFILE_SCREEN = "TOOLTIP_USER_PROFILE_SCREEN_"
+const val REFERRAL_COUNT = "REFERRAL_COUNT"
 
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 
@@ -89,8 +92,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             UserProfileViewModel::class.java
         )
     }
-
-    lateinit var ans: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -354,7 +355,29 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 helpCountControl = (map.variantKey == VariantKeys.PHC_IS_ENABLED.name) && map.variableMap?.isEnabled == true
             }
         }
+        viewModel.singleLiveEvent.observe(this) {
+            when (it.what) {
+                ON_BACK_PRESS -> {
+                    popBackStack()
+                }
+            }
+        }
 
+    }
+    private fun popBackStack() {
+        if (isAnimationVisible) {
+            hideOverlayAnimation()
+            return
+        }
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            try {
+                supportFragmentManager.popBackStackImmediate()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        } else{
+            onBackPressed()
+        }
     }
 
     private fun initView(userData: UserProfileResponse) {
@@ -556,9 +579,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 binding.referralInfoText.visibility = VISIBLE
                 if (userData.numberOfReferral != 0) {
                     val text = SpannableStringBuilder()
-                        .append("You have helped ")
-                        .bold { append(userData.numberOfReferral.toString() + " people") }
-                        .append(" start learning English")
+                        .append(getString(R.string.you_have_helped) + " ")
+                        .bold { append(userData.numberOfReferral.toString() + " " + getString(R.string.people)) }
+                        .append(" " + getString(R.string.start_learning_english))
                     binding.referralInfoText.text = text
                 } else {
                     binding.referralInfoText.text = getString(R.string.help_text_me)
@@ -567,9 +590,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 if (userData.numberOfReferral != 0) {
                     binding.referralInfoText.visibility = VISIBLE
                     val text = SpannableStringBuilder()
-                        .append(resp.trim().split(" ")[0] + " has helped ")
-                        .bold { append(userData.numberOfReferral.toString() + " people") }
-                        .append(" start learning English")
+                        .append(resp.trim().split(" ")[0] + " " + getString(R.string.has_helped) + " ")
+                        .bold { append(userData.numberOfReferral.toString() + " " + getString(R.string.people)) }
+                        .append(" " + getString(R.string.start_learning_english))
                     binding.referralInfoText.text = text
                 } else {
                     binding.referralInfoText.visibility = GONE
@@ -1049,9 +1072,16 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     fun openShareScreen(){
-        ShareFromProfile.startShareFromProfile(
-            this,
-            viewerReferral
-        )
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val bundle = Bundle().apply {
+                putInt(REFERRAL_COUNT, viewerReferral)
+            }
+            val fragment = ShareFromProfileFragment().apply {
+                arguments = bundle
+            }
+            replace(R.id.user_root_container, fragment, "OPEN_FRAGMENT")
+            addToBackStack("PROFILE_STACKS")
+        }
     }
 }

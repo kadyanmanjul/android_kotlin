@@ -11,10 +11,14 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/parent_Container"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/parent_Container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <FrameLayout
             android:id="@+id/freeTrialExpiryLayout"
@@ -406,25 +410,25 @@
                     app:layout_constraintTop_toTopOf="@id/joined_on_text"
                     tools:text="22 Oct 2020" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/referral_info_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_20sdp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:textColor="@color/colorPrimary"
-                    android:layout_marginStart="@dimen/_25sdp"
-                    android:visibility="gone"
-                    android:textSize="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                    android:drawableStart="@drawable/info_iv"
-                    android:drawablePadding="@dimen/_6sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:onClick="@{()-> handler.openShareScreen()}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_pic"/>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/referral_info_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_25sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:clickable="true"
+                        android:drawableStart="@drawable/info_iv"
+                        android:drawablePadding="@dimen/_6sdp"
+                        android:focusable="true"
+                        android:onClick="@{()-> handler.openShareScreen()}"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_10sdp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
                 <RelativeLayout
                     android:id="@+id/previous_profile_pic_layout"
@@ -829,5 +833,11 @@
         </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/user_root_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></androidx.fragment.app.FragmentContainerView>
+    </FrameLayout>
 
 </layout>
