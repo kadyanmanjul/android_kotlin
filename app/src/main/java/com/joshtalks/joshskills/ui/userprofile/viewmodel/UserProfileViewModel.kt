@@ -9,7 +9,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.DD_MM_YYYY
+import com.joshtalks.joshskills.core.DATE_FORMATTER
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
@@ -18,14 +28,26 @@ import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
 import com.joshtalks.joshskills.ui.userprofile.adapters.MyGroupsListAdapter
-import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
+import com.joshtalks.joshskills.ui.userprofile.models.FppDetails
+import com.joshtalks.joshskills.ui.userprofile.models.AwardCategory
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
+import com.joshtalks.joshskills.ui.userprofile.models.FppRequest
+import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
+import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
+import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
 import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
 import com.joshtalks.joshskills.ui.userprofile.utils.COURSE_LIST_DATA
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP_LIST_DATA
 import com.joshtalks.joshskills.ui.userprofile.utils.ON_BACK_PRESS
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -47,11 +69,11 @@ open class UserProfileViewModel(application: Application) : AndroidViewModel(app
     val apiCallStatusForAwardsList: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val sectionImpressionResponse: MutableLiveData<UserProfileSectionResponse> = MutableLiveData()
 
-    private val p2pNetworkService = AppObjectController.p2pNetworkService
     private var mentorId: String = EMPTY
     private var intervalType: String? = EMPTY
     private var previousPage: String? = EMPTY
     val userProfileRepo = UserProfileRepo()
+    val isCourseBought = ObservableBoolean(false)
 
     val isProgressBarShow = ObservableBoolean(false)
     val fetchingGroupList = ObservableBoolean(false)

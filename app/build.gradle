@@ -445,6 +445,5 @@ dependencies {
 
     //mixpanel
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
-    implementation 'com.github.wasabeef:blurry:4.0.0'
 
 }

@@ -17,6 +17,7 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
 
     private val context = AppObjectController.joshApplication
     var itemClick: ((RecentCall, Int,Int) -> Unit)? = null
+    var isFreeTrial:Boolean = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -67,42 +68,44 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
 
         fun initView(recentCall: RecentCall) {
             with(binding) {
-                when (recentCall.fppRequestStatus) {
-                    SENT_REQUEST -> {
-                        setBtnVisibilityAndText(
-                            btnSentRequest,
-                            R.color.colorAccent,
-                            R.color.white,
-                            R.string.send_request
-                        )
-                    }
-                    ALREADY_FPP -> {
-                        btnSentRequest.visibility = View.INVISIBLE
-                    }
-                    REQUESTED -> {
-                        setBtnVisibilityAndText(
-                            btnSentRequest,
-                            R.color.not_now,
-                            R.color.black_quiz,
-                            R.string.requested
-                        )
-                    }
-                    HAS_RECIEVED_REQUEST -> {
-                        setBtnVisibilityAndText(
-                            btnSentRequest,
-                            R.color.not_now,
-                            R.color.black_quiz,
-                            R.string.responsd
-                        )
-                        btnSentRequest.setCompoundDrawablesWithIntrinsicBounds(
-                            0,
-                            0,
-                            R.drawable.ic_reverse_polygon,
-                            0
-                        )
-                    }
-                    NONE -> {
-                        btnSentRequest.visibility = View.INVISIBLE
+                if (!isFreeTrial){
+                    when (recentCall.fppRequestStatus) {
+                        SENT_REQUEST -> {
+                            setBtnVisibilityAndText(
+                                btnSentRequest,
+                                R.color.colorAccent,
+                                R.color.white,
+                                R.string.send_request
+                            )
+                        }
+                        ALREADY_FPP -> {
+                            btnSentRequest.visibility = View.INVISIBLE
+                        }
+                        REQUESTED -> {
+                            setBtnVisibilityAndText(
+                                btnSentRequest,
+                                R.color.not_now,
+                                R.color.black_quiz,
+                                R.string.requested
+                            )
+                        }
+                        HAS_RECIEVED_REQUEST -> {
+                            setBtnVisibilityAndText(
+                                btnSentRequest,
+                                R.color.not_now,
+                                R.color.black_quiz,
+                                R.string.responsd
+                            )
+                            btnSentRequest.setCompoundDrawablesWithIntrinsicBounds(
+                                0,
+                                0,
+                                R.drawable.ic_reverse_polygon,
+                                0
+                            )
+                        }
+                        NONE -> {
+                            btnSentRequest.visibility = View.INVISIBLE
+                        }
                     }
                 }
                 if (recentCall.callType == "incoming") {
@@ -173,8 +176,9 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
             )
         }
     }
-    fun addRecentCallToList(members: List<RecentCall>) {
+    fun addRecentCallToList(members: List<RecentCall>,isFreeTrial:Boolean) {
         items = members
+        this.isFreeTrial = isFreeTrial
         notifyDataSetChanged()
     }
 

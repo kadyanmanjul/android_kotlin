@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentEnrolledCoursesBinding
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
-class EnrolledCoursesFragement : BaseFragment() {
+class EnrolledCoursesFragment : BaseFragment() {
     lateinit var binding: FragmentEnrolledCoursesBinding
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)

@@ -5,16 +5,28 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Html
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.NumberPicker
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.MAX_YEAR
+import com.joshtalks.joshskills.core.DD_MM_YYYY
+import com.joshtalks.joshskills.core.DATE_FORMATTER
+import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.getRandomName
+import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentEditProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
@@ -27,8 +39,17 @@ import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_edit_profile.*
-import java.util.*
+import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtJoshTalk
+import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtCollegeName
+import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtHometown
+import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtOccupationPlace
+import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtCompletionDate
+import kotlinx.android.synthetic.main.fragment_edit_profile.txtEducationName
+import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtName
+import kotlinx.android.synthetic.main.fragment_edit_profile.editTxtFutureGoals
+import kotlinx.android.synthetic.main.fragment_edit_profile.txtOccupationName
+import java.util.Calendar
+import java.util.Locale
 
 const val CLICKED_FROM="CLICKED_FROM"
 class EditProfileFragment : DialogFragment(){
@@ -192,16 +213,6 @@ class EditProfileFragment : DialogFragment(){
                 )
             }
         }
-
-//        viewModel.apiCallStatus.observe(this) {
-//            if (it == ApiCallStatus.SUCCESS) {
-//                hideProgressBar()
-//            } else if (it == ApiCallStatus.FAILED) {
-//                hideProgressBar()
-//            } else if (it == ApiCallStatus.START) {
-//                showProgressBar()
-//            }
-//        }
     }
 
     private fun addListeners() {
@@ -311,9 +322,9 @@ class EditProfileFragment : DialogFragment(){
         var updateProfilePayload = UpdateProfilePayload()
         updateProfilePayload.apply {
             basicDetails?.apply{
-                photoUrl= viewModel.getUserProfileUrl() ?: null
+                photoUrl= viewModel.getUserProfileUrl()
                 firstName= editTxtName.text.toString().ifEmpty { null }
-                dateOfBirth= userDateOfBirth ?: null
+                dateOfBirth= userDateOfBirth
                 homeTown= editTxtHometown.text.toString().ifEmpty { null }
                 futureGoals= editTxtFutureGoals.text.toString().ifEmpty { null }
                 favouriteJoshTalk= editTxtJoshTalk.text.toString().ifEmpty { null }
@@ -375,7 +386,7 @@ class EditProfileFragment : DialogFragment(){
             editTxtHometown.setText(userData.hometown)
             if (userData.hometown.isNullOrBlank()) {
                 if (binding.editTxtHometown.requestFocus()) {
-                    getActivity()?.getWindow()
+                    activity?.window
                         ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 }
             }
@@ -402,15 +413,6 @@ class EditProfileFragment : DialogFragment(){
             null
         )
     }
-
-//
-//    private fun showProgressBar() {
-//        binding.progressBar.visibility = View.VISIBLE
-//    }
-//
-//    private fun hideProgressBar() {
-//        binding.progressBar.visibility = View.GONE
-//    }
 
     private fun openChooser() {
         UserPicChooserFragment.showDialog(

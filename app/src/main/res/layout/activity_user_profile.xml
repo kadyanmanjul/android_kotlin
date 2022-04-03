@@ -35,7 +35,7 @@
                     android:layout_gravity="bottom|center"
                     android:layout_marginBottom="@dimen/_60sdp"
                     android:gravity="center"
-                    android:text="Your Free Trial has ended"
+                    android:text="@string/your_free_trial_has_ended"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                     android:textColor="@color/white" />
 
@@ -50,7 +50,7 @@
                     android:gravity="center"
                     android:onClick="@{()->handler.showFreeTrialPaymentScreen()}"
                     android:padding="@dimen/_10sdp"
-                    android:text="Buy Now"
+                    android:text="@string/buy_now"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
@@ -151,7 +151,7 @@
                             android:foreground="?android:attr/selectableItemBackground"
                             android:gravity="start"
                             android:padding="@dimen/_4sdp"
-                            android:text="Edit"
+                            android:text="@string/edit_profile_data"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                             android:textColor="@color/white"
                             android:visibility="gone"
@@ -249,7 +249,7 @@
                             android:shadowDx="0"
                             android:shadowDy="0"
                             android:shadowRadius="10"
-                            android:text="Tap anywhere to continue"
+                            android:text="@string/tap_anywhere_to_continue"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                             android:textColor="@color/white"
                             android:visibility="invisible"
@@ -281,7 +281,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/_6sdp"
-                            android:text="Edit"
+                            android:text="@string/edit_profile_data"
                             android:textColor="@color/white"
                             android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="@id/user_pic"
@@ -376,7 +376,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_4sdp"
                             android:layout_marginBottom="@dimen/_4sdp"
-                            android:text="Hometown:"
+                            android:text="@string/hometown"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                             android:textColor="@color/black"
                             app:layout_constraintStart_toStartOf="@id/user_age_text"
@@ -559,7 +559,7 @@
                                 android:drawablePadding="@dimen/_4sdp"
                                 android:focusable="true"
                                 android:gravity="center"
-                                android:text="See All"
+                                android:text="@string/see_all"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="@dimen/_8ssp"
@@ -585,7 +585,7 @@
                                 android:layout_marginVertical="@dimen/_4sdp"
                                 android:layout_marginStart="@dimen/_16sdp"
                                 android:gravity="center|start"
-                                android:text="Highlights"
+                                android:text="@string/highlights"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                                 android:textColor="@color/black" />
 
@@ -713,7 +713,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_16sdp"
                             android:layout_marginTop="@dimen/_8sdp"
-                            android:text="Future goals :"
+                            android:text="@string/future_goals"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/colorPrimary"
                             android:visibility="gone"
@@ -727,7 +727,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_16sdp"
                             android:layout_marginTop="@dimen/_2sdp"
-                            android:text="Aspiring IAS officer"
+                            android:text="@string/aspiring_ias_officer"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                             android:textColor="@color/black"
                             android:visibility="gone"
@@ -741,7 +741,7 @@
                             android:layout_height="0.5dp"
                             android:layout_marginHorizontal="@dimen/_9sdp"
                             android:layout_marginTop="@dimen/_8sdp"
-                            android:background="#687C90"
+                            android:background="@color/grey_68"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -755,7 +755,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_16sdp"
                             android:layout_marginTop="@dimen/_8sdp"
-                            android:text="Favourite Josh Talk :"
+                            android:text="@string/favourite_josh_talk"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/colorPrimary"
                             android:visibility="gone"
@@ -774,7 +774,7 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:foreground="?android:attr/selectableItemBackground"
-                            android:text="https://www.youtube.com/watch?v=uetRaRuCOwU"
+                            android:text="@string/youtube_link"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                             android:textColor="@color/link_color"
                             android:visibility="gone"
@@ -809,7 +809,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/seperatorWithoutFutureGoals"
-                            tools:visibility="visible"></ImageView>
+                            tools:visibility="visible" />
 
                         <View
                             android:id="@+id/seperatorWithoutEducation"
@@ -817,7 +817,7 @@
                             android:layout_height="0.5dp"
                             android:layout_marginHorizontal="@dimen/_9sdp"
                             android:layout_marginTop="@dimen/_7sdp"
-                            android:background="#687C90"
+                            android:background="@color/grey_68"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -838,7 +838,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/seperatorWithoutEducation"
-                            tools:visibility="visible"></ImageView>
+                            tools:visibility="visible" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/streaks_text"
@@ -901,15 +901,6 @@
                         <include layout="@layout/profile_shimmer_placeholder" />
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
-                    <!--                <com.facebook.shimmer.ShimmerFrameLayout-->
-                    <!--                    android:id="@+id/shimmer_view_fpp"-->
-                    <!--                    android:layout_width="wrap_content"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                    <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                    <!--                    app:layout_constraintTop_toBottomOf="@id/profile_shimmer"> -->
-                    <!--                </com.facebook.shimmer.ShimmerFrameLayout>-->
-
                     <RelativeLayout
                         android:id="@+id/fpp_list_layout"
                         android:layout_width="match_parent"
@@ -949,7 +940,7 @@
                             android:drawablePadding="@dimen/_4sdp"
                             android:focusable="true"
                             android:gravity="center"
-                            android:text="See All"
+                            android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/_8ssp"
@@ -966,7 +957,7 @@
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/fpp_list_layout"></LinearLayout>
+                        app:layout_constraintTop_toBottomOf="@id/fpp_list_layout" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/education_occupation_layout"
@@ -991,7 +982,7 @@
                             android:layout_marginVertical="@dimen/_4sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
-                            android:text="Education and Occupation"
+                            android:text="@string/education_and_occupation"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/black" />
 
@@ -1003,7 +994,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_12sdp"
-                        android:text="Occupation :"
+                        android:text="@string/occupation"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/colorPrimary"
                         android:visibility="gone"
@@ -1017,7 +1008,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
-                        android:text="Aspiring IAS officer"
+                        android:text="@string/aspiring_ias_officer"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black"
                         android:visibility="gone"
@@ -1031,7 +1022,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
-                        android:text="at Josh Talks"
+                        android:text="@string/at_josh_talks"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                         android:textColor="@color/black"
                         android:visibility="gone"
@@ -1045,7 +1036,7 @@
                         android:layout_height="0.5dp"
                         android:layout_marginHorizontal="@dimen/_9sdp"
                         android:layout_marginTop="@dimen/_6sdp"
-                        android:background="#687C90"
+                        android:background="@color/grey_68"
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -1059,7 +1050,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_6sdp"
-                        android:text="Education :"
+                        android:text="@string/education"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/colorPrimary"
                         android:visibility="gone"
@@ -1073,7 +1064,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
-                        android:text="B.Tech"
+                        android:text="@string/b_tech"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black"
                         android:visibility="gone"
@@ -1087,7 +1078,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_2sdp"
-                        android:text="from VIT    • 2023"
+                        android:text="@string/from_vit_2023"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                         android:textColor="@color/black"
                         android:visibility="gone"
@@ -1161,7 +1152,7 @@
                             android:layout_marginVertical="@dimen/_4sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
-                            android:text="Awards Cabinet"
+                            android:text="@string/awards_cabinet"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/black" />
 
@@ -1177,7 +1168,7 @@
                             android:drawablePadding="@dimen/_4sdp"
                             android:focusable="true"
                             android:gravity="center"
-                            android:text="See All"
+                            android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/_8ssp"
@@ -1272,7 +1263,7 @@
                             android:layout_marginVertical="@dimen/_4sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
-                            android:text="Groups"
+                            android:text="@string/groups"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/black" />
 
@@ -1288,7 +1279,7 @@
                             android:drawablePadding="@dimen/_4sdp"
                             android:focusable="true"
                             android:gravity="center"
-                            android:text="See All"
+                            android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/_8ssp"
@@ -1306,7 +1297,7 @@
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/my_groups_layout"></LinearLayout>
+                        app:layout_constraintTop_toBottomOf="@id/my_groups_layout" />
 
 
                     <com.facebook.shimmer.ShimmerFrameLayout
@@ -1364,7 +1355,7 @@
                             android:layout_marginVertical="@dimen/_4sdp"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:gravity="center|start"
-                            android:text="Courses"
+                            android:text="@string/courses"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                             android:textColor="@color/black" />
 
@@ -1380,7 +1371,7 @@
                             android:drawablePadding="@dimen/_4sdp"
                             android:focusable="true"
                             android:gravity="center"
-                            android:text="See All"
+                            android:text="@string/see_all"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/_8ssp"
@@ -1406,31 +1397,12 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </ScrollView>
-            <!--        <ScrollView-->
-            <!--            android:id="@+id/scroll_view_shimmer"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="0dp"-->
-            <!--            android:elevation="@dimen/_2sdp"-->
-            <!--            android:fillViewport="true"-->
-            <!--            android:visibility="visible"-->
-            <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--            app:layout_constraintEnd_toEndOf="parent"-->
-            <!--            app:layout_constraintStart_toStartOf="parent"-->
-            <!--            app:layout_constraintTop_toBottomOf="@+id/toolbar_container">-->
-            <!--            <com.airbnb.lottie.LottieAnimationView-->
-            <!--                android:id="@+id/profile_shimmer_view"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                app:lottie_autoPlay="true"-->
-            <!--                app:lottie_loop="true"-->
-            <!--                app:lottie_rawRes="@raw/user_profile_shimmer" />-->
-            <!--        </ScrollView>-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/user_root_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></androidx.fragment.app.FragmentContainerView>
+            android:layout_height="match_parent" />
     </FrameLayout>
 </layout>

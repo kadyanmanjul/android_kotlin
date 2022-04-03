@@ -1,11 +1,9 @@
 package com.joshtalks.joshskills.ui.userprofile.models
 
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import java.util.Date
-import kotlinx.android.parcel.Parcelize
 
 data class UserProfileResponse(
     @SerializedName("age")

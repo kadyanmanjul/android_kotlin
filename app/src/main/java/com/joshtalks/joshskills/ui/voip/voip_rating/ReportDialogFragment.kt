@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.voip.voip_rating
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,12 +14,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.LayoutReportDialogFragmentBinding
-import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
-import com.joshtalks.joshskills.ui.course_details.extra.TEACHER_DETAIL_SOURCE
-import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.voip_rating.adapter.ReportAdapter
-import timber.log.Timber
 
 
 class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {

@@ -67,7 +67,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="start|center"
                 android:singleLine="true"
-                android:text="Photo"
+                android:text="@string/photo"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                 android:textColor="@color/white" />
         </RelativeLayout>
@@ -130,7 +130,7 @@
                 android:paddingBottom="@dimen/_11sdp"
                 android:textColor="@color/white"
                 android:gravity="center"
-                android:text="Delete" />
+                android:text="@string/delete" />
 
         </LinearLayout>
 
@@ -160,23 +160,7 @@
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:paddingBottom="@dimen/_11sdp"
-                android:text="Set as profile photo" />
+                android:text="@string/set_as_profile_photo" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <!--    <com.joshtalks.joshskills.core.custom_ui.ZoomageView-->
-    <!--            android:id="@+id/big_image_view"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            app:zoomage_animateOnReset="true"-->
-    <!--            tools:src="@drawable/josh_skill"-->
-    <!--            app:zoomage_autoCenter="true"-->
-    <!--            app:zoomage_autoResetMode="UNDER"-->
-    <!--            app:zoomage_maxScale="8"-->
-    <!--            app:zoomage_minScale="0.6"-->
-    <!--            app:zoomage_restrictBounds="false"-->
-    <!--            app:zoomage_translatable="true"-->
-    <!--            app:zoomage_zoomable="true" />-->
-

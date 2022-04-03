@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.ui.fpp.constants.CONFIRM_REQUEST_TYPE
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.NOT_NOW_REQUEST_TYPE
 import com.joshtalks.joshskills.ui.fpp.constants.FPP_OPEN_USER_PROFILE
+import com.joshtalks.joshskills.ui.fpp.constants.PAGE_TYPE
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.repository.RequestsRepository
@@ -30,7 +31,7 @@ class SeeAllRequestsViewModel : BaseViewModel() {
     val adapter = SeeAllRequestsAdapter()
     val hasSeeAllRequest = ObservableBoolean(true)
     val fetchingAllPendingRequestInfo = ObservableBoolean(false)
-    val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
+    val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val isButtonClick = ObservableBoolean(false)
 
 
@@ -39,19 +40,21 @@ class SeeAllRequestsViewModel : BaseViewModel() {
             try {
                 fetchingAllPendingRequestInfo.set(true)
                 val response = requestsRepository.getPendingRequestsList()
-                if (response?.isSuccessful == true && response.body() != null) {
-                    withContext(dispatcher) {
+                if (response.isSuccessful && response.body() != null) {
+                    withContext(mainDispatcher) {
                         adapter.addSeeAllRequestToList(response.body()!!.pendingRequestsList)
                         fetchingAllPendingRequestInfo.set(false)
                     }
                 }
-                if (response?.body()?.pendingRequestsList?.isEmpty() == true) {
-                    withContext(dispatcher) {
+                if (adapter.itemCount <= 0 || response.body()?.pendingRequestsList?.isEmpty() == true) {
+                    withContext(mainDispatcher) {
                         hasSeeAllRequest.set(false)
+                        fetchingAllPendingRequestInfo.set(false)
                     }
                 }
             } catch (ex: Throwable) {
                 fetchingAllPendingRequestInfo.set(false)
+                hasSeeAllRequest.set(false)
                 ex.printStackTrace()
             }
         }
@@ -62,7 +65,7 @@ class SeeAllRequestsViewModel : BaseViewModel() {
             try {
                 val map: HashMap<String, String> = HashMap()
                 map[userStatus] = "true"
-                map["page_type"] = pageType
+                map[PAGE_TYPE] = pageType
                 requestsRepository.confirmOrRejectFppRequest(senderMentorId, map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()

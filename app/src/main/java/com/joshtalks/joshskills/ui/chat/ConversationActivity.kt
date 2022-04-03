@@ -13,9 +13,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -43,27 +41,7 @@ import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BLOCK_ISSUE
-import com.joshtalks.joshskills.core.CHAT_OPENED_FOR_NOTIFICATION
-import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_ANIMATION
-import com.joshtalks.joshskills.core.HAS_SEEN_LEADERBOARD_TOOLTIP
-import com.joshtalks.joshskills.core.HAS_SEEN_LESSON_TOOLTIP
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_ICON
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_CONVERSATION_MENU
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REPORT_ISSUE
-import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -610,7 +588,8 @@ class ConversationActivity :
                     R.id.menu_favorite_list -> {
                         FavoriteListActivity.openFavoriteCallerActivity(
                             this,
-                            inboxEntity.conversation_id
+                            inboxEntity.conversation_id,
+                            inboxEntity.isCourseBought.not()
                         )
                     }
                     R.id.menu_restart_course -> {
@@ -740,10 +719,16 @@ class ConversationActivity :
     }
 
     private fun initView() {
+
+        if (inboxEntity.isCourseBought.not()) {
+            conversationBinding.root.visibility = GONE
+        }else{
+            conversationBinding.root.visibility = VISIBLE
+        }
+
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
-
         if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
         }
@@ -753,8 +738,17 @@ class ConversationActivity :
         }
 
         conversationBinding.imgFppRequest.setOnClickListener {
-            val intent = Intent(this, SeeAllRequestsActivity::class.java)
-            startActivity(intent)
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(" ")
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(getString(R.string.feature_locked, firstName))
+            } else {
+                val intent = Intent(this, SeeAllRequestsActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         conversationBinding.imgGroupChatBtn.setOnClickListener {
@@ -764,7 +758,7 @@ class ConversationActivity :
             ) {
                 val nameArr = User.getInstance().firstName?.split(" ")
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
+                showToast(getString(R.string.feature_locked, firstName))
             } else {
                 val intent = Intent(this, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, getConversationId())
@@ -781,7 +775,7 @@ class ConversationActivity :
             ) {
                 val nameArr = User.getInstance().firstName?.split(" ")
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
+                showToast(getString(R.string.feature_locked, firstName))
             } else {
                 val intent = Intent(this, StartActivity::class.java)
                 GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
@@ -1504,7 +1498,6 @@ class ConversationActivity :
                         delay(1000)
                         val status =
                             AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
-                        val status = AppObjectController.appDatabase.lessonDao().getLessonStatus(1)
                         Log.d(TAG, "initScoreCardView: $status")
                         withContext(Dispatchers.Main) {
                             if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(

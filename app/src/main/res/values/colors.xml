@@ -218,5 +218,8 @@
     <color name="blur_color">#666666</color>
     <color name="empty_card_bg_color">#F3F3F3</color>
     <color name="language_item_bg">#7A7A7A</color>
-
+    <color name="but_button_color">#F09436</color>
+    <color name="empty_text_color">#5A5A5A</color>
+    <color name="basic_details">#F2F2F2</color>
+    <color name="grey_button">#E4E4E4</color>
 </resources>

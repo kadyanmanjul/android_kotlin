@@ -65,7 +65,7 @@
                     android:gravity="center_vertical|start"
                     android:lines="1"
                     android:padding="@dimen/_5sdp"
-                    android:text="Enrolled Courses"
+                    android:text="@string/enrolled_courses"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:textColor="@color/white" />
 

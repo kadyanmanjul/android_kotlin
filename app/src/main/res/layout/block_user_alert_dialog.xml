@@ -26,7 +26,7 @@
             android:lineSpacingExtra="0dp"
             android:lines="1"
             android:maxLines="1"
-            android:text="Block Harsh"
+            android:text="@string/block_harsh"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
             android:textColor="@color/pure_black" />

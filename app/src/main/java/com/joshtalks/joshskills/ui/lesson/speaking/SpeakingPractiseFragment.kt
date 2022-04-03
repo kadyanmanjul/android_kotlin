@@ -206,7 +206,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
             lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }
         binding.imgRecentCallsHistory.setOnClickListener {
-            RecentCallActivity.openRecentCallActivity(requireActivity(), CONVERSATION_ID)
+            RecentCallActivity.openRecentCallActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
         }
 
         viewModel.speakingTopicLiveData.observe(
@@ -302,8 +302,8 @@ class SpeakingPractiseFragment : ABTestFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
-            FavoriteListActivity.openFavoriteCallerActivity(requireActivity(), CONVERSATION_ID)
-//            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+            FavoriteListActivity.openFavoriteCallerActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
 //            if (haveAnyFavCaller) {
 //                startPractise(favoriteUserCall = true)
 //            } else {
@@ -311,6 +311,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
 //            }
         }
         binding.btnNewStudent.setOnClickListener {
+
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
         lifecycleScope.launchWhenStarted {

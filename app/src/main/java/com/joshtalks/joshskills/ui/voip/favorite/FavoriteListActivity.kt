@@ -9,17 +9,25 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.BaseFppActivity
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
-import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_LIST_SCREEN_BACK_PRESSED
+import com.joshtalks.joshskills.ui.fpp.constants.OPEN_CALL_SCREEN
+import com.joshtalks.joshskills.ui.fpp.constants.OPEN_RECENT_SCREEN
+import com.joshtalks.joshskills.ui.fpp.constants.FINISH_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.SET_TEXT_ON_ENABLE_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 
 class FavoriteListActivity : BaseFppActivity() {
 
     private var conversationId1: String = EMPTY
+    private var isCourseBought:Boolean = false
 
     private var actionMode: ActionMode? = null
 
@@ -56,6 +64,7 @@ class FavoriteListActivity : BaseFppActivity() {
 
     override fun setIntentExtras() {
         conversationId1 = intent.getStringExtra(CONVERSATION_ID).toString()
+        isCourseBought = intent.getBooleanExtra(IS_COURSE_BOUGHT,false)
     }
 
     override fun initViewBinding() {
@@ -84,7 +93,8 @@ class FavoriteListActivity : BaseFppActivity() {
     private fun openRecentScreen() {
         RecentCallActivity.openRecentCallActivity(
             this,
-            conversationId1
+            conversationId1,
+            isCourseBought
         )
     }
 
@@ -122,9 +132,10 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     companion object {
-        fun openFavoriteCallerActivity(activity: Activity, conversationId: String) {
+        fun openFavoriteCallerActivity(activity: Activity, conversationId: String,isCourseBought:Boolean) {
             Intent(activity, FavoriteListActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
+                putExtra(IS_COURSE_BOUGHT, isCourseBought)
             }.also {
                 activity.startActivity(it)
             }

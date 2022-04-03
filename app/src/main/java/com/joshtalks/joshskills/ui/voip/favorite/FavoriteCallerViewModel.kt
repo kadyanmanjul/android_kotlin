@@ -9,9 +9,18 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_LIST_SCREEN_BACK_PRESSED
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
+import com.joshtalks.joshskills.ui.fpp.constants.OPEN_CALL_SCREEN
+import com.joshtalks.joshskills.ui.fpp.constants.OPEN_RECENT_SCREEN
+import com.joshtalks.joshskills.ui.fpp.constants.FINISH_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.SET_TEXT_ON_ENABLE_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
 import kotlinx.coroutines.CoroutineDispatcher
@@ -107,29 +116,33 @@ class FavoriteCallerViewModel : BaseViewModel() {
     }
 
     fun getCallOnGoing(toMentorId: String, uid: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val map: HashMap<String, String> = HashMap()
-                map["from_mentor_id"] = Mentor.getInstance().getId()
-                map["to_mentor_id"] = toMentorId
-                val response = favoriteCallerRepository.userIsCallOrNot(map)
-                if (response.isSuccessful) {
-                    if (response.code() == 200) {
-                        withContext(dispatcher) {
-                            message.what = OPEN_CALL_SCREEN
-                            message.obj = uid
-                            singleLiveEvent.value = message
+        if (UpdateReceiver.isNetworkAvailable()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val map: HashMap<String, String> = HashMap()
+                    map["from_mentor_id"] = Mentor.getInstance().getId()
+                    map["to_mentor_id"] = toMentorId
+                    val response = favoriteCallerRepository.userIsCallOrNot(map)
+                    if (response.isSuccessful) {
+                        if (response.code() == 200) {
+                            withContext(dispatcher) {
+                                message.what = OPEN_CALL_SCREEN
+                                message.obj = uid
+                                singleLiveEvent.value = message
+                            }
+                        } else {
+                            showToast(response.body()?.getValue("message") ?: "", Toast.LENGTH_LONG)
                         }
-                    } else {
-                        showToast(response.body()?.getValue("message") ?: "", Toast.LENGTH_LONG)
                     }
+                    if (response.code() == 400){
+                        showToast(response.body()?.get("message")?: EMPTY, Toast.LENGTH_LONG)
+                    }
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
                 }
-                if (response.code() == 400){
-                    showToast(response.body()?.get("message")?: EMPTY, Toast.LENGTH_LONG)
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
             }
+        }else{
+            showToast("Seems like your Internet is too slow or not available.")
         }
     }
 

@@ -27,7 +27,7 @@
             android:lineSpacingExtra="0dp"
             android:lines="2"
             android:maxLines="2"
-            android:text="Harsh has requested to be your favorite practice partner"
+            android:text="@string/harsh_has_requested_to_be_your_favorite_practice_partner"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
             android:textColor="@color/pure_black" />
@@ -64,7 +64,7 @@
             android:layout_marginVertical="@dimen/_16sdp"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_15sdp"
-            android:backgroundTint="#E4E4E4"
+            android:backgroundTint="@color/grey_button"
             android:clickable="true"
             android:focusable="true"
             android:insetTop="0dp"

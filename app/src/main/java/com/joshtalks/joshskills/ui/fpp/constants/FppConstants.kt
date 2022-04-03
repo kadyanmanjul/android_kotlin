@@ -13,6 +13,8 @@ const val REQUESTS_SCREEN = "REQUESTS_SCREEN"
 const val USER_PROFILE = "USER_PROFILE"
 const val QUICK_VIEW = "QUICK_VIEW"
 const val ALL_REQUESTS = "ALL_REQUESTS"
+const val PAGE_TYPE = "page_type"
+const val TO_MENTOR_ID = "to_mentor_id"
 
 const val CONFIRM_REQUEST_TYPE = 1
 const val NOT_NOW_REQUEST_TYPE = 2

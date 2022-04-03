@@ -13,10 +13,18 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.databinding.ActivityRecentCallBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
-import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.fpp.constants.FPP_RECENT_CALL_ON_BACK_PRESS
+import com.joshtalks.joshskills.ui.fpp.constants.RECENT_OPEN_USER_PROFILE
+import com.joshtalks.joshskills.ui.fpp.constants.SCROLL_TO_POSITION
+import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL_USER_BLOCK
+import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL_HAS_RECIEVED_REQUESTED
+import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL
+import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
+import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
@@ -36,6 +44,7 @@ class RecentCallActivity : BaseFppActivity() {
 
     override fun setIntentExtras() {
         conversationId1 = intent.extras?.get(CONVERSATION_ID) as String
+        viewModel.isFreeTrial.set(intent.extras?.get(IS_FREE_TRIAL) as Boolean)
     }
 
     override fun initViewBinding() {
@@ -44,6 +53,11 @@ class RecentCallActivity : BaseFppActivity() {
     }
 
     override fun onCreated() {
+        viewModel.getRecentCall()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
         viewModel.getRecentCall()
     }
 
@@ -66,9 +80,10 @@ class RecentCallActivity : BaseFppActivity() {
     }
 
     companion object {
-        fun openRecentCallActivity(activity: Activity, conversationId: String) {
+        fun openRecentCallActivity(activity: Activity, conversationId: String,isFreeTrial:Boolean) {
             Intent(activity, RecentCallActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
+                putExtra(IS_FREE_TRIAL, isFreeTrial)
             }.also {
                 activity.startActivity(it)
             }
