@@ -156,6 +156,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
             FAV_CLICK_ON_PROFILE -> {
                 message.what = FAV_CLICK_ON_PROFILE
                 message.obj = it.mentorId
+                message.arg1 = position
                 singleLiveEvent.value = message
             }
             FAV_CLICK_ON_CALL -> {

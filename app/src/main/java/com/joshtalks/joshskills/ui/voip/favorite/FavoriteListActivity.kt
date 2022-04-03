@@ -58,6 +58,8 @@ class FavoriteListActivity : BaseFppActivity() {
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
+            viewModel.deleteRecords.clear()
+            viewModel.adapter.clearSelections()
             actionMode = null
         }
     }
@@ -80,7 +82,7 @@ class FavoriteListActivity : BaseFppActivity() {
         event.observe(this) {
             when (it.what) {
                 FAV_LIST_SCREEN_BACK_PRESSED -> popBackStack()
-                FAV_CLICK_ON_PROFILE -> openProfileScreen(it.obj.toString())
+                FAV_CLICK_ON_PROFILE -> openProfileScreen(it.obj.toString(),it.arg1)
                 OPEN_CALL_SCREEN -> callScreenOpen(it.obj as Int)
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
@@ -122,13 +124,16 @@ class FavoriteListActivity : BaseFppActivity() {
         actionMode?.invalidate()
     }
 
-    private fun openProfileScreen(mId: String) {
-        UserProfileActivity.startUserProfileActivity(
-            this,
-            mentorId = mId,
-            conversationId = conversationId1
-        )
-        return
+    private fun openProfileScreen(mId: String,position:Int) {
+        if (viewModel.deleteRecords.isEmpty()){
+            UserProfileActivity.startUserProfileActivity(
+                this,
+                mentorId = mId,
+                conversationId = conversationId1
+            )
+            return
+        }
+        viewModel.updateListRow(position)
     }
 
     companion object {
