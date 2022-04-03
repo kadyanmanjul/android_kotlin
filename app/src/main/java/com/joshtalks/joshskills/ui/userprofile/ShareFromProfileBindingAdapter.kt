@@ -19,12 +19,4 @@ fun setColorize(view:TextView,subStringToColorize: String) {
         )
         view.setText(spannable, TextView.BufferType.SPANNABLE)
     }
-//    val spannable: Spannable = SpannableString(view.text)
-//    spannable.setSpan(
-//        ForegroundColorSpan( Color.parseColor("#E58638")),
-//        16,
-//        16 + subStringToColorize.length,
-//        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-//    )
-//    view.setText(spannable, TextView.BufferType.SPANNABLE)
 }
