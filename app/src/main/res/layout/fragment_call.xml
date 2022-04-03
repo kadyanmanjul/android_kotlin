@@ -188,7 +188,7 @@
             app:layout_constraintEnd_toStartOf="@id/btn_action"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/btn_action"
-            tools:srcCompat="@drawable/ic_baseline_speaker_on"
+            app:srcCompat="@drawable/ic_baseline_speaker_on"
             setSpeakerImage="@{vm.isSpeakerOn}"
             />
 
@@ -223,7 +223,7 @@
             app:layout_constraintStart_toEndOf="@id/btn_action"
             app:layout_constraintTop_toTopOf="@id/btn_action"
             app:layout_constraintVertical_bias="0.9"
-            tools:srcCompat="@drawable/ic_baseline_mic_off"
+            app:srcCompat="@drawable/ic_baseline_mic_off"
             setMicImage="@{vm.isMute}" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -281,7 +281,7 @@
             android:layout_height="wrap_content"
             android:visibility="@{vm.callStatus ==`incoming` ? View.VISIBLE : View.GONE }"
             app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_outgoing"
@@ -289,7 +289,7 @@
             android:layout_height="wrap_content"
             android:visibility="@{vm.callStatus ==`outgoing` ? View.VISIBLE : View.GONE }"
             app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action,txt_speaker,txt_mute"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <FrameLayout
             android:id="@+id/placeholder_bg"
