@@ -513,44 +513,47 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         viewModel.userData.observe(this) {
             viewModel.isCourseBought.set(it.isCourseBought.not())
-            if (it.isCourseBought.not()) {
+            if (it.isCourseBought.not() &&
+                it.expiryDate != null &&
+                it.expiryDate.time < System.currentTimeMillis()
+            ){
                 binding.sentRequestCard.visibility = GONE
-            }
-        }
+            }else{
+                viewModel.fppRequest.observe(this) {
+                    when (it.requestStatus) {
+                        SENT_REQUEST -> {
+                            binding.sentRequestCard.visibility = VISIBLE
+                            binding.btnSentRequest.visibility = VISIBLE
+                            binding.profileText.text = it.text
+                        }
+                        IS_ALREADY_FPP -> {
+                        }
+                        REQUESTED -> {
+                            with(binding) {
+                                sentRequestCard.visibility = VISIBLE
+                                btnSentRequest.visibility = VISIBLE
+                                profileText.text = it.text
+                                btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
+                                    AppObjectController.joshApplication,
+                                    R.color.not_now
+                                )
+                                btnSentRequest.text = getString(R.string.requested)
+                                btnSentRequest.setTextColor(
+                                    ContextCompat.getColor(
+                                        AppObjectController.joshApplication,
+                                        R.color.black_quiz
+                                    )
+                                )
+                            }
+                        }
+                        HAS_RECIEVED_REQUEST -> {
+                            binding.sentRequestCard.visibility = VISIBLE
+                            binding.btnConfirmRequest.visibility = VISIBLE
+                            binding.btnNotNowRequest.visibility = VISIBLE
+                            binding.profileText.text = it.text
 
-        viewModel.fppRequest.observe(this) {
-            when (it.requestStatus) {
-                SENT_REQUEST -> {
-                    binding.sentRequestCard.visibility = VISIBLE
-                    binding.btnSentRequest.visibility = VISIBLE
-                    binding.profileText.text = it.text
-                }
-                IS_ALREADY_FPP -> {
-                }
-                REQUESTED -> {
-                    with(binding) {
-                        sentRequestCard.visibility = VISIBLE
-                        btnSentRequest.visibility = VISIBLE
-                        profileText.text = it.text
-                        btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
-                            AppObjectController.joshApplication,
-                            R.color.not_now
-                        )
-                        btnSentRequest.text = getString(R.string.requested)
-                        btnSentRequest.setTextColor(
-                            ContextCompat.getColor(
-                                AppObjectController.joshApplication,
-                                R.color.black_quiz
-                            )
-                        )
+                        }
                     }
-                }
-                HAS_RECIEVED_REQUEST -> {
-                    binding.sentRequestCard.visibility = VISIBLE
-                    binding.btnConfirmRequest.visibility = VISIBLE
-                    binding.btnNotNowRequest.visibility = VISIBLE
-                    binding.profileText.text = it.text
-
                 }
             }
         }
