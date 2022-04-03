@@ -131,11 +131,11 @@ class FavoriteCallerViewModel : BaseViewModel() {
                                 singleLiveEvent.value = message
                             }
                         } else {
-                            showToast(response.body()?.getValue("message") ?: "", Toast.LENGTH_LONG)
+                            showToast("Partner is on another call", Toast.LENGTH_LONG)
                         }
                     }
                     if (response.code() == 400){
-                        showToast(response.body()?.get("message")?: EMPTY, Toast.LENGTH_LONG)
+                        showToast("Partner is on another call", Toast.LENGTH_LONG)
                     }
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
