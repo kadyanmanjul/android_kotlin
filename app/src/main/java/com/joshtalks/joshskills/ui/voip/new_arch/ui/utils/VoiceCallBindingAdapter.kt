@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.ObservableBoolean
 import com.bumptech.glide.Glide
@@ -45,18 +46,27 @@ fun ConstraintLayout.setCallBackground(callType: CallType?) {
 
 @BindingAdapter("setSpeakerImage")
 fun AppCompatImageButton.setSpeakerImage(isSpeakerOn: ObservableBoolean) {
-    if (isSpeakerOn.get()) {
-        this.setImageResource(R.drawable.ic_baseline_speaker_on)
+    if (!isSpeakerOn.get()) {
+        this.backgroundTintList =
+            ContextCompat.getColorStateList(context, R.color.dis_color_10f)
+        this.imageTintList = ContextCompat.getColorStateList(context, R.color.white)
     } else {
-        this.setImageResource(R.drawable.ic_baseline_speaker_mute)
+        this.backgroundTintList =
+            ContextCompat.getColorStateList(context, R.color.white)
+        this.imageTintList =
+            ContextCompat.getColorStateList(context, R.color.grey_61)
     }
 }
 
 @BindingAdapter("setMicImage")
 fun AppCompatImageButton.setMicImage(isMute: ObservableBoolean) {
-    if (isMute.get()) {
-        this.setImageResource(R.drawable.ic_baseline_mic_off)
+    if (!isMute.get()) {
+        this.backgroundTintList =
+            ContextCompat.getColorStateList(context, R.color.dis_color_10f)
+        this.imageTintList = ContextCompat.getColorStateList(context, R.color.white)
     } else {
-        this.setImageResource(R.drawable.ic_new_mic)
-    }
+        this.backgroundTintList =
+            ContextCompat.getColorStateList(context, R.color.white)
+        this.imageTintList =
+            ContextCompat.getColorStateList(context, R.color.grey_61)    }
 }
