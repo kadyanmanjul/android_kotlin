@@ -1,39 +1,58 @@
 package com.joshtalks.joshskills.ui.inbox
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.os.Message
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.clevertap.android.sdk.Utils.runOnUiThread
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-
+const val variant = "Variant"
+const val variable = "Variable"
+const val campaign_v = "Campaign"
+const val goal_v = "Goal"
+const val OPEN_CONVERSATION_ACTIVITY = 0
+const val OPEN_EFT_CONVERSATION_ACTIVITY = 1
 class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(application) {
-    var extendedFreeTrialCourseNetworkData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
-    var isDataObtainedProcessRunninng: MutableLiveData<Boolean> = MutableLiveData()
 
-    val repository: ExtendFreeTrialRepository by lazy { ExtendFreeTrialRepository() }
-    val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
+    private val repository: ExtendFreeTrialRepository by lazy { ExtendFreeTrialRepository() }
+    private val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
+    var singleLiveEvent : EventLiveData = EventLiveData
+    private var message = Message()
+    var isProgressVisible = ObservableBoolean(false)
+
 
 
     fun extendFreeTrial() {
         viewModelScope.launch(Dispatchers.IO) {
-            isDataObtainedProcessRunninng.postValue(true)
-            val response = repository.extendFreeTrial()
-            if (response != null && response) {
-                getCourseData()
-            } else if (response != null && !response) {
-                isDataObtainedProcessRunninng.postValue(false)
-                showToast("Free Trial can't be extended")
-            } else {
-                isDataObtainedProcessRunninng.postValue(false)
+            try {
+                isProgressVisible.set(true)
+                isProgressVisible.notifyChange()
+                val response = repository.extendFreeTrial()
+                if (response.isSuccessful) {
+                    getCourseData()
+                } else{
+                    isProgressVisible.set(false)
+                    isProgressVisible.notifyChange()
+                    showToast(AppObjectController.joshApplication.getString(R.string.unextendable_freetrial))
+                }
+            }catch (ex : Exception){
+                isProgressVisible.set(false)
+                isProgressVisible.notifyChange()
+                ex.showAppropriateMsg()
             }
         }
     }
@@ -44,18 +63,30 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 val courseListResponse =
                     repository.getCourseData()
                 if (courseListResponse != null && courseListResponse.isEmpty().not()) {
-                    extendedFreeTrialCourseNetworkData.postValue(courseListResponse)
+                    addData(courseListResponse[0])
                     postGoal(GoalKeys.EFT_SUCCESS.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
                     PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, 0L)
-                    isDataObtainedProcessRunninng.postValue(false)
+                    isProgressVisible.set(false)
+                    isProgressVisible.notifyChange()
                 } else {
-                    isDataObtainedProcessRunninng.postValue(false)
-                    showToast("Something Went Wrong")
+                    isProgressVisible.set(false)
+                    isProgressVisible.notifyChange()
+                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
             } catch (ex: Exception) {
-                isDataObtainedProcessRunninng.postValue(false)
+                isProgressVisible.set(false)
+                isProgressVisible.notifyChange()
                 ex.printStackTrace()
             }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun addData(courseResponse : InboxEntity){
+        runOnUiThread{
+            message.what= OPEN_EFT_CONVERSATION_ACTIVITY
+            message.obj=courseResponse
+            singleLiveEvent.value=message
         }
     }
 
@@ -66,14 +97,17 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {
                     val props = JSONObject()
-                    props.put("Variant", data?.variantKey ?: EMPTY)
-                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put("Campaign", campaign)
-                    props.put("Goal", goal)
+                    props.put(variant, data?.variantKey ?: EMPTY)
+                    props.put(variable, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put(campaign_v, campaign)
+                    props.put(goal_v, goal)
                     MixPanelTracker().publishEvent(goal, props)
                 }
             }
         }
     }
-
+    fun openConversationActivity(){
+        message.what= OPEN_CONVERSATION_ACTIVITY
+        singleLiveEvent.value=message
+    }
 }

@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.inbox.ExtendFreeTrialActivity" />
+            name="vm"
+            type="com.joshtalks.joshskills.ui.inbox.ExtendFreeTrialViewModel" />
 
     </data>
 
@@ -23,10 +23,10 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
+            android:onClick="@{()->vm.openConversationActivity()}"
             android:gravity="center_vertical|end"
             android:paddingTop="@dimen/_22sdp"
             android:paddingBottom="@dimen/_22sdp"
-            android:onClick="@{()->handler.openConversationActivity()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0000001"
@@ -45,9 +45,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.11"
             app:srcCompat="@drawable/image_eft_medium" />
-
-<!--        android:layout_width="@dimen/_268sdp"-->
-<!--        android:layout_height="@dimen/_144sdp"-->
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/heading_text"
@@ -107,6 +104,7 @@
             android:layout_marginEnd="@dimen/_34sdp"
             android:singleLine="false"
             android:textColor="#4C4C4C"
+            substringTextColor = "@{@string/extend_free_trial1}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
             android:textSize="@dimen/_13sdp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -115,6 +113,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.63"
             android:text="@string/extend_free_trial1" />
+
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_circle2"
@@ -188,6 +187,9 @@
             app:layout_constraintVertical_bias="0.94"
             app:rippleColor="@color/white"
             tools:visibility="visible"
+            isProgressVisible="@{vm.isProgressVisible()}"
+            android:onClick="@{()->vm.extendFreeTrial()}"
             app:layout_constraintTop_toTopOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

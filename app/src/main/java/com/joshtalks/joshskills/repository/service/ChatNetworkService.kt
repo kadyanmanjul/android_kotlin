@@ -177,7 +177,7 @@ interface ChatNetworkService {
 
     @PATCH("$DIR/course/extend_free_trial/")
     suspend fun extendFreeTrial(
-        @Body id: HashMap<String, String>
+        @Body id: Map<String, String>
     ):Response<Any>
 
 }
