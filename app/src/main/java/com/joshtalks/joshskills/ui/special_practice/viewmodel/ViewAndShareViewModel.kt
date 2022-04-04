@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.ui.special_practice.viewmodel
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Outline
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.databinding.ObservableBoolean
@@ -15,7 +17,11 @@ import com.daasuu.mp4compose.FillMode
 import com.daasuu.mp4compose.composer.Mp4Composer
 import com.daasuu.mp4compose.filter.GlWatermarkFilter
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
@@ -216,14 +222,19 @@ class ViewAndShareViewModel : BaseViewModel() {
     }
 
     fun addOverLayOnVideo(
+        context: Context,
         bitmap: Bitmap?,
         spViewModel: SpecialPracticeViewModel,
         videoView: JoshVideoPlayer
     ) {
         try {
-            val videoPath = getVideoFilePath()
-
-            Mp4Composer(spViewModel.cameraVideoPath.get() ?: EMPTY, videoPath)
+            var filePath :String? = null
+            filePath = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q){
+                saveVideoQ(context,spViewModel)
+            }else{
+                getVideoFilePath()
+            }
+            Mp4Composer(spViewModel.cameraVideoPath.get() ?: EMPTY, filePath?: EMPTY)
                 .size(getWindowWidth(), getHeightByPixel())
                 .fillMode(FillMode.PRESERVE_ASPECT_CROP)
                 .filter(GlWatermarkFilter(bitmap, GlWatermarkFilter.Position.RIGHT_BOTTOM))
@@ -237,25 +248,23 @@ class ViewAndShareViewModel : BaseViewModel() {
                     override fun onCompleted() {
                         try {
 
-                            submitPractice(videoPath, spViewModel.specialId.get() ?: EMPTY)
+                            submitPractice(filePath?: EMPTY, spViewModel.specialId.get() ?: EMPTY)
                             viewModelScope.launch(Dispatchers.Main) {
                                 isShareCardClickable.set(true)
                                 isProgressbarShow.set(false)
-                                sharableVideoUrl.set(videoPath)
-                                showVideoUi(videoPath, videoView)
+                                sharableVideoUrl.set(filePath)
+                                showVideoUi(filePath?: EMPTY, videoView)
                             }
                             updateUserRecordVideo(spViewModel.specialId.get() ?: EMPTY, EMPTY)
                             deleteFile(spViewModel.imageNameForDelete.get() ?: EMPTY)
                             isVideoProcessing.set(false)
                         } catch (ex: Exception) {
-                            showToast(ex.message ?: EMPTY)
                         }
                     }
 
                     override fun onCanceled() {}
 
                     override fun onFailed(exception: Exception) {
-                        showToast(exception.message?: EMPTY)
                     }
                 })
                 .start()

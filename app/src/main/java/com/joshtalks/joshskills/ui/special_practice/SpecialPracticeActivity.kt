@@ -5,6 +5,7 @@ import android.app.DownloadManager
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -17,9 +18,24 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.ActivityRecordVideoBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.BaseGroupActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
-import com.joshtalks.joshskills.ui.special_practice.utils.*
+import com.joshtalks.joshskills.ui.special_practice.base.BaseKFactorActivity
+import com.joshtalks.joshskills.ui.special_practice.utils.CALL_INVITE_FRIENDS_METHOD
+import com.joshtalks.joshskills.ui.special_practice.utils.CLOSE_SAMPLE_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_ID_DATA
+import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.K_FACTOR_ON_BACK_PRESSED
+import com.joshtalks.joshskills.ui.special_practice.utils.MOVE_TO_ACTIVITY
+import com.joshtalks.joshskills.ui.special_practice.utils.OPEN_VIEW_AND_SHARE
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORDED_SPECIAL_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORD_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_SPECIAL_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.START_VIDEO_RECORDING
+import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
+import com.joshtalks.joshskills.ui.special_practice.utils.RECORD_VIEW_FRAGMENT
+import com.joshtalks.joshskills.ui.special_practice.utils.VIEW_AND_SHARE_FRAGMENT
+import com.joshtalks.joshskills.ui.special_practice.utils.K_FACTOR_STACK
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -28,7 +44,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import timber.log.Timber
 
-class SpecialPracticeActivity : BaseGroupActivity() {
+class SpecialPracticeActivity : BaseKFactorActivity() {
 
     private val binding by lazy<ActivityRecordVideoBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_record_video)
@@ -111,7 +127,7 @@ class SpecialPracticeActivity : BaseGroupActivity() {
                 DOWNLOAD_ID_DATA -> setDownloadId(it.obj as DownloadManager.Request)
                 OPEN_VIEW_AND_SHARE -> openViewAndShare()
                 MOVE_TO_ACTIVITY -> moveToNewActivity()
-               // CHECK_DOWNLOAD_PERMISSION_EXIST -> checkDownloadPermissionExist()
+                // CHECK_DOWNLOAD_PERMISSION_EXIST -> checkDownloadPermissionExist()
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.service
 
-import androidx.work.ListenableWorker
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
@@ -30,6 +29,12 @@ import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
+import com.joshtalks.joshskills.ui.userprofile.models.FppStatusInProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.AwardHeader
+import com.joshtalks.joshskills.ui.userprofile.models.GroupsHeader
+import com.joshtalks.joshskills.ui.userprofile.models.CourseHeader
+import com.joshtalks.joshskills.ui.userprofile.models.PictureHeader
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic

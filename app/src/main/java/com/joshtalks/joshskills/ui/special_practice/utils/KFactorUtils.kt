@@ -19,9 +19,6 @@ import androidx.core.util.Consumer
 import androidx.lifecycle.LifecycleOwner
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.util.getBitMapFromView
-import com.joshtalks.joshskills.util.toFile
-import com.joshtalks.joshskills.util.uriToFile
 import java.util.concurrent.Executor
 
 object KFactorUtils {
@@ -87,7 +84,8 @@ object KFactorUtils {
                 .prepareRecording(context, mediaStoreOutput)
                 .apply { withAudioEnabled() }
                 .start(mainThreadExecutor, captureListener)
-        } catch (ex: Exception) {}
+        } catch (ex: Exception) {
+        }
         return currentRecording
     }
 
@@ -102,11 +100,12 @@ object KFactorUtils {
                     view.setImageResource(R.drawable.ic_rectangle_stop)
                 }
             }
-        } catch (ex: Exception) {}
+        } catch (ex: Exception) {
+        }
         return timer
     }
 
-    fun updateUI(event: VideoRecordEvent,chronometer: Chronometer) {
+    fun updateUI(event: VideoRecordEvent, chronometer: Chronometer) {
         when (event) {
             is VideoRecordEvent.Start -> {
                 chronometer.visibility = View.VISIBLE

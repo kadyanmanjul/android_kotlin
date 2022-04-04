@@ -9,16 +9,23 @@ import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.camera.video.VideoRecordEvent
+import com.greentoad.turtlebody.mediapicker.util.UtilsFile
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.util.FileFormat
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
+
 
 fun doesVideoHaveAudio(path: String): Boolean {
     val retriever = MediaMetadataRetriever()
@@ -48,7 +55,7 @@ fun VideoRecordEvent.getNameString(): String {
 
 fun getWindowWidth(): Int {
     val display =
-        (AppObjectController.joshApplication .getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        (AppObjectController.joshApplication.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
     val size = Point()
     display.getSize(size)
     return size.x
@@ -63,14 +70,13 @@ fun getWindowHeight(): Int {
 }
 
 fun getVideoFilePath(): String {
-    return getAndroidDownloadFolder()?.absolutePath + "/" + JOSH_SKILL + SimpleDateFormat(
+    return getAndroidDownloadFolder()?.absolutePath + "/" + "JoshSkill-" + SimpleDateFormat(
         "ddMMyyyy",
         Locale.US
-    ).format(System.currentTimeMillis()) + FileFormat.VIDEO
+    ).format(System.currentTimeMillis()) + ".mp4"
 }
 
 fun getAndroidDownloadFolder(): File? {
-    Environment.getExternalStorageDirectory().path + DOWNLOAD_RECORD_PATH + System.currentTimeMillis()
     return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 }
 
@@ -124,7 +130,56 @@ fun getHeightByPixel(): Int {
 }
 
 fun getRecordingFileName(): String {
-    return JOSH_SKILL_RECORDING +
-            SimpleDateFormat("ddMMyyyy", Locale.US)
-                .format(System.currentTimeMillis()) + FileFormat.VIDEO
+    val fileName: String
+    val sdf = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+    val currentDateTime = sdf.format(Date())
+    fileName = "status_" + currentDateTime + Random().nextInt(61) + 20 + ".mp4"
+    return  fileName
+}
+
+@RequiresApi(api = Build.VERSION_CODES.Q)
+fun saveVideoQ(ctx: Context,specialPracticeViewModel: SpecialPracticeViewModel): String? {
+    try {
+        val valuesVideos = ContentValues()
+        val videoFileName = "SpecialVideo_" + System.currentTimeMillis() + ".mp4"
+        valuesVideos.put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/")
+        valuesVideos.put(MediaStore.Video.Media.TITLE, videoFileName)
+        valuesVideos.put(MediaStore.Video.Media.DISPLAY_NAME, videoFileName)
+        valuesVideos.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
+        val uriSavedVideo = ctx.contentResolver.insert(
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            valuesVideos
+        )
+        val pfd: ParcelFileDescriptor?
+        try {
+            pfd = uriSavedVideo?.let { ctx.contentResolver.openFileDescriptor(it, "w") }
+            assert(pfd != null)
+            val out = FileOutputStream(pfd!!.fileDescriptor)
+
+            val inputStream = ctx.contentResolver.openInputStream(Uri.parse(specialPracticeViewModel.videoUri.get()))
+            val buf = ByteArray(8192)
+            var len: Int
+            var progress = 0
+            while (inputStream!!.read(buf).also { len = it } > 0) {
+                progress += len
+                out.write(buf, 0, len)
+            }
+            out.close()
+            inputStream.close()
+            pfd.close()
+            valuesVideos.clear()
+            valuesVideos.put(MediaStore.Video.Media.IS_PENDING, 0)
+            valuesVideos.put(
+                MediaStore.Video.Media.IS_PENDING,
+                0
+            )
+            uriSavedVideo?.let { ctx.contentResolver.update(it, valuesVideos, null, null) }
+            return uriSavedVideo?.let { UtilsFile.getFilePath(ctx, it) }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }catch (ex:Exception){
+        showToast(ex.message.toString())
+    }
+    return getVideoFilePath()
 }

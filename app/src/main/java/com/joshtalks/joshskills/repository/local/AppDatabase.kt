@@ -214,7 +214,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_41_42,
                                 MIGRATION_42_43,
                                 MIGRATION_43_44,
-                                MIGRATION_44_45
+                                MIGRATION_44_45,
+                                MIGRATION_45_46
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -598,7 +599,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE course ADD COLUMN paid_test_id TEXT")
             }
         }
-        private val MIGRATION_44_45:Migration = object : Migration(44, 45) {
+        private val MIGRATION_45_46:Migration = object : Migration(44, 45) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT, `recorded_video` TEXT)")
             }

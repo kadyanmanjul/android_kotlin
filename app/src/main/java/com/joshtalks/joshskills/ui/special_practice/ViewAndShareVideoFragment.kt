@@ -81,6 +81,7 @@ class ViewAndShareVideoFragment : BaseKFactorFragment(), Player.EventListener {
     fun init() {
         if (isAdded)
             videoShareViewModel.addOverLayOnVideo(
+                requireContext(),
                 convertImageFilePathIntoBitmap(
                     spViewModel.imagePathForSetOnVideo.get() ?: EMPTY
                 ),

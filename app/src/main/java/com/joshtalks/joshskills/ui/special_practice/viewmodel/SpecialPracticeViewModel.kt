@@ -9,6 +9,7 @@ import android.graphics.Outline
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.databinding.ObservableBoolean
@@ -26,13 +27,32 @@ import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
-import com.joshtalks.joshskills.ui.special_practice.utils.*
+import com.joshtalks.joshskills.ui.special_practice.utils.K_FACTOR_ON_BACK_PRESSED
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORDED_SPECIAL_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORD_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.getAndroidDownloadFolder
+import com.joshtalks.joshskills.ui.special_practice.utils.getAppShareUrl
+import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
+import com.joshtalks.joshskills.ui.special_practice.utils.START_VIDEO_RECORDING
+import com.joshtalks.joshskills.ui.special_practice.utils.CALL_INVITE_FRIENDS_METHOD
+import com.joshtalks.joshskills.ui.special_practice.utils.START_VIEW_AND_SHARE
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.CLOSE_SAMPLE_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_ID_DATA
+import com.joshtalks.joshskills.ui.special_practice.utils.OPEN_VIEW_AND_SHARE
+import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_SPECIAL_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.MOVE_TO_ACTIVITY
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Defines
 import io.branch.referral.util.LinkProperties
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
-import java.util.*
+import java.util.Random
 
 class SpecialPracticeViewModel : BaseViewModel() {
     val specialPracticeRepo = SpecialPracticeRepo()
@@ -59,6 +79,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
     val imageNameForDelete = ObservableField(EMPTY)
     val cameraVideoPath = ObservableField(EMPTY)
     val imagePathForSetOnVideo = ObservableField(EMPTY)
+    val videoUri = ObservableField(EMPTY)
 
     var downloadID = ObservableLong(0L)
     val isVideoPlay = ObservableBoolean(false)
@@ -88,6 +109,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
                         }
                         if (recordedPathLocal.get() == EMPTY || recordedPathLocal.get() == null) {
                             withContext(dispatcher) {
+                                Log.e("sagar", "fetchSpecialPracticeData: 1")
                                 message.what = DOWNLOAD_VIDEO
                                 singleLiveEvent.value = message
                             }

@@ -89,11 +89,12 @@ class RecordVideoFragment : BaseKFactorFragment() {
                         startRecordingAndTimer()
                         setBtnBackgroundResources(binding.recordVideoBtn)
                     } else {
-                        changeUIAccordingToState(binding.recordVideoBtn,recordingState)
+                        changeUIAccordingToState(binding.recordVideoBtn, recordingState)
                     }
                 }
             }
-        } catch (ex: Exception) {}
+        } catch (ex: Exception) {
+        }
     }
 
     private val captureListener = Consumer<VideoRecordEvent> { event ->
@@ -105,6 +106,7 @@ class RecordVideoFragment : BaseKFactorFragment() {
 
             if (event is VideoRecordEvent.Finalize) {
                 spviewModel.imageNameForDelete.set(name)
+                spviewModel.videoUri.set(event.outputResults.outputUri.toString())
                 spviewModel.cameraVideoPath.set(
                     uriToFile(
                         requireContext(),
@@ -119,7 +121,8 @@ class RecordVideoFragment : BaseKFactorFragment() {
 
                 spviewModel.openViewShareFrag()
             }
-        } catch (ex: Exception) {}
+        } catch (ex: Exception) {
+        }
     }
 
     fun startRecordingAndTimer() {

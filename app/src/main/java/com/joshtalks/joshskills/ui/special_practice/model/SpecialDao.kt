@@ -1,6 +1,9 @@
 package com.joshtalks.joshskills.ui.special_practice.model
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 
 @Dao
 interface SpecialDao {
@@ -15,8 +18,5 @@ interface SpecialDao {
     fun insertSingleItem(specialPractice: SpecialPractice)
 
     @Query("UPDATE special_table SET recorded_video = :recordedVideo where special_id == :specialId")
-    fun updateRecordedTable(specialId: String,recordedVideo:String)
-
-
-
+    fun updateRecordedTable(specialId: String, recordedVideo: String)
 }
