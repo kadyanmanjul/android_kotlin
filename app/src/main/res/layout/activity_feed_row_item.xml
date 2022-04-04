@@ -5,14 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
-
         <import type="com.joshtalks.joshskills.ui.activity_feed.FirstTimeUser"/>
         <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse"/>
-        <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.activity_feed.ActivityFeedListAdapter.ViewHolder" />
     </data>
 
     <LinearLayout
@@ -103,7 +99,6 @@
                     android:layout_height="@dimen/_22sdp"
                     android:backgroundTint="#F2F2F2"
                     android:contentDescription="@string/play_button_description"
-                    android:onClick="@{()->handler.onPlayPauseBtnClick()}"
                     android:padding="@dimen/_1sdp"
                     android:theme="?actionBarTheme"
                     android:tint="#65767E"

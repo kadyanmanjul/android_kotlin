@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +23,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import de.hdodenhof.circleimageview.CircleImageView
+import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
 
 @BindingAdapter("partialTextColor","fullText")
 fun TextView.setColorize(subStringToColorize: String, fullText:String) {
@@ -99,11 +101,10 @@ fun getColorHexCode(): Int {
 fun setSeeAllRequestMemberAdapter(
     view: RecyclerView,
     adapter: ActivityFeedListAdapter,
-    function: ((ActivityFeedResponse, Int) -> Unit)?
+    function: ((ActivityFeedResponse, Int, SeekBar?, MaterialPlayPauseButton?, ActivityFeedListAdapter.ViewHolder?) -> Unit)?
 ) {
-    val layoutManager1 = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
-    view.layoutManager = layoutManager1
-
+    val layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+    view.layoutManager = layoutManager
 
     view.setHasFixedSize(false)
     view.adapter = adapter

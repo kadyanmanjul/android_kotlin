@@ -28,6 +28,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
 
     override fun initViewBinding() {
         binding.vm = viewModel
+        lifecycle.addObserver(viewModel)
         binding.executePendingBindings()
     }
 
