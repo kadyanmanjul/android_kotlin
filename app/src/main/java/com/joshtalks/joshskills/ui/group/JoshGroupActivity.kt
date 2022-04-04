@@ -17,7 +17,9 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -58,6 +60,11 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     override fun onCreated() {
         openGroupListFragment()
+
+//        if (!PrefManager.getBoolValue(MOENGAGE_USER_CREATED)){
+            vm.initializeMoEngageUser()
+            PrefManager.put(MOENGAGE_USER_CREATED,true)
+//        }
     }
 
     override fun initViewState() {

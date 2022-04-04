@@ -131,6 +131,8 @@ const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 const val IS_FREE_TRIAL_CAMPAIGN_ACTIVE = "is_free_trial_campaign_active"
 const val IS_EFT_VARIENT_ENABLED = "is_eft_varient_enabled"
 
+const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
+
 object PrefManager {
 
     private const val PREF_NAME_COMMON = "JoshSkills"
