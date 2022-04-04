@@ -81,6 +81,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
+    override fun muteAudioStream(muteAudio: Boolean) {
+        callingService.muteAudioStream(muteAudio)
+    }
+
     override fun sendEventToServer(data: OutgoingData) {
         networkEventChannel.emitEvent(data)
     }
@@ -122,6 +126,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
+    // Handle Events coming from Backend
     private fun handlePubnubEvent() {
         scope.launch {
             networkEventChannel.observeChannelEvents().collectLatest {

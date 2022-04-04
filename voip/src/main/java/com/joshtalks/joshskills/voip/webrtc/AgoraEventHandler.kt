@@ -1,13 +1,17 @@
 package com.joshtalks.joshskills.voip.webrtc
 
 import com.joshtalks.joshskills.voip.voipLog
+import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import timber.log.Timber
 
+const val USER_DROP_OFFLINE = 1
 internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler() {
 
     companion object {
@@ -84,21 +88,37 @@ internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler(
     // 2. Drop offline
     override fun onUserOffline(uid: Int, reason: Int) {
         voipLog?.log("UID -> $uid and Reason -> $reason")
+        scope.launch {
+            if(reason == USER_DROP_OFFLINE)
+                emitEvent(CallState.CallDisconnect)
+        }
     }
 
     // Occurs when a user rejoins the channel after being disconnected due to network problems
     override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
         voipLog?.log("Channel -> $channel and UID -> $uid")
+        scope.launch {
+            emitEvent(CallState.OnReconnected)
+        }
     }
 
     // Occurs when the SDK cannot reconnect to Agora server after its connection to the server is interrupted.
     override fun onConnectionLost() {
         voipLog?.log("Connection Lost")
+        scope.launch {
+            emitEvent(CallState.CallDisconnect)
+        }
     }
 
     // Occurs when the network connection state changes like RECONNECTING
     override fun onConnectionStateChanged(state: Int, reason: Int) {
-        voipLog?.log("State -> $state and Reason -> $reason")
+        scope.launch {
+            voipLog?.log("State -> $state and Reason -> $reason")
+            if (Constants.CONNECTION_STATE_RECONNECTING == state &&
+                reason == Constants.CONNECTION_CHANGED_INTERRUPTED) {
+                emitEvent(CallState.OnReconnecting)
+            }
+        }
     }
 
     private fun emitEvent(event : CallState) {

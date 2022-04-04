@@ -42,6 +42,7 @@ class JoshContentProvider : ContentProvider() {
                 val startTime = VoipPref.getStartTimeStamp()
                 val cursor = MatrixCursor(arrayOf(START_CALL_TIME_COLUMN))
                 cursor.addRow(arrayOf(startTime))
+                Log.d(TAG, "query: ${cursor.columnNames.asList()}")
                 return cursor
             }
         }

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.IBinder
 import android.os.Messenger
 import android.os.SystemClock
+import android.util.Log
 import com.joshtalks.joshskills.base.constants.CALL_ID
 import com.joshtalks.joshskills.base.constants.CALL_START_TIME
 import com.joshtalks.joshskills.base.constants.CALL_TYPE
@@ -43,11 +44,13 @@ import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationHandler
 import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+private const val TAG = "CallingRemoteService"
 class CallingRemoteService : Service() {
     private val ioScope by lazy { CoroutineScope(Dispatchers.IO) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
@@ -65,6 +68,7 @@ class CallingRemoteService : Service() {
     override fun onCreate() {
         super.onCreate()
         updateStartCallTime(0)
+        updateVoipState(IDLE)
         registerPstnCall()
         voipLog?.log("Creating Service")
         showNotification()
@@ -156,10 +160,12 @@ class CallingRemoteService : Service() {
                     }
                     MUTE -> {
                         val userAction = UserAction(ServerConstants.MUTE, CallDetails.callId)
+                        mediator.muteAudioStream(true)
                         mediator.sendEventToServer(userAction)
                     }
                     UNMUTE -> {
                         val userAction = UserAction(ServerConstants.UNMUTE, CallDetails.callId)
+                        mediator.muteAudioStream(false)
                         mediator.sendEventToServer(userAction)
                     }
                 }
@@ -203,7 +209,8 @@ class CallingRemoteService : Service() {
 
     private fun callDuration() : Long {
         val startTime = getStartCallTime()
-        return SystemClock.elapsedRealtime() - startTime
+        val currentTime = SystemClock.elapsedRealtime()
+        return TimeUnit.MILLISECONDS.toSeconds(currentTime - startTime)
     }
 
     private fun updateStartCallTime(
@@ -238,7 +245,10 @@ class CallingRemoteService : Service() {
             null,
             null
         )
-        val startTime = startCallTimeCursor?.getLong(startCallTimeCursor.getColumnIndex(START_CALL_TIME_COLUMN))
+        Log.d(TAG, "query: ${startCallTimeCursor?.columnNames?.asList()}")
+        startCallTimeCursor?.moveToFirst()
+        val startTime = startCallTimeCursor?.getLong(startCallTimeCursor.getColumnIndex(
+            START_CALL_TIME_COLUMN))
         startCallTimeCursor?.close()
         return startTime ?: 0L
     }

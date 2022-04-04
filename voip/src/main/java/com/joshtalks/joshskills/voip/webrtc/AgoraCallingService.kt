@@ -82,6 +82,10 @@ internal object AgoraCallingService : CallingService {
         }
     }
 
+    override fun muteAudioStream(muteAudio : Boolean) {
+        agoraEngine?.muteLocalAudioStream(muteAudio)
+    }
+
     override fun observeCallingEvents(): SharedFlow<CallState> {
         voipLog?.log("Setting event")
         return eventFlow
@@ -115,6 +119,7 @@ internal object AgoraCallingService : CallingService {
                     CallState.CallDisconnected, CallState.Idle -> state.emit(IDLE)
                     CallState.CallConnected -> state.emit(CONNECTED)
                     CallState.CallInitiated -> state.emit(JOINED)
+                    CallState.CallDisconnect -> disconnectCall()
                     CallState.Error -> {
                         if(state.equals(JOINED) || state.equals(CONNECTED) || state.equals(JOINING))
                             disconnectCall()
