@@ -1,5 +1,9 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
+import android.graphics.Color
+import android.os.SystemClock
+import android.view.View
+import android.widget.Chronometer
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -26,19 +30,20 @@ fun CircleImageView.setProfileImage(imageUrl: String?) {
 }
 
 @BindingAdapter("setCallBackground")
-fun ConstraintLayout.setCallBackground(callType: CallType?) {
-    if (callType != null) {
+fun ConstraintLayout.setCallBackground(callType: Int) {
+    if (callType>0) {
         when (callType) {
-            is CallType.FavoritePracticePartner -> {
-                this.setBackgroundResource(R.drawable.voip_bg)
-            }
-            is CallType.NormalPracticePartner -> {
-                this.setBackgroundResource(R.drawable.voip_bg)
-
-            }
-            is CallType.GroupCall -> {
-                this.setBackgroundResource(R.drawable.voip_bg)
-
+             1 -> {
+//                 Normal Call
+                 this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+             }
+             2 -> {
+//                 FPP
+                 this.setBackgroundResource(R.drawable.voip_bg)
+             }
+             3-> {
+//                 Group Call
+                 this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
         }
     }
@@ -69,4 +74,10 @@ fun AppCompatImageButton.setMicImage(isMute: ObservableBoolean) {
             ContextCompat.getColorStateList(context, R.color.white)
         this.imageTintList =
             ContextCompat.getColorStateList(context, R.color.grey_61)    }
+}
+
+@BindingAdapter("startTimer")
+fun Chronometer.startTimer(baseTime: Long) {
+    base = SystemClock.elapsedRealtime() - baseTime
+    start()
 }

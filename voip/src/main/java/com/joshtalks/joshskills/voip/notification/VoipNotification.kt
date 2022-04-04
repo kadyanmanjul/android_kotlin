@@ -14,13 +14,15 @@ class VoipNotification : NotificationInterface{
     constructor(_remoteView: RemoteViews,_notificationPriority:NotificationPriority){
          remoteView = _remoteView
          notificationPriority = _notificationPriority
+         buildNotification()
     }
     constructor(_notificationData: NotificationData,_notificationPriority:NotificationPriority){
         notificationData = _notificationData
         notificationPriority = _notificationPriority
+        buildNotification()
     }
 
-    override fun buildNotification() {
+    private fun buildNotification() {
         if(remoteView!=null){
             notificationBuiltObj = NotificationGenerator().initiateNotification(
                 notificationData = null,
@@ -44,6 +46,10 @@ class VoipNotification : NotificationInterface{
 
     override fun getNotificationObject(): NotificationCompat.Builder {
         return notificationBuiltObj.notificationBuilder
+    }
+
+    override fun getNotificationId(): Int {
+        return notificationBuiltObj.id
     }
 
     override fun updateTitle(title: String) {

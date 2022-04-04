@@ -5,9 +5,9 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 
 internal interface NotificationInterface {
-    fun buildNotification()
     fun removeNotification()
     fun getNotificationObject(): NotificationCompat.Builder
+    fun getNotificationId(): Int
     fun updateTitle(title:String)
     fun updateContent(content:String)
     fun updateUI(remoteView: RemoteViews)

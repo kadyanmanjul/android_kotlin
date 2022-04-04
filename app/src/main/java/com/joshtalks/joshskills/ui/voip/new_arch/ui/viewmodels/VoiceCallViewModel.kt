@@ -1,20 +1,19 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
-import android.os.Message
+import android.graphics.Color
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
-import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGMENT
+import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTING_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
@@ -28,9 +27,6 @@ import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -46,7 +42,7 @@ class VoiceCallViewModel : BaseViewModel() {
     val isMute = ObservableBoolean(false)
     val callStatus = ObservableField("outgoing")
     val callType = ObservableField("")
-    val callStatusTest = ObservableField("")
+    val callStatusTest = ObservableField("Timer")
     val callData = HashMap<String, Any>()
 
     init { listenRepositoryEvents() }
@@ -61,7 +57,7 @@ class VoiceCallViewModel : BaseViewModel() {
                         voipLog?.log("CALL_INITIATED_EVENT")
                     }
                     CALL_CONNECTED_EVENT -> {
-                        callStatusTest.set("Call Connected")
+                        callStatusTest.set("Timer")
                         voipLog?.log("CALL_CONNECTED_EVENT")
                     }
                     HOLD -> {
@@ -69,7 +65,7 @@ class VoiceCallViewModel : BaseViewModel() {
                         voipLog?.log("HOLD")
                     }
                     UNHOLD -> {
-                        callStatusTest.set("")
+                        callStatusTest.set("Timer")
                         voipLog?.log("UNHOLD")
                     }
                     MUTE -> {
@@ -77,7 +73,7 @@ class VoiceCallViewModel : BaseViewModel() {
                         voipLog?.log("Mute")
                     }
                     UNMUTE -> {
-                        callStatusTest.set("")
+                        callStatusTest.set("Timer")
                         voipLog?.log("UNMUTE")
                     }
                     RECONNECTING -> {
@@ -85,7 +81,7 @@ class VoiceCallViewModel : BaseViewModel() {
                         voipLog?.log("RECONNECTING")
                     }
                     RECONNECTED -> {
-                        callStatusTest.set("")
+                        callStatusTest.set("Timer")
                         voipLog?.log("RECONNECTED")
                     }
                     CALL_DISCONNECT_REQUEST -> {
@@ -154,15 +150,12 @@ class VoiceCallViewModel : BaseViewModel() {
         }
     }
 
-    private fun switchSpeakerOn() {
+    private fun switchSpeakerOn(){
     }
-
-    private fun switchSpeakerOff() {
+    private fun switchSpeakerOff(){
     }
-
     private fun switchMicOn() {
     }
-
     private fun switchMicOff() {
     }
 
@@ -178,26 +171,44 @@ class VoiceCallViewModel : BaseViewModel() {
 
 object CallDataObj : CallData {
     override fun getProfileImage(): String? {
-        return null
+        return CallDetails.remoteUserImageUrl
     }
 
     override fun getCallerName(): String {
-        return "Testing Name"
+        return CallDetails.remoteUserName
     }
 
     override fun getTopicHeader(): String {
-        return "Testing"
+        return CallDetails.topicHeader
     }
 
     override fun getTopicName(): String {
-        return "p2p test"
+        return CallDetails.topicName
     }
 
-    override fun getCallType(): CallType {
-        return CallType.NormalPracticePartner
+    override fun getCallType(): Int {
+        return CallDetails.callType
     }
 
     override fun getCallTypeHeader(): String {
-        return "P2P"
+        when(CallDetails.callType) {
+            1 -> {
+//                 Normal Call
+                return "Practice with Partner"
+            }
+            2 -> {
+//                 FPP
+                return "Favorite Practice Partner"
+            }
+            3 -> {
+//                 Group Call
+                return "Group Call"
+            }
+            else -> return ""
+        }
+    }
+
+    override fun getStartTime(): Long {
+       return VoipPref.getStartTimeStamp()
     }
 }

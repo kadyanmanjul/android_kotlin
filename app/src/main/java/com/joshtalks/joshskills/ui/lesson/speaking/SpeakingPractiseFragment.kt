@@ -170,7 +170,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         )
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            startPractise(favoriteUserCall = false)
+//            startPractise(favoriteUserCall = false)
             val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
             callIntent.apply {
                 putExtra(INTENT_DATA_COURSE_ID, courseId)

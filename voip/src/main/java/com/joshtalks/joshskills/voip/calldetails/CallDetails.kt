@@ -21,6 +21,10 @@ object CallDetails {
         private set
     var remoteUserImageUrl : String? = null
         private set
+    var topicHeader = ""
+        private set
+    var topicName = ""
+        private set
 
     suspend fun reset() {
         mutex.withLock {
@@ -31,7 +35,8 @@ object CallDetails {
             agoraChannelName = ""
             remoteUserName = ""
             remoteUserImageUrl = null
-
+            topicHeader = ""
+            topicName = ""
         }
     }
 
@@ -44,6 +49,8 @@ object CallDetails {
             agoraChannelName = details.getChannel()
             remoteUserName = details.getCallingPartnerName()
             remoteUserImageUrl = details.getCallingPartnerImage()
+            topicHeader = details.getCallingTopic()
+            topicName = details.getCallingTopic()
         }
     }
 }

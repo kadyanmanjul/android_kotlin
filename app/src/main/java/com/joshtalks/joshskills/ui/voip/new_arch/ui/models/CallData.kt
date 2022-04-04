@@ -5,8 +5,9 @@ interface CallData{
     fun getCallerName():String
     fun getTopicHeader():String
     fun getTopicName():String
-    fun getCallType(): CallType
+    fun getCallType(): Int
     fun getCallTypeHeader():String
+    fun getStartTime():Long
 }
 sealed class CallType{
     object FavoritePracticePartner:CallType()

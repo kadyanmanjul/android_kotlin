@@ -111,7 +111,7 @@ internal class NotificationGenerator {
             .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .setDefaults(NotificationCompat.DEFAULT_SOUND)
             .setChannelId(context.getString(R.string.CHANNEL_ID_CALLS))
-            .color = ContextCompat.getColor(context, R.color.colorPrimary)
+//            .color = ContextCompat.getColor(context, )
 
         if (notificationObj!=null) {
             notificationBuilder.setContentTitle(notificationObj.setTitle())
