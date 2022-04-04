@@ -30,9 +30,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
-import com.joshtalks.joshskills.ui.call.CALLING_SERVICE_ACTION
-import com.joshtalks.joshskills.ui.call.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.ui.call.START_SERVICE
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
@@ -240,10 +237,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fetchMentor()
             WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
-            if (PrefManager.getBoolValue(
-                    IS_COURSE_BOUGHT,
-                    false
-                )) {
+            val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
+            val courseExpiryTime =
+                PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
+            if ((isCourseBought && User.getInstance().isVerified) ||  courseExpiryTime != 0L &&
+                courseExpiryTime >= System.currentTimeMillis()) {
                 val broadcastIntent = Intent().apply {
                     action = CALLING_SERVICE_ACTION
                     putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
