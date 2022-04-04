@@ -111,7 +111,7 @@ fun setGroupMemberAdapter(
 fun setGroupRequestAdapter(
     view: RecyclerView,
     adapter: GroupRequestAdapter,
-    function: (Boolean) -> Unit
+    function: (String, Boolean) -> Unit
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)

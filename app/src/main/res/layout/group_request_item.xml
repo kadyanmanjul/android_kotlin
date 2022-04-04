@@ -97,6 +97,12 @@
                 app:strokeColor="@color/colorPrimary"
                 app:strokeWidth="1dp" />
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/request_item_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="allow_to_join, decline_join" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

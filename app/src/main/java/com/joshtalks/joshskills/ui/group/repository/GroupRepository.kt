@@ -194,6 +194,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         return false
     }
 
+    suspend fun sendRequestResponse(request: GroupRequest): Boolean {
+        return apiService.joinGroup(request)["success"] as Boolean
+    }
+
     suspend fun fetchUnreadMessage(startTime : Long, groupId: String) {
         val messages = chatService.getUnreadMessages(groupId, startTime = startTime)
         database.groupChatDao().insertMessages(messages)
