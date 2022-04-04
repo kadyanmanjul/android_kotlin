@@ -5,15 +5,21 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
 import com.joshtalks.badebhaiya.BuildConfig
-import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.repository.service.initStethoLibrary
+import io.agora.rtc.IRtcEngineEventHandler
+import io.agora.rtc.RtcEngine
 import io.branch.referral.Branch
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.text.DateFormat
-import java.util.*
+import java.util.Date
 
 class AppObjectController {
     companion object {
@@ -29,12 +35,23 @@ class AppObjectController {
         var uiHandler: Handler = Handler(Looper.getMainLooper())
             private set
 
+        @JvmStatic
+        @Volatile
+        var mRtcEngine: RtcEngine? = null
+
+        @JvmStatic
+        var screenWidth: Int = 0
+
+        @JvmStatic
+        var screenHeight: Int = 0
+
         fun init(context: Context) {
             joshApplication = context as JoshApplication
-            initStethoLibrary(context)
+            initStethoLibrary(joshApplication)
             initGsonMapper()
             initNotificationChannels(context)
             initBranch(context)
+            initRtcEngine(joshApplication)
         }
 
         private fun initNotificationChannels(context: Context) {
@@ -78,6 +95,24 @@ class AppObjectController {
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create()
+        }
+
+        private fun initRtcEngine(context: Context): RtcEngine? {
+            try {
+
+                mRtcEngine = RtcEngine.create(
+                    context,
+                    BuildConfig.AGORA_API_KEY,
+                    object : IRtcEngineEventHandler() {})
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+            return mRtcEngine
+        }
+
+        fun getRtcEngine(context: Context): RtcEngine? {
+            initRtcEngine(context)
+            return mRtcEngine
         }
     }
 

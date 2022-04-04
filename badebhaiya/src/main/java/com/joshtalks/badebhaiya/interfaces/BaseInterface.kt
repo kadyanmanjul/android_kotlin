@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.core.interfaces
+package com.joshtalks.badebhaiya.interfaces
 
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 

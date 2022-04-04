@@ -21,6 +21,9 @@ android {
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "AGORA_API_KEY", "\"6b72a762c0584871bf00b220c5cd0b33\""
+        buildConfigField "String", "PUBNUB_PUB_API_KEY", "\"pub-c-332fbc53-876d-4116-ae47-14e79e929492\""
+        buildConfigField "String", "PUBNUB_SUB_API_KEY", "\"sub-c-d573297a-a034-11ec-a074-1a3740267833\""
+        buildConfigField "String", "PUBNUB_SECRET_API_KEY", "\"sec-c-Y2VjZWFmZmUtZjMzNC00YmNiLWI5NDItMDFjZjVjMDI4N2Vl\""
         manifestPlaceholders = [file_provider: "com.joshtalks.badebhaiya"]
         javaCompileOptions {
             annotationProcessorOptions {
@@ -191,6 +194,17 @@ dependencies {
     implementation "com.truecaller.android.sdk:truecaller-sdk:2.6.0"
     // crashlytics
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
+    //agora
+    implementation files("libs/agora-rtc-sdk.jar")
+    implementation 'com.patloew.colocation:colocation:1.0.0'
+    //pubnub
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'
+    //Dexter
+    implementation 'com.karumi:dexter:6.2.2'
 
+    implementation 'com.afollestad.material-dialogs:core:3.3.0'
+    // reactive network
+    implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8'
+    implementation 'com.pnikosis:materialish-progress:1.7'
 
 }

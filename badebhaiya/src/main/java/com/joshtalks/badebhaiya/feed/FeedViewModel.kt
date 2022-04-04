@@ -1,12 +1,17 @@
 package com.joshtalks.badebhaiya.feed
 
+import android.os.Bundle
+import android.os.Message
+import android.view.View
 import androidx.databinding.ObservableBoolean
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
@@ -14,15 +19,28 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import kotlinx.coroutines.launch
 
+const val ROOM_ITEM = "room_item"
+
 class FeedViewModel : ViewModel() {
 
     val isRoomsAvailable = ObservableBoolean(true)
     val isLoading = ObservableBoolean(false)
-    val isBadeBhaiyaSpeaker = ObservableBoolean(false)
+    val isBadeBhaiyaSpeaker = ObservableBoolean(true)
 
     val feedAdapter = FeedAdapter()
-
+    var message = Message()
+    var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val repository = ConversationRoomRepository()
+    val onFeedItemClicked: (RoomListResponseItem?, View?) -> Unit = { item, view ->
+        message.what = OPEN_ROOM
+        message.data = Bundle().apply {
+            putParcelable(
+                ROOM_ITEM,
+                item
+            )
+        }
+        singleLiveEvent.postValue(message)
+    }
 
     fun onProfileClicked() {
 

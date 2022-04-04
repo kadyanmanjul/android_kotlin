@@ -15,7 +15,7 @@ data class ConversationRoomRequest(
 
 data class ConversationRoomResponse(
     @SerializedName("room_id")
-    val roomId: String?,
+    val roomId: Int,
 
     @SerializedName("token")
     val token: String?,
@@ -24,7 +24,7 @@ data class ConversationRoomResponse(
     val channelName: String?,
 
     @SerializedName("uid")
-    val uid: String?,
+    val uid: Int,
 
     @SerializedName("pubnub_token")
     val pubnubToken: String?
