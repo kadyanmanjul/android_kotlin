@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.constant
 
 // Error Code
+const val ERROR_IN_CONNECTION_API = -103
 const val ERROR_IN_JOINING_CHANNEL = -102
 const val ERROR = -101
 

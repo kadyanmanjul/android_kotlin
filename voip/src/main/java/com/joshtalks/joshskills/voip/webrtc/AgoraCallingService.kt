@@ -32,7 +32,6 @@ internal object AgoraCallingService : CallingService {
     private val agoraEvent by lazy {
         AgoraEventHandler.getAgoraEventObject(ioScope)
     }
-    private var callRequest : CallRequest? = null
 
     init { observeCallbacks() }
 

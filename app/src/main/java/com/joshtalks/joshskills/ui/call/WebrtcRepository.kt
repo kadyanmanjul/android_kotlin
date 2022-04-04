@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class WebrtcRepository() {
@@ -35,10 +36,11 @@ class WebrtcRepository() {
     private var handler : Messenger? = null
     private val scope = CoroutineScope(Dispatchers.Main)
     private val repositoryHandler = RepositoryHandler(scope)
-    private val repositoryToVMFlow = MutableSharedFlow<Int>(replay = 0)
+    private val repositoryToVMFlow = MutableSharedFlow<Message>(replay = 0)
 
     init {
         voipLog?.log("INIT .... ")
+        observeCallEvents()
         try {
             val remoteServiceIntent =
                 Intent(AppObjectController.joshApplication, CallingRemoteService::class.java)
@@ -58,7 +60,9 @@ class WebrtcRepository() {
         }
     }
 
-    fun getRepositoryEvents() : SharedFlow<Int> {
+
+
+    fun getRepositoryEvents() : SharedFlow<Message> {
         return repositoryToVMFlow
     }
 
@@ -80,9 +84,16 @@ class WebrtcRepository() {
         }
     }
 
-    fun observeCallEvents() : SharedFlow<Message> {
-        voipLog?.log("observeCallEvents")
-        return repositoryHandler.observerFlow()
+    fun observeRepositoryEvents() : SharedFlow<Message> {
+        return repositoryToVMFlow
+    }
+
+    private fun observeCallEvents() {
+        scope.launch {
+            repositoryHandler.observerFlow().collect {
+                repositoryToVMFlow.emit(it)
+            }
+        }
     }
 
     fun startService() {
@@ -120,14 +131,10 @@ class WebrtcRepository() {
             voipLog?.log("$data  $mService")
             mService?.send(data)
             when(data.what) {
-                IPC_CONNECTION_ESTABLISHED -> {
+                // Returning back these two event to View Model so that they can take action
+                IPC_CONNECTION_ESTABLISHED, CALL_DISCONNECT_REQUEST -> {
                     scope.launch {
-                        repositoryToVMFlow.emit(IPC_CONNECTION_ESTABLISHED)
-                    }
-                }
-                CALL_DISCONNECT_REQUEST -> {
-                    scope.launch {
-                        repositoryToVMFlow.emit(CALL_DISCONNECT_REQUEST)
+                        repositoryToVMFlow.emit(data)
                     }
                 }
             }

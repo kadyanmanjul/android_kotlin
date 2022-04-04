@@ -1,37 +1,43 @@
 package com.joshtalks.joshskills.voip.data
 
 import android.app.Service
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.net.Uri
-import android.os.DeadObjectException
 import android.os.IBinder
 import android.os.Messenger
 import android.os.SystemClock
-import android.provider.UserDictionary
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.joshtalks.joshskills.base.constants.API_HEADER
+import com.joshtalks.joshskills.base.constants.CALL_ID
 import com.joshtalks.joshskills.base.constants.CALL_START_TIME
+import com.joshtalks.joshskills.base.constants.CALL_TYPE
 import com.joshtalks.joshskills.base.constants.CONTENT_URI
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
+import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
+import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
-import com.joshtalks.joshskills.base.constants.UPDATE_START_CALL_TIME
-import com.joshtalks.joshskills.base.constants.UPDATE_VOIP_STATE
+import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
+import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
+import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
+import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
 import com.joshtalks.joshskills.base.constants.VOIP_STATE
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.calldetails.CallDetails
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.NetworkAction
+import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.constant.MUTE
+import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
-import com.joshtalks.joshskills.voip.mediator.CallType
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationHandler
@@ -39,7 +45,6 @@ import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -82,8 +87,15 @@ class CallingRemoteService : Service() {
             ioScope.launch {
                 mediator.observeEvents().collect {
                     when(it) {
-                        CALL_CONNECTED_EVENT -> updateStartCallTime(SystemClock.elapsedRealtime())
-                        CALL_DISCONNECT_REQUEST -> updateStartCallTime(0)
+                        CALL_CONNECTED_EVENT -> updateStartCallTime(
+                            SystemClock.elapsedRealtime(),
+                            remoteUserName = CallDetails.remoteUserName,
+                            remoteUserImage = CallDetails.remoteUserImageUrl,
+                            remoteUserAgoraId = CallDetails.remoteUserAgoraId,
+                            callId = CallDetails.callId,
+                            callType = CallDetails.callType
+                        )
+                        CALL_DISCONNECT_REQUEST -> updateLastCallDetails()
                     }
                     voipLog?.log("Sending Event to client")
                         handler.sendMessageToRepository(it)
@@ -93,11 +105,8 @@ class CallingRemoteService : Service() {
             ioScope.launch {
                 mediator.observeState().collect {
                     when(it) {
-                        IDLE -> {
-
-                        }
-                        LEAVING -> {
-
+                        IDLE, JOINING, LEAVING -> {
+                            updateVoipState(it)
                         }
                     }
                     voipLog?.log("State --> $it")
@@ -127,7 +136,7 @@ class CallingRemoteService : Service() {
                     CALL_CONNECT_REQUEST -> {
                         val callData = it.obj as? HashMap<String, Any>
                         if(callData != null) {
-                            mediator.connectCall(CallType.PEER_TO_PEER, callData)
+                            mediator.connectCall(PEER_TO_PEER, callData)
                             voipLog?.log("Connecting Call Data --> $callData")
                         }
                         else
@@ -135,8 +144,23 @@ class CallingRemoteService : Service() {
                     }
                     CALL_DISCONNECT_REQUEST -> {
                         voipLog?.log("Disconnect Call")
+                        updateLastCallDetails()
+                        val networkAction = NetworkAction(
+                            callId = CallDetails.callId,
+                            uid = CallDetails.localUserAgoraId,
+                            type = ServerConstants.DISCONNECTED,
+                            duration = callDuration()
+                        )
+                        mediator.sendEventToServer(networkAction)
                         mediator.disconnectCall()
-                        updateStartCallTime(0)
+                    }
+                    MUTE -> {
+                        val userAction = UserAction(ServerConstants.MUTE, CallDetails.callId)
+                        mediator.sendEventToServer(userAction)
+                    }
+                    UNMUTE -> {
+                        val userAction = UserAction(ServerConstants.UNMUTE, CallDetails.callId)
+                        mediator.sendEventToServer(userAction)
                     }
                 }
                 voipLog?.log("observeHandlerEvents: $it")
@@ -177,13 +201,55 @@ class CallingRemoteService : Service() {
         registerReceiver(pstnReceiver, filter)
     }
 
-    private fun updateStartCallTime(timeStamp : Long) {
+    private fun callDuration() : Long {
+        val startTime = getStartCallTime()
+        return SystemClock.elapsedRealtime() - startTime
+    }
+
+    private fun updateStartCallTime(
+        timestamp: Long,
+        remoteUserName: String = "",
+        remoteUserImage: String? = null,
+        callId: Int = -1,
+        callType: Int = -1,
+        remoteUserAgoraId: Int = -1
+    ) {
         voipLog?.log("QUERY")
         val values = ContentValues(1).apply {
-            put(CALL_START_TIME, timeStamp)
+            put(CALL_START_TIME, timestamp)
+            put(REMOTE_USER_NAME, remoteUserName)
+            put(REMOTE_USER_IMAGE, remoteUserImage)
+            put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
+            put(CALL_ID, callId)
+            put(CALL_TYPE, callType)
         }
         val data = contentResolver.insert(
-            Uri.parse(CONTENT_URI + UPDATE_START_CALL_TIME),
+            Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
+            values
+        )
+        voipLog?.log("Data --> $data")
+    }
+
+    private fun getStartCallTime() : Long {
+        val startCallTimeCursor = contentResolver.query(
+            Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
+            null,
+            null,
+            null,
+            null
+        )
+        val startTime = startCallTimeCursor?.getLong(startCallTimeCursor.getColumnIndex(START_CALL_TIME_COLUMN))
+        startCallTimeCursor?.close()
+        return startTime ?: 0L
+    }
+
+    private fun updateLastCallDetails() {
+        voipLog?.log("QUERY")
+        val values = ContentValues(1).apply {
+            put(CALL_START_TIME, 0L)
+        }
+        val data = contentResolver.insert(
+            Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
             values
         )
         voipLog?.log("Data --> $data")
@@ -195,7 +261,7 @@ class CallingRemoteService : Service() {
             put(VOIP_STATE, state)
         }
         val data = contentResolver.insert(
-            Uri.parse(CONTENT_URI + UPDATE_VOIP_STATE),
+            Uri.parse(CONTENT_URI + VOIP_STATE_URI),
             values
         )
         voipLog?.log("Data --> $data")

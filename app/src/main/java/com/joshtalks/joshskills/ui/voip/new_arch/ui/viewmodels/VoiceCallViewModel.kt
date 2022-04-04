@@ -21,6 +21,11 @@ import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
+import com.joshtalks.joshskills.voip.constant.MUTE
+import com.joshtalks.joshskills.voip.constant.RECONNECTED
+import com.joshtalks.joshskills.voip.constant.RECONNECTING
+import com.joshtalks.joshskills.voip.constant.UNHOLD
+import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,24 +36,25 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class VoiceCallViewModel : BaseViewModel() {
+    private var isConnectionRequestSent = false
+    private val repository = WebrtcRepository()
+    private val mutex = Mutex(false)
+    private val callBar = CallBar()
     val isSpeakerOn = ObservableBoolean(false)
     val isMute = ObservableBoolean(false)
     val callStatus = ObservableField("outgoing")
     val callType = ObservableField("")
     val callStatusTest = ObservableField("")
-    private var isConnectionRequestSent = false
-    private val repository = WebrtcRepository()
     val callData = HashMap<String, Any>()
-    val mutex = Mutex(false)
-    val callBar = CallBar()
 
-    init {
-        voipLog?.log("Before scope")
+    init { listenRepositoryEvents() }
+
+    private fun listenRepositoryEvents() {
         viewModelScope.launch {
-            repository.observeCallEvents().collect {
+            repository.observeRepositoryEvents().collect {
                 message.copyFrom(it)
                 voipLog?.log("observeCallEvents =-> $it")
-                when (it.what) {
+                when (message.what) {
                     CALL_INITIATED_EVENT -> {
                         voipLog?.log("CALL_INITIATED_EVENT")
                     }
@@ -60,26 +66,35 @@ class VoiceCallViewModel : BaseViewModel() {
                         callStatusTest.set("Call on Hold")
                         voipLog?.log("HOLD")
                     }
-                    ERROR -> {
-                        voipLog?.log("Error Occurred")
-                        showToast("Error Occoured")
+                    UNHOLD -> {
+                        callStatusTest.set("")
+                        voipLog?.log("UNHOLD")
+                    }
+                    MUTE -> {
+                        callStatusTest.set("User Muted the Call")
+                        voipLog?.log("Mute")
+                    }
+                    UNMUTE -> {
+                        callStatusTest.set("")
+                        voipLog?.log("UNMUTE")
+                    }
+                    RECONNECTING -> {
+                        callStatusTest.set("Reconnecting")
+                        voipLog?.log("RECONNECTING")
+                    }
+                    RECONNECTED -> {
+                        callStatusTest.set("")
+                        voipLog?.log("RECONNECTED")
                     }
                     CALL_DISCONNECT_REQUEST -> {
                         voipLog?.log("Call Disconnect")
                         showToast("Call Disconnect")
                     }
-                }
-                singleLiveEvent.value = message
-            }
-        }
-        viewModelScope.launch {
-            repository.getRepositoryEvents().collect {
-                voipLog?.log("getRepository --> $it")
-                when (it) {
                     IPC_CONNECTION_ESTABLISHED -> {
                         connectCall()
                     }
                 }
+                singleLiveEvent.value = message
             }
         }
     }

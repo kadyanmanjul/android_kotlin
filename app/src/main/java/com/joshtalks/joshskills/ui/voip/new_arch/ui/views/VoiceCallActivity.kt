@@ -10,13 +10,12 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.voipLog
 
 class VoiceCallActivity : BaseActivity() {
+    private val ERROR_RANGE = -1 downTo Int.MIN_VALUE
 
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
@@ -47,7 +46,10 @@ class VoiceCallActivity : BaseActivity() {
             when(it.what) {
                 CALL_INITIATED_EVENT -> addCallUserFragment()
                 CALL_DISCONNECT_REQUEST -> finish()
-                ERROR -> finish()
+                in ERROR_RANGE -> {
+                    showToast("Error Occurred")
+                    finish()
+                }
             }
         }
     }
@@ -67,7 +69,6 @@ class VoiceCallActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         vm.boundService()
-        vm.connectCall()
     }
 
     override fun onStop() {

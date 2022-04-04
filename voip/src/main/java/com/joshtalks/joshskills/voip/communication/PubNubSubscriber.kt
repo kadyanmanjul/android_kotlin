@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.voip.communication
 
 import com.google.gson.Gson
-import com.joshtalks.joshskills.voip.communication.constants.MessageConstants.Companion.CHANNEL
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.CHANNEL
 import com.joshtalks.joshskills.voip.communication.model.Channel
 import com.joshtalks.joshskills.voip.communication.model.Communication
 import com.joshtalks.joshskills.voip.communication.model.Error

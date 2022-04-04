@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.voip.communication.constants
 
-class MessageConstants {
+class ServerConstants {
     companion object {
         val ERROR = -1
         val CHANNEL = 1

@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.voip.mediator
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
-import com.joshtalks.joshskills.voip.communication.constants.MessageConstants
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.Error
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
@@ -17,11 +17,11 @@ import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.constant.JOINING
+import com.joshtalks.joshskills.voip.constant.MUTE
 import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
+import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.mediator.CallDirection.*
 import com.joshtalks.joshskills.voip.pstn.PSTNInterface
 import com.joshtalks.joshskills.voip.pstn.PSTNListener
@@ -37,17 +37,17 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
     private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
+
     // AudioRouter
     //
     private val pstnService: PSTNInterface = PSTNListener()
     private lateinit var callDirection: CallDirection
     private var calling = PeerToPeerCalling()
+    private var callType = 0
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
 
     init {
@@ -64,19 +64,24 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         return flow
     }
 
-    override fun connectCall(callType: CallType, callData: HashMap<String, Any>) {
+    override fun connectCall(callType: Int, callData: HashMap<String, Any>) {
         scope.launch {
             voipLog?.log("CallData Before Mutex --> $callData")
             try {
-                setCallType(callType)
+                this@CallingMediator.callType = callType
                 // TODO: Need to Handle when Error Occurred
                 voipLog?.log("Coroutine CallData --> $callData")
                 calling.onPreCallConnect(callData)
             } catch (e: Exception) {
+                flow.emit(ERROR)
                 voipLog?.log("Connect Call API Failed")
                 e.printStackTrace()
             }
         }
+    }
+
+    override fun sendEventToServer(data: OutgoingData) {
+        networkEventChannel.emitEvent(data)
     }
 
     override fun switchAudio() {}
@@ -98,14 +103,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     PSTNState.Idle -> {
                         voipLog?.log("IDEL")
                         val data =
-                            UserAction(type = MessageConstants.RESUME, callId = CallDetails.callId)
+                            UserAction(type = ServerConstants.RESUME, callId = CallDetails.callId)
                         networkEventChannel.emitEvent(data)
                         flow.emit(UNHOLD)
                     }
                     PSTNState.OnCall, PSTNState.Ringing -> {
                         voipLog?.log("ON CALL")
                         val data = UserAction(
-                            type = MessageConstants.ONHOLD,
+                            type = ServerConstants.ONHOLD,
                             callId = CallDetails.callId
                         )
                         networkEventChannel.emitEvent(data)
@@ -142,23 +147,29 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         )
                         callingService.connectCall(request)
                         CallDetails.reset()
-                        CallDetails.set(it)
+                        CallDetails.set(it, callType)
                     }
                     is MessageData -> {
                         voipLog?.log("Message Data -> $it")
-                        when (it.getType()) {
-                            MessageConstants.ONHOLD -> {
-                                // Transfer to Service
-                                flow.emit(HOLD)
-                            }
-
-                            MessageConstants.RESUME -> {
-                                flow.emit(UNHOLD)
-                            }
-
-                            MessageConstants.DISCONNECTED -> {
-                                callingService.disconnectCall()
-                                flow.emit(CALL_DISCONNECT_REQUEST)
+                        if (it.isMessageForSameChannel()) {
+                            when (it.getType()) {
+                                ServerConstants.ONHOLD -> {
+                                    // Transfer to Service
+                                    flow.emit(HOLD)
+                                }
+                                ServerConstants.RESUME -> {
+                                    flow.emit(UNHOLD)
+                                }
+                                ServerConstants.MUTE -> {
+                                    flow.emit(MUTE)
+                                }
+                                ServerConstants.UNMUTE -> {
+                                    flow.emit(UNMUTE)
+                                }
+                                ServerConstants.DISCONNECTED -> {
+                                    callingService.disconnectCall()
+                                    flow.emit(CALL_DISCONNECT_REQUEST)
+                                }
                             }
                         }
                     }
@@ -174,6 +185,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             }
         }
     }
+
+    private fun MessageData.isMessageForSameChannel() =
+        this.getChannel() == CallDetails.agoraChannelName
 
     private fun handleWebrtcEvent() {
         scope.launch {
@@ -208,14 +222,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                 }
             }
-        }
-    }
-
-    private fun setCallType(callType: CallType) {
-        when (callType) {
-            CallType.PEER_TO_PEER -> {}
-            CallType.FPP -> {}
-            CallType.GROUP -> {}
         }
     }
 

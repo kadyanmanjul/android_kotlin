@@ -13,6 +13,8 @@ object CallDetails {
         private set
     var callId : Int = -1
         private set
+    var callType : Int = -1
+        private set
     var agoraChannelName = ""
         private set
     var remoteUserName = ""
@@ -25,6 +27,7 @@ object CallDetails {
             remoteUserAgoraId = -1
             localUserAgoraId = -1
             callId = -1
+            callType = -1
             agoraChannelName = ""
             remoteUserName = ""
             remoteUserImageUrl = null
@@ -32,11 +35,12 @@ object CallDetails {
         }
     }
 
-    suspend fun set(details : ChannelData) {
+    suspend fun set(details : ChannelData, callType : Int) {
         mutex.withLock {
             remoteUserAgoraId = details.getPartnerUid()
             localUserAgoraId = details.getAgoraUid()
             callId = details.getCallingId()
+            this.callType = callType
             agoraChannelName = details.getChannel()
             remoteUserName = details.getCallingPartnerName()
             remoteUserImageUrl = details.getCallingPartnerImage()
