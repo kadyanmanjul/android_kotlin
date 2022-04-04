@@ -71,5 +71,10 @@ class ProfileActivity: AppCompatActivity() {
                 context.startActivity(this)
             }
         }
+        fun getIntent(context: Context, userId: String = EMPTY): Intent {
+            return Intent(context, ProfileActivity::class.java).apply {
+                putExtra(USER_ID, userId)
+            }
+        }
     }
 }

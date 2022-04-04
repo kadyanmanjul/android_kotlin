@@ -34,6 +34,7 @@ class AppObjectController {
             initStethoLibrary(context)
             initGsonMapper()
             initNotificationChannels(context)
+            initBranch(context)
         }
 
         private fun initNotificationChannels(context: Context) {
@@ -46,6 +47,14 @@ class AppObjectController {
                 enableLights = true,
                 enableVibration = true,
             )
+        }
+
+        private fun initBranch(context: Context){
+            Branch.getAutoInstance(context)
+            if (BuildConfig.DEBUG) {
+                Branch.enableLogging()
+                Branch.enableTestMode()
+            }
         }
 
         private fun initGsonMapper() {
