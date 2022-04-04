@@ -22,6 +22,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
+import com.joshtalks.joshskills.voip.constant.MUTE
+import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CoroutineScope
@@ -58,12 +60,6 @@ class WebrtcRepository {
             voipLog?.log("ERROR at INIT...")
             e.printStackTrace()
         }
-    }
-
-
-
-    fun getRepositoryEvents() : SharedFlow<Message> {
-        return repositoryToVMFlow
     }
 
     val serviceConnection = object : ServiceConnection {
@@ -120,6 +116,22 @@ class WebrtcRepository {
         voipLog?.log("Disconnect call")
         val msg = Message().apply {
             what = CALL_DISCONNECT_REQUEST
+        }
+        sendMessageToRemoteService(msg)
+    }
+
+    fun muteCall() {
+        voipLog?.log("Disconnect call")
+        val msg = Message().apply {
+            what = MUTE
+        }
+        sendMessageToRemoteService(msg)
+    }
+
+    fun unmuteCall() {
+        voipLog?.log("Disconnect call")
+        val msg = Message().apply {
+            what = UNMUTE
         }
         sendMessageToRemoteService(msg)
     }

@@ -144,7 +144,9 @@ class CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener
         ObservableBoolean(checkTimestamp())
     }
 
-    private val voipStateLiveData = MutableLiveData(checkVoipState())
+    private val voipStateLiveData by lazy {
+        MutableLiveData(checkVoipState())
+    }
 
     fun observerVoipState(): LiveData<Int> {
         return voipStateLiveData
@@ -170,7 +172,9 @@ class CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener
     }
 
     private fun checkVoipState(): Int {
-        return VoipPref.getVoipState()
+        val state = VoipPref.getVoipState()
+        Log.d(TAG, "checkVoipState: $state")
+        return state
     }
 
 }

@@ -145,9 +145,11 @@ class VoiceCallViewModel : BaseViewModel() {
     fun switchMic(v: View) {
         if (isMute.get()) {
             switchMicOn()
+            repository.unmuteCall()
             isMute.set(false)
         } else {
             switchMicOff()
+            repository.muteCall()
             isMute.set(true)
         }
     }

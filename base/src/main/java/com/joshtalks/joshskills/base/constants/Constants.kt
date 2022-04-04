@@ -61,3 +61,9 @@ const val GROUP = 3
 // Cursor Column Name
 const val START_CALL_TIME_COLUMN = "START_CALL_TIME"
 
+
+const val SERVICE_BROADCAST_KEY = "service_broadcast_key"
+const val START_SERVICE = true
+const val STOP_SERVICE = false
+const val CALLING_SERVICE_ACTION = "com.joshtalks.joshskills.CALLING_SERVICE"
+

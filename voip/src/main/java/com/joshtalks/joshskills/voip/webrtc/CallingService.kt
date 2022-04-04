@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.webrtc
 
+import android.telecom.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -7,6 +8,7 @@ internal interface CallingService {
     suspend fun initCallingService()
     fun connectCall(request: CallRequest) // Need Arguments
     fun disconnectCall() // Might Need Arguments
+    fun muteAudioStream(muteAudio : Boolean)
     fun observeCallingEvents() : SharedFlow<CallState> // Will return value
     fun observeCallingState() : SharedFlow<Int> // Will Return State
 }
@@ -27,6 +29,7 @@ internal sealed class CallState {
     object OnReconnected : CallState()
     object CallConnected : CallState() // Remote User Join The Channel
     object CallDisconnected : CallState()
+    object ReconnectingFailed : CallState()
     object CallInitiated : CallState() // Local User Join The Channel
     object Error : CallState()
 }

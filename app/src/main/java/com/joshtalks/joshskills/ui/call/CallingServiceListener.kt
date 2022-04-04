@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
@@ -15,11 +17,6 @@ import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.voipLog
-
-const val SERVICE_BROADCAST_KEY = "service_broadcast_key"
-const val START_SERVICE = true
-const val STOP_SERVICE = false
-const val CALLING_SERVICE_ACTION = "com.joshtalks.joshskills.CALLING_SERVICE"
 
 class CallingServiceReceiver: BroadcastReceiver(){
 

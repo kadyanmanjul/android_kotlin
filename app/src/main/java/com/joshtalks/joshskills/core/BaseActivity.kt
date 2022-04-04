@@ -40,6 +40,9 @@ import com.google.firebase.inappmessaging.model.InAppMessage
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -101,10 +104,13 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.lang.reflect.Type
 import java.util.*
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
 const val REQUEST_SHOW_SETTINGS = 123
+
 
 abstract class BaseActivity :
         TrackActivity(),

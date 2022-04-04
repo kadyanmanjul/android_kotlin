@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
+import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.voipLog
@@ -50,7 +51,7 @@ class VoiceCallActivity : BaseActivity() {
     override fun initViewState() {
         event.observe(this) {
             when(it.what) {
-                CALL_INITIATED_EVENT -> addCallUserFragment()
+                CALL_CONNECTED_EVENT -> addCallUserFragment()
                 CALL_DISCONNECT_REQUEST -> finish()
                 else -> {
                     if(it.what < 0) {

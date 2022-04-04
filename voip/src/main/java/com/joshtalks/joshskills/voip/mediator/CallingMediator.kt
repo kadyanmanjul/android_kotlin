@@ -37,7 +37,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
@@ -50,14 +51,17 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private var calling = PeerToPeerCalling()
     private var callType = 0
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
+    private val mutex = Mutex(false)
 
     init {
         scope.launch {
-            observerPstnService()
-            callingService.initCallingService()
-            networkEventChannel.initChannel()
-            handleWebrtcEvent()
-            handlePubnubEvent()
+            mutex.withLock {
+                observerPstnService()
+                callingService.initCallingService()
+                networkEventChannel.initChannel()
+                handleWebrtcEvent()
+                handlePubnubEvent()
+            }
         }
     }
 
@@ -67,18 +71,24 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun connectCall(callType: Int, callData: HashMap<String, Any>) {
         scope.launch {
-            voipLog?.log("CallData Before Mutex --> $callData")
-            try {
-                this@CallingMediator.callType = callType
-                // TODO: Need to Handle when Error Occurred
-                voipLog?.log("Coroutine CallData --> $callData")
-                calling.onPreCallConnect(callData)
-            } catch (e: Exception) {
-                flow.emit(ERROR)
-                voipLog?.log("Connect Call API Failed")
-                e.printStackTrace()
+            mutex.withLock {
+                voipLog?.log("CallData Before Mutex --> $callData")
+                try {
+                    this@CallingMediator.callType = callType
+                    // TODO: Need to Handle when Error Occurred
+                    voipLog?.log("Coroutine CallData --> $callData")
+                    calling.onPreCallConnect(callData)
+                } catch (e: Exception) {
+                    flow.emit(ERROR)
+                    voipLog?.log("Connect Call API Failed")
+                    e.printStackTrace()
+                }
             }
         }
+    }
+
+    override fun muteAudioStream(muteAudio: Boolean) {
+        callingService.muteAudioStream(muteAudio)
     }
 
     override fun sendEventToServer(data: OutgoingData) {
@@ -122,6 +132,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
+    // Handle Events coming from Backend
     private fun handlePubnubEvent() {
         scope.launch {
             networkEventChannel.observeChannelEvents().collectLatest {
@@ -202,6 +213,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     CallState.CallDisconnected -> {
                         flow.emit(CALL_DISCONNECTED)
                         voipLog?.log("Call Disconnected")
+                    }
+                    CallState.ReconnectingFailed -> {
+                        flow.emit(CALL_DISCONNECT_REQUEST)
+                        voipLog?.log("Call Disconnect Request")
                     }
                     CallState.CallInitiated -> {
                         // CallInitiated

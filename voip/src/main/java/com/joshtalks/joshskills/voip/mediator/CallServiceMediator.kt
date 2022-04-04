@@ -7,6 +7,7 @@ internal interface CallServiceMediator {
     fun observeEvents() : SharedFlow<Int>
     fun observeState() : SharedFlow<Int>
     fun connectCall(callType: Int, callData : HashMap<String, Any>)
+    fun muteAudioStream(muteAudio : Boolean)
     fun sendEventToServer(data : OutgoingData)
     fun switchAudio()
     fun disconnectCall()

@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.webrtc
 
-import android.telecom.Call
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CONNECTED
@@ -12,7 +11,6 @@ import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -82,6 +80,10 @@ internal object AgoraCallingService : CallingService {
         }
     }
 
+    override fun muteAudioStream(muteAudio : Boolean) {
+        agoraEngine?.muteLocalAudioStream(muteAudio)
+    }
+
     override fun observeCallingEvents(): SharedFlow<CallState> {
         voipLog?.log("Setting event")
         return eventFlow
@@ -115,6 +117,7 @@ internal object AgoraCallingService : CallingService {
                     CallState.CallDisconnected, CallState.Idle -> state.emit(IDLE)
                     CallState.CallConnected -> state.emit(CONNECTED)
                     CallState.CallInitiated -> state.emit(JOINED)
+                    CallState.ReconnectingFailed -> { disconnectCall() }
                     CallState.Error -> {
                         if(state.equals(JOINED) || state.equals(CONNECTED) || state.equals(JOINING))
                             disconnectCall()

@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.enums.PNLogVerbosity
+import com.pubnub.api.enums.PNReconnectionPolicy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -59,6 +60,7 @@ object PubNubChannelService : EventChannel {
                     else {
                         config.publishKey = BuildConfig.PUBNUB_PUB_P2P_KEY
                         config.subscribeKey = BuildConfig.PUBNUB_SUB_P2P_KEY
+                        config.reconnectionPolicy = PNReconnectionPolicy.LINEAR
                         //config.uuid = "Mentor.getInstance().getId()"
                         pubnub = PubNub(config)
                         pubnub?.addListener(pubNubData.callback)
