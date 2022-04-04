@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import java.lang.Exception
 
 class CallBarLayout @JvmOverloads
@@ -25,14 +27,14 @@ constructor(context: Context, attributes: AttributeSet? = null) : FrameLayout(co
             e.printStackTrace()
         }
         startCallTimer()
+        onCallBarClick()
     }
 
-    fun onCallBarClick(function: () -> Unit) {
+    fun onCallBarClick() {
         callBarContainer.setOnClickListener {
-            function.invoke()
+            context.startActivity(Intent(context,VoiceCallActivity::class.java))
         }
     }
-
     fun startCallTimer() {
         callTimer.start()
     }

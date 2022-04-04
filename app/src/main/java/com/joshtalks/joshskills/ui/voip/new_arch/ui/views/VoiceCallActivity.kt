@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.voip.voipLog
 
 class VoiceCallActivity : BaseActivity() {
     //private val ERROR_RANGE = -1 downTo Int.MIN_VALUE
+    private var toCallFragment : Boolean?=false
 
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
@@ -26,11 +27,12 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun getArguments() {
-        val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
-        val courseId = intent?.getStringExtra(INTENT_DATA_COURSE_ID)
-        voipLog?.log("Call Data --> $intent")
-        vm.callData[INTENT_DATA_COURSE_ID] = courseId ?: "0"
-        vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
+            toCallFragment = intent?.getBooleanExtra("openCallFragment",false)
+            val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
+            val courseId = intent?.getStringExtra(INTENT_DATA_COURSE_ID)
+            voipLog?.log("Call Data --> $intent")
+            vm.callData[INTENT_DATA_COURSE_ID] = courseId ?: "0"
+            vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
     }
 
     override fun initViewBinding() {
@@ -38,7 +40,11 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun onCreated() {
-        addSearchingUserFragment()
+        if (toCallFragment == true){
+            addCallUserFragment()
+        }else{
+            addSearchingUserFragment()
+        }
     }
 
     override fun initViewState() {
