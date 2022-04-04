@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.voipLog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 class VoiceCallViewModel : BaseViewModel() {
     private var isConnectionRequestSent = false
@@ -50,7 +52,7 @@ class VoiceCallViewModel : BaseViewModel() {
     init { listenRepositoryEvents() }
 
     private fun listenRepositoryEvents() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.observeRepositoryEvents().collect {
                 message.copyFrom(it)
                 voipLog?.log("observeCallEvents =-> $it")
@@ -94,7 +96,9 @@ class VoiceCallViewModel : BaseViewModel() {
                         connectCall()
                     }
                 }
-                singleLiveEvent.value = message
+                withContext(Dispatchers.Main) {
+                    singleLiveEvent.value = message
+                }
             }
         }
     }

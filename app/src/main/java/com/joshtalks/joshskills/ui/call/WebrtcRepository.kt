@@ -31,11 +31,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class WebrtcRepository() {
+class WebrtcRepository {
     private var mService : Messenger? = null
     private var handler : Messenger? = null
-    private val scope = CoroutineScope(Dispatchers.Main)
-    private val repositoryHandler = RepositoryHandler(scope)
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+    private val repositoryHandler = RepositoryHandler(ioScope)
     private val repositoryToVMFlow = MutableSharedFlow<Message>(replay = 0)
 
     init {
@@ -89,7 +89,7 @@ class WebrtcRepository() {
     }
 
     private fun observeCallEvents() {
-        scope.launch {
+        ioScope.launch {
             repositoryHandler.observerFlow().collect {
                 repositoryToVMFlow.emit(it)
             }
@@ -133,7 +133,7 @@ class WebrtcRepository() {
             when(data.what) {
                 // Returning back these two event to View Model so that they can take action
                 IPC_CONNECTION_ESTABLISHED, CALL_DISCONNECT_REQUEST -> {
-                    scope.launch {
+                    ioScope.launch {
                         repositoryToVMFlow.emit(data)
                     }
                 }

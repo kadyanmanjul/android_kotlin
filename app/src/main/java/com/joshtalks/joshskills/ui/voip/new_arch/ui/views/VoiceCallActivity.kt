@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.voipLog
 
 class VoiceCallActivity : BaseActivity() {
-    private val ERROR_RANGE = -1 downTo Int.MIN_VALUE
+    //private val ERROR_RANGE = -1 downTo Int.MIN_VALUE
 
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
@@ -46,9 +46,11 @@ class VoiceCallActivity : BaseActivity() {
             when(it.what) {
                 CALL_INITIATED_EVENT -> addCallUserFragment()
                 CALL_DISCONNECT_REQUEST -> finish()
-                in ERROR_RANGE -> {
-                    showToast("Error Occurred")
-                    finish()
+                else -> {
+                    if(it.what < 0) {
+                        showToast("Error Occurred")
+                        finish()
+                    }
                 }
             }
         }
