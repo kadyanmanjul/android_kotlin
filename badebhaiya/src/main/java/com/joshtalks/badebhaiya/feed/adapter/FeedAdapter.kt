@@ -30,20 +30,21 @@ class FeedAdapter :
         }
     }
 
-    var itemClick: ((RoomListResponseItem, View) -> Unit)? = null
+    var callback: ConversationRoomItemCallback? = null
 
     inner class FeedViewHolder(private val item: LiRoomEventBinding) :
         RecyclerView.ViewHolder(item.root) {
         fun onBind(room: RoomListResponseItem) {
             item.roomData = room
             item.root.setOnClickListener {
-                itemClick?.invoke(room, item.root)
+                callback?.viewRoom(room, it)
             }
+            item.callback = callback
         }
     }
 
-    fun setListener(function: ((RoomListResponseItem, View) -> Unit)?) {
-        itemClick = function
+    fun setListener(callback: ConversationRoomItemCallback) {
+        this.callback = callback
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
@@ -58,5 +59,11 @@ class FeedAdapter :
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         holder.onBind(getItem(position))
+    }
+
+    interface ConversationRoomItemCallback {
+        fun joinRoom(room: RoomListResponseItem, view: View)
+        fun setReminder(room: RoomListResponseItem, view: View)
+        fun viewRoom(room: RoomListResponseItem, view: View)
     }
 }

@@ -6,6 +6,7 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.joshtalks.badebhaiya.repository.model.User" />
 
         <variable
             name="viewModel"
@@ -17,102 +18,113 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/root_view"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        onRefresh="@{viewModel::getRooms}"
+        setRefreshing="@{viewModel.isLoading}"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/conversation_room_color">
+        android:layout_height="match_parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_iv"
-            android:layout_width="@dimen/_24sdp"
-            android:layout_height="@dimen/_24sdp"
-            android:onClick="@{() -> viewModel.onProfileClicked()}"
-            android:src="@drawable/ic_profile"
-            app:civ_circle_background_color="@color/grey"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.02" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            feedAdapter="@{viewModel.feedAdapter}"
-            onFeedItemClick="@{viewModel.onFeedItemClicked}"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? bg.getHeight() : 0}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_iv"
-            app:layout_constraintVertical_bias="0.0"
-            tools:listitem="@layout/li_room_event" />
+            android:layout_height="match_parent"
+            android:background="@color/conversation_room_color">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/noRoomsText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_50sdp"
-            android:gravity="center"
-            android:text="Unable to load, Please try again"
-            android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
-            android:textColor="@color/pure_black"
-            android:textSize="@dimen/_12sdp"
-            android:visibility="@{viewModel.isRoomsAvailable ? View.GONE : View.VISIBLE }"
-            app:layout_constraintBottom_toTopOf="@id/bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_iv"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:onClick="@{() -> viewModel.onProfileClicked()}"
+                android:src="@drawable/ic_profile"
+                app:civ_circle_background_color="@color/grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.95"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.02" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/bg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                feedAdapter="@{viewModel.feedAdapter}"
+                onFeedItemClick="@{handler}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? bg.getHeight() : 0}"
+                app:layout_constraintBottom_toTopOf="@id/bg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_iv"
+                app:layout_constraintVertical_bias="0.0"
+                tools:listitem="@layout/li_room_event" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/create_room"
-                style="@style/GreenButton"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_10sdp"
-                android:clickable="true"
-                android:drawableLeft="@drawable/ic_plus"
-                android:drawablePadding="@dimen/_3sdp"
-                android:focusable="true"
-                android:onClick="@{()->handler.openCreateRoomDialog()}"
-                android:text="@string/start_a_room"
-                android:textSize="@dimen/_12ssp" />
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="@{viewModel.isRoomsAvailable ? View.GONE : View.VISIBLE }"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/noRoomsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Unable to load, Please try again"
+                    android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+                    android:textColor="@color/pure_black"
+                    android:textSize="@dimen/_12sdp"
+                    tools:visibility="visible" />
 
+                <com.google.android.material.button.MaterialButton
+                    style="@style/GreyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()-> viewModel.getRooms()}"
+                    android:padding="@dimen/_4sdp"
+                    android:text="@string/retry" />
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:layout_width="@dimen/_96sdp"
-            android:layout_height="@dimen/_96sdp"
-            android:indeterminate="true"
-            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toTopOf="@id/bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <com.joshtalks.badebhaiya.feed.NotificationView
-            android:id="@+id/notification_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="@{User.getInstance().isSpeaker ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_room"
+                    style="@style/GreenButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/ic_plus"
+                    android:drawablePadding="@dimen/_3sdp"
+                    android:focusable="true"
+                    android:onClick="@{()->handler.openCreateRoomDialog()}"
+                    android:text="@string/start_a_room"
+                    android:textSize="@dimen/_12ssp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.joshtalks.badebhaiya.feed.NotificationView
+                android:id="@+id/notification_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

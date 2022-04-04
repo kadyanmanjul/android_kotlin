@@ -3,18 +3,17 @@ package com.joshtalks.badebhaiya.core
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
+import com.google.gson.*
+import com.joshtalks.badebhaiya.BuildConfig
+import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.repository.service.initStethoLibrary
+import io.branch.referral.Branch
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.text.DateFormat
-import java.util.Date
+import java.util.*
 
 class AppObjectController {
     companion object {
@@ -34,6 +33,19 @@ class AppObjectController {
             joshApplication = context as JoshApplication
             initStethoLibrary(context)
             initGsonMapper()
+            initNotificationChannels(context)
+        }
+
+        private fun initNotificationChannels(context: Context) {
+            NotificationHelper.createNotificationChannel(
+                context = context,
+                importance = NotificationManagerCompat.IMPORTANCE_MAX,
+                showBadge = false,
+                name = NotificationType.REMINDER.value,
+                description = "App notification channel.",
+                enableLights = true,
+                enableVibration = true,
+            )
         }
 
         private fun initGsonMapper() {

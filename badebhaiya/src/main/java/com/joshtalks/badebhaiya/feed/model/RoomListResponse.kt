@@ -1,15 +1,19 @@
 package com.joshtalks.badebhaiya.feed.model
 
+import android.os.Build
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
+import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.util.*
 
 data class RoomListResponse(
     @SerializedName("live_room")
     val liveRoomList: List<RoomListResponseItem>?,
 
-    /*@SerializedName("schedule_room")
-    val scheduledRoomList: List<RoomListResponseItem>?*/
+    @SerializedName("schedule_room")
+    val scheduledRoomList: List<RoomListResponseItem>?
 )
 
 
@@ -33,11 +37,34 @@ data class RoomListResponseItem(
     @SerializedName("ended")
     val endTime: String?,
     @SerializedName("is_scheduled")
-    val isScheduled: Boolean?,
+    var isScheduled: Boolean?,
     @SerializedName("speakers_data")
     val speakersData: SpeakerData?,
-    var conversationRoomQuestionId: Int? = null
-)
+    var conversationRoomQuestionId: Int? = null,
+    var conversationRoomType: ConversationRoomType? = null,
+) {
+    val startTimeDate: Long
+        get() {
+            return try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    ZonedDateTime.parse(startTime).toEpochSecond() * 1000
+                } else {
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }.parse(startTime).time
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                0
+            }
+        }
+}
+
+enum class ConversationRoomType() {
+    LIVE,
+    NOT_SCHEDULED,
+    SCHEDULED;
+}
 
 data class SpeakerData(
     @SerializedName("id")

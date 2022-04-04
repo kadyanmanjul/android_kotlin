@@ -52,5 +52,6 @@
     <string name="create_your_room">Create your Room</string>
     <string name="name_your_room">Name your Room</string>
     <string name="start_room">Start Room</string>
+    <string name="retry">Retry</string>
 
 </resources>

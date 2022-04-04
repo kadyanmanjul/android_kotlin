@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.repository
 
+import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.service.ConversationRoomNetworkService
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
@@ -22,4 +23,7 @@ class ConversationRoomRepository {
 
     suspend fun endRoom(conversationRoomRequest: ConversationRoomRequest) =
         service.endRoom(conversationRoomRequest)
+
+    suspend fun setReminder(reminderRequest: ReminderRequest) =
+        service.setReminder(reminderRequest)
 }
