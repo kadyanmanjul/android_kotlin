@@ -62,12 +62,15 @@ class JoshApplication :
         AppObjectController.init(this)
         registerBroadcastReceiver()
 //        initServices()
+        initMoEngage()
+        initGroups()
+    }
 
+    private fun initMoEngage() {
         val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
             .setDataCenter(DataCenter.DATA_CENTER_3)
             .build()
         MoEngage.initialiseDefaultInstance(moEngage)
-        initGroups()
     }
 
     private fun initServices() {
