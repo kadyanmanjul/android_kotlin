@@ -29,7 +29,7 @@ internal sealed class CallState {
     object OnReconnected : CallState()
     object CallConnected : CallState() // Remote User Join The Channel
     object CallDisconnected : CallState()
-    object CallDisconnect : CallState()
+    object ReconnectingFailed : CallState()
     object CallInitiated : CallState() // Local User Join The Channel
     object Error : CallState()
 }

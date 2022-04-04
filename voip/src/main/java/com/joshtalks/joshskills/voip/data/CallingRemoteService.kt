@@ -266,7 +266,7 @@ class CallingRemoteService : Service() {
     }
 
     private fun updateVoipState(state : Int) {
-        voipLog?.log("QUERY")
+        voipLog?.log("Setting Voip State --> $state")
         val values = ContentValues(1).apply {
             put(VOIP_STATE, state)
         }

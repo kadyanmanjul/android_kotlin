@@ -1,13 +1,9 @@
 package com.joshtalks.joshskills.ui.lesson.speaking
 
-import android.animation.TimeAnimator
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
-import android.graphics.drawable.ClipDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -22,7 +18,17 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
+import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
+import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.isCallOngoing
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -36,6 +42,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.voipLog
 import com.karumi.dexter.MultiplePermissionsReport
@@ -44,14 +51,14 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
-class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
+class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -61,11 +68,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     private var questionId: String? = null
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
-    private val LEVEL_INCREMENT = 20
-    private val MAX_LEVEL = 10000
-    private var mAnimator: TimeAnimator? = null
-    private var mCurrentLevel = 0
-    private var mClipDrawable: ClipDrawable? = null
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -102,10 +104,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
-        val layerDrawable = binding.btnStartTrialText.getBackground() as LayerDrawable
-        mClipDrawable = layerDrawable.findDrawableByLayerId(R.id.clip_drawable) as ClipDrawable
-        mAnimator = TimeAnimator()
-        mAnimator!!.setTimeListener(this)
         addObservers()
         // showTooltip()
         return binding.rootView
@@ -168,18 +166,17 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
                 courseId = it
             }
         )
-        binding.btnStartTrialText.setOnClickListener {
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            startPractise(favoriteUserCall = false)
+        binding.btnStart.setOnClickListener {
+//            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+//            startPractise(favoriteUserCall = false)
             val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
             callIntent.apply {
                 putExtra(INTENT_DATA_COURSE_ID, courseId)
                 putExtra(INTENT_DATA_TOPIC_ID, topicId)
             }
             voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
-//            animateButton()
             startActivity(callIntent)
-//            startActivity(Intent(activity,VoiceCallActivity::class.java))
+            //startActivity(Intent(activity,VoiceCallActivity::class.java))
         }
 
         viewModel.observerVoipState().observe(viewLifecycleOwner) {
@@ -251,7 +248,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
 
                     if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
                         binding.btnContinue.visibility = VISIBLE
-//                        binding.btnStart.pauseAnimation()
+                        binding.btnStart.pauseAnimation()
                         binding.btnContinue.playAnimation()
                         lessonActivityListener?.onQuestionStatusUpdate(
                             QUESTION_STATUS.AT,
@@ -259,7 +256,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
                         )
                         lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
                     } else {
-//                        binding.btnStart.playAnimation()
+                        binding.btnStart.playAnimation()
                     }
 
                     if (response.isNewStudentCallsActivated) {
@@ -431,19 +428,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
                 }
             }
         )
-    }
-    override fun onTimeUpdate(animation: TimeAnimator?, totalTime: Long, deltaTime: Long) {
-        mClipDrawable?.level = mCurrentLevel
-        if (mCurrentLevel >= MAX_LEVEL) {
-            mAnimator?.cancel()
-        } else {
-            mCurrentLevel = Math.min(MAX_LEVEL, mCurrentLevel + LEVEL_INCREMENT)
-        }
-    }
-
-    fun animateButton() {
-            mCurrentLevel = 0
-            mAnimator?.start()
     }
 
     private fun startPractiseSearchScreen(
