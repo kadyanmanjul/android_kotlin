@@ -441,4 +441,12 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             null
         }
     }
+
+    suspend fun createMoEngageUser(){
+        try {
+            apiService.createMoEngageUser(Mentor.getInstance().getId())
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
 }

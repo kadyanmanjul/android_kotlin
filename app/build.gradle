@@ -458,4 +458,10 @@ dependencies {
     //mixpanel
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
 
+    //moengage
+    implementation(moengage.core)
+    implementation("com.moengage:moe-android-sdk:12.0.000")
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.lifecycle:lifecycle-process:2.4.0")
+
 }

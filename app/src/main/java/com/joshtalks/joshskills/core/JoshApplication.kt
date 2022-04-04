@@ -24,6 +24,8 @@ import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
+import com.moengage.core.DataCenter
+import com.moengage.core.MoEngage
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
@@ -60,6 +62,11 @@ class JoshApplication :
         AppObjectController.init(this)
         registerBroadcastReceiver()
 //        initServices()
+
+        val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
+            .setDataCenter(DataCenter.DATA_CENTER_3)
+            .build()
+        MoEngage.initialiseDefaultInstance(moEngage)
         initGroups()
     }
 
