@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "403336746270",
+    "project_id": "joshbbapp",
+    "storage_bucket": "joshbbapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403336746270:android:fb7583c39f51f5e084e50f",
+        "android_client_info": {
+          "package_name": "com.joshtalks.badebhaiya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "403336746270-ometpuh7tnehmed50il7gbb72sct4eeb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn_XP4B_O-HpvkUk0mcPcnmEm640kw8fc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "403336746270-ometpuh7tnehmed50il7gbb72sct4eeb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
