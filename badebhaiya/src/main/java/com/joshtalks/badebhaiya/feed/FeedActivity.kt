@@ -19,7 +19,6 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
-import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -70,7 +69,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         CreateRoom.newInstance().also {
             it.show(supportFragmentManager, "createRoom")
             it.addCallback(object : CreateRoom.CreateRoomCallback {
-                override fun onRoomCreated(conversationRoomResponse: ConversationRoomResponse) {
+                override fun onRoomCreated(
+                    conversationRoomResponse: ConversationRoomResponse,
+                    topic: String
+                ) {
                     conversationRoomResponse.apply {
                         ConversationLiveRoomActivity.startRoomActivity(
                             activity = this@FeedActivity,
@@ -80,7 +82,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             isRoomCreatedByUser = true,
                             roomId = this.roomId,
                             moderatorId = this.uid,
-                            topicName = "Blank",
+                            topicName = topic,
                             flags = arrayOf()
 
                         )
@@ -106,7 +108,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 channelName = item.channelId,
                 uid = item.startedBy,
                 token = EMPTY,
-                isRoomCreatedByUser = false,
+                isRoomCreatedByUser = item.speakersData?.userId==User.getInstance().userId,
                 roomId = item.roomId,
                 moderatorId = item.startedBy,
                 topicName = item.topic,
@@ -151,7 +153,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun viewRoom(room: RoomListResponseItem, view: View) {
         //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
         Log.d("Manjul", "viewRoom() called with: room = $room, view = $view")
-        val item = room.speakersData?.userId?.let {
+        room.speakersData?.userId?.let {
             ProfileActivity.openProfileActivity(this,it)
         }
         /*item?.let { item ->

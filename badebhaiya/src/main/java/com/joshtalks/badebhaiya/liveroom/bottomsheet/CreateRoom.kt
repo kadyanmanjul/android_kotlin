@@ -14,7 +14,7 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 
 class CreateRoom : BottomSheetDialogFragment() {
     interface CreateRoomCallback {
-        fun onRoomCreated(conversationRoomResponse: ConversationRoomResponse)
+        fun onRoomCreated(conversationRoomResponse: ConversationRoomResponse, topic: String)
         fun onError(error: String)
     }
 

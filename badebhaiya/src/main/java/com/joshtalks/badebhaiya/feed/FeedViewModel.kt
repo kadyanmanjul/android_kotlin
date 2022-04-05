@@ -2,7 +2,6 @@ package com.joshtalks.badebhaiya.feed
 
 import android.os.Bundle
 import android.os.Message
-import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +11,6 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
-import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
@@ -68,7 +66,7 @@ class FeedViewModel : ViewModel() {
                 )
                 if (response.isSuccessful) {
                     showToast("Room created successfully")
-                    callback.onRoomCreated(response.body()!!)
+                    callback.onRoomCreated(response.body()!!,topic)
                 } else callback.onError("An error occurred!")
             } catch (e: Exception) {
                 callback.onError(e.localizedMessage)
