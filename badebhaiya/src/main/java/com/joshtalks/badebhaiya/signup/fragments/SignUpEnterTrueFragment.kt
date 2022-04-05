@@ -66,12 +66,7 @@ class SignUpEnterTrueFragment: Fragment() {
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
         override fun onSuccessProfileShared(@NonNull trueProfile: TrueProfile) {
-            //val intent = Intent(activity, SignUpEnterNameFragment::class.java)
-            //showToast(trueProfile.lastName)
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.truecaller, SignUpEnterNameFragment.newInstance(trueProfile.firstName,trueProfile.lastName))
-            transaction.commit()
-
+            viewModel.trueCallerLogin(trueProfile)
         }
 
         override fun onFailureProfileShared(@NonNull trueError: TrueError) {
@@ -113,7 +108,7 @@ class SignUpEnterTrueFragment: Fragment() {
         }
     }
 
-    private fun startProgress() {
+    /*private fun startProgress() {
         binding.btnNext.showProgress {
             progressColors =
                 intArrayOf(ContextCompat.getColor(requireContext(), R.color.white))
@@ -123,5 +118,5 @@ class SignUpEnterTrueFragment: Fragment() {
             textMarginRes = R.dimen.dp8
         }
         binding.btnNext.isEnabled = false
-    }
+    }*/
 }

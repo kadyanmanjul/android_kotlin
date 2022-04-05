@@ -36,6 +36,7 @@ private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
 class RetrofitInstance {
 
+
     companion object {
         @JvmStatic
         lateinit var gsonMapper: Gson
@@ -95,6 +96,9 @@ class RetrofitInstance {
                 .build()
         }
 
+        val conversationRoomNetworkService by lazy {
+            retrofit.create(ConversationRoomNetworkService::class.java)
+        }
         private fun cache() = Cache(File(AppObjectController.joshApplication.cacheDir, "api_cache"), cacheSize)
 
         val signUpNetworkService by lazy {
@@ -142,6 +146,8 @@ class RetrofitInstance {
                 .build().create(MediaDUNetworkService::class.java)
         }
     }
+
+
 }
 
 class HeaderInterceptor : Interceptor {

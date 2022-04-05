@@ -30,6 +30,8 @@ interface SignUpNetworkService {
     @PATCH("$DIR/user/{id}/")
     suspend fun updateUserProfile(@Path("id")userId: String, @Body params: Map<String, String?>): Response<User>
 
+    @POST("$DIR/user/truecaller_login/")
+    suspend fun trueCallerLogin(@Body params: Map<String, String>) : Response<LoginResponse>
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
     suspend fun requestUploadMedia(requestParams: Map<String, String>): Deferred<AmazonPolicyResponse>

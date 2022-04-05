@@ -35,6 +35,11 @@ class SignUpEnterNameFragment: Fragment() {
     }
     companion object {
         @JvmStatic
+        fun newInstance():SignUpEnterNameFragment
+        {
+            return SignUpEnterNameFragment()
+        }
+        @JvmStatic
         fun newInstance(
             firstname: String,lastname:String
         ) =
@@ -63,6 +68,9 @@ class SignUpEnterNameFragment: Fragment() {
         //showToast(lastName.toString())
         etFirstName.setText(firstName)
         etLastName.setText(lastName)
+        btnNext.setOnClickListener{
+            submitProfile()
+        }
         addObservers()
     }
 
@@ -75,11 +83,15 @@ class SignUpEnterNameFragment: Fragment() {
             showToast(getString(R.string.empty_name))
             return
         }
-
-        startProgress()
+        //Trial
+        //val transaction = requireActivity().supportFragmentManager.beginTransaction()
+        //transaction.replace(R.id.truecaller, SignUpAddProfilePhotoFragment.newInstance())
+        //transaction.commit()
+        //startProgress()
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = "${binding.etFirstName.text} ${binding.etLastName.text}"
         viewModel.completeProfile(requestMap)
+
     }
 
     private fun startProgress() {

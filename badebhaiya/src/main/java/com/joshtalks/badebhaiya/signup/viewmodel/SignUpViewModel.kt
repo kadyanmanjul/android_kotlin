@@ -22,6 +22,7 @@ import com.joshtalks.badebhaiya.signup.response.LoginResponse
 //import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.VerificationStatus
+import com.truecaller.android.sdk.TrueProfile
 import id.zelory.compressor.Compressor
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,6 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
     var mobileNumber = EMPTY
     val profilePicUploadApiCallStatus = MutableLiveData<ApiCallStatus>()
-
     fun sendPhoneNumberForOTP(phoneNumber: String, countryCode: String) {
         viewModelScope.launch {
             try {
@@ -57,7 +57,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
             try {
                 val reqObj = VerifyOTPRequest("+91", phoneNumber, otp)
                 val response = repository.verifyOTP(reqObj)
-                Log.i(TAG, "verifyOTP: $response")
+                Log.i(TAG, "verifyOTP: $response, ${response.isSuccessful}")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         updateUserFromLoginResponse(it)
@@ -76,6 +76,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     }
 
     private fun updateUserFromLoginResponse(loginResponse: LoginResponse) {
+        Log.i(TAG, "updateUserFromLoginResponse() called with: loginResponse = $loginResponse")
+
         val user = User.getInstance()
         user.userId = loginResponse.userId
         user.token = loginResponse.token
@@ -88,6 +90,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 val response = repository.getUserDetailsForSignUp(User.getInstance().userId)
+                Log.d(TAG, "fetchUser() called:- ${response.isSuccessful}")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         User.getInstance().updateFromResponse(it)
@@ -117,14 +120,18 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
             try {
                 val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
                 if (response.isSuccessful) {
+                    Log.i("Yashen","${response.code()}")
+
                     response.body()?.let {
                         User.getInstance().updateFromResponse(it)
                         signUpStatus.postValue(SignUpStepStatus.NameEntered)
                     }
                 }
+
             } catch (ex: Exception) {
 
             }
+
         }
     }
 
@@ -210,6 +217,29 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     }
                 }
             } catch (ex: Exception) {
+
+            }
+        }
+    }
+
+    fun trueCallerLogin( user:TrueProfile)
+    {
+        viewModelScope.launch {
+            try {
+                val requestTrueUser = mutableMapOf<String, String>()
+                requestTrueUser["payload"] = user.payload
+               requestTrueUser["signature"] = user.signature
+                requestTrueUser["signature_algorithm"] = user.signatureAlgorithm
+                val response = repository.trueCallerLogin(requestTrueUser)
+                if(response.isSuccessful)
+                {
+                    response.body()?.let{
+                        updateUserFromLoginResponse(it)
+                    }
+                }
+            }
+            catch (ex: Exception)
+            {
 
             }
         }

@@ -46,20 +46,7 @@
 
 
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnNext"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_34sdp"
-                android:layout_marginBottom="@dimen/_46sdp"
-                android:background="@drawable/next_button_selector"
-                android:paddingHorizontal="@dimen/_50sdp"
-                android:text="@string/next"
-                android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_17ssp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

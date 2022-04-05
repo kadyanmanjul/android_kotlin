@@ -1,12 +1,27 @@
 package com.joshtalks.badebhaiya.feed.model
 
+import android.os.Build
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.util.ArrayList
+import java.util.Locale
+import java.util.TimeZone
 import kotlinx.android.parcel.Parcelize
 
+data class RoomListResponse(
+    @SerializedName("live_room")
+    val liveRoomList: List<RoomListResponseItem>?,
+
+    @SerializedName("schedule_room")
+    val scheduledRoomList: List<RoomListResponseItem>?
+)
+
+@Parcelize
 data class RoomListResponseItem(
     @SerializedName("id")
-    val roomId: String,
+    val roomId: Int,
     @SerializedName("audience_count")
     var audienceCount: String?,
     @SerializedName("channel_name")
@@ -19,8 +34,52 @@ data class RoomListResponseItem(
     var liveRoomUserList: ArrayList<LiveRoomUser>?,
     @SerializedName("topic")
     val topic: String?,
-    var conversationRoomQuestionId:Int?=null
-)
+    @SerializedName("start_time")
+    val startTime: String?,
+    @SerializedName("ended")
+    val endTime: String?,
+    @SerializedName("is_scheduled")
+    var isScheduled: Boolean?,
+    @SerializedName("speakers_data")
+    val speakersData: SpeakerData?,
+    var conversationRoomQuestionId: Int? = null,
+    var conversationRoomType: ConversationRoomType? = null,
+) : Parcelable {
+    val startTimeDate: Long
+        get() {
+            return try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    ZonedDateTime.parse(startTime).toEpochSecond() * 1000
+                } else {
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }.parse(startTime).time
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                0
+            }
+        }
+}
+
+enum class ConversationRoomType() {
+    LIVE,
+    NOT_SCHEDULED,
+    SCHEDULED;
+}
+
+@Parcelize
+data class SpeakerData(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("user_id")
+    val userId: String?,
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("photo_url")
+    val photoUrl: String?,
+)  : Parcelable
+
 @Parcelize
 data class LiveRoomUser(
     @SerializedName("id")
@@ -41,7 +100,7 @@ data class LiveRoomUser(
     var isSpeaking: Boolean = false,
     @SerializedName("is_hand_raised")
     var isHandRaised: Boolean = false,
-    @SerializedName("mentor_id")
-    var mentorId: String,
+    @SerializedName("user_id")
+    var userId: String,
     var isInviteSent: Boolean = false
 ) : Parcelable

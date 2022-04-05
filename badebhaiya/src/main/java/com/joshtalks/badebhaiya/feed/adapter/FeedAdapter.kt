@@ -4,32 +4,54 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
+import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 
 class FeedAdapter :
-    RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
+    ListAdapter<RoomListResponseItem, FeedAdapter.FeedViewHolder>(DIFF_CALLBACK) {
 
-    var itemClick: ((RoomListResponseItem, View) -> Unit)? = null
-    var roomList: List<RoomListResponseItem> = listOf()
+    companion object DIFF_CALLBACK : DiffUtil.ItemCallback<RoomListResponseItem>() {
+        override fun areItemsTheSame(
+            oldItem: RoomListResponseItem,
+            newItem: RoomListResponseItem
+        ): Boolean {
+            return oldItem.roomId == newItem.roomId
+        }
 
-    fun updateRoomList(roomList: List<RoomListResponseItem>){
-        this.roomList = roomList
+        override fun areContentsTheSame(
+            oldItem: RoomListResponseItem,
+            newItem: RoomListResponseItem
+        ): Boolean {
+            return oldItem == newItem
+        }
     }
+
+    var callback: ConversationRoomItemCallback? = null
+
     inner class FeedViewHolder(private val item: LiRoomEventBinding) :
         RecyclerView.ViewHolder(item.root) {
         fun onBind(room: RoomListResponseItem) {
             item.roomData = room
             item.root.setOnClickListener {
-                itemClick?.invoke(room, item.root)
+                if (room.conversationRoomType == ConversationRoomType.LIVE) {
+                    callback?.joinRoom(room, it)
+                } else if (room.isScheduled == true) {
+                    callback?.viewRoom(room, it)
+                } else {
+                    callback?.setReminder(room, it)
+                }
             }
+            item.callback = callback
         }
     }
 
-    fun setListener(function: ((RoomListResponseItem, View) -> Unit)?) {
-        itemClick = function
+    fun setListener(callback: ConversationRoomItemCallback) {
+        this.callback = callback
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
@@ -43,8 +65,12 @@ class FeedAdapter :
     }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
-        holder.onBind(roomList[position])
+        holder.onBind(getItem(position))
     }
 
-    override fun getItemCount() = roomList.size
+    interface ConversationRoomItemCallback {
+        fun joinRoom(room: RoomListResponseItem, view: View)
+        fun setReminder(room: RoomListResponseItem, view: View)
+        fun viewRoom(room: RoomListResponseItem, view: View)
+    }
 }

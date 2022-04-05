@@ -36,6 +36,7 @@ const val EMAIL_HINT = 3
 const val MAX_YEAR = 6
 const val ALPHA_MAX = 1F
 const val ALPHA_MIN = 0.45F
+const val TAG = "Manjul"
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
@@ -223,6 +224,7 @@ class FirebaseRemoteConfigKey {
         const val VOIP_CALL_RECONNECT_TIME = "VOIP_CALL_RECONNECT_TIME"
         const val VOIP_FEEDBACK_MESSAGE = "VOIP_FEEDBACK_MESSAGE"
         const val VOIP_FEEDBACK_MESSAGE_NEW = "VOIP_FEEDBACK_MESSAGE_NEW"
+
 
         //UPDATE PIC STRINGS
         const val ADD_PROFILE_PHOTO = "ADD_PROFILE_PHOTO"

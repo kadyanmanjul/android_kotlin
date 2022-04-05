@@ -10,9 +10,9 @@ import com.joshtalks.badebhaiya.signup.response.LoginResponse
 const val USER_PERSISTENT_KEY = "USER_PERSISTENT_KEY"
 
 data class User(
-    @SerializedName("first_name") var firstName: String? = null,
-    @SerializedName("last_name") var lastName: String? = null,
-    @SerializedName("user_id") var userId: String = EMPTY,
+    @SerializedName("full_name") var firstName: String? = null,
+    //@SerializedName("last_name") var lastName: String? = null,
+    @SerializedName("uuid") var userId: String = EMPTY,
     @SerializedName("token") var token: String = EMPTY,
     @SerializedName("photo_url") var profilePicUrl: String? = null,
     @SerializedName("mobile") var mobile: String = EMPTY
@@ -45,7 +45,7 @@ data class User(
 
     fun updateFromResponse(user: User) {
         this.firstName = user.firstName
-        this.lastName = user.lastName
+        //this.lastName = user.lastName
         this.mobile = user.mobile
         if (this.profilePicUrl.isNullOrEmpty()) this.profilePicUrl = user.profilePicUrl
         if (this.userId.isEmpty()) this.userId = user.userId

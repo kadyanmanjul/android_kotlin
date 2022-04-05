@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.signup
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -13,8 +14,11 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.TemporaryFeedActivity
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
+import com.joshtalks.badebhaiya.core.USER_ID
 import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
@@ -53,15 +57,16 @@ class SignUpActivity: AppCompatActivity() {
                     openOTPVerificationFragment()
                 }
                 SignUpStepStatus.NameMissing -> {
-                   // openEnterNameFragment()
+                    openEnterNameFragment()
                 }
                 SignUpStepStatus.ProfilePicMissing, SignUpStepStatus.NameEntered -> {
                     openUploadProfilePicFragment()
                 }
                 SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.ProfileCompleted, SignUpStepStatus.ProfilePicUploaded -> {
-                    openFeedActivity()
+                    openNextActivity()
                     this@SignUpActivity.finishAffinity()
                 }
+
             }
         }
     }
@@ -75,7 +80,7 @@ class SignUpActivity: AppCompatActivity() {
     private fun openEnterTrueFragment() {
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpEnterTrueFragment::class.java.name)
-            //addToBackStack(null)
+            addToBackStack(null)
             replace(R.id.container, SignUpEnterTrueFragment.newInstance(), SignUpEnterTrueFragment::class.java.name)
         }
     }
@@ -87,12 +92,12 @@ class SignUpActivity: AppCompatActivity() {
         }
     }
 
-//    private fun openEnterNameFragment() {
-//        supportFragmentManager.commit(true) {
-//            addToBackStack(SignUpEnterNameFragment::class.java.name)
-//            replace(R.id.welcome, SignUpEnterNameFragment.newInstance(), SignUpEnterNameFragment::class.java.name)
-//        }
-//    }
+    private fun openEnterNameFragment() {
+        supportFragmentManager.commit(true) {
+            addToBackStack(SignUpEnterNameFragment::class.java.name)
+            replace(R.id.welcome, SignUpEnterNameFragment.newInstance(), SignUpEnterNameFragment::class.java.name)
+        }
+    }
 
     private fun openUploadProfilePicFragment() {
         supportFragmentManager.commit(true) {
@@ -101,8 +106,16 @@ class SignUpActivity: AppCompatActivity() {
         }
     }
 
-    private fun openFeedActivity() {
-        TemporaryFeedActivity.openFeedActivity(this)
+    private fun openNextActivity() {
+        if (intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY)
+            ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
+        else
+        {
+            var intent=Intent(this,FeedActivity::class.java)
+            startActivity(intent)
+        }
+
+            //TemporaryFeedActivity.openFeedActivity(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -113,5 +126,23 @@ class SignUpActivity: AppCompatActivity() {
             AppDirectory.copy(url, imageUpdatedPath)
             viewModel.uploadMedia(imageUpdatedPath)
         }
+    }
+
+    companion object {
+        private const val REDIRECT = ""
+        const val REDIRECT_TO_PROFILE_ACTIVITY = "redirect_to_profile_activity"
+
+        @JvmStatic
+        fun start(context: Context, redirect: String? = null, userId: String? = null) {
+            val starter = Intent(context, SignUpActivity::class.java)
+                .putExtra(REDIRECT, redirect)
+                .putExtra(USER_ID, userId)
+            context.startActivity(starter)
+        }
+
+        fun getIntent(context: Context, redirect: String? = null, userId: String? = null): Intent =
+            Intent(context, SignUpActivity::class.java)
+                .putExtra(REDIRECT, redirect)
+                .putExtra(USER_ID, userId)
     }
 }

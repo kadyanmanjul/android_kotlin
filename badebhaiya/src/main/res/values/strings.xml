@@ -7,13 +7,13 @@
     <string name="upcoming_rooms">Upcoming Rooms</string>
     <string name="join_now">Join Now</string>
     <string name="log_out">Log Out</string>
-    <string name="full_name_prompt">What’s your full name?</string>
+    <string name="full_name_prompt">What\'s your full name?</string>
     <string name="real_name_text">People use their real name on BB App</string>
     <string name="first">First</string>
     <string name="last">Last</string>
     <string name="next">Next</string>
     <string name="signup_with_prompt">Sign in with your phone #</string>
-    <string name="privacy_policy_text">By entering your number, you’re agreeing to our Terms of\n Service and Privacy Policy. Thanks!</string>
+    <string name="privacy_policy_text">By entering your number, you\'re agreeing to our Terms of\n Service and Privacy Policy. Thanks!</string>
     <string name="country_code">+91</string>
     <string name="phone_number">Phone Number</string>
     <string name="enter_otp_prompt">Please verify your OTP</string>
@@ -48,6 +48,45 @@
     <string name="profile_photo">Profile photo</string>
     <string name="full_name_concatenated">%s %s</string>
     <string name="start_a_room">Start a room</string>
-    <string name="wait_for_second">Wait for %s seconds</string>
+    <string name="continue_label">Continue</string>
+    <string name="create_your_room">Create your Room</string>
+    <string name="name_your_room">Name your Room</string>
+    <string name="start_room">Start Room</string>
+    <string name="retry">Retry</string>
+
+    <string name="hallway">Hallway</string>
+    <string name="speakers">Speakers</string>
+    <string name="audience">Audience</string>
+    <string name="finding_conversation_partner">Finding Conversation Partners</string>
+
+    <string name="something_went_wrong">Oops! Something Went Wrong</string>
+    <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
+    <string name="room_title">Join Conversation Room</string>
+    <string name="join">Join</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="convo_notification_title">%1s has started a conversation about %1s</string>
+    <string name="end_room">End Room</string>
+    <string name="storage_permission_message">To view or send media, allow Bade Bhaiya App  access to your device\'s  photos, media and files.</string>
+    <string name="record_permission_message">To record a Voice Message, allow Bade Bhaiya App  access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
+    <string name="camera_permission_message">To capture photos and videos allow Bade Bhaiya App access to your camera  and your device\'s  photos, media and files.</string>
+    <string name="settings">Settings</string>
+    <string name="not_now">Not Now</string>
+    <string name="call_start_permission_message_rational">To start speaking practice, please allow permissions for location, making calls, storage and microphone.</string>
+    <string name="call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
+    <string name="convo_room_start_permission_message">To enter/start room practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
+    <string name="demo_call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Phone on.</string>
+    <string name="alert_end_room_title">Are you sure, you want to end this room for everyone</string>
+    <string name="cancel">Cancel</string>
+    <string name="leave_room">Leave quietly</string>
+    <string name="generic_message_for_error">An error occurred, please try again!</string>
+    <string name="decline">Decline</string>
+    <string name="answer">Answer</string>
+    <string name="join_conversation">Join Conversation</string>
+    <string name="view_full_profile">View full profile</string>
+    <string name="move_to_audience">Move to audience</string>
+    <string name="move_to_speaker">Move to speaker</string>
+    <string name="cancel_button">Cancel Button</string>
+    <string name="open_to_everyone">Open to Everyone</string>
+    <string name="no_raised_hand_text">No one has their hand raised yet</string>
 
 </resources>

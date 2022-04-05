@@ -86,7 +86,7 @@
             android:layout_height="@dimen/_34sdp"
             android:layout_marginBottom="@dimen/_46sdp"
             android:background="@drawable/next_button_selector"
-            android:onClick="@{() -> handler.loginViaTrueCaller()}"
+            android:onClick="@{() -> handler.loginViaPhoneNumber()}"
             android:paddingHorizontal="@dimen/_50sdp"
             android:text="@string/next"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
