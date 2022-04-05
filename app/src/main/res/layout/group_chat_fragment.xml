@@ -52,6 +52,7 @@
             android:elevation="@dimen/_2sdp"
             android:onClick="@{vm::openRequestList}"
             android:orientation="horizontal"
+            android:visibility="@{vm.showRequestsTab ? View.VISIBLE : View.GONE, default=gone}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout">
@@ -65,9 +66,10 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:paddingHorizontal="@dimen/_7sdp"
                 android:paddingVertical="@dimen/_2sdp"
-                android:text="2"
+                android:text="@{vm.requestCount}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:visibility="@{vm.requestCount == `` ? View.INVISIBLE : View.VISIBLE, default=invisible}" />
 
             <TextView
                 android:layout_width="match_parent"

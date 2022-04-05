@@ -142,13 +142,12 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         return database.groupMemberDao().getMembersFromGroup(groupId)
     }
 
-    suspend fun getGroupOnlineCount(groupId: String): Int? {
+    suspend fun getOnlineAndRequestCount(groupId: String): Map<String, Any?> {
         return try {
-            val response = apiService.getGroupOnlineCount(groupId)
-            return (response["online_count"] as Double).toInt()
+            return apiService.getGroupOnlineCount(groupId)
         } catch (e: Exception) {
             showToast("An error has occurred")
-            0
+            mapOf()
         }
     }
 

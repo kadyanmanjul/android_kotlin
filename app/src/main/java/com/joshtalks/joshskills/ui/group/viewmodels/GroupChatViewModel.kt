@@ -57,9 +57,11 @@ class GroupChatViewModel : BaseViewModel() {
     val groupCreator = ObservableField("")
     val groupJoinStatus = ObservableField("")
     var memberCount = ObservableField(0)
+    var requestCount = ObservableField("")
     val memberAdapter = GroupMemberAdapter()
     val groupSubHeader = ObservableField("")
     val fetchingGrpInfo = ObservableBoolean(false)
+    val showRequestsTab = ObservableBoolean(false)
     var scrollToEnd = false
     var unreadCount = 0
     private val chatService : ChatService = PubNubService
@@ -370,15 +372,27 @@ class GroupChatViewModel : BaseViewModel() {
         if (showLoading) fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
-            val onlineCount = repository.getGroupOnlineCount(groupId)
+            val onlineAndRequestCount = repository.getOnlineAndRequestCount(groupId)
+            val onlineCount = (onlineAndRequestCount["online_count"] as Double).toInt()
+            val requestCnt = (onlineAndRequestCount["request_count"] as Double).toInt()
             memberCount.set(memberResult.size)
+            requestCount.set("$requestCnt")
             groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
+            setRequestsTab()
             withContext(Dispatchers.Main) {
                 memberAdapter.addMembersToList(memberResult)
                 if (showLoading) fetchingGrpInfo.set(false)
                 else showToast("Removed member from the group", Toast.LENGTH_LONG)
                 dismissProgressDialog()
             }
+        }
+    }
+
+    fun setRequestsTab() {
+        when {
+            groupType.get().equals(OPENED_GROUP) -> showRequestsTab.set(false)
+            adminId != Mentor.getInstance().getId() -> showRequestsTab.set(false)
+            else -> showRequestsTab.set(true)
         }
     }
 
@@ -412,8 +426,6 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = CLEAR_CHAT_TEXT
         singleLiveEvent.value = message
     }
-
-
 
     private fun getNotification(msg: String) : Map<String, Any?> {
         val pushPayloadHelper = PushPayloadHelper()
