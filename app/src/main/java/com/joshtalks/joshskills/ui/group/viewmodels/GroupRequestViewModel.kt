@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.ui.group.adapters.GroupRequestAdapter
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
 import com.joshtalks.joshskills.ui.group.model.GroupRequest
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
+import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,7 +41,7 @@ class GroupRequestViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-    val requestBtnResponse: (String, Boolean) -> Unit = { mentorId, allow ->
+    val requestBtnResponse: (String, String, Boolean) -> Unit = { mentorId, name, allow ->
         showProgressDialog("Allowing to join group...")
         viewModelScope.launch {
             try {
@@ -51,12 +52,11 @@ class GroupRequestViewModel : BaseViewModel() {
                     groupType = CLOSED_GROUP
                 )
                 val response = repository.sendRequestResponse(request)
-                if (response)
-                    dismissProgressDialog()
-                else {
-                    dismissProgressDialog()
+                if (response && allow)
+                    pushMetaMessage("${name.substringBefore(" ")} has joined the group", groupId, mentorId)
+                else
                     showToast("Error responding to the request")
-                }
+                dismissProgressDialog()
             } catch (e: Exception) {
                 dismissProgressDialog()
                 showToast("Error responding to the request")
