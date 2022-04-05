@@ -2,9 +2,11 @@ package com.joshtalks.joshskills.voip.communication
 
 import com.google.gson.Gson
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.CHANNEL
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.model.Channel
 import com.joshtalks.joshskills.voip.communication.model.Communication
 import com.joshtalks.joshskills.voip.communication.model.Error
+import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.Message
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PubNub
@@ -56,10 +58,11 @@ internal class PubNubSubscriber : SubscribeCallback() {
                 // So that we will ignore our own message
                 if(pnMessageResult.userMetadata == null)
                     return@launch
-                val message = if (pnMessageResult.userMetadata.asInt == CHANNEL)
-                    Gson().fromJson(messageJson, Channel::class.java)
-                else
-                    Gson().fromJson(messageJson, Message::class.java)
+                val message = when(pnMessageResult.userMetadata.asInt) {
+                    CHANNEL -> Gson().fromJson(messageJson, Channel::class.java)
+                    INCOMING_CALL -> Gson().fromJson(messageJson, IncomingCall::class.java)
+                    else -> Gson().fromJson(messageJson, Message::class.java)
+                }
                 messageFlow.emit(message)
             } catch (e : Exception) {
                 e.printStackTrace()

@@ -187,7 +187,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                     is IncomingCall -> {
                         voipLog?.log("Incoming Call -> $it")
-                        updateCallDirection(CallDirection.INCOMING)
+                        updateCallDirection(INCOMING)
                         calling.notificationLayout()
                         /**
                          * Show Incoming Call Notification
