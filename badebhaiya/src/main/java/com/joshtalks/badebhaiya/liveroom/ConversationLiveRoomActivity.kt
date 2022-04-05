@@ -325,6 +325,10 @@ class ConversationLiveRoomActivity : BaseActivity(),
         roomCreatedByUser: Boolean,
         roomId: Int?
     ) {
+        Log.d(
+            "ABC2",
+            "setValues() called with: channelName = $channelName, uid = $uid, token = $token, roomCreatedByUser = $roomCreatedByUser, roomId = $roomId"
+        )
         this.channelName = channelName
         vm.setAgoraUid(uid)
         this.token = token
@@ -392,7 +396,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
             vm.getModeratorId(),
             channelTopic,
             roomId,
-            roomQuestionId
+            roomQuestionId,
+            isRoomCreatedByUser
         )
     }
 
@@ -513,7 +518,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         vm.setModeratorId(intent?.getIntExtra(MODERATOR_UID, 0))
         Log.d(
             "ABC2",
-            "getIntentExtras() MODERATOR_UID called ${intent?.getIntExtra(MODERATOR_UID, 0)}"
+            "getIntentExtras() MODERATOR_UID called ${intent?.getIntExtra(MODERATOR_UID, 0)} isModerator : ${intent.getBooleanExtra(IS_ROOM_CREATED_BY_USER, false)}"
         )
         token = intent?.getStringExtra(TOKEN)
         roomId = intent?.getIntExtra(ROOM_ID, 0)
@@ -1284,33 +1289,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             topicName: String? = null,
             flags: Array<Int> = arrayOf()
         ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
-
-            putExtra(CHANNEL_NAME, channelName)
-            putExtra(UID, uid)
-            putExtra(MODERATOR_UID, moderatorId)
-            putExtra(TOKEN, token)
-            putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
-            putExtra(ROOM_ID, roomId)
-            putExtra(ROOM_QUESTION_ID, roomQuestionId)
-            putExtra(TOPIC_NAME, topicName)
-            flags.forEach { flag ->
-                this.addFlags(flag)
-            }
-        }
-
-        fun startRoom(
-            context: Context,
-            channelName: String?,
-            uid: Int?,
-            token: String?,
-            isRoomCreatedByUser: Boolean,
-            roomId: Int?,
-            roomQuestionId: Int? = null,
-            moderatorId: Int? = null,
-            topicName: String? = null,
-            flags: Array<Int> = arrayOf()
-        ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
-
+            Log.d("ABC2", "getIntent() called")
             putExtra(CHANNEL_NAME, channelName)
             putExtra(UID, uid)
             putExtra(MODERATOR_UID, moderatorId)
@@ -1337,6 +1316,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             flags: Array<Int> = arrayOf()
         ) {
             val intent = Intent(activity, ConversationLiveRoomActivity::class.java).apply {
+                Log.d("ABC2", "startRoomActivity() called isRoomCreatedByUser ${isRoomCreatedByUser}")
                 putExtra(CHANNEL_NAME, channelName)
                 putExtra(UID, uid)
                 putExtra(MODERATOR_UID, moderatorId)

@@ -91,7 +91,7 @@ class FeedViewModel : ViewModel() {
                     )
                 )
                 if (response.isSuccessful) {
-                    showToast("Room created successfully")
+                    showToast("Room joined successfully")
                     message.what = OPEN_ROOM
                     message.data = Bundle().apply {
                         putParcelable(

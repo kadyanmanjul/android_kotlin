@@ -12,34 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.BottomSheetRaisedHandsBinding
+import com.joshtalks.badebhaiya.databinding.LiBottomSheetRaisedHandsBinding
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.viewmodel.ConversationRoomViewModel
-/*
-
-class RaisedHandsBottomSheet : DialogFragment() {
-    private lateinit var binding: BottomSheetRaisedHandsBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        isCancelable = true
-        binding = DataBindingUtil.inflate(
-            inflater, R.layout.bottom_sheet_raised_hands, container, false
-        )
-        binding.lifecycleOwner = this
-        binding.fragment = this
-        return binding.root
-    }
-
-    interface HandRaiseSheetListener {
-        fun onUserInvitedToSpeak(user: LiveRoomUser)
-    }
-}*/
 
 class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
-    private lateinit var binding: BottomSheetRaisedHandsBinding
+    private lateinit var binding: LiBottomSheetRaisedHandsBinding
     private var roomId: Int? = null
     private var moderatorUid: Int? = null
     private var moderatorName: String? = null

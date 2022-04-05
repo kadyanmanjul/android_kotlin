@@ -70,9 +70,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                     channelName = room.channelName,
                                     uid = room.uid,
                                     token =room.token,
-                                    isRoomCreatedByUser = true,
+                                    isRoomCreatedByUser = room.moderatorId == room.uid,
                                     roomId = room.roomId,
-                                    moderatorId = room.uid,
+                                    moderatorId = room.moderatorId,
                                     topicName = it.getString(TOPIC),
                                     flags = arrayOf()
 
@@ -98,9 +98,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             channelName = this.channelName,
                             uid = this.uid,
                             token =this.token,
-                            isRoomCreatedByUser = true,
+                            isRoomCreatedByUser = true ,
                             roomId = this.roomId,
-                            moderatorId = this.uid,
+                            moderatorId = this.moderatorId,
                             topicName = topic,
                             flags = arrayOf()
 
@@ -162,19 +162,5 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         room.speakersData?.userId?.let {
             ProfileActivity.openProfileActivity(this,it)
         }
-        /*item?.let { item ->
-            ConversationLiveRoomActivity.startRoomActivity(
-                activity = this@FeedActivity,
-                channelName = item.channelId,
-                uid = item.startedBy,
-                token = EMPTY,
-                isRoomCreatedByUser = false,
-                roomId = item.roomId,
-                moderatorId = item.startedBy,
-                topicName = item.topic,
-                flags = arrayOf()
-
-            )
-        }*/
     }
 }

@@ -35,7 +35,6 @@ import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 const val ROOM_RTC_USER_UID_KEY = "room_user_uid"
 const val ROOM_RTC_MODERATOR_UID_KEY = "room_moderator_uid"
@@ -104,7 +103,8 @@ class ConvoWebRtcService : Service() {
             moderatorId: Int?,
             channelTopic: String?,
             roomId: Int?,
-            roomQuestionId: Int?
+            roomQuestionId: Int?,
+            isModerator: Boolean? = false
         ) {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
@@ -118,7 +118,7 @@ class ConvoWebRtcService : Service() {
                 putExtra(ROOM_RTC_CHANNEL_TOPIC, channelTopic)
                 putExtra(ROOM_RTC_ROOM_ID, roomId)
                 putExtra(ROOM_RTC_ROOM_Q, roomQuestionId)
-                putExtra(ROOM_RTC_IS_MODERATOR, moderatorId == uid)
+                putExtra(ROOM_RTC_IS_MODERATOR, isModerator)
             }
             serviceIntent.startServiceForWebrtc()
         }
@@ -295,7 +295,10 @@ class ConvoWebRtcService : Service() {
     inner class HangUpRtcOnPstnCallAnsweredListener : PhoneStateListener() {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
-            Timber.tag(TAG).e("RTC=    %s", state)
+            Log.d(
+                TAG,
+                "onCallStateChanged() called with: RTC= = $state, phoneNumber = $phoneNumber"
+            )
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     //TODO recheck this code
@@ -342,7 +345,7 @@ class ConvoWebRtcService : Service() {
             ex.printStackTrace()
         }
 
-        Timber.tag(TAG).e("onCreate")
+        Log.d(TAG, "onCreate() called")
         pstnCallState = CallState.CALL_STATE_IDLE
         /*handlerThread.start()
         mHandler = Handler(handlerThread.looper)*/
@@ -355,7 +358,7 @@ class ConvoWebRtcService : Service() {
 
     private fun initEngine(callback: () -> Unit) {
         try {
-            rtcEngine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
+            rtcEngine = AppObjectController.initRtcEngine(AppObjectController.joshApplication)
             try {
                 Thread.sleep(200)
             } catch (e: InterruptedException) {
@@ -422,7 +425,10 @@ class ConvoWebRtcService : Service() {
 
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
+        Log.d(
+            TAG,
+            "onStartCommand() called with: intent = $intent, flags = $flags, startId = $startId"
+        )
         removeNotifications()
         executor.execute {
             intent?.action?.run {
@@ -431,7 +437,7 @@ class ConvoWebRtcService : Service() {
                     try {
                         when {
                             this == InitLibrary().action -> {
-                                Timber.tag(TAG).e("LibraryInit")
+                                Log.d(TAG, "LibraryInit() called")
                                 showNotification(
                                     conversationRoomNotification(InitLibrary().action),
                                     ROOM_CALL_NOTIFICATION_ID
@@ -598,7 +604,7 @@ class ConvoWebRtcService : Service() {
         super.onTaskRemoved(rootIntent)
         isEngineInitialized = false
         retryInitLibrary = 0
-        Timber.tag(TAG).e("OnTaskRemoved")
+        Log.d(TAG, "onTaskRemoved() called with: rootIntent = $rootIntent")
     }
 
     override fun onDestroy() {
@@ -618,7 +624,7 @@ class ConvoWebRtcService : Service() {
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
         pstnCallState = CallState.CALL_STATE_IDLE
         executor.shutdown()
-        Timber.tag(TAG).e("onDestroy")
+        Log.d(TAG, "onDestroy() called")
         super.onDestroy()
     }
 
@@ -640,7 +646,7 @@ class ConvoWebRtcService : Service() {
         if (action == InitLibrary().action){
             isHavingPendingIntent = false
         }
-        Timber.tag(TAG).e("actionNotification  ")
+        Log.d(TAG, "conversationRoomNotification() called with: action = $action")
         mNotificationManager?.cancelAll()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannelName: CharSequence = "Voip Call Status"

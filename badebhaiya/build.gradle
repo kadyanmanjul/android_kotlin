@@ -195,7 +195,7 @@ dependencies {
     // crashlytics
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
     //agora
-    implementation files("libs/agora-rtc-sdk.jar")
+    implementation 'io.agora.rtc:full-sdk:3.6.2'
     implementation 'com.patloew.colocation:colocation:1.0.0'
     //pubnub
     implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'

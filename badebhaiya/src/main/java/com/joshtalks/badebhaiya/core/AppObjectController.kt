@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.core
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
@@ -97,21 +98,16 @@ class AppObjectController {
                 .create()
         }
 
-        private fun initRtcEngine(context: Context): RtcEngine? {
+        fun initRtcEngine(context: Context): RtcEngine? {
             try {
-
                 mRtcEngine = RtcEngine.create(
                     context,
                     BuildConfig.AGORA_API_KEY,
                     object : IRtcEngineEventHandler() {})
             } catch (ex: Throwable) {
+                Log.e("ABCService", "initRtcEngine: ",ex )
                 ex.printStackTrace()
             }
-            return mRtcEngine
-        }
-
-        fun getRtcEngine(context: Context): RtcEngine? {
-            initRtcEngine(context)
             return mRtcEngine
         }
     }

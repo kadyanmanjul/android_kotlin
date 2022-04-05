@@ -427,7 +427,6 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             setCurrentUser(user)
             message.what = HIDE_PROGRESSBAR
             singleLiveEvent.postValue(message)
-
         }
         if (user.isSpeaker == true) {
             val list = getSpeakerList()

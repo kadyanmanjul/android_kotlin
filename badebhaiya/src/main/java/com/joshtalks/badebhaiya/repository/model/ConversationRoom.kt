@@ -19,6 +19,9 @@ data class ConversationRoomResponse(
     @SerializedName("room_id")
     val roomId: Int,
 
+    @SerializedName("moderator_id")
+    val moderatorId: Int,
+
     @SerializedName("token")
     val token: String?,
 

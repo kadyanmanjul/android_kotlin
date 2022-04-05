@@ -18,5 +18,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/josh_skill" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
