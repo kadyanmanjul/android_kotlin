@@ -19,7 +19,7 @@ class GroupRequestViewModel : BaseViewModel() {
 
     val repository = GroupRepository()
     val requestAdapter = GroupRequestAdapter()
-    val fetchingGrpInfo = ObservableBoolean(false)
+    val noRequests = ObservableBoolean(false)
 
     var conversationId: String = ""
     var groupId: String = ""
@@ -66,10 +66,14 @@ class GroupRequestViewModel : BaseViewModel() {
     }
 
     fun getRequestList() {
+        showProgressDialog("Loading...")
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.fetchRequestList(groupId) ?: listOf()
             withContext(Dispatchers.Main) {
+                if (response.isEmpty())
+                    noRequests.set(true)
                 requestAdapter.addRequestsToList(response)
+                dismissProgressDialog()
             }
         }
     }
