@@ -8,12 +8,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.ui.call.CALLING_SERVICE_ACTION
-import com.joshtalks.joshskills.ui.call.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.ui.call.STOP_SERVICE
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 
 const val USER_UNIQUE_ID = "user_unique_id"

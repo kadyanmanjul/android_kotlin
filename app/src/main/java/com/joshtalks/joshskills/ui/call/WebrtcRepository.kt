@@ -23,6 +23,9 @@ import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.voip.constant.MUTE
+import com.joshtalks.joshskills.voip.constant.SPEAKER_OFF_REQUEST
+import com.joshtalks.joshskills.voip.constant.SPEAKER_ON_REQUEST
+import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.voipLog
@@ -124,6 +127,20 @@ class WebrtcRepository {
         voipLog?.log("Disconnect call")
         val msg = Message().apply {
             what = MUTE
+        }
+        sendMessageToRemoteService(msg)
+    }
+
+    fun turnOnSpeaker() {
+        val msg = Message().apply {
+            what = SPEAKER_ON_REQUEST
+        }
+        sendMessageToRemoteService(msg)
+    }
+
+    fun turnOffSpeaker() {
+        val msg = Message().apply {
+            what = SPEAKER_OFF_REQUEST
         }
         sendMessageToRemoteService(msg)
     }

@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.voip.audiocontroller
 
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 internal interface AudioControllerInterface {
     fun registerAudioControllerReceivers()
-    fun observeAudioRoute(): MutableSharedFlow<AudioRouteConstants>
+    fun observeAudioRoute(): SharedFlow<AudioRouteConstants>
     fun switchAudioToSpeaker()
-    fun switchAudioToEarpiece()
+    fun switchAudioToDefault()
 }

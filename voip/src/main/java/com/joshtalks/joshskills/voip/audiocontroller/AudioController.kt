@@ -55,7 +55,7 @@ class AudioController : AudioControllerInterface {
         audioManager?.isSpeakerphoneOn = true
     }
 
-    override fun switchAudioToEarpiece() {
+    override fun switchAudioToDefault() {
         audioManager?.mode = AudioManager.MODE_IN_COMMUNICATION
         audioManager?.isSpeakerphoneOn = false
     }
