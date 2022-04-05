@@ -9,6 +9,9 @@ class ServerConstants {
         val DISCONNECTED = 4
         val MUTE = 5
         val UNMUTE = 6
+        val INCOMING_CALL = 7
+        val CALL_PICKED = 8
+        val RECONNECTING = 9
     }
 }
 
