@@ -68,6 +68,8 @@ fun setConversationRoomCardActionButton(
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_button_color))
             view.isEnabled = false
+            view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
+
         }
     }
 }

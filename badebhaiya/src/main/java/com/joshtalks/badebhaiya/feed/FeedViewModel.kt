@@ -11,6 +11,7 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -20,6 +21,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import kotlinx.coroutines.launch
 
 const val ROOM_ITEM = "room_item"
+const val USER_ID = "user_id"
 
 class FeedViewModel : ViewModel() {
 
@@ -31,7 +33,8 @@ class FeedViewModel : ViewModel() {
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val repository = ConversationRoomRepository()
-    val onFeedItemClicked: (RoomListResponseItem?, View?) -> Unit = { item, view ->
+
+    /*val onFeedItemClicked: (RoomListResponseItem?, View?) -> Unit = { item, view ->
         message.what = OPEN_ROOM
         message.data = Bundle().apply {
             putParcelable(
@@ -40,10 +43,17 @@ class FeedViewModel : ViewModel() {
             )
         }
         singleLiveEvent.postValue(message)
-    }
+    }*/
 
     fun onProfileClicked() {
-
+        message.what = OPEN_PROFILE
+        message.data = Bundle().apply {
+            putString(
+                USER_ID,
+                User.getInstance().userId
+            )
+        }
+        singleLiveEvent.postValue(message)
     }
 
     fun createRoom(topic: String, callback: CreateRoom.CreateRoomCallback) {

@@ -18,8 +18,10 @@ import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity
+import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
+import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
@@ -52,22 +54,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
-                OPEN_ROOM -> {
+                OPEN_PROFILE ->{
                     it.data?.let {
-                        val item = it.getParcelable<RoomListResponseItem>(ROOM_ITEM)
-                        item?.let { item ->
-                            ConversationLiveRoomActivity.startRoomActivity(
-                                activity = this@FeedActivity,
-                                channelName = item.channelId,
-                                uid = item.startedBy,
-                                token = EMPTY,
-                                isRoomCreatedByUser = false,
-                                roomId = item.roomId,
-                                moderatorId = item.startedBy,
-                                topicName = item.topic,
-                                flags = arrayOf()
-
-                            )
+                        val userId = it.getString(USER_ID, EMPTY)
+                        if (userId.isNullOrBlank().not()){
+                            ProfileActivity.openProfileActivity(this,userId)
                         }
                     }
                 }
@@ -108,11 +99,25 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
         //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
-        Log.d("FeedActivity.kt", "YASH => joinRoom: $room")
+        Log.d("Manjul", "joinRoom() called with: room = $room, view = $view")
+        room?.let { item ->
+            ConversationLiveRoomActivity.startRoomActivity(
+                activity = this@FeedActivity,
+                channelName = item.channelId,
+                uid = item.startedBy,
+                token = EMPTY,
+                isRoomCreatedByUser = false,
+                roomId = item.roomId,
+                moderatorId = item.startedBy,
+                topicName = item.topic,
+                flags = arrayOf()
+
+            )
+        }
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        Log.d("FeedActivity.kt", "YASH => setReminder: ${room.startTime}")
+        Log.d("Manjul", "setReminder() called with: room = $room, view = $view")
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = NotificationHelper.getNotificationIntent(
             this, Notification(
@@ -145,6 +150,23 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
         //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
-        Log.d("FeedActivity.kt", "YASH => viewRoom: $room")
+        Log.d("Manjul", "viewRoom() called with: room = $room, view = $view")
+        val item = room.speakersData?.userId?.let {
+            ProfileActivity.openProfileActivity(this,it)
+        }
+        /*item?.let { item ->
+            ConversationLiveRoomActivity.startRoomActivity(
+                activity = this@FeedActivity,
+                channelName = item.channelId,
+                uid = item.startedBy,
+                token = EMPTY,
+                isRoomCreatedByUser = false,
+                roomId = item.roomId,
+                moderatorId = item.startedBy,
+                topicName = item.topic,
+                flags = arrayOf()
+
+            )
+        }*/
     }
 }

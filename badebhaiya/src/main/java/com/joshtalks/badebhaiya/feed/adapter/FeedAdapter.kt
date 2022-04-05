@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
+import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 
 class FeedAdapter :
@@ -37,7 +38,13 @@ class FeedAdapter :
         fun onBind(room: RoomListResponseItem) {
             item.roomData = room
             item.root.setOnClickListener {
-                callback?.viewRoom(room, it)
+                if (room.conversationRoomType == ConversationRoomType.LIVE) {
+                    callback?.joinRoom(room, it)
+                } else if (room.isScheduled == true) {
+                    callback?.viewRoom(room, it)
+                } else {
+                    callback?.setReminder(room, it)
+                }
             }
             item.callback = callback
         }
