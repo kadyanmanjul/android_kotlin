@@ -304,6 +304,7 @@
             android:clickable="true"
             android:elevation="@dimen/_4sdp"
             android:focusable="true"
+            android:visibility="gone"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
             android:padding="@dimen/_4sdp"

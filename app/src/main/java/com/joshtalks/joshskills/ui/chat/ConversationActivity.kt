@@ -571,11 +571,11 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        conversationBinding.imgFeedBtn.setOnClickListener {
-
-            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
-
-        }
+//        conversationBinding.imgFeedBtn.setOnClickListener {
+//
+//            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
+//
+//        }
         conversationBinding.imgGroupChatBtn.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
@@ -605,6 +605,19 @@ class ConversationActivity :
                 val intent = Intent(this, StartActivity::class.java)
                 GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
                 startActivity(intent)
+            }
+        }
+
+        conversationBinding.imgFeedBtn.setOnClickListener {
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(" ")
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(getString(R.string.feature_locked, firstName))
+            } else {
+                ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity,this)
             }
         }
 
@@ -980,6 +993,21 @@ class ConversationActivity :
                 }
                 else{
                     conversationBinding.imgGameBtn.visibility = GONE
+                }
+                initScoreCardView(userProfileData)
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                    profileFeatureActiveView(true)
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            utilConversationViewModel.userData.collectLatest { userProfileData ->
+                this@ConversationActivity.userProfileData = userProfileData
+                if(inboxEntity.isCourseBought){
+                    conversationBinding.imgFeedBtn.visibility = VISIBLE
+                }
+                else{
+                    conversationBinding.imgFeedBtn.visibility = GONE
                 }
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
