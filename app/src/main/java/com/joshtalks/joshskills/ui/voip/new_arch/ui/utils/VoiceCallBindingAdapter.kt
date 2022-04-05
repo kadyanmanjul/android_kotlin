@@ -12,6 +12,9 @@ import androidx.databinding.ObservableBoolean
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.FPP
+import com.joshtalks.joshskills.base.constants.GROUP
+import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -33,15 +36,15 @@ fun CircleImageView.setProfileImage(imageUrl: String?) {
 fun ConstraintLayout.setCallBackground(callType: Int) {
     if (callType>0) {
         when (callType) {
-             1 -> {
+             PEER_TO_PEER -> {
 //                 Normal Call
                  this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
              }
-             2 -> {
+             FPP -> {
 //                 FPP
                  this.setBackgroundResource(R.drawable.voip_bg)
              }
-             3-> {
+             GROUP -> {
 //                 Group Call
                  this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }

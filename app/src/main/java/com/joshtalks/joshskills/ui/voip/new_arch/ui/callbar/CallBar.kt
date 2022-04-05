@@ -59,6 +59,7 @@ class VoipPref {
             editor.putInt(PREF_KEY_CURRENT_CALL_TYPE, callType)
             editor.putInt(PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID, remoteUserAgoraId)
             editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, timestamp)
+            Log.d(TAG, "updateCallDetails: timestamp --> $timestamp")
             editor.apply()
         }
 
@@ -110,7 +111,9 @@ class VoipPref {
         }
 
         fun getStartTimeStamp(): Long {
-            return preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
+            val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
+            Log.d(TAG, "getStartTimeStamp: $startTime")
+            return startTime
         }
         fun getTopicName(): String {
             return "Lets talks"
@@ -131,14 +134,14 @@ class VoipPref {
 }
 
 class CallBar {
-    val prefListener by lazy { CallTimeStampListener() }
+    val prefListener by lazy { CallTimeStampListener }
 
     init {
         VoipPref.setListener(prefListener)
     }
 
-    fun getCallObserver(): ObservableBoolean {
-        return prefListener.isCallOnGoing
+    fun getTimerLiveData(): LiveData<Long> {
+        return prefListener.observerStartTime()
     }
 
     fun observerVoipState(): LiveData<Int> {
@@ -150,9 +153,9 @@ class CallBar {
     }
 }
 
-class CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener {
-    val isCallOnGoing by lazy {
-        ObservableBoolean(checkTimestamp())
+object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener {
+    private val timerLiveData by lazy {
+        MutableLiveData(checkTimestamp())
     }
 
     private val voipStateLiveData by lazy {
@@ -163,23 +166,20 @@ class CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener
         return voipStateLiveData
     }
 
+    fun observerStartTime(): LiveData<Long> {
+        return timerLiveData
+    }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         Log.d(TAG, "onSharedPreferenceChanged: $key")
         when (key) {
-            PREF_KEY_CURRENT_CALL_START_TIME -> isCallOnGoing.set(checkTimestamp())
+            PREF_KEY_CURRENT_CALL_START_TIME -> timerLiveData.value = checkTimestamp()
             PREF_KEY_WEBRTC_CURRENT_STATE -> voipStateLiveData.postValue(checkVoipState())
         }
     }
 
-    private fun checkTimestamp(): Boolean {
-        val callStartTimestamp = VoipPref.getStartTimeStamp()
-        return if (callStartTimestamp != 0L) {
-            Log.d(TAG, "onSharedPreferenceChanged: $callStartTimestamp")
-            true
-        } else {
-            Log.d(TAG, "onSharedPreferenceChanged: $callStartTimestamp")
-            false
-        }
+    private fun checkTimestamp(): Long {
+        return VoipPref.getStartTimeStamp()
     }
 
     private fun checkVoipState(): Int {

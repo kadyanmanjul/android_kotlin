@@ -8,6 +8,11 @@
 
     <include layout="@layout/call_ongoing_layout" />
 
+    <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/call_bar_layout"/>
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

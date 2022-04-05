@@ -42,7 +42,7 @@ class JoshContentProvider : ContentProvider() {
                 val startTime = VoipPref.getStartTimeStamp()
                 val cursor = MatrixCursor(arrayOf(START_CALL_TIME_COLUMN))
                 cursor.addRow(arrayOf(startTime))
-                Log.d(TAG, "query: ${cursor.columnNames.asList()}")
+                Log.d(TAG, "query: Timestamp --> $startTime")
                 return cursor
             }
         }
@@ -53,10 +53,10 @@ class JoshContentProvider : ContentProvider() {
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         voipLog?.log("INSERT")
-        Log.d(TAG, "insert: ")
         when(uri.path) {
             START_CALL_TIME_URI -> {
                 val startCallTimestamp = values?.getAsLong(CALL_START_TIME) ?: 0L
+                Log.d(TAG, "insert: timestamp --> $startCallTimestamp")
                 if(startCallTimestamp == 0L)
                     VoipPref.updateCallDetails(startCallTimestamp)
                 else {

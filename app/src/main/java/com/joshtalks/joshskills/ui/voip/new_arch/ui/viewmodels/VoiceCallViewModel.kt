@@ -171,7 +171,7 @@ class VoiceCallViewModel : BaseViewModel() {
 }
 
 object CallDataObj : CallData {
-    override fun getProfileImage(): String? {
+    override fun getProfileImage(): String {
         return VoipPref.getProfileImage()
     }
 

@@ -69,9 +69,7 @@ class CallingRemoteService : Service() {
     private val handler by lazy { CallingRemoteServiceHandler.getInstance(ioScope) }
     private var isMediatorInitialise = false
     private var pstnReceiver = PSTNStateReceiver()
-    private val audioController : AudioControllerInterface by lazy {
-        AudioController()
-    }
+    private val audioController : AudioControllerInterface by lazy { AudioController() }
 
     // For Testing Purpose
     private val notificationData = TestNotification()
@@ -84,8 +82,8 @@ class CallingRemoteService : Service() {
         updateStartCallTime(0)
         updateVoipState(IDLE)
         registerPstnCall()
-        registerAudioController()
-        observeAudioRouteEvents()
+        //registerAudioController()
+        //observeAudioRouteEvents()
         voipLog?.log("Creating Service")
         showNotification()
     }
@@ -179,13 +177,13 @@ class CallingRemoteService : Service() {
                     }
                     CALL_DISCONNECT_REQUEST -> {
                         voipLog?.log("Disconnect Call")
-                        updateLastCallDetails()
                         val networkAction = NetworkAction(
                             callId = CallDetails.callId,
                             uid = CallDetails.localUserAgoraId,
                             type = ServerConstants.DISCONNECTED,
                             duration = callDuration()
                         )
+                        updateLastCallDetails()
                         mediator.sendEventToServer(networkAction)
                         mediator.disconnectCall()
                     }
@@ -251,6 +249,7 @@ class CallingRemoteService : Service() {
     private fun callDuration() : Long {
         val startTime = getStartCallTime()
         val currentTime = SystemClock.elapsedRealtime()
+        Log.d(TAG, "callDuration: ST -> $startTime  and CT -> $currentTime")
         return TimeUnit.MILLISECONDS.toSeconds(currentTime - startTime)
     }
 
@@ -262,8 +261,8 @@ class CallingRemoteService : Service() {
         callType: Int = -1,
         remoteUserAgoraId: Int = -1
     ) {
-        voipLog?.log("QUERY")
-        val values = ContentValues(1).apply {
+        voipLog?.log("Timestamp -> $timestamp")
+        val values = ContentValues(6).apply {
             put(CALL_START_TIME, timestamp)
             put(REMOTE_USER_NAME, remoteUserName)
             put(REMOTE_USER_IMAGE, remoteUserImage)
@@ -291,6 +290,7 @@ class CallingRemoteService : Service() {
         val startTime = startCallTimeCursor?.getLong(startCallTimeCursor.getColumnIndex(
             START_CALL_TIME_COLUMN))
         startCallTimeCursor?.close()
+        Log.d(TAG, "getStartCallTime: $startTime")
         return startTime ?: 0L
     }
 

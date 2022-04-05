@@ -58,9 +58,6 @@ class ConversationViewModel(
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
     private val callbar = CallBar()
-    val isCallOnGoing by lazy {
-        callbar.getCallObserver()
-    }
 
     inner class CheckConnectivity : BroadcastReceiver() {
         override fun onReceive(context: Context, arg1: Intent) {
