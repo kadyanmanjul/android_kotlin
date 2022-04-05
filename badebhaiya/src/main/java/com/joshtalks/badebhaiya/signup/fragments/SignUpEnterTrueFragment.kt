@@ -15,53 +15,80 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.showProgress
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.TemporaryFeedActivity
 import com.joshtalks.badebhaiya.core.showToast
-import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterPhoneBinding
+import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterTrueBinding
+import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment.Companion.newInstance
+import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterTrueFragment.Companion.newInstance
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.truecaller.android.sdk.*
 
 
-class SignUpEnterPhoneFragment: Fragment() {
-    private lateinit var binding: FragmentSignupEnterPhoneBinding
+class SignUpEnterTrueFragment: Fragment() {
+    private lateinit var binding: FragmentSignupEnterTrueBinding
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
     }
+
     companion object {
-        fun newInstance() = SignUpEnterPhoneFragment()
+        fun newInstance() = SignUpEnterTrueFragment()
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_phone, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_true, container, false)
         binding.handler = this
-
-
         return binding.root
     }
 
+    private fun initTrueCallerUI() {
+        val trueScope = TruecallerSdkScope.Builder(requireActivity(), sdkCallback)
+            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
+            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
+            .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
+            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
+            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
+            .build()
+        TruecallerSDK.init(trueScope)
+        if(TruecallerSDK.getInstance().isUsable())
+        {
+            TruecallerSDK.getInstance().getUserProfile(this)
+        }
+        else
+        {
+            showToast("Internet Error")
+        }
+    }
 
+    private val sdkCallback: ITrueCallback = object : ITrueCallback {
+        override fun onSuccessProfileShared(@NonNull trueProfile: TrueProfile) {
+            //val intent = Intent(activity, SignUpEnterNameFragment::class.java)
+            //showToast(trueProfile.lastName)
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.truecaller, SignUpEnterNameFragment.newInstance(trueProfile.firstName,trueProfile.lastName))
+            transaction.commit()
 
+        }
 
+        override fun onFailureProfileShared(@NonNull trueError: TrueError) {
+            //showToast("Verification Failed. Try Again"+trueError.errorType)
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.truecaller, SignUpEnterPhoneFragment.newInstance())
+            transaction.commit()
+        }
 
-    /*override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_phone, container, false)
-            binding.lifecycleOwner = this
-            binding.handler = this
-            return binding.root
-        }*/
-
+        override fun onVerificationRequired(@Nullable trueError: TrueError) {
+            showToast("Verification Required")
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //work done here
+        initTrueCallerUI()
     }
 
     fun loginViaTrueCaller() {

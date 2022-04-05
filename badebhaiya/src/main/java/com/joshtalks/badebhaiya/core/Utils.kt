@@ -3,14 +3,12 @@ package com.joshtalks.badebhaiya.core
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.muddzdev.styleabletoast.StyleableToast
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 
@@ -40,17 +38,5 @@ fun isValidFullNumber(countryCode: String, number: String? = EMPTY): Boolean {
     } catch (ex: Exception) {
         ex.printStackTrace()
         true
-    }
-}
-
-fun Intent.startServiceForWebrtc() {
-
-    if (JoshApplication.isAppVisible) {
-        AppObjectController.joshApplication.startService(this)
-    } else {
-        ContextCompat.startForegroundService(
-            AppObjectController.joshApplication,
-            this
-        )
     }
 }

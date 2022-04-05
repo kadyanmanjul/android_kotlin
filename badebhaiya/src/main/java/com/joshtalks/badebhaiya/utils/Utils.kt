@@ -751,6 +751,18 @@ fun convertCamelCase(string: String): String {
     return output.toString().trim()
 }
 
+fun showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
+    AppObjectController.uiHandler.post {
+        StyleableToast.Builder(AppObjectController.joshApplication)
+            .gravity(Gravity.BOTTOM)
+            .text(message)
+            .cornerRadius(16)
+            .length(length)
+            .solidBackground()
+            .show()
+    }
+}
+
 fun getUserNameInShort(
     name: String = User.getInstance().firstName?.trim()?.uppercase(Locale.ROOT) ?: EMPTY
 ): String {

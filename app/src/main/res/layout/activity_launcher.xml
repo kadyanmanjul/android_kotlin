@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.launch.LauncherActivity">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageView"
-        android:layout_width="@dimen/_197sdp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/josh_skill" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/retry"

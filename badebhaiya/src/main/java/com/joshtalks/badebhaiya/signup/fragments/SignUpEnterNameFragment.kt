@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -15,15 +16,37 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterNameBinding
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import com.truecaller.android.sdk.TrueProfile
+import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.android.synthetic.main.fragment_signup_enter_name.*
 
 class SignUpEnterNameFragment: Fragment() {
     private lateinit var binding: FragmentSignupEnterNameBinding
+    var firstName :String? = null
+    var lastName :String? = null
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
     }
-    companion object {
-        fun newInstance() = SignUpEnterNameFragment()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        firstName= arguments?.getString("firstName")
+        lastName= arguments?.getString("lastName")
     }
+    companion object {
+        @JvmStatic
+        fun newInstance(
+            firstname: String,lastname:String
+        ) =
+            SignUpEnterNameFragment().apply {
+                arguments = Bundle()?.apply {
+                    putString("firstName", firstname)
+                    putString("lastName",lastname)
+
+                }
+            }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +60,9 @@ class SignUpEnterNameFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //showToast(lastName.toString())
+        etFirstName.setText(firstName)
+        etLastName.setText(lastName)
         addObservers()
     }
 
@@ -44,11 +70,12 @@ class SignUpEnterNameFragment: Fragment() {
 
     }
 
-    fun submitProfile(view: View) {
+    fun submitProfile() {
         if (binding.etFirstName.text.isNullOrEmpty() && binding.etLastName.text.isNullOrEmpty()) {
             showToast(getString(R.string.empty_name))
             return
         }
+
         startProgress()
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = "${binding.etFirstName.text} ${binding.etLastName.text}"

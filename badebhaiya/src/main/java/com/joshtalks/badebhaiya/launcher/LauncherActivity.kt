@@ -2,7 +2,6 @@ package com.joshtalks.badebhaiya.launcher
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -10,11 +9,8 @@ import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.FeedActivity
-import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
-import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_PROFILE_ACTIVITY
-import io.branch.referral.Branch
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -24,40 +20,11 @@ class LauncherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_launcher)
         initApp()
+        setContentView(R.layout.activity_launcher)
     }
-
-    override fun onStart() {
-        super.onStart()
-        initBranch()
-    }
-
 
     private fun initApp() {
-        WorkManager.getInstance(applicationContext).cancelAllWork()
-        WorkManagerAdmin.appStartWorker()
-    }
-
-    private fun initBranch() {
-        Branch.sessionBuilder(this@LauncherActivity).withCallback { referringParams, error ->
-            if (error == null) {
-                Log.d(
-                    "LauncherActivity.kt",
-                    "YASH => onInitFinished: $referringParams"
-                )
-                referringParams?.let {
-                    startActivityForState(
-                        if (it.has("user_id"))
-                            it.getString("user_id")
-                        else null
-                    )
-                }
-            } else {
-                Log.e("BRANCH SDK", error.message)
-                startActivityForState()
-            }
-        }.withData(this.intent.data).init()
         lifecycleScope.launch(Dispatchers.IO) {
             WorkManager.getInstance(applicationContext).cancelAllWork()
             WorkManagerAdmin.appInitWorker()
@@ -67,27 +34,16 @@ class LauncherActivity : AppCompatActivity() {
         }
     }
 
-    private fun startActivityForState(viewUserId: String? = null) {
+    fun getIntentForState(): Intent {
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
-                if (viewUserId == null) {
-                    Intent(this@LauncherActivity, FeedActivity::class.java)
-                } else {
-                    ProfileActivity.getIntent(this@LauncherActivity, viewUserId)
-                }
+                Intent(this@LauncherActivity, FeedActivity::class.java)
             }
-            else -> SignUpActivity.getIntent(
-                this@LauncherActivity,
-                REDIRECT_TO_PROFILE_ACTIVITY,
-                viewUserId
-            )
+            else -> Intent(this@LauncherActivity, SignUpActivity::class.java)
         }
-        lifecycleScope.launch(Dispatchers.IO) {
-            delay(1000)
-            startActivity(intent.apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            })
+        return intent.apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 }

@@ -15,8 +15,7 @@ data class User(
     @SerializedName("user_id") var userId: String = EMPTY,
     @SerializedName("token") var token: String = EMPTY,
     @SerializedName("photo_url") var profilePicUrl: String? = null,
-    @SerializedName("mobile") var mobile: String = EMPTY,
-    @SerializedName("is_speaker") var isSpeaker: Boolean = false,
+    @SerializedName("mobile") var mobile: String = EMPTY
 ) {
     companion object {
         @JvmStatic

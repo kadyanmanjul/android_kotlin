@@ -33,11 +33,4 @@
     <color name="notification_orange_color">#F3792B</color>
     <color name="conversation_room_gray">#ACA9A9</color>
 
-    <color name="checkbox_color">#ff0000</color>
-    <color name="action_color">#4bb543</color>
-    <color name="call_decline_color">#ef5050</color>
-    <color name="call_action_color">#5ee067</color>
-    <color name="grey_E8">#E8E8E8</color>
-    <color name="transparent_black">#a34b4949</color>
-
 </resources>
