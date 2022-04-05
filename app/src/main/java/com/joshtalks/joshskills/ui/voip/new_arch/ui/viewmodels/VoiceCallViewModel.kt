@@ -25,6 +25,10 @@ import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.voip.constant.MUTE
 import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
+import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_BLUETOOTH
+import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_HANDSET
+import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
+import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.voipLog
@@ -93,6 +97,14 @@ class VoiceCallViewModel : BaseViewModel() {
                     IPC_CONNECTION_ESTABLISHED -> {
                         connectCall()
                     }
+                    SWITCHED_TO_SPEAKER -> {
+                        isSpeakerOn.set(true)
+                        showToast("Speaker is ON")
+                    }
+                    SWITCHED_TO_WIRED, SWITCHED_TO_BLUETOOTH, SWITCHED_TO_HANDSET -> {
+                        isSpeakerOn.set(false)
+                        showToast("Speaker is Off")
+                    }
                 }
                 withContext(Dispatchers.Main) {
                     singleLiveEvent.value = message
@@ -132,33 +144,20 @@ class VoiceCallViewModel : BaseViewModel() {
 
     fun switchSpeaker(v: View) {
         if (isSpeakerOn.get()) {
-            switchSpeakerOff()
-            isSpeakerOn.set(false)
+            repository.turnOffSpeaker()
         } else {
-            switchSpeakerOn()
-            isSpeakerOn.set(true)
+            repository.turnOnSpeaker()
         }
     }
 
     fun switchMic(v: View) {
         if (isMute.get()) {
-            switchMicOn()
             repository.unmuteCall()
             isMute.set(false)
         } else {
-            switchMicOff()
             repository.muteCall()
             isMute.set(true)
         }
-    }
-
-    private fun switchSpeakerOn(){
-    }
-    private fun switchSpeakerOff(){
-    }
-    private fun switchMicOn() {
-    }
-    private fun switchMicOff() {
     }
 
     fun observeCallStatus(v: View) {

@@ -26,6 +26,12 @@ import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
 import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
 import com.joshtalks.joshskills.base.constants.VOIP_STATE
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.audiocontroller.AudioController
+import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.BluetoothAudio
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.EarpieceAudio
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.HeadsetAudio
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.SpeakerAudio
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
@@ -37,6 +43,10 @@ import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.MUTE
+import com.joshtalks.joshskills.voip.constant.SPEAKER_OFF_REQUEST
+import com.joshtalks.joshskills.voip.constant.SPEAKER_ON_REQUEST
+import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
+import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
@@ -48,8 +58,8 @@ import com.joshtalks.joshskills.voip.voipLog
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "CallingRemoteService"
@@ -59,6 +69,9 @@ class CallingRemoteService : Service() {
     private val handler by lazy { CallingRemoteServiceHandler.getInstance(ioScope) }
     private var isMediatorInitialise = false
     private var pstnReceiver = PSTNStateReceiver()
+    private val audioController : AudioControllerInterface by lazy {
+        AudioController()
+    }
 
     // For Testing Purpose
     private val notificationData = TestNotification()
@@ -71,6 +84,8 @@ class CallingRemoteService : Service() {
         updateStartCallTime(0)
         updateVoipState(IDLE)
         registerPstnCall()
+        registerAudioController()
+        observeAudioRouteEvents()
         voipLog?.log("Creating Service")
         showNotification()
     }
@@ -133,6 +148,21 @@ class CallingRemoteService : Service() {
         return true
     }
 
+    private fun observeAudioRouteEvents() {
+        ioScope.launch {
+            audioController.observeAudioRoute().collectLatest {
+                when(it) {
+                    BluetoothAudio, EarpieceAudio, HeadsetAudio -> {
+                        handler.sendMessageToRepository(SWITCHED_TO_WIRED)
+                    }
+                    SpeakerAudio -> {
+                        handler.sendMessageToRepository(SWITCHED_TO_SPEAKER)
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeHandlerEvents(handler: CallingRemoteServiceHandler) {
         voipLog?.log("${handler}")
         ioScope.launch {
@@ -168,6 +198,12 @@ class CallingRemoteService : Service() {
                         val userAction = UserAction(ServerConstants.UNMUTE, CallDetails.callId)
                         mediator.muteAudioStream(false)
                         mediator.sendEventToServer(userAction)
+                    }
+                    SPEAKER_ON_REQUEST -> {
+                        audioController.switchAudioToSpeaker()
+                    }
+                    SPEAKER_OFF_REQUEST -> {
+                        audioController.switchAudioToDefault()
                     }
                 }
                 voipLog?.log("observeHandlerEvents: $it")
@@ -206,6 +242,10 @@ class CallingRemoteService : Service() {
             addAction("android.intent.action.NEW_OUTGOING_CALL")
         }
         registerReceiver(pstnReceiver, filter)
+    }
+
+    private fun registerAudioController() {
+        audioController.registerAudioControllerReceivers()
     }
 
     private fun callDuration() : Long {

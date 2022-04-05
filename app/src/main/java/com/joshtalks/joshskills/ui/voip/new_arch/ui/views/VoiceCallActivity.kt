@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
-import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider

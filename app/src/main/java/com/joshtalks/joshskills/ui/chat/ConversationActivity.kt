@@ -102,7 +102,6 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.joshskills.voip.notification.NotificationData
-import com.joshtalks.joshskills.voip.notification.NotificationHandler
 import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
