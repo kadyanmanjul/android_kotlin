@@ -19,6 +19,7 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
+import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -58,6 +59,24 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         val userId = it.getString(USER_ID, EMPTY)
                         if (userId.isNullOrBlank().not()){
                             ProfileActivity.openProfileActivity(this,userId)
+                        }
+                    }
+                }
+                OPEN_ROOM ->{
+                    it.data?.let {
+                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room->
+                                ConversationLiveRoomActivity.startRoomActivity(
+                                    activity = this@FeedActivity,
+                                    channelName = room.channelName,
+                                    uid = room.uid,
+                                    token =room.token,
+                                    isRoomCreatedByUser = true,
+                                    roomId = room.roomId,
+                                    moderatorId = room.uid,
+                                    topicName = it.getString(TOPIC),
+                                    flags = arrayOf()
+
+                                )
                         }
                     }
                 }
@@ -102,20 +121,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun joinRoom(room: RoomListResponseItem, view: View) {
         //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
         Log.d("Manjul", "joinRoom() called with: room = $room, view = $view")
-        room?.let { item ->
-            ConversationLiveRoomActivity.startRoomActivity(
-                activity = this@FeedActivity,
-                channelName = item.channelId,
-                uid = item.startedBy,
-                token = EMPTY,
-                isRoomCreatedByUser = item.speakersData?.userId==User.getInstance().userId,
-                roomId = item.roomId,
-                moderatorId = item.startedBy,
-                topicName = item.topic,
-                flags = arrayOf()
-
-            )
-        }
+        viewModel.joinRoom(room)
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {

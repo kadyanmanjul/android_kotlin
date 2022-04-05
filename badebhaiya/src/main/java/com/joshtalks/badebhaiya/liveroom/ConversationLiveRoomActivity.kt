@@ -152,7 +152,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                 HIDE_SEARCHING_STATE -> {
                 }
                 LEAVE_ROOM -> {
-                    mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+                    mBoundService?.leaveRoom(roomId, roomQuestionId)
                     isExitApiFired = true
                     vm.unSubscribePubNub()
                     finish()
@@ -239,7 +239,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
 
     private fun endRoom() {
         Timber.tag("ABC2").e("endRoom() called")
-        mBoundService?.endRoom(roomId.toString(), roomQuestionId)
+        mBoundService?.endRoom(roomId, roomQuestionId)
         isExitApiFired = true
         vm.unSubscribePubNub()
         finish()
@@ -552,7 +552,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                 showEndRoomPopup()
             }
             else {
-                mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+                mBoundService?.leaveRoom(roomId, roomQuestionId)
                 isExitApiFired = true
                 vm.unSubscribePubNub()
                 finish()
@@ -1170,12 +1170,12 @@ class ConversationLiveRoomActivity : BaseActivity(),
         }
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
-            Log.d("ABC2", "activity showEndRoomPopup() called")
+            Log.d("ABC2", "activity showEndRoomPopup() called $mBoundService")
             if (!internetAvailableFlag) {
                 //viewModel.unSubscribePubNub()
                 finish()
             }
-            mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
+            mBoundService?.endRoom(roomId, roomQuestionId)
             isExitApiFired = true
             alertDialog.dismiss()
             vm.unSubscribePubNub()
@@ -1225,7 +1225,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             showEndRoomPopup()
         }
         else {
-            mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+            mBoundService?.leaveRoom(roomId, roomQuestionId)
             isExitApiFired = true
             vm.unSubscribePubNub()
             super.onBackPressed()
@@ -1235,10 +1235,10 @@ class ConversationLiveRoomActivity : BaseActivity(),
     override fun onDestroy() {
         if ((isBackPressed.or(isExitApiFired)).not()) {
             if (isRoomCreatedByUser) {
-                mBoundService?.endRoom(roomId?.toString(), roomQuestionId)
+                mBoundService?.endRoom(roomId, roomQuestionId)
             }
             else {
-                mBoundService?.leaveRoom(roomId?.toString(), roomQuestionId)
+                mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
         binding.notificationBar.destroyMediaPlayer()

@@ -162,7 +162,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                 val joinRoomRequest =
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,
-                        roomId = item.roomId.toString()
+                        roomId = item.roomId
                     )
                 val apiResponse = repository.joinRoom(joinRoomRequest)
                 if (apiResponse.isSuccessful) {
@@ -216,6 +216,10 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                 val act = msg["action"].asString
                 try {
                     if (msg != null) {
+                        Log.d(
+                            "ABC",
+                            "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
+                        )
                         replaySubject.toSerialized()
                             .onNext(ConversationRoomPubNubEventBus(PubNubEvent.valueOf(act), msg))
                     }

@@ -11,6 +11,7 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
+import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
@@ -20,6 +21,8 @@ import kotlinx.coroutines.launch
 
 const val ROOM_ITEM = "room_item"
 const val USER_ID = "user_id"
+const val ROOM_DETAILS = "room_details"
+const val TOPIC = "topic"
 
 class FeedViewModel : ViewModel() {
 
@@ -71,6 +74,39 @@ class FeedViewModel : ViewModel() {
             } catch (e: Exception) {
                 callback.onError(e.localizedMessage)
                 showToast("Error while creating room")
+            } finally {
+                isLoading.set(false)
+            }
+        }
+    }
+
+    fun joinRoom(item: RoomListResponseItem) {
+        viewModelScope.launch {
+            try {
+                isLoading.set(true)
+                val response = repository.joinRoom(
+                    ConversationRoomRequest(
+                        userId = User.getInstance().userId,
+                        roomId = item.roomId
+                    )
+                )
+                if (response.isSuccessful) {
+                    showToast("Room created successfully")
+                    message.what = OPEN_ROOM
+                    message.data = Bundle().apply {
+                        putParcelable(
+                            ROOM_DETAILS,
+                            response.body()
+                        )
+                        putString(
+                            TOPIC,
+                            item.topic
+                        )
+                    }
+                    singleLiveEvent.postValue(message)
+                }
+            } catch (e: Exception) {
+                 showToast("Error while joining room")
             } finally {
                 isLoading.set(false)
             }

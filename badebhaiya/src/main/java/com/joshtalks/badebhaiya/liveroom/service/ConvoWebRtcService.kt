@@ -77,7 +77,7 @@ class ConvoWebRtcService : Service() {
         var isRoomCreatedByUser = false
         var agoraUid: Int? = null
         var moderatorUid: Int? = null
-        var roomId: String? = null
+        var roomId: Int? = null
         var channelTopic: String? = null
         var roomQuestionId: Int? = null
         var conversationRoomChannelName: String? = null
@@ -217,7 +217,7 @@ class ConvoWebRtcService : Service() {
         }
 
 
-    fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
+    fun endRoom(roomId: Int?, conversationQuestionId: Int? = null) {
         Log.d(
             TAG,
             "endRoom() service called with: roomId = $roomId, conversationQuestionId = $conversationQuestionId"
@@ -252,8 +252,8 @@ class ConvoWebRtcService : Service() {
         }
     }
 
-    fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
-        if (roomId.isNullOrBlank().not()) {
+    fun leaveRoom(roomId: Int?, conversationQuestionId: Int? = null) {
+        if (roomId!=null) {
             CoroutineScope(Dispatchers.IO).launch {
                 if (isRoomEnded.not()) {
                     removeNotifications()
@@ -527,7 +527,7 @@ class ConvoWebRtcService : Service() {
         conversationRoomChannelName = intent.getStringExtra(ROOM_RTC_CHANNEL_KEY)
         moderatorUid = intent.getIntExtra(ROOM_RTC_MODERATOR_UID_KEY, 0)
         channelTopic = intent.getStringExtra(ROOM_RTC_CHANNEL_TOPIC)
-        roomId = intent.getIntExtra(ROOM_RTC_ROOM_ID, 0).toString()
+        roomId = intent.getIntExtra(ROOM_RTC_ROOM_ID, 0)
         roomQuestionId = intent.getIntExtra(ROOM_RTC_ROOM_Q, 0)
         isRoomCreatedByUser = intent.getBooleanExtra(ROOM_RTC_IS_MODERATOR, false)
         Log.d(
