@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
+import android.os.SystemClock
+import android.widget.Chronometer
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -69,4 +71,10 @@ fun AppCompatImageButton.setMicImage(isMute: ObservableBoolean) {
             ContextCompat.getColorStateList(context, R.color.white)
         this.imageTintList =
             ContextCompat.getColorStateList(context, R.color.grey_61)    }
+}
+
+@BindingAdapter("startTimer")
+fun Chronometer.startTimer(baseTime: Long) {
+    base = SystemClock.elapsedRealtime() - baseTime
+    start()
 }

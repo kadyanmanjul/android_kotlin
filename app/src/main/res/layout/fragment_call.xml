@@ -69,7 +69,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/call_time"
+            app:layout_constraintBottom_toTopOf="@+id/barrier"
             app:layout_constraintEnd_toEndOf="@+id/call_time"
             app:layout_constraintStart_toStartOf="@+id/call_time"
             tools:ignore="MissingPrefix"
@@ -86,29 +86,33 @@
             tools:text=""
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
-            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/c_image"
             app:layout_constraintEnd_toEndOf="@+id/c_image"
             app:layout_constraintStart_toStartOf="@+id/c_image"
             tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
+            android:visibility='@{!vm.callStatusTest.equals("Timer") ? View.VISIBLE : View.GONE}' />
 
         <Chronometer
             android:id="@+id/call_time1"
+            startTimer="@{CallData.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_24sdp"
             android:gravity="center"
-            tools:text="0:33"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
-            android:visibility="invisible"
+            android:visibility='@{vm.callStatusTest.equals("Timer") ? View.VISIBLE : View.GONE}'
             app:layout_constraintBottom_toTopOf="@+id/c_image"
             app:layout_constraintEnd_toEndOf="@+id/c_image"
             app:layout_constraintStart_toStartOf="@+id/c_image"
             tools:ignore="MissingPrefix"
-            tools:visibility="gone" />
-
+         />
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            app:barrierDirection="top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="call_time1,call_time"/>
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/c_image"
             android:layout_width="@dimen/_108sdp"

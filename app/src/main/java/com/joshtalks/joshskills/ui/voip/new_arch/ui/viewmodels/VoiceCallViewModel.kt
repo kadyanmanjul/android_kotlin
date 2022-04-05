@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
 import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGMENT
@@ -199,5 +200,9 @@ object CallDataObj : CallData {
 
     override fun getCallTypeHeader(): String {
         return "P2P"
+    }
+
+    override fun getStartTime(): Long {
+        return VoipPref.getStartTimeStamp()
     }
 }
