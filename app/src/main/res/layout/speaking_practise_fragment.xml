@@ -377,11 +377,12 @@
                         app:lottie_scale="1"
                         app:lottie_speed="1"
                         app:rippleColor="@color/white"
-                        tools:visibility="visible" />
+                        android:visibility="invisible" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/btnStartTrialText"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/call_btn_background"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:elevation="@dimen/_2sdp"

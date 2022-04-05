@@ -237,10 +237,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fetchMentor()
             WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
-            if (PrefManager.getBoolValue(
-                    IS_COURSE_BOUGHT,
-                    false
-                )) {
+            val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
+            val courseExpiryTime =
+                PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
+            if ((isCourseBought && User.getInstance().isVerified) ||  courseExpiryTime != 0L &&
+                courseExpiryTime >= System.currentTimeMillis()) {
                 val broadcastIntent = Intent().apply {
                     action = CALLING_SERVICE_ACTION
                     putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)

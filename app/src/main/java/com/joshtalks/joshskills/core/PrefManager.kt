@@ -2,13 +2,18 @@ package com.joshtalks.joshskills.core
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.ui.call.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.ui.call.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.ui.call.STOP_SERVICE
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 
 const val USER_UNIQUE_ID = "user_unique_id"
@@ -277,6 +282,7 @@ object PrefManager {
     }
 
     fun logoutUser() {
+        sendBroadcast()
         prefManagerCommon.edit().clear().apply()
         LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
@@ -285,6 +291,7 @@ object PrefManager {
     }
 
     fun clearUser() {
+        sendBroadcast()
         LastSyncPrefManager.clear()
         prefManagerCommon.edit().clear().apply()
         AppDatabase.clearDatabase()
@@ -304,7 +311,13 @@ object PrefManager {
         else prefManagerCommon.edit().remove(key).apply()
 
     }
-
+     private fun sendBroadcast(){
+         val broadcastIntent= Intent().apply {
+             action = CALLING_SERVICE_ACTION
+             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+         }
+         LocalBroadcastManager.getInstance(AppObjectController.joshApplication).sendBroadcast(broadcastIntent)
+     }
     fun getLastSyncTime(key: String): Pair<String, String> {
         return try {
             val time = getStringValue(key)

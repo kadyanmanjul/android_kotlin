@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
+import com.joshtalks.joshskills.ui.voip.presence.UserPresence
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.log.Feature
 import com.joshtalks.joshskills.voip.log.JoshLog.Companion.enableLog
@@ -53,6 +54,9 @@ class JoshApplication :
     ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
+    }
+    val userPresenceStatus by lazy {
+        UserPresence
     }
 
     companion object {
@@ -187,6 +191,7 @@ class JoshApplication :
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
+//        userPresenceStatus.setUserPresence(Mentor.getInstance().getId(),System.currentTimeMillis())
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         //WorkManagerAdmin.removeRepeatingNotificationWorker()
@@ -224,6 +229,7 @@ class JoshApplication :
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
+//        userPresenceStatus.setUserPresence(Mentor.getInstance().getId(),null)
         WorkManagerAdmin.userAppUsage(isAppVisible)
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         if (getConditionForShowLocalNotifications()) {

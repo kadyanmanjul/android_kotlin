@@ -31,12 +31,12 @@
             android:text="@{vm.callStatus}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
             android:textColor="@color/white"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/tv_group_name"
             app:layout_constraintEnd_toEndOf="@+id/tv_group_name"
             app:layout_constraintStart_toStartOf="@+id/tv_group_name"
             tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
+            tools:visibility="invisible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_group_name"

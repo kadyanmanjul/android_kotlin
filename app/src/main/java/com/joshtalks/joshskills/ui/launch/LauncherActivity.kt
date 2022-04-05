@@ -250,7 +250,10 @@ class LauncherActivity : CoreJoshActivity() {
         LocalBroadcastManager.getInstance(this@LauncherActivity)
             .registerReceiver(CallingServiceReceiver(), IntentFilter(CALLING_SERVICE_ACTION))
         val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
-        if (isCourseBought && User.getInstance().isVerified) {
+        val courseExpiryTime =
+            PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
+        if ((isCourseBought && User.getInstance().isVerified) ||  courseExpiryTime != 0L &&
+            courseExpiryTime >= System.currentTimeMillis()) {
             val broadcastIntent=Intent().apply {
                 action = CALLING_SERVICE_ACTION
                 putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)

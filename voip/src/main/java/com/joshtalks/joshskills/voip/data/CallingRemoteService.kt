@@ -41,12 +41,14 @@ import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
-import com.joshtalks.joshskills.voip.notification.NotificationHandler
+import com.joshtalks.joshskills.voip.notification.NotificationPriority
+import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -61,8 +63,7 @@ class CallingRemoteService : Service() {
     // For Testing Purpose
     private val notificationData = TestNotification()
     private val notification by lazy {
-        NotificationHandler(this)
-        .getNotificationObject(notificationData)
+      VoipNotification(notificationData,NotificationPriority.Low)
     }
 
     override fun onCreate() {
@@ -196,7 +197,7 @@ class CallingRemoteService : Service() {
     }
 
     private fun showNotification() {
-        startForeground(notification.notificationId, notification.notificationBuilder.build())
+        startForeground(notification.getNotificationId(), notification.getNotificationObject().build())
     }
 
     private fun registerPstnCall() {
