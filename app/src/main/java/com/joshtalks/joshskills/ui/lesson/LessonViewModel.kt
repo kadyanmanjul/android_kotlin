@@ -331,13 +331,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int, isWhatsappRemarketingActive :Boolean) {
+    fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             when (tabPosition) {
                 GRAMMAR_POSITION -> {
                     if (lessonLiveData.value?.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logGrammarSectionCompleted()
-                        if(isWhatsappRemarketingActive) MarketingAnalytics.logWhatsappRemarketing()
                     }
                     appDatabase.lessonDao().updateGrammarSectionStatus(lessonId, status)
                     lessonLiveData.postValue(

@@ -792,7 +792,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
                     ROOM_POSITION -> lesson.conversationStatus = status
                 }
-                viewModel.updateSectionStatus(lesson.id, status, tabPosition, isWhatsappRemarketingActive)
+                viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
         }
         AppObjectController.uiHandler.post {
