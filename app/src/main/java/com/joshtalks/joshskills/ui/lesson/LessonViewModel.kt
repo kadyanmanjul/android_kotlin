@@ -85,6 +85,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
+    val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getWhatsappRemarketingCampaign(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                whatsappRemarketingLiveData.postValue(campaign)
+            }
+        }
+    }
 
     fun getVideoData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -321,12 +331,13 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int) {
+    fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int, isWhatsappRemarketingActive :Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             when (tabPosition) {
                 GRAMMAR_POSITION -> {
                     if (lessonLiveData.value?.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logGrammarSectionCompleted()
+                        if(isWhatsappRemarketingActive) MarketingAnalytics.logWhatsappRemarketing()
                     }
                     appDatabase.lessonDao().updateGrammarSectionStatus(lessonId, status)
                     lessonLiveData.postValue(

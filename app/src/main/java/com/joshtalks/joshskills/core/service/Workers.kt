@@ -1053,7 +1053,8 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.P2P_IMAGE_SHARING.name,
                     CampaignKeys.HUNDRED_POINTS.NAME,
                     CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name,
-                    CampaignKeys.BUY_LAYOUT_CHANGED.name
+                    CampaignKeys.BUY_LAYOUT_CHANGED.name,
+                    CampaignKeys.WHATSAPP_REMARKETING.name
 
                 )
             )
