@@ -12,6 +12,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import com.google.firebase.firestore.OnProgressListener
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
+import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.startTimer
@@ -51,7 +53,10 @@ constructor(context: Context, attributes: AttributeSet? = null) : FrameLayout(co
 
     fun onCallBarClick() {
         callBarContainer.setOnClickListener {
-            context.startActivity(Intent(context,VoiceCallActivity::class.java))
+            val intent = Intent(context,VoiceCallActivity::class.java).apply {
+                putExtra(STARTING_POINT, FROM_CALL_BAR)
+            }
+            context.startActivity(intent)
         }
     }
 

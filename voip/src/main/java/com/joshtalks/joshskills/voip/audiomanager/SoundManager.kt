@@ -31,11 +31,10 @@ class SoundManager(
         return defaultRingtone
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     fun playSound() {
         gainAudioFocus()
         val ringtone = getRingtoneInstance()
-        if (soundType == SOUND_TYPE_RINGTONE) {
+        if (soundType == SOUND_TYPE_RINGTONE && Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
             ringtone?.isLooping = true
         }
         ringtone?.play()

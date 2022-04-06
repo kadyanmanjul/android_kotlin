@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,7 @@ class CallFragment : BaseFragment() {
         }
 
         callbar.getTimerLiveData().observe(viewLifecycleOwner) {
+            Log.d(TAG, "initViewState: $it")
             startTimer()
         }
     }

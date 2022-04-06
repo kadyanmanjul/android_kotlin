@@ -1,9 +1,12 @@
 package com.joshtalks.joshskills.voip.mediator
 
 import android.media.RingtoneManager
+import com.joshtalks.joshskills.base.constants.INCOMING
+import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
+import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
@@ -20,6 +23,7 @@ import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL
 import com.joshtalks.joshskills.voip.constant.MUTE
 import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
@@ -46,6 +50,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.*
 import kotlin.collections.HashMap
+import kotlinx.coroutines.delay
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
@@ -57,6 +62,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
     private val mutex = Mutex(false)
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
+    private lateinit var voipNotification : VoipNotification
 
     init {
         scope.launch {
@@ -74,14 +80,27 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         return flow
     }
 
+    private fun stopAudio() {
+        try {
+            soundManager.stopSound()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun connectCall(callType: Int, callData: HashMap<String, Any>) {
         scope.launch {
             mutex.withLock {
                 voipLog?.log("CallData Before Mutex --> $callData")
                 try {
+                    // Saving this to set Calltype when we receive Channel details
                     this@CallingMediator.callType = callType
                     // TODO: Need to Handle when Error Occurred
                     voipLog?.log("Coroutine CallData --> $callData")
+                    if(this@CallingMediator::voipNotification.isInitialized) {
+                        voipNotification.removeNotification()
+                        stopAudio()
+                    }
                     calling.onPreCallConnect(callData)
                 } catch (e: Exception) {
                     flow.emit(ERROR)
@@ -98,6 +117,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun sendEventToServer(data: OutgoingData) {
         networkEventChannel.emitEvent(data)
+    }
+
+    override fun showIncomingCall(incomingCall : IncomingCall) {
+        showIncomingNotification(incomingCall)
     }
 
     override fun switchAudio() {}
@@ -192,24 +215,24 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                     is IncomingCall -> {
                         voipLog?.log("Incoming Call -> $it")
-                        updateCallDirection(INCOMING)
-                        showIncomingNotification()
+                        IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
+                        flow.emit(INCOMING_CALL)
                     }
                 }
             }
         }
     }
 
-    private fun showIncomingNotification(){
-        val remoteView = calling.notificationLayout()
-        val voipNotification = VoipNotification(remoteView,NotificationPriority.High)
+    private fun showIncomingNotification(incomingCall : IncomingCall) {
+        val remoteView = calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
+        voipNotification = VoipNotification(remoteView,NotificationPriority.High)
         voipNotification.show()
         soundManager.playSound()
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                voipNotification.removeNotification()
-            }
-        }, 20000)
+        scope.launch {
+            delay(20000)
+            voipNotification.removeNotification()
+            stopAudio()
+        }
     }
 
     private fun MessageData.isMessageForSameChannel() =

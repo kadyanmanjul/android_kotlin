@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
 import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
 import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
 import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
+import com.joshtalks.joshskills.base.constants.INCOMING_CALL_URI
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
 import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
@@ -83,6 +84,12 @@ class JoshContentProvider : ContentProvider() {
             VOIP_STATE_URI -> {
                 val state = values?.getAsInteger(VOIP_STATE) ?: 0
                 VoipPref.updateVoipState(state)
+            }
+            INCOMING_CALL_URI -> {
+                val callId = values?.getAsInteger(CALL_ID) ?: -1
+                val callType = values?.getAsInteger(CALL_TYPE) ?: -1
+                Log.d(TAG, "insert: timestamp --> $callId ..... $callType")
+                VoipPref.updateIncomingCallData(callId, callType)
             }
         }
         return uri

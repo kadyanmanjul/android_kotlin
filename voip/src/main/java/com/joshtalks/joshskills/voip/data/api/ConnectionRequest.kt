@@ -13,3 +13,15 @@ data class ConnectionRequest(
 	@field:SerializedName("topic_id")
 	val topicId: Int? = null
 )
+
+data class CallAcceptRequest(
+
+	@field:SerializedName("response")
+	val response: String? = null,
+
+	@field:SerializedName("mentor_id")
+	val mentorId: String? = null,
+
+	@field:SerializedName("call_id")
+	val callId: Int? = null
+)
