@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
@@ -15,6 +16,7 @@ import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.USER_ID
 import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
@@ -59,6 +61,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun openEnterPhoneNumberFragment() {
+        binding.btnWelcome.visibility = View.GONE
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpEnterPhoneFragment::class.java.name)
             replace(
@@ -71,7 +74,6 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun openOTPVerificationFragment() {
         supportFragmentManager.commit(true) {
-            addToBackStack(SignUpEnterOTPFragment::class.java.name)
             replace(
                 R.id.container,
                 SignUpEnterOTPFragment.newInstance(),
@@ -82,7 +84,6 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun openEnterNameFragment() {
         supportFragmentManager.commit(true) {
-            addToBackStack(SignUpEnterNameFragment::class.java.name)
             replace(
                 R.id.container,
                 SignUpEnterNameFragment.newInstance(),
@@ -93,7 +94,6 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun openUploadProfilePicFragment() {
         supportFragmentManager.commit(true) {
-            addToBackStack(SignUpAddProfilePhotoFragment::class.java.name)
             replace(
                 R.id.container,
                 SignUpAddProfilePhotoFragment.newInstance(),
@@ -106,7 +106,9 @@ class SignUpActivity : AppCompatActivity() {
         if (intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY)
             ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
         else
-            TemporaryFeedActivity.openFeedActivity(this)
+            Intent(this, FeedActivity::class.java).also {
+                this@SignUpActivity.startActivity(it)
+            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

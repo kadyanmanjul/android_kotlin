@@ -20,7 +20,7 @@
         app:cardElevation="2dp"
 
         android:layout_margin="@dimen/_8sdp"
-        app:cardCornerRadius="@dimen/_12sdp">
+        app:cardCornerRadius="@dimen/_14sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -30,6 +30,7 @@
                 android:id="@+id/tvCardHeader"
                 android:text="@{roomData.speakersData.name}"
                 android:layout_width="wrap_content"
+                android:textSize="@dimen/_12ssp"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_18sdp"
@@ -50,19 +51,22 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCardTopic"
-                android:text="@{roomData.topic}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/profile_feed_item_font_color"
                 android:layout_marginTop="@dimen/_15sdp"
+                android:text="@{roomData.topic}"
+                android:textSize="@dimen/_15ssp"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+                android:textColor="@color/profile_feed_item_font_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/tvCardHeader"
                 app:layout_constraintTop_toBottomOf="@id/tvCardHeader"
                 tools:text="Guide To Crack UPSC 2023 \nIn One Attempt?" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_45sdp"
                 setCardActionButton="@{roomData.conversationRoomType}"
                 roomListItem="@{roomData}"
                 setCallback="@{callback}"
@@ -71,7 +75,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tvCardTopic"
                 tools:text="Set Reminder"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:backgroundTint="@color/reminder_button_color"
                 android:layout_marginTop="@dimen/_17sdp"
                 android:layout_marginBottom="@dimen/_9sdp"
@@ -80,7 +84,7 @@
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
                 android:textSize="@dimen/_16ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:cornerRadius="@dimen/_10sdp" />
+                app:cornerRadius="@dimen/_15sdp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>

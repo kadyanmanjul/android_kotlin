@@ -27,4 +27,7 @@ interface SignUpNetworkService {
 
     @PATCH("$DIR/user/{id}/")
     suspend fun updateUserProfile(@Path("id")userId: String, @Body params: Map<String, String?>): Response<User>
+
+    @POST("$DIR/user/truecaller_login/")
+    suspend fun trueCallerLogin(@Body params: Map<String, String>) : Response<LoginResponse>
 }

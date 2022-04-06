@@ -69,7 +69,7 @@ class LauncherActivity : AppCompatActivity() {
             }
             else -> SignUpActivity.getIntent(
                 this@LauncherActivity,
-                REDIRECT_TO_PROFILE_ACTIVITY,
+//                REDIRECT_TO_PROFILE_ACTIVITY,
                 viewUserId
             )
         }

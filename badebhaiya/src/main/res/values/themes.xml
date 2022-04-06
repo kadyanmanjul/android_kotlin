@@ -55,7 +55,7 @@
     </style>
 
     <style name="GreyButton" parent="GreenButton">
-        <item name="android:backgroundTint">@color/reminder_button_color</item>
+        <item name="android:backgroundTint">@color/retry_button_color</item>
         <item name="android:textColor">@color/black</item>
     </style>
 </resources>

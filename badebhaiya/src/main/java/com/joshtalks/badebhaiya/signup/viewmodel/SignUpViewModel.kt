@@ -21,6 +21,7 @@ import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
 import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
+import com.truecaller.android.sdk.TrueProfile
 import id.zelory.compressor.Compressor
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -209,6 +210,26 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     }
                 }
             } catch (ex: Exception) {
+
+            }
+        }
+    }
+
+    fun trueCallerLogin( user: TrueProfile) {
+        viewModelScope.launch {
+            try {
+                val requestTrueUser = mutableMapOf<String, String>()
+                requestTrueUser["payload"] = user.payload
+                requestTrueUser["signature"] = user.signature
+                requestTrueUser["signature_algorithm"] = user.signatureAlgorithm
+                val response = repository.trueCallerLogin(requestTrueUser)
+                if(response.isSuccessful) {
+                    response.body()?.let {
+                        updateUserFromLoginResponse(it)
+                    }
+                }
+            }
+            catch (ex: Exception) {
 
             }
         }

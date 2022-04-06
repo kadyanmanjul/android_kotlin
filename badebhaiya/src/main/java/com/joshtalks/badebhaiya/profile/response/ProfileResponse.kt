@@ -8,7 +8,7 @@ data class ProfileResponse(
     @SerializedName("date_of_birth") val date_of_birth: Any,
     @SerializedName("email") val email: Any,
     @SerializedName("first_name") val firstName: String,
-    @SerializedName("followers") val followers: List<Any>,
+    @SerializedName("followers_count") val followersCount: Int,
     @SerializedName("gender") val gender: Any,
     @SerializedName("hometown") val hometown: Any,
     @SerializedName("id") val userId: String,
@@ -20,5 +20,8 @@ data class ProfileResponse(
     @SerializedName("photo_url") val profilePicUrl: String?,
     @SerializedName("social_id") val social_id: Any,
     @SerializedName("user_type") val user_type: String,
-    @SerializedName("username") val username: String
+    @SerializedName("username") val username: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("uuid") val uuid: String,
+    @SerializedName("user_room_data") val SpeakerRooms: List<Any>
 )

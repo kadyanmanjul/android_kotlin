@@ -17,7 +17,7 @@
     <string name="country_code">+91</string>
     <string name="phone_number">Phone Number</string>
     <string name="enter_otp_prompt">Please verify your OTP</string>
-    <string name="verify_otp_for_phone_text">Enter the OTP your received on\n %s</string>
+    <string name="verify_otp_for_phone_text">Enter the OTP your received on \n+91 %s</string>
     <string name="skip">Skip</string>
     <string name="add_profile_photo_prompt">Add a profile photo!</string>
     <string name="raised_hand">Raised Hands</string>
@@ -88,5 +88,9 @@
     <string name="cancel_button">Cancel Button</string>
     <string name="open_to_everyone">Open to Everyone</string>
     <string name="no_raised_hand_text">No one has their hand raised yet</string>
+    <string name="bb_following">%s following</string>
+    <string name="bb_followers">%s followers</string>
+    <string name="welcome_in_string">🎉 Welcome in!</string>
+    <string name="bb_tagline">Connect with your role models directly</string>
 
 </resources>

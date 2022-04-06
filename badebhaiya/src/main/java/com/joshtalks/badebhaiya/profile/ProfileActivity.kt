@@ -3,7 +3,6 @@ package com.joshtalks.badebhaiya.profile
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.DataBindingUtil
@@ -59,11 +58,15 @@ class ProfileActivity: AppCompatActivity() {
     }
 
     private fun handleSpeakerProfile(isSpeaker: Boolean, profileResponse: ProfileResponse) {
-        if (isSpeaker) {
-            binding.apply {
+        binding.apply {
+            if (isSpeaker) {
                 tvProfileBio.text = profileResponse.bioText
+                tvFollowers.text =
+                    getString(R.string.bb_followers, profileResponse.followersCount.toString())
                 btnFollow.text = getString(R.string.following)
                 btnFollow.setBackgroundColor(resources.getColor(R.color.follow_button_stroke))
+            } else {
+                tvFollowers.text = getString(R.string.bb_following, profileResponse.followersCount.toString())
             }
         }
     }
