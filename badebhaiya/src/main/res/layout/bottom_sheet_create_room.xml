@@ -69,6 +69,8 @@
             android:fontFamily="@font/nunito_sans_semi_bold"
             android:text="Start Right Now"
             android:textSize="@dimen/_12sdp"
+            android:visibility="invisible"
+            android:enabled="false"
             app:layout_constraintBottom_toBottomOf="@id/hand_raised_text"
             app:thumbTint="#FDF7F7"
             app:trackTint="#929292" />

@@ -1064,7 +1064,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         )
         showBottomSheet(
             roomInfo,
-            user?.userId ?: EMPTY,
+            user?.userId!!,
             userUid,
             user?.name.toString()
         )

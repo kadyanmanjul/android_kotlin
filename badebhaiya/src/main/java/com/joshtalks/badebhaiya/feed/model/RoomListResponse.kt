@@ -3,12 +3,11 @@ package com.joshtalks.badebhaiya.feed.model
 import android.os.Build
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.badebhaiya.core.EMPTY
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
-import java.util.ArrayList
-import java.util.Locale
-import java.util.TimeZone
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 data class RoomListResponse(
     @SerializedName("live_room")
@@ -78,6 +77,8 @@ data class SpeakerData(
     val name: String?,
     @SerializedName("photo_url")
     val photoUrl: String?,
+    @SerializedName("uuid")
+    val uuid: String?,
 )  : Parcelable
 
 @Parcelize
@@ -101,6 +102,6 @@ data class LiveRoomUser(
     @SerializedName("is_hand_raised")
     var isHandRaised: Boolean = false,
     @SerializedName("user_id")
-    var userId: String,
+    var userId: String = EMPTY,
     var isInviteSent: Boolean = false
 ) : Parcelable

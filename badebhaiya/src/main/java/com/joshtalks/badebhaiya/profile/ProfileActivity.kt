@@ -3,7 +3,9 @@ package com.joshtalks.badebhaiya.profile
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
@@ -30,8 +32,15 @@ class ProfileActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding.lifecycleOwner = this
         handleIntent()
-        viewModel.getProfileForUser(User.getInstance().userId)
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
         addObserver()
+        setOnClickListener()
+    }
+
+    private fun setOnClickListener() {
+        findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
+            super.onBackPressed()
+        }
     }
 
     private fun handleIntent() {
