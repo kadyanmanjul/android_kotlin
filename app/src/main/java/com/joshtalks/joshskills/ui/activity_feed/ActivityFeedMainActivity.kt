@@ -23,7 +23,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
     val viewModel: ActivityFeedViewModel by lazy {
         ViewModelProvider(this).get(ActivityFeedViewModel::class.java)
     }
-
+    private var flag:Boolean=false
     override fun setIntentExtras() {}
 
     override fun initViewBinding() {
@@ -83,7 +83,10 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
             viewModel.isScrollToEndButtonVisible.set(false)
             binding.rvFeeds.layoutManager?.scrollToPosition(0)
         }else{
-            viewModel.isScrollToEndButtonVisible.set(true)
+            if(flag) {
+                viewModel.isScrollToEndButtonVisible.set(true)
+                flag=true
+            }
         }
     }
     fun scrollToEnd() {

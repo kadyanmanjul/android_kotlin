@@ -303,6 +303,7 @@
             android:background="@drawable/white_button_round_enabled"
             android:clickable="true"
             android:elevation="@dimen/_4sdp"
+            android:visibility="gone"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
