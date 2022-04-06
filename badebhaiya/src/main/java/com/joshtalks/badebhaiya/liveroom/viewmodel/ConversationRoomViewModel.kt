@@ -71,6 +71,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
 
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
     val roomDetailsLivedata = MutableLiveData<ConversationRoomDetailsResponse>()
+
     //val roomListLiveData = MutableLiveData<RoomListResponse>()
     val points = MutableLiveData<String>()
     var audienceList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
@@ -173,117 +174,121 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                             response?.uid,
                             response?.token,
                             item.startedBy ?: 0 == response?.uid,
-                            response?.roomId ,
+                            response?.roomId,
                             startedBy = item.startedBy,
                             topic = item.topic ?: EMPTY
                         )
                     )
 
-                }
-                else {
+                } else {
                     val errorResponse = Gson().fromJson(
                         apiResponse.errorBody()?.string(),
                         ConversationRoomResponse::class.java
                     )
                     navigation.postValue(
                         ConversationRoomListingNavigation.ApiCallError(
-                             " Error occured"
+                            " Error occured"
                         )
                     )
 
                 }
-            }
-            catch (ex: Throwable) {
+            } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
         }
     }
 
     fun initPubNub(channelName: String?) {
-        val pnConf = PNConfiguration()
-        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
-        pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
-        pnConf.uuid = User.getInstance().userId
-        pnConf.isSecure = false
-        pubnub = PubNub(pnConf)
+        viewModelScope.launch(Dispatchers.IO) {
+            val pnConf = PNConfiguration()
+            pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
+            pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
+            pnConf.uuid = User.getInstance().userId
+            pnConf.isSecure = false
+            pubnub = PubNub(pnConf)
 
-        pubnub?.addListener(object : SubscribeCallback() {
-            override fun status(pubnub: PubNub, pnStatus: PNStatus) {
-            }
+            pubnub?.addListener(object : SubscribeCallback() {
+                override fun status(pubnub: PubNub, pnStatus: PNStatus) {
+                }
 
-            override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-                val msg = pnMessageResult.message.asJsonObject
-                val act = msg["action"].asString
-                try {
-                    if (msg != null) {
-                        Log.d(
-                            "ABC",
-                            "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
-                        )
-                        replaySubject.toSerialized()
-                            .onNext(ConversationRoomPubNubEventBus(PubNubEvent.valueOf(act), msg))
+                override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
+                    val msg = pnMessageResult.message.asJsonObject
+                    val act = msg["action"].asString
+                    try {
+                        if (msg != null) {
+                            Log.d(
+                                "ABC",
+                                "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
+                            )
+                            replaySubject.toSerialized()
+                                .onNext(
+                                    ConversationRoomPubNubEventBus(
+                                        PubNubEvent.valueOf(act),
+                                        msg
+                                    )
+                                )
+                        }
+                    } catch (ex: Exception) {
+                        LogException.catchException(ex)
                     }
                 }
-                catch (ex: Exception) {
-                    LogException.catchException(ex)
+
+                override fun presence(
+                    pubnub: PubNub,
+                    pnPresenceEventResult: PNPresenceEventResult
+                ) {
                 }
-            }
 
-            override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
-            }
+                override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
 
-            override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
+                override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
 
-            override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
+                override fun channel(
+                    pubnub: PubNub,
+                    pnChannelMetadataResult: PNChannelMetadataResult
+                ) {
+                }
 
-            override fun channel(
-                pubnub: PubNub,
-                pnChannelMetadataResult: PNChannelMetadataResult
-            ) {
-            }
+                override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
 
-            override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
+                override fun messageAction(
+                    pubnub: PubNub,
+                    pnMessageActionResult: PNMessageActionResult
+                ) {
+                }
 
-            override fun messageAction(
-                pubnub: PubNub,
-                pnMessageActionResult: PNMessageActionResult
-            ) {
-            }
+                override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
+            })
 
-            override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
-        })
+            pubnub?.subscribe()?.channels(
+                Arrays.asList(channelName, agoraUid.toString())
+            )?.withPresence()
+                ?.execute()
 
-        pubnub?.subscribe()?.channels(
-            Arrays.asList(channelName, agoraUid.toString())
-        )?.withPresence()
-            ?.execute()
-
-        getLatestUserList(channelName)
+            getLatestUserList(channelName)
+        }
     }
 
     private fun getLatestUserList(channelName: String?) {
-
-        pubnub?.channelMembers
+        val memberList = pubnub?.channelMembers
             ?.channel(channelName)
             ?.includeCustom(true)
-            ?.async { result, status ->
-                Log.d("ABC2", "getLatestUserList() called with: result = $result, status = $status")
-                val tempSpeakerList = ArraySet<LiveRoomUser>()
-                val tempAudienceList = ArraySet<LiveRoomUser>()
-                result?.data?.forEach {
-                    refreshUsersList(it.uuid.id, it.custom)?.let { user ->
-                        if (user.isSpeaker == true) {
-                            tempSpeakerList.add(user)
-                        }
-                        else {
-                            tempAudienceList.add(user)
-                        }
-                    }
+            ?.sync()
+        Log.d("ABC2", "getLatestUserList() called with: memberList = $memberList ")
+        val tempSpeakerList = ArraySet<LiveRoomUser>()
+        val tempAudienceList = ArraySet<LiveRoomUser>()
+        memberList?.data?.forEach {
+            refreshUsersList(it.uuid.id, it.custom)?.let { user ->
+                if (user.isSpeaker == true) {
+                    tempSpeakerList.add(user)
+                } else {
+                    tempAudienceList.add(user)
                 }
-                speakersList.postValue(tempSpeakerList)
-                audienceList.postValue(tempAudienceList)
-                isPubNubUsersFetched.postValue(true)
             }
+        }
+        speakersList.postValue(tempSpeakerList)
+        audienceList.postValue(tempAudienceList)
+        isPubNubUsersFetched.postValue(true)
     }
 
     private fun refreshUsersList(uid: String, state: Any): LiveRoomUser? {
@@ -325,51 +330,44 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         isMicOn: Boolean? = null,
         channelName: String?
     ) {
-        if (user == null || pubnub == null || user.id == null) {
-            return
-        }
-        val state = mutableMapOf<String, Any>()
-        state.put("id", user.id!!)
-        state.put("is_speaker", user.isSpeaker.toString())
-        state.put("name", user.name ?: DEFAULT_NAME)
-        state.put("photo_url", user.photoUrl ?: EMPTY)
-        state.put("sort_order", user.sortOrder ?: 0)
-        state.put("is_moderator", user.isModerator)
-        state.put("is_mic_on", (isMicOn ?: user.isMicOn))
-        state.put("is_speaking", user.isSpeaking)
-        state.put("is_hand_raised", user.isHandRaised)
-        state.put("user_id", user.userId)
+        viewModelScope.launch(Dispatchers.IO) {
+            if (user == null || pubnub == null || user.id == null) {
+                return@launch
+            }
+            val state = mutableMapOf<String, Any>()
+            state.put("id", user.id!!)
+            state.put("is_speaker", user.isSpeaker.toString())
+            state.put("name", user.name ?: DEFAULT_NAME)
+            state.put("photo_url", user.photoUrl ?: EMPTY)
+            state.put("sort_order", user.sortOrder ?: 0)
+            state.put("is_moderator", user.isModerator)
+            state.put("is_mic_on", (isMicOn ?: user.isMicOn))
+            state.put("is_speaking", user.isSpeaking)
+            state.put("is_hand_raised", user.isHandRaised)
+            state.put("user_id", user.userId)
 
-        pubnub?.setChannelMembers()?.channel(channelName)
-            ?.uuids(
-                Arrays.asList(
-                    PNUUID.uuidWithCustom(
-                        user.id.toString(),
-                        state as Map<String, Any>?
+            pubnub?.setChannelMembers()?.channel(channelName)
+                ?.uuids(
+                    Arrays.asList(
+                        PNUUID.uuidWithCustom(
+                            user.id.toString(),
+                            state as Map<String, Any>?
+                        )
                     )
                 )
-            )
-            ?.includeCustom(true)
-            ?.async { result, status ->
-
-            }
+                ?.includeCustom(true)
+                ?.sync()
+        }
     }
 
     fun sendCustomMessage(state: JsonElement, channelName: String? = null) {
-        channelName?.let {
-            pubnub?.publish()
-                ?.message(state)
-                ?.channel(channelName)
-                ?.async(object : PNCallback<PNPublishResult> {
-                    override fun onResponse(result: PNPublishResult?, status: PNStatus) {
-                        if (status.isError.not()) {
-                            Log.d(
-                                "ABC2",
-                                "onResponse() called with: state = $state, channelName = $channelName result = $result"
-                            )
-                        }
-                    }
-                })
+        viewModelScope.launch(Dispatchers.IO) {
+            channelName?.let {
+                pubnub?.publish()
+                    ?.message(state)
+                    ?.channel(channelName)
+                    ?.sync()
+            }
         }
     }
 
@@ -433,8 +431,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             list.add(user)
             setSpeakerList(list)
             //speakerAdapter?.updateFullList(ArrayList(getSpeakerList()))
-        }
-        else {
+        } else {
 
             message.what = HIDE_SEARCHING_STATE
             singleLiveEvent.postValue(message)
@@ -460,8 +457,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                 val list = getSpeakerList().filter { it.id == user.id }
                 getSpeakerList().removeAll(list)
                 setSpeakerList(getSpeakerList())
-            }
-            else if (getAudienceList().any { it.id == user.id }) {
+            } else if (getAudienceList().any { it.id == user.id }) {
                 val list = getAudienceList().filter { it.id == user.id }
                 getAudienceList().removeAll(list)
                 setAudienceList(getAudienceList())
@@ -489,8 +485,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
 
 
             setHandRaisedForUser(msg.get("id").asInt, true)
-        }
-        else {
+        } else {
             setHandRaisedForUser(msg.get("id").asInt, false)
         }
     }
