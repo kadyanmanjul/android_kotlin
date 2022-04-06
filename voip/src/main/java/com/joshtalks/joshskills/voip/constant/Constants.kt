@@ -32,4 +32,5 @@ const val JOINING = 119 // Join Channel Called and Success Returned but haven't 
 const val JOINED = 120 // Local User Joined the Channel
 const val CONNECTED = 121 // Remote User Joined the Channel and can Talk
 const val LEAVING = 122 // LeaveChannel Called but haven't left the channel
+const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining New Channel
 

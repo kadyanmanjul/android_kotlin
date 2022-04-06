@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.webrtc
 
+import android.util.Log
 import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -10,8 +11,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
+private const val TAG = "AgoraEventHandler"
 const val USER_DROP_OFFLINE = 1
+private const val USER_ALREADY_LEFT_THE_CHANNEL = 18
 const val RECONNECTING_TIMEOUT_IN_MILLIS = 20 * 1000L
+
 internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler() {
 
     companion object {
@@ -60,6 +64,10 @@ internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler(
 
     // Reports an error during SDK runtime
     override fun onError(errorCode: Int) {
+        if(errorCode == USER_ALREADY_LEFT_THE_CHANNEL) {
+            Log.d(TAG, "onError: USER ALREADY LEFT THE CHANNEL")
+            return
+        }
         voipLog?.log("$errorCode")
         emitEvent(CallState.Error)
     }

@@ -22,6 +22,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import androidx.work.impl.background.greedy.GreedyScheduler
+import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
@@ -84,6 +85,7 @@ class JoshApplication :
             } else {
                 Timber.plant(Timber.DebugTree())
                 Utils.initUtils(this)
+                Stetho.initializeWithDefaults(this);
             }
         
             Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")

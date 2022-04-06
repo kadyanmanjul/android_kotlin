@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.data.api
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.joshtalks.joshskills.base.constants.KEY_APP_ACCEPT_LANGUAGE
 import com.joshtalks.joshskills.base.constants.KEY_APP_USER_AGENT
 import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_CODE
@@ -34,7 +35,6 @@ object VoipNetwork {
                 .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                 .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
                 .followSslRedirects(true)
-                .addInterceptor(HeaderInterceptor)
 
             if (BuildConfig.DEBUG) {
                 val logging =
@@ -43,7 +43,9 @@ object VoipNetwork {
                     }.apply {
                         level = HttpLoggingInterceptor.Level.BODY
                     }
+                okHttpBuilder.addInterceptor(HeaderInterceptor)
                 okHttpBuilder.addInterceptor(logging)
+                okHttpBuilder.addNetworkInterceptor(StethoInterceptor())
             }
 
         retrofit = Retrofit.Builder()

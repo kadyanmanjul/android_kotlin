@@ -7,17 +7,23 @@ import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
 import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val JOINING_CHANNEL_SUCCESS = 0
+private const val USER_ALREADY_IN_A_CHANNEL = -17
 
 internal object AgoraCallingService : CallingService {
     // TODO: Need to change name
@@ -27,6 +33,7 @@ internal object AgoraCallingService : CallingService {
     private val eventFlow : MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private var state = MutableSharedFlow<Int>(replay = 0)
+    private lateinit var lazyJoin : Deferred<Unit>
     private val agoraEvent by lazy {
         AgoraEventHandler.getAgoraEventObject(ioScope)
     }
@@ -55,12 +62,19 @@ internal object AgoraCallingService : CallingService {
             initCallingService()
             state.emit(JOINING)
             val status = joinChannel(request)
-            if(status != JOINING_CHANNEL_SUCCESS) {
-                state.emit(IDLE)
-                eventFlow.emit(CallState.Error)
-            }
             voipLog?.log("Join Channel Status ----> $status")
-            // TODO: Need to check status if its unable to join
+            when(status) {
+                JOINING_CHANNEL_SUCCESS -> {}
+                USER_ALREADY_IN_A_CHANNEL -> {
+                    state.emit(LEAVING_AND_JOINING)
+                    createLazyJoinRequest(request)
+                    leaveChannel()
+                }
+                else -> {
+                    state.emit(IDLE)
+                    eventFlow.emit(CallState.Error)
+                }
+            }
             // 1. API Call to notify backend Start Listening to Pubnub Channel
             // 2. Will send timeout (Use a Timer/repeat/loop and break-out from it when receive channel through pubnub)
             // 3. Receive Token and Channel through Pubnub [Pubnub Module]
@@ -73,11 +87,34 @@ internal object AgoraCallingService : CallingService {
         ioScope.launch {
             // 1. Send DISCONNECTING signal through Pubnub
             // 2. Leave Channel through Agora SDK
+            stopLazyJoin()
             voipLog?.log("Coroutine : About to call leaveChannel")
             state.emit(LEAVING)
             leaveChannel()
             voipLog?.log("Coroutine : Finishing call leaveChannel Coroutine")
         }
+    }
+
+    private fun createLazyJoinRequest(request: CallRequest) {
+        ioScope.launch {
+            lazyJoin = async(start = CoroutineStart.LAZY) {
+                if(isActive) {
+                    val status = joinChannel(request)
+                    if (status != JOINING_CHANNEL_SUCCESS && isActive)
+                        eventFlow.emit(CallState.Error)
+                }
+            }
+        }
+    }
+
+    private fun stopLazyJoin() {
+        if(this@AgoraCallingService::lazyJoin.isInitialized)
+            lazyJoin.cancel()
+    }
+
+    private fun startLazyJoin() {
+        if(this@AgoraCallingService::lazyJoin.isInitialized)
+            lazyJoin.start()
     }
 
     override fun muteAudioStream(muteAudio : Boolean) {
@@ -114,7 +151,12 @@ internal object AgoraCallingService : CallingService {
             agoraEvent.callingEvent.collect { callState ->
                 voipLog?.log("observeCallbacks : CallState = $callState")
                 when(callState) {
-                    CallState.CallDisconnected, CallState.Idle -> state.emit(IDLE)
+                    CallState.CallDisconnected, CallState.Idle -> {
+                        if(state.equals(LEAVING_AND_JOINING))
+                            startLazyJoin()
+                        else
+                            state.emit(IDLE)
+                    }
                     CallState.CallConnected -> state.emit(CONNECTED)
                     CallState.CallInitiated -> state.emit(JOINED)
                     CallState.ReconnectingFailed -> { disconnectCall() }
