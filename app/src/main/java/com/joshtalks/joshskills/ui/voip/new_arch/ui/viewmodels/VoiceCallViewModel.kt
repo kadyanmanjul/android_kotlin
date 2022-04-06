@@ -1,19 +1,21 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
-import android.graphics.Color
-import android.util.Log
+import android.content.Intent
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallFragment
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
@@ -98,11 +100,9 @@ class VoiceCallViewModel : BaseViewModel() {
                         connectCall()
                     }
                     SWITCHED_TO_SPEAKER -> {
-                        isSpeakerOn.set(true)
                         showToast("Speaker is ON")
                     }
                     SWITCHED_TO_WIRED, SWITCHED_TO_BLUETOOTH, SWITCHED_TO_HANDSET -> {
-                        isSpeakerOn.set(false)
                         showToast("Speaker is Off")
                     }
                 }
@@ -144,8 +144,10 @@ class VoiceCallViewModel : BaseViewModel() {
 
     fun switchSpeaker(v: View) {
         if (isSpeakerOn.get()) {
+            isSpeakerOn.set(false)
             repository.turnOffSpeaker()
         } else {
+            isSpeakerOn.set(true)
             repository.turnOnSpeaker()
         }
     }
@@ -207,5 +209,12 @@ object CallDataObj : CallData {
 
     override fun getStartTime(): Long {
        return VoipPref.getStartTimeStamp()
+    }
+
+    val startActivity = fun(){
+        val i = Intent(AppObjectController.joshApplication, VoiceCallActivity::class.java).apply {
+            putExtra("openCallFragment",true)
+        }
+        AppObjectController.joshApplication.startActivity(i)
     }
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="call_action_color">#5ee067</color>
+    <color name="call_decline_color">#ef5050</color>
+</resources>
