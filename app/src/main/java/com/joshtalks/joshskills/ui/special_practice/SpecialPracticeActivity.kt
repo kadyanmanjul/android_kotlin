@@ -5,7 +5,6 @@ import android.app.DownloadManager
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -17,25 +16,12 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.ActivityRecordVideoBinding
+import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.special_practice.base.BaseKFactorActivity
-import com.joshtalks.joshskills.ui.special_practice.utils.CALL_INVITE_FRIENDS_METHOD
-import com.joshtalks.joshskills.ui.special_practice.utils.CLOSE_SAMPLE_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_ID_DATA
-import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.K_FACTOR_ON_BACK_PRESSED
-import com.joshtalks.joshskills.ui.special_practice.utils.MOVE_TO_ACTIVITY
-import com.joshtalks.joshskills.ui.special_practice.utils.OPEN_VIEW_AND_SHARE
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORDED_SPECIAL_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORD_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_SPECIAL_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.START_VIDEO_RECORDING
-import com.joshtalks.joshskills.ui.special_practice.utils.SPECIAL_ID
-import com.joshtalks.joshskills.ui.special_practice.utils.RECORD_VIEW_FRAGMENT
-import com.joshtalks.joshskills.ui.special_practice.utils.VIEW_AND_SHARE_FRAGMENT
-import com.joshtalks.joshskills.ui.special_practice.utils.K_FACTOR_STACK
+import com.joshtalks.joshskills.ui.special_practice.utils.*
 import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -49,8 +35,9 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
     private val binding by lazy<ActivityRecordVideoBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_record_video)
     }
+    private var errorView: Stub<ErrorView>? = null
 
-    private val spviewModel by lazy {
+    private val spViewModel by lazy {
         ViewModelProvider(this).get(SpecialPracticeViewModel::class.java)
     }
 
@@ -83,24 +70,45 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
     }
 
     override fun setIntentExtras() {
-        spviewModel.specialId.set(intent.getStringExtra(SPECIAL_ID))
+        spViewModel.specialId.set(intent.getStringExtra(SPECIAL_ID))
     }
 
     override fun initViewBinding() {
-        binding.vm = spviewModel
+        binding.vm = spViewModel
         binding.executePendingBindings()
     }
 
     override fun onCreated() {
-        spviewModel.isVideoDownloadingStarted.set(true)
-        spviewModel.getSpecialIdData(spviewModel.specialId.get() ?: EMPTY)
+        spViewModel.isVideoDownloadingStarted.set(true)
+        spViewModel.getSpecialIdData(spViewModel.specialId.get() ?: EMPTY)
+        errorView = Stub(findViewById(R.id.error_view))
 
-        if (spviewModel.specialId.get() != null) {
+        if (spViewModel.specialId.get() != null) {
             val map = hashMapOf(
                 Pair("mentor_id", Mentor.getInstance().getId()),
-                Pair("special_practice_id", spviewModel.specialId.get() ?: EMPTY)
+                Pair("special_practice_id", spViewModel.specialId.get() ?: EMPTY)
             )
-            spviewModel.fetchSpecialPracticeData(map)
+            if (UpdateReceiver.isNetworkAvailable()) {
+                spViewModel.fetchSpecialPracticeData(map)
+                errorView?.resolved()?.let {
+                    errorView!!.get().onSuccess()
+                }
+            } else {
+                errorView?.resolved().let {
+                    errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                        override fun onRetryButtonClicked() {
+
+                        }
+                    })
+                }
+            }
+        }
+
+        spViewModel.specialPracticeData.observe(this) {
+            errorView?.resolved()?.let {
+                errorView!!.get().onSuccess()
+            }
+            getPermissionAndDownloadFile(spViewModel.recordedUrl)
         }
     }
 
@@ -109,16 +117,15 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
             when (it.what) {
                 K_FACTOR_ON_BACK_PRESSED -> popBackState()
                 CALL_INVITE_FRIENDS_METHOD -> inviteFriends(it.obj as Intent)
-                SHOW_RECORD_VIDEO -> spviewModel.showRecordedVideoUi(
+                SHOW_RECORD_VIDEO -> spViewModel.showRecordedVideoUi(
                     it.obj as Boolean,
                     binding.videoPlayer,
-                    spviewModel.recordedUrl
+                    spViewModel.recordedUrl
                 )
-                DOWNLOAD_VIDEO -> getPermissionAndDownloadFile(spviewModel.recordedUrl)
-                SHOW_SAMPLE_VIDEO -> spviewModel.showRecordedVideoUi(
+                SHOW_SAMPLE_VIDEO -> spViewModel.showRecordedVideoUi(
                     it.obj as Boolean,
                     binding.videoView,
-                    spviewModel.videoUrl
+                    spViewModel.videoUrl
                 )
                 SHOW_RECORDED_SPECIAL_VIDEO -> playRecordedVideo()
                 SHOW_SAMPLE_SPECIAL_VIDEO -> playSampleVideo()
@@ -127,7 +134,6 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
                 DOWNLOAD_ID_DATA -> setDownloadId(it.obj as DownloadManager.Request)
                 OPEN_VIEW_AND_SHARE -> openViewAndShare()
                 MOVE_TO_ACTIVITY -> moveToNewActivity()
-                // CHECK_DOWNLOAD_PERMISSION_EXIST -> checkDownloadPermissionExist()
             }
         }
     }
@@ -157,8 +163,8 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
     }
 
     private fun closeIntroVideoPopUpUi() {
-        spviewModel.isRecordButtonClick.set(true)
-        spviewModel.isVideoPopUpShow.set(false)
+        spViewModel.isRecordButtonClick.set(true)
+        spViewModel.isVideoPopUpShow.set(false)
         binding.videoView.onStop()
     }
 
@@ -211,14 +217,14 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
 
     private fun getPermissionAndDownloadFile(videoUrl: String) {
         if (PermissionUtils.isStoragePermissionEnabled(this)) {
-            spviewModel.downloadFile(videoUrl)
+            spViewModel.downloadFile(videoUrl)
         } else {
             PermissionUtils.storageReadAndWritePermission(this,
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
-                                spviewModel.downloadFile(videoUrl)
+                                spViewModel.downloadFile(videoUrl)
                                 return
 
                             }
@@ -242,13 +248,13 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
 
     fun setDownloadId(request: DownloadManager.Request) {
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
-        spviewModel.downloadID.set(downloadManager.enqueue(request))
+        spViewModel.downloadID.set(downloadManager.enqueue(request))
         registerDownloadReceiver()
     }
 
     fun registerDownloadReceiver() {
         registerReceiver(
-            spviewModel.onDownloadComplete,
+            spViewModel.onDownloadComplete,
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         )
     }
@@ -260,9 +266,9 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
 
     private fun openRecordingScreen() {
         try {
-            spviewModel.isVideoPlay.set(false)
+            spViewModel.isVideoPlay.set(false)
             pauseVideo()
-            spviewModel.isRecordButtonClick.set(false)
+            spViewModel.isRecordButtonClick.set(false)
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 val fragment = RecordVideoFragment()
@@ -290,7 +296,7 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
                 this,
                 EMPTY,
                 null,
-                spviewModel.recordedUrl,
+                spViewModel.recordedUrl,
                 currentVideoProgressPosition,
                 conversationId = getConversationId()
             )
@@ -304,7 +310,7 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
                 this,
                 EMPTY,
                 null,
-                spviewModel.videoUrl,
+                spViewModel.videoUrl,
                 currentVideoProgressPosition,
                 conversationId = getConversationId()
             )
@@ -314,7 +320,7 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
     fun moveToNewActivity() {
         try {
             val i = Intent(this, SpecialPracticeActivity::class.java)
-            i.putExtra(SPECIAL_ID, spviewModel.specialId.get())
+            i.putExtra(SPECIAL_ID, spViewModel.specialId.get())
             startActivity(i)
             overridePendingTransition(0, 0)
             finish()

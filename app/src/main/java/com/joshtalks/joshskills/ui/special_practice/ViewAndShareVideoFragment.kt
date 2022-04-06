@@ -65,7 +65,7 @@ class ViewAndShareVideoFragment : BaseKFactorFragment(), Player.EventListener {
     }
 
     override fun initViewState() {
-        liveData.observe(viewLifecycleOwner) {
+        liveData.observe(this) {
             when (it.what) {
                 CALL_INVITE_FRIENDS_METHOD -> inviteFriends(it.obj as Intent)
                 PLAY_RECORDED_VIDEO -> playRecordedVideo()

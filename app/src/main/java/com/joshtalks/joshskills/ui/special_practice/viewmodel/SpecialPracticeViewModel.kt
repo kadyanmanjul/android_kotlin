@@ -9,7 +9,6 @@ import android.graphics.Outline
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.databinding.ObservableBoolean
@@ -20,6 +19,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.K_FACTOR_ON_BACK_PRESSED
 import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORDED_SPECIAL_VIDEO
 import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORD_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_VIDEO
 import com.joshtalks.joshskills.ui.special_practice.utils.getAndroidDownloadFolder
 import com.joshtalks.joshskills.ui.special_practice.utils.getAppShareUrl
 import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
@@ -108,11 +107,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
                             singleLiveEvent.value = message
                         }
                         if (recordedPathLocal.get() == EMPTY || recordedPathLocal.get() == null) {
-                            withContext(dispatcher) {
-                                Log.e("sagar", "fetchSpecialPracticeData: 1")
-                                message.what = DOWNLOAD_VIDEO
-                                singleLiveEvent.value = message
-                            }
+                            specialPracticeData.postValue(response.body())
                         }
                     }
                 }
@@ -124,7 +119,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
 
     private fun setData(specialPractice: SpecialPractice?) {
         wordInEnglish.set(specialPractice?.wordEnglish)
-        sentenceInEnglish.set(specialPractice?.wordEnglish)
+        sentenceInEnglish.set(specialPractice?.sentenceEnglish)
         wordInHindi.set(specialPractice?.wordHindi)
         sentenceInHindi.set(specialPractice?.sentenceHindi)
     }
@@ -140,11 +135,6 @@ class SpecialPracticeViewModel : BaseViewModel() {
         message.what = K_FACTOR_ON_BACK_PRESSED
         singleLiveEvent.value = message
     }
-
-//    fun checkDownloadPermissionExist(view: View){
-//        message.what = CHECK_DOWNLOAD_PERMISSION_EXIST
-//        singleLiveEvent.value = message
-//    }
 
     fun getDeepLinkAndInviteFriends(view: View) {
         val referralTimestamp = System.currentTimeMillis()
@@ -212,6 +202,9 @@ class SpecialPracticeViewModel : BaseViewModel() {
                 waIntent.setPackage(WHATSAPP_PACKAGE_STRING)
             }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
+            if (recordedPathLocal.get() == EMPTY){
+                recordedPathLocal.set(videoDownloadPath.get())
+            }
             waIntent.putExtra(
                 Intent.EXTRA_STREAM,
                 Uri.parse(getAndroidDownloadFolder()?.absolutePath + "/" + recordedPathLocal.get())
@@ -229,9 +222,13 @@ class SpecialPracticeViewModel : BaseViewModel() {
     }
 
     fun onCardSampleVideoPlayer(view: View) {
-        message.what = SHOW_SAMPLE_VIDEO
-        message.obj = false
-        singleLiveEvent.value = message
+        if (UpdateReceiver.isNetworkAvailable()) {
+            message.what = SHOW_SAMPLE_VIDEO
+            message.obj = false
+            singleLiveEvent.value = message
+        }else{
+            showToast("Seems like your Internet is too slow or not available.")
+        }
     }
 
     fun closeIntroVideoPopUpUi(view: View) {
@@ -240,8 +237,12 @@ class SpecialPracticeViewModel : BaseViewModel() {
     }
 
     fun startRecording(view: View) {
-        message.what = START_VIDEO_RECORDING
-        singleLiveEvent.value = message
+        if (UpdateReceiver.isNetworkAvailable()){
+            message.what = START_VIDEO_RECORDING
+            singleLiveEvent.value = message
+        }else{
+            showToast("Seems like your Internet is too slow or not available.")
+        }
     }
 
     fun startViewAndShareScreen() {

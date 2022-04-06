@@ -430,6 +430,17 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <ViewStub
+                        android:id="@+id/error_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inflatedId="@+id/error_view"
+                        android:layout="@layout/error_view_stub"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>
 
