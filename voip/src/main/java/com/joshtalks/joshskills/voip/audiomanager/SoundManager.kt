@@ -4,7 +4,6 @@ import android.content.Context
 import android.media.*
 import android.os.Build
 import android.os.Vibrator
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.voip.Utils
 import java.util.*
@@ -15,45 +14,44 @@ class SoundManager(
 ) {
     private val applicationContext=Utils.context
     private var pattern = longArrayOf(0, 1500, 1000)
-    private var defaultRingtoneUri =
-        RingtoneManager.getActualDefaultRingtoneUri(applicationContext, soundType)
+    private var defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(applicationContext, soundType)
 
     companion object {
-        private var defaultRingtone: Ringtone? = null
         private var vibrator: Vibrator? = null
+       private var medialPlayer: MediaPlayer? = null
     }
 
-    private fun getRingtoneInstance(): Ringtone? {
-        if (defaultRingtone == null) {
+    private fun getMediaPlayerInstance(): MediaPlayer? {
+        if (medialPlayer == null) {
             vibrator = applicationContext?.let { ContextCompat.getSystemService(it, Vibrator::class.java) }
-            defaultRingtone = RingtoneManager.getRingtone(applicationContext, defaultRingtoneUri)
+            medialPlayer = MediaPlayer()
+            medialPlayer?.isLooping=true
+            medialPlayer?.prepare()
+            medialPlayer?.setAudioStreamType(AudioManager.STREAM_RING)
+            applicationContext?.let { medialPlayer?.setDataSource(it,defaultRingtoneUri)}
         }
-        return defaultRingtone
+        return medialPlayer
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     fun playSound() {
         gainAudioFocus()
-        val ringtone = getRingtoneInstance()
-        if (soundType == SOUND_TYPE_RINGTONE) {
-            ringtone?.isLooping = true
-        }
-        ringtone?.play()
+        medialPlayer= getMediaPlayerInstance()
+           medialPlayer?.start()
         if (duration > 0 && soundType == SOUND_TYPE_RINGTONE) {
-            stopSoundTimer(ringtone)
+            stopSoundTimer(medialPlayer)
         }
         vibrateDevice()
     }
 
     fun stopSound() {
-        getRingtoneInstance()?.stop()
+        getMediaPlayerInstance()?.stop()
         vibrator?.cancel()
     }
 
-    private fun stopSoundTimer(ringtone: Ringtone?) {
+    private fun stopSoundTimer(mediaPlayer: MediaPlayer?) {
         val task: TimerTask = object : TimerTask() {
             override fun run() {
-                ringtone?.stop()
+                mediaPlayer?.stop()
                 vibrator?.cancel()
             }
         }
@@ -101,7 +99,7 @@ class SoundManager(
                     }.build()
             )
         } else {
-            mAudioManager!!.requestAudioFocus(
+            mAudioManager?.requestAudioFocus(
                 { },
                 AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN
