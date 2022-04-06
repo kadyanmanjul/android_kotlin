@@ -1111,6 +1111,20 @@ class ConversationActivity :
                     profileFeatureActiveView(true)
             }
         }
+        lifecycleScope.launchWhenResumed {
+            utilConversationViewModel.userData.collectLatest { userProfileData ->
+                this@ConversationActivity.userProfileData = userProfileData
+                if(inboxEntity.isCourseBought){
+                    conversationBinding.imgFeedBtn.visibility = VISIBLE
+                }
+                else{
+                    conversationBinding.imgFeedBtn.visibility = GONE
+                }
+                initScoreCardView(userProfileData)
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                    profileFeatureActiveView(true)
+            }
+        }
 
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
