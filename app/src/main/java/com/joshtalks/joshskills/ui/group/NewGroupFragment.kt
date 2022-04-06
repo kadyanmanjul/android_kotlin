@@ -20,12 +20,7 @@ import com.joshtalks.joshskills.constants.OPEN_ADMIN_RESPONSIBILITY
 import com.joshtalks.joshskills.constants.SAVE_GROUP_INFO
 import com.joshtalks.joshskills.databinding.FragmentNewGroupBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
-import com.joshtalks.joshskills.ui.group.constants.GROUPS_IMAGE
-import com.joshtalks.joshskills.ui.group.constants.GROUPS_TITLE
-import com.joshtalks.joshskills.ui.group.constants.IS_FROM_GROUP_INFO
-import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
-import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
@@ -120,6 +115,15 @@ class NewGroupFragment : BaseFragment() {
             vm.isFromGroupInfo.set(it.getBoolean(IS_FROM_GROUP_INFO, false))
             vm.groupTitle.set(it.getString(GROUPS_TITLE))
             vm.groupImageUrl.set(it.getString(GROUPS_IMAGE))
+            vm.groupType.apply {
+                this.set(
+                    when(it.getString(GROUP_TYPE, "")) {
+                        OPENED_GROUP -> "Open Group"
+                        CLOSED_GROUP -> "Closed Group"
+                        else -> ""
+                    }
+                )
+            }
             groupId = it.getString(GROUPS_ID)
         }
         vm.isImageChanged = false

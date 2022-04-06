@@ -50,6 +50,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
+    val groupType = ObservableField("")
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
     val isFromGroupInfo = ObservableBoolean(false)
@@ -214,7 +215,7 @@ class JoshGroupViewModel : BaseViewModel() {
                         if (e.code() == 501)
                             showToast("Error : Same group name exist")
                         else
-                            showToast("Error while adding group")
+                            showToast("Error while editing group")
                     } else
                         showToast("Unknown Error Occurred")
                     dismissProgressDialog()

@@ -106,10 +106,12 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_6sdp"
             android:background="@drawable/white_rectangle_with_grey_stroke"
+            android:enabled="@{!vm.isFromGroupInfo()}"
             android:gravity="center_vertical"
             android:hint="Choose group type"
             android:onClick="@{vm::openTypeChooser}"
             android:paddingHorizontal="@dimen/_14sdp"
+            android:text="@{vm.isFromGroupInfo() ? vm.groupType : ``}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             app:drawableEndCompat="@drawable/ic_rounded_triangle"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,7 +145,7 @@
             android:onClick="@{vm::openImageChooser}"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_group_type_hint"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_group_type_hint" />
 
         <TextView
             android:layout_width="0dp"
@@ -152,9 +154,9 @@
             android:layout_marginEnd="@dimen/_4sdp"
             android:text="Provide an optional group icon "
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            app:layout_constraintBottom_toBottomOf="@id/img_group"
             app:layout_constraintStart_toEndOf="@id/img_group"
-            app:layout_constraintTop_toTopOf="@id/img_group"
-            app:layout_constraintBottom_toBottomOf="@id/img_group"/>
+            app:layout_constraintTop_toTopOf="@id/img_group" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/submit_add_group"

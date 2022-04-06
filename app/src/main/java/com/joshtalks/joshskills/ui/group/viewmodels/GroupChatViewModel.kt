@@ -278,9 +278,11 @@ class GroupChatViewModel : BaseViewModel() {
     fun editGroupInfo() {
         message.what = EDIT_GROUP_INFO
         message.data = Bundle().apply {
+            putBoolean(IS_FROM_GROUP_INFO, true)
             putString(GROUPS_TITLE, groupHeader.get())
             putString(GROUPS_IMAGE, imageUrl.get())
             putString(GROUPS_ID, groupId)
+            putString(GROUP_TYPE, groupType.get())
         }
         singleLiveEvent.value = message
     }

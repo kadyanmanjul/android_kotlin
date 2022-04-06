@@ -219,14 +219,9 @@ class JoshGroupActivity : BaseGroupActivity() {
     private fun openEditGroupInfo(data: Bundle?) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            val bundle = Bundle().apply {
-                putBoolean(IS_FROM_GROUP_INFO, true)
-                putString(GROUPS_TITLE, data?.getString(GROUPS_TITLE))
-                putString(GROUPS_IMAGE, data?.getString(GROUPS_IMAGE))
-                putString(GROUPS_ID, data?.getString(GROUPS_ID))
-            }
+
             val fragment = NewGroupFragment()
-            fragment.arguments = bundle
+            fragment.arguments = data
 
             replace(R.id.group_fragment_container, fragment, EDIT_GROUP_INFO_FRAGMENT)
             addToBackStack(GROUPS_STACK)
