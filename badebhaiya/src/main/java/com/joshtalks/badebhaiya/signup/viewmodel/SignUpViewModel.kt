@@ -11,6 +11,7 @@ import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.io.AppDirectory
+import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
@@ -88,6 +89,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         User.getInstance().updateFromResponse(it)
+                        WorkManagerAdmin.requiredTaskAfterLoginComplete()
                         analyzeUserProfile()
                     }
                 }

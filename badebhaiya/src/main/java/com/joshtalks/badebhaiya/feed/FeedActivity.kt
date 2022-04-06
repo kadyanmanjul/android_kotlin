@@ -158,7 +158,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
         //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
-        Log.d("Manjul", "viewRoom() called with: room = $room, view = $view")
+        Log.d("Manjul", "viewRoom() called with: roomid = ${room.speakersData?.userId}, room = $room")
         room.speakersData?.userId?.let {
             ProfileActivity.openProfileActivity(this,it)
         }

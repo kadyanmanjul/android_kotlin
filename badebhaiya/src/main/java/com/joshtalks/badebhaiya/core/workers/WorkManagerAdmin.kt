@@ -30,9 +30,7 @@ object WorkManagerAdmin {
             )
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build(),
-                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build(),
-                )
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build())
             )
             .enqueue()
     }
