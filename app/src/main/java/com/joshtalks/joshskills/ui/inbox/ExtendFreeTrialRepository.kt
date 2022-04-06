@@ -4,16 +4,15 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.delay
-import retrofit2.Response
 
 const val mentor_id = "mentor_id"
 class ExtendFreeTrialRepository {
     private val apiService by lazy { AppObjectController.chatNetworkService }
     private val dbService by lazy { AppObjectController.appDatabase }
 
-    suspend fun extendFreeTrial(): Response<Any> {
-        return apiService.extendFreeTrial(mapOf(mentor_id to Mentor.getInstance().getId()))
-    }
+    suspend fun extendFreeTrial() =
+        apiService.extendFreeTrial(mapOf(mentor_id to Mentor.getInstance().getId()))
+
 
     suspend fun getCourseData(): List<InboxEntity>? {
         try {

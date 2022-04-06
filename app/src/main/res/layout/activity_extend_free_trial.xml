@@ -44,7 +44,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.11"
-            app:srcCompat="@drawable/image_eft_medium" />
+            app:srcCompat="@drawable/ic_image_eft" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/heading_text"
@@ -58,7 +58,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.40"
-            android:text="Extend Free trial!" />
+            android:text="@string/extend_free_trial" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/subheading_text"
@@ -68,7 +68,7 @@
             android:layout_marginEnd="@dimen/_30sdp"
             android:singleLine="false"
             android:gravity="center_horizontal"
-            android:textColor="#4C4C4C"
+            android:textColor="@color/black_0.7_alpha"
             tools:visibility="visible"
             android:text="@string/extend_free_trial_subheading"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
@@ -82,7 +82,7 @@
             tools:text="@string/extend_free_trial_subheading" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_circle1"
+            android:id="@+id/circle_icon"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_42sdp"
             android:layout_marginStart="@dimen/_36sdp"
@@ -103,12 +103,12 @@
             android:layout_marginStart="@dimen/_1sdp"
             android:layout_marginEnd="@dimen/_34sdp"
             android:singleLine="false"
-            android:textColor="#4C4C4C"
+            android:textColor="@color/black_0.7_alpha"
             substringTextColor = "@{@string/extend_free_trial1}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
             android:textSize="@dimen/_13sdp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/iv_circle1"
+            app:layout_constraintStart_toEndOf="@+id/circle_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.63"
@@ -116,7 +116,7 @@
 
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_circle2"
+            android:id="@+id/vector_icon"
             android:layout_width="@dimen/_9sdp"
             android:layout_height="@dimen/_17sdp"
             android:layout_marginStart="@dimen/_36sdp"
@@ -138,8 +138,8 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H9_Regular"
             android:textSize="@dimen/_13sdp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textColor="#4C4C4C"
-            app:layout_constraintStart_toEndOf="@+id/iv_circle1"
+            android:textColor="@color/black_0.7_alpha"
+            app:layout_constraintStart_toEndOf="@+id/circle_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.69"

@@ -1,19 +1,16 @@
 package com.joshtalks.joshskills.ui.inbox
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Message
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.clevertap.android.sdk.Utils.runOnUiThread
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
@@ -30,9 +27,9 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
 
     private val repository: ExtendFreeTrialRepository by lazy { ExtendFreeTrialRepository() }
     private val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
-    var singleLiveEvent : EventLiveData = EventLiveData
-    private var message = Message()
-    var isProgressVisible = ObservableBoolean(false)
+    val singleLiveEvent : EventLiveData = EventLiveData
+    private val message = Message()
+    val isProgressVisible = ObservableBoolean(false)
 
 
 
@@ -63,7 +60,11 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 val courseListResponse =
                     repository.getCourseData()
                 if (courseListResponse != null && courseListResponse.isEmpty().not()) {
-                    addData(courseListResponse[0])
+                    launch(Dispatchers.Main){
+                        message.what= OPEN_EFT_CONVERSATION_ACTIVITY
+                        message.obj=courseListResponse[0]
+                        singleLiveEvent.value=message
+                    }
                     postGoal(GoalKeys.EFT_SUCCESS.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
                     PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, 0L)
                     isProgressVisible.set(false)
@@ -78,15 +79,6 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 isProgressVisible.notifyChange()
                 ex.printStackTrace()
             }
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun addData(courseResponse : InboxEntity){
-        runOnUiThread{
-            message.what= OPEN_EFT_CONVERSATION_ACTIVITY
-            message.obj=courseResponse
-            singleLiveEvent.value=message
         }
     }
 
