@@ -230,6 +230,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                                 IS_FREE_TRIAL_CAMPAIGN_ACTIVE
                             )){
                             viewModel.postGoal(GoalKeys.EFT_GT_2MIN.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
+                            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                         }
 
                         binding.tvTodayTopic.text = response.topicName

@@ -101,7 +101,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         addAfterTime()
     }
 
-    private fun initABTest(){
+    private fun initABTest() {
         viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
     }
 
@@ -215,11 +215,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
 
-        viewModel.extendFreeTrialAbTestLiveData.observe(this){ abTestCampaignData ->
+        viewModel.extendFreeTrialAbTestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 isExtendFreeTrialActive =
                     (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
             }
+            isExtendFreeTrialActive = true
         }
     }
 
@@ -386,14 +387,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        val expiredTime = inboxEntity.expiryDate?.time
-        val currentTime = System.currentTimeMillis()
 
-        PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, isExtendFreeTrialActive && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought.not() && inboxEntity.isFreeTrialExtendable.not())
-        if(isExtendFreeTrialActive && inboxEntity.isCourseBought.not() && inboxEntity.courseId.equals(HINDI_TO_ENGLISH_COURSE_ID) && expiredTime != null && expiredTime < currentTime && inboxEntity.isFreeTrialExtendable){
+
+        if (isExtendFreeTrialActive && inboxEntity.isFreeTrialExtendable
+        ) {
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
-        }else{
+        } else {
             ConversationActivity.startConversionActivity(this, inboxEntity)
         }
     }
