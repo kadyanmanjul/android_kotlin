@@ -31,21 +31,38 @@
             android:layout_height="match_parent"
             android:background="@color/conversation_room_color">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/profile_iv"
+            <androidx.cardview.widget.CardView
                 android:layout_width="@dimen/_24sdp"
+                android:id="@+id/card"
                 android:layout_height="@dimen/_24sdp"
-                android:onClick="@{() -> viewModel.onProfileClicked()}"
-                android:src="@drawable/ic_profile_header"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:cardBackgroundColor="@color/base_app_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.95"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.02" />
+                android:layout_marginTop="@dimen/_10sdp"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:layout_constraintVertical_bias="0.02">
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/profile_iv"
+                    android:layout_width="@dimen/_24sdp"
+                    android:scaleType="centerCrop"
+                    android:layout_height="@dimen/_24sdp"
+                    android:onClick="@{() -> viewModel.onProfileClicked()}"
+                    android:src="@drawable/ic_profile_header"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    app:layout_constraintVertical_bias="0.02" />
+
+            </androidx.cardview.widget.CardView>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
+                app:background="@color/base_app_color"
                 feedAdapter="@{viewModel.feedAdapter}"
                 onFeedItemClick="@{handler}"
                 android:layout_width="match_parent"
@@ -56,7 +73,7 @@
                 android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? bg.getHeight() : 0}"
                 app:layout_constraintBottom_toTopOf="@id/bg"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profile_iv"
+                app:layout_constraintTop_toBottomOf="@+id/card"
                 app:layout_constraintVertical_bias="0.0"
                 tools:listitem="@layout/li_room_event" />
 
