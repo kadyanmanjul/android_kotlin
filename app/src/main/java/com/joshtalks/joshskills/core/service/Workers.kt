@@ -74,23 +74,21 @@ val NOTIFICATION_TITLE_TEXT = arrayOf(
 )
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-    override fun doWork(): Result {
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
         try {
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                var id = getGoogleAdId(context)
-                // TODO abhi ke lea crash ka jugaad
-                if (id.isNullOrEmpty()) {
-                    id = getGoogleAdId(context)
-                }
-                if (id.isNullOrEmpty()) {
+                val response = AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
+                if (response.isSuccessful && response.body()!=null){
+                    PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
+                    Branch.getInstance().setIdentity(response.body()!!.gaID)
+                } else{
                     return Result.failure()
                 }
-                PrefManager.put(USER_UNIQUE_ID, id)
-                Branch.getInstance().setIdentity(id)
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)
+            return Result.failure()
         }
         return Result.success()
     }

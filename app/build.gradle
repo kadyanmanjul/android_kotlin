@@ -169,12 +169,12 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-         //   buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
             buildConfigField "String", "BASE_URL_GAME", "\"http://game-stg.joshtalks.org\""
             buildConfigField "String", "PUBNUB_PUB_GROUPS_KEY", "\"pub-c-d51937d0-6ebe-4da5-8fa7-07d64f8bd63d\""
             buildConfigField "String", "PUBNUB_SUB_GROUPS_KEY", "\"sub-c-41a9c94e-6473-11ec-bc1d-9abcb724faed\""
             /*For Port */
-            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9009\""
+//            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org:9010\""
 
             applicationVariants.all { variant ->
                 variant.outputs.all {
@@ -314,7 +314,6 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
 
-    implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
     implementation 'com.google.android.gms:play-services-ads:20.4.0'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.google.android.gms:play-services-base:17.6.0'
