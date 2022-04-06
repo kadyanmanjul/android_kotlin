@@ -13,6 +13,7 @@ import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
+import kotlinx.android.synthetic.main.base_toolbar.*
 
 class ProfileActivity: AppCompatActivity() {
 
@@ -32,6 +33,9 @@ class ProfileActivity: AppCompatActivity() {
         handleIntent()
         viewModel.getProfileForUser(User.getInstance().userId)
         addObserver()
+        iv_back.setOnClickListener{
+            finish()
+        }
     }
 
     private fun handleIntent() {

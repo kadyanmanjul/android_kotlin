@@ -16,16 +16,17 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView"
-            android:layout_width="397dp"
-            android:layout_height="432dp"
+            android:layout_width="@dimen/_297sdp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.48"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.207"
-            app:srcCompat="@drawable/josh_skill" />
+            app:layout_constraintVertical_bias="0.314"
+            app:srcCompat="@drawable/josh_bb_app_logo" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,9 +45,10 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_34sdp"
             android:layout_marginBottom="@dimen/_46sdp"
+
             android:background="@drawable/next_button_selector"
-            android:paddingHorizontal="@dimen/_50sdp"
-            android:text="🎉Welcome in!"
+            android:paddingHorizontal="@dimen/_25sdp"
+            android:text="🎉 Welcome in!"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
             android:textColor="@color/white"
             android:textSize="@dimen/_17ssp"

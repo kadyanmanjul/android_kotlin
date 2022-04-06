@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".launcher.LauncherActivity">
+    tools:context=".launcher.LauncherActivity"
+    android:background="@color/base_app_color">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageView"
-        android:layout_width="@dimen/_197sdp"
+        android:layout_width="@dimen/_297sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
@@ -16,6 +17,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/josh_skill" />
+        app:srcCompat="@drawable/josh_bb_app_logo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
