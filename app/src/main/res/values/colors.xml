@@ -210,5 +210,6 @@
     <color name="progess_color_quiz">#13B673</color>
     <color name="report_white">#F5F5F5</color>
     <color name="language_item_bg">#7A7A7A</color>
-
+    <color name="audio_view_container_color">#F2F2F2</color>
+    <color name="play_pause_button_color">#65767E</color>
 </resources>

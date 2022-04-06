@@ -85,6 +85,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         }else{
             if(flag) {
                 viewModel.isScrollToEndButtonVisible.set(true)
+            }else{
                 flag=true
             }
         }

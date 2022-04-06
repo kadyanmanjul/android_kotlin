@@ -172,6 +172,7 @@ const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
 const val DEFAULT_TOOLTIP_DELAY_IN_MS = 1000L
 const val LEADERBOARD_TOOLTIP_DELAY_IN_MS = 1500L
 const val TOOLTIP_CONVERSAITON = "TOOLTIP_CONVERSAITON_"
+const val HINDI_TO_ENGLISH_COURSE_ID = "151"
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -1111,20 +1112,20 @@ class ConversationActivity :
                     profileFeatureActiveView(true)
             }
         }
-        lifecycleScope.launchWhenResumed {
-            utilConversationViewModel.userData.collectLatest { userProfileData ->
-                this@ConversationActivity.userProfileData = userProfileData
-                if(inboxEntity.isCourseBought){
-                    conversationBinding.imgFeedBtn.visibility = VISIBLE
+            lifecycleScope.launchWhenResumed {
+                utilConversationViewModel.userData.collectLatest { userProfileData ->
+                    this@ConversationActivity.userProfileData = userProfileData
+                    if (inboxEntity.isCourseBought && inboxEntity.courseId == HINDI_TO_ENGLISH_COURSE_ID) {
+                        conversationBinding.imgFeedBtn.visibility = VISIBLE
+                    } else {
+                        conversationBinding.imgFeedBtn.visibility = GONE
+                    }
+                    initScoreCardView(userProfileData)
+                    if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                        profileFeatureActiveView(true)
                 }
-                else{
-                    conversationBinding.imgFeedBtn.visibility = GONE
-                }
-                initScoreCardView(userProfileData)
-                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
-                    profileFeatureActiveView(true)
             }
-        }
+
 
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
@@ -1241,8 +1242,7 @@ class ConversationActivity :
                 activityFeedControl =
                     (map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
             }
-            if (activityFeedControl) conversationBinding.imgFeedBtn.visibility =
-                VISIBLE else conversationBinding.imgFeedBtn.visibility = GONE
+
         }
     }
 
