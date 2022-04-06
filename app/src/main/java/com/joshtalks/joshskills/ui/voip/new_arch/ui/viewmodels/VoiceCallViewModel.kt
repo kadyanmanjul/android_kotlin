@@ -127,6 +127,10 @@ class VoiceCallViewModel : BaseViewModel() {
 
     fun disconnectCall(v: View) {
         voipLog?.log("Disconnect Call")
+        disconnect()
+    }
+
+    fun disconnect() {
         repository.disconnectCall()
     }
 

@@ -18,7 +18,7 @@ class SoundManager(
 
     companion object {
         private var vibrator: Vibrator? = null
-       private var medialPlayer: MediaPlayer? = null
+        private var medialPlayer: MediaPlayer? = null
     }
 
     private fun getMediaPlayerInstance(): MediaPlayer? {
@@ -36,7 +36,7 @@ class SoundManager(
     fun playSound() {
         gainAudioFocus()
         medialPlayer= getMediaPlayerInstance()
-           medialPlayer?.start()
+        medialPlayer?.start()
         if (duration > 0 && soundType == SOUND_TYPE_RINGTONE) {
             stopSoundTimer(medialPlayer)
         }

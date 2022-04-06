@@ -21,6 +21,8 @@ import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
 import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
+import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
+import com.joshtalks.joshskills.base.constants.INCOMING_CALL_URI
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
 import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
@@ -32,14 +34,19 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.Bluetoo
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.EarpieceAudio
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.HeadsetAudio
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.SpeakerAudio
+import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
+import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
+import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.MUTE
@@ -58,6 +65,7 @@ import com.joshtalks.joshskills.voip.voipLog
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -116,6 +124,12 @@ class CallingRemoteService : Service() {
                             callType = CallDetails.callType
                         )
                         CALL_DISCONNECT_REQUEST -> updateLastCallDetails()
+
+                        INCOMING_CALL -> {
+                            updateIncomingCallDetails()
+                            val data = IncomingCall(callId = IncomingCallData.callId)
+                            mediator.showIncomingCall(data)
+                        }
                     }
                     voipLog?.log("Sending Event to client")
                         handler.sendMessageToRepository(it)
@@ -124,11 +138,7 @@ class CallingRemoteService : Service() {
 
             ioScope.launch {
                 mediator.observeState().collect {
-                    when(it) {
-                        IDLE, JOINING, LEAVING -> {
-                            updateVoipState(it)
-                        }
-                    }
+                    updateVoipState(it)
                     voipLog?.log("State --> $it")
                 }
             }
@@ -232,6 +242,11 @@ class CallingRemoteService : Service() {
         voipLog?.log("Service Trim Memory ")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+
     private fun showNotification() {
         startForeground(notification.getNotificationId(), notification.getNotificationObject().build())
     }
@@ -301,6 +316,19 @@ class CallingRemoteService : Service() {
         }
         val data = contentResolver.insert(
             Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
+            values
+        )
+        voipLog?.log("Data --> $data")
+    }
+
+    private fun updateIncomingCallDetails() {
+        voipLog?.log("QUERY")
+        val values = ContentValues(2).apply {
+            put(CALL_ID, IncomingCallData.callId)
+            put(CALL_TYPE, IncomingCallData.callType)
+        }
+        val data = contentResolver.insert(
+            Uri.parse(CONTENT_URI + INCOMING_CALL_URI),
             values
         )
         voipLog?.log("Data --> $data")

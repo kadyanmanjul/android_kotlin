@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_CALL_TYPE
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_IMAGE
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_NAME
+import com.joshtalks.joshskills.base.constants.PREF_KEY_INCOMING_CALL_ID
+import com.joshtalks.joshskills.base.constants.PREF_KEY_INCOMING_CALL_TYPE
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_ID
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_START_TIME
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_TYPE
@@ -59,6 +61,13 @@ class VoipPref {
             editor.putInt(PREF_KEY_CURRENT_CALL_TYPE, callType)
             editor.putInt(PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID, remoteUserAgoraId)
             editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, timestamp)
+            editor.apply()
+        }
+
+        fun updateIncomingCallData(callId: Int, callType: Int) {
+            val editor = preferenceManager.edit()
+            editor.putInt(PREF_KEY_INCOMING_CALL_TYPE, callType)
+            editor.putInt(PREF_KEY_INCOMING_CALL_ID, callId)
             editor.apply()
         }
 
@@ -120,6 +129,9 @@ class VoipPref {
         }
         fun getCallType(): Int {
             return preferenceManager.getInt(PREF_KEY_CURRENT_CALL_TYPE,-1)
+        }
+        fun getIncomingCallId(): Int {
+            return preferenceManager.getInt(PREF_KEY_INCOMING_CALL_ID,-1)
         }
         fun getProfileImage(): String {
             return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_IMAGE,"").toString()

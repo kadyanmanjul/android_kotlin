@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.calldetails
 
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
+import com.joshtalks.joshskills.voip.mediator.CallDirection
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -22,6 +23,8 @@ object CallDetails {
     var remoteUserImageUrl : String? = null
         private set
     var topicName = ""
+        private set
+    var callDirection = -1
         private set
 
     suspend fun reset() {
@@ -47,6 +50,29 @@ object CallDetails {
             remoteUserName = details.getCallingPartnerName()
             remoteUserImageUrl = details.getCallingPartnerImage()
             topicName = details.getCallingTopic()
+        }
+    }
+}
+
+object IncomingCallData {
+    private val mutex = Mutex()
+
+    var callId : Int = -1
+        private set
+    var callType : Int = -1
+        private set
+
+    suspend fun reset() {
+        mutex.withLock {
+            callId = -1
+            callType = -1
+        }
+    }
+
+    suspend fun set(callId : Int, callType : Int) {
+        mutex.withLock {
+            this.callId = callId
+            this.callType = callType
         }
     }
 }
