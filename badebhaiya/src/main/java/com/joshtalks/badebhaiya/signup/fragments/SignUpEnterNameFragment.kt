@@ -45,7 +45,7 @@ class SignUpEnterNameFragment: Fragment() {
     }
 
     fun submitProfile(view: View) {
-        if (binding.etFirstName.text.isNullOrEmpty() && binding.etLastName.text.isNullOrEmpty()) {
+        if (binding.etFirstName.text.isNullOrEmpty() || binding.etLastName.text.isNullOrEmpty()) {
             showToast(getString(R.string.empty_name))
             return
         }

@@ -7,8 +7,6 @@ import com.joshtalks.badebhaiya.signup.response.LoginResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -29,8 +27,4 @@ interface SignUpNetworkService {
 
     @PATCH("$DIR/user/{id}/")
     suspend fun updateUserProfile(@Path("id")userId: String, @Body params: Map<String, String?>): Response<User>
-
-    @FormUrlEncoded
-    @POST("$DIR/core/signed_url/")
-    suspend fun requestUploadMedia(requestParams: Map<String, String>): Deferred<AmazonPolicyResponse>
 }

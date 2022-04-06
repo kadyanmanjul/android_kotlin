@@ -5,7 +5,6 @@ import com.joshtalks.badebhaiya.core.API_TOKEN
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PrefManager
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
-import com.joshtalks.badebhaiya.signup.response.LoginResponse
 
 const val USER_PERSISTENT_KEY = "USER_PERSISTENT_KEY"
 
