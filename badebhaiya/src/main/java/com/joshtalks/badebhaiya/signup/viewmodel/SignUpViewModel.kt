@@ -37,6 +37,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
     var mobileNumber = EMPTY
     val profilePicUploadApiCallStatus = MutableLiveData<ApiCallStatus>()
+    var firstName = EMPTY
+    var lastName = EMPTY
 
     fun sendPhoneNumberForOTP(phoneNumber: String, countryCode: String) {
         viewModelScope.launch {
@@ -215,7 +217,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun trueCallerLogin( user: TrueProfile) {
+    fun trueCallerLogin(user: TrueProfile) {
         viewModelScope.launch {
             try {
                 val requestTrueUser = mutableMapOf<String, String>()
@@ -225,6 +227,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 val response = repository.trueCallerLogin(requestTrueUser)
                 if(response.isSuccessful) {
                     response.body()?.let {
+                        firstName = user.firstName
+                        lastName = user.lastName
                         updateUserFromLoginResponse(it)
                     }
                 }

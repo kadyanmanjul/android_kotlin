@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.TemporaryFeedActivity
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -23,6 +22,8 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import com.truecaller.android.sdk.*
+import java.util.*
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -35,9 +36,17 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
-        binding.handler = viewModel
-        openEnterPhoneNumberFragment()
+        binding.handler = this
+        binding.viewModel = viewModel
         addObservers()
+        binding.btnWelcome.setOnClickListener {
+            openTrueCallerBottomSheet()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        initTrueCallerUI()
     }
 
     private fun addObservers() {
@@ -118,6 +127,45 @@ class SignUpActivity : AppCompatActivity() {
             val imageUpdatedPath = AppDirectory.getImageSentFilePath()
             AppDirectory.copy(url, imageUpdatedPath)
             viewModel.uploadMedia(imageUpdatedPath)
+            return
+        }
+
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance()
+                .onActivityResultObtained(this, requestCode, resultCode, data)
+            return
+        }
+    }
+
+    private fun initTrueCallerUI() {
+        val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
+            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
+            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
+            .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
+            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
+            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
+            .build()
+        TruecallerSDK.init(trueScope)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance().setLocale(Locale("en"))
+        }
+    }
+
+    fun openTrueCallerBottomSheet() {
+        TruecallerSDK.getInstance().getUserProfile(this)
+    }
+
+    private val sdkCallback: ITrueCallback = object : ITrueCallback {
+
+        override fun onFailureProfileShared(trueError: TrueError) {
+            openEnterPhoneNumberFragment()
+        }
+
+        override fun onVerificationRequired(p0: TrueError?) {
+        }
+
+        override fun onSuccessProfileShared(trueProfile: TrueProfile) {
+            viewModel.trueCallerLogin(trueProfile)
         }
     }
 

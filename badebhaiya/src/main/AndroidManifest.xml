@@ -4,6 +4,7 @@
     package="com.joshtalks.badebhaiya">
 
     <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS" />
+    <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk" />
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" />
@@ -132,6 +133,9 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
+        <meta-data
+            android:name="com.truecaller.android.sdk.PartnerKey"
+            android:value="@string/truecaller_key" />
     </application>
 
 </manifest>

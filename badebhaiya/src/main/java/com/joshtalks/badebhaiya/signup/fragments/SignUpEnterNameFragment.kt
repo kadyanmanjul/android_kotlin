@@ -41,7 +41,10 @@ class SignUpEnterNameFragment: Fragment() {
     }
 
     private fun addObservers() {
-
+        binding.apply {
+            etFirstName.setText(viewModel.firstName)
+            etLastName.setText(viewModel.lastName)
+        }
     }
 
     fun submitProfile(view: View) {

@@ -4,8 +4,11 @@
 
     <data>
         <variable
-            name="handler"
+            name="viewModel"
             type="com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel" />
+        <variable
+            name="handler"
+            type="com.joshtalks.badebhaiya.signup.SignUpActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,6 +53,7 @@
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
             android:textColor="@color/white"
             android:textSize="@dimen/_17ssp"
+            android:onClick="@{() -> handler.openTrueCallerBottomSheet()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

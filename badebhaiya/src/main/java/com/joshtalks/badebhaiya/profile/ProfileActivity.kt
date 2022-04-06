@@ -52,7 +52,7 @@ class ProfileActivity: AppCompatActivity() {
             binding.apply {
                 handleSpeakerProfile(it.isSpeaker, it)
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
-                tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName ?: EMPTY)
+                tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
     }
