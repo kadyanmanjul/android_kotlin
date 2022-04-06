@@ -3,15 +3,7 @@ package com.joshtalks.joshskills.voip.communication
 import android.util.Log
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.communication.model.ChannelData
-import com.joshtalks.joshskills.voip.communication.model.Communication
-import com.joshtalks.joshskills.voip.communication.model.Error
-import com.joshtalks.joshskills.voip.communication.model.MessageData
-import com.joshtalks.joshskills.voip.communication.model.NetworkAction
-import com.joshtalks.joshskills.voip.communication.model.NetworkActionData
-import com.joshtalks.joshskills.voip.communication.model.OutgoingData
-import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.communication.model.UserActionData
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
@@ -107,6 +99,7 @@ object PubNubChannelService : EventChannel {
                     when (it) {
                         is MessageData -> eventFlow.emit(it)
                         is ChannelData -> eventFlow.emit(it)
+                        is IncomingCall -> eventFlow.emit(it)
                         is Error -> eventFlow.emit(it)
                     }
             }

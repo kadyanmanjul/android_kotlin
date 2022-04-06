@@ -536,7 +536,9 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
-        <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity" />
+        <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"/>
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
@@ -681,7 +683,22 @@
                 <action android:name="android.intent.action. ACTION_LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".voip.CallingServiceReceiver"
+        <!-- Audio Control Module Receivers -->
+        <receiver
+            android:name="com.joshtalks.joshskills.voip.audiocontroller.HeadsetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.HEADSET_PLUG" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.joshtalks.joshskills.voip.audiocontroller.BluetoothReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".ui.call.CallingServiceReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.joshtalks.joshskills.CALLING_SERVICE"/>

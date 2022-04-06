@@ -12,4 +12,9 @@
     <string name="notification_content" >Notification Content</string>
     <string name="accept_call">Accept</string>
     <string name="reject_call">Reject</string>
+
+    <string name="hang_up">Hang Up</string>
+    <string name="decline">Decline</string>
+    <string name="answer">Answer</string>
+    <string name="call_back">CALL BACK</string>
 </resources>

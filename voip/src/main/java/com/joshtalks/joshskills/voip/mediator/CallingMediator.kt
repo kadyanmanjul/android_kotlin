@@ -1,7 +1,8 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import com.joshtalks.joshskills.voip.audiocontroller.AudioController
-import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
+import android.media.RingtoneManager
+import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
+import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
@@ -25,6 +26,8 @@ import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.mediator.CallDirection.*
+import com.joshtalks.joshskills.voip.notification.NotificationPriority
+import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.pstn.PSTNInterface
 import com.joshtalks.joshskills.voip.pstn.PSTNListener
 import com.joshtalks.joshskills.voip.pstn.PSTNState
@@ -41,17 +44,19 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.*
+import kotlin.collections.HashMap
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
     private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
-    //
     private val pstnService: PSTNInterface = PSTNListener()
     private lateinit var callDirection: CallDirection
     private var calling = PeerToPeerCalling()
     private var callType = 0
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
     private val mutex = Mutex(false)
+    private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
 
     init {
         scope.launch {
@@ -188,14 +193,23 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     is IncomingCall -> {
                         voipLog?.log("Incoming Call -> $it")
                         updateCallDirection(INCOMING)
-                        calling.notificationLayout()
-                        /**
-                         * Show Incoming Call Notification
-                         */
+                        showIncomingNotification()
                     }
                 }
             }
         }
+    }
+
+    private fun showIncomingNotification(){
+        val remoteView = calling.notificationLayout()
+        val voipNotification = VoipNotification(remoteView,NotificationPriority.High)
+        voipNotification.show()
+        soundManager.playSound()
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                voipNotification.removeNotification()
+            }
+        }, 20000)
     }
 
     private fun MessageData.isMessageForSameChannel() =
