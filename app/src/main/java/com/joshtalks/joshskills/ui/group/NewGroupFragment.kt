@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.group
 
 import android.net.Uri
 import android.os.Bundle
-import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CREATE_GROUP_VALIDATION
 import com.joshtalks.joshskills.constants.GROUP_IMAGE_SELECTED
-import com.joshtalks.joshskills.constants.OPEN_ADMIN_RESPONSIBILITY
 import com.joshtalks.joshskills.constants.SAVE_GROUP_INFO
 import com.joshtalks.joshskills.databinding.FragmentNewGroupBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -74,10 +72,7 @@ class NewGroupFragment : BaseFragment() {
                             groupIcon = imagePath ?: "",
                             groupType = groupType
                         )
-                        val message = Message()
-                        message.what = OPEN_ADMIN_RESPONSIBILITY
-                        message.obj = request
-                        liveData.value = message
+                        vm.openAdminResponsibility(request)
                     } else if (groupName.length > 25)
                         showToast("Group Name should be 25 character or less")
                     else if (groupType.isBlank())

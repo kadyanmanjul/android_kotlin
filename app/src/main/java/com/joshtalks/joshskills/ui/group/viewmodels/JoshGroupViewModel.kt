@@ -130,6 +130,13 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
+    fun openAdminResponsibility(request: AddGroupRequest) {
+        message.what = OPEN_ADMIN_RESPONSIBILITY
+        message.obj = request
+        singleLiveEvent.value = message
+        GroupAnalytics.push(GroupAnalytics.Event.OPEN_ADMIN_RESPONSIBILITY)
+    }
+
     fun createGroup(view: View) {
         message.what = ADD_GROUP_TO_SERVER
         singleLiveEvent.value = message

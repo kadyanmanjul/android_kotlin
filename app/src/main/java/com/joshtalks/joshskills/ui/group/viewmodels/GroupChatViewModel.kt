@@ -194,6 +194,7 @@ class GroupChatViewModel : BaseViewModel() {
                 } else
                     showToast("Error in sending request")
                 dismissProgressDialog()
+                GroupAnalytics.push(GroupAnalytics.Event.REQUEST_TO_JOIN, groupId)
             } catch (e: Exception) {
                 dismissProgressDialog()
                 showToast("Error in sending request")
@@ -274,6 +275,7 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = OPEN_GROUP_REQUESTS_LIST
         message.obj = groupId
         singleLiveEvent.value = message
+        GroupAnalytics.push(GroupAnalytics.Event.OPEN_REQUESTS_LIST, groupId)
     }
 
     fun editGroupInfo() {

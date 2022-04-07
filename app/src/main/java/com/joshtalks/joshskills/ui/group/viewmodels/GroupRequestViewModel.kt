@@ -47,7 +47,7 @@ class GroupRequestViewModel : BaseViewModel() {
         message.what = OPEN_PROFILE_PAGE
         message.obj = mentorId
         singleLiveEvent.value = message
-        GroupAnalytics.push(GroupAnalytics.Event.OPENED_PROFILE)
+        GroupAnalytics.push(GroupAnalytics.Event.OPEN_PROFILE_FROM_REQUEST, groupId, mentorId)
     }
 
     val openProfileOnClick: (String) -> Unit = { openProfile(it) }
@@ -63,8 +63,11 @@ class GroupRequestViewModel : BaseViewModel() {
                     groupType = CLOSED_GROUP
                 )
                 val response = repository.sendRequestResponse(request)
-                if (response && allow)
+                if (response && allow) {
                     pushMetaMessage("${name.substringBefore(" ")} has joined the group", groupId, mentorId)
+                    GroupAnalytics.push(GroupAnalytics.Event.REQUEST_ACCEPTED, groupId, mentorId)
+                } else if (response && !allow)
+                    GroupAnalytics.push(GroupAnalytics.Event.REQUEST_DECLINED, groupId, mentorId)
                 else
                     showToast("Error responding to the request")
                 dismissProgressDialog()
