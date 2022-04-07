@@ -439,21 +439,6 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
-                        <RelativeLayout
-                            android:id="@+id/previous_profile_pic_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_16sdp"
-                            android:background="@drawable/bg_profile_header"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:foreground="?android:attr/selectableItemBackground"
-                            android:gravity="center|start"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/referral_info_text">
-
-
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/sent_request_card"
                             android:layout_width="match_parent"
@@ -1443,8 +1428,4 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 </layout>
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/user_root_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></androidx.fragment.app.FragmentContainerView>
-    </FrameLayout>
+
