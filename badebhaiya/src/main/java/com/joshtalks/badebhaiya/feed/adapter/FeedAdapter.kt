@@ -11,6 +11,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.feed.model.SpeakerData
 
 class FeedAdapter :
     ListAdapter<RoomListResponseItem, FeedAdapter.FeedViewHolder>(DIFF_CALLBACK) {
@@ -30,6 +31,9 @@ class FeedAdapter :
             return oldItem == newItem
         }
     }
+    var speaker: SpeakerData?=null
+
+
 
     var callback: ConversationRoomItemCallback? = null
 

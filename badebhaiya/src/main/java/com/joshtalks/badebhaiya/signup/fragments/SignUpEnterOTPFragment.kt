@@ -13,10 +13,7 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.RxBus2
-import com.joshtalks.badebhaiya.core.SignUpStepStatus
-import com.joshtalks.badebhaiya.core.showToast
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterOtpBinding
 import com.joshtalks.badebhaiya.repository.eventbus.OTPReceivedEventBus
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
@@ -26,6 +23,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_signup_enter_otp.*
+import kotlinx.android.synthetic.main.fragment_signup_enter_otp.btnNext
+import kotlinx.android.synthetic.main.fragment_signup_enter_phone.*
 
 class SignUpEnterOTPFragment: Fragment() {
     private var compositeDisposable = CompositeDisposable()
@@ -44,7 +43,6 @@ class SignUpEnterOTPFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_otp, container, false)
         binding.handler = this
-
         return binding.root
     }
 
@@ -58,6 +56,7 @@ class SignUpEnterOTPFragment: Fragment() {
     private fun processOTP() {
         binding.otpView.otpListener = object : OTPListener {
             override fun onOTPComplete(otp: String?) {
+                btnNext.setBackgroundResource(R.drawable.change_button_selector)
                 verifyOTP()
             }
 

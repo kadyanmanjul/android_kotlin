@@ -86,7 +86,7 @@
             android:layout_height="@dimen/_34sdp"
             android:background="@drawable/next_button_selector"
             android:text="@string/next"
-            android:textSize="@dimen/_17ssp"
+            android:textSize="@dimen/_19ssp"
             android:paddingHorizontal="@dimen/_50sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
             android:textColor="@color/white"

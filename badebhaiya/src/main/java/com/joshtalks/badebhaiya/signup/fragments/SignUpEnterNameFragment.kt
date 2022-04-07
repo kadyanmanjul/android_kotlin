@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -12,9 +13,11 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.isValidFullNumber
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterNameBinding
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import kotlinx.android.synthetic.main.fragment_signup_enter_phone.*
 
 class SignUpEnterNameFragment: Fragment() {
     private lateinit var binding: FragmentSignupEnterNameBinding
@@ -32,6 +35,14 @@ class SignUpEnterNameFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_name, container, false)
         binding.handler = this
+        binding.etFirstName.addTextChangedListener {
+            if (binding.etFirstName.text.isNullOrEmpty().not()) {
+                btnNext.setBackgroundResource(R.drawable.change_button_selector)
+            }
+            else
+                btnNext.setBackgroundResource(R.drawable.next_button_selector)
+
+        }
         return binding.root
     }
 

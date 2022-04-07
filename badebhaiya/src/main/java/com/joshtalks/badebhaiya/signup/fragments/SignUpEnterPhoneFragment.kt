@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +18,7 @@ import com.joshtalks.badebhaiya.core.isValidFullNumber
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterPhoneBinding
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import kotlinx.android.synthetic.main.fragment_signup_enter_phone.*
 
 
 class SignUpEnterPhoneFragment: Fragment() {
@@ -35,6 +37,14 @@ class SignUpEnterPhoneFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_phone, container, false)
         binding.handler = this
+        binding.etPhone.addTextChangedListener {
+            if (binding.etPhone.text.isNullOrEmpty() || isValidFullNumber("+91", binding.etPhone.text.toString())) {
+                btnNext.setBackgroundResource(R.drawable.change_button_selector)
+            }
+            else
+                btnNext.setBackgroundResource(R.drawable.next_button_selector)
+
+        }
         return binding.root
     }
 
