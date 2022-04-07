@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.*
 import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
 import com.joshtalks.joshskills.ui.group.BaseGroupActivity
-import com.joshtalks.joshskills.ui.userprofile.ProfileImageShowFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragment
 
 class ActivityFeedMainActivity : BaseGroupActivity() {
 
@@ -23,7 +23,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
     val viewModel: ActivityFeedViewModel by lazy {
         ViewModelProvider(this).get(ActivityFeedViewModel::class.java)
     }
-    private var flag:Boolean=false
+    private var flag: Boolean = false
     override fun setIntentExtras() {}
 
     override fun initViewBinding() {
@@ -43,7 +43,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
                 OPEN_FEED_USER_PROFILE -> openUserProfileActivity(it.obj as ActivityFeedResponse)
                 OPEN_PROFILE_IMAGE_FRAGMENT -> openProfileImageFragment(it.obj as ActivityFeedResponse)
                 FEED_SCROLL_TO_END -> scrollToEnd()
-                ON_ITEM_ADDED->setScrollToEndBtn()
+                ON_ITEM_ADDED -> setScrollToEndBtn()
             }
         }
     }
@@ -69,26 +69,28 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
 
     private fun openProfileImageFragment(activityFeedResponse: ActivityFeedResponse) {
         ProfileImageShowFragment.newInstance(
-            activityFeedResponse.photoUrl,
-            null,
-            null,
             activityFeedResponse.mentorId ?: EMPTY,
-            false
+            false,
+            arrayOf(activityFeedResponse.photoUrl!!),
+            0,
+            null
         )
             .show((this).supportFragmentManager.beginTransaction(), "ImageShow")
     }
-    fun setScrollToEndBtn(){
-        val layout=binding.rvFeeds.layoutManager as LinearLayoutManager
-        if(layout.findFirstCompletelyVisibleItemPosition()==0){
+
+    fun setScrollToEndBtn() {
+        val layout = binding.rvFeeds.layoutManager as LinearLayoutManager
+        if (layout.findFirstCompletelyVisibleItemPosition() == 0) {
             viewModel.isScrollToEndButtonVisible.set(false)
             binding.rvFeeds.layoutManager?.scrollToPosition(0)
-        }else{
-            if(flag) {
+        } else {
+            if (flag) {
                 viewModel.isScrollToEndButtonVisible.set(true)
-                flag=true
+                flag = true
             }
         }
     }
+
     fun scrollToEnd() {
         binding.rvFeeds.layoutManager?.scrollToPosition(0)
         viewModel.isScrollToEndButtonVisible.set(false)

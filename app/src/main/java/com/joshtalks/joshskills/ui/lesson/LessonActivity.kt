@@ -38,6 +38,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
