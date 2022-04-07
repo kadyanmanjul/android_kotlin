@@ -82,6 +82,8 @@ import org.json.JSONObject
 import retrofit2.HttpException
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
+const val ENGLISH_COURSE_TEST_ID = "102"
+const val ENGLISH_FREE_TRIAL_1D_TEST_ID = "784"
 
 class PaymentSummaryActivity : CoreJoshActivity(),
     PaymentResultListener {
@@ -101,7 +103,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var razorpayOrderId = EMPTY
     private var compositeDisposable = CompositeDisposable()
     private var is100PointsObtained = false
-    private val ENGLISH_COURSE_TEST_ID = 102
     private var isHundredPointsActive = false
 
     companion object {
@@ -800,12 +801,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-            AppObjectController.getFirebaseRemoteConfig()
+        var popUpText = " "
+        if(isHundredPointsActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
+            popUpText = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_100_POINTS_BODY_TEXT + testId)
+                .replace("\\n", "\n")
+        }else{
+            popUpText =   AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
                 .replace("\\n", "\n")
-
-     //   if(isHundredPointsActive)  getString(R.string.free_trial_dialog_ji_haan_text).replace("\\n", "\n") else {getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")}
+        }
+        dialogView.findViewById<TextView>(R.id.e_g_motivat).text = popUpText
 
         dialogView.findViewById<TextView>(R.id.add_a_topic).text =
             AppObjectController.getFirebaseRemoteConfig()
