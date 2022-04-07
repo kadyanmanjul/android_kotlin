@@ -4,14 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.userprofile.UserProfileViewModel" />
-
-        <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.userprofile.ShareFromProfileFragment" />
     </data>
 
     <FrameLayout
@@ -76,10 +71,9 @@
                         android:layout_marginHorizontal="@dimen/_6sdp"
                         android:layout_marginVertical="@dimen/_4sdp"
                         android:layout_toEndOf="@id/iv_back"
-                        android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="start|center"
                         android:singleLine="true"
-                        android:text="Help your friends and family"
+                        android:text="@string/help_toolbar"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                         android:textColor="@color/white"
                         tools:text="Help your friends and family" />
@@ -131,13 +125,13 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/help_tv"
-                countTextColor="@{handler.count !=0 ? @string/subStringToColorize(handler.count) : @string/zero}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_30sdp"
                 android:layout_marginTop="@dimen/_22sdp"
                 android:gravity="center"
-                android:text="@{handler.count !=0 ? @string/referCntText(handler.count) : @string/noReferral}"
+                android:text="@{vm.count !=0 ? @string/referCntText(vm.count) : @string/noReferral}"
+                countTextColor="@{vm.count !=0 ? @string/subStringToColorize(vm.count) : @string/zero}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 android:textSize="@dimen/_15sdp"
                 app:layout_constraintEnd_toEndOf="parent"

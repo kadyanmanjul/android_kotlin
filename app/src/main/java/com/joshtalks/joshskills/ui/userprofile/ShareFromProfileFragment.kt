@@ -18,7 +18,6 @@ class ShareFromProfileFragment : BaseFragment() {
     val vm by lazy {
         ViewModelProvider(requireActivity())[UserProfileViewModel::class.java]
     }
-     var count: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,8 +29,6 @@ class ShareFromProfileFragment : BaseFragment() {
             container,
             false
         )
-        setArguments()
-        binding.handler=this
         return binding.root
     }
 
@@ -53,7 +50,7 @@ class ShareFromProfileFragment : BaseFragment() {
     override fun setArguments() {
         arguments?.let { it ->
             it.getInt(REFERRAL_COUNT)?.let { path ->
-                count = path
+                vm.count.set(path)
             }
         }
     }

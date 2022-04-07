@@ -80,7 +80,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var startTime = 0L
     private val TAG = "UserProfileActivity"
     private var isAnimationVisible = false
-    private var viewerReferral: Int = 0
+    private var viewerReferral: Int? = 0
     private var helpCountControl: Boolean = false
 
     init {
@@ -577,7 +577,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         if(helpCountControl) {
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.referralInfoText.visibility = VISIBLE
-                if (userData.numberOfReferral != 0) {
+                if (userData.numberOfReferral != 0 && userData.numberOfReferral != null) {
                     val text = SpannableStringBuilder()
                         .append(getString(R.string.you_have_helped) + " ")
                         .bold { append(userData.numberOfReferral.toString() + " " + getString(R.string.people)) }
@@ -587,7 +587,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     binding.referralInfoText.text = getString(R.string.help_text_me)
                 }
             } else {
-                if (userData.numberOfReferral != 0) {
+                if (userData.numberOfReferral != 0 && userData.numberOfReferral != null) {
                     binding.referralInfoText.visibility = VISIBLE
                     val text = SpannableStringBuilder()
                         .append(resp.trim().split(" ")[0] + " " + getString(R.string.has_helped) + " ")
@@ -1075,7 +1075,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
-                putInt(REFERRAL_COUNT, viewerReferral)
+                viewerReferral?.let { putInt(REFERRAL_COUNT, it) }
             }
             val fragment = ShareFromProfileFragment().apply {
                 arguments = bundle

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Message
+import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -45,6 +46,7 @@ import java.io.File
 import java.util.*
 
 const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
+//const val HELP_SHARE_KEY = "HELP_SHARE_TEXT"
 class UserProfileViewModel(application: Application) : AndroidViewModel(application) {
 
     private val jobs = arrayListOf<Job>()
@@ -62,6 +64,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     private var message = Message()
     val helpCountAbTestliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }
+    var count = ObservableField(0)
     fun getHelpCountCampaignData(campaign: String, mentorId:String, intervalType: String?, previousPage: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
@@ -385,7 +388,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-
     fun shareWithFriends(){
         getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
     }
@@ -436,7 +438,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             }
 
             waIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            waIntent.putExtra(Intent.EXTRA_TEXT, "Mai har roz angrezi mei baat karke angrezi seekh rha hu. Mai chahta hu aap bhi mere saath angrezi seekhe. Is link ko click karke yeh app download kare -\n" + dynamicLink)
+            waIntent.putExtra(Intent.EXTRA_TEXT,
+                "Mai har roz angrezi mei baat karke angrezi seekh rha hu. Mai chahta hu aap bhi mere saath angrezi seekhe. Is link ko click karke yeh app download kare -\n$dynamicLink"
+            )
             waIntent.type = "text/plain"
             message.what = INVITE_FRIENDS_METHOD
             message.obj = waIntent

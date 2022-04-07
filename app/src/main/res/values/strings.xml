@@ -1056,6 +1056,7 @@
     <string name="subStringToColorize">%s people</string>
     <string name="has_helped"> has helped </string>
     <string name="people">people</string>
+    <string name="help_toolbar">Help your friends and family</string>
     <string name="start_learning_english">start learning English</string>
     <string name="course_restart_success">Course Restarted Successfully</string>
     <string name="course_restart_fail">Course Can Not Restart</string>
