@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.feed
 
 import android.content.res.ColorStateList
+import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -78,7 +79,5 @@ fun setConversationRoomCardActionButton(
         }
     }
 }
-
-@BindingAdapter("profileImage")
-fun CircleImageView.setProfileImage(speaker: SpeakerData) =
-    this.setUserImageOrInitials(speaker.photoUrl, speaker.name ?: DEFAULT_NAME)
+@BindingAdapter("imageUrl", "userName", requireAll = false)
+fun ImageView.setDPUrl(url: String?, userName: String?) = this.setUserImageOrInitials(url, userName ?: DEFAULT_NAME)

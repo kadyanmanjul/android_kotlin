@@ -45,7 +45,8 @@
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginEnd="@dimen/_12sdp"
-                profileImage="@{roomData.speakersData}"
+                userName="@{roomData.speakersData.name}"
+                imageUrl="@{roomData.speakersData.photoUrl}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@color/black" />

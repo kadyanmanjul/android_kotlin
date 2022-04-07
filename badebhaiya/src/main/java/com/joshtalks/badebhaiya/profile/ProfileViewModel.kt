@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.profile
 
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
