@@ -5,23 +5,24 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.drawable.ClipDrawable
+import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
@@ -46,7 +47,9 @@ import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.voipLog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -71,11 +74,13 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     private var questionId: String? = null
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
-    private val LEVEL_INCREMENT = 20
+    private val LEVEL_INCREMENT = 10
     private val MAX_LEVEL = 10000
     private var mAnimator: TimeAnimator? = null
     private var mCurrentLevel = 0
     private var mClipDrawable: ClipDrawable? = null
+    private var beforeAnimation: GradientDrawable? = null
+
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -128,6 +133,22 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         }
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()
+        checkForVoipState()
+    }
+
+    private fun checkForVoipState() {
+        if (checkIfIdleState().not()){
+            Toast.makeText(activity,"Wait for a second!",Toast.LENGTH_LONG).show()
+            animateButton()
+            binding.btnStartTrialText.isEnabled = false
+        }else{
+            fillButton()
+            binding.btnStartTrialText.isEnabled = true
+        }
+    }
+
+    private fun checkIfIdleState():Boolean {
+        return VoipPref.getVoipState()==IDLE
     }
 
     override fun onStop() {
@@ -180,19 +201,24 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         )
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-//            startPractise(favoriteUserCall = false)
-            val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
-            callIntent.apply {
-                putExtra(INTENT_DATA_COURSE_ID, courseId)
-                putExtra(INTENT_DATA_TOPIC_ID, topicId)
+            if(VoipPref.getVoipState()==IDLE) {
+                startPractise()
             }
-            voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
-//            animateButton()
-            startActivity(callIntent)
-//            startActivity(Intent(activity,VoiceCallActivity::class.java))
         }
 
         viewModel.observerVoipState().observe(viewLifecycleOwner) {
+            when(it){
+                IDLE -> {
+                    mCurrentLevel=MAX_LEVEL
+                    binding.btnStartTrialText.isEnabled = true
+                }
+                else -> {
+                    if(mAnimator?.isRunning!=true) {
+                        animateButton()
+                        binding.btnStartTrialText.isEnabled = false
+                    }
+                }
+            }
             voipLog?.log("VOIP State --> $it")
         }
 
@@ -207,7 +233,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner, {
-            startPractise(favoriteUserCall = false)
+            startPractise()
         })
 
         binding.btnContinue.setOnClickListener {
@@ -309,13 +335,13 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         binding.btnFavorite.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (haveAnyFavCaller) {
-                startPractise(favoriteUserCall = true)
+                startPractise()
             } else {
                 showToast(getString(R.string.empty_favorite_list_message))
             }
         }
         binding.btnNewStudent.setOnClickListener {
-            startPractise(favoriteUserCall = false, isNewUserCall = true)
+            startPractise()
         }
         lifecycleScope.launchWhenStarted {
             viewModel.favoriteCaller.collect {
@@ -396,12 +422,9 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
-    private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false) {
+    private fun startPractise() {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            startPractiseSearchScreen(
-                favoriteUserCall = favoriteUserCall,
-                isNewUserCall = isNewUserCall
-            )
+            startPractiseSearchScreen()
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -417,12 +440,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
                             return
                         }
                         if (flag) {
-                            val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
-                            startActivity(callIntent)
-//                            startPractiseSearchScreen(
-//                                favoriteUserCall = favoriteUserCall,
-//                                isNewUserCall = isNewUserCall
-//                            )
+                            startPractiseSearchScreen()
                             return
                         } else {
                             MaterialDialog(requireActivity()).show {
@@ -455,34 +473,21 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             mCurrentLevel = 0
             mAnimator?.start()
     }
+    fun fillButton() {
+        mCurrentLevel = MAX_LEVEL
+        mAnimator?.start()
+    }
 
-    private fun startPractiseSearchScreen(
-        favoriteUserCall: Boolean = false,
-        isNewUserCall: Boolean = false,
-    ) {
-        // P2P Call
+
+    private fun startPractiseSearchScreen() {
         val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
         callIntent.apply {
             putExtra(INTENT_DATA_COURSE_ID, courseId)
             putExtra(INTENT_DATA_TOPIC_ID, topicId)
+            putExtra(STARTING_POINT, FROM_ACTIVITY)
         }
         voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
         startActivity(callIntent)
-//        viewModel.speakingTopicLiveData.value?.run {
-//            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
-//                openCallActivity.launch(
-//                    SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-//                        requireActivity(),
-//                        courseId = courseId,
-//                        topicId = id,
-//                        topicName = topicName,
-//                        favoriteUserCall = favoriteUserCall,
-//                        isNewUserCall = isNewUserCall,
-//                        conversationId = getConversationId()
-//                    )
-//                )
-//            }
-//        }
     }
 
     fun showSeniorStudentScreen() {

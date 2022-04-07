@@ -1,11 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 <androidx.fragment.app.FragmentContainerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/voice_call_container"
+    android:visibility="invisible"
     tools:context=".ui.voip.new_arch.ui.views.VoiceCallActivity">
 </androidx.fragment.app.FragmentContainerView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/incoming_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="#107BE5"
+        android:visibility="visible"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/call_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="108dp"
+            android:gravity="center"
+            android:text="Incoming Call"
+            android:textSize="@dimen/_16sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/c_image"
+            app:layout_constraintEnd_toEndOf="@+id/c_image"
+            app:layout_constraintHorizontal_bias="0.411"
+            app:layout_constraintStart_toStartOf="@+id/c_image"
+            tools:ignore="MissingPrefix" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_group_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="68dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.5"
+            android:maxLines="1"
+            android:text="Practice Partner Call"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/c_image"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            tools:ignore="MissingPrefix"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_incoming_disconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/checkbox_color"
+            android:padding="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.13"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9"
+            app:srcCompat="@drawable/ic_baseline_call" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_incoming_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/green"
+            android:padding="@dimen/_14sdp"
+            android:rotation="225"
+            android:onClick="@{vm::acceptCall}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.87"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9"
+            app:srcCompat="@drawable/ic_baseline_call" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/c_image"
+            android:layout_width="@dimen/_108sdp"
+            android:layout_height="@dimen/_108sdp"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:src="@drawable/ic_call_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.43" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_for_incoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect"
+            android:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/placeholder_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#AA000000"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.content.Intent
 import android.util.Log
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -83,10 +84,21 @@ class VoiceCallActivity : BaseActivity() {
     override fun onCreated() {
         Log.d(TAG, "onCreated: $source")
         if (source == FROM_INCOMING_CALL || source == FROM_CALL_BAR) {
+            showFragmentScreen()
             addCallUserFragment()
-        } else {
+        } else if(source == FROM_ACTIVITY) {
+            showFragmentScreen()
             addSearchingUserFragment()
+        }else{
+            showIncomingNotificationScreen()
         }
+    }
+    fun showFragmentScreen(){
+        voiceCallBinding.voiceCallContainer.visibility= View.VISIBLE
+        voiceCallBinding.incomingContainer.visibility= View.INVISIBLE
+    }
+    fun showIncomingNotificationScreen(){
+        voiceCallBinding.incomingContainer.visibility= View.VISIBLE
     }
 
     override fun initViewState() {
