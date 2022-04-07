@@ -45,21 +45,23 @@ import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
+import com.joshtalks.joshskills.voip.constant.HOLD
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL
-import com.joshtalks.joshskills.voip.constant.JOINING
-import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.MUTE
 import com.joshtalks.joshskills.voip.constant.SPEAKER_OFF_REQUEST
 import com.joshtalks.joshskills.voip.constant.SPEAKER_ON_REQUEST
 import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
 import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
+import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
+import com.joshtalks.joshskills.voip.pstn.PSTNController
+import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
 import java.util.concurrent.TimeUnit
@@ -81,8 +83,8 @@ class CallingRemoteService : Service() {
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private val handler by lazy { CallingRemoteServiceHandler.getInstance(ioScope) }
     private var isMediatorInitialise = false
-    private val pstnReceiver : PSTNStateReceiver by lazy {
-        PSTNStateReceiver(ioScope)
+    private val pstnController by lazy {
+        PSTNController(ioScope)
     }
     private val audioController : AudioControllerInterface by lazy { AudioController(ioScope) }
 
@@ -96,8 +98,8 @@ class CallingRemoteService : Service() {
         super.onCreate()
         updateStartCallTime(0)
         updateVoipState(IDLE)
-        registerPstnCall()
-        //registerAudioController()
+        registerReceivers()
+        observerPstnService()
         //observeAudioRouteEvents()
         voipLog?.log("Creating Service")
         showNotification()
@@ -178,6 +180,32 @@ class CallingRemoteService : Service() {
         }
     }
 
+    private fun observerPstnService() {
+        voipLog?.log("Listining PSTN")
+        ioScope.launch {
+            pstnController.observePSTNState().collect {
+                when (it) {
+                    PSTNState.Idle -> {
+                        voipLog?.log("IDEL")
+                        val data =
+                            UserAction(type = ServerConstants.RESUME, callId = CallDetails.callId)
+                        mediator.sendEventToServer(data)
+                        handler.sendMessageToRepository(UNHOLD)
+                    }
+                    PSTNState.OnCall, PSTNState.Ringing -> {
+                        voipLog?.log("ON CALL")
+                        val data = UserAction(
+                            type = ServerConstants.ONHOLD,
+                            callId = CallDetails.callId
+                        )
+                        mediator.sendEventToServer(data)
+                        handler.sendMessageToRepository(HOLD)
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeHandlerEvents(handler: CallingRemoteServiceHandler) {
         voipLog?.log("${handler}")
         ioScope.launch {
@@ -249,23 +277,21 @@ class CallingRemoteService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-
+        unregisterReceivers()
     }
 
     private fun showNotification() {
         startForeground(notification.getNotificationId(), notification.getNotificationObject().build())
     }
 
-    private fun registerPstnCall() {
-        val filter = IntentFilter().apply {
-            addAction("android.intent.action.PHONE_STATE")
-            addAction("android.intent.action.NEW_OUTGOING_CALL")
-        }
-        registerReceiver(pstnReceiver, filter)
+    private fun registerReceivers() {
+        pstnController.registerPstnReceiver()
+        audioController.registerAudioControllerReceivers()
     }
 
-    private fun registerAudioController() {
-        audioController.registerAudioControllerReceivers()
+    private fun unregisterReceivers() {
+        pstnController.unregisterPstnReceiver()
+        audioController.unregisterAudioControllerReceivers()
     }
 
     private fun callDuration() : Long {

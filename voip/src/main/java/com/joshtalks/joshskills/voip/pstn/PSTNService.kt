@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.voip.pstn
 
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 sealed class PSTNState() {
     object Idle : PSTNState()
@@ -8,5 +10,7 @@ sealed class PSTNState() {
     object OnCall : PSTNState()
 }
 internal interface PSTNInterface{
-    fun observePSTNState():MutableSharedFlow<PSTNState>
+    fun registerPstnReceiver()
+    fun unregisterPstnReceiver()
+    fun observePSTNState(): SharedFlow<PSTNState>
 }

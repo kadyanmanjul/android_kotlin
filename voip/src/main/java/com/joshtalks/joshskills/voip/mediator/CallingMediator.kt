@@ -32,9 +32,6 @@ import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.mediator.CallDirection.*
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
-import com.joshtalks.joshskills.voip.pstn.PSTNInterface
-import com.joshtalks.joshskills.voip.pstn.PSTNListener
-import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
 import com.joshtalks.joshskills.voip.webrtc.CallState
@@ -55,7 +52,6 @@ import kotlinx.coroutines.delay
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
     private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
-    private val pstnService: PSTNInterface = PSTNListener()
     private lateinit var callDirection: CallDirection
     private var calling = PeerToPeerCalling()
     private var callType = 0
@@ -67,7 +63,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     init {
         scope.launch {
             mutex.withLock {
-                observerPstnService()
                 callingService.initCallingService()
                 networkEventChannel.initChannel()
                 handleWebrtcEvent()
@@ -132,32 +127,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun observeState(): SharedFlow<Int> {
         return callingService.observeCallingState()
-    }
-
-    private fun observerPstnService() {
-        voipLog?.log("Listining PSTN")
-        scope.launch {
-            pstnService.observePSTNState().collect {
-                when (it) {
-                    PSTNState.Idle -> {
-                        voipLog?.log("IDEL")
-                        val data =
-                            UserAction(type = ServerConstants.RESUME, callId = CallDetails.callId)
-                        networkEventChannel.emitEvent(data)
-                        flow.emit(UNHOLD)
-                    }
-                    PSTNState.OnCall, PSTNState.Ringing -> {
-                        voipLog?.log("ON CALL")
-                        val data = UserAction(
-                            type = ServerConstants.ONHOLD,
-                            callId = CallDetails.callId
-                        )
-                        networkEventChannel.emitEvent(data)
-                        flow.emit(HOLD)
-                    }
-                }
-            }
-        }
     }
 
     // Handle Events coming from Backend
