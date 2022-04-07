@@ -47,8 +47,7 @@
             android:gravity="center"
             android:lineSpacingMultiplier="1.5"
             android:maxLines="1"
-            android:text="Topic"
-            tools:text="Practice Partner Call"
+            android:text="Practice Partner Call"
             android:textColor="@color/white"
             android:textSize="@dimen/_14sdp"
             android:textStyle="bold"
@@ -94,7 +93,6 @@
 
         <Chronometer
             android:id="@+id/call_time1"
-            startTimer="@{CallData.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_24sdp"
@@ -278,6 +276,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.9"
             app:srcCompat="@drawable/ic_baseline_call" />
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/incoming_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progress="75"
+            app:indicatorColor="#0D5CB8"
+            app:indicatorSize="@dimen/_108sdp"
+            app:trackColor="#ffffff"
+            app:trackThickness="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.43"/>
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_incoming"
