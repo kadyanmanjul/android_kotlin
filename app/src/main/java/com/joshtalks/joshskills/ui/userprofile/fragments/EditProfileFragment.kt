@@ -265,7 +265,7 @@ class EditProfileFragment : DialogFragment(){
 
     private fun saveData() {
         val newName = binding.editTxtName.text?.trim()?.toString()
-        if (newName.isNullOrBlank()) {
+        if (newName.isNullOrBlank() || !isFieldValid(newName)) {
             binding.seperator1.setBackgroundColor(resources.getColor(R.color.red))
             binding.editTxtName.setHintTextColor(resources.getColor(R.color.red))
             binding.basicDetailsContainer.visibility = View.VISIBLE
@@ -276,10 +276,18 @@ class EditProfileFragment : DialogFragment(){
         }
         val educationText=binding.txtEducationName
         val collegeName=binding.editTxtCollegeName
-        if(!binding.editTxtCompletionDate.text.isNullOrBlank() && educationText.text.isNullOrBlank() && collegeName.text.isNullOrBlank()){
+
+        if(educationText.text.isNullOrBlank() || !isFieldValid(educationText.text.toString())){
             binding.txtEducationNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
             educationText.setHintTextColor(resources.getColor(R.color.red))
+            binding.educationDetailsContainer.visibility = View.VISIBLE
+            isEducationDetailsExpanded = true
+            binding.arrowDownImg.setImageDrawable(drawableUp)
+            binding.educationDownImg.setImageDrawable(drawableUp)
             educationText.error = getString(R.string.degree_error_message)
+            return
+        }
+        if(collegeName.text.isNullOrBlank() || !isFieldValid(collegeName.text.toString())){
             binding.editTxtCollegeNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
             isEducationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -288,8 +296,29 @@ class EditProfileFragment : DialogFragment(){
             collegeName.setHintTextColor(resources.getColor(R.color.red))
             collegeName.error = getString(R.string.college_error_message)
             return
-
         }
+
+        if(binding.txtOccupationName.text.isNullOrBlank() || !isFieldValid(txtOccupationName.text.toString())){
+            binding.txtoccupationNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
+            binding.txtOccupationName.setHintTextColor(resources.getColor(R.color.red))
+            binding.occupationDetailsContainer.visibility = View.VISIBLE
+            isOccupationDetailsExpanded = true
+            binding.arrowDownImg.setImageDrawable(drawableUp)
+            binding.occupationDownImg.setImageDrawable(drawableUp)
+            binding.txtOccupationName.error = getString(R.string.degree_error_message)
+            return
+        }
+        if(binding.editTxtOccupationPlace.text.isNullOrBlank() || !isFieldValid(editTxtOccupationPlace.text.toString())){
+            binding.editTxtOccupationPlaceSeperator.setBackgroundColor(resources.getColor(R.color.red))
+            isOccupationDetailsExpanded = true
+            binding.arrowDownImg.setImageDrawable(drawableUp)
+            binding.occupationDownImg.setImageDrawable(drawableUp)
+            binding.occupationDetailsContainer.visibility = View.VISIBLE
+            binding.editTxtOccupationPlace.setHintTextColor(resources.getColor(R.color.red))
+            binding.editTxtOccupationPlace.error = getString(R.string.college_error_message)
+            return
+        }
+
         if (userDateOfBirth.isNullOrBlank()) {
             binding.seperator2.setBackgroundColor(resources.getColor(R.color.red))
             binding.editTxtDob.setHintTextColor(resources.getColor(R.color.red))
@@ -301,7 +330,7 @@ class EditProfileFragment : DialogFragment(){
         }
 
         val homeTownTxt = binding.editTxtHometown
-        if (homeTownTxt.text.isNullOrBlank()) {
+        if (homeTownTxt.text.isNullOrBlank() || !isFieldValid(homeTownTxt.text.toString())) {
             binding.seperator3.setBackgroundColor(resources.getColor(R.color.red))
             homeTownTxt.setHintTextColor(resources.getColor(R.color.red))
             binding.basicDetailsContainer.visibility = View.VISIBLE
@@ -310,15 +339,18 @@ class EditProfileFragment : DialogFragment(){
             homeTownTxt.error = getString(R.string.hometown_error_message)
             return
         }
-        if(editTxtJoshTalk.text.toString()!=null && !isYoutubeUrl(editTxtJoshTalk.text.toString())){
-            binding.seperator5.setBackgroundColor(resources.getColor(R.color.red))
-            editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.red))
-            binding.basicDetailsContainer.visibility = View.VISIBLE
-            isBasicDetailsExpanded = true
-            binding.arrowDownImg.setImageDrawable(drawableUp)
-            editTxtJoshTalk.error = getString(R.string.invalid_url_message)
-            return
+        if (editTxtJoshTalk.text.toString() != EMPTY){
+            if(!isYoutubeUrl(editTxtJoshTalk.text.toString())){
+                binding.seperator5.setBackgroundColor(resources.getColor(R.color.red))
+                editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.red))
+                binding.basicDetailsContainer.visibility = View.VISIBLE
+                isBasicDetailsExpanded = true
+                binding.arrowDownImg.setImageDrawable(drawableUp)
+                editTxtJoshTalk.error = getString(R.string.invalid_url_message)
+                return
+            }
         }
+
         var updateProfilePayload = UpdateProfilePayload()
         updateProfilePayload.apply {
             basicDetails?.apply{
@@ -342,8 +374,12 @@ class EditProfileFragment : DialogFragment(){
         viewModel.saveProfileInfo(updateProfilePayload, true)
     }
     fun isYoutubeUrl(youTubeURl: String): Boolean {
-        val pattern:String = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+"
+        val pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+"
         return youTubeURl.matches(Regex(pattern))
+    }
+
+    fun isFieldValid(filedName:String):Boolean{
+        return filedName.matches(Regex("^[a-zA-Z_ ]*\$"))
     }
 
     private fun initView(userData: UserProfileResponse) {

@@ -7,17 +7,16 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.Gravity
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View.INVISIBLE
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -105,7 +104,6 @@ import java.util.Locale
 const val FOR_BASIC_DETAILS = "For_Basic_Details"
 const val FOR_REST = "For_Rest"
 const val FOR_EDIT_SCREEN = "For_Edit_Screen"
-const val TOOLTIP_USER_PROFILE_SCREEN = "TOOLTIP_USER_PROFILE_SCREEN_"
 
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 
@@ -341,16 +339,16 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     private fun initToolbar() {
         with(iv_back) {
-            visibility = VISIBLE
+            visibility = View.VISIBLE
             setOnClickListener {
                 onBackPressed()
             }
         }
         with(iv_help) {
             if (mentorId == Mentor.getInstance().getId()) {
-                visibility = GONE
+                visibility = View.GONE
             } else {
-                visibility = VISIBLE
+                visibility = View.VISIBLE
                 setOnClickListener {
                     openHelpActivity()
                 }
@@ -358,13 +356,13 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         with(iv_edit) {
             if (mentorId == Mentor.getInstance().getId()) {
-                visibility = VISIBLE
+                visibility = View.VISIBLE
                 setOnClickListener {
                     EditProfileFragment.newInstance(FOR_EDIT_SCREEN)
                         .show(supportFragmentManager, "EditProfile")
                 }
             } else {
-                visibility = GONE
+                visibility = View.GONE
             }
         }
         with(iv_setting) {
@@ -379,9 +377,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 //            }
         }
         if (mentorId == Mentor.getInstance().getId()) {
-            binding.editPic.visibility = VISIBLE
+            binding.editPic.visibility = View.VISIBLE
         } else {
-            binding.editPic.visibility = GONE
+            binding.editPic.visibility = View.GONE
         }
     }
 
@@ -449,7 +447,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 initView(it)
             }
         }
-
         viewModel.awardsList.observe(this) {
             if (this.isSeniorStudent) {
                 binding.awardsLayout.visibility = VISIBLE
@@ -516,9 +513,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             if (it.isCourseBought.not() &&
                 it.expiryDate != null &&
                 it.expiryDate.time < System.currentTimeMillis()
-            ){
+            ) {
                 binding.sentRequestCard.visibility = GONE
-            }else{
+            } else {
                 viewModel.fppRequest.observe(this) {
                     when (it.requestStatus) {
                         SENT_REQUEST -> {
@@ -613,30 +610,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
 
-
-        if (viewModel.fetchingEnrolledCourseList.get()) {
-            binding.coursesShimmer.visibility = VISIBLE
-            binding.enrolledCoursesLayout.visibility = GONE
-            binding.coursesShimmer.startShimmer()
-
-        } else {
-            binding.coursesShimmer.stopShimmer()
-            binding.coursesShimmer.visibility = GONE
-            binding.enrolledCoursesLayout.visibility = VISIBLE
-        }
-
-
-        if (viewModel.fetchingGroupList.get()) {
-            binding.grpShimmer.visibility = VISIBLE
-            binding.myGroupsLayout.visibility = GONE
-            binding.grpShimmer.startShimmer()
-
-        } else {
-            binding.grpShimmer.visibility = GONE
-            binding.myGroupsLayout.visibility = VISIBLE
-            binding.grpShimmer.stopShimmer()
-        }
-
         viewModel.userProfileUrl.observe(this) {
             if (mentorId == Mentor.getInstance().getId()) {
                 if (it.isNullOrBlank()) {
@@ -707,7 +680,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         binding.joinedOn.text = userData.joinedOn
         if (userData.isOnline == true) {
-            binding.onlineStatusIv.visibility = VISIBLE
+            binding.onlineStatusIv.visibility = View.VISIBLE
         }
         if (!userData.futureGoals.isNullOrBlank()) {
             binding.seperatorBasicDetails.visibility = VISIBLE
@@ -1063,7 +1036,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         when (index) {
             0 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award1)
-                v.visibility = VISIBLE
+                v.visibility = View.VISIBLE
 
                 setViewToLayout(
                     award,
@@ -1075,7 +1048,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
             1 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award2)
-                v.visibility = VISIBLE
+                v.visibility = View.VISIBLE
 
                 setViewToLayout(
                     award,
@@ -1087,7 +1060,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
             2 -> {
                 v = view.findViewById<ConstraintLayout>(R.id.award3)
-                v.visibility = VISIBLE
+                v.visibility = View.VISIBLE
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award3),
@@ -1099,6 +1072,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             else -> {
             }
         }
+//        v?.setOnClickListener {
+//            RxBus2.publish(
+//                AwardItemClickedEventBus(award)
+//            )
+//        }
     }
 
     private fun setViewToLayout(
@@ -1110,19 +1088,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     ) {
         title.text = award.awardText
         if (award.dateText.isNullOrBlank()) {
-            date.visibility = INVISIBLE
+            date.visibility = View.INVISIBLE
         } else {
-            date.visibility = VISIBLE
+            date.visibility = View.VISIBLE
             date.text = award.dateText
         }
         award.imageUrl?.let {
             image.setImage(it, this)
         }
         if (award.count > 1) {
-            count.visibility = VISIBLE
+            count.visibility = View.VISIBLE
             count.text = award.count.toString()
         } else {
-            count.visibility = GONE
+            count.visibility = View.GONE
         }
     }
 
@@ -1227,6 +1205,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        /*super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)?.getOrNull(0)?.let {
+                if (it.isNotBlank()) {
+                    addUserImageInView(it)
+                }
+            }
+        }*/
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             val url = data?.data?.path ?: EMPTY
@@ -1264,9 +1250,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     private fun showCourseList(courseEnrolled: EnrolledCoursesList) {
         if (courseEnrolled.courses.isNullOrEmpty()) {
-            binding.enrolledCoursesLayout.visibility = GONE
-            binding.enrolledCoursesLl.visibility = GONE
+            binding.enrolledCoursesLayout.visibility = View.GONE
+            binding.enrolledCoursesLl.visibility = View.GONE
         } else {
+            binding.coursesShimmer.stopShimmer()
+            binding.coursesShimmer.visibility = GONE
+            binding.enrolledCoursesLayout.visibility = VISIBLE
             binding.enrolledCoursesLayout.visibility = View.VISIBLE
             binding.enrolledCoursesLl.visibility = View.VISIBLE
             binding.labelEnrolledCourses.text = getString(R.string.courses_title)
@@ -1289,6 +1278,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.myGroupsLayout.visibility = GONE
             binding.myGroupsLl.visibility = GONE
         } else {
+            binding.grpShimmer.visibility = GONE
+            binding.myGroupsLayout.visibility = VISIBLE
+            binding.grpShimmer.stopShimmer()
             binding.myGroupsLayout.visibility = VISIBLE
             binding.myGroupsLl.visibility = VISIBLE
             binding.labelMyGroups.text = getString(R.string.group_title)
@@ -1306,16 +1298,35 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
     }
 
+
     private fun showOverlayAnimation() {
         lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
             binding.contentOverlay.visibility = View.VISIBLE
             binding.arrowAnimation.visibility = View.VISIBLE
+            /*binding.arrowAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {
+                    animatePoints()
+                    Log.d(TAG, "onAnimationStart: ")
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    Log.d(TAG, "onAnimationEnd: ")
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                    Log.d(TAG, "onAnimationCancel: ")
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) {
+                    Log.d(TAG, "onAnimationRepeat: ")
+                }
+            })*/
             binding.arrowAnimation.playAnimation()
-            binding.toolbarOverlay.visibility = VISIBLE
+            binding.toolbarOverlay.visibility = View.VISIBLE
             //animatePoints()
-            binding.labelTapToDismiss.visibility = INVISIBLE
-            binding.overlayProfileTooltip.visibility = VISIBLE
+            binding.labelTapToDismiss.visibility = View.INVISIBLE
+            binding.overlayProfileTooltip.visibility = View.VISIBLE
             PrefManager.put(HAS_SEEN_PROFILE_ANIMATION, true)
             isAnimationVisible = true
             binding.overlayProfileTooltip.startAnimation(
@@ -1337,6 +1348,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 hideOverlayAnimation()
             }
 
+            /*binding.scrollView.setOnClickListener {
+                hideOverlayAnimation()
+            }
+*/
             binding.labelTapToDismiss.visibility = View.VISIBLE
             binding.labelTapToDismiss.setOnClickListener {
                 hideOverlayAnimation()
@@ -1355,11 +1370,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.toolbarOverlay.setOnClickListener(null)
         window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_color)
         //stopPointAnimation()
-        binding.arrowAnimation.visibility = GONE
-        binding.contentOverlay.visibility = GONE
-        binding.toolbarOverlay.visibility = GONE
-        binding.labelTapToDismiss.visibility = INVISIBLE
-        binding.overlayProfileTooltip.visibility = GONE
+        binding.arrowAnimation.visibility = View.GONE
+        binding.contentOverlay.visibility = View.GONE
+        binding.toolbarOverlay.visibility = View.GONE
+        binding.labelTapToDismiss.visibility = View.INVISIBLE
+        binding.overlayProfileTooltip.visibility = View.GONE
         isAnimationVisible = false
     }
 
@@ -1398,9 +1413,4 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
     }
 
-    fun getUserProfileTooltip(): String {
-        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
-        return AppObjectController.getFirebaseRemoteConfig()
-            .getString(TOOLTIP_USER_PROFILE_SCREEN + courseId)
-    }
 }

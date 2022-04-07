@@ -319,7 +319,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_18sdp"
                             android:layout_marginTop="@dimen/_18sdp"
-                            android:layout_marginEnd="@dimen/_4sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:maxLength="20"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:scrollHorizontally="true"
@@ -384,9 +385,9 @@
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txt_user_hometown"
-                            android:layout_width="@dimen/_80sdp"
+                            android:layout_width="@dimen/_100sdp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_10sdp"
                             android:clickable="false"
                             android:ellipsize="end"
                             android:singleLine="true"
@@ -723,10 +724,11 @@
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtFutureGoals"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_16sdp"
                             android:layout_marginTop="@dimen/_2sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
                             android:text="@string/aspiring_ias_officer"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                             android:textColor="@color/black"
@@ -769,6 +771,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/_16sdp"
                             android:layout_marginTop="@dimen/_2sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
                             android:layout_marginBottom="@dimen/_8sdp"
                             android:autoLink="web"
                             android:clickable="true"

@@ -89,26 +89,37 @@ class SeeAllAwardActivity : BaseActivity() {
     }
 
     private fun initRecyclerView() {
-        if (isSeniorStudent) {
-            val layoutInflater =
-                AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
-            val title = view.findViewById(R.id.title) as AppCompatTextView
-            title.text = "Senior Student"
-            setSeniorStudentAwardView(view!!)
-            if (view != null) {
-                binding.multiLineLl.addView(view)
+//        if (isSeniorStudent) {
+//            val layoutInflater =
+//                AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//            val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
+//            val title = view.findViewById(R.id.title) as AppCompatTextView
+//            title.text = "Senior Student"
+//            setSeniorStudentAwardView(view!!)
+//            if (view != null) {
+//                binding.multiLineLl.addView(view)
+//            }
+//        }
+
+        awardCategory.forEach{
+            it.awards?.forEach {
+                val view = addLinerLayout(it)
+                if (view != null) {
+                    binding.multiLineLl.addView(view)
+                } else {
+
+                }
             }
         }
 
-        awardCategory.first().awards?.forEach {
-            val view = addLinerLayout(it)
-            if (view != null) {
-                binding.multiLineLl.addView(view)
-            } else {
-
-            }
-        }
+//        awardCategory.first().awards?.forEach {
+//            val view = addLinerLayout(it)
+//            if (view != null) {
+//                binding.multiLineLl.addView(view)
+//            } else {
+//
+//            }
+//        }
     }
 
     private fun setSeniorStudentAwardView(view: View) {

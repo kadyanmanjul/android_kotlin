@@ -21,6 +21,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import java.util.*
 import kotlin.reflect.KFunction0
 
+
 class ViewPagerAdapter(
     context: Context,
     private val images: Array<String> = arrayOf(),
@@ -28,7 +29,9 @@ class ViewPagerAdapter(
     private var callback: AdapterCallback
 ) :
     PagerAdapter() {
-    var mLayoutInflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    var mLayoutInflater: LayoutInflater =
+        context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
     override fun getCount(): Int {
         return images.size
     }
@@ -42,7 +45,8 @@ class ViewPagerAdapter(
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val itemView: View = mLayoutInflater.inflate(R.layout.previous_pic_resource_layout, container, false)
+        val itemView: View =
+            mLayoutInflater.inflate(R.layout.previous_pic_resource_layout, container, false)
 
         val imageView = itemView.findViewById<View>(R.id.imageViewMain) as ZoomageView
         val width = AppObjectController.screenWidth * .8
@@ -73,9 +77,14 @@ class ViewPagerAdapter(
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeViewAt(position)
+        container.removeView(`object` as View)
+    }
+
+    override fun getItemPosition(`object`: Any): Int {
+        return images.size
     }
 }
+
 interface AdapterCallback {
     fun onSwipeCallback(position: Int)
 }
