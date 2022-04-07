@@ -83,8 +83,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
             }
         })
-        if (User.getInstance().profilePicUrl.isNullOrEmpty().not())
-            Utils.setImage(binding.profileIv, User.getInstance().profilePicUrl.toString())
     }
 
     fun openCreateRoomDialog() {
