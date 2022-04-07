@@ -106,16 +106,21 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                                 if (userId.isNotBlank()) {
                                     try {
                                         if (PrefManager.hasKey(FCM_TOKEN)) {
-                                            val data = mutableMapOf(
-                                                "registration_id" to it
-                                            )
-                                            val resp =
-                                                CommonRepository().patchFCMToken(userId, data)
-                                            if (resp.isSuccessful) {
-                                                resp.body()?.update()
-                                                PrefManager.put(FCM_TOKEN, it)
-                                                Timber.tag(FCMData::class.java.name)
-                                                    .e("patch data : ${resp.body()}")
+                                            FCMData.getInstance()?.let { fcmData ->
+                                                val data = mutableMapOf(
+                                                    "registration_id" to it
+                                                )
+                                                val resp =
+                                                    CommonRepository().patchFCMToken(
+                                                        fcmData.id,
+                                                        data
+                                                    )
+                                                if (resp.isSuccessful) {
+                                                    resp.body()?.update()
+                                                    PrefManager.put(FCM_TOKEN, it)
+                                                    Timber.tag(FCMData::class.java.name)
+                                                        .e("patch data : ${resp.body()}")
+                                                }
                                             }
                                         } else {
                                             val data = mutableMapOf(

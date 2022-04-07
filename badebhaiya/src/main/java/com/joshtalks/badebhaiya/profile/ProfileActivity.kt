@@ -3,19 +3,24 @@ package com.joshtalks.badebhaiya.profile
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.USER_ID
 import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
+import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
+import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
 
-class ProfileActivity: AppCompatActivity() {
+class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
     private val binding by lazy<ActivityProfileBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_profile)
@@ -30,6 +35,8 @@ class ProfileActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.lifecycleOwner = this
+        binding.handler = this
+        binding.viewModel = viewModel
         handleIntent()
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
         addObserver()
@@ -50,23 +57,29 @@ class ProfileActivity: AppCompatActivity() {
     private fun addObserver() {
         viewModel.userProfileData.observe(this) {
             binding.apply {
-                handleSpeakerProfile(it.isSpeaker, it)
+                handleSpeakerProfile(it)
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
                 else
                     Utils.setImage(ivProfilePic,it.firstName.toString())
                 tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
+        viewModel.speakerFollowed.observe(this) {
+            if (it == true) {
+                speakerFollowedUIChanges()
+            }
+        }
     }
 
-    private fun handleSpeakerProfile(isSpeaker: Boolean, profileResponse: ProfileResponse) {
+    private fun handleSpeakerProfile(profileResponse: ProfileResponse) {
         binding.apply {
-            if (isSpeaker) {
+            if (profileResponse.isSpeaker) {
                 tvProfileBio.text = profileResponse.bioText
-                tvFollowers.text =
-                    getString(R.string.bb_followers, profileResponse.followersCount.toString())
-                btnFollow.text = getString(R.string.following)
-                btnFollow.setBackgroundColor(resources.getColor(R.color.follow_button_stroke))
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, profileResponse.followersCount.toString()),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+                if (profileResponse.isSpeakerFollowed) {
+                    speakerFollowedUIChanges()
+                }
             } else {
                 tvFollowers.text = getString(R.string.bb_following, profileResponse.followersCount.toString())
             }
@@ -75,6 +88,15 @@ class ProfileActivity: AppCompatActivity() {
 
     fun updateFollowStatus() {
         viewModel.updateFollowStatus()
+    }
+
+    private fun speakerFollowedUIChanges() {
+        binding.apply {
+            btnFollow.text = getString(R.string.following)
+            btnFollow.setTextColor(resources.getColor(R.color.white))
+            btnFollow.background = AppCompatResources.getDrawable(this@ProfileActivity,
+                R.drawable.following_button_background)
+        }
     }
 
     companion object {
@@ -90,5 +112,17 @@ class ProfileActivity: AppCompatActivity() {
                 putExtra(USER_ID, userId)
             }
         }
+    }
+
+    override fun joinRoom(room: RoomListResponseItem, view: View) {
+
+    }
+
+    override fun setReminder(room: RoomListResponseItem, view: View) {
+
+    }
+
+    override fun viewRoom(room: RoomListResponseItem, view: View) {
+
     }
 }

@@ -89,8 +89,9 @@
     <string name="open_to_everyone">Open to Everyone</string>
     <string name="no_raised_hand_text">No one has their hand raised yet</string>
     <string name="bb_following">%s following</string>
-    <string name="bb_followers">%s followers</string>
+    <string name="bb_followers"><![CDATA[\<b>%s</b> followers\]]></string>
     <string name="welcome_in_string">🎉 Welcome in!</string>
     <string name="bb_tagline">Connect with your role models directly</string>
+    <string name="unable_to_load">Unable to load, Please try again</string>
 
 </resources>

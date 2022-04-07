@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F2F0E4"
+        android:background="@color/base_app_color"
         tools:context=".conversationRoom.liveRooms.ConversationLiveRoomActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,12 +42,11 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/user_photo"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                android:background="@color/red"
                 android:scaleType="fitXY"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -30,7 +30,7 @@
                 android:id="@+id/tvCardHeader"
                 android:text="@{roomData.speakersData.name}"
                 android:layout_width="wrap_content"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_10ssp"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_18sdp"
@@ -53,11 +53,11 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCardTopic"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_200sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:text="@{roomData.topic}"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="@dimen/_14ssp"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
                 android:textColor="@color/profile_feed_item_font_color"
                 app:layout_constraintEnd_toEndOf="parent"

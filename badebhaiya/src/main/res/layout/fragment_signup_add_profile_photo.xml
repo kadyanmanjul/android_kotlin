@@ -53,7 +53,7 @@
             android:layout_marginTop="@dimen/_66sdp"
             android:text="@string/add_profile_photo_prompt"
             android:textAppearance="@style/BB_Typography_Nunito_Regular"
-            android:textSize="@dimen/_18ssp"
+            android:textSize="@dimen/_20ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -77,7 +77,7 @@
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_34sdp"
-            android:layout_marginBottom="@dimen/_46sdp"
+            android:layout_marginBottom="@dimen/_42sdp"
             android:background="@drawable/next_button_selector"
             android:paddingHorizontal="@dimen/_50sdp"
             android:text="@string/next"

@@ -21,7 +21,7 @@ interface CommonNetworkService {
 
     @PATCH("$DIR/user/fcm/{id}/")
     suspend fun patchFCMToken(
-        @Path("id") userId: String,
+        @Path("id") id: Int,
         @Body params: Map<String, String>
     ): Response<FCMData>
 

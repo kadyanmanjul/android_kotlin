@@ -16,6 +16,9 @@ class FCMData(
     @SerializedName("user_id")
     var userId: String?,
 
+    @SerializedName("date_created")
+    val dateCreated: String?,
+
     @Expose
     var apiStatus: ApiRespStatus = ApiRespStatus.EMPTY
 

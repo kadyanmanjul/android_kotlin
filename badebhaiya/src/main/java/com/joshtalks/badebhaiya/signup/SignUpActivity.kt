@@ -40,7 +40,12 @@ class SignUpActivity : AppCompatActivity() {
         binding.handler = this
         binding.viewModel = viewModel
         addObservers()
+        setOnClickListeners()
+    }
+
+    private fun setOnClickListeners() {
         binding.btnWelcome.setOnClickListener {
+            binding.btnWelcome.visibility = View.GONE
             openTrueCallerBottomSheet()
         }
     }

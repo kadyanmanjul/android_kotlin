@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:text="@string/signup_with_prompt"
             android:textAppearance="@style/BB_Typography_Nunito_Regular"
-            android:textSize="@dimen/_20ssp"
+            android:textSize="@dimen/_18ssp"
             android:layout_marginTop="@dimen/_44sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/phone_container"
-            android:layout_width="330dp"
+            android:layout_width="@dimen/_200sdp"
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -44,14 +44,13 @@
                 android:layout_height="@dimen/_19sdp"
                 android:src="@drawable/ic_flag_foreground"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="-3dp" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/country_code_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="36dp"
+                android:layout_marginStart="@dimen/_36sdp"
                 android:text="@string/country_code"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
                 android:textColor="@color/black"
@@ -96,12 +95,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/phone_container" />
 
-
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_34sdp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="@dimen/_42sdp"
             app:elevation="10dp"
             android:background="@drawable/next_button_selector"
             android:onClick="@{() -> handler.loginViaPhoneNumber()}"
@@ -112,10 +110,7 @@
             android:textSize="@dimen/_17ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.575"
             app:layout_constraintStart_toStartOf="parent" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -12,8 +12,8 @@ class CommonRepository {
     suspend fun postFCMToken(requestParams: Map<String, String>) =
         service.postFCMToken(requestParams)
 
-    suspend fun patchFCMToken(userId: String, requestParams: Map<String, String>) =
-        service.patchFCMToken(userId, requestParams)
+    suspend fun patchFCMToken(id: Int, requestParams: Map<String, String>) =
+        service.patchFCMToken(id, requestParams)
     fun requestUploadMediaAsync(requestParams: Map<String, String>) = service.requestUploadMediaAsync(requestParams)
 
     suspend fun getInstallReferrerAsync(obj: InstallReferrerModel) =
