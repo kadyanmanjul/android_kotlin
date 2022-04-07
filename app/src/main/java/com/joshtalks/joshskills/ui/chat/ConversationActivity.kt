@@ -57,7 +57,6 @@ import com.joshtalks.joshskills.core.extension.shiftGroupChatIconDown
 import com.joshtalks.joshskills.core.extension.slideOutAnimation
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -67,12 +66,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -92,7 +86,6 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
@@ -744,7 +737,7 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        conversationBinding.imgFeedBtn.setOnClickListener {
+        conversationBinding.imgActivityFeed.setOnClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()

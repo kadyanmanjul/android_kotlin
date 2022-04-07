@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
@@ -27,6 +28,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -41,6 +43,8 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -646,34 +650,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 .subscribe {
                     getProfileData(intervalType, previousPage)
                 })
-        viewModel.helpCountAbTestliveData.observe(this){helpCountAbTestliveData->
+        viewModel.helpCountAbTestliveData.observe(this){ helpCountAbTestliveData ->
             helpCountAbTestliveData?.let { map->
                 helpCountControl = (map.variantKey == VariantKeys.PHC_IS_ENABLED.name) && map.variableMap?.isEnabled == true
             }
         }
-        viewModel.singleLiveEvent.observe(this) {
-            when (it.what) {
-                ON_BACK_PRESS -> {
-                    popBackStack()
-                }
-            }
-        }
 
-    }
-    private fun popBackStack() {
-        if (isAnimationVisible) {
-            hideOverlayAnimation()
-            return
-        }
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            try {
-                supportFragmentManager.popBackStackImmediate()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        } else{
-            onBackPressed()
-        }
     }
 
     private fun getOtherProfileData() {

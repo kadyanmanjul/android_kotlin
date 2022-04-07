@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.INVITE_FRIENDS_METHOD
 import com.joshtalks.joshskills.databinding.FragmentShareFromProfileBinding
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
 class ShareFromProfileFragment : BaseFragment() {
     lateinit var binding: FragmentShareFromProfileBinding
