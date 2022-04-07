@@ -1,6 +1,5 @@
 package com.joshtalks.badebhaiya.profile
 
-import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +11,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import kotlinx.coroutines.launch
 
-class ProfileViewModel: ViewModel() {
+class ProfileViewModel : ViewModel() {
     val userIdForOpenedProfile = MutableLiveData<String>()
     private val service = RetrofitInstance.profileNetworkService
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
@@ -43,9 +42,10 @@ class ProfileViewModel: ViewModel() {
                     response.body()?.let {
                         userProfileData.postValue(it)
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
+                        isBadeBhaiyaSpeaker.notifyChange()
                     }
                 }
-            } catch(ex: Exception) {
+            } catch (ex: Exception) {
 
             }
         }
