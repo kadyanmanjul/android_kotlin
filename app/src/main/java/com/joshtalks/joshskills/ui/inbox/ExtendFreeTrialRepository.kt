@@ -23,7 +23,6 @@ class ExtendFreeTrialRepository {
             }
             dbService.courseDao().insertRegisterCourses(courseListResponse)
                 .let {
-                    delay(1000)
                     return dbService.courseDao().getRegisterCourseMinimal()
                 }
         } catch (ex: Exception) {

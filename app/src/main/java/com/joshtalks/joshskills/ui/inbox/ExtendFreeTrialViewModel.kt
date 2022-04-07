@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 const val variant = "Variant"
@@ -60,7 +61,7 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 val courseListResponse =
                     repository.getCourseData()
                 if (courseListResponse != null && courseListResponse.isEmpty().not()) {
-                    launch(Dispatchers.Main){
+                    withContext(Dispatchers.Main){
                         message.what= OPEN_EFT_CONVERSATION_ACTIVITY
                         message.obj=courseListResponse[0]
                         singleLiveEvent.value=message
