@@ -11,6 +11,11 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType.*
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.feed.model.SpeakerData
+import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
+import com.joshtalks.badebhaiya.utils.setImage
+import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import de.hdodenhof.circleimageview.CircleImageView
 
 private const val TAG = "GroupBindingAdapter"
 
@@ -73,3 +78,7 @@ fun setConversationRoomCardActionButton(
         }
     }
 }
+
+@BindingAdapter("profileImage")
+fun CircleImageView.setProfileImage(speaker: SpeakerData) =
+    this.setUserImageOrInitials(speaker.photoUrl, speaker.name ?: DEFAULT_NAME)
