@@ -804,7 +804,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         var popUpText = " "
         if(isHundredPointsActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
             popUpText = AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_100_POINTS_BODY_TEXT + testId)
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
                 .replace("\\n", "\n")
         }else{
             popUpText =   AppObjectController.getFirebaseRemoteConfig()

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -15,6 +16,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
@@ -34,6 +36,24 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     var userName: String? = null
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
+    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun get100PCampaignData(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try{
+                val response = repository.getCampaignData(campaign)
+                if(response != null ){
+                    points100ABtestLiveData.postValue(response)
+                }else {
+                    points100ABtestLiveData.postValue(null)
+                }
+            }catch (ex : Exception){
+                ex.printStackTrace()
+                points100ABtestLiveData.postValue(null)
+            }
+        }
+    }
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
