@@ -8,16 +8,15 @@ import android.app.DownloadManager
 import android.content.*
 import android.content.res.ColorStateList
 import android.graphics.Color
-import com.joshtalks.joshskills.BuildConfig
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMuxer
+import android.net.NetworkInfo
 import android.net.Uri
 import android.os.*
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -62,11 +61,9 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
-import com.joshtalks.joshskills.ui.lesson.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
@@ -79,9 +76,6 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.reading_practice_fragment_without_feedback.*
@@ -92,15 +86,19 @@ import java.util.concurrent.TimeUnit
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 import java.io.File
-import java.io.IOException
 import java.lang.IllegalStateException
 import java.lang.Runnable
-import java.nio.ByteBuffer
 import java.util.*
 import kotlin.collections.ArrayList
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
+import com.joshtalks.joshskills.constants.SHARE_VIDEO
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_record_practise.view.*
+import java.io.IOException
+import java.nio.ByteBuffer
 
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
@@ -126,17 +124,16 @@ class ReadingFragmentWithoutFeedback :
     private var audioManager: ExoAudioPlayer? = null
     private var currentLessonQuestion: LessonQuestion? = null
     var lessonActivityListener: LessonActivityListener? = null
-    private var userReferralCode: String = EMPTY
     private var video: String? = null
     private var videoDownPath: String? = null
-    private var outputFile: String = ""
+    private var outputFile: String = EMPTY
     private var downloadID: Long = -1
     lateinit var fileName: String
-    private var fileDir: String = ""
-    private var flag: Boolean = false
+    private var fileDir: String = EMPTY
     private val scope = CoroutineScope(Dispatchers.IO)
     private val mutex = Mutex(false)
     private var muxerJob: Job? = null
+    private var internetAvailableFlag: Boolean = true
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -283,6 +280,7 @@ class ReadingFragmentWithoutFeedback :
         events.observe(this) {
             when (it.what) {
                 PERMISSION_FROM_READING_GRANTED -> download()
+                SHARE_VIDEO -> inviteFriends(it.obj as Intent)
             }
         }
     }
@@ -674,8 +672,6 @@ class ReadingFragmentWithoutFeedback :
                     this.imageList?.getOrNull(0)?.imageUrl?.let { path ->
                         binding.imageView.setImageAndFitCenter(path, context)
                         binding.imageView.setOnClickListener {
-                            //ImageShowFragment.newInstance(path, "", "")
-                            //    .show(childFragmentManager, "ImageShow")
                         }
                     }
                 }
@@ -773,10 +769,7 @@ class ReadingFragmentWithoutFeedback :
                                         val submittedVideoPath = AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
                                         binding.mergedVideo.setVideoPath(submittedVideoPath)
-                                    } else if (AppObjectController.appDatabase.chatDao()
-                                            .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao()
-                                            .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) == false
-                                    ) {
+                                    } else {
                                         getPermissionAndDownloadVideo(
                                             currentLessonQuestion!!.practiceEngagement?.get(
                                                 0
@@ -792,7 +785,7 @@ class ReadingFragmentWithoutFeedback :
                                     if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
                                             .not()
                                     ) {
-                                        shareVideoForAudio(
+                                        viewModel.shareVideoForAudio(
                                             currentLessonQuestion?.practiceEngagement?.get(
                                                 0
                                             )?.localPath.toString()
@@ -800,7 +793,7 @@ class ReadingFragmentWithoutFeedback :
                                     } else if (AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
                                     ) {
-                                        shareVideoForAudio(
+                                        viewModel.shareVideoForAudio(
                                             AppObjectController.appDatabase.chatDao()
                                                 .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
                                         )
@@ -904,7 +897,6 @@ class ReadingFragmentWithoutFeedback :
     private fun downloadVideos() {
         currentLessonQuestion?.videoList?.let {
             if (it.isNotEmpty()) {
-                flag = false
                 scope.launch { mutex.lock() }
                 DownloadUtils.downloadFile(
                     it[0].video_url!!,
@@ -934,10 +926,7 @@ class ReadingFragmentWithoutFeedback :
             DownloadUtils.removeCallbackListener(download.tag)
             currentLessonQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
             videoDownPath = download.file.toString()
-            flag = true
             unlockDownloadLock()
-            binding.progressDialog.visibility = GONE
-
             scope.launch {
                 if (videoDownPath.isNullOrEmpty().not()) {
                     AppObjectController.appDatabase.chatDao().insertCompressedVideo(
@@ -1036,7 +1025,7 @@ class ReadingFragmentWithoutFeedback :
             binding.ivClose.visibility = GONE
             binding.ivShare.visibility = VISIBLE
             binding.ivShare.setOnClickListener {
-                shareVideoForAudio(outputFile)
+                viewModel.shareVideoForAudio(outputFile)
             }
         }
 
@@ -1203,6 +1192,7 @@ class ReadingFragmentWithoutFeedback :
         showPracticeSubmitLayout()
         binding.practiseSubmitLayout.visibility = VISIBLE
         if (video.isNullOrEmpty().not()) {
+            observeNetwork()
             addVideoView()
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
@@ -1319,9 +1309,14 @@ class ReadingFragmentWithoutFeedback :
                             if (File(outputFile).exists()) {
                                 File(outputFile).delete()
                             }
-                            outputFile =
-                                (Environment.getExternalStorageDirectory().path + "/Download/MergedVideo_" + System.currentTimeMillis()
-                                    .toString() + ".mp4")
+                             if(android.os.Build.VERSION.SDK_INT >= 29){
+                                if(isAdded){
+                                    outputFile = saveVideoQ(requireContext(), videoDownPath?: EMPTY)?: EMPTY
+                                }
+                            }
+                            else{
+                                 outputFile = getVideoFilePath()
+                            }
 
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
@@ -1351,11 +1346,11 @@ class ReadingFragmentWithoutFeedback :
                                         audioVideoMuxer()
                                         requireActivity().runOnUiThread(Runnable {
                                             binding.progressDialog.visibility = GONE
-                                            binding.playBtn.visibility = VISIBLE
                                         })
                                     }
                                 }
                             }
+                            binding.playBtn.visibility = VISIBLE
                         }
                     }
                 }
@@ -1436,8 +1431,6 @@ class ReadingFragmentWithoutFeedback :
             muxer.stop()
             muxer.release()
             binding.mergedVideo.setVideoPath(outputFile)
-            binding.mergedVideo.start()
-            binding.playBtn.visibility = INVISIBLE
 
         } catch (e: IOException) {
             Timber.e(e)
@@ -1445,65 +1438,12 @@ class ReadingFragmentWithoutFeedback :
             Timber.e(e)
         }
     }
-
-    fun shareVideoForAudio(path: String) {
-        userReferralCode = Mentor.getInstance().referralCode
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign("referral")
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
-            .addControlParameter(
-                Defines.Jsonkey.UTMMedium.key,
-                userReferralCode.plus(System.currentTimeMillis())
-            )
-        branchUniversalObject
-            .generateShortUrl(requireContext(), lp) { url, error ->
-                if (error == null)
-                    inviteFriends(
-                        dynamicLink = url,
-                        path = path
-                    )
-                else
-                    inviteFriends(
-                        dynamicLink = (if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl()),
-                        path = path
-                    )
-            }
-    }
-
-    fun inviteFriends(dynamicLink: String, path: String) {
-        viewModel.getDeepLink(
-            dynamicLink,
-            userReferralCode.plus(System.currentTimeMillis())
-        )
+    fun inviteFriends(waIntent: Intent){
         try {
-            val destination = path!!
-            val waIntent = Intent(Intent.ACTION_SEND)
-            waIntent.type = "*/*"
-            waIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink)
-            waIntent.putExtra(
-                Intent.EXTRA_STREAM,
-                Uri.parse(destination)
-            )
-            waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(Intent.createChooser(waIntent, "Share with"))
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
     fun closeRecordedView() {
@@ -1789,5 +1729,22 @@ class ReadingFragmentWithoutFeedback :
         @JvmStatic
         fun getInstance() = ReadingFragmentWithoutFeedback()
     }
-
+    private fun observeNetwork() {
+        compositeDisposable.add(
+            ReactiveNetwork.observeNetworkConnectivity(requireContext())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { connectivity ->
+                    internetAvailableFlag =
+                        connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
+                    if (!internetAvailableFlag && videoDownPath == null) {
+                        disableSubmitButton()
+                        showToast("Internet not available")
+                    }
+                    else {
+                        enableSubmitButton()
+                    }
+                }
+        )
+    }
 }

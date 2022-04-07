@@ -149,6 +149,7 @@
     <color name="conversation_room_color">#F2F0E4</color>
     <color name="grammar_wrong_answer_bg">#FFDFE0</color>
     <color name="grammar_right_answer_bg">#D7FFB8</color>
+    <color name="reading_close_bg">#878A91</color>
 
     <!--New Grammar Buttons-->
     <color name="grammar_button_default_color">#3eadeb</color>

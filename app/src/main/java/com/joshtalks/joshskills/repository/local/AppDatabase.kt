@@ -603,7 +603,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_45_46:Migration = object : Migration(45, 46) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `reading_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL, `isDownloaded` TEXT NOT NULL )")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `reading_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL, `isDownloaded` BOOLEAN NOT NULL )")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `compressed_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL)")
             }
         }

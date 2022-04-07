@@ -1,16 +1,21 @@
 package com.joshtalks.joshskills.ui.lesson
 
 import android.app.Application
+import android.content.Intent
+import android.net.Uri
 import android.os.Message
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
+import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
@@ -33,11 +38,14 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Defines
+import io.branch.referral.util.LinkProperties
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -45,10 +53,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-
-const val PERMISSION_FROM_GRAMMER = 1
-const val PERMISSION_FROM_READING = 2
-const val PERMISSION_FROM_READING_GRANTED = 3
+import androidx.databinding.ObservableField
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -67,6 +72,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     private var isRecordingStarted = false
     private val mAudioRecording: M4ABaseAudioRecording = M4ABaseAudioRecording()
     var recordFile: File? = null
+    private var userReferralCode: String = EMPTY
 
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
@@ -95,6 +101,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
+    val videoUri = ObservableField(EMPTY)
 
     fun getVideoData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -828,12 +835,73 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     sharedItemType = "VI",
                     deepLink = deepLink
                 )
-                val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
-                Timber.i(res.body().toString())
+                AppObjectController.commonNetworkService.getDeepLink(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
         }
+    }
+
+    fun shareVideoForAudio(path: String) {
+        userReferralCode = Mentor.getInstance().referralCode
+        val branchUniversalObject = BranchUniversalObject()
+            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
+            .setTitle("Invite Friend")
+            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+        val lp = LinkProperties()
+            .setChannel(userReferralCode)
+            .setFeature("sharing")
+            .setCampaign("referral")
+            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
+            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
+            .addControlParameter(
+                Defines.Jsonkey.UTMMedium.key,
+                userReferralCode.plus(System.currentTimeMillis())
+            )
+        branchUniversalObject
+            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
+                if (error == null)
+                    inviteFriends(
+                        dynamicLink = url,
+                        path = path
+                    )
+                else
+                    inviteFriends(
+                        dynamicLink = (if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                        else
+                            getAppShareUrl()),
+                        path = path
+                    )
+            }
+    }
+
+    fun inviteFriends(dynamicLink: String, path: String) {
+        getDeepLink(
+            dynamicLink,
+            userReferralCode.plus(System.currentTimeMillis())
+        )
+        try {
+            val destination = path
+            val waIntent = Intent(Intent.ACTION_SEND)
+            waIntent.type = "*/*"
+            waIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink)
+            waIntent.putExtra(
+                Intent.EXTRA_STREAM,
+                Uri.parse(destination)
+            )
+            waIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            message.what = SHARE_VIDEO
+            message.obj = waIntent
+            singleLiveEvent.value = message
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getAppShareUrl(): String {
+        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
 }

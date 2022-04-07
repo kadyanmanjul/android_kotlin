@@ -145,9 +145,6 @@ data class LessonQuestion(
     @IgnoredOnParcel
     var filePath: String? = null,
 
-//    @Ignore
-//    var videoFilePath: String? = null,
-
     @Ignore
     var playProgress: Int = 0,
 
