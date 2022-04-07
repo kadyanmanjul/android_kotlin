@@ -72,6 +72,10 @@
         <item name="android:textColorPrimary">@color/colorAccent</item>
         <item name="android:colorControlNormal">@color/colorAccent</item>
     </style>
+    <style name="YearPickerAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">#FF4081</item>  // you can change the color of the yearPiker dialog
+        <item name="android:textColorPrimary">#FF4081</item> // you can change the color of the yearPiker dialog
+    </style>
 
 
     <style name="VideoPlayerTheme" parent="@style/Theme.AppCompat.Light">
@@ -390,11 +394,32 @@
         <item name="android:letterSpacing">0.05</item>
     </style>
 
+    <style name="TextAppearance.JoshTypography.Heading_H11_Semi_Bold" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
+        <item name="android:textSize">@dimen/_11ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.Body_Text_Medium_Regular_Bold" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
+        <item name="android:textSize">@dimen/_11ssp</item>
+        <item name="android:lineSpacingMultiplier">1.1</item>
+        <item name="android:letterSpacing">0.025</item>
+    </style>
+
     <style name="TextAppearance.JoshTypography.Heading_H8" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
         <item name="android:textSize">@dimen/_10ssp</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.Heading_H8_1.0" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:lineSpacingMultiplier">0</item>
+        <item name="android:letterSpacing">0.0</item>
     </style>
 
     <style name="TextAppearance.JoshTypography.Heading_H8_Semi_Bold" parent="TextAppearance.MaterialComponents.Headline6">
@@ -538,6 +563,27 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
+    <style name="TextAppearance.JoshTypography.8_Caption_Normal" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.8_Caption_Semi_bold" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.Caption_Small" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
     <style name="TextAppearance.JoshTypography.Caption_Normal_Italic" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontPath">fonts/OpenSans-Italic.ttf</item>
         <item name="android:textSize">@dimen/_9ssp</item>
@@ -548,6 +594,13 @@
     <style name="TextAppearance.JoshTypography.Caption_Normal_Regular" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
         <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.Caption_Normal11_Regular" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
+        <item name="android:textSize">@dimen/_11ssp</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">0</item>
     </style>
@@ -600,6 +653,13 @@
         <item name="android:textSize">@dimen/_13ssp</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">-0.015</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.Dialog_Subtitle" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">0.00</item>
     </style>
     <!--
         <style name="TextAppearance.JoshTypography.Link_Small" parent="TextAppearance.MaterialComponents.Button">
@@ -791,5 +851,11 @@
 
     <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="myEditText" parent="@android:style/Widget.Holo.Light.EditText">
+        <item name="android:background">@android:drawable/editbox_background_normal</item>
+        <item name="android:textCursorDrawable">@android:drawable/editbox_background_normal</item>
+        <item name="android:height">20dp</item>
     </style>
 </resources>

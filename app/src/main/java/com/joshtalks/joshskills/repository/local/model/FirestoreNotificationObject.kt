@@ -110,6 +110,7 @@ data class FirestoreNotificationObject(
             FirestoreNotificationAction.CALL_DISCONNECT_NOTIFICATION -> NotificationAction.CALL_DISCONNECT_NOTIFICATION
             FirestoreNotificationAction.CALL_FORCE_RECEIVE_NOTIFICATION -> NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION
             FirestoreNotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION
+            FirestoreNotificationAction.CALL_DECLINE_NOTIFICATION -> NotificationAction.CALL_DECLINE_NOTIFICATION
             FirestoreNotificationAction.NO_USER_FOUND_NOTIFICATION -> NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION
             FirestoreNotificationAction.CALL_ONHOLD_NOTIFICATION -> NotificationAction.CALL_ON_HOLD_NOTIFICATION
             FirestoreNotificationAction.CALL_RESUME_NOTIFICATION -> NotificationAction.CALL_RESUME_NOTIFICATION
@@ -146,5 +147,9 @@ enum class FirestoreNotificationAction(val value: String) {
     CALL_CONNECTED_NOTIFICATION("CALL_CONNECTED_NOTIFICATION"),
 
     @SerializedName("JOIN_CONVERSATION_ROOM")
-    JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM")
+    JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM"),
+
+    @SerializedName("CALL_DECLINE_NOTIFICATION")
+    CALL_DECLINE_NOTIFICATION("CALL_DECLINE_NOTIFICATION")
+
 }

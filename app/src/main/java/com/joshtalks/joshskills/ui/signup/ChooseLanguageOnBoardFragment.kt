@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
@@ -17,6 +19,8 @@ import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
 class ChooseLanguageOnBoardFragment: BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
     private var languageAdapter = ChooseLanguageAdapter()
+    private var is100PointsActive = false
+    lateinit var language: ChooseLanguages
 
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
@@ -65,19 +69,37 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
                 languageAdapter.setData(it)
             }
         }
+        viewModel.points100ABtestLiveData.observe(requireActivity()) { map ->
+            if (map != null) {
+                is100PointsActive =
+                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
+
+                (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                    language,
+                    is100PointsActive
+                )
+            }else{
+                (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                    language,
+                    false
+                )
+            }
+        }
     }
 
     private fun initRV() {
         val linearLayoutManager = LinearLayoutManager(activity)
-        languageAdapter.setLanguageItemClickListener(this::selectLanguageOnBoard)
+        languageAdapter.setLanguageItemClickListener(this::initABTest)
         binding.rvChooseLanguage.apply {
             layoutManager = linearLayoutManager
             adapter = languageAdapter
         }
     }
 
-    fun selectLanguageOnBoard(language: ChooseLanguages) {
-        (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(language)
+
+    fun initABTest(language: ChooseLanguages) {
+        this.language = language
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
     }
 
     fun onBackPressed() {

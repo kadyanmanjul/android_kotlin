@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -38,13 +39,16 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
+import com.joshtalks.joshskills.core.LESSON_ONE_TOPIC_ID
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -57,6 +61,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 
 class SpeakingPractiseFragment : ABTestFragment() {
 
@@ -70,6 +75,9 @@ class SpeakingPractiseFragment : ABTestFragment() {
     private var isAnimationShown = false
     private var isIntroVideoEnabled = true
     private var lessonNo = 0
+    private var beforeTwoMinTalked = -1
+    private var afterTwoMinTalked = -1
+    private val twoMinutes: Int = 2
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -203,6 +211,9 @@ class SpeakingPractiseFragment : ABTestFragment() {
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }
+        binding.imgRecentCallsHistory.setOnClickListener {
+            RecentCallActivity.openRecentCallActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
+        }
 
         viewModel.speakingTopicLiveData.observe(
             viewLifecycleOwner,
@@ -212,6 +223,21 @@ class SpeakingPractiseFragment : ABTestFragment() {
                     showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
                 } else {
                     try {
+                        if(response.alreadyTalked < twoMinutes){
+                            beforeTwoMinTalked = 0
+                            afterTwoMinTalked = 0
+                        }else if(response.alreadyTalked >= twoMinutes){
+                            beforeTwoMinTalked = afterTwoMinTalked
+                            afterTwoMinTalked = 1
+                        }
+
+                        if(beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
+                                IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+                            )){
+                            viewModel.postGoal(GoalKeys.EFT_GT_2MIN.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
+                            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
+                        }
+
                         binding.tvTodayTopic.text = response.topicName
                         binding.tvPractiseTime.text =
                             response.alreadyTalked.toString().plus(" / ")
@@ -297,15 +323,16 @@ class SpeakingPractiseFragment : ABTestFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
-            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
+            FavoriteListActivity.openFavoriteCallerActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if (haveAnyFavCaller) {
-                startPractise(favoriteUserCall = true)
-            } else {
-                showToast(getString(R.string.empty_favorite_list_message))
-            }
+//            if (haveAnyFavCaller) {
+//                startPractise(favoriteUserCall = true)
+//            } else {
+//                showToast(getString(R.string.empty_favorite_list_message))
+//            }
         }
         binding.btnNewStudent.setOnClickListener {
+
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
         lifecycleScope.launchWhenStarted {

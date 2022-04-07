@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
@@ -58,6 +60,7 @@ import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 
 
 const val REGISTER_INFO_CODE = 2001
@@ -69,6 +72,7 @@ const val USER_DETAILS_CODE = 1001
 const val TRIAL_COURSE_ID = "76"
 const val SUBSCRIPTION_COURSE_ID = "60"
 const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
+const val HINDI_TO_ENGLISH_COURSE_ID = "151"
 
 class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListener {
 
@@ -78,6 +82,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     var isPermissionRequired: Boolean = true
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
+    private var isExtendFreeTrialActive = false
 
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
@@ -92,7 +97,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         setContentView(R.layout.activity_inbox)
         initView()
         addLiveDataObservable()
+        initABTest()
         addAfterTime()
+    }
+
+    private fun initABTest() {
+        viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
     }
 
     private fun addAfterTime() {
@@ -202,6 +212,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseLocalData.collect {
                 addCourseInRecyclerView(it)
+            }
+        }
+
+        viewModel.extendFreeTrialAbTestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isExtendFreeTrialActive =
+                    (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
             }
         }
     }
@@ -369,7 +386,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        ConversationActivity.startConversionActivity(this, inboxEntity)
+
+
+        if (isExtendFreeTrialActive && inboxEntity.isFreeTrialExtendable
+        ) {
+            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
+            ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
+        } else {
+            ConversationActivity.startConversionActivity(this, inboxEntity)
+        }
     }
 
     companion object {

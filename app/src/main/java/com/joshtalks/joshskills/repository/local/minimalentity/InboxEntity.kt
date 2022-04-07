@@ -53,7 +53,9 @@ data class InboxEntity constructor(
     @ColumnInfo(name = "expire_date")
     @SerializedName("expire_date") val expiryDate: Date? = null,
     @ColumnInfo(name="paid_test_id")
-    @SerializedName("paid_test_id") val paidTestId: String? = null
+    @SerializedName("paid_test_id") val paidTestId: String? = null,
+    @ColumnInfo(name = "is_extend_ft_applicable")
+    @SerializedName("is_extend_ft_applicable") val isFreeTrialExtendable: Boolean = false
 
 ) : Parcelable {
     override fun hashCode(): Int {

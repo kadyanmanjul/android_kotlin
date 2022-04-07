@@ -42,6 +42,10 @@ data class FavoriteCaller(
     @SerializedName("mentor_id")
     val mentorId: String = EMPTY,
 
+    @Expose
+    @SerializedName("is_online")
+    val isOnline: Boolean = false
+
 ) : Parcelable {
     @Ignore
     @Expose

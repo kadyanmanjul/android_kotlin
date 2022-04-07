@@ -11,803 +11,1421 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/parent_Container"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/freeTrialExpiryLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/parent_Container"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
-            android:background="@drawable/black_gradient"
-            android:elevation="@dimen/_4sdp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:visibility="gone">
+            android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <FrameLayout
+                android:id="@+id/freeTrialExpiryLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:background="@drawable/black_gradient"
+                android:elevation="@dimen/_4sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:layout_marginBottom="@dimen/_60sdp"
+                    android:gravity="center"
+                    android:text="@string/your_free_trial_has_ended"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/materialTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:background="@drawable/bg_cta_button"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.showFreeTrialPaymentScreen()}"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/buy_now"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/toolbar_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent_blue_alpha_75"
+                android:clickable="true"
+                android:elevation="@dimen/_1sdp"
+                android:focusable="true"
+                android:visibility="gone"
+                tools:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/toolbar_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginBottom="@dimen/_60sdp"
-                android:gravity="center"
-                android:text="Your Free Trial has ended"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                android:textColor="@color/white" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/materialTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                android:layout_marginVertical="@dimen/_10sdp"
-                android:background="@drawable/bg_cta_button"
-                android:gravity="center"
-                android:onClick="@{()->handler.showFreeTrialPaymentScreen()}"
-                android:padding="@dimen/_10sdp"
-                android:text="Buy Now"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1" />
+                app:layout_constraintTop_toTopOf="parent">
 
-        </FrameLayout>
+                <include layout="@layout/call_ongoing_layout" />
 
-        <FrameLayout
-            android:id="@+id/toolbar_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/transparent_blue_alpha_75"
-            android:clickable="true"
-            android:elevation="@dimen/_1sdp"
-            android:focusable="true"
-            android:visibility="gone"
-            tools:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/toolbar_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <include layout="@layout/call_ongoing_layout" />
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimary"
-                android:contentInsetStart="0dp"
-                android:contentInsetLeft="0dp"
-                android:contentInsetEnd="0dp"
-                android:contentInsetRight="0dp"
-                android:elevation="@dimen/_4sdp"
-                android:minHeight="?attr/actionBarSize"
-                app:contentInsetEnd="0dp"
-                app:contentInsetEndWithActions="0dp"
-                app:contentInsetLeft="0dp"
-                app:contentInsetRight="0dp"
-                app:contentInsetStart="0dp"
-                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
-
-                <RelativeLayout
-                    android:id="@+id/parent_layout"
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/_6sdp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="@dimen/_3sdp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical|start"
-                        android:paddingTop="@dimen/_4sdp"
-                        android:paddingBottom="@dimen/_4sdp"
-                        app:srcCompat="@drawable/ic_arrow_back"
-                        tools:visibility="visible" />
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_message_title"
-                        android:layout_width="@dimen/_180sdp"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:layout_marginHorizontal="@dimen/_6sdp"
-                        android:layout_marginVertical="@dimen/_4sdp"
-                        android:layout_toEndOf="@id/iv_back"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="start|center"
-                        android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                        android:textColor="@color/white"
-                        tools:text="Spoken English Course for a" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/iv_edit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/_8sdp"
-                        android:layout_toEndOf="@id/text_message_title"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:gravity="start"
-                        android:padding="@dimen/_4sdp"
-                        android:text="Edit"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                        android:textColor="@color/white"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_help"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/_8sdp"
-                        android:layout_toEndOf="@id/text_message_title"
-                        android:gravity="start"
-                        android:padding="@dimen/_4sdp"
-                        android:tint="@color/white"
-                        android:visibility="visible"
-                        app:srcCompat="@drawable/ic_help_outline"
-                        tools:visibility="gone" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_setting"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/_8sdp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:padding="@dimen/_4sdp"
-                        android:tint="@color/white"
-                        app:srcCompat="@drawable/ic_more_option"
-                        tools:visibility="visible" />
-
-                </RelativeLayout>
-
-            </com.google.android.material.appbar.MaterialToolbar>
-        </LinearLayout>
-
-        <ScrollView
-            android:id="@+id/scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:elevation="@dimen/_2sdp"
-            android:fillViewport="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/root_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RelativeLayout
-                    android:id="@+id/content_overlay"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:background="@color/transparent_blue_alpha_75"
-                    android:elevation="@dimen/_5sdp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="gone">
-
-                    <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
-                        android:id="@+id/overlay_profile_tooltip"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@id/label_tap_to_dismiss"
-                        android:clickable="true"
-                        android:elevation="@dimen/_8sdp"
-                        android:gravity="center"
-                        android:padding="@dimen/_18sdp"
-                        android:visibility="gone"
-                        app:tooltipText="@{handler.getUserProfileTooltip()}"
-                        tools:visibility="visible" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_tap_to_dismiss"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="bottom|center"
-                        android:layout_marginHorizontal="@dimen/_12sdp"
-                        android:layout_marginTop="@dimen/_20sdp"
-                        android:layout_marginBottom="@dimen/_60sdp"
-                        android:clickable="true"
-                        android:elevation="@dimen/_8sdp"
-                        android:shadowColor="#BD6674"
-                        android:shadowDx="0"
-                        android:shadowDy="0"
-                        android:shadowRadius="10"
-                        android:text="Tap anywhere to continue"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                        android:textColor="@color/white"
-                        android:visibility="invisible"
-                        tools:visibility="visible" />
-                </RelativeLayout>
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/user_pic"
-                    android:layout_width="@dimen/_86sdp"
-                    android:layout_height="@dimen/_86sdp"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginVertical="@dimen/_18sdp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:background="@color/black"
-                    tools:src="@drawable/ic_josh_course" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/edit_pic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/_6sdp"
-                    android:text="Edit"
-                    android:textColor="@color/white"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/user_pic"
-                    app:layout_constraintEnd_toEndOf="@id/user_pic"
-                    app:layout_constraintStart_toStartOf="@id/user_pic"
-                    tools:visibility="visible" />
-
-                <FrameLayout
-                    android:id="@+id/online_status_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_6sdp"
-                    android:background="@drawable/circle2"
-                    android:backgroundTint="@color/white"
-                    android:padding="@dimen/_2sdp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/user_pic"
-                    app:layout_constraintEnd_toEndOf="@id/user_pic"
-                    app:layout_constraintHorizontal_bias="1"
-                    app:layout_constraintStart_toStartOf="@id/user_pic"
-                    app:layout_constraintTop_toTopOf="@id/user_pic"
-                    app:layout_constraintVertical_bias="1"
-                    tools:visibility="visible">
-
-                    <ImageView
-                        android:layout_width="@dimen/_12sdp"
-                        android:layout_height="@dimen/_12sdp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/green" />
-                </FrameLayout>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_18sdp"
-                    android:layout_marginTop="@dimen/_18sdp"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                    android:textColor="@color/black"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toEndOf="@id/user_pic"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="User Name" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_senior_student_badge"
-                    android:layout_width="@dimen/_34sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:onClick="@{()->handler.showSeniorStudentScreen()}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/user_name"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toEndOf="@id/user_name"
-                    app:layout_constraintTop_toTopOf="@+id/user_name"
-                    app:srcCompat="@drawable/senior_student_badge"
-                    tools:visibility="visible" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/user_age_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginBottom="@dimen/_4sdp"
-                    android:text="@string/age"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="@id/user_name"
-                    app:layout_constraintTop_toBottomOf="@id/user_name" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/user_age"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/grey_7A"
-                    app:layout_constraintStart_toEndOf="@id/user_age_text"
-                    app:layout_constraintTop_toTopOf="@id/user_age_text"
-                    tools:text="22" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txt_label_hometown"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginBottom="@dimen/_4sdp"
-                    android:text="Hometown:"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="@id/user_age_text"
-                    app:layout_constraintTop_toBottomOf="@id/user_age_text" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txt_user_hometown"
-                    android:layout_width="@dimen/_80sdp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:clickable="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/grey_7A"
-                    app:layout_constraintStart_toEndOf="@id/txt_label_hometown"
-                    app:layout_constraintTop_toTopOf="@id/txt_label_hometown"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    tools:text="Patiala is my home town which" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/joined_on_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_4sdp"
-                    android:text="@string/batch"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="@id/txt_label_hometown"
-                    app:layout_constraintTop_toBottomOf="@id/txt_label_hometown" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/joined_on"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/grey_7A"
-                    app:layout_constraintStart_toEndOf="@id/joined_on_text"
-                    app:layout_constraintTop_toTopOf="@id/joined_on_text"
-                    tools:text="22 Oct 2020" />
-
-                <RelativeLayout
-                    android:id="@+id/previous_profile_pic_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_28sdp"
-                    android:background="@drawable/bg_profile_header"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center|start"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/user_pic">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_previous_dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_4sdp"
-                        android:layout_marginStart="@dimen/_16sdp"
-                        android:gravity="center|start"
-                        android:text="@string/previous_dp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_view_more_dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/label_previous_dp"
-                        android:layout_alignBottom="@+id/label_previous_dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="@dimen/_8sdp"
-                        android:clickable="true"
-                        android:drawablePadding="@dimen/_4sdp"
-                        android:focusable="true"
-                        android:gravity="center"
-                        android:text="See All"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="@dimen/_8ssp"
-                        app:drawableEndCompat="@drawable/ic_arrow"
-                        app:drawableTint="@color/colorPrimary" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/highlights_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:background="@drawable/bg_profile_header"
-                    android:gravity="center|start"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/previous_profile_pic_layout">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_highlights"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_4sdp"
-                        android:layout_marginStart="@dimen/_16sdp"
-                        android:gravity="center|start"
-                        android:text="Highlights"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black" />
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/point_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:layout_marginEnd="@dimen/_8ssp"
-                    android:background="@drawable/ic_points_bg"
-                    android:clickable="true"
-                    android:elevation="@dimen/_6sdp"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toStartOf="@id/minutes_layout"
-                    app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/highlights_layout"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.33">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/points"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_6sdp"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_18ssp"
-                        tools:text="22,234" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/point_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/points"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                        android:textColor="@color/white" />
-
-                </LinearLayout>
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/arrow_animation"
-                    android:layout_width="@dimen/_100sdp"
-                    android:layout_height="@dimen/_60sdp"
-                    android:elevation="@dimen/_6sdp"
-                    android:rotationY="-180"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/point_layout"
-                    app:layout_constraintEnd_toEndOf="@+id/minutes_layout"
-                    app:layout_constraintStart_toStartOf="@+id/point_layout"
-                    app:layout_constraintTop_toTopOf="@+id/point_layout"
-                    app:lottie_autoPlay="false"
-                    app:lottie_fileName="lottie/leaderboard_arrow.json"
-                    app:lottie_imageAssetsFolder="lottie"
-                    app:lottie_loop="true"
-                    app:lottie_repeatMode="reverse"
-                    app:lottie_scale="1"
-                    app:lottie_speed="1"
-                    tools:visibility="gone" />
-
-                <LinearLayout
-                    android:id="@+id/minutes_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_50sdp"
-                    android:layout_marginStart="@dimen/_8ssp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:background="@drawable/ic_minutes_spoken_bg"
-                    android:clickable="true"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/colorPrimary"
+                    android:contentInsetStart="0dp"
+                    android:contentInsetLeft="0dp"
+                    android:contentInsetEnd="0dp"
+                    android:contentInsetRight="0dp"
                     android:elevation="@dimen/_4sdp"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/point_layout"
-                    app:layout_constraintTop_toBottomOf="@id/highlights_layout"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.36">
+                    android:minHeight="?attr/actionBarSize"
+                    app:contentInsetEnd="0dp"
+                    app:contentInsetEndWithActions="0dp"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetRight="0dp"
+                    app:contentInsetStart="0dp"
+                    app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/minutes"
+                    <RelativeLayout
+                        android:id="@+id/parent_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/_6sdp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_3sdp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical|start"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            app:srcCompat="@drawable/ic_arrow_back"
+                            tools:visibility="visible" />
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_message_title"
+                            android:layout_width="@dimen/_180sdp"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:layout_marginHorizontal="@dimen/_6sdp"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_toEndOf="@id/iv_back"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:gravity="start|center"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                            android:textColor="@color/white"
+                            tools:text="Spoken English Course for a" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/iv_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/_8sdp"
+                            android:layout_toEndOf="@id/text_message_title"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:gravity="start"
+                            android:padding="@dimen/_4sdp"
+                            android:text="@string/edit_profile_data"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                            android:textColor="@color/white"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_help"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/_8sdp"
+                            android:layout_toEndOf="@id/text_message_title"
+                            android:gravity="start"
+                            android:padding="@dimen/_4sdp"
+                            android:tint="@color/white"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/ic_help_outline"
+                            tools:visibility="gone" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_setting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/_8sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:padding="@dimen/_4sdp"
+                            android:tint="@color/white"
+                            app:srcCompat="@drawable/ic_more_option"
+                            tools:visibility="visible" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.appbar.MaterialToolbar>
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:elevation="@dimen/_2sdp"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/root_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:id="@+id/content_overlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:background="@color/transparent_blue_alpha_75"
+                        android:elevation="@dimen/_5sdp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="gone">
+
+                        <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+                            android:id="@+id/overlay_profile_tooltip"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@id/label_tap_to_dismiss"
+                            android:clickable="true"
+                            android:elevation="@dimen/_8sdp"
+                            android:gravity="center"
+                            android:padding="@dimen/_18sdp"
+                            android:visibility="gone"
+                            app:tooltipText="हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_tap_to_dismiss"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="bottom|center"
+                            android:layout_marginHorizontal="@dimen/_12sdp"
+                            android:layout_marginTop="@dimen/_20sdp"
+                            android:layout_marginBottom="@dimen/_60sdp"
+                            android:clickable="true"
+                            android:elevation="@dimen/_8sdp"
+                            android:shadowColor="#BD6674"
+                            android:shadowDx="0"
+                            android:shadowDy="0"
+                            android:shadowRadius="10"
+                            android:text="@string/tap_anywhere_to_continue"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                            android:textColor="@color/white"
+                            android:visibility="invisible"
+                            tools:visibility="visible" />
+                    </RelativeLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/profile_Container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/user_pic"
+                            android:layout_width="@dimen/_86sdp"
+                            android:layout_height="@dimen/_86sdp"
+                            android:layout_marginHorizontal="@dimen/_16sdp"
+                            android:layout_marginVertical="@dimen/_18sdp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:background="@color/black"
+                            tools:src="@drawable/ic_josh_course" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/edit_pic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/_6sdp"
+                            android:text="@string/edit_profile_data"
+                            android:textColor="@color/white"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/user_pic"
+                            app:layout_constraintEnd_toEndOf="@id/user_pic"
+                            app:layout_constraintStart_toStartOf="@id/user_pic"
+                            tools:visibility="visible" />
+
+                        <FrameLayout
+                            android:id="@+id/online_status_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_6sdp"
+                            android:background="@drawable/circle2"
+                            android:backgroundTint="@color/white"
+                            android:padding="@dimen/_2sdp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/user_pic"
+                            app:layout_constraintEnd_toEndOf="@id/user_pic"
+                            app:layout_constraintHorizontal_bias="1"
+                            app:layout_constraintStart_toStartOf="@id/user_pic"
+                            app:layout_constraintTop_toTopOf="@id/user_pic"
+                            app:layout_constraintVertical_bias="1"
+                            tools:visibility="visible">
+
+                            <ImageView
+                                android:layout_width="@dimen/_12sdp"
+                                android:layout_height="@dimen/_12sdp"
+                                android:background="@drawable/circle"
+                                android:backgroundTint="@color/green" />
+                        </FrameLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_18sdp"
+                            android:layout_marginTop="@dimen/_18sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:maxLength="20"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                            android:textColor="@color/black"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toEndOf="@id/user_pic"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="User Name" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/img_senior_student_badge"
+                            android:layout_width="@dimen/_34sdp"
+                            android:layout_height="@dimen/_18sdp"
+                            android:layout_marginEnd="@dimen/_4sdp"
+                            android:onClick="@{()->handler.showSeniorStudentScreen()}"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/user_name"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toEndOf="@id/user_name"
+                            app:layout_constraintTop_toTopOf="@+id/user_name"
+                            app:srcCompat="@drawable/senior_student_badge"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/user_age_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:text="@string/age"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/black"
+                            app:layout_constraintStart_toStartOf="@id/user_name"
+                            app:layout_constraintTop_toBottomOf="@id/user_name" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/user_age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/grey_7A"
+                            app:layout_constraintStart_toEndOf="@id/user_age_text"
+                            app:layout_constraintTop_toTopOf="@id/user_age_text"
+                            tools:text="22" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txt_label_hometown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:text="@string/hometown"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/black"
+                            app:layout_constraintStart_toStartOf="@id/user_age_text"
+                            app:layout_constraintTop_toBottomOf="@id/user_age_text" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txt_user_hometown"
+                            android:layout_width="@dimen/_100sdp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:clickable="false"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/grey_7A"
+                            app:layout_constraintStart_toEndOf="@id/txt_label_hometown"
+                            app:layout_constraintTop_toTopOf="@id/txt_label_hometown"
+                            tools:text="Patiala is my home town which" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/joined_on_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:text="@string/batch"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/black"
+                            app:layout_constraintStart_toStartOf="@id/txt_label_hometown"
+                            app:layout_constraintTop_toBottomOf="@id/txt_label_hometown" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/joined_on"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/grey_7A"
+                            app:layout_constraintStart_toEndOf="@id/joined_on_text"
+                            app:layout_constraintTop_toTopOf="@id/joined_on_text"
+                            tools:text="22 Oct 2020" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/referral_info_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_25sdp"
+                            android:layout_marginTop="@dimen/_20sdp"
+                            android:clickable="true"
+                            android:drawableStart="@drawable/info_iv"
+                            android:drawablePadding="@dimen/_6sdp"
+                            android:focusable="true"
+                            android:onClick="@{()-> handler.openShareScreen()}"
+                            android:paddingBottom="@dimen/_5sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="@dimen/_10sdp"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/user_pic" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/sent_request_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_19sdp"
+                            android:background="@color/profile_request_card"
+                            android:longClickable="true"
+                            android:visibility="gone"
+                            app:cardBackgroundColor="@color/profile_request_card"
+                            app:cardElevation="0dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/joined_on"
+                            tools:cardBackgroundColor="@color/profile_request_card"
+                            tools:cardPreventCornerOverlap="false">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/profile_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_32sdp"
+                                    android:layout_marginTop="@dimen/_11sdp"
+                                    android:layout_marginEnd="@dimen/_32sdp"
+                                    android:gravity="center_horizontal"
+                                    android:lineSpacingExtra="0dp"
+                                    android:lines="3"
+                                    android:maxLines="3"
+                                    android:text="@string/profile_test_for_request"
+                                    android:textAlignment="center"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                                    android:textColor="@color/pure_black" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btn_sent_request"
+                                    android:layout_width="@dimen/_106sdp"
+                                    android:layout_height="@dimen/_21sdp"
+                                    android:layout_below="@+id/profile_text"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="@dimen/_10sdp"
+                                    android:layout_marginEnd="@dimen/_14sdp"
+                                    android:layout_marginBottom="@dimen/_10sdp"
+                                    android:backgroundTint="@color/colorAccent"
+                                    android:insetTop="0dp"
+                                    android:insetBottom="0dp"
+                                    android:text="@string/send_request"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                    android:textColor="@color/white"
+                                    android:visibility="gone"
+                                    app:rippleColor="@color/white" />
+
+                                <LinearLayout
+                                    android:id="@+id/btn_confirm_or_not_now_card"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/profile_text"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:layout_marginTop="@dimen/_10sdp"
+                                    android:layout_marginRight="@dimen/_10sdp"
+                                    android:layout_marginBottom="@dimen/_10sdp"
+                                    android:gravity="center_horizontal"
+                                    android:visibility="visible"
+                                    android:weightSum="2">
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btn_confirm_request"
+                                        android:layout_width="@dimen/_91sdp"
+                                        android:layout_height="@dimen/_22sdp"
+                                        android:backgroundTint="@color/colorAccent"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        android:text="@string/confirm"
+                                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                        android:textColor="@color/white"
+                                        android:visibility="gone"
+                                        app:rippleColor="@color/white" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btn_not_now_request"
+                                        android:layout_width="@dimen/_91sdp"
+                                        android:layout_height="@dimen/_22sdp"
+                                        android:layout_marginStart="@dimen/_8sdp"
+                                        android:backgroundTint="@color/not_now"
+                                        android:insetTop="0dp"
+                                        android:insetBottom="0dp"
+                                        android:text="@string/not_now_txt"
+                                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                        android:textColor="@color/pure_black"
+                                        android:visibility="gone"
+                                        app:rippleColor="@color/white" />
+                                </LinearLayout>
+                            </RelativeLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <RelativeLayout
+                            android:id="@+id/previous_profile_pic_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_22sdp"
+                            android:layout_marginBottom="@dimen/_8sdp"
+                            android:background="@drawable/bg_profile_header"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:gravity="center|start"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/sent_request_card"
+                            tools:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/label_previous_dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/_4sdp"
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:gravity="center|start"
+                                android:text="@string/previous_dp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                                android:textColor="@color/black" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/label_view_more_dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignTop="@+id/label_previous_dp"
+                                android:layout_alignBottom="@+id/label_previous_dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginEnd="@dimen/_8sdp"
+                                android:clickable="true"
+                                android:drawablePadding="@dimen/_4sdp"
+                                android:focusable="true"
+                                android:gravity="center"
+                                android:text="@string/see_all"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/_8ssp"
+                                app:drawableEndCompat="@drawable/ic_arrow"
+                                app:drawableTint="@color/colorPrimary" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/highlights_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_28sdp"
+                            android:layout_marginTop="@dimen/_6sdp"
+                            android:background="@drawable/bg_profile_header"
+                            android:gravity="center|start"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/previous_profile_pic_layout">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/label_highlights"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/_4sdp"
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:gravity="center|start"
+                                android:text="@string/highlights"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                                android:textColor="@color/black" />
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/point_layout"
+                            android:layout_width="@dimen/_126sdp"
+                            android:layout_height="@dimen/_61sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:layout_marginEnd="@dimen/_8ssp"
+                            android:background="@drawable/ic_points_bg"
+                            android:clickable="true"
+                            android:elevation="@dimen/_6sdp"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toStartOf="@id/minutes_layout"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/highlights_layout"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="0.33">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/points"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_6sdp"
+                                android:gravity="center"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_18ssp"
+                                tools:text="22,234" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/point_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/points"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/arrow_animation"
+                            android:layout_width="@dimen/_100sdp"
+                            android:layout_height="@dimen/_60sdp"
+                            android:elevation="@dimen/_6sdp"
+                            android:rotationY="-180"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/point_layout"
+                            app:layout_constraintEnd_toEndOf="@+id/minutes_layout"
+                            app:layout_constraintStart_toStartOf="@+id/point_layout"
+                            app:layout_constraintTop_toTopOf="@+id/point_layout"
+                            app:lottie_autoPlay="false"
+                            app:lottie_fileName="lottie/leaderboard_arrow.json"
+                            app:lottie_imageAssetsFolder="lottie"
+                            app:lottie_loop="true"
+                            app:lottie_repeatMode="reverse"
+                            app:lottie_scale="1"
+                            app:lottie_speed="1"
+                            tools:visibility="gone" />
+
+                        <LinearLayout
+                            android:id="@+id/minutes_layout"
+                            android:layout_width="@dimen/_126sdp"
+                            android:layout_height="@dimen/_61sdp"
+                            android:layout_marginStart="@dimen/_8ssp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:background="@drawable/ic_minutes_spoken_bg"
+                            android:clickable="true"
+                            android:elevation="@dimen/_4sdp"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/point_layout"
+                            app:layout_constraintTop_toBottomOf="@id/highlights_layout"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="0.36">
+
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/minutes"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_6sdp"
+                                android:gravity="center"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_18ssp"
+                                tools:text="8322" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/minutes_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/user_min_text"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/seperatorBasicDetails"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginHorizontal="@dimen/_9sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:background="#687C90"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/point_layout"
+                            tools:layout_editor_absoluteX="0dp"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtLabelFutureGoals"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_16sdp"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:text="@string/future_goals"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/colorPrimary"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/seperatorBasicDetails"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtFutureGoals"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_16sdp"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:text="@string/aspiring_ias_officer"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/black"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/txtLabelFutureGoals"
+                            tools:visibility="visible" />
+
+                        <View
+                            android:id="@+id/seperatorFavouriteJoshTalk"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginHorizontal="@dimen/_9sdp"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:background="@color/grey_68"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/txtFutureGoals"
+                            tools:layout_editor_absoluteX="0dp"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/labelFavouriteJoshTalk"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_16sdp"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:text="@string/favourite_josh_talk"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/colorPrimary"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/seperatorFavouriteJoshTalk"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtFavouriteJoshTalk"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_16sdp"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:layout_marginBottom="@dimen/_8sdp"
+                            android:autoLink="web"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:text="@string/youtube_link"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/link_color"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/labelFavouriteJoshTalk"
+                            tools:visibility="visible" />
+
+                        <View
+                            android:id="@+id/seperatorWithoutFutureGoals"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginHorizontal="@dimen/_9sdp"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:background="#687C90"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/txtFavouriteJoshTalk"
+                            tools:layout_editor_absoluteX="0dp"
+                            tools:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/without_future_goals"
+                            android:layout_width="@dimen/_265sdp"
+                            android:layout_height="@dimen/_37sdp"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:src="@drawable/ic_without_future_goals"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/seperatorWithoutFutureGoals"
+                            tools:visibility="visible" />
+
+                        <View
+                            android:id="@+id/seperatorWithoutEducation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginHorizontal="@dimen/_9sdp"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:background="@color/grey_68"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/without_future_goals"
+                            tools:layout_editor_absoluteX="0dp"
+                            tools:visibility="visible" />
+
+                        <ImageView
+                            android:id="@+id/without_education"
+                            android:layout_width="@dimen/_265sdp"
+                            android:layout_height="@dimen/_37sdp"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:src="@drawable/ic_without_education_details"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/seperatorWithoutEducation"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/streaks_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/colorPrimary"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/without_education"
+                            tools:text="@string/user_streak_text" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txt_label_senior_student"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_16sdp"
+                            android:layout_marginVertical="@dimen/_14sdp"
+                            android:text="@string/label_senior_student"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="#687C90"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/streaks_text"
+                            tools:visibility="gone" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txt_label_become_senior_student"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_16sdp"
+                            android:layout_marginVertical="@dimen/_2sdp"
+                            android:drawablePadding="@dimen/_4sdp"
+                            android:gravity="center"
+                            android:onClick="@{()->handler.showSeniorStudentScreen()}"
+                            android:text="@string/label_become_senior_student"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/colorPrimary"
+                            android:visibility="gone"
+                            app:drawableStartCompat="@drawable/ic_info_micro"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/txt_label_senior_student"
+                            tools:visibility="gone" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/profile_shimmer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/profile_Container"
+                        tools:visibility="gone">
+
+                        <include layout="@layout/profile_shimmer_placeholder" />
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/fpp_list_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:background="@drawable/bg_profile_header"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center|start"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/profile_shimmer"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/fpp_dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:gravity="center|start"
+                            android:text="@string/fpp_text"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/view_all_fpp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/fpp_dp"
+                            android:layout_alignBottom="@+id/fpp_dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:clickable="true"
+                            android:drawablePadding="@dimen/_4sdp"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/see_all"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="@dimen/_8ssp"
+                            app:drawableEndCompat="@drawable/ic_arrow"
+                            app:drawableTint="@color/colorPrimary" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/my_fpp_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/fpp_list_layout" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/education_occupation_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:background="@drawable/bg_profile_header"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center|start"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/my_fpp_ll"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/EducationOccupationLayout_dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:gravity="center|start"
+                            android:text="@string/education_and_occupation"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/black" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtLabelOccupation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:text="@string/occupation"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/colorPrimary"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/education_occupation_layout"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtOccupation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:text="@string/aspiring_ias_officer"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtLabelOccupation"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtPlace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:text="@string/at_josh_talks"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                        android:textColor="@color/black"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtOccupation"
+                        tools:visibility="visible" />
+
+                    <View
+                        android:id="@+id/seperator_education_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginHorizontal="@dimen/_9sdp"
                         android:layout_marginTop="@dimen/_6sdp"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_18ssp"
-                        tools:text="8322" />
+                        android:background="@color/grey_68"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtPlace"
+                        tools:layout_editor_absoluteX="0dp"
+                        tools:visibility="visible" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/minutes_text"
+                        android:id="@+id/label_education"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:text="@string/education"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/colorPrimary"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seperator_education_details"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txt_degree"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:text="@string/b_tech"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/label_education"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txt_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:text="@string/from_vit_2023"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                        android:textColor="@color/black"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txt_degree"
+                        tools:visibility="visible" />
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/awards_shimmer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/user_min_text"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
-                        android:textColor="@color/white" />
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txt_date"
+                        tools:visibility="gone">
 
-                </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/awards_shimmer_ll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/streaks_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/colorPrimary"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/point_layout"
-                    tools:text="@string/user_streak_text" />
+                            <LinearLayout
+                                android:id="@+id/awards_shimmer_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_28sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:background="@drawable/bg_profile_header"
+                                android:gravity="center|start"
+                                android:orientation="horizontal" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txt_label_senior_student"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginVertical="@dimen/_14sdp"
-                    android:text="@string/label_senior_student"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="#687C90"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/streaks_text"
-                    tools:visibility="gone" />
+                            <LinearLayout
+                                android:id="@+id/awards_shimmer_multi_line_ll"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/not_now"
+                                android:minHeight="@dimen/_120sdp"
+                                android:orientation="vertical"
+                                android:paddingHorizontal="@dimen/_6sdp"
+                                android:visibility="visible"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/awards_layout"
+                                tools:visibility="visible" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txt_label_become_senior_student"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginVertical="@dimen/_2sdp"
-                    android:drawablePadding="@dimen/_4sdp"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.showSeniorStudentScreen()}"
-                    android:text="@string/label_become_senior_student"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                    android:textColor="@color/colorPrimary"
-                    android:visibility="gone"
-                    app:drawableStartCompat="@drawable/ic_info_micro"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_label_senior_student"
-                    tools:visibility="gone" />
+                        </LinearLayout>
 
-                <RelativeLayout
-                    android:id="@+id/my_groups_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:background="@drawable/bg_profile_header"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center|start"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_label_become_senior_student">
+                    </com.facebook.shimmer.ShimmerFrameLayout>
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_my_groups"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_4sdp"
-                        android:layout_marginStart="@dimen/_16sdp"
-                        android:gravity="center|start"
-                        android:text="My Groups"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black" />
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_view_more_groups"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/label_my_groups"
-                        android:layout_alignBottom="@+id/label_my_groups"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="@dimen/_8sdp"
+                    <RelativeLayout
+                        android:id="@+id/awards_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_marginTop="@dimen/_14sdp"
+                        android:background="@drawable/bg_profile_header"
                         android:clickable="true"
-                        android:drawablePadding="@dimen/_4sdp"
                         android:focusable="true"
-                        android:gravity="center"
-                        android:text="See All"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="@dimen/_8ssp"
-                        app:drawableEndCompat="@drawable/ic_arrow"
-                        app:drawableTint="@color/colorPrimary" />
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/my_groups_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/my_groups_layout">
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:id="@+id/awards_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:background="@drawable/bg_profile_header"
-                    android:gravity="center|start"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/my_groups_ll">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_awards"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_4sdp"
-                        android:layout_marginStart="@dimen/_16sdp"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center|start"
-                        android:text="Awards Cabinet"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black" />
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/awards_shimmer"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_awards"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:gravity="center|start"
+                            android:text="@string/awards_cabinet"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_view_more_awards"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/label_awards"
+                            android:layout_alignBottom="@+id/label_awards"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:clickable="true"
+                            android:drawablePadding="@dimen/_4sdp"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/see_all"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="@dimen/_8ssp"
+                            app:drawableEndCompat="@drawable/ic_arrow"
+                            app:drawableTint="@color/colorPrimary" />
+
+                    </RelativeLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_view_more_awards"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/no_award_text"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/label_awards"
-                        android:layout_alignBottom="@+id/label_awards"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:layout_marginVertical="@dimen/_36sdp"
+                        android:elevation="@dimen/_1sdp"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/_36sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                        android:textColor="@color/white"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/multi_line_ll"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/multi_line_ll"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/multi_line_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_wood"
+                        android:minHeight="@dimen/_120sdp"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/_6sdp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/awards_layout"
+                        tools:visibility="visible" />
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/grp_shimmer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/multi_line_ll"
+                        tools:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/my_groups_shimmer_ll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/my_groups_shimmer_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_28sdp"
+                                android:background="@drawable/bg_profile_header"
+                                android:gravity="center|start"
+                                android:orientation="horizontal" />
+
+                            <include layout="@layout/linear_layout_placeholder" />
+
+                            <include layout="@layout/linear_layout_placeholder" />
+
+                            <include layout="@layout/linear_layout_placeholder" />
+                        </LinearLayout>
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/my_groups_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_28sdp"
+                        android:background="@drawable/bg_profile_header"
                         android:clickable="true"
-                        android:drawablePadding="@dimen/_4sdp"
                         android:focusable="true"
-                        android:gravity="center"
-                        android:text="See All"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="@dimen/_8ssp"
-                        app:drawableEndCompat="@drawable/ic_arrow"
-                        app:drawableTint="@color/colorPrimary" />
-
-                </RelativeLayout>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/no_award_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_36sdp"
-                    android:elevation="@dimen/_1sdp"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/_36sdp"
-                    android:text="@string/no_awards_others"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:textColor="@color/white"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/multi_line_ll"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/multi_line_ll"
-                    tools:visibility="visible" />
-
-                <LinearLayout
-                    android:id="@+id/multi_line_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:background="@drawable/bg_wood"
-                    android:minHeight="@dimen/_120sdp"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="@dimen/_6sdp"
-                    android:paddingVertical="@dimen/_2sdp"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/awards_layout"
-                    tools:visibility="visible" />
-
-                <RelativeLayout
-                    android:id="@+id/enrolled_courses_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:background="@drawable/bg_profile_header"
-                    android:gravity="center|start"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/multi_line_ll">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_enrolled_courses"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_4sdp"
-                        android:layout_marginStart="@dimen/_16sdp"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:gravity="center|start"
-                        android:text="Courses Enrolled"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black" />
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/grp_shimmer"
+                        tools:visibility="visible">
 
-                </RelativeLayout>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_my_groups"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:gravity="center|start"
+                            android:text="@string/groups"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/black" />
 
-                <LinearLayout
-                    android:id="@+id/enrolled_courses_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:orientation="vertical"
-                    android:paddingBottom="@dimen/_80sdp"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/enrolled_courses_layout">
-                    <!--
-                                        <include layout="@layout/enrolled_courses_row_item" />
-                                        <include layout="@layout/enrolled_courses_row_item" />
-                                        <include layout="@layout/enrolled_courses_row_item" />
-                    -->
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_view_more_groups"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/label_my_groups"
+                            android:layout_alignBottom="@+id/label_my_groups"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:clickable="true"
+                            android:drawablePadding="@dimen/_4sdp"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/see_all"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="@dimen/_8ssp"
+                            app:drawableEndCompat="@drawable/ic_arrow"
+                            app:drawableTint="@color/colorPrimary" />
 
-                </LinearLayout>
+                    </RelativeLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <LinearLayout
+                        android:id="@+id/my_groups_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_14sdp"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/my_groups_layout" />
 
-        </ScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/courses_shimmer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/my_groups_ll"
+                        tools:visibility="gone">
 
+                        <LinearLayout
+                            android:id="@+id/courses_shimmer_ll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/courses_shimmer_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_28sdp"
+                                android:background="@drawable/bg_profile_header"
+                                android:gravity="center|start"
+                                android:orientation="horizontal" />
+
+                            <include layout="@layout/linear_layout_placeholder" />
+
+                            <include layout="@layout/linear_layout_placeholder" />
+
+                            <include layout="@layout/linear_layout_placeholder" />
+                        </LinearLayout>
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/enrolled_courses_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_28sdp"
+                        android:background="@drawable/bg_profile_header"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center|start"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/courses_shimmer"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_enrolled_courses"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:gravity="center|start"
+                            android:text="@string/courses"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                            android:textColor="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_view_more_courses"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/label_enrolled_courses"
+                            android:layout_alignBottom="@+id/label_enrolled_courses"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            android:clickable="true"
+                            android:drawablePadding="@dimen/_4sdp"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/see_all"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="@dimen/_8ssp"
+                            app:drawableEndCompat="@drawable/ic_arrow"
+                            app:drawableTint="@color/colorPrimary" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/enrolled_courses_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="@dimen/_80sdp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/enrolled_courses_layout">
+
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </ScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/user_root_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 </layout>
+

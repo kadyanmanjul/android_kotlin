@@ -65,13 +65,12 @@ import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
-class FreeTrialOnBoardActivity : ABTestActivity() {
+class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
-    private var is100PointsActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,14 +88,6 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         }
         addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
-    }
-
-    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        is100PointsActive = (abTestCampaignData?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && (abTestCampaignData.variableMap?.isEnabled == true)
-    }
-
-    override fun initCampaigns() {
-        getCampaigns(CampaignKeys.HUNDRED_POINTS.NAME)
     }
 
     override fun onStart() {
@@ -148,7 +139,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         }
     }
 
-    fun showStartTrialPopup(language: ChooseLanguages) {
+    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
@@ -217,10 +208,8 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance().setLocale(Locale(PrefManager.getStringValue(USER_LOCALE)))
-        }
-        else {
+        } else
             viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED)
-        }
     }
 
     private fun openTrueCallerBottomSheet() {

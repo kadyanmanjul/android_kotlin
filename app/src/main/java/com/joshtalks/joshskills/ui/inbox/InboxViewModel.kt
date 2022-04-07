@@ -5,9 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -32,6 +34,16 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val registerCourseLocalData: SharedFlow<List<InboxEntity>>
         get() = _registerCourseLocalData
 
+    val extendFreeTrialAbTestLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getEFTCampaignData(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                extendFreeTrialAbTestLiveData.postValue(campaign)
+            }
+        }
+    }
 
     fun getRegisterCourses() {
         viewModelScope.launch(Dispatchers.IO) {
