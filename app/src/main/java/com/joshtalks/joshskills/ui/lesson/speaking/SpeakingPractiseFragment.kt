@@ -79,8 +79,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     private var mAnimator: TimeAnimator? = null
     private var mCurrentLevel = 0
     private var mClipDrawable: ClipDrawable? = null
-    private var beforeAnimation: GradientDrawable? = null
-
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()

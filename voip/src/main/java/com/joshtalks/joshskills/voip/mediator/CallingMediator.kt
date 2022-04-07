@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.mediator
 
 import android.media.RingtoneManager
+import android.util.Log
 import com.joshtalks.joshskills.base.constants.INCOMING
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.MessageData
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
+import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
@@ -40,14 +42,19 @@ import kotlin.Exception
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.*
 import kotlin.collections.HashMap
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+
+const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
+const val CALL_CONNECT_TIMEOUT_IN_MILLIS = 2 * 60 * 1000L
+private const val TAG = "CallingMediator"
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
@@ -59,6 +66,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val mutex = Mutex(false)
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
     private lateinit var voipNotification : VoipNotification
+    private lateinit var userNotFoundJob : Job
 
     init {
         scope.launch {
@@ -96,6 +104,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         voipNotification.removeNotification()
                         stopAudio()
                     }
+                    startUserNotFoundTimer()
                     calling.onPreCallConnect(callData)
                 } catch (e: Exception) {
                     flow.emit(ERROR)
@@ -104,6 +113,30 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 }
             }
         }
+    }
+    
+    private fun startUserNotFoundTimer() {
+        userNotFoundJob = scope.launch {
+            if(isActive) {
+                val timeout = Timeout(ServerConstants.TIMEOUT)
+                for(i in 1..12) {
+                    Log.d(TAG, "startUserNotFoundTimer: ")
+                    delay(PER_USER_TIMEOUT_IN_MILLIS)
+                    if(isActive)
+                        networkEventChannel.emitEvent(timeout)
+                    else
+                        break
+                }
+                disconnectCall()
+                flow.emit(CALL_DISCONNECT_REQUEST)
+            }
+        }
+    }
+
+    private fun stopUserNotFoundTimer() {
+        Log.d(TAG, "stopUserNotFoundTimer: ")
+        if(::userNotFoundJob.isInitialized)
+            userNotFoundJob.cancel()
     }
 
     override fun muteAudioStream(muteAudio: Boolean) {
@@ -147,6 +180,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         /**
                          * Join Channel
                          */
+                        stopUserNotFoundTimer()
                         voipLog?.log("Channel Data -> ${it}")
                         // TODO: Use Calling Service type
                         val request = PeerToPeerCallRequest(

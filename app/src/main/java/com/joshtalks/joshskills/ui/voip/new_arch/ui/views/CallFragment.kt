@@ -69,7 +69,9 @@ class CallFragment : BaseFragment() {
 
         callbar.getTimerLiveData().observe(viewLifecycleOwner) {
             Log.d(TAG, "initViewState: $it")
-            startTimer()
+            if(it > 0) {
+                startTimer()
+            }
         }
     }
 

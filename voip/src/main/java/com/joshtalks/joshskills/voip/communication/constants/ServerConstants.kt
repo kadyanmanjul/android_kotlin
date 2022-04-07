@@ -12,6 +12,7 @@ class ServerConstants {
         val INCOMING_CALL = 7
         val CALL_PICKED = 8
         val RECONNECTING = 9
+        val TIMEOUT = 10
     }
 }
 

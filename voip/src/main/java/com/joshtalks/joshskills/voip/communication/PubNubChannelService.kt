@@ -9,6 +9,7 @@ import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.enums.PNReconnectionPolicy
+import java.sql.Time
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +80,7 @@ object PubNubChannelService : EventChannel {
                 val message = when (event) {
                     is NetworkActionData -> event as NetworkAction
                     is UserActionData -> event as UserAction
+                    is Timeout -> event
                 }
 
                 pubnub?.publish()

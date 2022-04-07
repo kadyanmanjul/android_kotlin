@@ -166,6 +166,9 @@ internal object AgoraCallingService : CallingService {
                     CallState.CallConnected -> state.emit(CONNECTED)
                     CallState.CallInitiated -> state.emit(JOINED)
                     CallState.ReconnectingFailed -> { disconnectCall() }
+                    CallState.UserAlreadyDisconnectedError -> {
+                        state.emit(IDLE)
+                    }
                     CallState.Error -> {
                         if(state.equals(JOINED) || state.equals(CONNECTED) || state.equals(JOINING))
                             disconnectCall()

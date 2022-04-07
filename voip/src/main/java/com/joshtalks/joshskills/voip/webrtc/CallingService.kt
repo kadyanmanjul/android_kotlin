@@ -32,6 +32,7 @@ internal sealed class CallState {
     object ReconnectingFailed : CallState()
     object CallInitiated : CallState() // Local User Join The Channel
     object Error : CallState()
+    object UserAlreadyDisconnectedError: CallState()
 }
 
 //internal enum class State {

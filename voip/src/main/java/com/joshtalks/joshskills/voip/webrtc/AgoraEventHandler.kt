@@ -66,6 +66,7 @@ internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler(
     override fun onError(errorCode: Int) {
         if(errorCode == USER_ALREADY_LEFT_THE_CHANNEL) {
             Log.d(TAG, "onError: USER ALREADY LEFT THE CHANNEL")
+            emitEvent(CallState.UserAlreadyDisconnectedError)
             return
         }
         voipLog?.log("$errorCode")
