@@ -11,6 +11,7 @@
     <color name="checkmark_blue">#34B7F1</color>
 
     <color name="gray_53">#535664</color>
+    <color name="gray_6F">#6F6F6F</color>
     <color name="gray_94">#F0F0F0</color>
 
     <color name="button_activated">@color/colorAccent</color>
@@ -210,6 +211,21 @@
     <color name="shadow_progress_color_quiz">#055C39</color>
     <color name="progess_color_quiz">#13B673</color>
     <color name="report_white">#F5F5F5</color>
-    <color name="language_item_bg">#7A7A7A</color>
+    <color name="gray_color_special">#33D8D8D8</color>
+    <color name="special_card_color">#F8F8F8</color>
+    <color name="dialog_no_color">#E4E4E4</color>
 
+    <color name="dark_text_color">#99000000</color>
+    <color name="profile_request_card">#99EEEEEE</color>
+    <color name="not_now">#E1E1E1</color>
+    <color name="request_respond">#FFF9D7</color>
+    <color name="edit_profile_bg">#EEEEEE</color>
+    <color name="link_color">#0000FF</color>
+    <color name="blur_color">#666666</color>
+    <color name="empty_card_bg_color">#F3F3F3</color>
+    <color name="language_item_bg">#7A7A7A</color>
+    <color name="but_button_color">#F09436</color>
+    <color name="empty_text_color">#5A5A5A</color>
+    <color name="basic_details">#F2F2F2</color>
+    <color name="grey_button">#E4E4E4</color>
 </resources>

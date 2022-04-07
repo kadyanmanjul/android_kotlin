@@ -4,6 +4,7 @@ package com.joshtalks.joshskills.repository.server
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.ui.userprofile.models.Award
 import kotlinx.android.parcel.Parcelize
 
 data class UpdateLessonResponse(

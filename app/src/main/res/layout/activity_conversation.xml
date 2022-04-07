@@ -114,18 +114,18 @@
                         android:textColor="@color/white"
                         tools:text="Spoken English Course" />
 
-<!--                    <androidx.appcompat.widget.AppCompatImageView-->
-<!--                        android:id="@+id/ic_notification_dot"-->
-<!--                        android:layout_width="@dimen/_8sdp"-->
-<!--                        android:layout_height="@dimen/_8sdp"-->
-<!--                        android:layout_alignEnd="@id/text_message_title"-->
-<!--                        android:layout_marginTop="@dimen/_4sdp"-->
-<!--                        android:background="@drawable/timer_drawable"-->
-<!--                        android:backgroundTint="@color/wa_color"-->
-<!--                        android:gravity="start"-->
-<!--                        android:tint="@color/wh_fc"-->
-<!--                        android:visibility="gone"-->
-<!--                        tools:visibility="gone" />-->
+                    <!--                    <androidx.appcompat.widget.AppCompatImageView-->
+                    <!--                        android:id="@+id/ic_notification_dot"-->
+                    <!--                        android:layout_width="@dimen/_8sdp"-->
+                    <!--                        android:layout_height="@dimen/_8sdp"-->
+                    <!--                        android:layout_alignEnd="@id/text_message_title"-->
+                    <!--                        android:layout_marginTop="@dimen/_4sdp"-->
+                    <!--                        android:background="@drawable/timer_drawable"-->
+                    <!--                        android:backgroundTint="@color/wa_color"-->
+                    <!--                        android:gravity="start"-->
+                    <!--                        android:tint="@color/wh_fc"-->
+                    <!--                        android:visibility="gone"-->
+                    <!--                        tools:visibility="gone" />-->
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_icon_referral"
@@ -145,15 +145,6 @@
 
             </com.google.android.material.appbar.MaterialToolbar>
         </LinearLayout>
-
-        <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_groups"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_cross"
-            android:layout_below="@id/free_trial_container"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/_16sdp"/>-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/free_trial_container"
@@ -189,12 +180,12 @@
                 android:layout_marginStart="@dimen/_25sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:background="@drawable/rounded_rectangle_attach_2px"
-                android:backgroundTint="#F09436"
+                android:backgroundTint="@color/but_button_color"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_5sdp"
                 android:paddingVertical="@dimen/_4sdp"
-                android:text="Buy now"
+                android:text="@string/buy_now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -291,71 +282,11 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgFeedBtn"
-            android:layout_width="@dimen/_42sdp"
-            android:layout_height="@dimen/_42sdp"
-            android:layout_below="@+id/user_point_container"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginVertical="@dimen/_12sdp"
-            android:adjustViewBounds="true"
-            android:background="@drawable/white_button_round_enabled"
-            android:clickable="true"
-            android:elevation="@dimen/_4sdp"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="@dimen/_4sdp"
-            app:srcCompat="@drawable/ic_activity_feed"
-            tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgGroupChatBtn"
-            android:elevation="@dimen/_4sdp"
-            android:layout_width="@dimen/_42sdp"
-            android:layout_height="@dimen/_42sdp"
-            android:layout_below="@+id/imgFeedBtn"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginVertical="@dimen/_12sdp"
-            android:adjustViewBounds="true"
-            android:background="@drawable/white_button_round_enabled"
-            android:backgroundTint="@color/colorPrimary"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="@dimen/_4sdp"
-            app:srcCompat="@drawable/ic_groupchat"
-            tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgGameBtn"
-            android:elevation="@dimen/_4sdp"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_below="@+id/imgGroupChatBtn"
-            android:layout_alignParentEnd="true"
-            android:layout_marginHorizontal="@dimen/_7sdp"
-            android:layout_marginVertical="@dimen/_12sdp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="@dimen/_4sdp"
-            app:srcCompat="@drawable/ic_game_icon"
-            tools:visibility="visible" />
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_bar"
             android:layout_below="@+id/toolbar_container">
-
 
             <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
                 android:id="@+id/refresh_layout"
@@ -427,8 +358,8 @@
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:visibility="gone"
                 android:padding="@dimen/_4sdp"
+                android:visibility="gone"
                 app:elevation="@dimen/_4sdp"
                 app:srcCompat="@drawable/ic_groupchat"
                 tools:visibility="gone" />
@@ -454,7 +385,6 @@
                 tools:visibility="gone" />
 
         </FrameLayout>
-
 
         <include
             android:id="@+id/attachment_container"
@@ -487,7 +417,7 @@
                 android:elevation="@dimen/_4sdp"
                 android:onClick="@{()->handler.restartCourse(true)}"
                 android:padding="@dimen/_8sdp"
-                android:text="Restart Course"
+                android:text="@string/restart_course"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
@@ -601,16 +531,15 @@
                 android:layout_margin="@dimen/_5sdp"
                 android:background="@drawable/rect_round"
                 android:visibility="gone"
-                app:counter_time_color="#ff0000"
+                app:counter_time_color="@color/red"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/record_button"
                 app:layout_constraintStart_toStartOf="parent"
                 app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
-                app:slide_to_cancel_arrow_color="#000000"
+                app:slide_to_cancel_arrow_color="@color/pure_black"
                 app:slide_to_cancel_bounds="10dp"
                 app:slide_to_cancel_margin_right="10dp"
                 app:slide_to_cancel_text="@string/slide_to_cancel" />
-
 
             <com.joshtalks.recordview.CustomImageButton
                 android:id="@+id/record_button"
@@ -621,7 +550,7 @@
                 android:background="@drawable/recv_bg_mic"
                 android:backgroundTint="@color/button_color"
                 android:scaleType="centerInside"
-                android:textColor="#fff"
+                android:textColor="@color/white"
                 android:visibility="visible"
                 app:image_first="@drawable/recv_ic_mic_white"
                 app:image_second="@drawable/ic_send"
@@ -664,7 +593,7 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="@dimen/_60sdp"
                 android:gravity="center"
-                android:text="Your Free Trial has ended"
+                android:text="@string/your_free_trial_has_ended"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/white" />
 
@@ -677,9 +606,9 @@
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:background="@drawable/bg_cta_button"
                 android:gravity="center"
+                android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
-                android:onClick="@{() -> handler.showFreeTrialPaymentScreen()}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
@@ -714,7 +643,7 @@
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="10"
-                android:text="Tap anywhere to continue"
+                android:text="@string/tap_anywhere_to_continue"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/white" />
 
@@ -795,7 +724,6 @@
             app:tooltipText="@{handler.getConversationTooltip()}"
             tools:visibility="gone" />
 
-
         <FrameLayout
             android:id="@+id/leaderboard_tooltip_layout"
             android:layout_width="wrap_content"
@@ -875,6 +803,235 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/blur_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:visibility="invisible"
+            tools:visibility="invisible" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar_container"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_50sdp"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/_15sdp"
+            android:fillAfter="false"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButtonAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:visibility="invisible"
+                app:backgroundTint="@color/colorAccent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_add_24"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/all_count_number"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:background="@drawable/bg_all_number"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                android:text="@string/zero"
+                android:maxLength="2"
+                android:elevation="@dimen/_15sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="0"
+                tools:visibility="gone" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/img_main"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_68sdp"
+                android:elevation="@dimen/_15sdp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/quickCardView"
+                app:layout_constraintEnd_toStartOf="@+id/floatingActionButtonAdd"
+                tools:visibility="invisible">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_game_btn"
+                    android:layout_width="@dimen/_47sdp"
+                    android:layout_height="@dimen/_47sdp"
+                    android:layout_centerVertical="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_game"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@+id/img_group_chat_btn"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_group_chat_btn"
+                    android:layout_width="@dimen/_47sdp"
+                    android:layout_height="@dimen/_47sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/img_game_btn"
+                    android:focusable="true"
+                    android:src="@drawable/ic_activity_feed"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@id/img_game_btn"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_activity_feed"
+                    android:layout_width="@dimen/_47sdp"
+                    android:layout_height="@dimen/_47sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/img_group_chat_btn"
+                    android:focusable="true"
+                    android:src="@drawable/ic_groups"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@id/img_group_chat_btn"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/fpp_request_count_number"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:background="@drawable/bg_quick_view_number"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    android:text="@string/zero"
+                    android:elevation="@dimen/_15sdp"
+                    app:layout_constraintEnd_toEndOf="@id/img_fpp_request"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="39"
+                    tools:visibility="gone" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_fpp_request"
+                    android:layout_width="@dimen/_47sdp"
+                    android:layout_height="@dimen/_47sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_toStartOf="@+id/img_activity_feed"
+                    android:focusable="true"
+                    android:src="@drawable/ic_requests"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@id/img_activity_feed"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/img_pointer"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:elevation="@dimen/_6sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_rectangle_1414"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/img_fpp_request"
+                    app:layout_constraintStart_toStartOf="@id/img_fpp_request"
+                    app:layout_constraintTop_toBottomOf="@id/img_fpp_request" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/quickCardView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_325sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_minus1sdp"
+                android:background="@drawable/quick_view_corner"
+                android:backgroundTint="@color/white"
+                android:clipToPadding="false"
+                android:elevation="@dimen/_6sdp"
+                android:focusable="true"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_main"
+                tools:visibility="invisible">
+
+                <TextView
+                    android:id="@+id/quick_view_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="@dimen/_13sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/favorite_practice_partner_requests"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
+                    android:textColor="@color/pure_black"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/horizontal_line_for_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_below="@+id/quick_view_heading"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="#26000000"
+                    android:orientation="horizontal" />
+
+                <ImageView
+                    android:id="@+id/quick_view_no_requests"
+                    android:layout_width="@dimen/_217sdp"
+                    android:layout_height="@dimen/_93sdp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_quick_view_no_requests"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/my_requests_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/horizontal_line_for_heading"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:layout_marginBottom="@dimen/_52sdp"
+                    android:orientation="vertical"
+                    android:visibility="visible" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/_34sdp"
+                    android:background="#26000000"
+                    android:orientation="horizontal"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/view_all_requests"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="@dimen/_11sdp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/see_all_requests"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_1.0"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>
 

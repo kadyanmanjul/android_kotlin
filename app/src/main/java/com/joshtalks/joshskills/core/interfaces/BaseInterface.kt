@@ -65,3 +65,9 @@ interface FileDownloadCallback : OnDismissWithDialog {
     fun downloadedFile(path: String) {}
     fun webURL(path: String, localUrl: String) {}
 }
+
+interface OnClickUserProfile{
+    fun clickOnProfile(position: Int)
+    fun clickOnPhoneCall(position: Int)
+    fun clickLongPressDelete(position: Int)
+}

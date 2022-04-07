@@ -116,6 +116,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
     private var introVideoControl = false
+    private var isWhatsappRemarketingActive = false
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -198,6 +199,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         titleView = findViewById(R.id.text_message_title)
 
         setObservers()
+        viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId, isDemo)
 
@@ -593,6 +595,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         }
+        viewModel.whatsappRemarketingLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isWhatsappRemarketingActive =
+                    (map.variantKey == VariantKeys.WR_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            }
+        }
     }
 
     private fun hideSpotlight() {
@@ -768,6 +776,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     GRAMMAR_POSITION -> {
                         if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logGrammarSectionCompleted()
+                            if(isWhatsappRemarketingActive){
+                                MarketingAnalytics.logWhatsappRemarketing()
+                            }
                         }
                         lesson.grammarStatus = status
                     }

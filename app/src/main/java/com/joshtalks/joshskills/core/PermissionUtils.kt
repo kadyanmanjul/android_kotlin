@@ -92,7 +92,7 @@ object PermissionUtils {
                 context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
-        } else{
+        } else {
             return ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.READ_EXTERNAL_STORAGE
@@ -122,7 +122,7 @@ object PermissionUtils {
                 context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
-        } else{
+        } else {
 
             return ContextCompat.checkSelfPermission(
                 context,
@@ -291,6 +291,49 @@ object PermissionUtils {
             ) == PackageManager.PERMISSION_GRANTED
         }
 
+    }
+
+    fun isCameraPermissionEnabled(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS
+            ) +
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.RECORD_AUDIO
+                    ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_PHONE_STATE
+            ) +
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS
+                    ) +
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.RECORD_AUDIO
+                    ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
     fun callingFeaturePermission(

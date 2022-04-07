@@ -252,55 +252,72 @@ object MarketingAnalytics {
         }
     }
 
-    fun logCallInitiated() {
+    fun logWhatsappRemarketing() {
         JoshSkillExecutors.BOUNDED.submit {
             val context = AppObjectController.joshApplication
             val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CONTACT)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_PARAM_SEARCH_STRING)
 
-            BranchEvent(AppEventsConstants.EVENT_NAME_CONTACT)
-                .setDescription("User has initiated his call")
+            BranchEvent(AppEventsConstants.EVENT_PARAM_SEARCH_STRING)
+                .setDescription("Exclude this user from add")
                 .logEvent(context)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_NAME_CONTACT)
+            AppAnalytics.create(AppEventsConstants.EVENT_PARAM_SEARCH_STRING)
                 .addBasicParam()
                 .addUserDetails()
                 .push()
         }
     }
 
-    fun logNewPaymentPageOpened() {
-        JoshSkillExecutors.BOUNDED.submit {
-            val context = AppObjectController.joshApplication
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_DONATE)
+        fun logCallInitiated() {
+            JoshSkillExecutors.BOUNDED.submit {
+                val context = AppObjectController.joshApplication
+                val facebookEventLogger = AppEventsLogger.newLogger(context)
+                facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CONTACT)
 
-            BranchEvent(AppEventsConstants.EVENT_NAME_DONATE)
-                .setDescription("User has opened te new payment page")
-                .logEvent(context)
+                BranchEvent(AppEventsConstants.EVENT_NAME_CONTACT)
+                    .setDescription("User has initiated his call")
+                    .logEvent(context)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_NAME_DONATE)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
+                AppAnalytics.create(AppEventsConstants.EVENT_NAME_CONTACT)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
+            }
         }
-    }
 
-    fun logSpeakingSectionCompleted() {
-        JoshSkillExecutors.BOUNDED.submit {
-            val context = AppObjectController.joshApplication
-            val facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+        fun logNewPaymentPageOpened() {
+            JoshSkillExecutors.BOUNDED.submit {
+                val context = AppObjectController.joshApplication
+                val facebookEventLogger = AppEventsLogger.newLogger(context)
+                facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_DONATE)
 
-            BranchEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
-                .setDescription("User has completed his speaking section")
-                .logEvent(context)
+                BranchEvent(AppEventsConstants.EVENT_NAME_DONATE)
+                    .setDescription("User has opened te new payment page")
+                    .logEvent(context)
 
-            AppAnalytics.create(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
+                AppAnalytics.create(AppEventsConstants.EVENT_NAME_DONATE)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
+            }
         }
-    }
 
-}
+        fun logSpeakingSectionCompleted() {
+            JoshSkillExecutors.BOUNDED.submit {
+                val context = AppObjectController.joshApplication
+                val facebookEventLogger = AppEventsLogger.newLogger(context)
+                facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+
+                BranchEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+                    .setDescription("User has completed his speaking section")
+                    .logEvent(context)
+
+                AppAnalytics.create(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
+            }
+        }
+
+    }

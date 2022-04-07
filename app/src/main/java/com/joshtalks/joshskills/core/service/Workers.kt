@@ -1054,6 +1054,7 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.HUNDRED_POINTS.NAME,
                     CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name,
                     CampaignKeys.BUY_LAYOUT_CHANGED.name,
+                    CampaignKeys.WHATSAPP_REMARKETING.name
                     CampaignKeys.PEOPLE_HELP_COUNT.name
 
                 )
