@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
@@ -38,6 +39,7 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.util.AudioRecording
@@ -101,7 +103,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
-    val videoUri = ObservableField(EMPTY)
+    val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getWhatsappRemarketingCampaign(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                whatsappRemarketingLiveData.postValue(campaign)
+            }
+        }
+    }
 
     fun getVideoData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -198,7 +209,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             lessonQuestion.pdfList =
                                 appDatabase.chatDao().getPdfOfQuestion(lessonQuestion.id)
 
-                        else-> {
+                        else -> {
                             lessonQuestion.imageList =
                                 appDatabase.chatDao().getImagesOfQuestion(lessonQuestion.id)
                             lessonQuestion.videoList =

@@ -7,9 +7,11 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
 import java.util.*
 
 @Parcelize
@@ -119,6 +121,10 @@ data class ChatModel(
 
     @Ignore
     var playProgress: Int = 0,
+
+    @Ignore
+    @SerializedName("special_practice")
+    var specialPractice: @RawValue SpecialPractice? = null,
 
     ) : DataBaseClass(), Parcelable {
 
@@ -585,7 +591,8 @@ enum class BASE_MESSAGE_TYPE(val type: String) {
     BEST_PERFORMER_RACE("BEST_PERFORMER_RACE"),
     FIRST_DAY_ACHIEVEMENT("FIRST_DAY_ACHIEVEMENT"),
     NEW_CLASS("NEW_CLASS"),
-    FIRST_WEEK_ACHIEVEMENT("FIRST_WEEK_ACHIEVEMENT")
+    FIRST_WEEK_ACHIEVEMENT("FIRST_WEEK_ACHIEVEMENT"),
+    SPECIAL_PRACTICE("SPECIAL_PRACTICE")
 }
 
 enum class EXPECTED_ENGAGE_TYPE(val type: String) {

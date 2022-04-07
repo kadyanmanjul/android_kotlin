@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.group.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.isDigitsOnly
 import androidx.databinding.DataBindingUtil
@@ -15,14 +16,18 @@ import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatUnreadMsgBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.viewholder.ChatViewHolder
 
 class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
     PagingDataAdapter<ChatItem, ChatViewHolder>(
         diffCallback
     ) {
+
+    var itemClick: ((GroupMember, View) -> Unit)? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -70,6 +75,10 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         return getItem(position)?.msgType!!
     }
 
+    fun setListener(function: ((GroupMember, View) -> Unit)?) {
+        itemClick = function
+    }
+
     private fun <V : ViewDataBinding> setViewHolder(parent: ViewGroup, layoutId: Int): V {
         return DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
@@ -83,6 +92,17 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         ChatViewHolder(item) {
         override fun bindData(groupChatData: ChatItem) {
             item.itemData = groupChatData
+            item.textTitle.setOnClickListener {
+                val groupMember = GroupMember(
+                    groupChatData.getMentorId() ?: Mentor.getInstance().getId(),
+                    groupChatData.sender!!,
+                    memberIcon = "",
+                    isAdmin = true,
+                    isOnline = false,
+                    groupChatData.groupId
+                )
+                itemClick?.invoke(groupMember, item.textTitle)
+            }
         }
     }
 
@@ -97,7 +117,11 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         ChatViewHolder(item) {
         override fun bindData(groupChatData: ChatItem) {
             if (groupChatData.message.isDigitsOnly())
-                groupChatData.message = getMessageTime(groupChatData.message.toLong().times(1000), timeNeeded = false, DateTimeStyle.LONG)
+                groupChatData.message = getMessageTime(
+                    groupChatData.message.toLong().times(1000),
+                    timeNeeded = false,
+                    DateTimeStyle.LONG
+                )
             item.itemData = groupChatData
         }
     }

@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.local
 
-// import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
@@ -99,10 +98,14 @@ import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.data.local.GroupChatDao
 import com.joshtalks.joshskills.ui.group.data.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.data.local.GroupMemberDao
 import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
 import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
@@ -122,9 +125,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
-        ABTestCampaignData::class, ReadingVideo::class, CompressedVideo::class
+        ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class
     ],
-    version = 45,
+    version = 46,
     exportSchema = true
 )
 @TypeConverters(
@@ -216,7 +219,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_41_42,
                                 MIGRATION_42_43,
                                 MIGRATION_43_44,
-                                MIGRATION_44_45
+                                MIGRATION_44_45,
+                                MIGRATION_45_46
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -583,7 +587,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_43_44:Migration = object : Migration(43, 44) {
+        private val MIGRATION_43_44: Migration = object : Migration(43, 44) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_questions_tmp` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE)")
                 database.execSQL("INSERT INTO `assessment_questions_tmp` (`localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status`) SELECT `localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status` FROM `assessment_questions`")
@@ -601,8 +605,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_45_46:Migration = object : Migration(45, 46) {
+        private val MIGRATION_45_46: Migration = object : Migration(45, 46) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_member_table` (`mentorID` TEXT NOT NULL, `memberName` TEXT NOT NULL, `memberIcon` TEXT NOT NULL, `isAdmin` INTEGER NOT NULL, `isOnline` INTEGER NOT NULL, `groupId` TEXT NOT NULL, PRIMARY KEY (`mentorId`, `groupId`))")
+                database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupType` TEXT")
+                database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupStatus` TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT, `recorded_video` TEXT)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `reading_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL, `isDownloaded` BOOLEAN NOT NULL )")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `compressed_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL)")
             }
@@ -651,7 +659,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun timeTokenDao(): TimeTokenDao
     abstract fun groupChatDao(): GroupChatDao
     abstract fun gameAnalyticsDao(): GameAnalyticsDao
+    abstract fun specialDao():SpecialDao
     abstract fun abCampaignDao(): ABTestCampaignDao
+    abstract fun groupMemberDao(): GroupMemberDao
 }
 
 class MessageTypeConverters {

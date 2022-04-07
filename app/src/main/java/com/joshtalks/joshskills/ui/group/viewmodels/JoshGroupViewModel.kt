@@ -1,8 +1,12 @@
 package com.joshtalks.joshskills.ui.group.viewmodels
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -10,10 +14,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.group.SHOW_NEW_INFO
+import com.joshtalks.joshskills.ui.group.constants.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -21,6 +26,7 @@ import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 
+import kotlinx.android.synthetic.main.group_type_dialog.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -44,6 +50,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
+    val groupType = ObservableField("")
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
     val isFromGroupInfo = ObservableBoolean(false)
@@ -118,9 +125,14 @@ class JoshGroupViewModel : BaseViewModel() {
             message.what = SAVE_GROUP_INFO
             singleLiveEvent.value = message
         } else {
-            message.what = ADD_GROUP_TO_SERVER
+            message.what = CREATE_GROUP_VALIDATION
             singleLiveEvent.value = message
         }
+    }
+
+    fun createGroup(view: View) {
+        message.what = ADD_GROUP_TO_SERVER
+        singleLiveEvent.value = message
     }
 
     fun showProgressDialog(loadingMsg: String) {
@@ -132,6 +144,24 @@ class JoshGroupViewModel : BaseViewModel() {
     fun dismissProgressDialog() {
         message.what = DISMISS_PROGRESS_BAR
         singleLiveEvent.value = message
+    }
+
+    fun openTypeChooser(view: View) {
+        val groupTypeDialog = AlertDialog.Builder(view.context)
+            .setView(R.layout.group_type_dialog)
+            .setCancelable(false)
+            .create()
+
+        groupTypeDialog.show()
+        groupTypeDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        groupTypeDialog.select_group_type.setOnClickListener {
+            if (groupTypeDialog.open_group_radio.isChecked)
+                (view as TextView).text = "Open Group"
+            else
+                (view as TextView).text = "Closed Group"
+            groupTypeDialog.dismiss()
+        }
     }
 
     fun addGroup(request: AddGroupRequest) {
@@ -146,6 +176,7 @@ class JoshGroupViewModel : BaseViewModel() {
                     }
                     singleLiveEvent.value = message
                     dismissProgressDialog()
+                    onBackPress()
                     onBackPress()
                 }
             } catch (e: Exception) {
@@ -184,7 +215,7 @@ class JoshGroupViewModel : BaseViewModel() {
                         if (e.code() == 501)
                             showToast("Error : Same group name exist")
                         else
-                            showToast("Error while adding group")
+                            showToast("Error while editing group")
                     } else
                         showToast("Unknown Error Occurred")
                     dismissProgressDialog()

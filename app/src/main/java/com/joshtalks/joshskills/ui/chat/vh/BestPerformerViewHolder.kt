@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.ui.userprofile.models.Award
 import java.util.*
 
 class BestPerformerViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {

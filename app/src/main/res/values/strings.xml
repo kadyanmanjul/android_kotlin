@@ -470,7 +470,6 @@
     <string name="correct_answer_label">Your answer is Correct</string>
     <string name="wrong_answer_label">Your answer is Wrong</string>
     <string name="english_practise_hint">Practice English on live call with partner</string>
-    <string name="photo">Photo</string>
     <string name="voice_message">Voice Message</string>
     <string name="video">Video</string>
     <string name="conversation">Video %1$s</string>
@@ -574,11 +573,10 @@
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>
     <string name="batch">Batch:</string>
-    <string name="highlights">Highlights</string>
     <string name="points">Points</string>
     <string name="regular">Regular</string>
     <string name="awards">Awards</string>
-    <string name="see_all">See All>> </string>
+    <string name="see_all">See All </string>
     <string name="profile"> Profile</string>
     <string name="profile_photo">Profile photo</string>
     <string name="view_profile"> View Profile</string>
@@ -632,6 +630,9 @@
         but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
         with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
         \software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="loremIpsumShort">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer
+        took a galley of type and scrambled it to make a type specimen book.</string>
     <string name="replyTxt">reply</string>
     <string name="pin">pin</string>
     <string name="message_deleted">This message was deleted</string>
@@ -859,6 +860,20 @@
     <string name="practise_uploading">Practice Uploading &#8230; </string>
     <string name="how_to_pronounce">How to pronounce:</string>
 
+    <!-- Groups -->
+    <string name="admin_responsibilities">
+        1. Admin ek tarah se group ka Leader hota h\n2. Admin ne jo group banaya h use uss group k topic k prati JOSHila hona chaiye\n3. Admin logo ko Group se nikal bhi sakta h lekin uske peeche koi reason hona chaiye jaise batameezi, inactive ya irrelevant\n4. Admin ko Closed group me sab ki request barabar se padhni chaiyeaur sirf interested and relevant logo ko allow karna chaiye\n5. Admin baki logo ko Group join karne k liye bhi bol sakta h jisse group me aur acche students aye\n6. Admin ko group me active rehena hoga and group ko engage rakhna hoga takio group k sabhi logo ki progress ho\n7. Admin ko apni powers ka galat istamal nahi karna chaiye
+    </string>
+
+    <string name="group_rules_list">
+        1. Be Kind\n
+        2. Help other members\n
+        3. No spam\n
+        4. Respect everyone\n
+        5. No self promotion
+    </string>
+
+    <string name="closed_group_desc">Ye group ek closed group h. Iss group ko join karne k liye Admin ko aapko Allow karna hoga. En Questions k answers de dijiye taki aapko group  me allow kiya jaye </string>
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>
@@ -879,7 +894,7 @@
     <string name="search_leaderboard">Search Leaderboard</string>
     <string name="rank">Rank</string>
     <string name="aapki_new_class">Aapki Nayi Classes </string>
-    <string name="favorites_header">Favorites</string>
+    <string name="favorites_header">Favorites List</string>
     <string name="your_favorite_practice_partners">Your Favorite Practice Partners</string>
     <string name="mute">Mute</string>
     <string name="speaker">Speaker</string>
@@ -1036,16 +1051,78 @@
     <string name="josh_fam">You are a valuable member of the Josh\nfamily</string>
     <string name="share_with_friends">Share with friends</string>
     <string name="great_job">Great Job %1$s!</string>
+    <string name="sent_request">Sent Request</string>
+    <string name="send_request">Send Request</string>
+    <string name="requested">Requested</string>
+    <string name="recent_calls">Recent calls</string>
+    <string name="favorite_requests">Favorite Requests</string>
+    <string name="profile_test_for_request">Shobhit and you spoke for 20 min, you can request him to be your favorite practice partner to practice again.</string>
+    <string name="harsh_has_r">Harsh has requested to be your favorite practice partner</string>
+    <string name="not_now_txt">Not Now</string>
+    <string name="fpp_text">Favorite practice partners</string>
+    <string name="start_a_practice_partner_call_from_recent">You will be able to see you practice partner calls here. </string>
+    <string name="view_recent_calls">View recent calls</string>
+    <string name="no_recent_calls_yet">No recent calls yet...</string>
+    <string name="no_favorite_practice_partners">No favorite practice partners...</string>
+    <string name="you_can_add_fpp">You can add favorite practice partners by sending and accepting requests from recent practice partner calls</string>
+    <string name="see_all_requests">See all requests</string>
+    <string name="favorite_practice_partner_requests">Favorite practice partner requests</string>
+    <string name="no_favorite_requests_yet">No favorite requests yet ...</string>
+    <string name="favorite_practice_partner_requests_here">You will be able to see your favorite practice partner requests here.</string>
+    <string name="confirm">Confirm</string>
+    <string name="now_fpp">You are now favorite practice partners</string>
+    <string name="request_removed">Request Removed</string>
+    <string name="see_requests">See all requests (%s)</string>
+    <string name="enrolled_student_text">%s students enrolled</string>
+    <string name="education_occupation_text">Education and Occupation</string>
+    <string name="education_text">Education</string>
+    <string name="occupation_text">Occupation</string>
+    <string name="see_course_list">See course list</string>
+    <string name="record_video">Record Video</string>
+    <string name="record_and_submit_video">Record your video and submit the practice</string>
+    <string name="submit_your_practice">Submit your practice</string>
+    <string name="play_video">Play Video</string>
+    <string name="instruction_text">To understand how to complete this special practice watch this video submitted by Harsh who started this course on 8th of January 2021.</string>
+    <string name="text_temp">In this special practice your task is to create a video where you are teaching the meaning of this word</string>
+    <string name="your_submitted_video">Your Submitted video</string>
+    <string name="special_practice_text"><b>Vedant Maheshwari</b> sir has sent you a special practice for completing total 300 minutes speaking practice</string>
+
     <string name="how_to_speak"><u>How To Speak?</u></string>
+    <string name="responsd">Respond</string>
+    <string name="previous_profile_text">Previous Profile Photos (%s)</string>
+    <string name="profile_request_removed_text">%s\'s favorite practice partner request has been removed</string>
+    <string name="courses_title">Courses</string>
+    <string name="senior_student">Senior Student</string>
+    <string name="edit_text">Edit</string>
+    <string name="basic_details">Basic Details</string>
+    <string name="name_error_message">Please Enter Your Name</string>
+    <string name="degree_error_message">Please Enter Your Degree</string>
+    <string name="college_error_message">Please Enter Your College Name</string>
+    <string name="dob_error_message">Please Enter Your Date Of Birth</string>
+    <string name="hometown_error_message">Please Enter Hometown</string>
+    <string name="invalid_url_message">Please Enter A Valid YouTube Url</string>
+    <string name="spoke_minutes">Spoke for 20 minutes</string>
+    <string name="recording_start_permission_message">"To start recording video, please allow permission"</string>
 
     <string name="download_syllabus_23_pages">Download Syllabus<b> • </b>15 pages</string>
     <string name="the_ultimate_spoken_english_n_course_syllabus">The Ultimate Spoken English \nCourse Syllabus</string>
-    <string name="see_course_list">See course list</string>
     <string name="achieve_100_points_to_buy">Achieve 100 points to buy</string>
     <string name="free_trial_dialog_ji_haan_text">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n  \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।
     </string>
     <string name="achieve_100_points_first">Achieve 100 points first</string>
-
+    <string name="select_friend">Select friends</string>
+    <string name="total_help_me">You have helped 4 people start learning English</string>
+    <string name="you_have_helped">You have helped</string>
+    <string name="help_learning">You have helped 4 people start learning English</string>
+    <string name="hindi_txt"> आपके ऐसे कौनसे दोस्त है जिनकी आप अंग्रेजी बोलने में मदद करना चाहते है</string>
+    <string name="share_details">Jab bhi aapke link share karne pe aapka koi dost iss course ko join karega tab aapki profile pe ye number update hoga</string>
+    <string name="referCntText"><b>You have helped %s people start learning English</b></string>
+    <string name="noReferral"><b>You have not helped anyone start learning English yet</b></string>
+    <string name="subStringToColorize">%s people</string>
+    <string name="has_helped"> has helped </string>
+    <string name="people">people</string>
+    <string name="help_toolbar">Help your friends and family</string>
+    <string name="start_learning_english">start learning English</string>
     <string name="course_restart_success">Course Restarted Successfully</string>
     <string name="course_restart_fail">Course Can Not Restart</string>
     <string name="my_formatted_text">
@@ -1053,4 +1130,52 @@
         <font color="#107BE5">speak english confidently</font>
         <font color ="@android:color/black">from ...</font>
     </string>
+    <string name="buy_now">Buy now</string>
+    <string name="your_free_trial_has_ended">Your Free Trial has ended</string>
+    <string name="tap_anywhere_to_continue">Tap anywhere to continue</string>
+    <string name="edit_profile_data">Edit</string>
+    <string name="hometown">Hometown:</string>
+    <string name="highlights">Highlights</string>
+    <string name="future_goals">Future goals :</string>
+    <string name="favourite_josh_talk">Favourite Josh Talk :</string>
+    <string name="youtube_link">https://www.youtube.com/watch?v=uetRaRuCOwU</string>
+    <string name="education_and_occupation">Education and Occupation</string>
+    <string name="occupation">Occupation :</string>
+    <string name="aspiring_ias_officer">Aspiring IAS officer</string>
+    <string name="at_josh_talks">at Josh Talks</string>
+    <string name="education">Education :</string>
+    <string name="b_tech">B.Tech</string>
+    <string name="from_vit_2023">from VIT • 2023</string>
+    <string name="awards_cabinet">Awards Cabinet</string>
+    <string name="groups">Groups</string>
+    <string name="courses">Courses</string>
+    <string name="block_harsh">Block Harsh</string>
+    <string name="course_name">Course Name</string>
+    <string name="number_od_student_enrolled">29123 students enrolled</string>
+    <string name="harsh_gupta">Harsh Gupta</string>
+    <string name="spoke_for_20_min">Spoke for 20 minutes</string>
+    <string name="save">Save</string>
+    <string name="change_profile_photo">Change Profile Photo</string>
+    <string name="your_full_name">Your Full Name</string>
+    <string name="time_format">DD/MM/YYYY</string>
+    <string name="ex_aspiring_ias_officer">Ex- Aspiring IAS Officer</string>
+    <string name="paste_link_to_your_favourite_josh_talk_here">Paste link to your favourite josh talk here</string>
+    <string name="add_education_details">Add Education Details</string>
+    <string name="subject_degree">Subject / Degree</string>
+    <string name="ex_arts_m_tech">Ex- Arts, M.Tech</string>
+    <string name="name_of_school_college">Name of School / College</string>
+    <string name="ex_dps_vit">Ex- DPS, VIT</string>
+    <string name="completed_expected_to_complete_by">Completed / Expected to Complete by</string>
+    <string name="add_occupation_details">Add Occupation Details</string>
+    <string name="ex_manager_homemaker_etc">Ex- Manager, Homemaker etc.</string>
+    <string name="company_business_name">Company / Business name</string>
+    <string name="ex_josh_talks">Ex- Josh Talks</string>
+    <string name="enrolled_courses">Enrolled Courses</string>
+    <string name="photo">Photo</string>
+    <string name="set_as_profile_photo">Set as profile photo</string>
+    <string name="number_of_min_talked_by">20 minutes talked by Mohit</string>
+    <string name="harsh_has_requested_to_be_your_favorite_practice_partner">Harsh has requested to be your favorite practice partner</string>
+    <string name="year">Year</string>
+    <string name="retry">Retry</string>
+    <string name="help_text_me">You have not helped anyone start learning English</string>
 </resources>
