@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
 import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.RtcEngine
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 private const val JOINING_CHANNEL_SUCCESS = 0
 private const val USER_ALREADY_IN_A_CHANNEL = -17
@@ -31,7 +33,11 @@ internal object AgoraCallingService : CallingService {
     @Volatile
     private var agoraEngine: RtcEngine? = null
     private val eventFlow : MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
+        Timber.tag("Coroutine Exception").d("Handled...")
+        e.printStackTrace()
+    }
+    private val ioScope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
     private var state = MutableSharedFlow<Int>(replay = 0)
     private lateinit var lazyJoin : Deferred<Unit>
     private val agoraEvent by lazy {

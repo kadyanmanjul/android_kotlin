@@ -9,6 +9,7 @@ import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.enums.PNReconnectionPolicy
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,9 +17,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+
 private const val TAG = "PubNubChannelService"
 
 object PubNubChannelService : EventChannel {
+    private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
+        Timber.tag("Coroutine Exception").d("Handled...")
+        e.printStackTrace()
+    }
     enum class State {
         ACTIVE,
         INACTIVE
@@ -33,7 +40,7 @@ object PubNubChannelService : EventChannel {
         PubNubSubscriber.getSubscribeCallback(ioScope)
     }
 
-    private val ioScope by lazy { CoroutineScope(Dispatchers.IO) }
+    private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
 
     private val config by lazy {
         PNConfiguration().apply {

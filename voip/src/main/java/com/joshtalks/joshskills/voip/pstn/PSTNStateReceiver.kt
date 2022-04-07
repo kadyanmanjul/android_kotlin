@@ -12,12 +12,14 @@ import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-class PSTNStateReceiver : BroadcastReceiver() {
+class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver() {
+    private val pstnFlow = MutableSharedFlow<PSTNState>()
 
-    companion object {
-        val pstnFlow = MutableSharedFlow<PSTNState>()
+    fun observePstnReceiver() : SharedFlow<PSTNState> {
+        return pstnFlow
     }
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
@@ -49,14 +51,14 @@ class PSTNStateReceiver : BroadcastReceiver() {
             }
             TelephonyManager.EXTRA_STATE_OFFHOOK -> {
                 state = TelephonyManager.CALL_STATE_OFFHOOK
-                CoroutineScope(Dispatchers.IO).launch {
+                scope.launch {
                     pstnFlow.emit(PSTNState.OnCall)
                 }
                 Log.d(TAG, "getCallingState:OffHook  $state")
             }
             TelephonyManager.EXTRA_STATE_RINGING -> {
                 state = TelephonyManager.CALL_STATE_RINGING
-                CoroutineScope(Dispatchers.IO).launch {
+                scope.launch {
                     pstnFlow.emit(PSTNState.Ringing)
                 }
                 Log.d(TAG, "getCallingState: Ringing $state")

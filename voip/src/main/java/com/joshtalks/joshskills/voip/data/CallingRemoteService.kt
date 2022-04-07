@@ -63,21 +63,28 @@ import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 private const val TAG = "CallingRemoteService"
 class CallingRemoteService : Service() {
-    private val ioScope by lazy { CoroutineScope(Dispatchers.IO) }
+    private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
+        Timber.tag("Coroutine Exception").d("Handled...")
+        e.printStackTrace()
+    }
+    private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private val handler by lazy { CallingRemoteServiceHandler.getInstance(ioScope) }
     private var isMediatorInitialise = false
-    private var pstnReceiver = PSTNStateReceiver()
-    private val audioController : AudioControllerInterface by lazy { AudioController() }
+    private val pstnReceiver : PSTNStateReceiver by lazy {
+        PSTNStateReceiver(ioScope)
+    }
+    private val audioController : AudioControllerInterface by lazy { AudioController(ioScope) }
 
     // For Testing Purpose
     private val notificationData = TestNotification()

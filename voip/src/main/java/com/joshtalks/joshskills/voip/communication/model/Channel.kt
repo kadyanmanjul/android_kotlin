@@ -28,7 +28,7 @@ data class Channel(
 	@field:SerializedName("agora_uid")
 	private val agoraUId: Int? = null,
 
-	@field:SerializedName("parter_uid")
+	@field:SerializedName("partner_uid")
 	private val partnerUid: Int?
 ) : ChannelData {
 	override fun getCallingPartnerName(): String {

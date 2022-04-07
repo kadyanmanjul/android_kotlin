@@ -8,4 +8,5 @@ sealed class AudioRouteConstants {
     object HeadsetAudio : AudioRouteConstants()
     object SpeakerAudio : AudioRouteConstants()
     object EarpieceAudio : AudioRouteConstants()
+    object Default : AudioRouteConstants()
 }
