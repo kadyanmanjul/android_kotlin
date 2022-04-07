@@ -7,6 +7,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
@@ -152,6 +153,12 @@ object NetworkRequestHelper {
                     it.chatId = chatModel.chatId
                     AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
                 }
+
+                chatModel.specialPractice?.let {
+                    it.chatId = chatModel.chatId
+                    it.recordedVideo = EMPTY
+                    AppObjectController.appDatabase.specialDao().insertSingleItem(it)
+                }
             }
             if (resp.chatModelList.isEmpty()) {
                 RxBus2.publish(DBInsertion("ChatIEmpty"))
@@ -272,6 +279,11 @@ object NetworkRequestHelper {
                     AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
                 }
 
+                chatModel.specialPractice?.let {
+                    it.chatId = chatModel.chatId
+                    it.recordedVideo = EMPTY
+                    AppObjectController.appDatabase.specialDao().insertSingleItem(it)
+                }
             }
 
             resp.next?.let {

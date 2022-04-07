@@ -53,6 +53,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     fun getGroupListResult(onGroupsLoaded: ((Int) -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
             database.groupListDao().deleteAllGroupItems()
+            database.groupMemberDao().clearMemberTable()
             fetchGroupListFromNetwork()
             withContext(Dispatchers.Main) {
                 onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
@@ -120,26 +121,33 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    fun getGroupMemberList(groupId: String, adminId: String, pageInfo: PageInfo? = null): MemberResult {
-        val memberList = mutableListOf<GroupMember>()
-        var pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
-        do {
-            val pageMembers = pubnubResponse?.getMemberData(adminId)?.list ?: listOf()
-            memberList.addAll(pageMembers)
-            val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
-            pubnubResponse = chatService.getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
-        } while (pageMembers.isNotEmpty())
-        memberList.sortByDescending { it.isAdmin }
-        return MemberResult(memberList, memberList.size)
+    suspend fun fetchMembersFromNetwork(groupId: String, adminId: String, pageInfo: PageInfo? = null) {
+        val pubNubResponse = chatService.getGroupMemberList(groupId, pageInfo)
+        val memberList = pubNubResponse?.getMemberData(groupId, adminId) ?: listOf()
+        if (memberList.isEmpty())
+            return
+
+        database.groupMemberDao().insertMembers(memberList)
+
+        val nextPage = pubNubResponse?.getPageInfo()?.pubNubNext
+        fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    suspend fun getGroupOnlineCount(groupId: String): Int? {
+    suspend fun getGroupMemberList(groupId: String, adminId: String): List<GroupMember> {
+        val memberList = database.groupMemberDao().getMembersFromGroup(groupId)
+        if (memberList.isNotEmpty())
+            return memberList
+        else
+            fetchMembersFromNetwork(groupId, adminId)
+        return database.groupMemberDao().getMembersFromGroup(groupId)
+    }
+
+    suspend fun getOnlineAndRequestCount(groupId: String): Map<String, Any?> {
         return try {
-            val response = apiService.getGroupOnlineCount(groupId)
-            return (response["online_count"] as Double).toInt()
+            return apiService.getGroupOnlineCount(groupId)
         } catch (e: Exception) {
             showToast("An error has occurred")
-            0
+            mapOf()
         }
     }
 
@@ -159,7 +167,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         name = response["group_name"] as String?,
                         createdBy = response["created_by"] as String?,
                         totalCalls = null,
-                        adminId = response["admin_id"] as String?
+                        adminId = response["admin_id"] as String?,
+                        groupType = response["group_type"] as String?
                     )
                 )
                 database.groupChatDao().insertMessage(ChatItem(
@@ -182,6 +191,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             }
         }
         return false
+    }
+
+    suspend fun sendRequestResponse(request: GroupRequest): Boolean {
+        return apiService.joinGroup(request)["success"] as Boolean
     }
 
     suspend fun fetchUnreadMessage(startTime : Long, groupId: String) {
@@ -216,7 +229,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         name = request.groupName,
                         createdBy = response["created_by"] as String?,
                         totalCalls = null,
-                        adminId = Mentor.getInstance().getId()
+                        adminId = Mentor.getInstance().getId(),
+                        groupType = response["group_type"] as String?
                     )
                 )
                 database.groupChatDao().insertMessage(ChatItem(
@@ -408,6 +422,22 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 null
         } catch (e: Exception){
             showToast("An error has occurred")
+            null
+        }
+    }
+
+    suspend fun sendJoinGroupRequest(request: GroupJoinRequest): Boolean {
+        val response = apiService.sendJoinRequest(request)
+        if (response.isSuccessful)
+            return true
+        return false
+    }
+
+    suspend fun fetchRequestList(groupId: String): List<GroupMemberRequest>? {
+        return try {
+            apiService.getRequestsList(groupId).requestList
+        } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }

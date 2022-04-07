@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLEAR_SEARCH
 import com.joshtalks.joshskills.databinding.FragmentGroupSearchBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.group.constants.IS_FROM_VOIP
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupSearchViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest

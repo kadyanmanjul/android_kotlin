@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.group
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,13 @@ import com.bumptech.glide.Glide
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.constants.ADD_GROUP_TO_SERVER
+import com.joshtalks.joshskills.constants.CREATE_GROUP_VALIDATION
 import com.joshtalks.joshskills.constants.GROUP_IMAGE_SELECTED
+import com.joshtalks.joshskills.constants.OPEN_ADMIN_RESPONSIBILITY
 import com.joshtalks.joshskills.constants.SAVE_GROUP_INFO
 import com.joshtalks.joshskills.databinding.FragmentNewGroupBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
@@ -58,17 +61,27 @@ class NewGroupFragment : BaseFragment() {
                             .into(binding.imgGroup)
                     }
                 }
-                ADD_GROUP_TO_SERVER -> {
+                CREATE_GROUP_VALIDATION -> {
                     val groupName = binding.etGroupName.text.toString()
-                    if (groupName.isNotEmpty() && groupName.length <= 25) {
+                    var groupType = OPENED_GROUP
+                    if (binding.tvSelectGroupType.text.toString().contains(CLOSED_GROUP, true))
+                        groupType = CLOSED_GROUP
+
+                    if (groupName.isNotBlank() && groupName.length <= 25 && groupType.isNotEmpty()) {
                         val request = AddGroupRequest(
                             mentorId = Mentor.getInstance().getId(),
                             groupName = groupName,
-                            groupIcon = imagePath ?: ""
+                            groupIcon = imagePath ?: "",
+                            groupType = groupType
                         )
-                        vm.addGroup(request)
+                        val message = Message()
+                        message.what = OPEN_ADMIN_RESPONSIBILITY
+                        message.obj = request
+                        liveData.value = message
                     } else if (groupName.length > 25)
                         showToast("Group Name should be 25 character or less")
+                    else if (groupType.isBlank())
+                        showToast("Please select the group type")
                     else
                         showToast("Please enter group name")
                 }
@@ -102,6 +115,15 @@ class NewGroupFragment : BaseFragment() {
             vm.isFromGroupInfo.set(it.getBoolean(IS_FROM_GROUP_INFO, false))
             vm.groupTitle.set(it.getString(GROUPS_TITLE))
             vm.groupImageUrl.set(it.getString(GROUPS_IMAGE))
+            vm.groupType.apply {
+                this.set(
+                    when(it.getString(GROUP_TYPE, "")) {
+                        OPENED_GROUP -> "Open Group"
+                        CLOSED_GROUP -> "Closed Group"
+                        else -> ""
+                    }
+                )
+            }
             groupId = it.getString(GROUPS_ID)
         }
         vm.isImageChanged = false

@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:tools="http://schemas.android.com/tools"
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto">
-<data>
-    <import type="com.joshtalks.joshskills.R"/>
-    <import type="android.view.View"/>
-    <variable
-        name="vm"
-        type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
-</data>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />
+    </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -17,13 +20,12 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:orientation="vertical"
         tools:context=".ui.group.JoshGroupActivity">
 
-        <include
-            layout="@layout/call_ongoing_layout" />
+        <include layout="@layout/call_ongoing_layout" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/group_fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

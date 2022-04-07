@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.Manifest.*
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
@@ -34,9 +35,9 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
@@ -68,6 +69,10 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -85,9 +90,11 @@ const val ROOM_POSITION = 4
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 private const val TAG = "LessonActivity"
 const val TOOLTIP_LESSON_GRAMMAR = "TOOLTIP_LESSON_GRAMMAR_"
+val STORAGE_GRAMMER_REQUEST_CODE = 3456
+private val STORAGE_READING_REQUEST_CODE = 3457
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
-
+    private val event = EventLiveData
     private lateinit var binding: LessonActivityBinding
     private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 
@@ -116,6 +123,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
     private var introVideoControl = false
+    private var isWhatsappRemarketingActive = false
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -163,6 +171,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             R.layout.lesson_activity
         )
         binding.viewbinding = this
+
+        event.observe(this) {
+            when(it.what) {
+                PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
+            }
+        }
+
         PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY, false)
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         if (lessonId == 0) {
@@ -198,6 +213,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         titleView = findViewById(R.id.text_message_title)
 
         setObservers()
+        viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId, isDemo)
 
@@ -216,6 +232,35 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
+    }
+
+    private fun requestStoragePermission(requestCode: Int) {
+        PermissionUtils.storageReadAndWritePermissionReading(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let {
+                        if (report.areAllPermissionsGranted()) {
+                            if (requestCode == STORAGE_READING_REQUEST_CODE)
+                                viewModel.permissionGranted()
+                        } else if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                this@LessonActivity,
+                                R.string.grant_storage_permission
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     override fun onResume() {
@@ -593,6 +638,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         }
+        viewModel.whatsappRemarketingLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isWhatsappRemarketingActive =
+                    (map.variantKey == VariantKeys.WR_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            }
+        }
     }
 
     private fun hideSpotlight() {
@@ -768,6 +819,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     GRAMMAR_POSITION -> {
                         if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logGrammarSectionCompleted()
+                            if(isWhatsappRemarketingActive){
+                                MarketingAnalytics.logWhatsappRemarketing()
+                            }
                         }
                         lesson.grammarStatus = status
                     }

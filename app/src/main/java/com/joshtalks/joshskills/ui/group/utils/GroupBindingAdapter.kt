@@ -17,10 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
-import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
-import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
-import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
+import com.joshtalks.joshskills.ui.group.adapters.*
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.model.GroupMember
@@ -53,12 +50,13 @@ fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, boolean: Boo
     this.setGroupSubTitle(subHeader, header, boolean)
 
 @BindingAdapter("secondIcon")
-fun GroupsAppBar.setSecondIcon(drawableRes: Int) {
-    this.secondIcon(drawableRes)
-}
+fun GroupsAppBar.setSecondIcon(drawableRes: Int) = this.secondIcon(drawableRes)
 
 @BindingAdapter("groupImage")
 fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
+
+@BindingAdapter("groupType")
+fun GroupsAppBar.setLockVisibility(groupType: String) = this.setLockVisibility(groupType)
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {
@@ -109,11 +107,25 @@ fun setGroupMemberAdapter(
     adapter.setListener(function)
 }
 
-@BindingAdapter("groupChatAdapter", "scrollToBottom")
+@BindingAdapter("groupRequestAdapter", "btnOnClick")
+fun setGroupRequestAdapter(
+    view: RecyclerView,
+    adapter: GroupRequestAdapter,
+    function: (String, String, Boolean) -> Unit
+) {
+    view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
+    view.setHasFixedSize(false)
+    view.adapter = adapter
+
+    adapter.setListener(function)
+}
+
+@BindingAdapter("groupChatAdapter", "scrollToBottom", "onTitleClick")
 fun setGroupChatAdapter(
     view: RecyclerView,
     adapter: GroupChatAdapter,
-    scrollView: AppCompatImageView
+    scrollView: AppCompatImageView,
+    function: ((GroupMember, View) -> Unit)?
 ) {
     view.layoutManager = LinearLayoutManager(
         view.context,
@@ -133,6 +145,8 @@ fun setGroupChatAdapter(
     })
     view.setHasFixedSize(false)
     view.adapter = adapter
+
+    adapter.setListener(function)
 }
 
 @BindingAdapter("onSearch")

@@ -81,8 +81,9 @@ import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
-import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoardFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment
+import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch

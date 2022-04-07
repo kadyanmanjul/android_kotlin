@@ -6,16 +6,13 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
-import com.joshtalks.joshskills.repository.server.Award
-import com.mindorks.placeholderview.annotations.Click
+import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.award_item_view_holder)
-class AwardItemViewHolder(var award: Award,var dateText:String?,  var context: Context) {
+class AwardItemViewHolder(var award: Award, var dateText:String?, var context: Context) {
 
     @View(R.id.title)
     lateinit var title: AppCompatTextView

@@ -22,11 +22,12 @@ import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBu
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
+import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
@@ -83,7 +84,37 @@ class ConversationViewModel(
             }
         }
     }
+    private val p2pNetworkService = AppObjectController.p2pNetworkService
+    val pendingRequestsList = MutableLiveData<PendingRequestResponse>()
+    val apiCallStatus = MutableLiveData<ApiCallStatus>()
 
+    fun getPendingRequestsList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = p2pNetworkService.getPendingRequestsList()
+                if (response.isSuccessful) {
+                    pendingRequestsList.postValue(response.body())
+                    return@launch
+                }
+                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+            } catch (ex: Throwable) {
+                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                ex.printStackTrace()
+            }
+        }
+    }
+    fun confirmOrRejectFppRequest(senderMentorId:String,userStatus:String,pageType:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map: HashMap<String, String> = HashMap<String, String>()
+                map[userStatus] = "true"
+                map["page_type"] = pageType
+                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
     fun sendTextMessage(messageObject: BaseChatMessage, chatModel: ChatModel?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

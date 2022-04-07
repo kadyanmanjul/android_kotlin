@@ -2,36 +2,42 @@ package com.joshtalks.joshskills.ui.voip.favorite
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
-import com.joshtalks.joshskills.core.interfaces.RecyclerViewItemClickListener
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.fpp.BaseFppActivity
+import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
+import com.joshtalks.joshskills.ui.fpp.constants.FAV_LIST_SCREEN_BACK_PRESSED
+import com.joshtalks.joshskills.ui.fpp.constants.OPEN_CALL_SCREEN
+import com.joshtalks.joshskills.ui.fpp.constants.OPEN_RECENT_SCREEN
+import com.joshtalks.joshskills.ui.fpp.constants.FINISH_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.SET_TEXT_ON_ENABLE_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
+import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 
-class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickListener {
-    private lateinit var binding: FavoriteListActivityBinding
+class FavoriteListActivity : BaseFppActivity() {
+
+    private var conversationId1: String = EMPTY
+    private var isCourseBought:Boolean = false
+
     private var actionMode: ActionMode? = null
-    private val deleteRecords: MutableSet<FavoriteCaller> = mutableSetOf()
+
+    private val binding by lazy<FavoriteListActivityBinding> {
+        DataBindingUtil.setContentView(this, R.layout.favorite_list_activity)
+    }
 
     private val viewModel: FavoriteCallerViewModel by lazy {
         ViewModelProvider(this).get(FavoriteCallerViewModel::class.java)
     }
-    private val favoriteAdapter: FavoriteAdapter by lazy { FavoriteAdapter(this) }
 
     private var actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -45,142 +51,108 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
             if (item.itemId == R.id.action_delete) {
-                deleteFavoriteUserFromList()
+                viewModel.deleteFavoriteUserFromList()
                 mode?.finish()
             }
             return true
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            deleteRecords.clear()
-            favoriteAdapter.clearSelections()
+            viewModel.deleteRecords.clear()
+            viewModel.adapter.clearSelections()
             actionMode = null
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.favorite_list_activity)
-        binding.handler = this
-        setSupportActionBar(binding.toolbar)
-        initView()
-        addObservable()
+    override fun setIntentExtras() {
+        conversationId1 = intent.getStringExtra(CONVERSATION_ID).toString()
+        isCourseBought = intent.getBooleanExtra(IS_COURSE_BOUGHT,false)
+    }
+
+    override fun initViewBinding() {
+        binding.vm = viewModel
+        binding.executePendingBindings()
+    }
+
+    override fun onCreated() {
         viewModel.getFavorites()
     }
 
-    override fun getConversationId(): String? {
-        return intent.getStringExtra(CONVERSATION_ID)
-    }
-
-    private fun initView() {
-
-        binding.favoriteListRv.apply {
-            itemAnimator = null
-            layoutManager = LinearLayoutManager(applicationContext).apply {
-                isSmoothScrollbarEnabled = true
-            }
-            adapter = favoriteAdapter
-        }
-        binding.favoriteListRv.addOnItemTouchListener(
-            RecyclerTouchListener(
-                applicationContext,
-                binding.favoriteListRv,
-                this
-            )
-        )
-    }
-
-    private fun addObservable() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.favoriteCallerList.collect {
-                if (it.isEmpty()) {
-                    return@collect
-                }
-                delay(350)
-                favoriteAdapter.addItems(it)
-                binding.progressBar.visibility = View.GONE
-            }
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.apiCallStatus.collect {
-                binding.progressBar.visibility = View.GONE
-                if (favoriteAdapter.itemCount == 0) {
-                    showToast("You can add partners to this list by doing calls and pressing yes")
-                }
+    override fun initViewState() {
+        event.observe(this) {
+            when (it.what) {
+                FAV_LIST_SCREEN_BACK_PRESSED -> popBackStack()
+                FAV_CLICK_ON_PROFILE -> openProfileScreen(it.obj.toString(),it.arg1)
+                OPEN_CALL_SCREEN -> callScreenOpen(it.obj as Int)
+                OPEN_RECENT_SCREEN -> openRecentScreen()
+                ENABLE_ACTION_MODE -> enableMode()
+                SET_TEXT_ON_ENABLE_ACTION_MODE -> setTextOnActionMode(it.obj.toString())
+                FINISH_ACTION_MODE -> finishActionMode()
             }
         }
     }
 
-    override fun onItemClick(view: View?, position: Int) {
-        if (deleteRecords.isEmpty()) {
-            openProfileScreen(favoriteAdapter.getItemAtPosition(position))
-            return
-        }
-        updateListRow(position)
-    }
-
-    private fun openProfileScreen(fc: FavoriteCaller) {
-        UserProfileActivity.startUserProfileActivity(
+    private fun openRecentScreen() {
+        RecentCallActivity.openRecentCallActivity(
             this,
-            mentorId = fc.mentorId,
-            conversationId = intent.getStringExtra(CONVERSATION_ID),
+            conversationId1,
+            isCourseBought
         )
     }
 
-    override fun onItemLongClick(view: View?, position: Int) {
-        updateListRow(position)
+    private fun popBackStack() {
+        onBackPressed()
     }
 
-    private fun updateListRow(position: Int) {
-        enableActionMode(position)
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getFavorites()
     }
 
-    private fun enableActionMode(position: Int) {
+    private fun enableMode() {
         if (actionMode == null) {
             actionMode = startSupportActionMode(actionModeCallback)
         }
-        toggleSelection(position)
     }
 
-    private fun toggleSelection(position: Int) {
-        val item = favoriteAdapter.getItemAtPosition(position)
-        if (deleteRecords.contains(item)) {
-            item.selected = false
-            deleteRecords.remove(item)
-        } else {
-            item.selected = true
-            deleteRecords.add(item)
-        }
-        favoriteAdapter.updateItem(item, position)
-        if (deleteRecords.isEmpty()) {
-            actionMode?.finish()
-            actionMode = null
-        } else {
-            actionMode?.title = deleteRecords.size.toString()
-            actionMode?.invalidate()
-        }
+    private fun finishActionMode(){
+        actionMode?.finish()
     }
 
-    private fun deleteFavoriteUserFromList() {
-        showToast(getDeleteMessage())
-        favoriteAdapter.removeAndUpdated()
-        viewModel.deleteUsersFromFavoriteList(deleteRecords.toMutableList())
+    private fun setTextOnActionMode(size: String) {
+        actionMode?.title = size
+        actionMode?.invalidate()
     }
 
-    private fun getDeleteMessage(): String {
-        if (deleteRecords.size > 1) {
-            return "${deleteRecords.size} practice partners removed"
+    private fun openProfileScreen(mId: String,position:Int) {
+        if (viewModel.deleteRecords.isEmpty()){
+            UserProfileActivity.startUserProfileActivity(
+                this,
+                mentorId = mId,
+                conversationId = conversationId1
+            )
+            return
         }
-        return "${deleteRecords.size} practice partner removed"
+        viewModel.updateListRow(position)
     }
 
     companion object {
-        fun openFavoriteCallerActivity(activity: Activity, conversationId: String) {
+        fun openFavoriteCallerActivity(activity: Activity, conversationId: String,isCourseBought:Boolean) {
             Intent(activity, FavoriteListActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
+                putExtra(IS_COURSE_BOUGHT, isCourseBought)
             }.also {
                 activity.startActivity(it)
             }
         }
+    }
+
+    private fun callScreenOpen(uid: Int) {
+        val intent =
+            WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        startActivity(intent)
     }
 }

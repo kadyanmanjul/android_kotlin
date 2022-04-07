@@ -37,6 +37,7 @@
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
                 groupSubHeader="@{`Created by ` + vm.groupCreator}"
+                groupType="@{vm.groupType}"
                 onBackPressed="@{vm::onBackPress}"
                 onSecondIconPressed="@{vm::editGroupInfo}"
                 secondIcon="@{vm.adminId.equals(Mentor.getInstance().getId()) ? R.drawable.ic_pen_edit : 0, default = 0}"

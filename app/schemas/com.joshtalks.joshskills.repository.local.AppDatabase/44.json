@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 44,
-    "identityHash": "91f35a569a51841a3d53fa6fa54dca35",
+    "identityHash": "170e2a30dd6b3a42e30089dfa88c63cf",
     "entities": [
       {
         "tableName": "course",
@@ -2437,7 +2437,7 @@
       },
       {
         "tableName": "favorite_caller",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `photo_url` TEXT, `minutes_spoken` INTEGER NOT NULL, `total_calls` INTEGER NOT NULL, `last_called_at` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `mentor_id` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `photo_url` TEXT, `minutes_spoken` INTEGER NOT NULL, `total_calls` INTEGER NOT NULL, `last_called_at` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, `mentor_id` TEXT NOT NULL, `isOnline` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -2485,6 +2485,12 @@
             "fieldPath": "mentorId",
             "columnName": "mentor_id",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isOnline",
+            "columnName": "isOnline",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -2753,6 +2759,32 @@
         "foreignKeys": []
       },
       {
+        "tableName": "group_chat_analytics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupId` TEXT NOT NULL, `lastSentMsgTime` INTEGER NOT NULL, PRIMARY KEY(`groupId`))",
+        "fields": [
+          {
+            "fieldPath": "groupId",
+            "columnName": "groupId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSentMsgTime",
+            "columnName": "lastSentMsgTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "groupId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
         "tableName": "group_list_table",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, PRIMARY KEY(`groupId`))",
         "fields": [
@@ -2977,12 +3009,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "game_analytics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "event",
+            "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mentorId",
+            "columnName": "mentorId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '91f35a569a51841a3d53fa6fa54dca35')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '170e2a30dd6b3a42e30089dfa88c63cf')"
     ]
   }
 }
