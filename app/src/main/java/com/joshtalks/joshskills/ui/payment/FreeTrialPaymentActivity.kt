@@ -1,8 +1,8 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -32,9 +32,11 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentP
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.quizgame.util.UpdateReceiver.Companion.isNetworkAvailable
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -44,26 +46,25 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.math.BigDecimal
+import kotlinx.android.synthetic.main.activity_free_trial_payment.view.*
+import kotlinx.android.synthetic.main.price_card.view.*
+import kotlinx.android.synthetic.main.syllabus_pdf_layout.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.android.synthetic.main.activity_free_trial_payment.view.*
-import kotlinx.android.synthetic.main.price_card.view.*
-import kotlinx.android.synthetic.main.syllabus_pdf_layout.view.*
+import java.io.File
+import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
 const val IS_FAKE_CALL = "is_fake_call"
@@ -233,13 +234,20 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         englishCard.syllabus_layout_new.english_syllabus_pdf.setOnClickListener {
-            startPdfDownload()
+            if(isNetworkAvailable()) {
+                startPdfDownload()
+            }else{
+                showToast("something went wrong")
+            }
         }
 
         binding.syllabusLayout.english_syllabus_pdf.setOnClickListener {
-            startPdfDownload()
+            if(isNetworkAvailable()) {
+                startPdfDownload()
+            }else{
+                showToast("something went wrong")
+            }
         }
-
         binding.applyCoupon.setOnClickListener {
             viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
             val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
