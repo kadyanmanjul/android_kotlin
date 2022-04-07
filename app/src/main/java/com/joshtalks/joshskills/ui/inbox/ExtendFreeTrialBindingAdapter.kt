@@ -1,18 +1,16 @@
 package com.joshtalks.joshskills.ui.inbox
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
-import com.google.android.material.color.MaterialColors.getColor
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 
@@ -20,7 +18,7 @@ import com.joshtalks.joshskills.R
 fun TextView.setColorize(subStringToColorize: String) {
     val spannable: Spannable = SpannableString(text)
     spannable.setSpan(
-        ForegroundColorSpan(Color.parseColor("#107BE5")),
+        ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorPrimary)),
         7,
         31,
         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

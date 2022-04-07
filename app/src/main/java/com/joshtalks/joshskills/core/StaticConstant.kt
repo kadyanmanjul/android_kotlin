@@ -302,6 +302,7 @@ enum class CallType {
     INCOMING, OUTGOING, FAVORITE_INCOMING, FAVORITE_MISSED_CALL, CONNECTED
 }
 
+const val LESSON_ONE_TOPIC_ID = "5"
 /*
 val PointHistoryTitlesArray=arrayOf(
     "Your Points",
