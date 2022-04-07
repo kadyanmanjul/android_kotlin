@@ -56,7 +56,7 @@ internal class PubNubSubscriber : SubscribeCallback() {
 
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         scope.launch {
-            voipLog?.log("Incoming message --> : $pnMessageResult")
+            Log.d(TAG, "message: $pnMessageResult")
             val messageJson = pnMessageResult.message
             try {
                 // So that we will ignore our own message
@@ -89,6 +89,9 @@ internal class PubNubSubscriber : SubscribeCallback() {
                 Log.d(TAG, "status: PNTimeoutCategory")
                 pubnub.reconnect();
             }
+        }
+        when(status) {
+
         }
     }
 

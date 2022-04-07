@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.Error
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.MessageData
+import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
 import com.joshtalks.joshskills.voip.communication.model.Timeout
@@ -127,6 +128,13 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     else
                         break
                 }
+                val networkAction = NetworkAction(
+                    callId = -1,
+                    uid = -1,
+                    type = ServerConstants.DISCONNECTED,
+                    duration = 0
+                )
+                networkEventChannel.emitEvent(networkAction)
                 disconnectCall()
                 flow.emit(CALL_DISCONNECT_REQUEST)
             }
