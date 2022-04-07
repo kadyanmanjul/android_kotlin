@@ -25,6 +25,7 @@ import com.joshtalks.codeinputview.OTPListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_signup_enter_otp.*
 
 class SignUpEnterOTPFragment: Fragment() {
     private var compositeDisposable = CompositeDisposable()
@@ -43,6 +44,7 @@ class SignUpEnterOTPFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_otp, container, false)
         binding.handler = this
+
         return binding.root
     }
 

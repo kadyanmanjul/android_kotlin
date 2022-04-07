@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.truecaller.android.sdk.*
+import kotlinx.android.synthetic.main.activity_sign_up.*
 import java.util.*
 
 class SignUpActivity : AppCompatActivity() {
@@ -51,6 +52,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun addObservers() {
         viewModel.signUpStatus.observe(this) {
+            btnWelcome.visibility=View.GONE
             when (it) {
                 SignUpStepStatus.RequestForOTP -> {
                     openOTPVerificationFragment()

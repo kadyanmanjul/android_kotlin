@@ -72,7 +72,7 @@ fun setConversationRoomCardActionButton(
             view.text = view.context.getString(R.string.reminder_on)
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
             view.backgroundTintList =
-                ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_button_color))
+                ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
             view.isEnabled = false
             view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
 

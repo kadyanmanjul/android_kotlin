@@ -9,8 +9,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageView"
-        android:layout_width="@dimen/_297sdp"
-        android:layout_height="wrap_content"
+        android:layout_width="368dp"
+        android:layout_height="384dp"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
         app:layout_constraintBottom_toBottomOf="parent"

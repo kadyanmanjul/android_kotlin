@@ -52,6 +52,8 @@ class ProfileActivity: AppCompatActivity() {
             binding.apply {
                 handleSpeakerProfile(it.isSpeaker, it)
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
+                else
+                    Utils.setImage(ivProfilePic,it.firstName.toString())
                 tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
