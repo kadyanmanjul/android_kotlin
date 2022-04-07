@@ -71,8 +71,8 @@ class JoshApplication :
     private fun initMoEngage() {
         val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
             .setDataCenter(DataCenter.DATA_CENTER_3)
-            .configureLogs(LogConfig(LogLevel.VERBOSE,false))
             .build()
+//            .configureLogs(LogConfig(LogLevel.VERBOSE,true))
         MoEngage.initialiseDefaultInstance(moEngage)
     }
 

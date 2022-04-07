@@ -109,6 +109,8 @@ import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import com.moengage.firebase.MoEFireBaseHelper
+import com.moengage.pushbase.MoEPushHelper
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -151,6 +153,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
+        MoEFireBaseHelper.getInstance().passPushToken(applicationContext, token)
         CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
@@ -198,15 +201,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Timber.tag(FirebaseNotificationService::class.java.name).e("fcm")
+
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage)) {
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            } /*else if (remoteMessage.data.containsKey("message") && remoteMessage.data["message"] != null && Mentor.getInstance()
-                    .hasId()
-            ) {
-                msgCount++
-                showGroupChatNotification(remoteMessage.data["message"]!!)
-            }*/ else {
+            } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
+                // TODO : Custom API key check
+//            if (remoteMessage.data.containsKey("custom"))
+//                sendNotification()
+                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+                MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
+                incomingCallNotificationAction(remoteMessage.data["gcm_title"])
+                return
+            } else {
                 if (BuildConfig.DEBUG) {
                     Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
                         Gson().toJson(remoteMessage.data)
@@ -1666,6 +1673,5 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
         }
-
     }
 }
