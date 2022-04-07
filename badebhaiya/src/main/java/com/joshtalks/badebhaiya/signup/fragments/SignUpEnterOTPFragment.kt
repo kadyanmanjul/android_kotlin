@@ -56,7 +56,6 @@ class SignUpEnterOTPFragment: Fragment() {
     private fun processOTP() {
         binding.otpView.otpListener = object : OTPListener {
             override fun onOTPComplete(otp: String?) {
-                btnNext.setBackgroundResource(R.drawable.change_button_selector)
                 verifyOTP()
             }
 

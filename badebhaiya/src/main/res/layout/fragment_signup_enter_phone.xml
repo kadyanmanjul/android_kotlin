@@ -63,7 +63,9 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etPhone"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
                 android:digits="1234567890"
                 android:hint="@string/phone_number"
                 android:textAlignment="center"

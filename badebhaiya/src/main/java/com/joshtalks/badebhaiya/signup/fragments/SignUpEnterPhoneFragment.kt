@@ -37,14 +37,6 @@ class SignUpEnterPhoneFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_phone, container, false)
         binding.handler = this
-        binding.etPhone.addTextChangedListener {
-            if (binding.etPhone.text.isNullOrEmpty() || isValidFullNumber("+91", binding.etPhone.text.toString())) {
-                btnNext.setBackgroundResource(R.drawable.change_button_selector)
-            }
-            else
-                btnNext.setBackgroundResource(R.drawable.next_button_selector)
-
-        }
         return binding.root
     }
 

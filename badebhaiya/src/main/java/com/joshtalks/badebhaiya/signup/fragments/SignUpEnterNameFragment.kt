@@ -35,14 +35,6 @@ class SignUpEnterNameFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_name, container, false)
         binding.handler = this
-        binding.etFirstName.addTextChangedListener {
-            if (binding.etFirstName.text.isNullOrEmpty().not()) {
-                btnNext.setBackgroundResource(R.drawable.change_button_selector)
-            }
-            else
-                btnNext.setBackgroundResource(R.drawable.next_button_selector)
-
-        }
         return binding.root
     }
 
