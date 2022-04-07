@@ -630,6 +630,9 @@
         but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
         with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
         \software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="loremIpsumShort">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer
+        took a galley of type and scrambled it to make a type specimen book.</string>
     <string name="replyTxt">reply</string>
     <string name="pin">pin</string>
     <string name="message_deleted">This message was deleted</string>
@@ -857,6 +860,20 @@
     <string name="practise_uploading">Practice Uploading &#8230; </string>
     <string name="how_to_pronounce">How to pronounce:</string>
 
+    <!-- Groups -->
+    <string name="admin_responsibilities">
+        1. Admin ek tarah se group ka Leader hota h\n2. Admin ne jo group banaya h use uss group k topic k prati JOSHila hona chaiye\n3. Admin logo ko Group se nikal bhi sakta h lekin uske peeche koi reason hona chaiye jaise batameezi, inactive ya irrelevant\n4. Admin ko Closed group me sab ki request barabar se padhni chaiyeaur sirf interested and relevant logo ko allow karna chaiye\n5. Admin baki logo ko Group join karne k liye bhi bol sakta h jisse group me aur acche students aye\n6. Admin ko group me active rehena hoga and group ko engage rakhna hoga takio group k sabhi logo ki progress ho\n7. Admin ko apni powers ka galat istamal nahi karna chaiye
+    </string>
+
+    <string name="group_rules_list">
+        1. Be Kind\n
+        2. Help other members\n
+        3. No spam\n
+        4. Respect everyone\n
+        5. No self promotion
+    </string>
+
+    <string name="closed_group_desc">Ye group ek closed group h. Iss group ko join karne k liye Admin ko aapko Allow karna hoga. En Questions k answers de dijiye taki aapko group  me allow kiya jaye </string>
 
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
     <string name="p2p_title">Practice Partner calling</string>

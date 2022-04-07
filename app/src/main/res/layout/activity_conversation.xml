@@ -114,18 +114,18 @@
                         android:textColor="@color/white"
                         tools:text="Spoken English Course" />
 
-<!--                    <androidx.appcompat.widget.AppCompatImageView-->
-<!--                        android:id="@+id/ic_notification_dot"-->
-<!--                        android:layout_width="@dimen/_8sdp"-->
-<!--                        android:layout_height="@dimen/_8sdp"-->
-<!--                        android:layout_alignEnd="@id/text_message_title"-->
-<!--                        android:layout_marginTop="@dimen/_4sdp"-->
-<!--                        android:background="@drawable/timer_drawable"-->
-<!--                        android:backgroundTint="@color/wa_color"-->
-<!--                        android:gravity="start"-->
-<!--                        android:tint="@color/wh_fc"-->
-<!--                        android:visibility="gone"-->
-<!--                        tools:visibility="gone" />-->
+                    <!--                    <androidx.appcompat.widget.AppCompatImageView-->
+                    <!--                        android:id="@+id/ic_notification_dot"-->
+                    <!--                        android:layout_width="@dimen/_8sdp"-->
+                    <!--                        android:layout_height="@dimen/_8sdp"-->
+                    <!--                        android:layout_alignEnd="@id/text_message_title"-->
+                    <!--                        android:layout_marginTop="@dimen/_4sdp"-->
+                    <!--                        android:background="@drawable/timer_drawable"-->
+                    <!--                        android:backgroundTint="@color/wa_color"-->
+                    <!--                        android:gravity="start"-->
+                    <!--                        android:tint="@color/wh_fc"-->
+                    <!--                        android:visibility="gone"-->
+                    <!--                        tools:visibility="gone" />-->
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_icon_referral"

@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -235,6 +236,9 @@ interface CommonNetworkService {
 
     @GET("$DIR/activity_feed/fetch_all/")
     suspend fun getActivityFeedData(): Response<ActivityFeedList>
+
+    @GET("$DIR/activity_feed/fetch_all/{time_stamp}")
+    suspend fun getActivityFeedData(@Path("time_stamp") id: String): Response<ActivityFeedList>
 
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(

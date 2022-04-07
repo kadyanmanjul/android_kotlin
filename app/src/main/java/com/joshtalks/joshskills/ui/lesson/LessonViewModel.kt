@@ -85,6 +85,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
+    val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
+
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getWhatsappRemarketingCampaign(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                whatsappRemarketingLiveData.postValue(campaign)
+            }
+        }
+    }
 
     fun getVideoData() {
         viewModelScope.launch(Dispatchers.IO) {

@@ -740,8 +740,22 @@ class ConversationActivity :
             PrefManager.put(IS_COURSE_BOUGHT, true)
         }
 
-        conversationBinding.imgActivityFeed.setOnClickListener {
-            ActivityFeedMainActivity.startActivityFeedMainActivity(inboxEntity, this)
+//        conversationBinding.imgGroupChat.setOnClickListener {
+//            val intent = Intent(this, JoshGroupActivity::class.java)
+//            startActivity(intent)
+//        }
+        conversationBinding.imgFeedBtn.setOnClickListener {
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                val nameArr = User.getInstance().firstName?.split(SINGLE_SPACE)
+                val firstName = if (nameArr != null) nameArr[0] else EMPTY
+                showToast(getString(R.string.feature_locked, firstName))
+            } else {
+                val intent = Intent(this, ActivityFeedMainActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         conversationBinding.imgFppRequest.setOnClickListener {

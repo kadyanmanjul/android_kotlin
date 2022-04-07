@@ -96,8 +96,10 @@ import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsDao
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.data.local.GroupChatDao
 import com.joshtalks.joshskills.ui.group.data.local.GroupListDao
+import com.joshtalks.joshskills.ui.group.data.local.GroupMemberDao
 import com.joshtalks.joshskills.ui.group.data.local.TimeTokenDao
 import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.group.model.TimeTokenRequest
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialDao
@@ -120,7 +122,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
-        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class, SpecialPractice::class, ABTestCampaignData::class
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
+        ABTestCampaignData::class, GroupMember::class, SpecialPractice::class
     ],
     version = 46,
     exportSchema = true
@@ -582,7 +585,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_43_44:Migration = object : Migration(43, 44) {
+        private val MIGRATION_43_44: Migration = object : Migration(43, 44) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_questions_tmp` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE)")
                 database.execSQL("INSERT INTO `assessment_questions_tmp` (`localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status`) SELECT `localId`,`remoteId`,`assessmentId`,`text`,`subText`,`sortOrder`,`mediaUrl`,`mediaType`,`mediaUrl2`,`mediaType2`,`videoThumbnailUrl`,`choiceType`,`isAttempted`,`isNewHeader`,`listOfAnswers`,`status` FROM `assessment_questions`")
@@ -599,8 +602,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE course ADD COLUMN paid_test_id TEXT")
             }
         }
-        private val MIGRATION_45_46:Migration = object : Migration(44, 45) {
+
+        private val MIGRATION_45_46: Migration = object : Migration(45, 46) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `group_member_table` (`mentorID` TEXT NOT NULL, `memberName` TEXT NOT NULL, `memberIcon` TEXT NOT NULL, `isAdmin` INTEGER NOT NULL, `isOnline` INTEGER NOT NULL, `groupId` TEXT NOT NULL, PRIMARY KEY (`mentorId`, `groupId`))")
+                database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupType` TEXT")
+                database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupStatus` TEXT")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT, `recorded_video` TEXT)")
             }
         }
@@ -650,6 +657,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun gameAnalyticsDao(): GameAnalyticsDao
     abstract fun specialDao():SpecialDao
     abstract fun abCampaignDao(): ABTestCampaignDao
+    abstract fun groupMemberDao(): GroupMemberDao
 }
 
 class MessageTypeConverters {
