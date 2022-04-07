@@ -237,7 +237,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             if(isNetworkAvailable()) {
                 startPdfDownload()
             }else{
-                showToast("something went wrong")
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
 
@@ -245,7 +245,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             if(isNetworkAvailable()) {
                 startPdfDownload()
             }else{
-                showToast("something went wrong")
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
         binding.applyCoupon.setOnClickListener {
