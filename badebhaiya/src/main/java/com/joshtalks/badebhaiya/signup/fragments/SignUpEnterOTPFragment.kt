@@ -60,7 +60,9 @@ class SignUpEnterOTPFragment: Fragment() {
                 verifyOTP()
             }
 
-            override fun onInteractionListener() {}
+            override fun onInteractionListener() {
+                binding.btnNext.isEnabled = binding.otpView.otp.isNotEmpty()
+            }
         }
     }
 

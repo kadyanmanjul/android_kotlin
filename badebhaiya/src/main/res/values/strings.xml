@@ -88,7 +88,7 @@
     <string name="cancel_button">Cancel Button</string>
     <string name="open_to_everyone">Open to Everyone</string>
     <string name="no_raised_hand_text">No one has their hand raised yet</string>
-    <string name="bb_following">%s following</string>
+    <string name="bb_following"><![CDATA[\<b>%s</b> following\]]></string>
     <string name="bb_followers"><![CDATA[\<b>%s</b> followers\]]></string>
     <string name="welcome_in_string">🎉 Welcome in!</string>
     <string name="bb_tagline">Connect with your role models directly</string>

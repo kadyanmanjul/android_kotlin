@@ -127,6 +127,8 @@
             onFeedItemClick="@{handler}"
             android:paddingStart="@dimen/_8sdp"
             android:paddingEnd="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_2sdp"
             app:layout_constraintTop_toBottomOf="@+id/tvSpeakerRoomHeading"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/li_room_event" />

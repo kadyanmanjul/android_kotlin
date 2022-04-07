@@ -1,8 +1,11 @@
 package com.joshtalks.badebhaiya.profile
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -11,12 +14,19 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.USER_ID
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
+import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.feed.ROOM_DETAILS
+import com.joshtalks.badebhaiya.feed.TOPIC
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity
+import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
+import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
+import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
 
@@ -28,6 +38,10 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     private val viewModel by lazy {
         ViewModelProvider(this)[ProfileViewModel::class.java]
+    }
+
+    private val feedViewModel by lazy {
+        ViewModelProvider(this)[FeedViewModel::class.java]
     }
 
     private var userId: String? = EMPTY
@@ -60,7 +74,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 handleSpeakerProfile(it)
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
                 else
-                    Utils.setImage(ivProfilePic,it.firstName.toString())
+                    Utils.setImage(ivProfilePic, it.firstName.toString())
                 tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
@@ -69,6 +83,33 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 speakerFollowedUIChanges()
             }
         }
+        viewModel.singleLiveEvent.observe(this) {
+            Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
+            when (it.what) {
+                OPEN_PROFILE ->{
+
+                }
+                OPEN_ROOM ->{
+                    it.data?.let {
+                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room->
+                            ConversationLiveRoomActivity.startRoomActivity(
+                                activity = this@ProfileActivity,
+                                channelName = room.channelName,
+                                uid = room.uid,
+                                token =room.token,
+                                isRoomCreatedByUser = room.moderatorId == room.uid,
+                                roomId = room.roomId,
+                                moderatorId = room.moderatorId,
+                                topicName = it.getString(TOPIC),
+                                flags = arrayOf()
+
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private fun handleSpeakerProfile(profileResponse: ProfileResponse) {
@@ -81,7 +122,8 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                     speakerFollowedUIChanges()
                 }
             } else {
-                tvFollowers.text = getString(R.string.bb_following, profileResponse.followersCount.toString())
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, profileResponse.followersCount.toString()),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
     }
@@ -115,11 +157,40 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-
+        Log.d("Manjul", "joinRoom() called with: room = $room, view = $view")
+        feedViewModel.joinRoom(room)
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-
+        Log.d("Manjul", "setReminder() called with: room = $room, view = $view")
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val notificationIntent = NotificationHelper.getNotificationIntent(
+            this, Notification(
+                title = room.topic ?: "Conversation Room Reminder",
+                body = room.speakersData?.name ?: "Conversation Room Reminder",
+                id = room.startedBy ?: 0,
+                userId = room.speakersData?.userId ?: "",
+                type = NotificationType.REMINDER
+            )
+        )
+        val pendingIntent =
+            PendingIntent.getBroadcast(
+                applicationContext,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
+            .also {
+                room.isScheduled = true
+                feedViewModel.setReminder(
+                    ReminderRequest(
+                        roomId = room.roomId.toString(),
+                        userId = User.getInstance().userId,
+                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
+                    )
+                )
+            }
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
