@@ -90,6 +90,8 @@ const val ROOM_POSITION = 4
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 private const val TAG = "LessonActivity"
 const val TOOLTIP_LESSON_GRAMMAR = "TOOLTIP_LESSON_GRAMMAR_"
+val STORAGE_GRAMMER_REQUEST_CODE = 3456
+private val STORAGE_READING_REQUEST_CODE = 3457
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
     private val event = EventLiveData
