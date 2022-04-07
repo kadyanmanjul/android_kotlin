@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.voip.data
 
+import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.Service
 import android.content.ContentValues
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.IBinder
 import android.os.Messenger
+import android.os.Process
 import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.CALL_ID
@@ -23,6 +25,8 @@ import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
 import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INCOMING_CALL_URI
+import com.joshtalks.joshskills.base.constants.PREF_KEY_MAIN_PROCESS_PID
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
 import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
@@ -62,18 +66,22 @@ import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
-import com.joshtalks.joshskills.voip.pstn.PSTNStateReceiver
 import com.joshtalks.joshskills.voip.voipLog
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 private const val TAG = "CallingRemoteService"
+const val SERVICE_ALONE_LIFE_TIME = 1 * 60 * 1000L
+
 class CallingRemoteService : Service() {
     private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
         Timber.tag("Coroutine Exception").d("Handled...")
@@ -93,6 +101,7 @@ class CallingRemoteService : Service() {
     private val notification by lazy {
       VoipNotification(notificationData,NotificationPriority.Low)
     }
+    private lateinit var serviceKillJob : Job
 
     override fun onCreate() {
         super.onCreate()
@@ -110,6 +119,12 @@ class CallingRemoteService : Service() {
         val shouldStopService = (intent?.action == SERVICE_ACTION_STOP_SERVICE)
         if(shouldStopService) {
             stopSelf()
+            return START_NOT_STICKY
+        }
+        val checkAppState = (intent?.action == SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND)
+        Log.d(TAG, "onStartCommand: In BackGround $checkAppState")
+        if(checkAppState) {
+            startAutoServiceKillingTimer()
             return START_NOT_STICKY
         }
         Utils.apiHeader = intent?.getParcelableExtra(INTENT_DATA_API_HEADER)
@@ -163,6 +178,21 @@ class CallingRemoteService : Service() {
     override fun onUnbind(intent: Intent?): Boolean {
         voipLog?.log("Service Unbinding")
         return true
+    }
+
+    private fun startAutoServiceKillingTimer() {
+        Log.d(TAG, "startAutoServiceKillingTimer: ")
+        serviceKillJob = ioScope.launch {
+            delay(SERVICE_ALONE_LIFE_TIME)
+            if(isActive)
+                stopSelf()
+        }
+    }
+
+    private fun stopServiceKillingTimer() {
+        Log.d(TAG, "stopServiceKillingTimer: ")
+        if(::serviceKillJob.isInitialized)
+            serviceKillJob.cancel()
     }
 
     private fun observeAudioRouteEvents() {
@@ -255,7 +285,12 @@ class CallingRemoteService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        showNotification()
+        //showNotification()
+        if(::serviceKillJob.isInitialized.not())
+            startAutoServiceKillingTimer()
+        else if(serviceKillJob.isActive.not())
+            startAutoServiceKillingTimer()
+
         voipLog?.log("onTaskRemoved --> ${rootIntent}")
         super.onTaskRemoved(rootIntent)
     }

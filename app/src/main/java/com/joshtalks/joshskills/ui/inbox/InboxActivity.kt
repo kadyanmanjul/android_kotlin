@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.os.Process
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.PREF_KEY_MAIN_PROCESS_PID
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -32,6 +35,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.*
@@ -354,6 +358,21 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        applicationClosed()
+    }
+
+    private fun applicationClosed() {
+        val remoteServiceIntent =
+            Intent(
+                AppObjectController.joshApplication,
+                CallingRemoteService::class.java
+            )
+        remoteServiceIntent.action = SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
+        AppObjectController.joshApplication.startService(remoteServiceIntent)
     }
 
 }
